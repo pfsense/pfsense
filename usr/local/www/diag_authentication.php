@@ -51,11 +51,11 @@ if ($_POST) {
 	if (!$authcfg)
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
 
-	if (empty($_POST['username']) || empty($_POST['password']))
+	if (empty($_POST['username']) || empty($_POST['passwordfld']))
 		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
-		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
+		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
 			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";

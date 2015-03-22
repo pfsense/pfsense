@@ -114,8 +114,8 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
 	$pconfig['port'] = $a_ppps[$pppid]['ports'];
 	if ($a_ppps[$pppid]['type'] == "ppp") {
-		$pconfig['username'] = $a_ppps[$pppid]['username'];
-		$pconfig['password'] = base64_decode($a_ppps[$pppid]['password']);
+		$pconfig['ppp_username'] = $a_ppps[$pppid]['username'];
+		$pconfig['ppp_password'] = base64_decode($a_ppps[$pppid]['password']);
 
 		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
 		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
@@ -522,9 +522,6 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
-		case "dhcp":
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
@@ -575,6 +572,7 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
+			break;
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
@@ -611,7 +609,8 @@ if ($_POST['apply']) {
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
 				if ($track6_prefix_id < 0 || $track6_prefix_id > $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
-					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range. ({$_POST['track6-interface']}) - ({$_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]}) - ({$ipv6_delegation_length})");
+					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range.") .
+						" ({$_POST['track6-interface']}) - (0) - (" . sprintf('%x', $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) . ")";
 				} else {
 					foreach ($ifdescrs as $ifent => $ifdescr) {
 						if ($if == $ifent)
@@ -772,9 +771,74 @@ if ($_POST['apply']) {
 		if ($_POST['mode'] == 'hostap') {
 			$reqdfields[] = "ssid";
 			$reqdfieldsn[] = gettext("SSID");
+			if (isset($_POST['channel']) && $_POST['channel'] == "0") {
+				// auto channel with hostap is broken, prevent this for now.
+				$input_errors[] = gettext("A specific channel, not auto, must be selected for Access Point mode.");
+			}
+		}
+		if (stristr($_POST['standard'], '11n')) {
+			if (!($_POST['wme_enable'])) {
+				$input_errors[] = gettext("802.11n standards require enabling WME.");
+			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		check_wireless_mode();
+		if (isset($_POST['wpa_group_rekey']) && (!is_numericint($_POST['wpa_group_rekey']) || $_POST['wpa_group_rekey'] < 1 || $_POST['wpa_group_rekey'] > 9999)) {
+			$input_errors[] = gettext("Key Rotation must be an integer between 1 and 9999.");
+		}
+		if (isset($_POST['wpa_gmk_rekey']) && (!is_numericint($_POST['wpa_gmk_rekey']) || $_POST['wpa_gmk_rekey'] < 1 || $_POST['wpa_gmk_rekey'] > 9999)) {
+			$input_errors[] = gettext("Master Key Regeneration must be an integer between 1 and 9999.");
+		}
+		if (isset($_POST['wpa_group_rekey']) && isset($_POST['wpa_gmk_rekey'])) {
+			if ($_POST['wpa_group_rekey'] > $_POST['wpa_gmk_rekey']) {
+				$input_errors[] = gettext("Master Key Regeneration must be greater than Key Rotation.");
+			}
+		}
+		if (!empty($_POST['auth_server_addr'])) {
+			if (!is_domain($_POST['auth_server_addr']) && !is_ipaddr($_POST['auth_server_addr'])) {
+				$input_errors[] = gettext("802.1X Authentication Server must be an IP or hostname.");
+			}
+		}
+		if (!empty($_POST['auth_server_addr2'])) {
+			if (!is_domain($_POST['auth_server_addr2']) && !is_ipaddr($_POST['auth_server_addr2'])) {
+				$input_errors[] = gettext("Secondary 802.1X Authentication Server must be an IP or hostname.");
+			}
+		}
+		if (!empty($_POST['auth_server_port'])) {
+			if (!is_port($_POST['auth_server_port'])) {
+				$input_errors[] = gettext("802.1X Authentication Server Port must be a valid port number (1-65535).");
+			}
+		}
+		if (!empty($_POST['auth_server_port2'])) {
+			if (!is_port($_POST['auth_server_port2'])) {
+				$input_errors[] = gettext("Secondary 802.1X Authentication Server Port must be a valid port number (1-65535).");
+			}
+		}
+		if (isset($_POST['channel']) && !is_numericint($_POST['channel'])) {
+			if (!is_numericint($_POST['channel'])) {
+				$input_errors[] = gettext("Invalid channel specified.");
+			} else {
+				if ($_POST['channel'] > 255 || $_POST['channel'] < 0) {
+					$input_errors[] = gettext("Channel must be between 0-255.");
+				}
+			}
+		}
+		if (!empty($_POST['distance']) && !is_numericint($_POST['distance'])) {
+			$input_errors[] = gettext("Distance must be an integer.");
+		}
+		if (isset($_POST['standard']) && (stristr($_POST['standard'], '11na') || stristr($_POST['standard'], '11a'))) {
+			if ($_POST['channel'] != 0 && $_POST['channel'] < 15) {
+				$input_errors[] = gettext("Channel selected is not valid for 802.11a or 802.11na.");
+			}
+		}
+		if (isset($_POST['standard']) && ($_POST['standard'] == "11b" || $_POST['standard'] == "11g")) {
+			if ($_POST['channel'] > 14) {
+				$input_errors[] = gettext("Channel selected is not valid for 802.11b or 802.11g.");
+			}
+		}
+		if (!empty($_POST['protmode']) && !in_array($_POST['protmode'], array("off", "cts", "rtscts"))) {
+			$input_errors[] = gettext("Invalid option chosen for OFDM Protection Mode");
+		}
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {
 			if ($_POST['key' . $i]) {
@@ -806,7 +870,7 @@ if ($_POST['apply']) {
 				}
 				if(strlen($_POST['key' . $i]) == 28)
 					continue;
-				$input_errors[] =  gettext("Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.");
+				$input_errors[] =  gettext("Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key.");
 				break;
 			}
 		}
@@ -814,7 +878,12 @@ if ($_POST['apply']) {
 		if ($_POST['passphrase']) {
 			$passlen = strlen($_POST['passphrase']);
 			if ($passlen < 8 || $passlen > 63)
-				$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
+				$input_errors[] = gettext("The WPA passphrase must be between 8 and 63 characters long.");
+		}
+		if ($_POST['wpa_enable'] == "yes") {
+			if (empty($_POST['passphrase']) && stristr($_POST['wpa_key_mgmt'], "WPA-PSK")) {
+				$input_errors[] = gettext("A WPA Passphrase must be specified when WPA PSK is enabled.");
+			}
 		}
 	}
 	if (!$input_errors) {
@@ -983,8 +1052,8 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['type'] = $_POST['type'];
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
-				$a_ppps[$pppid]['username'] = $_POST['username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['password']);
+				$a_ppps[$pppid]['username'] = $_POST['ppp_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
 				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
@@ -1598,8 +1667,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			success: function(data,textStatus,response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
-				jQuery('#username').val('');
-				jQuery('#password').val('');
+				jQuery('#ppp_username').val('');
+				jQuery('#ppp_password').val('');
 				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
 					jQuery('#phone').val('#777');
 					jQuery('#apn').val('');
@@ -1607,10 +1676,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					jQuery('#phone').val('*99#');
 					jQuery('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
-				username = provider.getElementsByTagName('username')[0].firstChild.data;
-				password = provider.getElementsByTagName('password')[0].firstChild.data;
-				jQuery('#username').val(username);
-				jQuery('#password').val(password);
+				ppp_username = provider.getElementsByTagName('ppp_username')[0].firstChild.data;
+				ppp_password = provider.getElementsByTagName('ppp_password')[0].firstChild.data;
+				jQuery('#ppp_username').val(ppp_username);
+				jQuery('#ppp_password').val(ppp_password);
 			}
 		});
 	}
@@ -2224,10 +2293,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr style='display:none' id="basicdhcp6_show_dhcp6_prefix_only">
-										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Request only an IPv6 prefix"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcp6prefixonly" type="checkbox" id="dhcp6prefixonly" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?> />
-											<?=gettext("Only request a IPv6 prefix, do not request a IPv6 address"); ?>
+											<?=gettext("Only request an IPv6 prefix, do not request an IPv6 address"); ?>
 										</td>
 									</tr>
 									<tr style='display:none' id="basicdhcp6_show_dhcp6_prefix_delegation_size">
@@ -2257,7 +2326,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_interface_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Interface_statement\">Interface Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement\">Interface Statement</a>"); ?>
 											<br /><br />
 											<input name="adv_dhcp6_interface_statement_information_only_enable" type="checkbox" id="adv_dhcp6_interface_statement_information_only_enable" value="" onclick="show_adv_dhcp6_config(this)" />
 											<?=gettext("Information Only"); ?>
@@ -2289,7 +2358,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_id_assoc_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Identity_association_statement\">Identity Association Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Identity_association_statement\">Identity Association Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 
@@ -2330,7 +2399,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_prefix_interface_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("Prefix Interface "); ?>
@@ -2343,7 +2412,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_authentication_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Authentication_statement\">Authentication Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Authentication_statement\">Authentication Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>authname</i>"); ?>
@@ -2359,7 +2428,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_key_info_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Keyinfo_statement\">Keyinfo Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Keyinfo_statement\">Keyinfo Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>keyname</i>"); ?>
@@ -2378,7 +2447,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_config_file_override">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports\">Configuration File</a> Override"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports\">Configuration File</a> Override"); ?>
 										</td>
 										<td width="78%" class="vtable">
  											<input name="adv_dhcp6_config_file_override_path"   type="text" class="formfld unknown" id="adv_dhcp6_config_file_override_path"  size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override_path']);?>" />
@@ -2616,13 +2685,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
+										<input name="ppp_username" type="text" class="formfld user" id="ppp_username" size="20" value="<?=htmlspecialchars($pconfig['ppp_username']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+										<input name="ppp_password" type="password" class="formfld pwd" id="ppp_password" size="20" value="<?=htmlspecialchars($pconfig['ppp_password']);?>" />
 										</td>
 									</tr>
 									<tr id="phone_num">
@@ -2881,11 +2950,22 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<select name="standard" class="formselect" id="standard">
 								<?php
 								$rowIndex = 0;
+								echo "<option ";
+								if ($pconfig['standard'] == "auto") {
+									echo "selected=\"selected\" ";
+								}
+								echo "value=\"auto\">auto</option>\n";
 								foreach($wl_modes as $wl_standard => $wl_channels) {
 									$rowIndex++;
 									echo "<option ";
-									if ($pconfig['standard'] == "$wl_standard")
+									if ($pconfig['standard'] == "$wl_standard") {
 										echo "selected=\"selected\" ";
+									}
+									if ($pconfig['standard'] == "") {
+										if ($wl_standard == "11ng") {
+											echo "selected=\"selected\" ";
+										}
+									}
 									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
 								}
 								if ($rowIndex == 0)
@@ -2911,6 +2991,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<?php else: ?>
 						<input name="protmode" type="hidden" id="protmode" value="off" />
 						<?php endif; ?>
+						<?php /* txpower is disabled because of issues with it.
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("Transmit power"); ?></td>
 							<td class="vtable">
@@ -2927,7 +3008,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</select><br />
 								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adapters support changing the transmit power setting."); ?>
 							</td>
-						</tr>
+						</tr>*/
+						?>
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
 							<td class="vtable">
@@ -3011,7 +3093,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>" />
 								<br />
 								<?=gettext("Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client"); ?><br />
-								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
+								<?=gettext("(measured in meters)"); ?>
 							</td>
 						</tr>
 						<?php endif; ?>
@@ -3209,7 +3291,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 								</table>
-								<br /><?=gettext("Passphrase must be from 8 to 63 characters."); ?>
+								<br /><?=gettext("WPA Passphrase must be between 8 and 63 characters long."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -3217,7 +3299,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<select name="wpa_mode" class="formselect" id="wpa_mode">
 									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected=\"selected\"";?> value="1"><?=gettext("WPA"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '2') echo "selected=\"selected\"";?> value="2"><?=gettext("WPA2"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '2' || !isset($pconfig['wpa_mode'])) echo "selected=\"selected\"";?> value="2"><?=gettext("WPA2"); ?></option>
 									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected=\"selected\"";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
@@ -3248,7 +3330,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
 									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected=\"selected\"";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected=\"selected\"";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP' || !isset($pconfig['wpa_pairwise'])) echo "selected=\"selected\"";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
 									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected=\"selected\"";?> value="TKIP"><?=gettext("TKIP"); ?></option>
 								</select>
 							</td>
@@ -3257,14 +3339,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
 								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>" />
-								<br /><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."); ?>
+								<br /><?=gettext("Allowed values are 1-9999. Must be longer than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>" />
-								<br /><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time."); ?>
+								<br /><?=gettext("Allowed values are 1-9999. Must be shorter than Key Rotation time."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -3278,7 +3360,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked=\"checked\"";?> />
-								<br /><?=gettext("Setting this option will enable 802.1x authentication."); ?>
+								<br /><?=gettext("Setting this option will enable 802.1X authentication."); ?>
 								<br /><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
 						</tr>
@@ -3293,7 +3375,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>" />
-								<br /><?=gettext("Leave blank for the default 1812 port."); ?>
+								<br /><?=gettext("Leave blank for the default port 1812."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -3314,7 +3396,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>" />
-								<br /><?=gettext("Leave blank for the default 1812 port."); ?>
+								<br /><?=gettext("Leave blank for the default port 1812."); ?>
 							</td>
 						</tr>
 						<tr>

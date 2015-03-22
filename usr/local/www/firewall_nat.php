@@ -63,11 +63,8 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 
-		write_config();
-
 		$retval = 0;
 
-		unlink_if_exists("/tmp/config.cache");
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);
 

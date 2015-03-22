@@ -202,7 +202,7 @@ include("head.inc");
 
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
+<script type="text/javascript" src="/javascript/autosuggest.js?rev=1">
 </script>
 <script type="text/javascript" src="/javascript/suggestions.js">
 </script>

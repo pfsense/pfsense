@@ -55,7 +55,7 @@ EOD;
 
 		system_reboot_sync();
 	}
-	
+
 	fclose($fp);
 
 ?>

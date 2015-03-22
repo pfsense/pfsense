@@ -162,10 +162,10 @@ if ($_POST) {
 	if ($_POST['natport'])
 		$_POST['natport'] = trim($_POST['natport']);
 
-	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_portoralias($_POST['sourceport']))
+	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport'])))
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
 
-	if($protocol_uses_ports && $_POST['dstport'] <> "" && !is_portoralias($_POST['dstport']))
+	if($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport'])))
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 
 	if($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
@@ -347,7 +347,7 @@ include("head.inc");
 ?>
 
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
 <script type="text/javascript">
 //<![CDATA[
 var portsenabled = 1;

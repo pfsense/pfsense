@@ -399,7 +399,7 @@ if ($_POST) {
 								$config = parse_config(true);
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
-									if (strpos($loaderconf, "comconsole")) {
+									if (strpos($loaderconf, "console=\"comconsole")) {
 										$config['system']['enableserial'] = true;
 										write_config("Restore serial console enabling in configuration.");
 									}

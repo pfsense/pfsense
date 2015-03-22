@@ -58,7 +58,6 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
-$pconfig['beast_protection'] = isset($config['system']['webgui']['beast_protection']);
 $pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
@@ -171,12 +170,7 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['nohttpreferercheck']);
 
-		if ($_POST['beast-attack-protection'] == "yes")
-			$config['system']['webgui']['beast_protection'] = true;
-		else
-			unset($config['system']['webgui']['beast_protection']);
-
-		if ($_POST['browser-tab-text'] == "yes")
+		if ($_POST['pagenamefirst'] == "yes")
 			$config['system']['webgui']['pagenamefirst'] = true;
 		else
 			unset($config['system']['webgui']['pagenamefirst']);
@@ -255,21 +249,6 @@ if ($_POST) {
 			services_unbound_configure();
 		conf_mount_ro();
 	}
-}
-
-unset($hwcrypto);
-$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
-if ($fd) {
-	while (!feof($fd)) {
-		$dmesgl = fgets($fd);
-		if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)) {
-				unset($pconfig['beast_protection']);
-				$disable_beast_option = true;
-				$hwcrypto = $matches[1];
-			break;
-		}
-	}
-	fclose($fd);
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
@@ -432,25 +411,6 @@ $section->addInput(new Form_Checkbox(
 	'corner cases such as using external scripts to interact with this system. More '.
 	'information on HTTP_REFERER is available from<a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
-
-$section->addInput($input = new Form_Checkbox(
-	'beast-attack-protection',
-	'BEAST Attack Protection',
-	'Mitigate the BEAST SSL Attack',
-	$pconfig['beast_protection']
-))->setHelp('When this is checked, the webConfigurator can mitigate BEAST SSL '.
-	'attacks. This option is off by default because Hifn accelerators do NOT work '.
-	'with this option, and the GUI will not function. It is possible that other '.
-	'accelerators have a similar problem that is not yet known/documented. More '.
-	'information on BEAST is available from <a target="_blank" '.
-	'href="https://en.wikipedia.org/wiki/Transport_Layer_Security#BEAST_attack">Wikipedia</a>.');
-
-if ($disable_beast_option)
-{
-	$input->setAttribute('disabled', 'disabled');
-	$input->setHelp('This option has been automatically disabled because a conflicting '.
-	'cryptographic accelerator card has been detected (%s).', [$hwcrypto]);
-}
 
 $section->addInput(new Form_Checkbox(
 	'browser-tab-text',

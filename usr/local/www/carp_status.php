@@ -112,15 +112,37 @@ if($_POST['disablecarp'] <> "") {
 	}
 }
 
-$carp_detected_problems = ((get_single_sysctl("net.inet.carp.demotion")) > 0);
+$carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
+
+if (!empty($_POST['resetdemotion'])) {
+	set_single_sysctl("net.inet.carp.demotion", "-{$carp_detected_problems}");
+	sleep(1);
+	$carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
+}
 
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
 ?>
 <form action="carp_status.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg)?>
-<?php if ($carp_detected_problems) print_info_box(gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br />" . gettext("Check link status on all interfaces with configured CARP VIPs."))?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+
+<?PHP if ($carp_detected_problems > 0) {
+	print_info_box(
+		gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
+		gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
+		gettext("Search the") .
+		" <a href=\"/diag_logs.php?filtertext=carp%3A+demoted+by\">" .
+		gettext("system log") .
+		"</a> " .
+		gettext("for CARP demotion-related events.") . "<br/>" .
+		"<input type=\"submit\" name=\"resetdemotion\" id=\"resetdemotion\" value=\"" .
+		gettext("Reset CARP Demotion Status") .
+		"\" />"
+	);
+
+} ?>
+
 <?php
 $carpcount = 0;
 if(is_array($config['virtualip']['vip'])) {

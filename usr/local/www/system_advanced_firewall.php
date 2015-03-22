@@ -69,6 +69,20 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout'];
+$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout'];
+$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout'];
+$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout'];
+$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout'];
+$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout'];
+$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
+$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
+$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
+$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout'];
+$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
+$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
+$pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
+$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
 
 if ($_POST) {
 
@@ -95,6 +109,48 @@ if ($_POST) {
 	}
 	if ($_POST['reflection-timeout'] && !is_numericint($_POST['reflection-timeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
+	}
+	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) {
+		$input_errors[] = gettext("The TCP first timeout value must be an integer.");
+	}
+	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) {
+		$input_errors[] = gettext("The TCP opening timeout value must be an integer.");
+	}
+	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) {
+		$input_errors[] = gettext("The TCP established timeout value must be an integer.");
+	}
+	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) {
+		$input_errors[] = gettext("The TCP closing timeout value must be an integer.");
+	}
+	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) {
+		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer.");
+	}
+	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) {
+		$input_errors[] = gettext("The TCP closed timeout value must be an integer.");
+	}
+	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) {
+		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
+	}
+	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) {
+		$input_errors[] = gettext("The UDP single timeout value must be an integer.");
+	}
+	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) {
+		$input_errors[] = gettext("The UDP multiple timeout value must be an integer.");
+	}
+	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) {
+		$input_errors[] = gettext("The ICMP first timeout value must be an integer.");
+	}
+	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) {
+		$input_errors[] = gettext("The ICMP error timeout value must be an integer.");
+	}
+	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) {
+		$input_errors[] = gettext("The Other first timeout value must be an integer.");
+	}
+	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) {
+		$input_errors[] = gettext("The Other single timeout value must be an integer.");
+	}
+	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
+		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
 	}
 
 	ob_flush();
@@ -141,7 +197,78 @@ if ($_POST) {
 		$config['system']['aliasesresolveinterval'] = $_POST['aliases-hostnames-resolve-interval'];
 		$config['system']['maximumtableentries'] = $_POST['firewall-maximum-table-entries'];
 
-		if($_POST['nat-reflection-mode-for-port-forwards'] == "proxy") {
+		if (!empty($_POST['tcpfirsttimeout'])) {
+				$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
+		} else {
+				unset($config['system']['tcpfirsttimeout']);
+		}
+		if (!empty($_POST['tcpopeningtimeout'])) {
+				$config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
+		} else {
+				unset($config['system']['tcpopeningtimeout']);
+		}
+		if (!empty($_POST['tcpestablishedtimeout'])) {
+				$config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
+		} else {
+				unset($config['system']['tcpestablishedtimeout']);
+		}
+		if (!empty($_POST['tcpclosingtimeout'])) {
+				$config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
+		} else {
+				unset($config['system']['tcpclosingtimeout']);
+		}
+		if (!empty($_POST['tcpfinwaittimeout'])) {
+				$config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
+		} else {
+				unset($config['system']['tcpfinwaittimeout']);
+		}
+		if (!empty($_POST['tcpclosedtimeout'])) {
+				$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
+		} else {
+				unset($config['system']['tcpclosedtimeout']);
+		}
+		if (!empty($_POST['udpfirsttimeout'])) {
+				$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
+		} else {
+				unset($config['system']['udpfirsttimeout']);
+		}
+		if (!empty($_POST['udpsingletimeout'])) {
+				$config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
+		} else {
+				unset($config['system']['udpsingletimeout']);
+		}
+		if (!empty($_POST['udpmultipletimeout'])) {
+				$config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
+		} else {
+				unset($config['system']['udpmultipletimeout']);
+		}
+		if (!empty($_POST['icmpfirsttimeout'])) {
+				$config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
+		} else {
+				unset($config['system']['icmpfirsttimeout']);
+		}
+		if (!empty($_POST['icmperrortimeout'])) {
+				$config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
+		} else {
+				unset($config['system']['icmperrortimeout']);
+		}
+		if (!empty($_POST['otherfirsttimeout'])) {
+				$config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
+		} else {
+				unset($config['system']['otherfirsttimeout']);
+		}
+		if (!empty($_POST['othersingletimeout'])) {
+				$config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
+		} else {
+				unset($config['system']['othersingletimeout']);
+		}
+		if (!empty($_POST['othermultipletimeout'])) {
+				$config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
+		} else {
+				unset($config['system']['othermultipletimeout']);
+		}
+
+		if($_POST['natreflection'] == "proxy") {
 			unset($config['system']['disablenatreflection']);
 			unset($config['system']['enablenatreflectionpurenat']);
 		} else if($_POST['nat-reflection-mode-for-port-forwards'] == "purenat") {
@@ -491,6 +618,67 @@ if (count($config['interfaces']) > 1)
 
 	$form->add($section);
 }
+
+$section = new Form_Section('State Timeouts');
+
+$group = new Form_Group('TCP Timeouts');
+$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN', 'closed');
+foreach ($tcpTimeouts as $name)
+{
+	$group->add(new Form_Input(
+		'tcp'. strtolower($name) .'timeout',
+		'TCP '. $name,
+		'number',
+		$config['system']['tcp'. strtolower($name) .'timeout']
+	))->setHelp('Enter value for TCP '. $name .' timeout in seconds. Leave blank for '.
+		'default (recommended).');
+}
+
+$section->add($group);
+
+$group = new Form_Group('UDP Timeouts');
+$udpTimeouts = array('First', 'Single', 'Multiple');
+foreach ($udpTimeouts as $name)
+{
+	$group->add(new Form_Input(
+		'udp'. strtolower($name) .'timeout',
+		'UDP '. $name,
+		'number',
+		$config['system']['udo'. strtolower($name) .'timeout']
+	))->setHelp('Enter value for UDP '. $name .' timeout in seconds. Leave blank for '.
+		'default (recommended).');
+}
+
+$section->add($group);
+
+$group = new Form_Group('ICMP Timeouts');
+$udpTimeouts = array('First', 'Error');
+foreach ($udpTimeouts as $name)
+{
+	$group->add(new Form_Input(
+		'icmp'. strtolower($name) .'timeout',
+		'UDP '. $name,
+		'number',
+		$config['system']['icmp'. strtolower($name) .'timeout']
+	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
+		'default (recommended).');
+}
+
+$section->add($group);
+
+$group = new Form_Group('Other Timeouts');
+foreach ($udpTimeouts as $name)
+{
+	$group->add(new Form_Input(
+		'other'. strtolower($name) .'timeout',
+		'Other '. $name,
+		'number',
+		$config['system']['other'. strtolower($name) .'timeout']
+	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
+		'default (recommended).');
+}
+
+$section->add($group);
 
 print $form;
 include("foot.inc");

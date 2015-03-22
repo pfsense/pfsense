@@ -187,7 +187,7 @@ include("head.inc"); ?>
             <?=$mandfldhtml;?>
 			<table summary="results">
 				<tr><td valign="top">
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			<input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
 			</td>
 			<?php if ($resolved && $type) { ?>
 			<td valign="middle">&nbsp;=&nbsp;</td><td>

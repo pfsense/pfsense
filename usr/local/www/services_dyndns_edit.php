@@ -100,7 +100,7 @@ if ($_POST) {
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 		$reqdfields[] = "host";
 		$reqdfieldsn[] = gettext("Hostname");
-		$reqdfields[] = "password";
+		$reqdfields[] = "passwordfld";
 		$reqdfieldsn[] = gettext("Password");
  		$reqdfields[] = "username";
  		$reqdfieldsn[] = gettext("Username");
@@ -111,7 +111,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['host'])) {
+	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.')
 			$host_to_check = substr($_POST['host'], 2);
@@ -133,7 +133,7 @@ if ($_POST) {
 		$dyndns = array();
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
-		$dyndns['password'] = $_POST['password'];
+		$dyndns['password'] = $_POST['passwordfld'];
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
@@ -205,6 +205,7 @@ function _onTypeChange(type){
 			document.getElementById("r53_zoneid").style.display='none';
 			document.getElementById("r53_ttl").style.display='none';
 			break;
+		case "dnsimple":
 		case "route53":
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
@@ -319,7 +320,9 @@ function _onTypeChange(type){
 				    <span class="red"><strong><?=gettext("Note:");?><br /></strong>
 				    </span>
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br />
-					<?=gettext("For he.net tunnelbroker, enter your tunnel ID");?>
+					<?=gettext("he.net tunnelbroker: Enter your tunnel ID");?><br />
+					<?=gettext("GleSYS: Enter your record ID");?><br />
+					<?= gettext("DNSimple: Enter only the domain name.");?>
 				    </span>
 		          </td>
 				</tr>
@@ -359,17 +362,20 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
                     <br /><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
-		    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
-		    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
+                    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
+                    <br /><?= gettext("GleSYS: Enter your API user.");?>
+                    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+                    <input name="passwordfld" type="password" class="formfld pwd" id="passwordfld" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
                     <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
-		    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
+                    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
+                    <br /><?= gettext("GleSYS: Enter your API key.");?>
+                    <br /><?= gettext("DNSimple: Enter your API token.");?>
                   </td>
                 </tr>
 
@@ -378,6 +384,7 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>" />
                     <br /><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
+                    <br /><?= gettext("DNSimple: Enter the Record ID of record to update.");?>
                   </td>
                 </tr>
                 <tr id="_urltr">

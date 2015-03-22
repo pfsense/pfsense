@@ -379,7 +379,7 @@ if ($_POST) {
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
-			$input_errors[] = sprintf(gettext("%s is only valid with protocol tcp."),$_POST['statetype']);
+			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."),$_POST['statetype']);
 		if(($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != ""))
 			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."),$_POST['statetype']);
 	}
@@ -492,7 +492,7 @@ if ($_POST) {
 	}
 	if ($_POST['os']) {
 		if( $_POST['proto'] != "tcp" )
-			$input_errors[] = gettext("OS detection is only valid with protocol tcp.");
+			$input_errors[] = gettext("OS detection is only valid with protocol TCP.");
 		if (!in_array($_POST['os'], $ostypes))
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
 	}
@@ -959,7 +959,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 	$interfaces["openvpn"] = "OpenVPN";
 
-$section->addInput(new Form_Select(
+$section->addInput($input = new Form_Select(
 	'interface',
 	'Interface',
 	$pconfig['interface'],
@@ -967,6 +967,9 @@ $section->addInput(new Form_Select(
 	($if == "FloatingRules" || isset($pconfig['floating']))
 ))->setHelp('Choose on which interface packets must come in to match this '.
 	'rule.');
+
+if ($if == "FloatingRules" || isset($pconfig['floating']))
+	$input->setHelp('Choose the interface(s) for this rule.');
 
 if ($if == "FloatingRules" || isset($pconfig['floating']))
 {

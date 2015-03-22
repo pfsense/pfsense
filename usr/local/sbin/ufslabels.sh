@@ -12,7 +12,7 @@
 
 string_length() {
 	unset LEN
-	LEN=`echo -n ${1} | /usr/bin/wc -m | awk '{print $1}'`
+	LEN=$(echo -n "${1}" | /usr/bin/wc -m)
 }
 
 get_ufsid() {
@@ -21,63 +21,72 @@ get_ufsid() {
 	# 51928c99a471c440
 
 	unset UFSID
+	local _dev="${1}"
 
-	ID_PARTS=`/sbin/dumpfs /dev/${1} | /usr/bin/head -n 2 | /usr/bin/tail -n 1 | /usr/bin/cut -f2 -d'[' | /usr/bin/cut -f1 -d ']'`
+	if [ -z "${_dev}" ]; then
+		return
+	fi
+
+	ID_PARTS=$(/sbin/dumpfs /dev/${_dev} | \
+		/usr/bin/head -n 2 | \
+		/usr/bin/tail -n 1 | \
+		/usr/bin/cut -f2 -d'[' | \
+		/usr/bin/cut -f1 -d ']')
 	# " 51110eb0 f288b35d " (note it has more spaces than we need/want)
-	ID_PART1=`echo ${ID_PARTS} | awk '{print $1;}'`
+	ID_PART1=$(echo ${ID_PARTS} | awk '{print $1}')
 	# "51110eb0"
-	ID_PART2=`echo ${ID_PARTS} | awk '{print $2;}'`
+	ID_PART2=$(echo ${ID_PARTS} | awk '{print $2}')
 	# "f288b35d"
 
-	if [ "${ID_PART1}" = "" ] || [ "${ID_PART2}" = "" ]; then
+	if [ -z "${ID_PART1}" -o -z  "${ID_PART2}" ]; then
 		echo "Invalid ufsid on ${1} (${ID_PARTS}), cannot continue"
-		exit.
+		exit -1
 	fi
 
 	# Safety check to avoid http://www.freebsd.org/cgi/query-pr.cgi?pr=156908
-	string_length ${ID_PART1}
+	string_length "${ID_PART1}"
 	if [ ${LEN} -ne 8 ]; then
-		ID_PART1=`printf "%08s" "${ID_PART1}"`
+		ID_PART1=$(printf "%08s" "${ID_PART1}")
 	fi
-	string_length ${ID_PART2}
+	string_length "${ID_PART2}"
 	if [ ${LEN} -ne 8 ]; then
-		ID_PART2=`printf "%08s" "${ID_PART2}"`
+		ID_PART2=$(printf "%08s" "${ID_PART2}")
 	fi
-	UFSID=${ID_PART1}${ID_PART2}
+	UFSID="${ID_PART1}${ID_PART2}"
 }
 
-find_fs_device(){
+find_fs_device() {
 	unset DEV
-	DEV=`/usr/bin/grep -e "[[:blank:]]${1}[[:blank:]]" ${FSTAB} | awk '{print $1;}'`
+	DEV=$(/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" ${FSTAB} | awk '{print $1}')
 	DEV=${DEV##/dev/}
 }
 
-FSTAB=/etc/fstab
-NEED_CHANGES=false
+FSTAB=${DESTDIR}/etc/fstab
+unset NEED_CHANGES
 cp ${FSTAB} ${FSTAB}.tmp
 
-ALL_FILESYSTEMS=`/bin/cat /etc/fstab | /usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2;}'`
+ALL_FILESYSTEMS=$(/usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2}' ${DESTDIR}/etc/fstab)
 
 for FS in ${ALL_FILESYSTEMS}
 do
-	find_fs_device ${FS}
+	find_fs_device "${FS}"
 	if [ "${DEV}" != "" ]; then
 		get_ufsid ${DEV}
-		string_length ${UFSID}
+		string_length "${UFSID}"
 		if [ ${LEN} -ne 16 ]; then
 			echo "Invalid UFS ID for FS ${FS} ($UFSID), skipping"
 		else
-			/usr/bin/sed -i'' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
-			NEED_CHANGES=true
+			/usr/bin/sed -i '' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
+			NEED_CHANGES=1
 		fi
 	else
 		echo "Unable to find device for ${FS}"
-		return -1
+		exit -1
 	fi
 	echo "FS: ${FS} on device ${DEV} with ufsid ${UFSID}"
 done
 
-ALL_SWAPFS=`/bin/cat /etc/fstab | /usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1;}'`
+ALL_SWAPFS=$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' ${DESTDIR}/etc/fstab)
 SWAPNUM=0
 for SFS in ${ALL_SWAPFS}
 do
@@ -86,16 +95,16 @@ do
 		SWAPDEV=${DEV}
 		echo "FS: Swap slice ${SWAPNUM} on device ${SWAPDEV}"
 		if [ "${SWAPDEV}" != "" ]; then
-			/usr/bin/sed -i'' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
-			NEED_CHANGES=true
+			/usr/bin/sed -i '' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
+			NEED_CHANGES=1
 		fi
-		SWAPNUM=`expr ${SWAPNUM} + 1`
+		SWAPNUM=$((SWAPNUM+1))
 	fi
 done
 
-if [ "${NEED_CHANGES}" = "false" ]; then
+if [ -z "${NEED_CHANGES}" ]; then
 	echo Nothing to do, all filesystems and swap already use some form of device-independent labels
-	exit
+	exit 0
 fi
 
 echo "===================="
@@ -113,21 +122,21 @@ else
 fi
 
 # Commit changes
-if [ "${COMMIT}" = "y" ] || [ "${COMMIT}" = "Y" ]; then
-	echo "Disabling swap to apply label"
-	/sbin/swapoff /dev/${SWAPDEV}
+if [ "${COMMIT}" = "y" -o "${COMMIT}" = "Y" ]; then
 
-	echo "Applying label to swap parition"
+	echo "Applying label to swap partition"
 	SWAPNUM=0
 	for SFS in ${ALL_SWAPFS}
 	do
-		find_fs_device ${SFS}
+		find_fs_device "${SFS}"
 		if [ "${DEV}" != "" ]; then
 			SWAPDEV=${DEV}
-			if [ "${SWAPDEV}" != "" ]; then
+			if [ -n "${SWAPDEV}" ]; then
+				echo "Disabling swap ${SWAPDEV} to apply label"
+				/sbin/swapoff /dev/${SWAPDEV}
 				/sbin/glabel label swap${SWAPNUM} /dev/${SWAPDEV}
 			fi
-			SWAPNUM=`expr ${SWAPNUM} + 1`
+			SWAPNUM=$((SWAPNUM+1))
 		fi
 	done
 

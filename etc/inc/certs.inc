@@ -52,10 +52,13 @@ $openssl_crl_status = array(
 function & lookup_ca($refid) {
 	global $config;
 
-	if (is_array($config['ca']))
-		foreach ($config['ca'] as & $ca)
-			if ($ca['refid'] == $refid)
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as & $ca) {
+			if ($ca['refid'] == $refid) {
 				return $ca;
+			}
+		}
+	}
 
 	return false;
 }
@@ -63,13 +66,14 @@ function & lookup_ca($refid) {
 function & lookup_ca_by_subject($subject) {
 	global $config;
 
-	if (is_array($config['ca']))
-		foreach ($config['ca'] as & $ca)
-		{
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as & $ca) {
 			$ca_subject = cert_get_subject($ca['crt']);
-			if ($ca_subject == $subject)
+			if ($ca_subject == $subject) {
 				return $ca;
+			}
 		}
+	}
 
 	return false;
 }
@@ -77,46 +81,57 @@ function & lookup_ca_by_subject($subject) {
 function & lookup_cert($refid) {
 	global $config;
 
-	if (is_array($config['cert']))
-		foreach ($config['cert'] as & $cert)
-			if ($cert['refid'] == $refid)
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as & $cert) {
+			if ($cert['refid'] == $refid) {
 				return $cert;
+			}
+		}
+	}
 
 	return false;
 }
 
 function & lookup_cert_by_name($name) {
 	global $config;
-	if (is_array($config['cert']))
-		foreach ($config['cert'] as & $cert)
-			if ($cert['descr'] == $name)
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as & $cert) {
+			if ($cert['descr'] == $name) {
 				return $cert;
+			}
+		}
+	}
 }
 
 function & lookup_crl($refid) {
 	global $config;
 
-	if (is_array($config['crl']))
-		foreach ($config['crl'] as & $crl)
-			if ($crl['refid'] == $refid)
+	if (is_array($config['crl'])) {
+		foreach ($config['crl'] as & $crl) {
+			if ($crl['refid'] == $refid) {
 				return $crl;
+			}
+		}
+	}
 
 	return false;
 }
 
 function ca_chain_array(& $cert) {
-	if($cert['caref']) {
+	if ($cert['caref']) {
 		$chain = array();
 		$crt = lookup_ca($cert['caref']);
 		$chain[] = $crt;
 		while ($crt) {
 			$caref = $crt['caref'];
-			if($caref)
+			if ($caref) {
 				$crt = lookup_ca($caref);
-			else
+			} else {
 				$crt = false;
-			if($crt)
+			}
+			if ($crt) {
 				$chain[] = $crt;
+			}
 		}
 		return $chain;
 	}
@@ -124,15 +139,15 @@ function ca_chain_array(& $cert) {
 }
 
 function ca_chain(& $cert) {
-	if($cert['caref']) {
+	if ($cert['caref']) {
 		$ca = "";
 		$cas = ca_chain_array($cert);
-		if (is_array($cas))
-			foreach ($cas as & $ca_cert)
-			{
+		if (is_array($cas)) {
+			foreach ($cas as & $ca_cert) {
 				$ca .= base64_decode($ca_cert['crt']);
 				$ca .= "\n";
 			}
+		}
 		return $ca;
 	}
 	return "";
@@ -142,35 +157,40 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
-	if (!empty($key))
+	if (!empty($key)) {
 		$ca['prv'] = base64_encode($key);
-	if (!empty($serial))
+	}
+	if (!empty($serial)) {
 		$ca['serial'] = $serial;
+	}
 	$subject = cert_get_subject($str, false);
 	$issuer = cert_get_issuer($str, false);
-	
+
 	// Find my issuer unless self-signed
-	if($issuer <> $subject) {
+	if ($issuer <> $subject) {
 		$issuer_crt =& lookup_ca_by_subject($issuer);
-		if($issuer_crt)
+		if ($issuer_crt) {
 			$ca['caref'] = $issuer_crt['refid'];
+		}
 	}
 
 	/* Correct if child certificate was loaded first */
-	if (is_array($config['ca']))
-		foreach ($config['ca'] as & $oca)
-		{
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as & $oca) {
 			$issuer = cert_get_issuer($oca['crt']);
-			if($ca['refid']<>$oca['refid'] && $issuer==$subject)
+			if ($ca['refid']<>$oca['refid'] && $issuer==$subject) {
 				$oca['caref'] = $ca['refid'];
+			}
 		}
-	if (is_array($config['cert']))
-		foreach ($config['cert'] as & $cert)
-		{
+	}
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as & $cert) {
 			$issuer = cert_get_issuer($cert['crt']);
-			if($issuer==$subject)
+			if ($issuer==$subject) {
 				$cert['caref'] = $ca['refid'];
+			}
 		}
+	}
 	return true;
 }
 
@@ -185,20 +205,27 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
-	if (!$res_key) return false;
+	if (!$res_key) {
+		return false;
+	}
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
-	if (!$res_csr) return false;
+	if (!$res_csr) {
+		return false;
+	}
 
 	// self sign the certificate
 	$res_crt = openssl_csr_sign($res_csr, null, $res_key, $lifetime, $args);
-	if (!$res_crt) return false;
+	if (!$res_crt) {
+		return false;
+	}
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt))
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
+	}
 
 	// return our ca information
 	$ca['crt'] = base64_encode($str_crt);
@@ -211,12 +238,15 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256") {
 	// Create Intermediate Certificate Authority
 	$signing_ca =& lookup_ca($caref);
-	if (!$signing_ca)
+	if (!$signing_ca) {
 		return false;
+	}
 
 	$signing_ca_res_crt = openssl_x509_read(base64_decode($signing_ca['crt']));
 	$signing_ca_res_key = openssl_pkey_get_private(array(0 => base64_decode($signing_ca['prv']) , 1 => ""));
-	if (!$signing_ca_res_crt || !$signing_ca_res_key) return false;
+	if (!$signing_ca_res_crt || !$signing_ca_res_key) {
+		return false;
+	}
 	$signing_ca_serial = ++$signing_ca['serial'];
 
 	$args = array(
@@ -228,20 +258,27 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
-	if (!$res_key) return false;
+	if (!$res_key) {
+		return false;
+	}
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
-	if (!$res_csr) return false;
+	if (!$res_csr) {
+		return false;
+	}
 
 	// Sign the certificate
 	$res_crt = openssl_csr_sign($res_csr, $signing_ca_res_crt, $signing_ca_res_key, $lifetime, $args, $signing_ca_serial);
-	if (!$res_crt) return false;
+	if (!$res_crt) {
+		return false;
+	}
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt))
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
+	}
 
 	// return our ca information
 	$ca['crt'] = base64_encode($str_crt);
@@ -258,12 +295,13 @@ function cert_import(& $cert, $crt_str, $key_str) {
 
 	$subject = cert_get_subject($crt_str, false);
 	$issuer = cert_get_issuer($crt_str, false);
-	
+
 	// Find my issuer unless self-signed
-	if($issuer <> $subject) {
+	if ($issuer <> $subject) {
 		$issuer_crt =& lookup_ca_by_subject($issuer);
-		if($issuer_crt)
+		if ($issuer_crt) {
 			$cert['caref'] = $issuer_crt['refid'];
+		}
 	}
 	return true;
 }
@@ -275,14 +313,17 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 	if ($type != "self-signed") {
 		$cert['caref'] = $caref;
 		$ca =& lookup_ca($caref);
-		if (!$ca)
+		if (!$ca) {
 			return false;
+		}
 
 		$ca_str_crt = base64_decode($ca['crt']);
 		$ca_str_key = base64_decode($ca['prv']);
 		$ca_res_crt = openssl_x509_read($ca_str_crt);
 		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
-		if(!$ca_res_key) return false;
+		if (!$ca_res_key) {
+			return false;
+		}
 		$ca_serial = ++$ca['serial'];
 	}
 
@@ -316,7 +357,9 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
-	if(!$res_key) return false;
+	if (!$res_key) {
+		return false;
+	}
 
 	// If this is a self-signed cert, blank out the CA and sign with the cert's key
 	if ($type == "self-signed") {
@@ -329,17 +372,22 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
-	if(!$res_csr) return false;
+	if (!$res_csr) {
+		return false;
+	}
 
 	// sign the certificate using an internal CA
 	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,
 				 $args, $ca_serial);
-	if(!$res_crt) return false;
+	if (!$res_crt) {
+		return false;
+	}
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt))
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
+	}
 
 	// return our certificate information
 	$cert['crt'] = base64_encode($str_crt);
@@ -359,16 +407,21 @@ function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
-	if(!$res_key) return false;
+	if (!$res_key) {
+		return false;
+	}
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
-	if(!$res_csr) return false;
+	if (!$res_csr) {
+		return false;
+	}
 
 	// export our request data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_csr_export($res_csr, $str_csr))
+	    !openssl_csr_export($res_csr, $str_csr)) {
 		return false;
+	}
 
 	// return our request information
 	$cert['csr'] = base64_encode($str_csr);
@@ -388,20 +441,23 @@ function csr_complete(& $cert, $str_crt) {
 
 function csr_get_subject($str_crt, $decode = true) {
 
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 
 	$components = openssl_csr_get_subject($str_crt);
 
-	if (empty($components) || !is_array($components))
+	if (empty($components) || !is_array($components)) {
 		return "unknown";
+	}
 
 	ksort($components);
 	foreach ($components as $a => $v) {
-		if (!strlen($subject))
+		if (!strlen($subject)) {
 			$subject = "{$a}={$v}";
-		else
+		} else {
 			$subject = "{$a}={$v}, {$subject}";
+		}
 	}
 
 	return $subject;
@@ -409,14 +465,16 @@ function csr_get_subject($str_crt, $decode = true) {
 
 function cert_get_subject($str_crt, $decode = true) {
 
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
 
-	if (empty($components) || !is_array($components))
+	if (empty($components) || !is_array($components)) {
 		return "unknown";
+	}
 
 	ksort($components);
 	foreach ($components as $a => $v) {
@@ -440,13 +498,15 @@ function cert_get_subject_array($crt) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
 
-	if (!is_array($components))
+	if (!is_array($components)) {
 		return;
+	}
 
 	$subject_array = array();
 
-	foreach($components as $a => $v)
+	foreach ($components as $a => $v) {
 		$subject_array[] = array('a' => $a, 'v' => $v);
+	}
 
 	return $subject_array;
 }
@@ -459,14 +519,16 @@ function cert_get_subject_hash($crt) {
 
 function cert_get_issuer($str_crt, $decode = true) {
 
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['issuer'];
-	
-	if (empty($components) || !is_array($components))
+
+	if (empty($components) || !is_array($components)) {
 		return "unknown";
+	}
 
 	ksort($components);
 	foreach ($components as $a => $v) {
@@ -486,24 +548,26 @@ function cert_get_issuer($str_crt, $decode = true) {
 }
 
 /* this function works on x509 (crt), rsa key (prv), and req(csr) */
-function cert_get_modulus($str_crt, $decode = true, $type = "crt"){
-	if ($decode)
+function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 
 	$modulus = "";
 	if ( in_array($type, array("crt", "prv", "csr")) ) {
-			$type = str_replace( array("crt","prv","csr"), array("x509","rsa","req"), $type);
-			$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
+		$type = str_replace( array("crt","prv","csr"), array("x509","rsa","req"), $type);
+		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
 	}
 	return $modulus;
 }
-function csr_get_modulus($str_crt, $decode = true){
+function csr_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "csr");
 }
 
 function cert_get_purpose($str_crt, $decode = true) {
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 	$crt_details = openssl_x509_parse($str_crt);
 	$purpose = array();
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
@@ -512,40 +576,48 @@ function cert_get_purpose($str_crt, $decode = true) {
 }
 
 function cert_get_dates($str_crt, $decode = true) {
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if ($crt_details['validFrom_time_t'] > 0)
+	if ($crt_details['validFrom_time_t'] > 0) {
 		$start = date('r', $crt_details['validFrom_time_t']);
-	if ($crt_details['validTo_time_t'] > 0)
+	}
+	if ($crt_details['validTo_time_t'] > 0) {
 		$end = date('r', $crt_details['validTo_time_t']);
+	}
 	return array($start, $end);
 }
 
 function cert_get_serial($str_crt, $decode = true) {
-	if ($decode)
+	if ($decode) {
 		$str_crt = base64_decode($str_crt);
+	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber']))
+	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber'])) {
 		return $crt_details['serialNumber'];
-	else
+	} else {
 		return NULL;
+	}
 }
 
-function prv_get_modulus($str_crt, $decode = true){
+function prv_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "prv");
 }
 
 function is_user_cert($certref) {
 	global $config;
-	if (!is_array($config['system']['user']))
+	if (!is_array($config['system']['user'])) {
 		return;
+	}
 	foreach ($config['system']['user'] as $user) {
-		if (!is_array($user['cert']))
+		if (!is_array($user['cert'])) {
 			continue;
+		}
 		foreach ($user['cert'] as $cert) {
-			if ($certref == $cert)
+			if ($certref == $cert) {
 				return true;
+			}
 		}
 	}
 	return false;
@@ -553,51 +625,60 @@ function is_user_cert($certref) {
 
 function is_openvpn_server_cert($certref) {
 	global $config;
-	if (!is_array($config['openvpn']['openvpn-server']))
+	if (!is_array($config['openvpn']['openvpn-server'])) {
 		return;
+	}
 	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-		if ($ovpns['certref'] == $certref)
+		if ($ovpns['certref'] == $certref) {
 			return true;
+		}
 	}
 	return false;
 }
 
 function is_openvpn_client_cert($certref) {
 	global $config;
-	if (!is_array($config['openvpn']['openvpn-client']))
+	if (!is_array($config['openvpn']['openvpn-client'])) {
 		return;
+	}
 	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
-		if ($ovpnc['certref'] == $certref)
+		if ($ovpnc['certref'] == $certref) {
 			return true;
+		}
 	}
 	return false;
 }
 
 function is_ipsec_cert($certref) {
 	global $config;
-	if (!is_array($config['ipsec']['phase1']))
+	if (!is_array($config['ipsec']['phase1'])) {
 		return;
+	}
 	foreach ($config['ipsec']['phase1'] as $ipsec) {
-		if ($ipsec['certref'] == $certref)
+		if ($ipsec['certref'] == $certref) {
 			return true;
+		}
 	}
 	return false;
 }
 
 function is_webgui_cert($certref) {
 	global $config;
-	if (($config['system']['webgui']['ssl-certref'] == $certref)
-		&& ($config['system']['webgui']['protocol'] != "http"))
+	if (($config['system']['webgui']['ssl-certref'] == $certref) &&
+	    ($config['system']['webgui']['protocol'] != "http")) {
 		return true;
+	}
 }
 
 function is_captiveportal_cert($certref) {
 	global $config;
-	if (!is_array($config['captiveportal']))
+	if (!is_array($config['captiveportal'])) {
 		return;
+	}
 	foreach ($config['captiveportal'] as $portal) {
-		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref))
+		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref)) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -614,8 +695,9 @@ function cert_in_use($certref) {
 function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
 	global $config;
 	$ca =& lookup_ca($caref);
-	if (!$ca)
+	if (!$ca) {
 		return false;
+	}
 	$crl['descr'] = $name;
 	$crl['caref'] = $caref;
 	$crl['serial'] = $serial;
@@ -629,11 +711,13 @@ function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
 function crl_update(& $crl) {
 	global $config;
 	$ca =& lookup_ca($crl['caref']);
-	if (!$ca)
+	if (!$ca) {
 		return false;
+	}
 	// If we have text but no certs, it was imported and cannot be updated.
-	if (($crl["method"] != "internal") && (!empty($crl['text']) && empty($crl['cert'])))
+	if (($crl["method"] != "internal") && (!empty($crl['text']) && empty($crl['cert']))) {
 		return false;
+	}
 	$crl['serial']++;
 	$ca_str_crt = base64_decode($ca['crt']);
 	$ca_str_key = base64_decode($ca['prv']);
@@ -650,11 +734,13 @@ function crl_update(& $crl) {
 
 function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
 	global $config;
-	if (is_cert_revoked($cert, $crl['refid']))
+	if (is_cert_revoked($cert, $crl['refid'])) {
 		return true;
+	}
 	// If we have text but no certs, it was imported and cannot be updated.
-	if (!is_crl_internal($crl))
+	if (!is_crl_internal($crl)) {
 		return false;
+	}
 	$cert["reason"] = $reason;
 	$cert["revoke_time"] = time();
 	$crl["cert"][] = $cert;
@@ -664,18 +750,21 @@ function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
 
 function cert_unrevoke($cert, & $crl) {
 	global $config;
-	if (!is_crl_internal($crl))
+	if (!is_crl_internal($crl)) {
 		return false;
+	}
 	foreach ($crl['cert'] as $id => $rcert) {
 		if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr'])) {
 			unset($crl['cert'][$id]);
 			if (count($crl['cert']) == 0) {
 				// Protect against accidentally switching the type to imported, for older CRLs
-				if (!isset($crl['method']))
+				if (!isset($crl['method'])) {
 					$crl['method'] = "internal";
+				}
 				crl_update($crl);
-			} else
+			} else {
 				crl_update($crl);
+			}
 			return true;
 		}
 	}
@@ -690,34 +779,40 @@ function cert_compare($cert1, $cert2) {
 		being identical. */
 	$c1 = base64_decode($cert1['crt']);
 	$c2 = base64_decode($cert2['crt']);
-	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false))
-		&& (cert_get_subject($c1, false) == cert_get_subject($c2, false))
-		&& (cert_get_serial($c1, false) == cert_get_serial($c2, false))
-		&& (cert_get_modulus($c1, false) == cert_get_modulus($c2, false)))
+	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false)) &&
+	    (cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
+	    (cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
+	    (cert_get_modulus($c1, false) == cert_get_modulus($c2, false))) {
 		return true;
+	}
 	return false;
 }
 
 function is_cert_revoked($cert, $crlref = "") {
 	global $config;
-	if (!is_array($config['crl']))
+	if (!is_array($config['crl'])) {
 		return false;
+	}
 
 	if (!empty($crlref)) {
 		$crl = lookup_crl($crlref);
-		if (!is_array($crl['cert']))
+		if (!is_array($crl['cert'])) {
 			return false;
+		}
 		foreach ($crl['cert'] as $rcert) {
-			if (cert_compare($rcert, $cert))
+			if (cert_compare($rcert, $cert)) {
 				return true;
+			}
 		}
 	} else {
 		foreach ($config['crl'] as $crl) {
-			if (!is_array($crl['cert']))
+			if (!is_array($crl['cert'])) {
 				continue;
+			}
 			foreach ($crl['cert'] as $rcert) {
-				if (cert_compare($rcert, $cert))
+				if (cert_compare($rcert, $cert)) {
 					return true;
+				}
 			}
 		}
 	}
@@ -726,11 +821,13 @@ function is_cert_revoked($cert, $crlref = "") {
 
 function is_openvpn_server_crl($crlref) {
 	global $config;
-	if (!is_array($config['openvpn']['openvpn-server']))
+	if (!is_array($config['openvpn']['openvpn-server'])) {
 		return;
+	}
 	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref))
+		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref)) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -749,8 +846,9 @@ function cert_get_cn($crt, $isref = false) {
 	if ($isref) {
 		$cert = lookup_cert($crt);
 		/* If it's not a valid cert, bail. */
-		if (!(is_array($cert) && !empty($cert['crt'])))
+		if (!(is_array($cert) && !empty($cert['crt']))) {
 			return "";
+		}
 		$cert = $cert['crt'];
 	} else {
 		$cert = $crt;
@@ -758,8 +856,9 @@ function cert_get_cn($crt, $isref = false) {
 	$sub = cert_get_subject_array($cert);
 	if (is_array($sub)) {
 		foreach ($sub as $s) {
-			if (strtoupper($s['a']) == "CN")
+			if (strtoupper($s['a']) == "CN") {
 				return $s['v'];
+			}
 		}
 	}
 	return "";

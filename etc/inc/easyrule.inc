@@ -43,30 +43,36 @@ function easyrule_find_rule_interface($int) {
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(false, true);
 
-	if ($config['pptpd']['mode'] == "server")
+	if ($config['pptpd']['mode'] == "server") {
 		$iflist['pptp'] = "PPTP VPN";
+	}
 
-	if ($config['pppoe']['mode'] == "server")
+	if ($config['pppoe']['mode'] == "server") {
 		$iflist['pppoe'] = "PPPoE Server";
+	}
 
-	if ($config['l2tp']['mode'] == "server")
-                $iflist['l2tp'] = "L2TP VPN";
+	if ($config['l2tp']['mode'] == "server") {
+		$iflist['l2tp'] = "L2TP VPN";
+	}
 
 	/* add ipsec interfaces */
 	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])){
 		$iflist["enc0"] = "IPSEC";
 	}
 
-	if (isset($iflist[$int]))
+	if (isset($iflist[$int])) {
 		return $int;
-
-	foreach ($iflist as $if => $ifd) {
-		if (strtolower($int) == strtolower($ifd))
-			return $if;
 	}
 
-	if (substr($int, 0, 4) == "ovpn")
+	foreach ($iflist as $if => $ifd) {
+		if (strtolower($int) == strtolower($ifd)) {
+			return $if;
+		}
+	}
+
+	if (substr($int, 0, 4) == "ovpn") {
 		return "openvpn";
+	}
 
 	return false;
 }
@@ -80,11 +86,13 @@ function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 
 	/* Search through the rules for one referencing our alias */
 	foreach ($config['filter']['rule'] as $rule) {
-		if (!is_array($rule) || !is_array($rule['source']))
+		if (!is_array($rule) || !is_array($rule['source'])) {
 			continue;
+		}
 		$checkproto = isset($rule['ipprotocol']) ? $rule['ipprotocol'] : "inet";
-		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int) && ($checkproto == $ipproto))
+		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int) && ($checkproto == $ipproto)) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -93,12 +101,14 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname, $config;
 	/* If the alias doesn't exist, exit.
 	 * Can't create an empty alias, and we don't know a host */
-	if (easyrule_block_alias_getid($int) === false)
+	if (easyrule_block_alias_getid($int) === false) {
 		return false;
+	}
 
 	/* If the rule already exists, no need to do it again */
-	if (easyrule_block_rule_exists($int, $ipproto))
+	if (easyrule_block_rule_exists($int, $ipproto)) {
 		return true;
+	}
 
 	/* No rules, start a new array */
 	if (!is_array($config['filter']['rule'])) {
@@ -125,13 +135,16 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 
 function easyrule_block_alias_getid($int = 'wan') {
 	global $blockaliasname, $config;
-	if (!is_array($config['aliases']))
+	if (!is_array($config['aliases'])) {
 		return false;
+	}
 
 	/* Hunt down an alias with the name we want, return its id */
-	foreach ($config['aliases']['alias'] as $aliasid => $alias)
-		if ($alias['name'] == $blockaliasname . strtoupper($int))
+	foreach ($config['aliases']['alias'] as $aliasid => $alias) {
+		if ($alias['name'] == $blockaliasname . strtoupper($int)) {
 			return $aliasid;
+		}
+	}
 
 	return false;
 }
@@ -140,19 +153,22 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	global $blockaliasname, $config;
 	/* If the host isn't a valid IP address, bail */
 	$host = trim($host, "[]");
-	if (!is_ipaddr($host) && !is_subnet($host))
+	if (!is_ipaddr($host) && !is_subnet($host)) {
 		return false;
+	}
 
 	/* If there are no aliases, start an array */
-	if (!is_array($config['aliases']['alias']))
+	if (!is_array($config['aliases']['alias'])) {
 		$config['aliases']['alias'] = array();
+	}
 
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
 	$id = easyrule_block_alias_getid($int);
-	if ($id === false)
+	if ($id === false) {
 	  unset($id);
+	}
 
 	$alias = array();
 
@@ -168,8 +184,9 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 
 	if (isset($id) && $a_aliases[$id]) {
 		/* Make sure this IP isn't already in the list. */
-		if (in_array($host.'/'.$mask, explode(" ", $a_aliases[$id]['address'])))
+		if (in_array($host.'/'.$mask, explode(" ", $a_aliases[$id]['address']))) {
 			return true;
+		}
 		/* Since the alias already exists, just add to it. */
 		$alias['name']    = $a_aliases[$id]['name'];
 		$alias['type']    = $a_aliases[$id]['type'];
@@ -179,8 +196,8 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		$alias['detail']  = $a_aliases[$id]['detail'] . gettext('Entry added') . ' ' . date('r') . '||';
 	} else {
 		/* Create a new alias with all the proper information */
-	 	$alias['name']    = $blockaliasname . strtoupper($int);
-	 	$alias['type']    = 'network';
+		$alias['name']    = $blockaliasname . strtoupper($int);
+		$alias['type']    = 'network';
 		$alias['descr']   = gettext("Hosts blocked from Firewall Log view");
 
 		$alias['address'] = $host . '/' . $mask;
@@ -188,10 +205,11 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	}
 
 	/* Replace the old alias if needed, otherwise tack it on the end */
-	if (isset($id) && $a_aliases[$id])
+	if (isset($id) && $a_aliases[$id]) {
 		$a_aliases[$id] = $alias;
-	else
+	} else {
 		$a_aliases[] = $alias;
+	}
 
 	// Sort list
 	$a_aliases = msort($a_aliases, "name");
@@ -203,8 +221,9 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
 	$host = trim($host, "[]");
-	if (!is_ipaddr($host) && !is_subnet($host))
+	if (!is_ipaddr($host) && !is_subnet($host)) {
 		return false;
+	}
 
 	/* Flag whether or not we need to reload the filter */
 	$dirty = false;
@@ -263,18 +282,21 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	$filterent['ipprotocol'] = $ipproto;
 	$filterent['descr'] = gettext("Easy Rule: Passed from Firewall Log View");
 
-	if ($proto != "any")
+	if ($proto != "any") {
 		$filterent['protocol'] = $proto;
-	else
+	} else {
 		unset($filterent['protocol']);
+	}
 
 	/* Default to only allow echo requests, since that's what most people want and
 	 *  it should be a safe choice. */
-	if ($proto == "icmp")
+	if ($proto == "icmp") {
 		$filterent['icmptype'] = 'echoreq';
+	}
 
-	if ((strtolower($proto) == "icmp6") || (strtolower($proto) == "icmpv6"))
+	if ((strtolower($proto) == "icmp6") || (strtolower($proto) == "icmpv6")) {
 		$filterent['protocol'] = "icmp";
+	}
 
 	if (is_subnet($srchost)) {
 		list($srchost, $srcmask) = explode("/", $srchost);

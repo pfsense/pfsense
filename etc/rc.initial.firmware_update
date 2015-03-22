@@ -11,17 +11,19 @@ echo "Starting the {$g['product_name']} console firmware update system";
 require("functions.inc");
 echo ".";
 
-if(isset($config['system']['firmware']['alturl']['enable']))
+if(isset($config['system']['firmware']['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else
+} else {
 	$updater_url = $g['update_url'];
+}
 
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt"))
+	if (file_exists("/etc/nano_use_vga.txt")) {
 		$nanosize = "-nanobsd-vga-";
-	else
+	} else {
 		$nanosize = "-nanobsd-";
+	}
 
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 	$update_filename = "latest{$nanosize}.img.gz";
@@ -55,28 +57,28 @@ switch ($command) {
 	case "1":
 		echo "\nEnter the URL to the .tgz or .img.gz update file. \nType 'auto' to use {$autoupdateurl}\n> ";
 		$url = chop(fgets($fp));
-		if(!$url) { 
+		if (!$url) {
 			fclose($fp);
 			die;
 		}
-		if($url == "auto") {
+		if ($url == "auto") {
 			$url = $autoupdateurl;
 		}
 		$status = does_url_exist($url);
-		if($status) {
+		if ($status) {
 			conf_mount_rw();
 			mark_subsystem_dirty('firmware');
 			unlink_if_exists("/root/firmware.tgz");
 			echo "\nFetching file... ";
 			download_file_with_progress_bar($url, '/root/firmware.tgz');
-			if(!file_exists("/root/firmware.tgz")) {
+			if (!file_exists("/root/firmware.tgz")) {
 				echo "Something went wrong during file transfer.  Exiting.\n\n";
 				fclose($fp);
 				clear_subsystem_dirty('firmware');
 				die;
 			}
 			$status = does_url_exist("$url.sha256");
-			if($status) { 
+			if ($status) {
 				echo "\nFetching sha256... ";
 				download_file_with_progress_bar($url . ".sha256", '/root/firmware.tgz.sha256');
 				echo "\n";
@@ -92,12 +94,12 @@ switch ($command) {
 					die;
 				}
 			}
-			if(file_exists("/root/firmware.tgz.sha256")) {
+			if (file_exists("/root/firmware.tgz.sha256")) {
 				$source_sha256 = trim(`cat /root/firmware.tgz.sha256 | awk '{ print \$4 }'`,"\r");
 				$file_sha256 = trim(`sha256 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
 				echo "URL sha256: $source_sha256\n";
 				echo "Downloaded file sha256: $file_sha256\n";
-				if($source_sha256 <> $file_sha256) {
+				if ($source_sha256 <> $file_sha256) {
 					echo "\n\nsha256 checksum does not match.  Cancelling upgrade.\n\n";
 					unlink_if_exists("/root/firmware.tgz.sha256");
 					fclose($fp);
@@ -107,10 +109,10 @@ switch ($command) {
 				echo "\nsha256 checksum matches.\n";
 				unlink_if_exists("/root/firmware.tgz.sha256");
 			}
-			if(strstr($url,"bdiff")) {
+			if (strstr($url,"bdiff")) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
-			} elseif(strstr($url,"nanobsd")) {
+			} elseif (strstr($url,"nanobsd")) {
 				echo "NanoBSD upgrade file detected...\n";
 				$type = "nanobsd";
 			} else {
@@ -123,15 +125,17 @@ switch ($command) {
 	case "2":
 		echo "\nEnter the complete path to the .tgz or .img.gz update file: ";
 		$path = chop(fgets($fp));
-		if(!$path) {
+		if (!$path) {
 			fclose($fp);
 			die;
 		}
-		if(stristr($path,"bdiff"))
+		if (stristr($path,"bdiff")) {
 			$type = "bdiff";
-		if(stristr($path,"nanobsd"))
-			$type = "nanobsd";			
-		if(file_exists($path)) {
+		}
+		if (stristr($path,"nanobsd")) {
+			$type = "nanobsd";
+		}
+		if (file_exists($path)) {
 			mark_subsystem_dirty('firmware');
 			do_upgrade($path, $type);
 			clear_subsystem_dirty('firmware');
@@ -144,15 +148,16 @@ switch ($command) {
 
 function do_upgrade($path, $type) {
 	global $g, $fp;
-	
+
 	$sigchk = verify_digital_signature($path);
-	if ($sigchk == 1)
+	if ($sigchk == 1) {
 		$sig_warning = "The digital signature on this image is invalid.";
-	else if ($sigchk == 2)
+	} elseif ($sigchk == 2) {
 		$sig_warning = "This image is not digitally signed.";
-	else if (($sigchk == 3) || ($sigchk == 4))
+	} elseif (($sigchk == 3) || ($sigchk == 4)) {
 		$sig_warning = "There has been an error verifying the signature on this image.";
-	if($sig_warning) {
+	}
+	if ($sig_warning) {
 		$sig_warning = "\nWARNING! ACHTUNG! DANGER!\n\n{$sig_warning}\n\n" .
 			"This means that the image you uploaded is not an official/supported image and\n" .
 			"may lead to unexpected behavior or security compromises.\n\n" .
@@ -161,7 +166,7 @@ function do_upgrade($path, $type) {
 			"Do you want to install this image anyway at your own risk [n]?";
 		echo $sig_warning;
 		$command = strtoupper(chop(fgets($fp)));
-		if(strtoupper($command) == "Y" or strtoupper($command) == "Y" or strtoupper($command) == "YES") {
+		if (strtoupper($command) == "Y" or strtoupper($command) == "Y" or strtoupper($command) == "YES") {
 			echo "\nContinuing upgrade...";
 		} else {
 			echo "\nUpgrade cancelled.\n\n";
@@ -170,14 +175,15 @@ function do_upgrade($path, $type) {
 	}
 	mark_subsystem_dirty('firmwarelock');
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
-	if($type == "bdiff")
+	if ($type == "bdiff") {
 		mwexec_bg("/etc/rc.firmware delta_update $path");
-	elseif($type == "nanobsd")
+	} elseif ($type == "nanobsd") {
 		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
-	else
+	} else {
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
+	}
 	sleep(10);
-	while(is_subsystem_dirty('firmwarelock')) {
+	while (is_subsystem_dirty('firmwarelock')) {
 		sleep(1);
 		echo ".";
 	}

@@ -195,10 +195,10 @@ if ($_POST) {
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces username password ondemand idletimeout");
+				$reqdfields = explode(" ", "interfaces username passwordfld ondemand idletimeout");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Dial on demand"),gettext("Idle timeout value"));
 			} else {
-				$reqdfields = explode(" ", "interfaces username password");
+				$reqdfields = explode(" ", "interfaces username passwordfld");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -206,10 +206,10 @@ if ($_POST) {
 		case "l2tp":
 		case "pptp":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
+				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway ondemand idletimeout");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
 			} else {
-				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
+				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -276,7 +276,7 @@ if ($_POST) {
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',',$_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
-		$ppp['password'] = base64_encode($_POST['password']);
+		$ppp['password'] = base64_encode($_POST['passwordfld']);
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout']))
 			$ppp['idletimeout'] = $_POST['idletimeout'];
@@ -528,7 +528,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Password"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<input name="passwordfld" type="password" class="formfld pwd" id="passwordfld" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
 			</td>
 		</tr>
 

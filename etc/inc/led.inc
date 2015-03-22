@@ -84,8 +84,9 @@ function led_digit($led, $digitstring) {
 	$dstring = "d";
 	while ($i < strlen($digitstring)) {
 		$thisdigit = substr($digitstring, $i++, 1);
-		if (is_numeric($thisdigit))
+		if (is_numeric($thisdigit)) {
 			$dstring .= $thisdigit;
+		}
 	}
 	led_ctl($led, $dstring);
 }
@@ -123,8 +124,9 @@ function led_count() {
  */
 function led_exists($led) {
 	global $led_root;
-	if (!is_numeric($led))
+	if (!is_numeric($led)) {
 		return false;
+	}
 	return file_exists("{$led_root}{$led}");
 }
 

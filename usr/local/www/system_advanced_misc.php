@@ -102,10 +102,10 @@ if ($_POST) {
 	if (!empty($_POST['thermal-sensors']) && !array_key_exists($_POST['thermal-sensors'], $thermal_hardware_modules))
 		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
 
-	if (!empty($_POST['-tmp-ram-disk-size']) && (!is_numeric($_POST['-tmp-ram-disk-size']) || ($_POST['-tmp-ram-disk-size'] <= 40)))
+	if (!empty($_POST['-tmp-ram-disk-size']) && (!is_numeric($_POST['-tmp-ram-disk-size']) || ($_POST['-tmp-ram-disk-size'] < 40)))
 		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MB.");
 
-	if (!empty($_POST['-var-ram-disk-size']) && (!is_numeric($_POST['-var-ram-disk-size']) || ($_POST['-var-ram-disk-size'] <= 60)))
+	if (!empty($_POST['-var-ram-disk-size']) && (!is_numeric($_POST['-var-ram-disk-size']) || ($_POST['-var-ram-disk-size'] < 60)))
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MB.");
 
 	if (!$input_errors) {
@@ -134,6 +134,9 @@ if ($_POST) {
 		if($_POST['use-sticky-connections'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
+				$need_relayd_restart = true;
+			}
+			if ($config['system']['srctrack'] != $_POST['source-tracking-timeout']) {
 				$config['system']['srctrack'] = $_POST['source-tracking-timeout'];
 				$need_relayd_restart = true;
 			}

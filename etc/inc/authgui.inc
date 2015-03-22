@@ -39,8 +39,9 @@
 
 include_once("auth.inc");
 include_once("priv.inc");
-if (!function_exists('platform_booting'))
+if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
+}
 
 /* Authenticate user - exit if failed */
 if (!session_auth()) {
@@ -66,8 +67,9 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		pfSenseHeader("/{$page}");
 
 		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
-		if (!empty($_SERVER['REMOTE_ADDR']))
+		if (!empty($_SERVER['REMOTE_ADDR'])) {
 			$username .= '@' . $_SERVER['REMOTE_ADDR'];
+		}
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
 
 		exit;
@@ -75,12 +77,13 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
 		exit;
 	}
-} else
+} else {
 	$_SESSION['Post_Login'] = true;
+}
 
 /*
  * redirect browsers post-login to avoid pages
- * taking action in reponse to a POST request
+ * taking action in response to a POST request
  */
 if (!$_SESSION['Post_Login']) {
 	$_SESSION['Post_Login'] = true;
@@ -101,12 +104,13 @@ session_commit();
 function display_error_form($http_code, $desc) {
 	global $config, $g;
 	$g['theme'] = get_current_theme();
-	if(isAjax()) {
+	if (isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
 	}
 
 ?>
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,9 +140,9 @@ function display_login_form() {
 
 	unset($input_errors);
 
-	if(isAjax()) {
+	if (isAjax()) {
 		if (isset($_POST['login'])) {
-			if($_SESSION['Logged_In'] <> "True") {
+			if ($_SESSION['Logged_In'] <> "True") {
 				isset($_SESSION['Login_Error']) ? $login_error = $_SESSION['Login_Error'] : $login_error = gettext("unknown reason");
 				printf("showajaxmessage('" . gettext("Invalid login (%s).") . "')", $login_error);
 			}
@@ -167,11 +171,11 @@ if (empty($FilterIflist)) {
 	filter_generate_optcfg_array();
 }
 foreach ($FilterIflist as $iflist) {
-	if ($iflist['ip'] == $http_host)
+	if ($iflist['ip'] == $http_host) {
 		$local_ip = true;
-	else if ($iflist['ipv6'] == $http_host)
+	} else if ($iflist['ipv6'] == $http_host) {
 		$local_ip = true;
-	else if (is_array($iflist['vips'])) {
+	} else if (is_array($iflist['vips'])) {
 		foreach ($iflist['vips'] as $vip) {
 			if ($vip['ip'] == $http_host) {
 				$local_ip = true;
@@ -180,8 +184,9 @@ foreach ($FilterIflist as $iflist) {
 		}
 		unset($vip);
 	}
-	if ($local_ip == true)
+	if ($local_ip == true) {
 		break;
+	}
 }
 unset($FilterIflist);
 unset($iflist);
@@ -194,8 +199,9 @@ if ($local_ip == false) {
 			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
 				$local_ip = true;
 			}
-			if ($local_ip == true)
+			if ($local_ip == true) {
 				break;
+			}
 		}
 	}
 }

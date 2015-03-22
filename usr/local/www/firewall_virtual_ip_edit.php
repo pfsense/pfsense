@@ -182,16 +182,6 @@ if ($_POST) {
 		if (empty($_POST['password']))
 			$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
 
-		if (is_ipaddrv4($_POST['subnet'])) {
-			$parent_ip = get_interface_ip($_POST['interface']);
-			$parent_sn = get_interface_subnet($_POST['interface']);
-			$subnet = gen_subnet($parent_ip, $parent_sn);
-		} else if (is_ipaddrv6($_POST['subnet'])) {
-			$parent_ip = get_interface_ipv6($_POST['interface']);
-			$parent_sn = get_interface_subnetv6($_POST['interface']);
-			$subnet = gen_subnetv6($parent_ip, $parent_sn);
-		}
-
 		if ($_POST['interface'] == 'lo0')
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		else if (strpos($_POST['interface'], '_vip'))
@@ -213,6 +203,7 @@ if ($_POST) {
 				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 			}
+			unset($parent_ip, $parent_sn, $subnet);
 		}
 		break;
 	default:

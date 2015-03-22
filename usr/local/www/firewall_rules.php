@@ -75,54 +75,6 @@ if ($_POST['if'])
 
 $ifdescs = get_configured_interface_with_descr();
 
-// Drag and drop reordering
-if($_REQUEST['dragdroporder']) {
-	// First create a new ruleset array and tmp arrays
-	$a_filter_before = array();
-	$a_filter_order = array();
-	$a_filter_order_tmp = array();
-	$a_filter_after = array();
-	$found = false;
-	$drag_order = $_REQUEST['dragtable'];
-	// Next traverse through rules building a new order for interface
-	for ($i = 0; isset($a_filter[$i]); $i++) {
-		if(( $_REQUEST['if'] == "FloatingRules" && isset($a_filter[$i]['floating']) ) || ( $a_filter[$i]['interface'] == $_REQUEST['if'] && !isset($a_filter[$i]['floating']) )) {
-			$a_filter_order_tmp[] = $a_filter[$i];
-			$found = true;
-		} else if (!$found)
-			$a_filter_before[] = $a_filter[$i];
-		else
-			$a_filter_after[] = $a_filter[$i];
-	}
-	// Reorder rules with the posted order
-	for ($i = 0; $i<count($drag_order); $i++)
-		$a_filter_order[] = $a_filter_order_tmp[$drag_order[$i]];
-	// In case $drag_order didn't account for some rules, make sure we don't lose them
-	if(count($a_filter_order) < count($a_filter_order_tmp)) {
-		for ($i = 0; $i<count($a_filter_order_tmp); $i++)
-			if(!in_array($i, $drag_order))
-				$a_filter_order[] = $a_filter_order_tmp[$i];
-	}
-	// Overwrite filter rules with newly created items
-	$config['filter']['rule'] = array_merge($a_filter_before, $a_filter_order, $a_filter_after);
-	// Write configuration
-	$config = write_config(gettext("Drag and drop firewall rules ordering update."));
-	// Redirect back to page
-	mark_subsystem_dirty('filter');
-	$undo = array();
-	foreach($_REQUEST['dragtable'] as $dt)
-		$undo[] = "";
-	$counter = 0;
-	foreach($_REQUEST['dragtable'] as $dt) {
-		$undo[$dt] = $counter;
-		$counter++;
-	}
-	foreach($undo as $dt)
-		$undotxt .= "&dragtable[]={$dt}";
-	header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
-	exit;
-}
-
 /* add group interfaces */
 if (is_array($config['ifgroups']['ifgroupentry']))
 	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
@@ -279,17 +231,9 @@ $nrules = 0;
 
 <?php if ($savemsg) print_info_box($savemsg);?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
-<?php
-if($_REQUEST['undodrag']) {
-	foreach($_REQUEST['dragtable'] as $dt)
-		$dragtable .= "&dragtable[]={$dt}";
-	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
-} else {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
-}
-?>
+<?php	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true); ?>
 <br />
-<?php endif;?>
+<?php endif; ?>
 <?php
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_table");
 ?>

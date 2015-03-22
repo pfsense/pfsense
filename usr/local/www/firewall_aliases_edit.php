@@ -672,7 +672,7 @@ EOD;
 
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script type="text/javascript" src="/javascript/row_helper.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <input type='hidden' name='address_type' value='textbox' />

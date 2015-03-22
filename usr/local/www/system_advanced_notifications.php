@@ -75,6 +75,8 @@ if ($config['notifications']['smtp']['username'])
 	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
 if ($config['notifications']['smtp']['password'])
 	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+if ($config['notifications']['smtp']['authentication_mechanism'])
+	$pconfig['smtpauthmech'] = $config['notifications']['smtp']['authentication_mechanism'];
 if ($config['notifications']['smtp']['fromaddress'])
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
@@ -110,6 +112,7 @@ if ($_POST) {
 			$config['notifications']['smtp']['tls'] = true;
 		else
 			unset($config['notifications']['smtp']['tls']);
+
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['notification-e-mail-address'];
 		$config['notifications']['smtp']['username'] = $_POST['notification-e-mail-auth-username-optional-'];
 		$config['notifications']['smtp']['password'] = $_POST['notification-e-mail-auth-password'];

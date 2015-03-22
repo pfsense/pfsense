@@ -52,8 +52,9 @@ function startElement_attr($parser, $name, $attrs) {
 	}
 	foreach ($curpath as $path) {
 		$ptr =& $ptr[$path];
-		if (isset($writeattrs))
+		if (isset($writeattrs)) {
 			$attrptr =& $attrptr[$path];
+		}
 	}
 
 	/* is it an element that belongs to a list? */
@@ -68,16 +69,17 @@ function startElement_attr($parser, $name, $attrs) {
 		array_push($curpath, count($ptr));
 
 		if (isset($writeattrs)) {
-			if (!is_array($attrptr))
+			if (!is_array($attrptr)) {
 				$attrptr = array();
+			}
 			$attrptr[count($ptr)] = $attrs;
 		}
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
 		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
-				$name,
-				xml_get_current_line_number($parser)));
+			$name,
+			xml_get_current_line_number($parser)));
 	} else if (isset($writeattrs)) {
 		$attrptr = $attrs;
 	}
@@ -99,8 +101,9 @@ function endElement_attr($parser, $name) {
 
 	array_pop($curpath);
 
-	if (in_array(strtolower($name), $listtags))
+	if (in_array(strtolower($name), $listtags)) {
 		array_pop($curpath);
+	}
 
 	$depth--;
 }
@@ -130,8 +133,9 @@ function cData_attr($parser, $data) {
 function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulatory-data') {
 	global $g, $listtags;
 
-	if (empty($rdfile))
+	if (empty($rdfile)) {
 		$rdfile = $g['etc_path'] . '/regdomain.xml';
+	}
 	$listtags = listtags_rd();
 	$parsed_xml = array();
 
@@ -147,15 +151,19 @@ function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulator
 
 		// unset parts that aren't used before making cache
 		foreach ($rdmain['regulatory-domains']['rd'] as $rdkey => $rdentry) {
-			if (isset($rdmain['regulatory-domains']['rd'][$rdkey]['netband']))
+			if (isset($rdmain['regulatory-domains']['rd'][$rdkey]['netband'])) {
 				unset($rdmain['regulatory-domains']['rd'][$rdkey]['netband']);
-			if (isset($rdattributes['regulatory-domains']['rd'][$rdkey]['netband']))
+			}
+			if (isset($rdattributes['regulatory-domains']['rd'][$rdkey]['netband'])) {
 				unset($rdattributes['regulatory-domains']['rd'][$rdkey]['netband']);
+			}
 		}
-		if (isset($rdmain['shared-frequency-bands']))
+		if (isset($rdmain['shared-frequency-bands'])) {
 			unset($rdmain['shared-frequency-bands']);
-		if (isset($rdattributes['shared-frequency-bands']))
+		}
+		if (isset($rdattributes['shared-frequency-bands'])) {
 			unset($rdattributes['shared-frequency-bands']);
+		}
 
 		$parsed_xml = array('main' => $rdmain, 'attributes' => $rdattributes);
 		$rdcache = fopen($g['tmp_path'] . '/regdomain.cache', "w");
@@ -174,14 +182,15 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isst
 	$depth = 0;
 	$havedata = 0;
 
-	if (isset($parsed_attributes))
+	if (isset($parsed_attributes)) {
 		$parsedattrs = array();
+	}
 
 	$xml_parser = xml_parser_create();
 
 	xml_set_element_handler($xml_parser, "startElement_attr", "endElement_attr");
 	xml_set_character_data_handler($xml_parser, "cData_attr");
-	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1); 
+	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1);
 
 	if (!($fp = fopen($cffile, "r"))) {
 		log_error(gettext("Error: could not open XML input") . "\n");
@@ -195,8 +204,8 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isst
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
 			log_error(sprintf(gettext('XML error: %1$s at line %2$d') . "\n",
-						xml_error_string(xml_get_error_code($xml_parser)),
-						xml_get_current_line_number($xml_parser)));
+				xml_error_string(xml_get_error_code($xml_parser)),
+				xml_get_current_line_number($xml_parser)));
 			if (isset($parsed_attributes)) {
 				$parsed_attributes = array();
 				unset($parsedattrs);
@@ -216,8 +225,9 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isst
 	}
 
 	if (isset($parsed_attributes)) {
-		if ($parsedattrs[$rootobj])
+		if ($parsedattrs[$rootobj]) {
 			$parsed_attributes = $parsedattrs[$rootobj];
+		}
 		unset($parsedattrs);
 	}
 

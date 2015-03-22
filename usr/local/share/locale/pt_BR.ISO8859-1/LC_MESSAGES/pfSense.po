@@ -16255,7 +16255,7 @@ msgstr "Você não pode associar um gateway IPv6 a uma regra de filtro IPv4"
 #: usr/local/www/firewall_rules_edit.php:323
 #: usr/local/www/firewall_rules_edit.php:329
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr "%s é válido somente com o protocolo TCP."
 
 #: usr/local/www/firewall_rules_edit.php:299
@@ -16306,7 +16306,7 @@ msgstr "Você não pode utilizar endereços IPv4 em regras IPv6."
 #: usr/local/www/firewall_rules_edit.php:433
 #: usr/local/www/firewall_rules_edit.php:436
 #: usr/local/www/firewall_rules_edit.php:442
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr "Detecção de OS somente é válida com o protocolo tcp."
 
 #: usr/local/www/firewall_rules_edit.php:406
@@ -18327,14 +18327,14 @@ msgstr "SSID"
 #: usr/local/www/interfaces.php:654 usr/local/www/interfaces.php:669
 #: usr/local/www/interfaces.php:710 usr/local/www/interfaces.php:706
 #: usr/local/www/interfaces.php:711
-msgid "Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit."
+msgid "Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key."
 msgstr "Tamanho de chave WEP inválido. Tamanhos devem ser de 40 (64) chaves de bit ou 104 (128) bits."
 
 #: usr/local/www/interfaces.php:591 usr/local/www/interfaces.php:665
 #: usr/local/www/interfaces.php:662 usr/local/www/interfaces.php:677
 #: usr/local/www/interfaces.php:718 usr/local/www/interfaces.php:714
 #: usr/local/www/interfaces.php:719
-msgid "The length of the passphrase should be between 8 and 63 characters."
+msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr "O tamanho da frase secreta deve ser entre 8 e 63 caracteres."
 
 #: usr/local/www/interfaces.php:659
@@ -19411,7 +19411,7 @@ msgstr "Nota: Esse campo pode ser usado para afinar os temporizadores ACK/CTS pa
 #: usr/local/www/interfaces.php:2271 usr/local/www/interfaces.php:2301
 #: usr/local/www/interfaces.php:2347 usr/local/www/interfaces.php:2336
 #: usr/local/www/interfaces.php:2372
-msgid "(measured in Meters and works only for Atheros based cards !)"
+msgid "(measured in meters)"
 msgstr "(medido em Metros e funciona somente com cartões baseados em Atheros!)"
 
 #: usr/local/www/interfaces.php:2110 usr/local/www/interfaces.php:2288
@@ -19725,7 +19725,7 @@ msgstr "PSK:"
 #: usr/local/www/interfaces.php:2469 usr/local/www/interfaces.php:2499
 #: usr/local/www/interfaces.php:2545 usr/local/www/interfaces.php:2534
 #: usr/local/www/interfaces.php:2570
-msgid "Passphrase must be from 8 to 63 characters."
+msgid "WPA Passphrase must be between 8 and 63 characters long."
 msgstr "Frase secreta deve ter de 8 a 63 caracteres."
 
 #: usr/local/www/interfaces.php:2305 usr/local/www/interfaces.php:2485
@@ -19834,7 +19834,7 @@ msgstr "Rotação de Chave"
 #: usr/local/www/interfaces.php:2517 usr/local/www/interfaces.php:2547
 #: usr/local/www/interfaces.php:2593 usr/local/www/interfaces.php:2582
 #: usr/local/www/interfaces.php:2618
-msgid "Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."
+msgid "Allowed values are 1-9999. Must be longer than Master Key Regeneration time."
 msgstr "Os valores permitidos são 1-9999 mas não devem ser mais longos que o tempo de Regeneração da Chave Master."
 
 #: usr/local/www/interfaces.php:2353 usr/local/www/interfaces.php:2533
@@ -19848,7 +19848,7 @@ msgstr "Regeneração da Chave Master"
 #: usr/local/www/interfaces.php:2524 usr/local/www/interfaces.php:2554
 #: usr/local/www/interfaces.php:2600 usr/local/www/interfaces.php:2589
 #: usr/local/www/interfaces.php:2625
-msgid "Allowed values are 1-9999 but should not be shorter than Key Rotation time."
+msgid "Allowed values are 1-9999. Must be shorter than Key Rotation time."
 msgstr "Os valores permitidos são 1-9999 mas devem ser menores que o tempo de Rotação da Chave."
 
 #: usr/local/www/interfaces.php:2360 usr/local/www/interfaces.php:2540
@@ -19876,7 +19876,7 @@ msgstr "Habilita Autenticação IEEE802.1X"
 #: usr/local/www/interfaces.php:2538 usr/local/www/interfaces.php:2568
 #: usr/local/www/interfaces.php:2614 usr/local/www/interfaces.php:2603
 #: usr/local/www/interfaces.php:2639
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr "Configurando essa opção habilitará a autenticação 802.1x."
 
 #: usr/local/www/interfaces.php:2371
@@ -19929,7 +19929,7 @@ msgstr "Porta do Servidor de Autenticação 802.1X"
 #: usr/local/www/interfaces.php:2650 usr/local/www/interfaces.php:2618
 #: usr/local/www/interfaces.php:2639 usr/local/www/interfaces.php:2654
 #: usr/local/www/interfaces.php:2675
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr "Deixe em branco para usar a porta padrão 1812."
 
 #: usr/local/www/interfaces.php:2389 usr/local/www/interfaces.php:2569
@@ -37850,7 +37850,7 @@ msgstr "Esta configuração limita o número de conexões simultâneas ao HTTP portal
 #: usr/local/www/services_captiveportal.php:600
 #: usr/local/www/services_captiveportal.php:601
 #: usr/local/www/services_captiveportal.php:617
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr "Protocolo Radius"
 
 #: usr/local/www/services_captiveportal.php:611
@@ -41220,11 +41220,11 @@ msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 
 #: usr/local/www/interfaces.php:1815
-msgid "Request only a IPv6 prefix"
+msgid "Request only an IPv6 prefix"
 msgstr "Requesita somente um prefixo IPv6"
 
 #: usr/local/www/interfaces.php:1818
-msgid "Only request a IPv6 prefix, do not request a IPv6 address"
+msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr ""
 
 #: etc/inc/pkg-utils.inc:1267

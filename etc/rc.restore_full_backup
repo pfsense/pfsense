@@ -8,7 +8,7 @@ if [ `tar tzPf $1 /etc/rc 2>/dev/null` ]; then
 		EXCLUDE="--exclude /cf/conf/config.xml"
 		rm /tmp/do_not_restore_config.xml
 	else
-		EXCLUDE=""	
+		EXCLUDE=""
 	fi
 	tar xzPfU $1 $EXCLUDE -C / 2>/var/etc/restore_log.txt
 	echo "Restore of $1 complete."

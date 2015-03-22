@@ -231,7 +231,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
 <script type="text/javascript">
 //<![CDATA[
 function typesel_change() {
@@ -335,7 +335,7 @@ if ($input_errors)
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="external" type="text" class="formfld" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
+				<input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
 				<br />
 				<span class="vexpl">
 					<?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  " .

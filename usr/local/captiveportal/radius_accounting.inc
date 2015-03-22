@@ -7,30 +7,30 @@
     Copyright (c) 2006, Jonathan De Graeve <jonathan.de.graeve@imelda.be>
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without 
-    modification, are permitted provided that the following conditions 
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
     are met:
 
-    1. Redistributions of source code must retain the above copyright 
+    1. Redistributions of source code must retain the above copyright
        notice, this list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright 
-       notice, this list of conditions and the following disclaimer in the 
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
-    3. The names of the authors may not be used to endorse or promote products 
+    3. The names of the authors may not be used to endorse or promote products
        derived from this software without specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-    IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
-    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+    IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    This code cannot simply be copied and put under the GNU Public License or 
+    This code cannot simply be copied and put under the GNU Public License or
     any other GPL-like (LGPL, GPL2) License.
 
         This code is made possible thx to samples made by Michael Bretterklieber <michael@bretterklieber.com>
@@ -45,7 +45,7 @@
 define('GIGAWORDS_RIGHT_OPERAND', '4294967296'); // 2^32
 
 /*
-RADIUS ACCOUNTING START 
+RADIUS ACCOUNTING START
 -----------------------
 */
 
@@ -202,9 +202,9 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
         $racct = new Auth_RADIUS_Acct_Stop;
 
     /*
-    Add support for more then one radiusserver. 
-    At most 10 servers may be specified. 
-    When multiple servers are given, they are tried in round-robin fashion until a valid response is received 
+    Add support for more then one radiusserver.
+    At most 10 servers may be specified.
+    When multiple servers are given, they are tried in round-robin fashion until a valid response is received
     */
     foreach ($radiusservers as $radsrv) {
         // Add a new server to our instance

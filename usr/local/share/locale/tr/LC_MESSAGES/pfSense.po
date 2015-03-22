@@ -12345,7 +12345,7 @@ msgstr "IPv4 ve IPv6 için uygulanacak ICMP türü kurallarını atayamazsınız
 
 #: usr/local/www/firewall_rules_edit.php:382
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr "%s sadece TCP protokolü ile çalışır."
 
 #: usr/local/www/firewall_rules_edit.php:384
@@ -12383,7 +12383,7 @@ msgstr ""
 "kullanamazsınız."
 
 #: usr/local/www/firewall_rules_edit.php:495
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr "İşletim sistemi tespiti sadece TCP protokolünde çalışır."
 
 #: usr/local/www/firewall_rules_edit.php:497
@@ -14104,13 +14104,13 @@ msgstr "SSID"
 
 #: usr/local/www/interfaces.php:805
 msgid ""
-"Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit."
+"Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key."
 msgstr ""
 "WEP anahtar boyutu geçersiz. Anahtar boyutu 40 (64) bit ya da 104 (128) bit "
 "olmalıdır."
 
 #: usr/local/www/interfaces.php:813
-msgid "The length of the passphrase should be between 8 and 63 characters."
+msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr "Şifre uzunluğu 8 ila 63 karakter arası olmalıdır."
 
 #: usr/local/www/interfaces.php:1383
@@ -14515,11 +14515,11 @@ msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2229
-msgid "Request only a IPv6 prefix"
+msgid "Request only an IPv6 prefix"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2232
-msgid "Only request a IPv6 prefix, do not request a IPv6 address"
+msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2236
@@ -14547,7 +14547,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Interface_statement\">Interface Statement</a>"
+"+10.1-RELEASE+and+Ports#Interface_statement\">Interface Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2265
@@ -14594,7 +14594,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Identity_association_statement\">Identity Association Statement</a>"
+"+10.1-RELEASE+and+Ports#Identity_association_statement\">Identity Association Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2299
@@ -14649,7 +14649,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"
+"+10.1-RELEASE+and+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2338
@@ -14668,7 +14668,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Authentication_statement\">Authentication Statement</a>"
+"+10.1-RELEASE+and+Ports#Authentication_statement\">Authentication Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2351
@@ -14691,7 +14691,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Keyinfo_statement\">Keyinfo Statement</a>"
+"+10.1-RELEASE+and+Ports#Keyinfo_statement\">Keyinfo Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2367
@@ -14717,7 +14717,7 @@ msgstr ""
 #: usr/local/www/interfaces.php:2383
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
-"query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports"
+"query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=+10.1-RELEASE+and+Ports"
 "\">Configuration File</a> Override"
 msgstr ""
 
@@ -15140,7 +15140,7 @@ msgstr ""
 "mesafeyi belielemek için ACK/CTS zamanlayıcılarını ayarlamada kullanılabilir"
 
 #: usr/local/www/interfaces.php:3016
-msgid "(measured in Meters and works only for Atheros based cards !)"
+msgid "(measured in meters)"
 msgstr ""
 "(metre cinsinden ölçülür ve sadece Atheros tabanlı kartlarda çalışır !)"
 
@@ -15380,7 +15380,7 @@ msgid "PSK:"
 msgstr "PSK:"
 
 #: usr/local/www/interfaces.php:3214
-msgid "Passphrase must be from 8 to 63 characters."
+msgid "WPA Passphrase must be between 8 and 63 characters long."
 msgstr "Şifre 8 ila 63 karakter olmalıdır."
 
 #: usr/local/www/interfaces.php:3218
@@ -15445,7 +15445,7 @@ msgstr "Anahtar Rotasyonu"
 
 #: usr/local/www/interfaces.php:3262
 msgid ""
-"Allowed values are 1-9999 but should not be longer than Master Key "
+"Allowed values are 1-9999. Must be longer than Master Key "
 "Regeneration time."
 msgstr ""
 "İzin verilen değerler 1 ile 9999 arasındadır ama Ana Anahtar Yenileme "
@@ -15457,7 +15457,7 @@ msgstr "Ana Anahtar Yenileme"
 
 #: usr/local/www/interfaces.php:3269
 msgid ""
-"Allowed values are 1-9999 but should not be shorter than Key Rotation time."
+"Allowed values are 1-9999. Must be shorter than Key Rotation time."
 msgstr ""
 "İzin verilen değerler 1 ile 9999 arasındadır ama Anahtar Rotasyon zamanından "
 "fazla olmamalıdır."
@@ -15479,7 +15479,7 @@ msgid "Enable IEEE802.1X Authentication"
 msgstr "IEEE802.1x Kimlik Doğrulamayı Etkinleştir"
 
 #: usr/local/www/interfaces.php:3283
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr ""
 "Bu seçeneği etkinleştirmek 802.1x kimlik doğrulamanın devreye girmesini "
 "sağlayacaktır."
@@ -15511,7 +15511,7 @@ msgid "802.1X Authentication Server Port"
 msgstr "802.1x Kimlik doğrulama Sunucu Portu"
 
 #: usr/local/www/interfaces.php:3298 usr/local/www/interfaces.php:3319
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr "Varsayılan port olan 1812'yi kullanmak için boş bırakın."
 
 #: usr/local/www/interfaces.php:3302
@@ -18985,7 +18985,7 @@ msgid "RADIUS Authentication"
 msgstr "RADIUS Kimlik Doğrulama"
 
 #: usr/local/www/services_captiveportal.php:689
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr "Radius Protokol"
 
 #: usr/local/www/services_captiveportal.php:694 usr/local/www/vpn_l2tp.php:392
@@ -19019,7 +19019,7 @@ msgstr ""
 
 #: usr/local/www/services_captiveportal.php:733
 msgid "Leave this field blank to use the default port (1812)."
-msgstr "Varsayılan 1812 portunu kullanmak için boş bırakınız."
+msgstr "Varsayılan port 1812unu kullanmak için boş bırakınız."
 
 #: usr/local/www/services_captiveportal.php:736
 #: usr/local/www/services_captiveportal.php:756
@@ -22172,7 +22172,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:327
-msgid "Enable rrd graphs of NTP statistics (default: disabled)."
+msgid "Enable RRD graphs of NTP statistics (default: disabled)."
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:333

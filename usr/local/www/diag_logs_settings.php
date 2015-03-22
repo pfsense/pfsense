@@ -109,8 +109,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	}
 
 	if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
-		if (!is_numeric($_POST['logfilesize']) || ($_POST['logfilesize'] < 5120)) {
-			$input_errors[] = gettext("Log file size must be a positive integer greater than 5120.");
+		if (!is_numeric($_POST['logfilesize']) || ($_POST['logfilesize'] < 100000)) {
+			$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
 		}
 	}
 	if (!$input_errors) {

@@ -1,21 +1,21 @@
 <?php
 /*
 	vpn_ipsec_mobile.php
-	
+
 	Copyright (C) 2008 Shrew Soft Inc
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -112,7 +112,8 @@ if ($_POST['create']) {
 
 if ($_POST['apply']) {
 	$retval = 0;
-	$retval = vpn_ipsec_configure();
+	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
+	$retval = vpn_ipsec_configure(true);
 	$savemsg = get_std_save_message($retval);
 	if ($retval >= 0)
 		if (is_subsystem_dirty('ipsec'))
@@ -145,7 +146,9 @@ if ($_POST['save']) {
 
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
-			$domain_array=preg_split("/[ ,]+/",$pconfig['dns_split']);
+			/* Replace multiple spaces by single */
+			$pconfig['dns_split'] = preg_replace('/\s+/', ' ', trim($pconfig['dns_split']));
+			$domain_array=explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
 					$input_errors[] = gettext("A valid split DNS domain list must be specified.");
@@ -226,8 +229,6 @@ if ($_POST['save']) {
 
 		if ($pconfig['login_banner_enable'])
 			$client['login_banner'] = $pconfig['login_banner'];
-
-//		$echo "login banner = {$pconfig['login_banner']}";
 
 		$a_client = $client;
 
@@ -332,9 +333,6 @@ if ($pconfig['enable'] && !$ph1found)
 	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
 if ($input_errors)
 	print_input_errors($input_errors);
-?>
-
-<?php
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
@@ -459,7 +457,7 @@ $section->add($group);
 $section->addInput(new Form_Checkbox(
 	'dns_split_enable',
 	'Split DNS',
-	'Provide a list of split DNS domain names to clients. Enter a comma separated list.',
+	'Provide a list of split DNS domain names to clients. Enter a space separated list.',
 	$pconfig['dns_split_enable']
 ))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-dns_split');
 

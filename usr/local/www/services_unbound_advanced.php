@@ -3,7 +3,7 @@
 /*
 	services_unbound_advanced.php
 	part of the pfSense project (https://www.pfsense.org)
-	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
+	Copyright (C) 2015	Warren Baker (warren@percol8.co.za)
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -58,9 +58,6 @@ if (isset($config['unbound']['prefetch'])) {
 if (isset($config['unbound']['prefetchkey'])) {
 	$pconfig['prefetchkey'] = true;
 }
-if (isset($config['unbound']['hardenglue'])) {
-	$pconfig['hardenglue'] = true;
-}
 if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
 }
@@ -80,6 +77,10 @@ $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config
 
 if (isset($config['unbound']['disable_auto_added_access_control'])) {
 	$pconfig['disable_auto_added_access_control'] = true;
+}
+
+if (isset($config['unbound']['use_caps'])) {
+	$pconfig['use_caps'] = true;
 }
 
 if ($_POST) {
@@ -129,56 +130,63 @@ if ($_POST) {
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
 			$input_errors[] = "A valid value must be specified for Log level verbosity.";
 		}
-		if (isset($_POST['hideidentity'])) {
-			$config['unbound']['hideidentity'] = true;
-		} else {
-			unset($config['unbound']['hideidentity']);
+		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
+			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
 		}
-		if (isset($_POST['hideversion'])) {
-			$config['unbound']['hideversion'] = true;
-		} else {
-			unset($config['unbound']['hideversion']);
-		}
-		if (isset($_POST['prefetch'])) {
-			$config['unbound']['prefetch'] = true;
-		} else {
-			unset($config['unbound']['prefetch']);
-		}
-		if (isset($_POST['prefetchkey'])) {
-			$config['unbound']['prefetchkey'] = true;
-		} else {
-			unset($config['unbound']['prefetchkey']);
-		}
-		if (isset($_POST['hardenglue'])) {
-			$config['unbound']['hardenglue'] = true;
-		} else {
-			unset($config['unbound']['hardenglue']);
-		}
-		if (isset($_POST['dnssecstripped'])) {
-			$config['unbound']['dnssecstripped'] = true;
-		} else {
-			unset($config['unbound']['dnssecstripped']);
-		}
-		$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
-		$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
-		$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];
-		$config['unbound']['edns_buffer_size'] = $_POST['edns_buffer_size'];
-		$config['unbound']['num_queries_per_thread'] = $_POST['num_queries_per_thread'];
-		$config['unbound']['jostle_timeout'] = $_POST['jostle_timeout'];
-		$config['unbound']['cache_max_ttl'] = $_POST['cache_max_ttl'];
-		$config['unbound']['cache_min_ttl'] = $_POST['cache_min_ttl'];
-		$config['unbound']['infra_host_ttl'] = $_POST['infra_host_ttl'];
-		$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
-		$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
-		$config['unbound']['log_verbosity'] = $_POST['log_verbosity'];
-		if (isset($_POST['disable_auto_added_access_control'])) {
-			$config['unbound']['disable_auto_added_access_control'] = true;
-		} else {
-			unset($config['unbound']['disable_auto_added_access_control']);
-		}
-		write_config("DNS Resolver configured.");
+		
+		if (!$input_errors) {
 
-		mark_subsystem_dirty('unbound');
+			if (isset($_POST['hideidentity'])) {
+				$config['unbound']['hideidentity'] = true;
+			} else {
+				unset($config['unbound']['hideidentity']);
+			}
+			if (isset($_POST['hideversion'])) {
+				$config['unbound']['hideversion'] = true;
+			} else {
+				unset($config['unbound']['hideversion']);
+			}
+			if (isset($_POST['prefetch'])) {
+				$config['unbound']['prefetch'] = true;
+			} else {
+				unset($config['unbound']['prefetch']);
+			}
+			if (isset($_POST['prefetchkey'])) {
+				$config['unbound']['prefetchkey'] = true;
+			} else {
+				unset($config['unbound']['prefetchkey']);
+			}
+			if (isset($_POST['dnssecstripped'])) {
+				$config['unbound']['dnssecstripped'] = true;
+			} else {
+				unset($config['unbound']['dnssecstripped']);
+			}
+			$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
+			$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
+			$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];
+			$config['unbound']['edns_buffer_size'] = $_POST['edns_buffer_size'];
+			$config['unbound']['num_queries_per_thread'] = $_POST['num_queries_per_thread'];
+			$config['unbound']['jostle_timeout'] = $_POST['jostle_timeout'];
+			$config['unbound']['cache_max_ttl'] = $_POST['cache_max_ttl'];
+			$config['unbound']['cache_min_ttl'] = $_POST['cache_min_ttl'];
+			$config['unbound']['infra_host_ttl'] = $_POST['infra_host_ttl'];
+			$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
+			$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
+			$config['unbound']['log_verbosity'] = $_POST['log_verbosity'];
+			if (isset($_POST['disable_auto_added_access_control'])) {
+				$config['unbound']['disable_auto_added_access_control'] = true;
+			} else {
+				unset($config['unbound']['disable_auto_added_access_control']);
+			}
+			if (isset($_POST['use_caps'])) {
+				$config['unbound']['use_caps'] = true;
+			} else {
+				unset($config['unbound']['use_caps']);
+			}
+			write_config("DNS Resolver configured.");
+	
+			mark_subsystem_dirty('unbound');
+		}
 	}
 }
 
@@ -245,14 +253,7 @@ include_once("head.inc");
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch DNS Key Support");?></td>
 								<td width="78%" class="vtable">
 									<input name="prefetchkey" type="checkbox" id="prefetchkey" value="yes" <?php if (isset($pconfig['prefetchkey'])) echo "checked=\"checked\"";?> /><br />
-									<?=sprintf(gettext("DNSKEY's are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
-								<td width="78%" class="vtable">
-									<input name="hardenglue" type="checkbox" id="hardenglue" value="yes" <?php if (isset($pconfig['hardenglue'])) echo "checked=\"checked\"";?> /><br />
-									<?=gettext("Only trust glue if it is within the servers authority.");?>
+									<?=sprintf(gettext("DNSKEYs are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?>
 								</td>
 							</tr>
 							<tr>
@@ -440,6 +441,13 @@ include_once("head.inc");
 								<td width="78%" class="vtable">
 									<input name="disable_auto_added_access_control" type="checkbox" id="disable_auto_added_access_control" value="yes" <?php if (isset($pconfig['disable_auto_added_access_control'])) echo "checked=\"checked\"";?> />
 									<?=gettext("Check this box to disable the automatically-added access control entries. By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Experimental Bit 0x20 Support");?></td>
+								<td width="78%" class="vtable">
+									<input name="use_caps" type="checkbox" id="use_caps" value="yes" <?php if (isset($pconfig['use_caps'])) echo "checked=\"checked\"";?> /> <br />
+									<?=sprintf(gettext("Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts. See the implementation %sdraft dns-0x20%s for more information."), "<a href='https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00'>", "</a>");?>
 								</td>
 							</tr>
 							<tr>

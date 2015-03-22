@@ -2,3 +2,10 @@
 _notes/
 # Ignore Vim swap files
 .*.swp
+upload.sh
+# eclipse
+.buildpath
+.project
+.settings/
+# PhpStorm
+.idea

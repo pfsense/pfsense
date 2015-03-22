@@ -34,43 +34,45 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="smart status">
-	<tr>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Drive") ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Ident") ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("SMART Status") ?></b></td>
-	</tr>
-
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th></th>
+			<th><?=gettext("Drive")?></th>
+			<th><?=gettext("Ident")?></th>
+			<th><?=gettext("SMART Status")?></th>
+		</tr>
+	</thead>
+	<tbody>
 <?php
 $devs = array();
 ## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
 $devs = get_smart_drive_list();
 
-if(count($devs) > 0)  {
-	foreach($devs as $dev)  {	## for each found drive do
-		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
-		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+foreach($devs as $dev):
+	$dev_ident = exec("diskinfo -v /dev/$dev | grep ident	| awk '{print $1}'"); ## get identifier from drive
+	$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
-		switch ($dev_state) {
+	switch ($dev_state) {
 		case "PASSED":
 		case "OK":
-			$color = "#90EE90";
+			$icon = 'ok';
 			break;
 		case "":
 			$dev_state = "Unknown";
-			$color = "#C0B788";
+			$icon = 'question';
 			break;
 		default:
-			$color = "#F08080";
+			$icon = 'remove';
 			break;
-		}
+	}
 ?>
 		<tr>
-			<td class="listlr"><?php echo $dev; ?></td>
-			<td class="listr" align="center"><?php echo $dev_ident; ?></td>
-			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>">&nbsp;<?php echo $dev_state; ?>&nbsp;</span></td>
+			<td><i class="icon icon-<?=$icon?>-sign"></i></td>
+			<td><?=$dev?></td>
+			<td><?=$dev_ident?></td>
+			<td><?=ucfirst($dev_state)?></td>
 		</tr>
-<?php	}
-}
-?>
+<?php endforeach; ?>
+	</tbody>
 </table>

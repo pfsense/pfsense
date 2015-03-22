@@ -58,9 +58,6 @@ switch ($_REQUEST['state']) {
 	case "easy_install_ufs":
 		easy_install("UFS+S");
 		exit;
-	case "easy_install_ufs":
-		easy_install("ZFS");
-		exit;
 
 	default:
 		installer_main();	

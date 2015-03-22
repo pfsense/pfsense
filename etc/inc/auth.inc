@@ -73,11 +73,11 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$http_host = $http_host[0];
 	}
 	if (is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-	    strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1") {
+		strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1") {
 		$found_host = true;
 	}
 	if (strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
-	    strcasecmp($http_host, $config['system']['hostname']) == 0) {
+		strcasecmp($http_host, $config['system']['hostname']) == 0) {
 		$found_host = true;
 	}
 
@@ -125,8 +125,24 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 			if ($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
 				header("Refresh: 1; url=index.php");
-				echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
-				echo "<html><head><title>" . gettext("Redirecting...") . "</title></head><body>" . gettext("Redirecting to the dashboard...") . "</body></html>";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Redirecting..."); ?></title>
+</head>
+<body id="error" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+				<p><?=gettext("Redirecting to the dashboard...")?></p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<?php
 				exit;
 			}
 		}
@@ -135,7 +151,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
 			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
-			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+				strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
 				$found_host = true;
 			}
 

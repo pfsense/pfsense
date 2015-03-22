@@ -2579,7 +2579,6 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 	global $config, $g;
 
 	$is_installed = false;
-	$cron_changed = true;
 
 	if (!is_array($config['cron'])) {
 		$config['cron'] = array();
@@ -2610,13 +2609,8 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 			$config['cron']['item'][] = $cron_item;
 			write_config(sprintf(gettext("Installed cron job for %s"), $command));
 		} else {
-			if ($config['cron']['item'][$x] == $cron_item) {
-				$cron_changed = false;
-				log_error(sprintf(gettext("Checked cron job for %s, no change needed"), $command));
-			} else {
-				$config['cron']['item'][$x] = $cron_item;
-				write_config(sprintf(gettext("Updated cron job for %s"), $command));
-			}
+			$config['cron']['item'][$x] = $cron_item;
+			write_config(sprintf(gettext("Updated cron job for %s"), $command));
 		}
 	} else {
 		if ($is_installed == true) {

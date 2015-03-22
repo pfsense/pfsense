@@ -1,30 +1,30 @@
 <?php
 /*
-    carp_status.php
-    Copyright (C) 2004 Scott Ullrich
-    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-    All rights reserved.
+	carp_status.php
+	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 ##|+PRIV
@@ -123,11 +123,7 @@ if (!empty($_POST['resetdemotion'])) {
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
-
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
@@ -147,103 +143,72 @@ include("head.inc");
 
 } ?>
 
-<div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="carp status">
-		<tr>
-			<td>
 <?php
-			$carpcount = 0;
-			if(is_array($config['virtualip']['vip'])) {
-				foreach($config['virtualip']['vip'] as $carp) {
-					if ($carp['mode'] == "carp") {
-						$carpcount++;
-						break;
-					}
-				}
-			}
-			if($carpcount > 0) {
-				if($status > 0) {
-					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\" />";
-				} else {
-					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
-				}
-				if(isset($config["virtualip_carp_maintenancemode"])) {
-					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\" />";
-				} else {
-					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Persistent CARP Maintenance Mode") . "\" />";
-				}
-			}
+$carpcount = 0;
+if(is_array($config['virtualip']['vip'])) {
+	foreach($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] == "carp") {
+			$carpcount++;
+			break;
+		}
+	}
+}
+if ($carpcount > 0):
+	$carp_enabled = ($status > 0);
 ?>
-
-			<br/><br/>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="results">
-				<tr>
-					<td class="listhdrr" align="center"><?=gettext("CARP Interface"); ?></td>
-					<td class="listhdrr" align="center"><?=gettext("Virtual IP"); ?></td>
-					<td class="listhdrr" align="center"><?=gettext("Status"); ?></td>
-				</tr>
+	<input type="submit" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
+	<input type="submit" name="carp_maintenancemode" value="<?=($config["virtualip_carp_maintenancemode"] ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
+<?php elseif ($carpcount == 0): ?>
+	<div class="alert alert-info" role="alert">
+		<p>
+			<?=gettext("Could not locate any defined CARP interfaces.")?><br/>
+			<a href="system_hasync.php" class="alert-link"><?=gettext("You can configure high availability sync settings here")?></a>.
+		</p>
+	</div>
+<?php else: ?>
+<table>
+	<tr>
+		<td><?=gettext("CARP Interface")?></td>
+		<td><?=gettext("Virtual IP")?></td>
+		<td><?=gettext("Status")?></td>
+	</tr>
 <?php
-				if ($carpcount == 0) {
-					echo "</table></td></tr></table></div></form><center><br />" . gettext("Could not locate any defined CARP interfaces.");
-					echo "</center>";
-
-					include("fend.inc");
-					echo "</body></html>";
-					return;
-				}
-				if(is_array($config['virtualip']['vip'])) {
-					foreach($config['virtualip']['vip'] as $carp) {
-						if ($carp['mode'] != "carp")
-							continue;
-						$ipaddress = $carp['subnet'];
-						$vhid = $carp['vhid'];
-						$status = get_carp_interface_status("_vip{$carp['uniqid']}");
-						echo "<tr>";
-						$align = "style=\"vertical-align:middle\"";
-						if($carp_enabled == false) {
-							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disabled\" />";
-							$status = "DISABLED";
-						} else {
-							if($status == "MASTER") {
-								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass.gif\" alt=\"master\" />";
-							} else if($status == "BACKUP") {
-								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
-							} else if($status == "INIT") {
-								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
-							} else {
-								$icon = "";
-							}
-						}
-						echo "<td class=\"listlr\" align=\"center\">" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
-						echo "<td class=\"listlr\" align=\"center\">" . $ipaddress . "&nbsp;</td>";
-						echo "<td class=\"listlr\" align=\"center\">{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
-						echo "</tr>";
-					}
-				}
+	foreach($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp")
+			continue;
+		$ipaddress = $carp['subnet'];
+		$vhid = $carp['vhid'];
+		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
+		if($carp_enabled == false) {
+			$icon = 'remove-sign';
+			$status = "DISABLED";
+		} else {
+			if($status == "MASTER") {
+				$icon = 'ok-sign';
+			} else if($status == "BACKUP") {
+				$icon = 'ok-circle';
+			} else if($status == "INIT") {
+				$icon = 'question-sign';
+			}
+		}
 ?>
-			</table>
-			</td>
-		</tr>
-	</table>
-</div>
+	<tr>
+		<td>
+			<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
+			<td><?=$ipaddress?></td>
+			<td><i class="icon icon-<?=$icon?>">$status</td>
+	</tr>
+<?php }?>
+</table>
 </form>
+<?php endif?>
 
-<p class="vexpl">
-<span class="red"><strong><?=gettext("Note"); ?>:</strong></span>
-<br />
-<?=gettext("You can configure high availability sync settings"); ?> <a href="system_hasync.php"><?=gettext("here"); ?></a>.
-</p>
-
+<h4><?=gettext("pfSync nodes")?></h4>
+<ul>
 <?php
-	echo "<br />" . gettext("pfSync nodes") . ":<br />";
-	echo "<pre>";
-	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
-	echo "</pre>";
+	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node)
+		echo '<li>'. $node .'</li>';
 ?>
+</ul>
 
-<?php include("fend.inc"); ?>
-
-</body>
-</html>
+<?php include("foot.inc")?>

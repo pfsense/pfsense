@@ -97,15 +97,15 @@ if(!$ignorefirmwarelock) {
 
 /* Reserved table names to avoid colision */
 $reserved_table_names = array(
-        "bogons",
-        "bogonsv6",
-        "negate_networks",
-        "snort2c",
-        "sshlockout",
-        "tonatsubnets",
-        "virusprot",
-        "vpn_networks",
-        "webConfiguratorlockout"
+		"bogons",
+		"bogonsv6",
+		"negate_networks",
+		"snort2c",
+		"sshlockout",
+		"tonatsubnets",
+		"virusprot",
+		"vpn_networks",
+		"webConfiguratorlockout"
 );
 
 $firewall_rules_dscp_types = array("af11",
@@ -266,30 +266,16 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 }
 
 function print_input_errors($input_errors) {
-	global $g;
+	echo '<div class="alert alert-danger input-errors">';
+	echo '<p>' . gettext('The following input errors were detected:') . '</p>';
+	echo '<ul>';
 
-	print <<<EOF
-	<div id="inputerrorsdiv">
-	<table border="0" cellspacing="0" cellpadding="4" width="100%" summary="input errors">
-	<tr>
-		<td class="inputerrorsleft">
-			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
-		</td>
-        <td class="inputerrorsright errmsg">
-EOF;
-    echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
 	foreach ($input_errors as $ierr) {
-		echo "<li>" . htmlspecialchars($ierr) . "</li>";
+		echo '<li>' . htmlspecialchars($ierr) . '</li>';
 	}
 
-	print <<<EOF2
-				</ul>
-		</td></tr>
-	</table>
-	</div>
-	&nbsp;<br />
-EOF2;
-
+	echo '</ul>';
+	echo '</div>';
 }
 
 function verify_gzip_file($fname) {
@@ -312,63 +298,15 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		$nifty_background = "#FFF";
 
 	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$savebutton = "<td class=\"infoboxsave\">";
-		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
+		$dismiss = "alert-dismissible";
+		$button = '<button type="submit" class="btn btn-primary" name="login" value="'.$value.'">'.$name.'</button>';
+
 		if($_POST['if'])
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
-		$savebutton.="</td>";
-	}
-	$nifty_redbox = "#990000";
-	$nifty_blackbox = "#000000";
+	} else
+		$button = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
 
-	$themename = $g['theme'];
-
-	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
-		eval($toeval);
-	}
-
-	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
-		eval($toeval);
-	}
-
-	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
-	}
-
-	echo <<<EOFnp
-	<table class="infobox" id="redboxtable" summary="red box table">
-		<tr>
-			<td>
-				<div class="infoboxnp" id="redbox">
-					<table class="infoboxnptable2" summary="message">
-						<tr>
-							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
-							</td>
-							<td class="infoboxnptd2">
-								<b>{$msg}</b>
-							</td>
-							{$savebutton}
-						</tr>
-					</table>
-				</div>
-				<div>
-					<p>&nbsp;</p>
-				</div>
-			</td>
-		</tr>
-	</table>
-	<script type="text/javascript">
-	//<![CDATA[
-		NiftyCheck();
-		Rounded("div#redbox","all","{$nifty_background}","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","{$nifty_background}","{$nifty_blackbox}","smooth");
-	//]]>
-	</script>
-EOFnp;
-
+	echo '<div class="alert alert-warning" role="alert">'.$msg.'</div>';
 }
 
 function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
@@ -549,7 +487,6 @@ function firewall_check_for_advanced_options(&$item) {
 }
 
 function gentitle($title) {
-	global $navlevelsep;
 	if(!is_array($title))
 		return $title;
 	else
@@ -557,8 +494,19 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	global $config;
-	return gentitle($title);
+	if(!is_array($title))
+		return '<h1 class="page-header">' . $title . '</h1>';
+
+	$heading = '<h1 class="page-header">' . end($title) . '</h1>';
+
+	$bc = '<ol class="breadcrumb">';
+
+	foreach ($title as $el)
+		$bc .= '<li>'.$el.'</li>';
+
+	$bc .= '</ol>';
+
+	return $heading . $bc;
 }
 
 /* update the changedesc and changecount(er) variables */
@@ -950,11 +898,11 @@ function echo_array($array,$return_me=false){
  * NAME
  *   display_top_tabs - display tabs with rounded edges
  * INPUTS
- *   $text      - array of tabs
+ *   $text	  - array of tabs
  * RESULT
  *   null
  ******/
-function display_top_tabs(& $tab_array, $no_drop_down = false) {
+function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'tabs') {
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -990,14 +938,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 	$nifty_tabs_corners = "#FFF";
 	$font_color = "white";
 
-	/* if tabcontrols.php exist for a theme, allow it to be overriden */
-	$themename = $config['theme'];
-	$filename = "/usr/local/www/themes/{$themename}/tabcontrols.php";
-	if(file_exists($filename)) {
-		$eval_code = file_get_contents($filename);
-		eval($eval_code);
-	}
-
 	$tabcharcount = 0;
 	foreach ($tab_array as $ta)
 		$tabcharcount = $tabcharcount + strlen($ta[0]);
@@ -1009,7 +949,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
-	if($tabcharcount > $tab_array_char_limit) {
+	if($tabcharcount > $tab_array_char_limit): ?>
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
@@ -1027,21 +967,13 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
 		echo "//]]>\n";
 		echo "</script>";
-	}  else {
-		echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
-		echo "<!-- Tabbed bar code-->\n";
-		echo "<ul class=\"newtabmenu\">\n";
-		$tabscounter = 0;
-		foreach ($tab_array as $ta) {
-			if ($ta[1] == true) {
-				echo "  <li class=\"newtabmenu_active\"><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
-			} else {
-				echo "  <li><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
-			}
-			$tabscounter++;
-		}
-		echo "</ul>\n</div>\n";
-	}
+<? else: ?>
+	<ul class="nav nav-<?= $type ?>">
+		<?php foreach ($tab_array as $ta): ?>
+			<li role="presentation"<?=($ta[1] ? ' class="active"' : '')?>><a href="<?=$ta[2]?>"><?=$ta[0]?></a></li>
+		<?php endforeach; ?>
+	</ul>
+<?php endif;
 }
 
 function add_package_tabs($tabgroup, & $tab_array) {
@@ -1067,115 +999,77 @@ function add_package_tabs($tabgroup, & $tab_array) {
 
 function alias_info_popup($alias_id){
 	global $config;
+
+	if (!is_array($config['aliases']['alias'][$alias_id]))
+		return;
+
 	$maxlength = 60;
-	$close_title="title='".gettext('move mouse out this alias to hide')."'";
-	if (is_array($config['aliases']['alias'][$alias_id])){
-		$alias_name=$config['aliases']['alias'][$alias_id];
-		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
-		if ($alias_name['url']) {
-			// TODO: Change it when pf supports tables with ports
-			if ($alias_name['type'] == "urltable") {
-				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-				$counter=preg_replace("/\D/","",$total_entries[0]);
-				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
-			} else {
-				$urlfn = alias_expand_urltable($alias_name['name']);
-				$alias_addresses = explode("\n", file_get_contents($urlfn));
-				$counter = count($alias_addresses);
-			}
-			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
-			$x=0;
-			foreach ($alias_addresses as $alias_ports_address ) {
-				switch ($x) {
-				case 0:
-					$x++;
-					$alias_objects_with_details .= "<tr><td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
-					break;
-				case 1:
-					$x++;
-					$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
-					break;
-				default:
-					$x=0;
-					$alias_objects_with_details .= "<td  $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td><tr>";
-					break;
-				}
-			}
-			for ($y = $x; $y <= $x; $y++) {
-				$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\">&nbsp;</td>";
-			}
-			if ($x > 0) {
-				$alias_objects_with_details .= "</tr>";
-			}
-			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". gettext("listing only first 10k items") . "</td><tr>";
-			}
+	$alias = $config['aliases']['alias'][$alias_id];
+	$content = "";
+
+	if ($alias['url'])
+	{
+		// TODO: Change it when pf supports tables with ports
+		if ($alias['type'] == "urltable") {
+			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
+			$counter=preg_replace("/\D/","",$total_entries[0]);
+			exec("/sbin/pfctl -t {$alias['name']} -T show | head -10002", $alias_addresses);
+		} else {
+			$urlfn = alias_expand_urltable($alias['name']);
+			$alias_addresses = explode("\n", file_get_contents($urlfn));
+			$counter = count($alias_addresses);
 		}
-		else{
-			$alias_addresses = explode (" ", $alias_name['address']);
-			$alias_details = explode ("||", $alias_name['detail']);
-			$counter = 0;
-			foreach ($alias_addresses as $alias_ports_address) {
-				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
-				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
-				if ($alias_details[$counter] != "" && $alias_detail_default === False)
-					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_details[$counter]}</td>";
-				else
-					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">&nbsp;</td>";
-				$alias_objects_with_details .= "</tr>";
-				$counter++;
-			}
-		}
-		$alias_objects_with_details .= "</table>";
+
+		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_ports_address) .'</li></ul>';
+
+		if ($counter > 10002)
+			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
 	}
-	$alias_descr_substr = $alias_name['descr'];
-	if ($strlength >= $maxlength)
-		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
-	$item_text = ($counter > 1 ? "items" : "item");
-	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
-	$strlength = strlen ($alias_caption);
-	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
+	else
+	{
+		$alias_addresses = explode (" ", $alias['address']);
+		$alias_details = explode ("||", $alias['detail']);
+
+		$content .= '<ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
+	}
+
+	if (strlen($alias['descr']) >= $maxlength)
+		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+
+	return $content;
 }
 
-function rule_popup($src,$srcport,$dst,$dstport){
-	global $config,$g;
-	$aliases_array = array();
-	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
-		$descriptions = array ();
-		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
-			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
-			switch ($alias_name['type']){
-			case "port":
-				$width="250";
-				break;
-			case "urltable":
-				$width="500";
-				break;
-			default:
-				$width="350";
-				break;
-			}
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g['theme']}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-			$span_end = "</u></span>";
-			if ($alias_name['name'] == $src) {
-				$descriptions['src'] = $span_begin;
-				$descriptions['src_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $srcport) {
-				$descriptions['srcport'] = $span_begin;
-				$descriptions['srcport_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $dst ) {
-				$descriptions['dst'] = $span_begin;
-				$descriptions['dst_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $dstport) {
-				$descriptions['dstport'] = $span_begin;
-				$descriptions['dstport_end'] = $span_end;
-			}
-		}
-		return $descriptions;
+function rule_columns_with_alias($src, $srcport, $dst, $dstport){
+	global $config;
+
+	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias']))
+		return;
+
+	$columns = array();
+	foreach ($config['aliases']['alias'] as $alias_id => $alias_name){
+		if ($alias_name['name'] == $src)
+			$columns['src'] = $alias_id;
+		elseif ($alias_name['name'] == $srcport)
+			$columns['srcport'] = $alias_id;
+		elseif ($alias_name['name'] == $dst )
+			$columns['dst'] = $alias_id;
+		elseif ($alias_name['name'] == $dstport)
+			$columns['dstport'] = $alias_id;
+
+		return $columns;
 	}
+}
+
+function form_output_row($name, $label, $content){
+var_dump($content);die;
+?>
+<div class="form-group">
+	<label for="<?=$name?>" class="col-sm-2 control-label"><?=gettext($label); ?></label>
+	<div class="col-sm-10">
+		<?=$content?>
+	</div>
+</div>
+<?php
 }
 
 $timezone = $config['system']['timezone'];

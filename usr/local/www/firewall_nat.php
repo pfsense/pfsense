@@ -105,7 +105,7 @@ if (isset($_POST['del_x'])) {
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])){
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
-				
+
 				mark_subsystem_dirty('filter');
 			}
 	        unset($a_nat[$rulei]);
@@ -169,6 +169,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domTT.js\"></scri
 echo "<script type=\"text/javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
 echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 
+//FIXME This largely matches firewall_rules.php
 ?>
 </head>
 
@@ -223,8 +224,8 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 		  </td>
 		</tr>
 	<?php $nnats = $i = 0; foreach ($a_nat as $natent): ?>
-	<?php 
-	
+	<?php
+
 		//build Alias popup box
 		$span_end = "</U></span>";
 
@@ -254,9 +255,9 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 			$textss = "<span>";
 
 		$textse = "</span>";
-	
+
 		/* if user does not have access to edit an interface skip on to the next record */
-		if(!have_natpfruleint_access($natent['interface'])) 
+		if(!have_natpfruleint_access($natent['interface']))
 			continue;
 	?>
                 <tr valign="top" id="fr<?=$nnats;?>">

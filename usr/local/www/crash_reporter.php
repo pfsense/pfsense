@@ -53,27 +53,16 @@ function upload_crash_report($files) {
 		$post["file{$counter}"] = "@{$file}";
 		$counter++;
 	}
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_VERBOSE, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
-    $response = curl_exec($ch);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
+	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+	$response = curl_exec($ch);
 	return $response;
-}
-
-function output_crash_reporter_html($crash_reports) {
-	echo "<p><strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
-	echo "<p>" . gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
-	echo "<p><i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i></p>";
-	echo "<p>" . gettext("Contents of crash reports") . ":<br />";
-	echo "<textarea readonly=\"readonly\" rows=\"40\" cols=\"65\" name=\"crashreports\">{$crash_reports}</textarea></p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
-	echo "</form>";
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
@@ -86,15 +75,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
-
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-
-	<form action="crash_reporter.php" method="post">
-
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
@@ -140,14 +121,29 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 					$crash_reports .= file_get_contents($cf);
 				}
 			}
-		} else { 
+		} else {
 			echo "Could not locate any crash data.";
 		}
-		output_crash_reporter_html($crash_reports);
+?>
+	<div class="jumbotron">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3><?=gettext("Unfortunately we have detected a programming bug.")?></h3></div>
+		<div class="panel-body">
+		<p>
+			<?=gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?")?>
+			<i><?=gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.")?></i>
+		</p>
+		<textarea readonly="readonly" style="width: 100%; height: 350px;">
+			<?=$crash_reports?>
+		</textarea>
+		<form action="crash_reporter.php" method="post">
+			<button class="btn btn-primary" name="Submit" type="submit" value="Yes"><?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?></button>
+			<button class="btn btn-default" name="Submit" type="submit" value="No"><?=gettext("No")?> - <?=gettext("Just delete the crash report and take me back to the Dashboard")?></button>
+		</form>
+	</div>
+	</div>
+<?php
 	}
 ?>
 
-<?php include("fend.inc"); ?>
-
-</body>
-</html>
+<?php include("foot.inc")?>

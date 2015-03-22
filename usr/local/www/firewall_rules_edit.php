@@ -57,16 +57,16 @@ function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
-	    (isset($rule_config['disablereplyto'])) ||
-	    ($rule_config['tag'] != "") ||
-	    ($rule_config['tagged'] != "") ||
-	    ($rule_config['max'] != "") ||
-	    ($rule_config['max-src-nodes'] != "") ||
-	    ($rule_config['max-src-conn'] != "") ||
-	    ($rule_config['max-src-states'] != "") ||
-	    ($rule_config['max-src-conn-rate'] != "") ||
-	    ($rule_config['max-src-conn-rates'] != "") ||
-	    ($rule_config['statetimeout'] != ""))
+		(isset($rule_config['disablereplyto'])) ||
+		($rule_config['tag'] != "") ||
+		($rule_config['tagged'] != "") ||
+		($rule_config['max'] != "") ||
+		($rule_config['max-src-nodes'] != "") ||
+		($rule_config['max-src-conn'] != "") ||
+		($rule_config['max-src-states'] != "") ||
+		($rule_config['max-src-conn-rate'] != "") ||
+		($rule_config['max-src-conn-rates'] != "") ||
+		($rule_config['statetimeout'] != ""))
 		return true;
 	return false;
 }
@@ -118,8 +118,8 @@ if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after']
 	$after = $_POST['after'];
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-        $id = $_GET['dup'];
-        $after = $_GET['dup'];
+		$id = $_GET['dup'];
+		$after = $_GET['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -141,7 +141,7 @@ if (isset($id) && $a_filter[$id]) {
 
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
 		$pconfig['floating'] = $a_filter[$id]['floating'];
-		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "")
+		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] != "")
 			$pconfig['interface'] = $a_filter[$id]['interface'];
 	}
 
@@ -166,14 +166,14 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
 
-	if($a_filter[$id]['os'] <> "")
+	if($a_filter[$id]['os'] != "")
 		$pconfig['os'] = $a_filter[$id]['os'];
 
 	address_to_pconfig($a_filter[$id]['destination'], $pconfig['dst'],
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
-	if ($a_filter[$id]['dscp'] <> "")
+	if ($a_filter[$id]['dscp'] != "")
 		$pconfig['dscp'] = $a_filter[$id]['dscp'];
 
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
@@ -183,15 +183,15 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['tcpflags_any']))
 		$pconfig['tcpflags_any'] = true;
 	else {
-		if (isset($a_filter[$id]['tcpflags1']) && $a_filter[$id]['tcpflags1'] <> "")
+		if (isset($a_filter[$id]['tcpflags1']) && $a_filter[$id]['tcpflags1'] != "")
 			$pconfig['tcpflags1'] = $a_filter[$id]['tcpflags1'];
-		if (isset($a_filter[$id]['tcpflags2']) && $a_filter[$id]['tcpflags2'] <> "")
+		if (isset($a_filter[$id]['tcpflags2']) && $a_filter[$id]['tcpflags2'] != "")
 			$pconfig['tcpflags2'] = $a_filter[$id]['tcpflags2'];
 	}
 
-	if (isset($a_filter[$id]['tag']) && $a_filter[$id]['tag'] <> "")
+	if (isset($a_filter[$id]['tag']) && $a_filter[$id]['tag'] != "")
 		$pconfig['tag'] = $a_filter[$id]['tag'];
-	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tagged'] <> "")
+	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tagged'] != "")
 		$pconfig['tagged'] = $a_filter[$id]['tagged'];
 	if (isset($a_filter[$id]['quick']) && $a_filter[$id]['quick'])
 		$pconfig['quick'] = $a_filter[$id]['quick'];
@@ -266,7 +266,7 @@ if ($_POST) {
 			$_POST['icmptype'] = $pconfig['icmptype'];
 	}
 
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+	if (($_POST['ipprotocol'] != "") && ($_POST['gateway'] != "")) {
 		if(is_array($config['gateways']['gateway_group'])) {
 			foreach($config['gateways']['gateway_group'] as $gw_group) {
 				if($gw_group['name'] == $_POST['gateway']) {
@@ -287,8 +287,8 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-		if(($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
+	if (($_POST['ipprotocol'] != "") && ($_POST['gateway'] != "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+		if(($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] != "")) {
 			$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
 		}
 		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
@@ -303,7 +303,7 @@ if ($_POST) {
 		if($_POST['ipprotocol'] == "inet46")
 			$input_errors[] =  gettext("You can not assign a protocol other than ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
 	}
-	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")){
+	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] != "")){
 		if($_POST['ipprotocol'] == "inet46")
 			$input_errors[] =  gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
 	}
@@ -421,7 +421,7 @@ if ($_POST) {
 		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust'])
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust']!='')) ||
-		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust'])))
+			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust'])))
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 	}
 	if ( !$_POST['dstbeginport_cust'] && $_POST['dstendport_cust'])
@@ -431,7 +431,7 @@ if ($_POST) {
 		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust'])
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust']!='')) ||
-		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust'])))
+			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust'])))
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 	}
 
@@ -512,9 +512,9 @@ if ($_POST) {
 			$input_errors[] = gettext("You must select a queue for the In direction before selecting one for Out too.");
 		else if ($_POST['pdnpipe'] == $_POST['dnpipe'])
 			$input_errors[] = gettext("In and Out Queue cannot be the same.");
-		else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] <> "?")
+		else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] != "?")
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
-		else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?")
+		else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] != "?")
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
 		if ($_POST['direction'] == "out" && empty($_POST['gateway']))
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
@@ -524,7 +524,7 @@ if ($_POST) {
 	if($_POST['l7container'] && $_POST['l7container'] != "") {
 		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
 			$input_errors[] = gettext("You can only select a layer7 container for TCP and/or UDP protocols");
-		if ($_POST['type'] <> "pass")
+		if ($_POST['type'] != "pass")
 			$input_errors[] = gettext("You can only select a layer7 container for Pass type rules.");
 	}
 
@@ -537,7 +537,7 @@ if ($_POST) {
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
 	}
 
-	if ($_POST['type'] <> "pass") {
+	if ($_POST['type'] != "pass") {
 		if (!empty($_POST['max']))
 			$input_errors[] = gettext("You can only specify the maximum state entries (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-nodes']))
@@ -585,8 +585,8 @@ if ($_POST) {
 	if (($_POST['statetimeout'] != "") && !is_posnumericint($_POST['statetimeout']))
 		$input_errors[] = gettext("State timeout (advanced option) must be a positive integer");
 
-	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) || 
-	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> "")))
+	if ((($_POST['max-src-conn-rate'] != "" and $_POST['max-src-conn-rates'] == "")) ||
+		(($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] != "")))
 		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 
 	if (!$_POST['tcpflags_any']) {
@@ -642,7 +642,7 @@ if ($_POST) {
 			$filterent['tagged'] = $_POST['tagged'];
 		if ($if == "FloatingRules" || isset($_POST['floating'])) {
 			$filterent['direction'] = $_POST['direction'];
-			if (isset($_POST['quick']) && $_POST['quick'] <> "")
+			if (isset($_POST['quick']) && $_POST['quick'] != "")
 				$filterent['quick'] = $_POST['quick'];
 			$filterent['floating'] = "yes";
 			if (isset($_POST['interface']) && count($_POST['interface']) > 0)  {
@@ -666,19 +666,19 @@ if ($_POST) {
 		$filterent['statetimeout'] = $_POST['statetimeout'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
-		if($_POST['nopfsync'] <> "")
+		if($_POST['nopfsync'] != "")
 			$filterent['nopfsync'] = true;
 		else
 			unset($filterent['nopfsync']);
 
 		/* Nosync directive - do not xmlrpc sync this item */
-		if($_POST['nosync'] <> "")
+		if($_POST['nosync'] != "")
 			$filterent['nosync'] = true;
 		else
 			unset($filterent['nosync']);
 
 		/* unless both values are provided, unset the values - ticket #650 */
-		if($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] <> "") {
+		if($_POST['max-src-conn-rate'] != "" and $_POST['max-src-conn-rates'] != "") {
 			$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
 			$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
 		} else {
@@ -810,966 +810,676 @@ $closehead = false;
 $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
-?>
-<link rel="stylesheet" href="/javascript/chosen/chosen.css" />
-</head>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
-<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_input_errors"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+require('classes/Form.class.php');
+$form = new Form;
+$section = new Form_Section('Edit Firewall rule');
 
-<form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
-<input type='hidden' name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?htmlspecialchars($pconfig['ruleid']):''?>" />
+if (isset($id))
+{
+	$form->addGlobal(new Form_Input(
+		'id',
+		'ID',
+		'hidden',
+		$id
+	));
+}
 
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall rules edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Firewall rule");?></td>
-		</tr>
-<?php
-		// Allow extending of the firewall edit page and include custom input validation
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
-?>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
-			<td width="78%" class="vtable">
-				<select name="type" class="formselect">
-					<?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
-					<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected=\"selected\""; ?>>
-					<?=htmlspecialchars($type);?>
-					</option>
-					<?php endforeach; ?>
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected=\"selected\""; ?>>Match</option>
-<?php endif; ?>
-				</select>
-				<br />
-				<span class="vexpl">
-					<?=gettext("Choose what to do with packets that match the criteria specified below.");?> <br />
-					<?=gettext("Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded.");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
-			<td width="78%" class="vtable">
-				<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Disable this rule");?></strong><br />
-				<span class="vexpl"><?=gettext("Set this option to disable this rule without removing it from the list.");?></span>
-			</td>
-		</tr>
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq">
-				<?=gettext("Quick");?>
-			</td>
-			<td width="78%" class="vtable">
-				<input name="quick" type="checkbox" id="quick" value="yes" <?php if ($pconfig['quick']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Apply the action immediately on match.");?></strong><br />
-				<span class="vexpl"><?=gettext("Set this option if you need to apply this action to traffic that matches this rule immediately.");?></span>
-			</td>
-		</tr>
-<?php endif; ?>
-<?php $edit_disabled = ""; ?>
-<?php if( isset($pconfig['associated-rule-id']) ): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Associated filter rule");?></td>
-			<td width="78%" class="vtable">
-				<span class="red"><strong><?=gettext("Note: ");?></strong></span><?=gettext("This is associated to a NAT rule.");?><br />
-				<?=gettext("You cannot edit the interface, protocol, source, or destination of associated filter rules.");?><br />
-				<br />
-				<?php
-					$edit_disabled = "disabled";
-					if (is_array($config['nat']['rule'])) {
-						foreach( $config['nat']['rule'] as $index => $nat_rule ) {
-							if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
-								echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br />";
-								break;
-							}
-						}
-					}
-					echo "<input name='associated-rule-id' id='associated-rule-id' type='hidden' value='{$pconfig['associated-rule-id']}' />";
-					if (!empty($pconfig['interface']))
-						echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' />";
-				?>
-				<script type="text/javascript">
-				//<![CDATA[
-				editenabled = 0;
-				//]]>
-				</script>
-			</td>
-		</tr>
-<?php endif; ?>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
-			<td width="78%" class="vtable">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-				<select name="interface[]" title="Select interfaces..." multiple="multiple" style="width:350px;" class="chzn-select" tabindex="2" <?=$edit_disabled;?>>
-<?php else: ?>
-				<select name="interface" class="formselect" <?=$edit_disabled;?>>
-<?php endif;
-				/* add group interfaces */
-				if (is_array($config['ifgroups']['ifgroupentry']))
-					foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
-						if (have_ruleint_access($ifgen['ifname']))
-							$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
-				$ifdescs = get_configured_interface_with_descr();
-				// Allow extending of the firewall edit page and include custom input validation
-				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_interfaces_edit");
-				foreach ($ifdescs as $ifent => $ifdesc)
-					if(have_ruleint_access($ifent))
-							$interfaces[$ifent] = $ifdesc;
-					if ($config['l2tp']['mode'] == "server")
-						if(have_ruleint_access("l2tp"))
-							$interfaces['l2tp'] = "L2TP VPN";
-					if ($config['pptpd']['mode'] == "server")
-						if(have_ruleint_access("pptp"))
-							$interfaces['pptp'] = "PPTP VPN";
+if (isset($a_filter[$id]))
+{
+	$form->addGlobal(new Form_Input(
+		'tracker',
+		'Tracker',
+		'hidden',
+		$pconfig['tracker']
+	));
+}
 
-					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-						$interfaces['pppoe'] = "PPPoE Server";
-					/* add ipsec interfaces */
-					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-						if(have_ruleint_access("enc0"))
-							$interfaces["enc0"] = "IPsec";
-					/* add openvpn/tun interfaces */
-					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-						$interfaces["openvpn"] = "OpenVPN";
-					if (is_array($pconfig['interface']))
-						$pconfig['interface'] = implode(",", $pconfig['interface']);
-					$selected_interfaces = explode(",", $pconfig['interface']);
-					foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && ( strcasecmp($pconfig['interface'], $iface) == 0 || in_array($iface, $selected_interfaces) )) echo "selected=\"selected\""; ?>><?=$ifacename?></option>
-<?php 				endforeach; ?>
-				</select>
-				<br />
-				<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-					<span class="vexpl"><?=gettext("Choose the interface(s) for this rule.");?></span>
-				<?php else: ?>
-					<span class="vexpl"><?=gettext("Choose which interface packets must be sourced on to match this rule.");?></span>
-				<?php endif; ?>
-			</td>
-		</tr>
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq">
-				<?=gettext("Direction");?>
-			</td>
-			<td width="78%" class="vtable">
-				<select name="direction" class="formselect">
-					<?php      $directions = array('any','in','out');
-				foreach ($directions as $direction): ?>
-				<option value="<?=$direction;?>"
-					<?php if ($direction == $pconfig['direction']): ?>
-						selected="selected"
-					<?php endif; ?>
-					><?=$direction;?></option>
-				<?php endforeach; ?>
-				</select>
-				<input type="hidden" id="floating" name="floating" value="floating" />
-			</td>
-		<tr>
-<?php endif; ?>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
-			<td width="78%" class="vtable">
-				<select name="ipprotocol" class="formselect" onchange="proto_change()">
-					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6', 'inet46' => 'IPv4+IPv6' );
-				foreach ($ipproto as $proto => $name): ?>
-				<option value="<?=$proto;?>"
-					<?php if ($proto == $pconfig['ipprotocol']): ?>
-						selected="selected"
-					<?php endif; ?>
-					><?=$name;?></option>
-				<?php endforeach; ?>
-				</select>
-				<strong><?=gettext("Select the Internet Protocol version this rule applies to");?></strong><br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
-			<td width="78%" class="vtable">
-				<select <?=$edit_disabled;?> name="proto" class="formselect" onchange="proto_change()">
-<?php
-				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF any carp pfsync");
-				foreach ($protocols as $proto): ?>
-					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
-<?php 			endforeach; ?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Choose which IP protocol this rule should match.");?> <br /> <?=gettext("Hint: in most cases, you should specify ");?><em>TCP</em> &nbsp;<?=gettext("here.");?></span>
-			</td>
-		</tr>
-		<tr id="icmpbox">
-			<td valign="top" class="vncell"><?=gettext("ICMP type");?></td>
-			<td class="vtable">
-				<select <?=$edit_disabled;?> name="icmptype" class="formselect">
-<?php
-				foreach ($icmptypes as $icmptype => $descr):
-?>
-					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
-<?php
-				endforeach;
-?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
-			</td>
-		</tr>
-		<tr id="icmp6box">
-			<td valign="top" class="vncell"><?=gettext("ICMPv6 type");?></td>
-			<td class="vtable">
-				<select <?=$edit_disabled;?> name="icmp6type" class="formselect">
-<?php
-				foreach ($icmp6types as $icmptype => $descr):
-?>
-					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
-<?php
-				endforeach;
-?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source");?></td>
-			<td width="78%" class="vtable">
-				<input <?=$edit_disabled;?> name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("not");?></strong>
-				<br />
-				<?=gettext("Use this option to invert the sense of the match.");?>
-				<br />
-				<br />
-				<table border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
-						<td>
-							<select <?=$edit_disabled;?> name="srctype" class="formselect" onchange="typesel_change()">
-<?php
-								$sel = is_specialnet($pconfig['src']); ?>
-								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any");?></option>
-								<option value="single"
-						<?php  if (!$sel &&
-							    ((is_ipaddrv6($pconfig['src']) && $pconfig['srcmask'] == 128) ||
-							    (is_ipaddrv4($pconfig['src']) && $pconfig['srcmask'] == 32) || is_alias($pconfig['src'])))
-								{ echo "selected=\"selected\""; $sel = 1; }
-						?>
-								> <?=gettext("Single host or alias");?></option>
-								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
-								<?PHP	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules"): ?>
-								<option value="(self)" <?PHP if ($pconfig['src'] == "(self)") echo "selected=\"selected\""; ?>><?=gettext("This Firewall (self)");?></option>
-								<?PHP endif;?>
-								<?php if(have_ruleint_access("pptp")): ?>
-								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients");?></option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("pppoe")): ?>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients");?></option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("l2tp")): ?>
-								<option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients");?></option>
-								<?php endif; ?>
-<?php
-								foreach ($ifdisp as $ifent => $ifdesc): ?>
-								<?php if(have_ruleint_access($ifent)): ?>
-									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
-									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
-										<?=$ifdesc?> <?=gettext("address");?>
-									</option>
-								<?php endif; ?>
-<?php 							endforeach; ?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
-							<select <?=$edit_disabled;?> name="srcmask" class="formselect ipv4v6" id="srcmask">
-<?php						for ($i = 127; $i > 0; $i--): ?>
-								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
-<?php 						endfor; ?>
-							</select>
-						</td>
-					</tr>
-				</table>
-				<div id="showadvancedboxspr">
-					<p>
-					<input <?=$edit_disabled;?> type="button" onclick="show_source_port_range()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show source port range");?>
-					</p>
-				</div>
-			</td>
-		</tr>
-		<tr style="display:none" id="sprtable">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source port range");?></td>
-			<td width="78%" class="vtable">
-				<table border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
-						<td>
-							<select <?=$edit_disabled;?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
-								<option value="">(<?=gettext("other"); ?>)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
-<?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
-<?php 							endforeach; ?>
-							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("to:");?></td>
-						<td>
-							<select <?=$edit_disabled;?> name="srcendport" class="formselect" onchange="ext_change()">
-								<option value="">(<?=gettext("other"); ?>)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
-<?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
-<?php							endforeach; ?>
-							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
-						</td>
-					</tr>
-				</table>
-				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b><br /><?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination");?></td>
-			<td width="78%" class="vtable">
-				<input <?=$edit_disabled;?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("not");?></strong>
-					<br />
-				<?=gettext("Use this option to invert the sense of the match.");?>
-					<br />
-					<br />
-				<table border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
-						<td>
-							<select <?=$edit_disabled;?> name="dsttype" class="formselect" onchange="typesel_change()">
-<?php
-								$sel = is_specialnet($pconfig['dst']); ?>
-								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any");?></option>
-								<option value="single"
-								<?php  if (!$sel &&
-									    ((is_ipaddrv6($pconfig['dst']) && $pconfig['dstmask'] == 128) ||
-									    (is_ipaddrv4($pconfig['dst']) && $pconfig['dstmask'] == 32) || is_alias($pconfig['dst'])))
-										{ echo "selected=\"selected\""; $sel = 1; }
-								?>
-								><?=gettext("Single host or alias");?></option>
-								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
-								<option value="(self)" <?PHP if ($pconfig['dst'] == "(self)") echo "selected=\"selected\""; ?>><?=gettext("This Firewall (self)");?></option>
-								<?php if(have_ruleint_access("pptp")): ?>
-								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients");?></option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("pppoe")): ?>
-								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients");?></option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("l2tp")): ?>
-								<option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients");?></option>
-								<?php endif; ?>
+$form->addGlobal(new Form_Input(
+	'after',
+	'After',
+	'hidden',
+	$after
+));
 
-<?php 							foreach ($ifdisp as $if => $ifdesc): ?>
-								<?php if(have_ruleint_access($if)): ?>
-									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
-									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
-										<?=$ifdesc;?> <?=gettext("address");?>
-									</option>
-								<?php endif; ?>
-<?php 							endforeach; ?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
-							/
-							<select <?=$edit_disabled;?> name="dstmask" class="formselect ipv4v6" id="dstmask">
-<?php
-							for ($i = 127; $i > 0;
-$i--): ?>
-								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
-<?php						endfor; ?>
-							</select>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr id="dprtr">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination port range ");?></td>
-			<td width="78%" class="vtable">
-				<table border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
-						<td>
-							<select <?=$edit_disabled;?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
-								<option value="">(<?=gettext("other"); ?>)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
-<?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
-<?php 							endforeach; ?>
-							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("to:");?></td>
-						<td>
-							<select <?=$edit_disabled;?> name="dstendport" class="formselect" onchange="ext_change()">
-								<option value="">(<?=gettext("other"); ?>)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
-<?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
-<?php 							endforeach; ?>
-							</select>
-								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />
-						</td>
-					</tr>
-				</table>
-				<br />
-				<span class="vexpl">
-					<?=gettext("Specify the port or port range for the destination of the packet for this rule.");?>
-					<br />
-					<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Log");?></td>
-			<td width="78%" class="vtable">
-				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets that are handled by this rule");?></strong>
-				<br />
-				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server"); ?> (<?=gettext("see the"); ?> <a href="diag_logs_settings.php"><?=gettext("Diagnostics: System logs: Settings"); ?></a> <?=gettext("page"); ?>).</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference.");?></span>
-			</td>
-		</tr>
-<?php		if (!isset($id) || !($a_filter[$id] && firewall_check_for_advanced_options($a_filter[$id]) <> "")): ?>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				&nbsp;<br />&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-<?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-<?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
-			</td>
-		</tr>
-<?php		endif; ?>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced features");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Source OS");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvsourceosbox" <?php if ($pconfig['os']) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_sourceos()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showsourceosadv" <?php if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
-					<?=gettext("OS Type:");?>&nbsp;
-					<select name="os" id="os" class="formselect">
-						<option value="" <?php if (empty($pconfig['os'])) echo "selected=\"selected\""; ?>>Any</option>
-<?php
-						foreach ($ostypes as $ostype): ?>
-							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($ostype);?></option>
-<?php
-					endforeach;
-?>
-					</select>
-					<br />
-					<?=gettext("Note: this only works for TCP rules. General OS choice matches all subtypes.");?>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Diffserv Code Point");?></td>
-			<td width="78%" class="vtable">
-				<div id="dsadv" <?php if ($pconfig['dscp']) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_dsdiv();" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="dsdivmain" <?php if (empty($pconfig['dscp'])) echo "style='display:none'"; ?>>
-					<select name="dscp" id="dscp">
-						<option value=""></option>
-						<?php foreach($firewall_rules_dscp_types as $frdt): ?>
-							<option value="<?=$frdt?>"<?php if($pconfig['dscp'] == $frdt) echo " selected=\"selected\""; ?>><?=$frdt?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Advanced Options");?></td>
-			<td width="78%" class="vtable">
-			<div id="aoadv" <?php if (is_aoadv_used($pconfig)) echo "style='display:none'"; ?>>
-				<input type="button" onclick="show_aodiv();" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-			</div>
-			<div id="aodivmain" <?php if (!is_aoadv_used($pconfig)) echo "style='display:none'"; ?>>
-				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked=\"checked\""; ?> />
-				<br /><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
-				</span><p>
-				<input type="checkbox" id="disablereplyto" value="yes" name="disablereplyto"<?php if($pconfig['disablereplyto'] == true) echo " checked=\"checked\""; ?> />
-				<br /><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
-				</span></p><p>
-				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>" />
-				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called"); ?> <b><?=gettext("Policy filtering"); ?></b>
-				</span></p><p>
-				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>" />
-				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
-				</span></p><p>
-				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br /><?=gettext(" Maximum state entries this rule can create");?></p><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br /><?=gettext(" Maximum number of unique source hosts");?></p><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br /><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
-				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br /><?=gettext(" Maximum state entries per host");?></p><p>
-				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo htmlspecialchars($pconfig['max-src-conn-rate']) ?>" /> /
-				<select name="max-src-conn-rates" id="max-src-conn-rates">
-					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected=\"selected\""; ?>></option>
-<?php				for($x=1; $x<255; $x++) {
-						if($x == $pconfig['max-src-conn-rates']) $selected = " selected=\"selected\""; else $selected = "";
-						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
-					} ?>
-				</select><br />
-				<?=gettext("Maximum new connections per host / per second(s) (TCP only)");?>
-				</p><p>
-				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br />
-				<?=gettext("State Timeout in seconds (TCP only)");?>
-				</p>
-				<p><strong><?=gettext("Note: Leave fields blank to disable that feature.");?></strong></p>
-			</div>
-			</td>
-		</tr>
-		<tr id="tcpflags">
-			<td width="22%" valign="top" class="vncell"><?=gettext("TCP flags");?></td>
-			<td width="78%" class="vtable">
-			<div id="showtcpflagsbox" <?php if ($pconfig['tcpflags_any'] || $pconfig['tcpflags1'] || $pconfig['tcpflags2']) echo "style='display:none'"; ?>>
-				<input type="button" onclick="show_advanced_tcpflags()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-			</div>
-			<div id="showtcpflagsadv" <?php if (empty($pconfig['tcpflags_any']) && empty($pconfig['tcpflags1']) && empty($pconfig['tcpflags2'])) echo "style='display:none'"; ?>>
-			<div id="tcpheader" align="center">
-			<table border="0" cellspacing="0" cellpadding="0">
-			<?php
-				$setflags = explode(",", $pconfig['tcpflags1']);
-				$outofflags = explode(",", $pconfig['tcpflags2']);
-				$header = "<td width='40' class='nowrap'></td>";
-				$tcpflags1 = "<td width='40' class='nowrap'>set</td>";
-				$tcpflags2 = "<td width='40' class='nowrap'>out of</td>";
-				foreach ($tcpflags as $tcpflag) {
-					$header .= "<td  width='40' class='nowrap'><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
-					$tcpflags1 .= "<td  width='40' class='nowrap'> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
-					if (array_search($tcpflag, $setflags) !== false)
-						$tcpflags1 .= "checked=\"checked\"";
-					$tcpflags1 .= " /></td>\n";
-					$tcpflags2 .= "<td  width='40' class='nowrap'> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
-					if (array_search($tcpflag, $outofflags) !== false)
-						$tcpflags2 .= "checked=\"checked\"";
-					$tcpflags2 .= " /></td>\n";
-				}
-				echo "<tr id='tcpheader'>{$header}</tr>\n";
-				echo "<tr id='tcpflags1'>{$tcpflags1}</tr>\n";
-				echo "<tr id='tcpflags2'>{$tcpflags2}</tr>\n";
-			?>
-			</table>
-			</div>
-			<br /><center>
-			<input onclick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked=\"checked\""; ?> /><strong><?=gettext("Any flags.");?></strong><br /></center>
-			<br />
-			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must ".
-			"be set or cleared for this rule to match.");?></span>
-			</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("State Type");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvstatebox" <?php if (!empty($pconfig['nopfsync']) || (!empty($pconfig['statetype']) && $pconfig['statetype'] != "keep state")) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_state()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showstateadv" <?php if (empty($pconfig['nopfsync']) && (empty($pconfig['statetype']) || $pconfig['statetype'] == "keep state")) echo "style='display:none'"; ?>>
-					<input name="nopfsync" type="checkbox" id="nopfsync" value="yes" <?php if ($pconfig['nopfsync']) echo "checked=\"checked\""; ?> />
-					<span class="vexpl">
-						NO pfsync<br />
-						<?=gettext("Hint: This prevents states created by this rule to be sync'ed over pfsync.");?><br />
-					</span><br />
-					<select name="statetype">
-						<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected=\"selected\""; ?>><?=gettext("keep state");?></option>
-						<option value="sloppy state" <?php if($pconfig['statetype'] == "sloppy state") echo "selected=\"selected\""; ?>><?=gettext("sloppy state");?></option>
-						<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected=\"selected\""; ?>><?=gettext("synproxy state");?></option>
-						<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected=\"selected\""; ?>><?=gettext("none");?></option>
-					</select><br />
-					<span class="vexpl">
-						<?=gettext("Hint: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
-					</span>
-					<table width="90%">
-						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("sloppy state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("synproxy state");?></li></ul></td><td><?=gettext("Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.");?></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("none");?></li></ul></td><td><?=gettext("Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.");?></td></tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvnoxmlrpcsyncbox" <?php if ($pconfig['nosync']) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_noxmlrpc()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
-					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
-					<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("802.1p");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvvlanpriobox" <?php if (!empty($pconfig['vlanprio'])) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_vlanprio()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showvlanprioadv" <?php if (empty($pconfig['vlanprio'])) echo "style='display:none'"; ?>>
-					<?php $vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc"); ?>
-<?php
-					$opts = "";
-					foreach($vlanprio as $vprio) {
-						if ($vprio == $pconfig['vlanprio'])
-							$selected = " selected=\"selected\"";
-						else
-							$selected = "";
-						if ($vprio == "none")
-							$opts .= "<option value=\"\">{$vprio}</option>\n";
-						else
-							$opts .= "<option value=\"{$vprio}\" {$selected}>" . strtoupper($vprio) . "</option>\n";
-					}
+$form->addGlobal(new Form_Input(
+	'ruleid',
+	'Ruleid',
+	'hidden',
+	$pconfig['ruleid']
+));
 
-					$optsset = "";
-					foreach($vlanprio as $vprioset) {
-						if ($vprioset == $pconfig['vlanprioset'])
-							$selected = " selected=\"selected\"";
-						else
-							$selected = "";
-						if ($vprioset == "none")
-							$optsset .= "<option value=\"\">{$vprioset}</option>\n";
-						else
-							$optsset .= "<option value=\"{$vprioset}\" {$selected}>" . strtoupper($vprioset) . "</option>\n";
-					}
-?>
-					<select name='vlanprio'>
-					<?php echo $opts; ?>
-					</select>
-					<p><?=gettext("Choose 802.1p priority to match on");?></p>
-					<select name='vlanprioset'>
-					<?php echo $optsset; ?>
-					</select>
-					<p><?=gettext("Choose 802.1p priority to apply");?></p>
-				</div>
-			</td>
-		</tr>
-		<?php
-			//build list of schedules
-			$schedules = array();
-			$schedules[] = "none";//leave none to leave rule enabled all the time
-			if(is_array($config['schedules']['schedule'])) {
-				foreach ($config['schedules']['schedule'] as $schedule) {
-					if ($schedule['name'] <> "")
-						$schedules[] = $schedule['name'];
-				}
-			}
-		?>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Schedule");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvschedulebox" <?php if (!empty($pconfig['sched'])) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_schedule()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showscheduleadv" <?php if (empty($pconfig['sched'])) echo "style='display:none'"; ?>>
-					<select name='sched'>
-<?php
-					foreach($schedules as $schedule) {
-						if($schedule == $pconfig['sched']) {
-							$selected = " selected=\"selected\"";
-						} else {
-							$selected = "";
-						}
-						if ($schedule == "none") {
-							echo "<option value=\"\" {$selected}>{$schedule}</option>\n";
-						} else {
-							echo "<option value=\"{$schedule}\" {$selected}>{$schedule}</option>\n";
-						}
-					}
-?>
-					</select>
-					<p><?=gettext("Leave as 'none' to leave the rule enabled all the time.");?></p>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvgatewaybox" <?php if (!empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_gateway()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showgatewayadv" <?php if (empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
-					<select name='gateway'>
-					<option value="" ><?=gettext("default");?></option>
-<?php
-					/* build a list of gateways */
-					$gateways = return_gateways_array();
-					// add statically configured gateways to list
-					foreach($gateways as $gwname => $gw) {
-						if(($pconfig['ipprotocol'] == "inet46"))
-							continue;
-						if(($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway']))))
-							continue;
-						if(($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway']))))
-							continue;
-						if($gw == "")
-							continue;
-						if($gwname == $pconfig['gateway']) {
-							$selected = " selected=\"selected\"";
-						} else {
-							$selected = "";
-						}
-						$gateway_addr_str = empty($gw['gateway']) ? "" : " - " . $gw[gateway];
-						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']}{$gateway_addr_str}</option>\n";
-					}
-					/* add gateway groups to the list */
-					if (is_array($a_gatewaygroups)) {
-						foreach($a_gatewaygroups as $gwg_name => $gwg_data) {
-							if((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
-								if($pconfig['gateway'] == $gwg_name) {
-									$selected = " selected=\"selected\"";
-								} else {
-									$selected = "";
-								}
-								echo "<option value=\"{$gwg_name}\" $selected>{$gwg_name}</option>\n";
-							}
-						}
-					}
-?>
-					</select>
-					<p><?=gettext("Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.");?></p>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("In/Out");?></td>
-			<td width="78%" class="vtable">
-				<div id="showadvinoutbox" <?php if (!empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
-					<input type="button" onclick="show_advanced_inout()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-				</div>
-				<div id="showinoutadv" <?php if (empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
-					<select name="dnpipe">
-<?php
-		if (!is_array($dnqlist))
-			$dnqlist = array();
-		echo "<option value=\"\"";
-		if (!$dnqselected) echo " selected=\"selected\"";
-		echo " >none</option>";
-		foreach ($dnqlist as $dnq => $dnqkey) {
-			if($dnq == "")
-				continue;
-			echo "<option value=\"$dnq\"";
-			if ($dnq == $pconfig['dnpipe']) {
-				$dnqselected = 1;
-				echo " selected=\"selected\"";
-			}
-			echo ">{$dnq}</option>";
-		}
-?>
-			</select> /
-			<select name="pdnpipe">
-<?php
-		$dnqselected = 0;
-		echo "<option value=\"\"";
-		if (!$dnqselected) echo " selected=\"selected\"";
-		echo " >none</option>";
-		foreach ($dnqlist as $dnq => $dnqkey) {
-			if($dnq == "")
-				continue;
-			echo "<option value=\"$dnq\"";
-			if ($dnq == $pconfig['pdnpipe']) {
-				$dnqselected = 1;
-				echo " selected=\"selected\"";
-			}
-			echo ">{$dnq}</option>";
-		}
-?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have also selected In.")."<br />".gettext("The Out selection is applied to traffic leaving the interface where the rule is created, In is applied to traffic coming into the chosen interface.")."<br />".gettext("If you are creating a floating rule, if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing.");?></span>
-				</div>
-			</td>
-		</tr>
+// Allow extending of the firewall edit page and include custom input validation
+pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
 
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Ackqueue/Queue");?></td>
-			<td width="78%" class="vtable">
-			<div id="showadvackqueuebox" <?php if (!empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
-				<input type="button" onclick="show_advanced_ackqueue()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-			</div>
-			<div id="showackqueueadv" <?php if (empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
-				<select name="ackqueue">
-<?php
-			if (!is_array($qlist))
-				$qlist = array();
-			echo "<option value=\"\"";
-			if (!$qselected) echo " selected=\"selected\"";
-			echo " >none</option>";
-			foreach ($qlist as $q => $qkey) {
-				if($q == "")
-					continue;
-				echo "<option value=\"$q\"";
-				if ($q == $pconfig['ackqueue']) {
-					$qselected = 1;
-					echo " selected=\"selected\"";
-				}
-				if (isset($ifdisp[$q]))
-					echo ">{$ifdisp[$q]}</option>";
-				else
-					echo ">{$q}</option>";
-			}
-?>
-				</select> /
-				<select name="defaultqueue">
-<?php
-			$qselected = 0;
-			echo "<option value=\"\"";
-			if (!$qselected) echo " selected=\"selected\"";
-			echo " >none</option>";
-			foreach ($qlist as $q => $qkey) {
-				if($q == "")
-					continue;
-				echo "<option value=\"$q\"";
-				if ($q == $pconfig['defaultqueue']) {
-					$qselected = 1;
-					echo " selected=\"selected\"";
-				}
-				if (isset($ifdisp[$q]))
-					echo ">{$ifdisp[$q]}</option>";
-				else
-					echo ">{$q}</option>";
-			}
-?>
-				</select>
-					<br />
-					<span class="vexpl"><?=gettext("Choose the Acknowledge Queue only if you have selected Queue.");?></span>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Layer7");?></td>
-				<td width="78%" class="vtable">
-					<div id="showadvlayer7box" <?php if (!empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
-						<input type="button" onclick="show_advanced_layer7()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
-					</div>
-					<div id="showlayer7adv" <?php if (empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
-						<select name="l7container">
-<?php
-						if (!is_array($l7clist))
-							$l7clist = array();
-						echo "<option value=\"\"";
-						echo " >none</option>";
-						foreach ($l7clist as $l7ckey) {
-							echo "<option value=\"{$l7ckey}\"";
-							if ($l7ckey == $pconfig['l7container']) {
-								echo " selected=\"selected\"";
-							}
-							echo ">{$l7ckey}</option>";
-						}
-?>
-						</select>
-						<br />
-						<span class="vexpl">
-							<?=gettext("Choose a Layer7 container to apply application protocol inspection rules. " .
-							"These are valid for TCP and UDP protocols only.");?>
-						</span>
-					</div>
-				</td>
-			</tr>
-<?php
-		// Allow extending of the firewall edit page and include custom input validation
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphplate");
-?>
-<?php
+$values = array(
+	'pass' => 'Pass',
+	'block' => 'Block',
+	'reject' => 'Reject',
+);
+
+if ($if == "FloatingRules" || isset($pconfig['floating']))
+	$values['match'] = 'Match';
+
+$section->addInput(new Form_Select(
+	'type',
+	'Action',
+	$pconfig['type'],
+	$values
+))->setHelp('Choose what to do with packets that match the criteria specified '.
+	'below.<br/>Hint: the difference between block and reject is that with '.
+	'reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned '.
+	'to the sender, whereas with block the packet is dropped silently. In '.
+	'either case, the original packet is discarded.');
+
+$section->addInput(new Form_Checkbox(
+	'disabled',
+	'Disabled',
+	'Disable this rule',
+	$pconfig['disabled']
+))->setHelp('Set this option to disable this rule without removing it from the '.
+	'list.');
+
+if ($if == "FloatingRules" || isset($pconfig['floating']))
+{
+	$section->addInput(new Form_Checkbox(
+		'floating',
+		'Quick',
+		'Apply the action immediately on match.',
+		$pconfig['quick']
+	))->setHelp('Set this option if you need to apply this action to traffic that '.
+		'matches this rule immediately.');
+}
+
+$edit_disabled = isset($pconfig['associated-rule-id']);
+
+if ($edit_disabled)
+{
+	$extra = '';
+	foreach( $config['nat']['rule'] as $index => $nat_rule )
+	{
+		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id'] )
+			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
+	}
+
+	$section->add(new Form_Group(
+		'Associated filter rule'
+	))->setHelp('Note: This is associated to a NAT rule.<br/>You cannot edit '.
+		'the interface, protocol, source, or destination of associated filter '.
+		'rules.'. $extra);
+
+	$section->addGlobal(new Form_Input(
+		'associated-rule-id',
+		'Associated Rule ID',
+		'hidden',
+		$pconfig['associated-rule-id']
+	));
+
+	if (!empty($pconfig['interface']))
+	{
+		$section->addInput(new Form_Input(
+			'interface',
+			'Interface',
+			'hidden',
+			$pconfig['interface']
+		));
+	}
+}
+
+$interfaces = array();
+
+/* add group interfaces */
+if (is_array($config['ifgroups']['ifgroupentry']))
+	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen)
+		if (have_ruleint_access($ifgen['ifname']))
+			$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
+
+foreach (get_configured_interface_with_descr() as $ifent => $ifdesc)
+{
+	if (have_ruleint_access($ifent))
+		$interfaces[$ifent] = $ifdesc;
+}
+
+if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp"))
+	$interfaces['l2tp'] = 'L2TP VPN';
+
+if ($config['pptpd']['mode'] == "server" && have_ruleint_access("pptp"))
+	$interfaces['pptp'] = 'PPTP VPN';
+
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+	$interfaces['pppoe'] = "PPPoE Server";
+
+/* add ipsec interfaces */
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']) && have_ruleint_access("enc0"))
+	$interfaces["enc0"] = "IPsec";
+
+/* add openvpn/tun interfaces */
+if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	$interfaces["openvpn"] = "OpenVPN";
+
+$section->addInput($input = new Form_Select(
+	'interface',
+	'Interface',
+	$pconfig['interface'],
+	$interfaces,
+	($if == "FloatingRules" || isset($pconfig['floating']))
+))->setHelp('Choose on which interface packets must come in to match this '.
+	'rule.');
+
+if ($if == "FloatingRules" || isset($pconfig['floating']))
+	$input->setHelp('Choose the interface(s) for this rule.');
+
+if ($if == "FloatingRules" || isset($pconfig['floating']))
+{
+	$section->addInput(new Form_Select(
+		'direction',
+		'Direction',
+		$pconfig['direction'],
+		array(
+			'any' => 'any',
+			'in' => 'in',
+			'out' => 'out',
+		)
+	));
+
+	$section->addInput(new Form_Input(
+		'floating',
+		'Floating',
+		'hidden',
+		'floating'
+	));
+}
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'TCP/IP Version',
+	$pconfig['ipprotocol'],
+	array(
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+		'inet46' => 'IPv4+IPv6',
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to');
+
+$section->addInput(new Form_Select(
+	'proto',
+	'Protocol',
+	$pconfig['ipprotocol'],
+	array(
+		'tcp' => 'TCP',
+		'udp' => 'UDP',
+		'tcp/udp' => 'TCP/UDP',
+		'icmp' => 'ICMP',
+		'esp' => 'ESP',
+		'ah' => 'AH',
+		'gre' => 'GRE',
+		'ipv6' => 'IPV6',
+		'igmp' => 'IGMP',
+		'pim' => 'PIM',
+		'ospf' => 'OSPF',
+		'any' => 'any',
+		'carp' => 'CARP',
+		'pfsync' => 'PFSYNC',
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to');
+
+$section->addInput(new Form_Select(
+	'icmptype',
+	'ICMP type',
+	$pconfig['icmptype'],
+	$icmptypes
+))->setHelp('If you selected ICMP for the protocol above, you may specify an ICMP type here.');
+
+$section->addInput(new Form_Select(
+	'icmp6type',
+	'ICMPv6 type',
+	$pconfig['icmptype'],
+	$icmp6types
+))->setHelp('If you selected ICMP for the protocol above, you may specify an ICMP type here.');
+
+$form->add($section);
+
+// Source and destination share a lot of logic. Loop over the two
+foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
+{
+	$section = new Form_Section($name .' details');
+
+	$group = new Form_Group($name);
+	$group->add(new Form_Checkbox(
+		$type .'not',
+		$name .' not',
+		'Invert the sense of the match.',
+		$pconfig[$type.'not']
+	));
+
+	$ruleType = $pconfig[$type];
+	if (is_specialnet($pconfig[$type]))
+		$ruleType = 'network';
+	elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
+			(is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
+			(is_alias($pconfig[$type])))
+		$ruleType = 'single';
+
+	$ruleValues = array(
+		'any' => 'any',
+		'single' => 'Single host or alias',
+		'network' => 'Network',
+	);
+	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules")
+		$ruleValues['(self)'] = 'This Firewall (self)';
+	if (have_ruleint_access("pptp"))
+		$ruleValues['pptp'] = 'PPTP clients';
+	if (have_ruleint_access("pppoe"))
+		$ruleValues['pppoe'] = 'PPoE clients';
+	if (have_ruleint_access("l2tp"))
+		$ruleValues['l2tp'] = 'L2TP clients';
+
+	foreach ($ifdisp as $ifent => $ifdesc)
+	{
+		if (!have_ruleint_access($ifent))
+			continue;
+
+		$ruleValues[$ifent] = $ifdesc.' net';
+		$ruleValues[$ifent.'ip'] = $ifdesc.' address';
+	}
+
+	$group->add(new Form_Select(
+		$type . 'type',
+		$name .' Type',
+		$ruleType,
+		$ruleValues
+	));
+
+	$group->add(new Form_Input(
+		$type,
+		$name .' Address',
+		'text',
+		$pconfig[$type]
+	));
+
+	$group->add(new Form_Input(
+		$type .'mask',
+		$name .' addressmask',
+		'number',
+		$pconfig[$type.'mask'],
+		['min' => 1, 'max' => 127]
+	));
+
+	$section->add($group);
+
+	$portValues = ['any' => 'any'];
+	foreach ($wkports as $port => $portName)
+		$portValues[$port] = $portName.' ('. $port .')';
+
+	$group = new Form_Group($name .' port range');
+	$group->add($input = new Form_Select(
+		$type .'beginport',
+		$name .' port begin',
+		$pconfig[$type .'beginport'],
+		$portValues
+	));
+
+	if ($type == 'src')
+		$input->setHelp('Specify the source port or port range for this rule. This is '.
+			'usually random and almost never equal to the destination port range (and '.
+			'should usually be <b>any</b><br />Hint: you can leave the <i>to</i> field '.
+			'empty if you only want to filter a single port.');
+	else
+		$input->setHelp('Specify the destination port or port range for this rule. <br />'.
+			'Hint: you can leave the <i>to</i> field empty if you only want to filter a '.
+			'single port.');
+
+	$group->add(new Form_Input(
+		$type .'beginport_cust',
+		$name .' port begin custom',
+		'number',
+		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport']),
+		['min' => 1, 'max' => 65535]
+	));
+
+	$group->add(new Form_Select(
+		$type .'endport',
+		$name .' port end',
+		$pconfig[$type .'endport'],
+		$portValues
+	));
+
+	$group->add(new Form_Input(
+		$type .'endport_cust',
+		$name .' port end custom',
+		'number',
+		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport']),
+		['min' => 1, 'max' => 65535]
+	));
+
+	$section->add($group);
+	$form->add($section);
+}
+
+$section = new Form_Section('Extra options');
+$section->addInput(new Form_Checkbox(
+	'log',
+	'Log',
+	'Log packets that are handled by this rule',
+	$pconfig['log']
+))->setHelp('Hint: the firewall has limited local log space. Don"t turn on logging '.
+	'for everything. If you want to do a lot of logging, consider using a remote '.
+	'syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: '.
+	'Settings</a> page).');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference.');
+
+$form->add($section);
+$section = new Form_Section('Advanced options');
+
+$section->addInput(new Form_Select(
+	'os',
+	'Source OS',
+	$pconfig['os'],
+	['' => 'any'] + $ostypes
+))->setHelp('Note: this only works for TCP rules. General OS choice matches all subtypes.');
+
+$section->addInput(new Form_Select(
+	'dscp',
+	'Diffserv Code Point',
+	$pconfig['dscp'],
+	array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
+));
+
+$section->addInput(new Form_Checkbox(
+	'allowopts',
+	'Allow IP options',
+	'Allow packets with IP options to pass. Otherwise they are blocked by '.
+	'default. This is usually only seen with multicast traffic.',
+	$pconfig['allowopts']
+));
+
+$section->addInput(new Form_Checkbox(
+	'disablereplyto',
+	'Disable reply-to',
+	'Disable auto generated reply-to for this rule.',
+	$pconfig['disablereplyto']
+));
+
+$section->addInput(new Form_Input(
+	'tag',
+	'Tag',
+	'text',
+	$pconfig['tag']
+))->setHelp('You can mark a packet matching this rule and use this mark to match '.
+	'on other NAT/filter rules. It is called <b>Policy filtering</b>.');
+
+$section->addInput(new Form_Input(
+	'tagged',
+	'Tagged',
+	'text',
+	$pconfig['tagged']
+))->setHelp('You can match packet on a mark placed before on another rule.');
+
+$section->addInput(new Form_Input(
+	'max',
+	'Max. states',
+	'number',
+	$pconfig['max']
+))->setHelp('Maximum state entries this rule can create.');
+
+$section->addInput(new Form_Input(
+	'max-src-nodes',
+	'Max. src nodes',
+	'number',
+	$pconfig['max-src-nodes']
+))->setHelp('Maximum number of unique source hosts.');
+
+$section->addInput(new Form_Input(
+	'max-src-conn',
+	'Max. connections',
+	'number',
+	$pconfig['max-src-conn']
+))->setHelp('Maximum number of established connections per host (TCP only).');
+
+$section->addInput(new Form_Input(
+	'max-src-states',
+	'Max. src. states',
+	'number',
+	$pconfig['max-src-states']
+))->setHelp('Maximum state entries per host.');
+
+$section->addInput(new Form_Input(
+	'max-src-conn-rate',
+	'Max. src. conn. Rate',
+	'number',
+	$pconfig['max-src-conn-rate']
+))->setHelp('Maximum state entries per host');
+
+$section->addInput(new Form_Input(
+	'max-src-conn-rates',
+	'Max. src. conn. Rates',
+	'number',
+	$pconfig['max-src-conn-rates'],
+	['min' => 1, 'max' => 255]
+))->setHelp('Maximum new connections per host / per second(s) (TCP only)');
+
+$section->addInput(new Form_Input(
+	'statetimeout',
+	'State timeout',
+	'number',
+	$pconfig['statetimeout'],
+	['min' => 1, 'max' => 3600]
+))->setHelp('State Timeout in seconds (TCP only)');
+
+$form->add($section);
+$section = new Form_Section('TCP Flags');
+
+$setflags = explode(',', $pconfig['tcpflags1']);
+$outofflags = explode(',', $pconfig['tcpflags2']);
+
+foreach ($tcpflags as $tcpflag)
+{
+	$section->addInput(new Form_Checkbox(
+		'tcpflags1_'. $tcpflag,
+		'Set '. strtoupper($tcpflag),
+		null,
+		(array_search($tcpflag, $setflags) !== false),
+		'on'
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'tcpflags2_'. $tcpflag,
+		'Out of '. strtoupper($tcpflag),
+		null,
+		(array_search($tcpflag, $setflags) !== false),
+		'on'
+	));
+}
+
+$section->addInput(new Form_Checkbox(
+	'tcpflags_any',
+	'Any',
+	'Any flags',
+	$pconfig['tcpflags_any'],
+	'on'
+))->setHelp('Use this to choose TCP flags that must be set or cleared for this rule to match.');
+
+$form->add($section);
+$section = new Form_Section('State Type');
+
+$section->addInput(new Form_Checkbox(
+	'nopfsync',
+	'No pfSync',
+	'Prevent states created by this rule to be sync\'ed over pfsync.',
+	$pconfig['nopfsync']
+));
+
+$section->addInput(new Form_Select(
+	'statetype',
+	'State type',
+	$pconfig['statetype'],
+	array(
+		'keep state' => 'Keep: works with all IP protocols',
+		'sloppy state' => 'Sloppy: works with all IP protocols',
+		'synproxy state' => 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined',
+		'none' => 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations',
+	)
+))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.');
+
+$section->addInput(new Form_Checkbox(
+	'nosync',
+	'No XMLRPC Sync',
+	'Prevent the rule on Master from automatically syncing to other CARP members',
+	$pconfig['nosync']
+))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
+
+$vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc");
+$section->addInput(new Form_Select(
+	'vlanprio',
+	'VLAN Prio',
+	$pconfig['vlanprio'],
+	$vlanprio
+))->setHelp('Choose 802.1p priority to match on');
+
+$section->addInput(new Form_Select(
+	'vlanprioset',
+	'VLAN Prio Set',
+	$pconfig['vlanprioset'],
+	$vlanprio
+))->setHelp('Choose 802.1p priority to apply');
+
+$schedules = array('none'); //leave none to leave rule enabled all the time
+foreach ((array)$config['schedules']['schedule'] as $schedule)
+{
+	if ($schedule['name'] != "")
+		$schedules[] = $schedule['name'];
+}
+
+$section->addInput(new Form_Select(
+	'sched',
+	'Schedule',
+	$pconfig['sched'],
+	$schedules
+))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
+
+$gateways = array('default' => 'default');
+foreach (return_gateways_array() as $gwname => $gw)
+{
+	if (($pconfig['ipprotocol'] == "inet46"))
+		continue;
+	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway']))))
+		continue;
+	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway']))))
+		continue;
+	if ($gw == "")
+		continue;
+
+	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gateway_addr_str);
+}
+
+foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data)
+{
+	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol']))
+		$gateways[ $gwg_name ] = $gwg_name;
+}
+
+$section->addInput(new Form_Select(
+	'gateway',
+	'Gateway',
+	$pconfig['gateway'],
+	$gateways
+))->setHelp('Leave as \'default\' to use the system routing table. Or choose a '.
+	'gateway to utilize policy based routing.');
+
+$group = new Form_Group('In / Out pipe');
+
+$group->add(new Form_Select(
+	'dnpipe',
+	'DNpipe',
+	$pconfig['dnpipe'],
+	array('' => 'none') + array_keys($dnqlist)
+));
+
+$group->add(new Form_Select(
+	'pdnpipe',
+	'PDNpipe',
+	$pconfig['pdnpipe'],
+	array('' => 'none') + array_keys($dnqlist)
+));
+
+$section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
+	'you have also selected In. The Out selection is applied to traffic leaving '.
+	'the interface where the rule is created, In is applied to traffic coming '.
+	'into the chosen interface.<br />If you are creating a floating rule, if the '.
+	'direction is In then the same rules apply, if the direction is out the '.
+	'selections are reverted Out is for incoming and In is for outgoing.'
+);
+
+$group = new Form_Group('Ackqueue / Queue');
+
+$qlist = array_keys($qlist);
+foreach ($qlist as $idx => $q)
+{
+	if (isset($ifdisp[$q]))
+		$qlist[$idx] = $ifdisp[$q];
+}
+
+$group->add(new Form_Select(
+	'ackqueue',
+	'Ackqueue',
+	$pconfig['ackqueue'],
+	$qlist
+));
+
+$group->add(new Form_Select(
+	'defaultqueue',
+	'Default Queue',
+	$pconfig['defaultqueue'],
+	$qlist
+));
+
+$section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.
+	'selected Queue.'
+);
+
+$section->addInput(new Form_Select(
+	'l7container',
+	'Layer7',
+	$pconfig['l7container'],
+	array_keys($l7clist)
+))->setHelp('Choose a Layer7 container to apply application protocol inspection '.
+	'rules. These are valid for TCP and UDP protocols only.');
+
 $has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']));
 $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));
-?>
-		<?php if ($has_created_time || $has_updated_time): ?>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Rule Information");?></td>
-		</tr>
-		<?php if ($has_created_time): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Created");?></td>
-			<td width="78%" class="vtable">
-				<?= date(gettext("n/j/y H:i:s"), $a_filter[$id]['created']['time']) ?> <?= gettext("by") ?> <strong><?= $a_filter[$id]['created']['username'] ?></strong>
-			</td>
-		</tr>
-		<?php endif; ?>
-		<?php if ($has_updated_time): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Updated");?></td>
-			<td width="78%" class="vtable">
-				<?= date(gettext("n/j/y H:i:s"), $a_filter[$id]['updated']['time']) ?> <?= gettext("by") ?> <strong><?= $a_filter[$id]['updated']['username'] ?></strong>
-			</td>
-		</tr>
-		<?php endif; ?>
-		<?php endif; ?>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				&nbsp;<br />&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-<?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<input name="tracker" type="hidden" value="<?=htmlspecialchars($pconfig['tracker']);?>">
-<?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
-			</td>
-		</tr>
-	</table>
-</form>
-<script type="text/javascript">
-//<![CDATA[
-	ext_change();
-	typesel_change();
-	proto_change();
-	<?php if ( (!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any") ): ?>
-	show_source_port_range();
-	<?php endif; ?>
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-	var oTextbox1 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
-	var oTextbox2 = new AutoSuggestControl(document.getElementById("srcbeginport_cust"), new StateSuggestions(customarray));
-	var oTextbox3 = new AutoSuggestControl(document.getElementById("srcendport_cust"), new StateSuggestions(customarray));
-	var oTextbox4 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
-	var oTextbox5 = new AutoSuggestControl(document.getElementById("dstbeginport_cust"), new StateSuggestions(customarray));
-	var oTextbox6 = new AutoSuggestControl(document.getElementById("dstendport_cust"), new StateSuggestions(customarray));
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($has_created_time || $has_updated_time)
+{
+	$form->add($section);
+	$section = new Form_Section('Rule Information');
+
+	if ($has_created_time)
+	{
+		$section->addInput(new Form_StaticText(
+			'Created',
+			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext('by') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
+		));
+	}
+
+	if ($has_updated_time)
+	{
+		$section->addInput(new Form_StaticText(
+			'Updated',
+			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext('by') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
+		));
+	}
+}
+
+$form->add($section);
+echo $form;
+
+include("foot.inc");

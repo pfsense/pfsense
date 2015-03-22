@@ -354,7 +354,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 
 	// Use SMTP Auth if fields are filled out
 	if ($config['notifications']['smtp']['username'] &&
-	    $config['notifications']['smtp']['password']) {
+		$config['notifications']['smtp']['password']) {
 		if (isset($config['notifications']['smtp']['authentication_mechanism'])) {
 			$smtp->authentication_mechanism = $config['notifications']['smtp']['authentication_mechanism'];
 		} else {

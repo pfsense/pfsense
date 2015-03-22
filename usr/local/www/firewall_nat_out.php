@@ -212,6 +212,8 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"));
 include("head.inc");
 
+//FIXME This largely matches firewall_rules.php
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

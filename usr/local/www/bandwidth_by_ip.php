@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  *
@@ -47,7 +47,7 @@ if ($filter == "local") {
 
 //get the sort method
 $sort = $_GET['sort'];
-if ($sort == "out") 
+if ($sort == "out")
 	{$sort_method = "-T";}
 else
 	{$sort_method = "-R";}
@@ -77,15 +77,15 @@ $_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_met
 $someinfo = false;
 for ($x=2; $x<12; $x++){
 
-    $bandwidthinfo = $listedIPs[$x];
+	$bandwidthinfo = $listedIPs[$x];
 
-   // echo $bandwidthinfo;
-    $emptyinfocounter = 1;
-    if ($bandwidthinfo != "") {
-        $infoarray = explode (":",$bandwidthinfo);
+	// echo $bandwidthinfo;
+	$emptyinfocounter = 1;
+	if ($bandwidthinfo != "") {
+		$infoarray = explode (":",$bandwidthinfo);
 		if (($filter == "all") ||
-		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
-		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
+			(($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
+			(($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
 			if ($hostipformat == "") {
 				$addrdata = $infoarray[0];
 			} else {
@@ -116,6 +116,6 @@ unset($listedIPs);
 
 //no bandwidth usage found
 if ($someinfo == false)
-    echo gettext("no info");
+	echo gettext("no info");
 
 ?>

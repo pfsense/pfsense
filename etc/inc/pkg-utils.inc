@@ -766,8 +766,8 @@ function install_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -795,8 +795,8 @@ function install_package_xml($pkg) {
 					update_output_window($static_output);
 					pkg_debug(gettext("Package WAS NOT installed properly.") . "\n");
 					if ($pkg_interface <> "console") {
-						echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-						echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+						echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+						echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 					}
 					sleep(1);
 					return false;
@@ -962,8 +962,8 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -1032,8 +1032,8 @@ function delete_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		ob_flush();
 		sleep(1);

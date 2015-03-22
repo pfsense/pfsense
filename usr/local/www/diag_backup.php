@@ -178,31 +178,31 @@ function check_and_returnif_section_exists($section) {
 function spit_out_select_items($name, $showall) {
 	global $config;
 
-	$areas = array("aliases" => gettext("Aliases"),
-		       "captiveportal" => gettext("Captive Portal"),
-		       "voucher" => gettext("Captive Portal Vouchers"),
-		       "dnsmasq" => gettext("DNS Forwarder"),
-		       "unbound" => gettext("DNS Resolver"),
-		       "dhcpd" => gettext("DHCP Server"),
-		       "dhcpdv6" => gettext("DHCPv6 Server"),
-		       "filter" => gettext("Firewall Rules"),
-		       "interfaces" => gettext("Interfaces"),
-		       "ipsec" => gettext("IPSEC"),
-		       "nat" => gettext("NAT"),
-		       "openvpn" => gettext("OpenVPN"),
-		       "installedpackages" => gettext("Package Manager"),
-		       "pptpd" => gettext("PPTP Server"),
-		       "rrddata" => gettext("RRD Data"),
-		       "cron" => gettext("Scheduled Tasks"),
-		       "syslog" => gettext("Syslog"),
-		       "system" => gettext("System"),
-		       "staticroutes" => gettext("Static routes"),
-		       "sysctl" => gettext("System tunables"),
-		       "snmpd" => gettext("SNMP Server"),
-		       "shaper" => gettext("Traffic Shaper"),
-		       "vlans" => gettext("VLANS"),
-		       "wol" => gettext("Wake on LAN")
-		);
+	$areas = array(
+		"aliases" => gettext("Aliases"),
+		"captiveportal" => gettext("Captive Portal"),
+		"voucher" => gettext("Captive Portal Vouchers"),
+		"dnsmasq" => gettext("DNS Forwarder"),
+		"dhcpd" => gettext("DHCP Server"),
+		"dhcpdv6" => gettext("DHCPv6 Server"),
+		"filter" => gettext("Firewall Rules"),
+		"interfaces" => gettext("Interfaces"),
+		"ipsec" => gettext("IPSEC"),
+		"nat" => gettext("NAT"),
+		"openvpn" => gettext("OpenVPN"),
+		"installedpackages" => gettext("Package Manager"),
+		"pptpd" => gettext("PPTP Server"),
+		"rrddata" => gettext("RRD Data"),
+		"cron" => gettext("Scheduled Tasks"),
+		"syslog" => gettext("Syslog"),
+		"system" => gettext("System"),
+		"staticroutes" => gettext("Static routes"),
+		"sysctl" => gettext("System tunables"),
+		"snmpd" => gettext("SNMP Server"),
+		"shaper" => gettext("Traffic Shaper"),
+		"vlans" => gettext("VLANS"),
+		"wol" => gettext("Wake on LAN")
+	);
 
 	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
@@ -217,22 +217,7 @@ function spit_out_select_items($name, $showall) {
 
 	$select .= "</select>\n";
 
-	if ($name === "backuparea") {
-		$select .= <<<END_SCRIPT_BLOCK
-			<script type="text/javascript">
-			//<![CDATA[
-				jQuery(function (\$) {
-					$("#{$name}").change(function () {
-						backuparea_change(this);
-					}).trigger("change");
-				});
-			//]]>
-			</script>
-END_SCRIPT_BLOCK;
-	}
-
 	echo $select;
-
 }
 
 if ($_POST['apply']) {
@@ -595,209 +580,136 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
 include("head.inc");
 
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
-
-function encrypt_change() {
-
-	if (!document.iform.encrypt.checked)
-		document.getElementById("encrypt_opts").style.display="none";
-	else
-		document.getElementById("encrypt_opts").style.display="";
-}
-
-function decrypt_change() {
-
-	if (!document.iform.decrypt.checked)
-		document.getElementById("decrypt_opts").style.display="none";
-	else
-		document.getElementById("decrypt_opts").style.display="";
-}
-
-function backuparea_change(obj) {
-	if (obj.value == "rrddata") {
-		document.getElementById("nopackages").disabled      = true;
-		document.getElementById("dotnotbackuprrd").disabled = true;
-	} else {
-		document.getElementById("nopackages").disabled      = false;
-		document.getElementById("dotnotbackuprrd").disabled = false;
-	}
-}
-//]]>
-</script>
-
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('restore')): ?><br/>
-<form action="reboot.php" method="post">
-<input name="Submit" type="hidden" value="Yes" />
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
-</form>
-<?php endif; ?>
-<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="diag backup">
-	<tr>
-		<td>
+<?php if ($input_errors) print_input_errors($input_errors)?>
+<?php if ($savemsg) print_info_box($savemsg)?>
+<?php if (is_subsystem_dirty('restore')):?><br/>
+	<form action="reboot.php" method="post">
+		<input name="Submit" type="hidden" value="Yes" />
+		<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?><br />
+	</form>
+<?php endif?>
 <?php
-		$tab_array = array();
-		$tab_array[0] = array(gettext("Config History"), false, "diag_confbak.php");
-		$tab_array[1] = array(gettext("Backup/Restore"), true, "diag_backup.php");
-		display_top_tabs($tab_array);
+	$tab_array = array();
+	$tab_array[0] = array(gettext("Config History"), false, "diag_confbak.php");
+	$tab_array[1] = array(gettext("Backup/Restore"), true, "diag_backup.php");
+	display_top_tabs($tab_array);
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Backup configuration"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<p><?=gettext("Click this button to download the system configuration in XML format."); ?><br /><br /> <?=gettext("Backup area:"); ?> <?php spit_out_select_items("backuparea", false); ?></p>
-						<table>
-							<tr>
-								<td>
-									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Do not backup package information."); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>
-									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="encrypt_change()" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Encrypt this configuration file."); ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked="checked" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table id="encrypt_opts">
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("Password:"); ?> </span>
-								</td>
-								<td>
-									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("confirm:"); ?> </span>
-								</td>
-								<td>
-									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="download" value="<?=gettext("Download configuration"); ?>" /></p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Restore configuration"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?>
-						<br /><br />
-						<?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
-						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40" /></p>
-						<table>
-							<tr>
-								<td>
-									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="decrypt_change()" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Configuration file is encrypted."); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table id="decrypt_opts">
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("Password :"); ?></span>
-								</td>
-								<td>
-									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("confirm :"); ?></span>
-								</td>
-								<td>
-									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>" /></p>
-						<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
-					</td>
-				</tr>
-				<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) { ?>
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Package Functions"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<?php if ($config['installedpackages']['package'] != "") { ?>
-							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>" />
-							<br />
-							<br />
-						<?php } ?>
-						<?php if (is_subsystem_dirty("packagelock")) { ?>
-							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>" />
-						<?php } ?>
-							</p>
-					</td>
-				</tr>
-				<?php } ?>
-			</table>
+	<div id="container">
+		<form class="form-horizontal" action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+			<h2><?=gettext("Backup configuration"); ?></h2>
+			<div class="form-group">
+				<label for="backuparea" class="col-sm-2 control-label"><?=gettext("Backup area"); ?></label>
+				<div class="col-sm-10">
+					<?php spit_out_select_items("backuparea", false)?>
+				</div>
 			</div>
-		</td>
-	</tr>
-</table>
-</form>
 
-<script type="text/javascript">
-//<![CDATA[
-encrypt_change();
-decrypt_change();
-//]]>
-</script>
+			<div class="form-group">
+				<label for="nopackages" class="col-sm-2 control-label"><?=gettext("Skip packages")?></label>
+				<div class="col-sm-10">
+					<input name="nopackages" type="checkbox" /> <?=gettext("Do not backup package information.")?>
+				</div>
+			</div>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+			<div class="form-group">
+				<label for="donotbackuprrd" class="col-sm-2 control-label"><?=gettext("Skip RRD data")?></label>
+				<div class="col-sm-10">
+					<input name="donotbackuprrd" type="checkbox" checked="checked" /> <?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)")?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="encrypt" class="col-sm-2 control-label"><?=gettext("Encryption")?></label>
+				<div class="col-sm-10">
+					<input name="encrypt" type="checkbox" data-toggle="collapse" href="#encryptOptions" aria-expanded="false" aria-controls="encryptOptions" />
+					<?=gettext("Encrypt this configuration file.")?>
+				</div>
+			</div>
+
+			<div class="form-group collapse" id="encryptOptions">
+				<label for="donotbackuprrd" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="encrypt_password" type="password" class="form-control" placeholder="Password" /><br/>
+					<input name="encrypt_passconf" type="password" class="form-control" placeholder="Confirm password" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input name="Submit" type="submit" class="btn btn-primary" value="<?=gettext("Download configuration as XML")?>" />
+				</div>
+			</div>
+		</form>
+
+		<form class="form-horizontal" action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+			<h2><?=gettext("Restore configuration"); ?></h2>
+			<?=gettext("Open a")?><?=$g['[product_name']?><?=gettext("configuration XML file and click the button below to restore the configuration.")?>
+
+			<div class="form-group">
+				<label for="restorearea" class="col-sm-2 control-label"><?=gettext("Restore area"); ?></label>
+				<div class="col-sm-10">
+					<?php spit_out_select_items("restorearea", false)?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="conffile" class="col-sm-2 control-label"><?=gettext("Configuration file"); ?></label>
+				<div class="col-sm-10">
+					<input name="conffile" type="file" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="encrypt" class="col-sm-2 control-label"><?=gettext("Encryption")?></label>
+				<div class="col-sm-10">
+					<input name="encrypt" type="checkbox" data-toggle="collapse" href="#decryptOptions" aria-expanded="false" aria-controls="decryptOptions" />
+					<?=gettext("Decrypt this configuration file.")?>
+				</div>
+			</div>
+
+			<div class="form-group collapse" id="decryptOptions">
+				<label for="decrypt_password" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="decrypt_password" type="password" class="form-control" placeholder="Password" /><br/>
+					<input name="decrypt_passconf" type="password" class="form-control" placeholder="Confirm password" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input name="Submit" type="submit" class="btn btn-danger" value="<?=gettext("Restore configuration")?>" />
+					<p><?=gettext("Note:")?><br /><?=gettext("The firewall will reboot after restoring the configuration.")?></p>
+				</div>
+			</div>
+		</form>
+
+		<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {?>
+			<form class="form-horizontal" action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+				<h2><?=gettext("Package Functions")?></h2>
+
+				<?php if ($config['installedpackages']['package'] != ""): ?>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages")?>" />
+							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while.")?><br /><br />
+						</div>
+					</div>
+				<?php endif; ?>
+
+				<?php if (is_subsystem_dirty("packagelock")): ?>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock")?>" />
+							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.")?><br /><br />
+						</div>
+					</div>
+				<?php endif; ?>
+			</form>
+		<?php }?>
+	</div>
+<?php include("foot.inc")?>
 <?php
 
 if (is_subsystem_dirty('restore'))
 	system_reboot();
-
 ?>

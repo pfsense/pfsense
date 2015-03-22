@@ -245,7 +245,7 @@ if ($_POST) {
 		}
 
 		if (!$natent['interface']) {
-			$natent['interface'] == "wan";
+			$natent['interface'] = "wan";
 		}
 	}
 

@@ -1222,8 +1222,8 @@ function openvpn_get_active_servers($type="multipoint") {
 }
 
 function openvpn_get_server_status($server, $socket) {
-	$errval;
-	$errstr;
+	$errval = null;
+	$errstr = null;
 	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
 	if ($fp) {
 		stream_set_timeout($fp, 1);
@@ -1325,8 +1325,8 @@ function openvpn_get_active_clients() {
 }
 
 function openvpn_get_client_status($client, $socket) {
-	$errval;
-	$errstr;
+	$errval = null;
+	$errstr = null;
 	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
 	if ($fp) {
 		stream_set_timeout($fp, 1);

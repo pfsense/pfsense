@@ -71,62 +71,42 @@ $shortcut_section = "authentication";
 include("head.inc");
 
 ?>
+<?php if ($input_errors) print_input_errors($input_errors)?>
+<?php if ($savemsg) print_info_box($savemsg)?>
+	<div id="container">
+		<form class="form-horizontal" action="diag_authentication.php" method="post">
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Authentication Server")?></label>
+				<div class="col-sm-10">
+					<select name="authmode" id="authmode" class="formselect" >
+					<?php
+							foreach (auth_get_authserver_list() as $auth_server):
+								$selected = ($auth_server['name'] == $pconfig['authmode'])
+					?>
+						<option value="<?=$auth_server['name']?>" <?=($selected?'selected="selected"':'')?>>
+							<?=$auth_server['name']?>
+						</option>
+					<?php   endforeach?>
+					</select>
+				</div>
+			</div>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Username")?></label>
+				<div class="col-sm-10">
+					<input name="username" value="<?=htmlspecialchars($pconfig['username'])?>" />
+				</div>
+			</div>
 
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors);?>
-<?php if ($savemsg) print_info_box($savemsg);?>
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="password" type="password" value="<?=htmlspecialchars($pconfig['password'])?>" />
+				</div>
+			</div>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag authentication">
-	<tr>
-		<td class="tabnavtbl"></td>
-	</tr>
-	<tr>
-	<td>
-	<div id="mainarea">
-	<form id="iform" name="iform" action="diag_authentication.php" method="post">
-	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="test">
-	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
-		<td width="78%" class="vtable">
-			<select name="authmode" id="authmode" class="formselect" >
-			<?php
-				$auth_servers = auth_get_authserver_list();
-				foreach ($auth_servers as $auth_server):
-					$selected = "";
-					if ($auth_server['name'] == $pconfig['authmode'])
-						$selected = "selected=\"selected\"";
-			?>
-			<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-			<?php   endforeach; ?>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
-		<td width="78%" class="vtable">
-			<input class="formfld unknown" size="20" id="username" name="username" value="<?=htmlspecialchars($pconfig['username']);?>" />
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
-		<td width="78%" class="vtable">
-			<input class="formfld pwd" type="password" size="20" id="passwordfld" name="passwordfld" value="<?=htmlspecialchars($pconfig['passwordfld']);?>" />
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top">&nbsp;</td>
-		<td width="78%">
-			<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Test");?>" />
-		</td>
-	</tr>
-	</table>
-	</form>
+			<button type="submit" class="btn btn-primary"><?=gettext("Test");?></button>
+		</form>
 	</div>
-	</td></tr>
-</table>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
+</div>
+<?php include("foot.inc")?>

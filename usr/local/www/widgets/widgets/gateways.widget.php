@@ -41,102 +41,64 @@ $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);
 
-$counter = 1;
-
 ?>
-
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="gateway status">
+<table class="table table-striped">
+<thead>
+<tr>
+	<th>Name</td>
+	<th>RTT</td>
+	<th>Loss</td>
+	<th>Status</td>
+</tr>
+</thead>
+<tbody>
+<?php foreach ($a_gateways as $gname => $gateway): ?>
 	<tr>
-		<td class="listhdrr" id="gatewayname" align="center">Name</td>
-		<td class="listhdrr" align="center">RTT</td>
-		<td class="listhdrr" align="center">Loss</td>
-		<td class="listhdrr" align="center">Status</td>
+		<td>
+<?php
+	$if_gw = '';
+	if (is_ipaddr($gateway['gateway']))
+		$if_gw = $gateway['gateway'];
+	else {
+		if($gateway['ipprotocol'] == "inet")
+			$if_gw = get_interface_gateway($gateway['friendlyiface']);
+		if($gateway['ipprotocol'] == "inet6")
+			$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
+	}
+?>
+			<?=htmlspecialchars($gateway['name'])?><br />
+			<i><?=($if_gw == '' ? '~' : htmlspecialchars($if_gw));?></i>
+		</td>
+<?php
+	if ($gateways_status[$gname]) {
+		if (stristr($gateways_status[$gname]['status'], "force_down")) {
+			$online = "Offline (forced)";
+			$bgcolor = "#F08080";  // lightcoral
+		} elseif (stristr($gateways_status[$gname]['status'], "down")) {
+			$online = "Offline";
+			$bgcolor = "#F08080";  // lightcoral
+		} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
+			$online = "Packetloss";
+			$bgcolor = "#F0E68C";  // khaki
+		} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
+			$online = "Latency";
+			$bgcolor = "#F0E68C";  // khaki
+		} elseif ($gateways_status[$gname]['status'] == "none") {
+			$online = "Online";
+			$bgcolor = "#90EE90";  // lightgreen
+		} elseif ($gateways_status[$gname]['status'] == "") {
+			$online = "Pending";
+			$bgcolor = "#D3D3D3";  // lightgray
+		}
+	} else {
+		$online = gettext("Unknown");
+		$bgcolor = "#ADD8E6";  // lightblue
+	}
+?>
+		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending"))?></td>
+		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending"))?></td>
+		<td style="background-color: <?=$bgcolor?>"><?=$online?></td>
 	</tr>
-	<?php foreach ($a_gateways as $gname => $gateway) { ?>
-	<tr>
-	<td class="listhdrr" id="gateway<?php echo $counter; ?>" rowspan="2" align="center">
-		<strong>
-		<?php echo htmlspecialchars($gateway['name']); ?>
-		</strong>
-		<?php $counter++; ?>
-	</td>
-	<td colspan="3" class="listr ellipsis" align="center">
-				<div id="gateway<?php echo $counter; ?>" style="display:inline"><b>
-					<?php
-						$if_gw = '';
-						if (is_ipaddr($gateway['gateway']))
-							$if_gw = htmlspecialchars($gateway['gateway']);
-						else {
-							if($gateway['ipprotocol'] == "inet")
-								$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
-							if($gateway['ipprotocol'] == "inet6")
-								$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
-						}
-						echo ($if_gw == '' ? '~' : $if_gw);
-						unset ($if_gw);
-						$counter++;
-					?>
-				</b></div>
-			</td>
-	</tr>
-	<tr>
-			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
-			<?php
-				if ($gateways_status[$gname])
-					echo htmlspecialchars($gateways_status[$gname]['delay']);
-				else
-					echo gettext("Pending");
-			?>
-			<?php $counter++; ?>
-			</td>
-			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
-			<?php
-				if ($gateways_status[$gname])
-					echo htmlspecialchars($gateways_status[$gname]['loss']);
-				else
-					echo gettext("Pending");
-			?>
-			<?php $counter++; ?>
-			</td>
-			<?php
-				if ($gateways_status[$gname]) {
-					if (stristr($gateways_status[$gname]['status'], "force_down")) {
-						$online = "Offline (forced)";
-						$bgcolor = "#F08080";  // lightcoral
-					} elseif (stristr($gateways_status[$gname]['status'], "down")) {
-						$online = "Offline";
-						$bgcolor = "#F08080";  // lightcoral
-					} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
-						$online = "Packetloss";
-						$bgcolor = "#F0E68C";  // khaki
-					} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
-						$online = "Latency";
-						$bgcolor = "#F0E68C";  // khaki
-					} elseif ($gateways_status[$gname]['status'] == "none") {
-						$online = "Online";
-						$bgcolor = "#90EE90";  // lightgreen
-					} elseif ($gateways_status[$gname]['status'] == "") {
-						$online = "Pending";
-						$bgcolor = "#D3D3D3";  // lightgray
-					}
-				} else {
-					$online = gettext("Unknown");
-					$bgcolor = "#ADD8E6";  // lightblue
-				}
-				echo "<td class=\"listr ellipsis\" align=\"center\" id=\"gateway$counter\">$online</td>\n";
-				?>
-				<td style="display:none;">
-				<script type="text/javascript">
-				//<![CDATA[
-					jQuery('#gateway<?php echo $counter;?>').css('background-color',"<?php echo $bgcolor;?>");
-				//]]>
-				</script>
-				</td>
-				<?php
-				$counter++;
-			?>
-	</tr>
-	<?php } // foreach ?>
+<?php endforeach; ?>
+</tbody>
 </table>
-
-

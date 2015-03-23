@@ -480,7 +480,11 @@ function get_dates($curperiod, $graph) {
 					if($curcat == "custom") {
 						foreach ($custom_databases as $db => $database) {
 							$optionc = explode("-", $database);
-							$search = array("-", ".rrd", $optionc);
+							$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc[0]));
+							if (empty($friendly)) {
+								$friendly = $optionc[0];
+							}
+							$search = array("-", ".rrd", $optionc[0]);
 							$replace = array(" :: ", "", $friendly);
 							echo "<option value=\"{$database}\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $database));

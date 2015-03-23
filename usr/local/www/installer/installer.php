@@ -1138,7 +1138,8 @@ EOF;
 function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encpass) {
 		global $g, $select_txt, $custom_disks, $savemsg;
 		$release = php_uname("r");
-		$release = trim($release[0]);
+		// Get release number like 8.3 or 10.1
+		$relnum = strtok($release, "-");
 
 		// Mount point
 		$disks = installer_find_all_disks();
@@ -1155,7 +1156,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		);
 
 		// UFS + Journaling was introduced in 9.0
-		if($release == "9") {
+		if($relnum >= 9) {
 			$types['UFS+J'] = "UFS + Journaling";
 			$types['UFS+J.eli'] = "Encrypted UFS + Journaling";
 		}

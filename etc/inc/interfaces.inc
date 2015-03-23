@@ -4236,10 +4236,14 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 function DHCP_Config_File_Override($wancfg, $wanif) {
 
-	$dhclientconf = file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
-	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+	$dhclientconf = @file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
 
-	return $dhclientconf;
+	if ($dhclientconf === false) {
+		log_error("Error: cannot open {$wancfg['adv_dhcp_config_file_override_path']} in DHCP_Config_File_Override() for reading.\n");
+		return '';
+	} else {
+		return DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+	}
 }
 
 

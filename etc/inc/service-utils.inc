@@ -264,7 +264,7 @@ function get_services() {
 	if (isset($config['unbound']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "unbound";
-		$pconfig['description'] = gettext("Unbound DNS Resolver");
+		$pconfig['description'] = gettext("DNS Resolver");
 		$services[] = $pconfig;
 	}
 

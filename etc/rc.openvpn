@@ -54,7 +54,8 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 				$new_device = get_failover_interface($ovpn_settings['interface']);
 				if (isset($config['interfaces'][$interface])) {
 					$this_device = $config['interfaces'][$interface]['if'];
-					if (($current_device == $new_device) && ($current_device != $this_device))
+					/* If the "current", "new", and "this" device are ALL the same, no resync should be necessary */
+					if (($current_device == $new_device) && ($current_device == $this_device))
 						$resync_needed = false;
 				}
 			}

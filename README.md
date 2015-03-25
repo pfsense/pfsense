@@ -44,7 +44,7 @@ rsync -xav --delete `dirname $0`/etc/inc/ root@$HOST:/etc/inc/
 
 # Cleaner
 
-Before diving into a template, clean it with the supplied cleaner (`clean.sh`). This script tries to remove most of the unnecessary element attributes and does a bunch of other replaces which have to be done in every template.
+Before diving into a file, clean it with the supplied cleaner (`clean.sh`). This script tries to remove most of the unnecessary element attributes and does a bunch of other replaces which have to be done in every file.
 
 # Migration conventions
 

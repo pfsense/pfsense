@@ -346,7 +346,8 @@ function _onTypeChange(type) {
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br />
 					<?=gettext("he.net tunnelbroker: Enter your tunnel ID");?><br />
 					<?=gettext("GleSYS: Enter your record ID");?><br />
-					<?=gettext("DNSimple: Enter only the domain name.");?>
+					<?=gettext("DNSimple: Enter only the domain name");?><br />
+					<?=gettext("DNS Made Easy: Enter your record ID separated by commas if more than one at a time");?>
 				</span>
 			</td>
 		</tr>
@@ -383,7 +384,7 @@ function _onTypeChange(type) {
 				<?=gettext("Verify SSL peer"); ?>
 			</td>
 		</tr>
-			<tr id="_usernametr">
+		<tr id="_usernametr">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
 			<td width="78%" class="vtable">
 				<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />

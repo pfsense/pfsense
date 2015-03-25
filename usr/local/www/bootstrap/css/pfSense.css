@@ -38,8 +38,13 @@ body#index .icons {
 	cursor: move;
 }
 
-tr.disabled {
+tr.disabled td,
+tr.disabled th {
 	opacity: .5;
+}
+
+.contains-table table {
+	border: 1px solid #ddd;
 }
 
 .nav-pills {

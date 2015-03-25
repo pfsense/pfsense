@@ -276,7 +276,7 @@ if(! $g['disablehelpmenu']) {
 }
 
 ?>
-<nav class="navbar navbar-fixed-top navbar-inverse">
+<nav class="navbar navbar-static-top navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pf-navbar">

@@ -72,8 +72,7 @@ tr.disabled {
 	margin-left: 10px;
 }
 
-form input.btn + input.btn
-{
+form .btn + .btn {
 	margin-left: 5px;
 }
 

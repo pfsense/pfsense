@@ -233,7 +233,7 @@ EOF;
 	$verbosity = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : 1;
 	$use_caps = isset($config['unbound']['use_caps']) ? "yes" : "no";
 
-	// Set up forwarding if it configured
+	// Set up forwarding if it is configured
 	if (isset($config['unbound']['forwarding'])) {
 		$dnsservers = array();
 		if (isset($config['system']['dnsallowoverride'])) {
@@ -243,12 +243,11 @@ EOF;
 					$dnsservers[] = $nameserver;
 				}
 			}
-		} else {
-			$ns = array_unique(get_dns_servers());
-			foreach ($ns as $nameserver) {
-				if ($nameserver) {
-					$dnsservers[] = $nameserver;
-				}
+		}
+		$sys_dnsservers = array_unique(get_dns_servers());
+		foreach ($sys_dnsservers as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
+				$dnsservers[] = $sys_dnsserver;
 			}
 		}
 

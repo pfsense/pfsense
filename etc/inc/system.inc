@@ -176,15 +176,16 @@ function system_resolvconf_generate($dynupdate = false) {
 			}
 		}
 	} else {
+		$ns = array();
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if ($syscfg['domain']) {
 			$resolvconf .= "search {$syscfg['domain']}\n";
 		}
 	}
 	if (is_array($syscfg['dnsserver'])) {
-		foreach ($syscfg['dnsserver'] as $ns) {
-			if ($ns) {
-				$resolvconf .= "nameserver $ns\n";
+		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns)) {
+				$resolvconf .= "nameserver $sys_dnsserver\n";
 			}
 		}
 	}

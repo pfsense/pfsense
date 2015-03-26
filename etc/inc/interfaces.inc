@@ -1301,6 +1301,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			}
 			sleep(3);
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
+			unlink_if_exists("{$g['varetc_path']}/rtsold_{$realifv6}_script.sh");
 			if (does_interface_exist($realifv6)) {
 				$ip6 = find_interface_ipv6($realifv6);
 				if (is_ipaddrv6($ip6) && $ip6 != "::") {
@@ -3770,73 +3772,72 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
-	$dhcp6cconf .= "interface {$wanif} {\n";
 
-	/* for SLAAC interfaces we do fire off a dhcp6 client for just our name servers */
-	if ($wancfg['ipaddrv6'] == "slaac") {
-		$dhcp6cconf .= "	information-only;\n";
-		$dhcp6cconf .= "	request domain-name-servers;\n";
-		$dhcp6cconf .= "	request domain-name;\n";
-		$dhcp6cconf .= "	script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
-		$dhcp6cconf .= "};\n";
-	} else {
-		$trackiflist = array();
-		$iflist = link_interface_to_track6($interface);
-		foreach ($iflist as $ifname => $ifcfg) {
-			if (is_numeric($ifcfg['track6-prefix-id'])) {
-				$trackiflist[$ifname] = $ifcfg;
-			}
-		}
-
-		/* skip address request if this is set */
-		if (!isset($wancfg['dhcp6prefixonly'])) {
-			$dhcp6cconf .= "        send ia-na 0;   # request stateful address\n";
-		}
-		if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
-			$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
-		}
-
-		$dhcp6cconf .= "\trequest domain-name-servers;\n";
-		$dhcp6cconf .= "\trequest domain-name;\n";
-		$dhcp6cconf .= "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
-
-		$dhcp6cconf .= "};\n";
-
-		if (!isset($wancfg['dhcp6prefixonly'])) {
-			$dhcp6cconf .= "id-assoc na 0 { };\n";
-		}
-
-		if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
-			/* Setup the prefix delegation */
-			$dhcp6cconf .= "id-assoc pd 0 {\n";
-			$preflen = 64 - $wancfg['dhcp6-ia-pd-len'];
-			if (isset($wancfg['dhcp6-ia-pd-send-hint'])) {
-				$dhcp6cconf .= "	prefix ::/{$preflen} infinity;\n";
-			}
-			foreach ($trackiflist as $friendly => $ifcfg) {
-				if ($g['debug']) {
-					log_error("setting up $ifdescr - {$ifcfg['track6-prefix-id']}");
-				}
-				$realif = get_real_interface($friendly);
-				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-				$dhcp6cconf .= "		sla-id {$ifcfg['track6-prefix-id']};\n";
-				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
-				$dhcp6cconf .= "	};\n";
-			}
-			unset($preflen, $iflist, $ifcfg, $ifname);
-			$dhcp6cconf .= "};\n";
-		}
-		unset($trackiflist);
-	}
-
-	// DHCP6 Config File Advanced
-	if ($wancfg['adv_dhcp6_config_advanced']) {
-		$dhcp6cconf = DHCP6_Config_File_Advanced($interface, $wancfg, $wanif);
-	}
-
-	// DHCP6 Config File Override
 	if ($wancfg['adv_dhcp6_config_file_override']) {
+		// DHCP6 Config File Override
 		$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
+	} elseif ($wancfg['adv_dhcp6_config_advanced']) {
+		// DHCP6 Config File Advanced
+		$dhcp6cconf = DHCP6_Config_File_Advanced($interface, $wancfg, $wanif);
+	} else {
+		// DHCP6 Config File Basic
+		$dhcp6cconf .= "interface {$wanif} {\n";
+
+		/* for SLAAC interfaces we do fire off a dhcp6 client for just our name servers */
+		if ($wancfg['ipaddrv6'] == "slaac") {
+			$dhcp6cconf .= "\tinformation-only;\n";
+			$dhcp6cconf .= "\trequest domain-name-servers;\n";
+			$dhcp6cconf .= "\trequest domain-name;\n";
+			$dhcp6cconf .= "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
+			$dhcp6cconf .= "};\n";
+		} else {
+			$trackiflist = array();
+			$iflist = link_interface_to_track6($interface);
+			foreach ($iflist as $ifname => $ifcfg) {
+				if (is_numeric($ifcfg['track6-prefix-id'])) {
+					$trackiflist[$ifname] = $ifcfg;
+				}
+			}
+
+			/* skip address request if this is set */
+			if (!isset($wancfg['dhcp6prefixonly'])) {
+				$dhcp6cconf .= "\tsend ia-na 0;\t# request stateful address\n";
+			}
+			if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
+				$dhcp6cconf .= "\tsend ia-pd 0;\t# request prefix delegation\n";
+			}
+
+			$dhcp6cconf .= "\trequest domain-name-servers;\n";
+			$dhcp6cconf .= "\trequest domain-name;\n";
+			$dhcp6cconf .= "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
+			$dhcp6cconf .= "};\n";
+
+			if (!isset($wancfg['dhcp6prefixonly'])) {
+				$dhcp6cconf .= "id-assoc na 0 { };\n";
+			}
+
+			if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
+				/* Setup the prefix delegation */
+				$dhcp6cconf .= "id-assoc pd 0 {\n";
+				$preflen = 64 - $wancfg['dhcp6-ia-pd-len'];
+				if (isset($wancfg['dhcp6-ia-pd-send-hint'])) {
+					$dhcp6cconf .= "\tprefix ::/{$preflen} infinity;\n";
+				}
+				foreach ($trackiflist as $friendly => $ifcfg) {
+					if ($g['debug']) {
+						log_error("setting up $ifdescr - {$ifcfg['track6-prefix-id']}");
+					}
+					$realif = get_real_interface($friendly);
+					$dhcp6cconf .= "\tprefix-interface {$realif} {\n";
+					$dhcp6cconf .= "\t\tsla-id {$ifcfg['track6-prefix-id']};\n";
+					$dhcp6cconf .= "\t\tsla-len {$wancfg['dhcp6-ia-pd-len']};\n";
+					$dhcp6cconf .= "\t};\n";
+				}
+				unset($preflen, $iflist, $ifcfg, $ifname);
+				$dhcp6cconf .= "};\n";
+			}
+			unset($trackiflist);
+		}
 	}
 
 	/* wide-dhcp6c works for now. */
@@ -4052,10 +4053,14 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 function DHCP6_Config_File_Override($wancfg, $wanif) {
 
-	$dhcp6cconf = file_get_contents($wancfg['adv_dhcp6_config_file_override_path']);
-	$dhcp6cconf = DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+	$dhcp6cconf = @file_get_contents($wancfg['adv_dhcp6_config_file_override_path']);
 
-	return $dhcp6cconf;
+	if ($dhcp6cconf === false) {
+		log_error("Error: cannot open {$wancfg['adv_dhcp6_config_file_override_path']} in DHCP6_Config_File_Override() for reading.\n");
+		return '';
+	} else {
+		return DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);;
+	}
 }
 
 
@@ -4231,10 +4236,14 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 function DHCP_Config_File_Override($wancfg, $wanif) {
 
-	$dhclientconf = file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
-	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+	$dhclientconf = @file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
 
-	return $dhclientconf;
+	if ($dhclientconf === false) {
+		log_error("Error: cannot open {$wancfg['adv_dhcp_config_file_override_path']} in DHCP_Config_File_Override() for reading.\n");
+		return '';
+	} else {
+		return DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+	}
 }
 
 

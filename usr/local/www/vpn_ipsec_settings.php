@@ -106,10 +106,10 @@ if ($_POST) {
 		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
 	}
 	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] <> '') {
+		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
+		if ($pconfig['maxmss'] != '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
 			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";	
 	}
 	
@@ -181,7 +181,7 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if(stristr($retval, "error") != true)
 			$savemsg = get_std_save_message(gettext($retval));
 		else
 			$savemsg = gettext($retval);
@@ -200,8 +200,8 @@ $shortcut_section = "ipsec";
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
+
 
 <script type="text/javascript">
 //<![CDATA[
@@ -225,140 +225,117 @@ function maxmss_checked(obj) {
 		print_input_errors($input_errors);
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec settings">
-	<tr>
-		<td class="tabnavtbl">
-			<?php
-				$tab_array = array();
-				$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
-				$tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
-				display_top_tabs($tab_array);
-			?>
-		</td>
-	</tr>
-	<tr>
-		<td id="mainarea">
-			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
-						<td width="78%" class="vtable">
-							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
-							<br />
-							<table summary="ipsec debug">
-						<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
-								<td width="78%" valign="top" class="vncell">
-								<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
-									foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
-										echo "<option value=\"{$lidx}\" ";
-										 if ($pconfig["ipsec_{$lkey}"] == $lidx)
-											echo "selected=\"selected\"";
-										echo ">{$lvalue}</option>\n";
-									}
-								?>
-									</select>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-							<tr style="display:none;"><td></td></tr>
-							</table>
-							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
-							"will be generated to aid in troubleshooting."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Unique IDs"); ?></td>
-						<td width="78%" class="vtable">
-							<strong><?=gettext("Configure Unique IDs as: "); ?></strong>
-							<?php	echo "<select name=\"uniqueids\" id=\"uniqueids\">\n";
-								foreach ($ipsec_idhandling as $value => $lvalue) {
-									echo "<option value=\"{$value}\" ";
-									 if ($pconfig['uniqueids'] == $value)
-										echo "selected=\"selected\"";
-									echo ">{$lvalue}</option>\n";
-								}
-							?>
-								</select>
-							<br />
-							<?=gettext("whether a particular participant ID should be kept unique, with any new IKE_SA using an ID " .
-								"deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new " .
-								"IKE_SA using the same ID is almost invariably intended to replace an old one. " .
-								"The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an " .
-								"INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. " .
-								"The daemon also accepts the value <b>keep</b> to reject " .
-								"new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IP Compression"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="compression" type="checkbox" id="compression" value="yes" <?php if ($pconfig['compression']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable IPCompression"); ?></strong>
-							<br />
-							<?=gettext("IPComp compression of content is proposed on the connection."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Strict interface binding"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="enableinterfacesuse" type="checkbox" id="enableinterfacesuse" value="yes" <?php if ($pconfig['enableinterfacesuse']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable strict interface binding"); ?></strong>
-							<br />
-							<?=gettext("Enable strongSwan's interfaces_use option to bind specific interfaces only. This option is known to break IPsec with dynamic IP interfaces. This is not recommended at this time."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Unencrypted payloads in IKEv1 Main Mode"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="acceptunencryptedmainmode" type="checkbox" id="acceptunencryptedmainmode" value="yes" <?php if ($pconfig['acceptunencryptedmainmode']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"); ?></strong>
-							<br />
-							<?=gettext("Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication." .
-							"This is very similar to Aggressive Mode, and has the same security implications: " .
-							"A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload." .
-							" It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
-							<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
-							<br />
-							<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else echo "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
-							<br />
-							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
-							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Cisco Extensions"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="unityplugin" type="checkbox" id="unityplugin" value="yes" <?php if ($pconfig['unityplugin'] == true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
-							<br />
-							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php
+
+$tab_array = array();
+$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
+display_top_tabs($tab_array, false, 'pills');
+
+require('classes/Form.class.php');
+$form = new Form;
+
+$section = new Form_Section('IPsec Advanced Settings');
+// TODO: group with groups.
+/*
+	<td width="78%" class="vtable">
+		<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
+		<br />
+		<table summary="ipsec debug">
+			<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
+				<tr>
+					<td width="22%" valign="top" class="vncell"><?=$ldescr?></td>
+					<td width="78%" valign="top" class="vncell">
+						<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
+						foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
+							echo "<option value=\"{$lidx}\" ";
+							if ($pconfig["ipsec_{$lkey}"] == $lidx)
+								echo "selected=\"selected\"";
+							echo ">{$lvalue}</option>\n";
+						}
+						?>
+						</select>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+			<tr style="display:none;"><td></td></tr>
+		</table>
+		<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
+			"will be generated to aid in troubleshooting."); ?>
+	</td>
+*/
+$section->addInput(new Form_Select(
+	'uniqueids',
+	'Unique IDs',
+	$pconfig['uniqueids'],
+	$ipsec_idhandling
+))->setHelp(
+	'<strong>Configure Unique IDs as:</strong><br /><br />Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
+	'deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new ' .
+	'IKE_SA using the same ID is almost invariably intended to replace an old one. ' .
+	'The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an ' .
+	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. ' .
+	'The daemon also accepts the value <b>keep</b> to reject ' .
+	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.'
+);
+
+$section->addInput(new Form_Checkbox(
+	'compression',
+	'IP Compression',
+	'Enable IPCompression',
+	$pconfig['compression']
+))->setHelp('IPComp compression of content is proposed on the connection.');
+
+$section->addInput(new Form_Checkbox(
+	'enableinterfacesuse',
+	'Strict interface binding',
+	'Enable strict interface binding',
+	$pconfig['enableinterfacesuse']
+))->setHelp('Enable strongSwan\'s interfaces_use option to bind specific interfaces only. This option is known to break IPsec with dynamic IP interfaces. This is not recommended at this time.');
+
+$section->addInput(new Form_Checkbox(
+	'acceptunencryptedmainmode',
+	'Unencrypted payloads in IKEv1 Main Mode',
+	'Accept unencrypted ID and HASH payloads in IKEv1 Main Mode',
+	$pconfig['acceptunencryptedmainmode']
+))->setHelp(
+	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication.' .
+	'This is very similar to Aggressive Mode, and has the same security implications: ' .
+	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload.' .
+	'It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).'
+);
+
+// TODO: should toggle the maxmss input
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable',
+	'Enable Maximum MSS',
+	'Enable MSS clamping on VPN traffic',
+	$pconfig['maxmss_enable']
+));
+
+$section->addInput(new Form_Input(
+	'maxmss',
+	'Maximum MSS',
+	'text',
+	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400')
+))->setHelp(
+	'Enable MSS clamping on TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
+);
+
+$section->addInput(new Form_Checkbox(
+	'unityplugin',
+	'Disable Cisco Extensions',
+	'Disable Unity Plugin',
+	$pconfig['unityplugin']
+))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+
+$form->add($section);
+
+print $form;
+
+?>
+
+<?php include("foot.inc"); ?>

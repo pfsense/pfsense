@@ -266,17 +266,22 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 }
 
 function print_input_errors($input_errors) {
+    print_errors($input_errors, gettext('The following input errors were detected:'));
+}
+
+function print_errors($errors, $heading) {
 	echo '<div class="alert alert-danger input-errors">';
-	echo '<p>' . gettext('The following input errors were detected:') . '</p>';
+    echo '<p>' . $heading . '</p>';  
 	echo '<ul>';
 
-	foreach ($input_errors as $ierr) {
+	foreach ($errors as $ierr) {
 		echo '<li>' . htmlspecialchars($ierr) . '</li>';
 	}
 
 	echo '</ul>';
 	echo '</div>';
 }
+
 
 function verify_gzip_file($fname) {
 	$returnvar = mwexec("/usr/bin/gzip -t " . escapeshellarg($fname));

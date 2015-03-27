@@ -1366,6 +1366,9 @@ url.access-deny             = ( "~", ".inc" )
 
 ######### Options that are good to be but not necessary to be changed #######
 
+## disable server header
+server.tag = ""
+
 ## bind to port (default: 80)
 
 EOD;

@@ -95,7 +95,7 @@ if(isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 
 if ($_POST) {
 	unset($input_errors);
-
+	
 	$reqdfields = explode(" ", "host");
 	$reqdfieldsn = explode(",", "Host");
 
@@ -157,9 +157,6 @@ if( ($_POST['host']) && ($_POST['dialog_output']) ) {
 function display_host_results ($address,$hostname,$dns_speeds) {
 	$map_lengths = function($element) { return strlen($element[0]); };
 
-	echo gettext("IP Address") . ": {$address} \n";
-	echo gettext("Host Name") . ": {$hostname} \n";
-	echo "\n";
 	$text_table = array();
 	$text_table[] = array(gettext("Server"), gettext("Query Time"));
 	if (is_array($dns_speeds)) {
@@ -175,13 +172,23 @@ function display_host_results ($address,$hostname,$dns_speeds) {
 
 include("head.inc"); ?>
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="diag_dns.php" method="post" name="iform" id="iform">
+<?php
+	/* Dosplay any error messages resulting from user input */ 
+	if ($input_errors) 
+		print_input_errors($input_errors);
+	else if (!$resolved && $type)
+		{
+		$errors[] = gettext("Host") . ": " . "\"" . $host . "\"" . " " . gettext("could not be resolved");
+		print_errors($errors, gettext("DNS Lookup error:"));		
+	}
+?>
+  
+<form action="diag_dns.php" method="post" name="iform" id="iform">
 
-<!-- First table displayes the DNS lookup form and hte resulting IP addresses -->
-
+<!-- First table displayes the DNS lookup form and the resulting IP addresses -->
 	<div class="table-responsive">
-		<table width="100%" class="table" summary="results">
+	
+		<table class="table" summary="results">
 		<thead>
 			<tr>
 				<th width="30%">Host name</th>
@@ -192,7 +199,7 @@ include("head.inc"); ?>
 		</thead>
 		<tbody>
 			<tr class="active">
-				<td valign="top">
+				<td>
 					<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host)?>" />
 					<br /><br />
 					<button type="submit" class="btn btn-primary"><?=gettext("DNS Lookup");?></button>
@@ -277,7 +284,7 @@ include("head.inc"); ?>
 		</table>
 	</div>
 		
-<!-- Third table displays "More information --> 
+<!-- Third table displays "More information" --> 
 	<div class="table-responsive">
 		<table class="table table-condensed" summary="results">
 		<?php		if($_POST && ($found > 0)) { ?>
@@ -295,7 +302,7 @@ include("head.inc"); ?>
 				<a href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping")?></a><br />
 				<a href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a>
 				<p><br />
-				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed. They use only the first IP address returned above.")?><br /><br />
+				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.<br />They use only the first IP address returned above.")?><br /><br />
 				<a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff")?></a><br />
 				<a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff")?></a>
 				</p>
@@ -306,10 +313,8 @@ include("head.inc"); ?>
 		</tbody>
 		<?php } ?>
 		</table>
-	</div>
-<!-- --------------------------------------- -->	  
+	</div>	
 	
 </form>
 <?php include("foot.inc"); ?>
-</body>
-</html>
+

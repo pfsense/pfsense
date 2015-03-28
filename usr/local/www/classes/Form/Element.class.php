@@ -27,16 +27,19 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Form_Element
+abstract class Form_Element
 {
-	protected $_attributes = array('class' => array());
+	protected $_tagName;
+	protected $_tagSelfClosing = false;
+	protected $_attributes = array(
+		'class' => array()
+	);
 	protected $_parent;
 
 	public function addClass()
 	{
-		foreach (func_get_args() as $class) {
+		foreach (func_get_args() as $class)
 			$this->_attributes['class'][$class] = true;
-		}
 
 		return $this;
 	}
@@ -48,46 +51,29 @@ class Form_Element
 		return $this;
 	}
 
-	public function getClasses()
+	public function __toString()
 	{
-		return implode(' ', array_keys($this->getAttribute('class')));
-	}
-
-	public function setAttribute($key, $value = null)
-	{
-		$this->_attributes[$key] = $value;
-
-		return $this;
-	}
-
-	public function getAttribute($name)
-	{
-		return $this->_attributes[$name];
-	}
-
-	public function removeAttribute($name)
-	{
-		unset($this->_attributes[$name]);
-
-		return $this;
-	}
-
-	public function getHtmlAttribute()
-	{
-		/* Will overwright _attributes['class'] with string Therefore you cannot 
-		 * delete or add classes once getHtmlAttribute() has been called. */
-		if (empty($this->_attributes['class'])) {
-			$this->removeAttribute('class');
-		} else {
-			$this->_attributes['class'] = $this->getClasses();
-		}
-
 		$attributes = '';
-		foreach ($this->_attributes as $key => $value) {
-			$attributes .= ' ' . $key . (isset($value) ? '="' . htmlspecialchars($value) . '"' : '');
+		foreach ($this->_attributes as $key => $value)
+		{
+			if (is_array($value))
+			{
+				// Used for classes. If it's empty, we don't want the attribute at all
+				if (!empty($value))
+					$value = implode(' ', array_keys($value));
+				else
+					$value = null;
+			}
+
+			if ($value === null)
+				continue;
+
+			$attributes .= ' '. $key;
+			if ($value !== true)
+				$attributes .= '="' . htmlspecialchars($value) . '"';
 		}
 
-		return $attributes;
+		return '<'. $this->_tagName . $attributes . ($this->_tagSelfClosing ? '/' : '') .'>';
 	}
 
 	protected function _setParent(Form_Element $parent)

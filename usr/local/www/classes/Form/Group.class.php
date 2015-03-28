@@ -28,6 +28,10 @@
 */
 class Form_Group extends Form_Element
 {
+	protected $_tagName = 'div';
+	protected $_attributes = array(
+		'class' => array('form-group' => true),
+	);
 	protected $_title;
 	protected $_inputs = array();
 	protected $_labelTarget;
@@ -36,9 +40,6 @@ class Form_Group extends Form_Element
 	public function __construct($title)
 	{
 		$this->_title = gettext($title);
-		$this->addClass('form-group');
-
-		return $this;
 	}
 
 	public function add(Form_Input $input)
@@ -73,6 +74,8 @@ class Form_Group extends Form_Element
 
 	public function __toString()
 	{
+		$element = parent::__toString();
+
 		// Automatically determine width for inputs without explicit set
 		$spaceLeft = 12 - $this->getLabelWidth();
 		$missingWidth = array();
@@ -90,12 +93,12 @@ class Form_Group extends Form_Element
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		$target = $this->_labelTarget->getAttribute('name');
+		$target = $this->_labelTarget->getName();
 		$inputs = implode('', $this->_inputs);
 		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
 
 		return <<<EOT
-	<div {$this->getHtmlAttribute()}>
+	{$element}
 		<label for="{$target}" class="col-sm-{$this->getLabelWidth()} control-label">
 			{$this->_title}
 		</label>

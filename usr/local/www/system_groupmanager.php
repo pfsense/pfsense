@@ -280,7 +280,7 @@ $section->addInput($input = new Form_Input(
 ));
 
 if ($pconfig['gtype'] == "system")
-	$input->setAttribute('readonly', 'readonly');
+	$input->setReadonly();
 
 $section->addInput(new Form_Input(
 	'description',

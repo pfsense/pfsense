@@ -281,7 +281,7 @@ $group->add(new Form_Checkbox(
 	'HTTP',
 	($pconfig['webguiproto']=='http'),
 	'http'
-))->displayAsRadio()->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '#ssl-certificate');
+))->displayAsRadio()->toggles('#ssl-certificate');
 
 $group->add($input = new Form_Checkbox(
 	'protocol',
@@ -289,13 +289,13 @@ $group->add($input = new Form_Checkbox(
 	'HTTPS',
 	($pconfig['webguiproto']=='https'),
 	'https'
-))->displayAsRadio()->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '#ssl-certificate');
+))->displayAsRadio()->toggles('#ssl-certificate');
 
 $section->add($group);
 
 if (!$certs_available)
 {
-	$input->setAttribute('disabled', 'disabled');
+	$input->setDisabled();
 	$input->setHelp('No Certificates have been defined. You must '.
 	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.
 	'a Certificate before SSL can be enabled.');

@@ -432,7 +432,7 @@ $section->addInput($input = new Form_Input(
 ));
 
 if ($ro)
-	$input->setAttribute('disabled', 'disabled');
+	$input->setDisabled();
 
 $group = new Form_Group('Password');
 $group->add(new Form_Input(
@@ -456,7 +456,7 @@ $section->addInput($input = new Form_Input(
 ))->setHelp('User\'s full name, for your own information only');
 
 if ($ro)
-	$input->setAttribute('disabled', 'disabled');
+	$input->setDisabled();
 
 $section->addInput(new Form_Input(
 	'expires',
@@ -498,7 +498,7 @@ if (isset($pconfig['uid']))
 		if ($priv['group'])
 		{
 			$group = new Form_Group('Inherited from '. $priv['group']);
-			$input->setAttribute('disabled', 'disabled');
+			$input->setDisabled();
 		}
 		else
 			$group = new Form_Group('Revoke privilege');

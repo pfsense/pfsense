@@ -29,6 +29,9 @@
 
 class Form_Checkbox extends Form_Input
 {
+	protected $_attributes = array(
+		'class' => array('checkbox' => true),
+	);
 	protected $_description;
 
 	public function __construct($name, $title, $description, $checked, $value = 'yes')
@@ -36,17 +39,14 @@ class Form_Checkbox extends Form_Input
 		parent::__construct($name, $title, 'checkbox', $value);
 
 		$this->_description = $description;
-		$this->removeClass('form-control');
-		$this->addColumnClass('checkbox');
 
-		if ($checked) {
-			$this->setAttribute('checked', 'checked');
-		}
+		if ($checked)
+			$this->_attributes['checked'] = 'checked';
 	}
 
 	public function displayAsRadio()
 	{
-		return $this->setAttribute('type', 'radio');
+		return $this->_attributes['type'] = 'radio';
 	}
 
 	protected function _getInput()

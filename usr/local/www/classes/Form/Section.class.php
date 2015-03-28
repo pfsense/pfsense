@@ -28,15 +28,19 @@
 */
 class Form_Section extends Form_Element
 {
+	protected $_tagName = 'div';
+	protected $_attributes = array(
+		'class' => array(
+			'panel' => true,
+			'panel-default' => true,
+		),
+	);
 	protected $_title;
 	protected $_groups = array();
 
 	public function __construct($title)
 	{
 		$this->_title = $title;
-		$this->addClass('panel', 'panel-default');
-
-		return $this;
 	}
 
 	public function add(Form_Group $group)
@@ -66,11 +70,12 @@ class Form_Section extends Form_Element
 
 	public function __toString()
 	{
+		$element = parent::__toString();
 		$title = gettext($this->_title);
 		$body = implode('', $this->_groups);
 
 		return <<<EOT
-	<div {$this->getHtmlAttribute()}>
+	{$element}
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}</h2>
 		</div>

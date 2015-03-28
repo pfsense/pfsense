@@ -29,17 +29,19 @@
 
 class Form_Select extends Form_Input
 {
+	protected $_tagName = 'select';
 	protected $_values;
 	protected $_value;
 
 	public function __construct($name, $title, $value, array $values, $allowMultiple = false)
 	{
-		if ($allowMultiple) {
-			$this->setAttribute('multiple', 'multiple');
-			$name = $name . '[]';
-		}
+		if ($allowMultiple)
+			$name .= '[]';
 
 		parent::__construct($name, $title, null);
+
+		if ($allowMultiple)
+			$this->_attributes['multiple'] = 'multiple';
 
 		$this->_value = $value;
 		$this->_values = $values;
@@ -47,16 +49,21 @@ class Form_Select extends Form_Input
 
 	protected function _getInput()
 	{
-		$element = preg_replace('~^<input(.*)/>$~', 'select\1', parent::_getInput());
+		$element = parent::_getInput();
 
 		$options = '';
-		foreach ($this->_values as $value => $name) {
-			$selected = (is_array($this->_value) && array_key_exists($value, $this->_value) || $this->_value == $value);
+		foreach ($this->_values as $value => $name)
+		{
+			if (isset($this->_attributes['multiple']))
+				$selected = in_array($value, (array)$this->_value);
+			else
+				$selected = ($this->_value == $value);
+
 			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. gettext($name) .'</option>';
 		}
 
 		return <<<EOT
-	<{$element}>
+	{$element}
 		{$options}
 	</select>
 EOT;

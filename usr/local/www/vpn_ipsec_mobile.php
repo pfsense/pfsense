@@ -388,7 +388,7 @@ $section->addInput(new Form_Checkbox(
 	'Virtual Address Pool',
 	'Provide a virtual IP address to clients',
 	$pconfig['pool_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-pool_enable');
+))->toggles('.toggle-pool_enable');
 
 // TODO: Refactor this manual setup
 $group = new Form_Group('');
@@ -437,7 +437,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS Default Domain',
 	'Provide a default domain name to clients',
 	$pconfig['dns_domain_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-dns_domain');
+))->toggles('.toggle-dns_domain');
 
 $group = new Form_Group('');
 $group->addClass('toggle-dns_domain collapse');
@@ -459,7 +459,7 @@ $section->addInput(new Form_Checkbox(
 	'Split DNS',
 	'Provide a list of split DNS domain names to clients. Enter a space separated list.',
 	$pconfig['dns_split_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-dns_split');
+))->toggles('.toggle-dns_split');
 
 $group = new Form_Group('');
 $group->addClass('toggle-dns_split collapse');
@@ -481,7 +481,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS Servers',
 	'Provide a DNS server list to clients',
 	$pconfig['dns_server_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-dns_server_enable');
+))->toggles('.toggle-dns_server_enable');
 
 for ($i = 1; $i <= 4; $i++)
 {
@@ -506,7 +506,7 @@ $section->addInput(new Form_Checkbox(
 	'WINS Servers',
 	'Provide a WINS server list to clients',
 	$pconfig['wins_server_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-wins_server_enable');
+))->toggles('.toggle-wins_server_enable');
 
 for ($i = 1; $i <= 2; $i++)
 {
@@ -532,7 +532,7 @@ $section->addInput(new Form_Checkbox(
 	'Phase2 PFS Group',
 	'Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )',
 	$pconfig['pfs_group_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-pfs_group');
+))->toggles('.toggle-pfs_group');
 
 $group = new Form_Group('Group');
 $group->addClass('toggle-pfs_group collapse');
@@ -554,7 +554,7 @@ $section->addInput(new Form_Checkbox(
 	'Login Banner',
 	'Provide a login banner to clients',
 	$pconfig['login_banner_enable']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-login_banner');
+))->toggles('.toggle-login_banner');
 
 $group = new Form_Group('');
 $group->addClass('toggle-login_banner collapse');

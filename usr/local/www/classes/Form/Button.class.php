@@ -28,34 +28,41 @@
 */
 class Form_Button extends Form_Input
 {
+	protected $_tagSelfClosing = false;
+	protected $_attributes = array(
+		'class' => array(
+			'btn' => true,
+		),
+		'type' => 'submit',
+	);
+
 	public function __construct($name, $title, $link = null)
 	{
 		// If we have a link; we're actually an <a class='btn'>
-		if (isset($link)) {
-			$this->setAttribute('href', htmlspecialchars($link));
+		if (isset($link))
+		{
+			$this->_attributes['href'] = $link;
+			$this->_tagName = 'a';
 			$this->addClass('btn-default');
-			$type = null;
-		} else {
+			unset($this->_attributes['type']);
+		}
+		else
+		{
+			$this->_tagSelfClosing = true;
+			$this->_attributes['value'] = $title;
 			$this->addClass('btn-primary');
-			$this->setAttribute('value', $title);
-			$type = 'submit';
 		}
 
-		parent::__construct($name, $title, $type);
-
-		$this->removeClass('form-control')->addClass('btn');
+		parent::__construct($name, $title, null);
 	}
 
 	protected function _getInput()
 	{
-		if (empty($this->getAttribute('href'))) {
-			return parent::_getInput();
-		}
+		$input = parent::_getInput();
 
-		$element = preg_replace('~^<input(.*)/>$~', 'a\1', parent::_getInput());
+		if (!isset($this->_attributes['href']))
+			return $input;
 
-		return <<<EOT
-	<{$element}>{$this->_title}</a>
-EOT;
+		return $input . htmlspecialchars($this->_title) .'</a>';
 	}
 }

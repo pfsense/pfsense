@@ -28,6 +28,14 @@
 */
 class Form_Input extends Form_Element
 {
+	protected $_tagName = 'input';
+	protected $_tagSelfClosing = true;
+	protected $_attributes = array(
+		'class' => array('form-control' => true),
+		'name' => null,
+		'id' => null,
+		'title' => null,
+	);
 	protected $_title;
 	protected $_help;
 	protected $_helpParams = array();
@@ -36,29 +44,28 @@ class Form_Input extends Form_Element
 
 	public function __construct($name, $title, $type = 'text', $value = null, array $attributes = array())
 	{
-		$this->setAttribute('name', $name);
-		$this->setAttribute('id', $name);
-		$this->_title = htmlspecialchars($title);
-		$this->addClass('form-control');
+		$this->_attributes['name'] = $name;
+		$this->_attributes['id'] = $name;
+		$this->_title = $title;
 
-		if (isset($type)) {
-			$this->setAttribute('type', $type);
-		}
+		if (isset($type))
+			$this->_attributes['type'] = $type;
 
-		if (isset($value)) {
-			$this->setAttribute('value', $value);
-		}
+		if (isset($value))
+			$this->_attributes['value'] = $value;
 
-		foreach($attributes as $name => $value) {
-			$this->setAttribute($name, $value);
-		}
-
-		return $this;
+		foreach ($attributes as $name => $value)
+			$this->_attributes[$name] = $value;
 	}
 
 	public function getTitle()
 	{
 		return $this->_title;
+	}
+
+	public function getName()
+	{
+		return $this->_attributes['name'];
 	}
 
 	public function setHelp($help, array $params = array())
@@ -76,9 +83,8 @@ class Form_Input extends Form_Element
 
 	public function setWidth($size)
 	{
-		if ($size < 1 || $size > 12) {
+		if ($size < 1 || $size > 12)
 			throw new Exception('Incorrect size, pass a number between 1 and 12');
-		}
 
 		$this->removeColumnClass('col-sm-'. $this->_columnWidth);
 
@@ -111,16 +117,37 @@ class Form_Input extends Form_Element
 		return 'class="'. implode(' ', array_keys($this->_columnClasses)).'"';
 	}
 
+	public function setReadonly()
+	{
+		$this->_attributes['readonly'] = 'readonly';
+	}
+
+	public function setDisabled()
+	{
+		$this->_attributes['disabled'] = 'disabled';
+	}
+
+	public function toggles($selector, $type = 'collapse')
+	{
+		$this->_attributes['data-target'] = $selector;
+		$this->_attributes['data-toggle'] = $type;
+	}
+
 	protected function _getInput()
 	{
-		return "<input{$this->getHtmlAttribute()}/>";
+		return parent::__toString();
 	}
 
 	public function __toString()
 	{
 		$input = $this->_getInput();
 
-		if (isset($this->_help)) {
+		// No classes => no element. This is useful for global inputs
+		if (!isset($this->_help) && empty($this->_columnClasses))
+			return (string)$input;
+
+		if (isset($this->_help))
+		{
 			$help = gettext($this->_help);
 
 			if (!empty($this->_helpParams))
@@ -128,17 +155,12 @@ class Form_Input extends Form_Element
 
 			$help = '<span class="help-block">'. $help .'</span>';
 
-		} else {
-			$columnClass = $this->getColumnHtmlClass();
-
-			// No classes => no element. This is useful for global inputs
-			if (empty($columnClass))
-				return (string)$input;
 		}
 
 		return <<<EOT
 	<div {$this->getColumnHtmlClass()}>
 		{$input}
+
 		{$help}
 	</div>
 EOT;

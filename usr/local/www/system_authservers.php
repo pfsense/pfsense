@@ -378,17 +378,17 @@ $section->addInput($input = new Form_Input(
 ));
 
 if ($act == 'edit')
-	$input->setAttribute('readonly', 'readonly');
+	$input->setReadonly();
 
 $section->addInput($input = new Form_Select(
 	'type',
 	'Type',
 	$pconfig['type'],
 	$auth_server_types
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-type');
+))->toggles('.toggle-type');
 
 if ($act == 'edit')
-	$input->setAttribute('disabled', 'disabled');
+	$input->setDisabled();
 
 $form->add($section);
 $section = new Form_Section('LDAP Server Settings');
@@ -486,7 +486,7 @@ $group->add(new Form_Checkbox(
 	'Enable Extended Query',
 	null,
 	$pconfig['ldap_extended_enabled']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-extended');
+))->toggles('.toggle-extended');
 
 $group->add(new Form_Input(
 	'ldap_extended_query',
@@ -501,7 +501,7 @@ $section->addInput(new Form_Checkbox(
 	'Bind anonymous',
 	'Use anonymous binds to resolve distinguished names',
 	$pconfig['ldap_anon']
-))->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '.toggle-anon');
+))->toggles('.toggle-anon');
 
 $group = new Form_Group('Bind credentials');
 $group->addClass('toggle-anon collapse');

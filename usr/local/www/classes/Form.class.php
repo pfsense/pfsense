@@ -34,21 +34,23 @@ foreach (glob('classes/Form/*.class.php') as $file)
 
 class Form extends Form_Element
 {
+	protected $_tagName = 'form';
+	protected $_attributes = array(
+		'class' => array('form-horizontal' => true),
+		'method' => 'post',
+		// Empty is interpreted by all browsers to submit to the current URI
+		'action' => '',
+	);
 	protected $_sections = array();
 	protected $_global = array();
 	protected $_labelWidth = 2;
 
 	public function __construct()
 	{
-		$this->addClass('form-horizontal');
-		$this->setAttribute('method', 'post');
-
 		$this->addGlobal(new Form_Button(
 			'save',
 			'Save'
 		));
-
-	return $this;
 	}
 
 	public function add(Form_Section $section)
@@ -67,9 +69,9 @@ class Form extends Form_Element
 		$this->_labelWidth = (int)$size;
 	}
 
-	public function setAction($uri)
+	public function setAction($url)
 	{
-		$this->setAttribute('action', $uri);
+		$this->_attributes['action'] = $url;
 
 		return $this;
 	}
@@ -93,6 +95,7 @@ class Form extends Form_Element
 
 	public function __toString()
 	{
+		$element = parent::__toString();
 		$html = implode('', $this->_sections);
 
 		if (isset($this->_submit))
@@ -105,7 +108,7 @@ class Form extends Form_Element
 		$html .= implode('', $this->_global);
 
 		return <<<EOT
-	<form {$this->getHtmlAttribute()}>
+	{$element}
 		{$html}
 	</form>
 EOT;

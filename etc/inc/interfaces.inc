@@ -5519,12 +5519,13 @@ function is_altq_capable($int) {
 	/* Per:
 	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+8.3-RELEASE&arch=default&format=html
 	 * Only the following drivers have ALTQ support
+	 * 20150328 - removed wireless drivers - ath, awi, bwn, iwi, ipw, ral, rum, run, wi - for now. redmine #4406
 	 */
-	$capable = array("ae", "age", "alc", "ale", "an", "ath", "aue", "axe", "awi", "bce",
+	$capable = array("ae", "age", "alc", "ale", "an", "aue", "axe", "bce",
 			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
-			"hme", "hn", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
-			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
-			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vmx", "vr", "vte", "wi", "xl",
+			"hme", "hn", "igb", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"nge", "npe", "nve", "re", "rl", "sf", "sge", "sis", "sk",
+			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vmx", "vr", "vte", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 

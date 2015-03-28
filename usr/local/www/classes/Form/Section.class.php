@@ -70,12 +70,13 @@ class Form_Section extends Form_Element
 		$body = implode('', $this->_groups);
 
 		return <<<EOT
-	<div {$this->getHtmlClass()}>
+	<div {$this->getHtmlAttribute()}>
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}</h2>
 		</div>
-
-		<div class="panel-body">{$body}</div>
+		<div class="panel-body">
+			{$body}
+		</div>
 	</div>
 EOT;
 	}

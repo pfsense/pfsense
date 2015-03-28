@@ -29,13 +29,13 @@
 
 class Form_Element
 {
-	protected $_classes = array();
+	protected $_attributes = array('class' => array());
 	protected $_parent;
 
 	public function addClass()
 	{
 		foreach (func_get_args() as $class) {
-			$this->_classes[$class] = true;
+			$this->_attributes['class'][$class] = true;
 		}
 
 		return $this;
@@ -43,22 +43,51 @@ class Form_Element
 
 	public function removeClass($class)
 	{
-		unset($this->_classes[$class]);
+		unset($this->_attributes['class'][$class]);
 
 		return $this;
 	}
 
-	public function getHtmlClass($wrapped = true)
+	public function getClasses()
 	{
-		if (empty($this->_classes))
-				return '';
+		return implode(' ', array_keys($this->getAttribute('class')));
+	}
 
-		$list = implode(' ', array_keys($this->_classes));
+	public function setAttribute($key, $value = null)
+	{
+		$this->_attributes[$key] = $value;
 
-		if (!$wrapped)
-			return $list;
+		return $this;
+	}
 
-		return 'class="'. $list .'"';
+	public function getAttribute($name)
+	{
+		return $this->_attributes[$name];
+	}
+
+	public function removeAttribute($name)
+	{
+		unset($this->_attributes[$name]);
+
+		return $this;
+	}
+
+	public function getHtmlAttribute()
+	{
+		/* Will overwright _attributes['class'] with string Therefore you cannot 
+		 * delete or add classes once getHtmlAttribute() has been called. */
+		if (empty($this->_attributes['class'])) {
+			$this->removeAttribute('class');
+		} else {
+			$this->_attributes['class'] = $this->getClasses();
+		}
+
+		$attributes = '';
+		foreach ($this->_attributes as $key => $value) {
+			$attributes .= ' ' . $key . (isset($value) ? '="' . htmlspecialchars($value) . '"' : '');
+		}
+
+		return $attributes;
 	}
 
 	protected function _setParent(Form_Element $parent)

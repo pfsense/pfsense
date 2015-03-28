@@ -28,19 +28,14 @@
 */
 class Form_Button extends Form_Input
 {
-	protected $_link;
-
 	public function __construct($name, $title, $link = null)
 	{
 		// If we have a link; we're actually an <a class='btn'>
-		if (isset($link))
-		{
-			$this->_link = $link;
+		if (isset($link)) {
+			$this->setAttribute('href', htmlspecialchars($link));
 			$this->addClass('btn-default');
 			$type = null;
-		}
-		else
-		{
+		} else {
 			$this->addClass('btn-primary');
 			$this->setAttribute('value', $title);
 			$type = 'submit';
@@ -53,17 +48,14 @@ class Form_Button extends Form_Input
 
 	protected function _getInput()
 	{
-		if (!isset($this->_link))
+		if (empty($this->getAttribute('href'))) {
 			return parent::_getInput();
+		}
 
 		$element = preg_replace('~^<input(.*)/>$~', 'a\1', parent::_getInput());
-		$link = htmlspecialchars($this->_link);
-		$title = htmlspecialchars($this->_title);
 
 		return <<<EOT
-	<{$element} href="{$link}">
-		{$title}
-	</a>
+	<{$element}>{$this->_title}</a>
 EOT;
 	}
 }

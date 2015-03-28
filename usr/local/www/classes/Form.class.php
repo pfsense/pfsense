@@ -37,15 +37,18 @@ class Form extends Form_Element
 	protected $_sections = array();
 	protected $_global = array();
 	protected $_labelWidth = 2;
-	// Empty is interpreted by all browsers to submit to the current URI
-	protected $_action;
 
 	public function __construct()
 	{
+		$this->addClass('form-horizontal');
+		$this->setAttribute('method', 'post');
+
 		$this->addGlobal(new Form_Button(
 			'save',
 			'Save'
 		));
+
+	return $this;
 	}
 
 	public function add(Form_Section $section)
@@ -66,7 +69,9 @@ class Form extends Form_Element
 
 	public function setAction($uri)
 	{
-		$this->_action = $uri;
+		$this->setAttribute('action', $uri);
+
+		return $this;
 	}
 
 	public function getLabelWidth()
@@ -100,7 +105,7 @@ class Form extends Form_Element
 		$html .= implode('', $this->_global);
 
 		return <<<EOT
-	<form class="form-horizontal" action="{$this->_action}" method="post">
+	<form {$this->getHtmlAttribute()}>
 		{$html}
 	</form>
 EOT;

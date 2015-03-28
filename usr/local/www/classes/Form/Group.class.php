@@ -90,16 +90,15 @@ class Form_Group extends Form_Element
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		$target = $this->_labelTarget->getName();
+		$target = $this->_labelTarget->getAttribute('name');
 		$inputs = implode('', $this->_inputs);
 		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
 
 		return <<<EOT
-	<div {$this->getHtmlClass()}>
+	<div {$this->getHtmlAttribute()}>
 		<label for="{$target}" class="col-sm-{$this->getLabelWidth()} control-label">
 			{$this->_title}
 		</label>
-
 		{$inputs}
 		{$help}
 	</div>

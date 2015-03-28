@@ -1092,20 +1092,11 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 		$ruleValues
 	));
 
-	$group->add(new Form_Input(
+	$group->add(new Form_IpAddress(
 		$type,
 		$name .' Address',
-		'text',
 		$pconfig[$type]
-	));
-
-	$group->add(new Form_Input(
-		$type .'mask',
-		$name .' addressmask',
-		'number',
-		$pconfig[$type.'mask'],
-		['min' => 1, 'max' => 127]
-	));
+	))->addMask($type .'mask', $pconfig[$type.'mask']);
 
 	$section->add($group);
 

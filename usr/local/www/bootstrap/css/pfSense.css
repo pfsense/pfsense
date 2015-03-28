@@ -81,6 +81,10 @@ form .btn + .btn {
 	margin-left: 5px;
 }
 
+.input-group-inbetween {
+	border-left: 0;
+}
+
 /** Page footer */
 .footer {
 	position: absolute;

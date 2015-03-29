@@ -7,7 +7,7 @@ We are migrating pfSense to Bootstrap. You can help! Please respect these code-g
 * no trailing whitespace
 * limited echoing of HTML from php, please use proper templating syntax instead (eg. foreach/endforeach)
 * limited attributes on elements; so _**no** style/align/width attributes_
-* no inline javascript
+* no inline javascript, no ```&nbsp;```, no tables for layout (replace them with [panels](getbootstrap.com/components/#panels) where necessary)
 * html attributes should be using double-quoted attribute-values. This means your php-code should probably use single-quoted strings
 * we use icons for status-indication and buttons for actions
 * **do not** refactor any of the 'backend' code that is on top of each file. Only changes necessary after updating are acceptable; any other changes will be rejected (including changes that were done upstream)

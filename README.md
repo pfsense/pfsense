@@ -1,4 +1,4 @@
-pfSense on bootstrap (<a href="https://github.com/SjonHortensius/pfsense/blob/bootstrap/usr/local/www/PROGRESS.md#php-file-status">progress</a>)
+pfSense on bootstrap (<a href="https://github.com/SjonHortensius/pfsense/blob/bootstrap/PROGRESS.md#php-file-status">progress</a>)
 ====================
 
 We are migrating pfSense to Bootstrap. You can help! Please respect these code-guidelines:

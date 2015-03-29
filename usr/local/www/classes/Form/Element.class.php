@@ -27,14 +27,19 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-abstract class Form_Element
+class Form_Element
 {
 	protected $_tagName;
-	protected $_tagSelfClosing = false;
-	protected $_attributes = array(
-		'class' => array()
-	);
+	protected $_tagSelfClosing;
+	protected $_attributes;
 	protected $_parent;
+
+	public function __construct($tagName = 'div', $selfClose = false, $attributes = array('class' => array()))
+	{
+		$this->_tagName = $tagName;
+		$this->_tagSelfClosing = $selfClose;
+		$this->_attributes = $attributes;
+	}
 
 	public function addClass()
 	{

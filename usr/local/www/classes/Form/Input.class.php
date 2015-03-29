@@ -28,6 +28,7 @@
 */
 class Form_Input extends Form_Element
 {
+	public $column;
 	protected $_tagName = 'input';
 	protected $_tagSelfClosing = true;
 	protected $_attributes = array(
@@ -40,10 +41,11 @@ class Form_Input extends Form_Element
 	protected $_help;
 	protected $_helpParams = array();
 	protected $_columnWidth;
-	protected $_columnClasses = array();
 
 	public function __construct($name, $title, $type = 'text', $value = null, array $attributes = array())
 	{
+		$this->column = new Form_Element;
+
 		$this->_attributes['name'] = $name;
 		$this->_attributes['id'] = $name;
 		$this->_title = $title;
@@ -86,35 +88,13 @@ class Form_Input extends Form_Element
 		if ($size < 1 || $size > 12)
 			throw new Exception('Incorrect size, pass a number between 1 and 12');
 
-		$this->removeColumnClass('col-sm-'. $this->_columnWidth);
+		$this->column->removeClass('col-sm-'. $this->_columnWidth);
 
 		$this->_columnWidth = (int)$size;
 
-		$this->addColumnClass('col-sm-'. $this->_columnWidth);
+		$this->column->addClass('col-sm-'. $this->_columnWidth);
 
 		return $this;
-	}
-
-	public function addColumnClass($class)
-	{
-		$this->_columnClasses[$class] = true;
-
-		return $this;
-	}
-
-	public function removeColumnClass($class)
-	{
-		unset($this->_columnClasses[$class]);
-
-		return $this;
-	}
-
-	public function getColumnHtmlClass()
-	{
-		if (empty($this->_columnClasses))
-				return '';
-
-		return 'class="'. implode(' ', array_keys($this->_columnClasses)).'"';
 	}
 
 	public function setReadonly()
@@ -141,9 +121,10 @@ class Form_Input extends Form_Element
 	public function __toString()
 	{
 		$input = $this->_getInput();
+		$column = (string)$this->column;
 
-		// No classes => no element. This is useful for global inputs
-		if (!isset($this->_help) && empty($this->_columnClasses))
+		// Don't add an empty <div>, skip it instead
+		if (!isset($this->_help) && '<div>' == $column)
 			return (string)$input;
 
 		if (isset($this->_help))
@@ -158,7 +139,7 @@ class Form_Input extends Form_Element
 		}
 
 		return <<<EOT
-	<div {$this->getColumnHtmlClass()}>
+	{$column}
 		{$input}
 
 		{$help}

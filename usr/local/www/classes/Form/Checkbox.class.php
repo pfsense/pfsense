@@ -30,7 +30,7 @@
 class Form_Checkbox extends Form_Input
 {
 	protected $_attributes = array(
-		'class' => array('checkbox' => true),
+		'class' => array(),
 	);
 	protected $_description;
 
@@ -42,11 +42,15 @@ class Form_Checkbox extends Form_Input
 
 		if ($checked)
 			$this->_attributes['checked'] = 'checked';
+
+		$this->column->addClass('checkbox');
 	}
 
 	public function displayAsRadio()
 	{
-		return $this->_attributes['type'] = 'radio';
+		$this->_attributes['type'] = 'radio';
+
+		return $this;
 	}
 
 	protected function _getInput()

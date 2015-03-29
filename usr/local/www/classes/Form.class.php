@@ -98,11 +98,13 @@ class Form extends Form_Element
 		$element = parent::__toString();
 		$html = implode('', $this->_sections);
 
-		if (isset($this->_submit))
+		foreach ($this->_global as $global)
 		{
-			$this->_submit->setWidth(12 - $this->getLabelWidth());
-			$this->_submit->addColumnClass('col-sm-offset-'. $this->_labelWidth);
-			$$html .= $this->_submit;
+			if (!$global instanceof Form_Button)
+				continue;
+
+			$global->setWidth(12 - $this->getLabelWidth());
+			$global->column->addClass('col-sm-offset-'. $this->_labelWidth);
 		}
 
 		$html .= implode('', $this->_global);

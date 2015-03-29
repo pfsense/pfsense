@@ -3,13 +3,15 @@ pfSense on bootstrap (<a href="https://github.com/SjonHortensius/pfsense/blob/bo
 
 We are migrating pfSense to Bootstrap. You can help! Please respect these code-guidelines:
 
-* use tabs (tabstop=4) for indenting (except the license-header which contains 3 lines that are indented with "\t<SP><SP><SP>")
+* use tabs (tabstop=4) for indenting (except the license-header which contains 3 lines that are indented with ```\t<SP><SP><SP>```)
 * no trailing whitespace
 * limited echoing of HTML from php, please use proper templating syntax instead (eg. foreach/endforeach)
-* limited attributes on elements; _no style attributes_
+* limited attributes on elements; so _**no** style/align/width attributes_
 * no inline javascript
 * html attributes should be using double-quoted attribute-values. This means your php-code should probably use single-quoted strings
 * we use icons for status-indication and buttons for actions
+* **do not** refactor any of the 'backend' code that is on top of each file. Only changes necessary after updating are acceptable; any other changes will be rejected (including changes that were done upstream)
+* we accepth both [K&R](https://en.wikipedia.org/wiki/Indent_style#K.26R_style) and [ZF](http://framework.zend.com/manual/1.12/en/coding-standard.html) styled code, the above guidelines have a higher precedence
 
 If you feel adventurous you can sometimes rewrite some PHP & javascript code as well; but try to keep this to a minimum.
 

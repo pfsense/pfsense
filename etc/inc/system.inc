@@ -184,7 +184,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
-			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns)) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
 				$resolvconf .= "nameserver $sys_dnsserver\n";
 			}
 		}

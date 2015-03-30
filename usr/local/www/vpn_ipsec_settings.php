@@ -293,15 +293,20 @@ $section->addInput(new Form_Checkbox(
 	'It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).'
 );
 
-// TODO: should toggle the maxmss input
 $section->addInput(new Form_Checkbox(
 	'maxmss_enable',
 	'Enable Maximum MSS',
 	'Enable MSS clamping on VPN traffic',
 	$pconfig['maxmss_enable']
-));
+))->toggles('.toggle-maxmss', 'collapse');
 
-$section->addInput(new Form_Input(
+$group = new Form_Group('Maximum MSS');
+$group->addClass('toggle-maxmss collapse');
+
+if (!empty($pconfig['maxmss_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
 	'maxmss',
 	'Maximum MSS',
 	'text',
@@ -310,6 +315,8 @@ $section->addInput(new Form_Input(
 	'Enable MSS clamping on TCP flows over VPN. ' .
 	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
 );
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',

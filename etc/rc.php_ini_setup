@@ -177,6 +177,7 @@ TIMEZONE=`cat /conf/config.xml | egrep -E '<timezone>(.*?)</timezone>' | awk -F'
 ; File generated from /etc/rc.php_ini_setup
 output_buffering = "0"
 expose_php = Off
+session.name = "sessionId"
 implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 900

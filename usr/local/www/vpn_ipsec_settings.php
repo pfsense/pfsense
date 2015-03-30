@@ -200,9 +200,6 @@ $shortcut_section = "ipsec";
 include("head.inc");
 ?>
 
-
-
-
 <script type="text/javascript">
 //<![CDATA[
 
@@ -215,8 +212,6 @@ function maxmss_checked(obj) {
 
 //]]>
 </script>
-
-<form action="vpn_ipsec_settings.php" method="post" name="iform" id="iform">
 
 <?php
 	if ($savemsg)
@@ -237,42 +232,33 @@ display_top_tabs($tab_array, false, 'pills');
 require('classes/Form.class.php');
 $form = new Form;
 
+$section = new Form_Section('Start IPsec in debug mode based on sections selected');
+
+foreach ($ipsec_loglevels as $lkey => $ldescr)
+{
+	$section->addInput(new Form_Select(
+		'ipsec_' . $lkey,
+		$ldescr,
+		$pconfig['ipsec_' . $lkey],
+		array('Silent', 'Audit', 'Control', 'Diag', 'Raw', 'Highest')
+	))->setWidth(2);
+}
+
+$section->addInput(new Form_StaticText('', ''))->setHelp(
+	'Launches IPsec in debug mode so that more verbose logs will be generated to aid in troubleshooting.'
+);
+
+$form->add($section);
+
 $section = new Form_Section('IPsec Advanced Settings');
-// TODO: group with groups.
-/*
-	<td width="78%" class="vtable">
-		<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
-		<br />
-		<table summary="ipsec debug">
-			<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=$ldescr?></td>
-					<td width="78%" valign="top" class="vncell">
-						<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
-						foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
-							echo "<option value=\"{$lidx}\" ";
-							if ($pconfig["ipsec_{$lkey}"] == $lidx)
-								echo "selected=\"selected\"";
-							echo ">{$lvalue}</option>\n";
-						}
-						?>
-						</select>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-			<tr style="display:none;"><td></td></tr>
-		</table>
-		<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
-			"will be generated to aid in troubleshooting."); ?>
-	</td>
-*/
+
 $section->addInput(new Form_Select(
 	'uniqueids',
-	'Unique IDs',
+	'Configure Unique IDs as',
 	$pconfig['uniqueids'],
 	$ipsec_idhandling
 ))->setHelp(
-	'<strong>Configure Unique IDs as:</strong><br /><br />Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
+	'Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
 	'deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new ' .
 	'IKE_SA using the same ID is almost invariably intended to replace an old one. ' .
 	'The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an ' .

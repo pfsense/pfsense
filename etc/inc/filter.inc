@@ -796,7 +796,7 @@ function filter_generate_gateways() {
 			$route = "";
 			if (!is_ipaddr($gwip))
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
-			if (is_ipaddr($gwip) && !empty($int))
+			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']))
 				$route = "route-to ( {$int} {$gwip} )";
 			if (($route === "") && isset($config['system']['skip_rules_gw_down']))
 				unset($GatewaysList[$gwname]);

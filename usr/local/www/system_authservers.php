@@ -326,33 +326,37 @@ display_top_tabs($tab_array);
 if (!($act == "new" || $act == "edit" || $input_errors))
 {
 	?>
-	<table class="table">
-		<thead>
-			<tr>
-				<th><?=gettext("Server Name")?></th>
-				<th><?=gettext("Type")?></th>
-				<th><?=gettext("Host Name")?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-	<?php foreach($a_server as $i => $server): ?>
-			<tr>
-				<td><?=htmlspecialchars($server['name'])?></td>
-				<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
-				<td><?=htmlspecialchars($server['host'])?></td>
-				<td>
-				<?php if ($i < (count($a_server) - 1)): ?>
-					<a href="system_authservers.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-					<a href="system_authservers.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" onclick="return confirm('<?=gettext("Do you really want to delete this Server?")?>')">delete</a>
-				<?php endif?>
-				</td>
-			</tr>
-	<?php endforeach; ?>
-		</tbody>
-	</table>
+	<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><?=gettext("Server Name")?></th>
+					<th><?=gettext("Type")?></th>
+					<th><?=gettext("Host Name")?></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php foreach($a_server as $i => $server): ?>
+				<tr>
+					<td><?=htmlspecialchars($server['name'])?></td>
+					<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
+					<td><?=htmlspecialchars($server['host'])?></td>
+					<td>
+					<?php if ($i < (count($a_server) - 1)): ?>
+						<a href="system_authservers.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
+						<a href="system_authservers.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" onclick="return confirm('<?=gettext("Do you really want to delete this Server?")?>')">delete</a>
+					<?php endif?>
+					</td>
+				</tr>
+		<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
 
-	<a href="?act=new" class="btn btn-success">add new</a>
+	<nav class="action-buttons">
+		<a href="?act=new" class="btn btn-success">add new</a>
+	</nav>
 <?php
 	include("foot.inc");
 	exit;

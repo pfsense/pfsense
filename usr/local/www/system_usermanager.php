@@ -324,7 +324,9 @@ display_top_tabs($tab_array);
 if (!($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors))
 {
 ?>
-<table class="table">
+
+<div class="table-responsive">
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
@@ -367,7 +369,10 @@ foreach($a_user as $i => $userent):
 <?php endforeach; ?>
 	</tbody>
 </table>
-<a href="?act=new" class="btn btn-success">add new</a>
+</div>
+<nav class="action-buttons">
+	<a href="?act=new" class="btn btn-success">add new</a>
+</nav>
 <p>
 	<?=gettext("Additional users can be added here. User permissions for accessing " .
 	"the webConfigurator can be assigned directly or inherited from group memberships. " .

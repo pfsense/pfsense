@@ -648,15 +648,17 @@ display_top_tabs($tab_array);
 	</div>
 <?php endif;?>
 
-<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-success">
-	<?=gettext("add new");?>
-</a>
+<nav class="action-buttons">
+	<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-success">
+		<?=gettext("add new");?>
+	</a>
 <?php if ($i > 0): ?>
 	<a href="#" role="button" class="btn btn-danger">
 		<?=gettext("delete selected");?>
 	</a>
 	<!-- onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />-->
 <?php endif;?>
+</nav>
 
 <h2>Legend</h2>
 <ul>

@@ -77,7 +77,6 @@ if ($_GET['act'] == "del") {
 include("head.inc");
 ?>
 
-<form action="vpn_l2tp_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg)?>
 <?php if (isset($config['l2tp']['radius']['enable']))
 	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used."))?>
@@ -91,36 +90,38 @@ include("head.inc");
 	$tab_array[1] = array(gettext("Users"), true, "vpn_l2tp_users.php");
 	display_top_tabs($tab_array, false, 'pills');
 ?>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover">
-			<thead>
-				<tr>
-					<th><?=gettext("Username")?></th>
-					<th><?=gettext("IP address")?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th><?=gettext("Username")?></th>
+				<th><?=gettext("IP address")?></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php $i = 0; foreach ($a_secret as $secretent):?>
-				<tr>
-					<td>
-						<?=htmlspecialchars($secretent['name'])?>
-					</td>
-					<td>
-						<?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"?>
-						<?=htmlspecialchars($secretent['ip'])?>&nbsp;
-					</td>
-					<td>
-						<a class="btn btn-xs btn-primary" href="vpn_l2tp_users_edit.php?id=<?=$i?>"><?= gettext('edit') ?></a>
-				        <a class="btn btn-xs btn-danger" href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?")?>')"><?=gettext("delete")?></a>
-					</td>
-				</tr>
+			<tr>
+				<td>
+					<?=htmlspecialchars($secretent['name'])?>
+				</td>
+				<td>
+					<?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"?>
+					<?=htmlspecialchars($secretent['ip'])?>&nbsp;
+				</td>
+				<td>
+					<a class="btn btn-xs btn-primary" href="vpn_l2tp_users_edit.php?id=<?=$i?>"><?= gettext('edit') ?></a>
+			        <a class="btn btn-xs btn-danger" href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?")?>')"><?=gettext("delete")?></a>
+				</td>
+			</tr>
 <?php $i++; endforeach?>
-			</tbody>
-		</table>
-	</div>
+		</tbody>
+	</table>
+</div>
 
+<nav class="action-buttons">
 	<a class="btn btn-success" href="vpn_l2tp_users_edit.php"><?=gettext("add user")?></a>
-</form>
+</nav>
+
 
 <?php include("foot.inc")?>

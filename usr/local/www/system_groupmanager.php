@@ -190,16 +190,17 @@ display_top_tabs($tab_array);
 if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 {
 ?>
-<table class="table">
-	<thead>
-		<tr>
-			<th><?=gettext("Group name")?></th>
-			<th><?=gettext("Description")?></th>
-			<th><?=gettext("Member Count")?></th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
+	<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><?=gettext("Group name")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Member Count")?></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 	foreach($a_group as $i => $group):
 		if ($group["name"] == "all")
@@ -207,30 +208,33 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 		else
 			$groupcount = count($group['member']);
 ?>
-		<tr>
-			<td>
-				<?=htmlspecialchars($group['name'])?>
-			</td>
-			<td>
-				<?=htmlspecialchars($group['description'])?>
-			</td>
-			<td>
-				<?=$groupcount?>
-			</td>
-			<td>
-				<a href="?act=edit&amp;groupid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-				<?php if($group['scope'] != "system"): ?>
-					<a href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" class="btn btn-xs btn-danger">delete</a>
-				<?php endif;?>
-			</td>
-		</tr>
+				<tr>
+					<td>
+						<?=htmlspecialchars($group['name'])?>
+					</td>
+					<td>
+						<?=htmlspecialchars($group['description'])?>
+					</td>
+					<td>
+						<?=$groupcount?>
+					</td>
+					<td>
+						<a href="?act=edit&amp;groupid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
+						<?php if($group['scope'] != "system"): ?>
+							<a href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" class="btn btn-xs btn-danger">delete</a>
+						<?php endif;?>
+					</td>
+				</tr>
 <?php
 	endforeach;
 ?>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
 
-	<a href="?act=new" class="btn btn-success">add new</a>
+	<nav class="action-buttons">
+		<a href="?act=new" class="btn btn-success">add new</a>
+	</nav>
 <?php
 	include('foot.inc');
 	exit;

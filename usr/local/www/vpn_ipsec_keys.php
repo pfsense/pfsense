@@ -3,21 +3,21 @@
 	vpn_ipsec_keys.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	part of pfSense
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -82,7 +82,7 @@ include("head.inc");
 
 ?>
 
-<?php 
+<?php
 if ($savemsg)
 	print_info_box($savemsg);
 if (is_subsystem_dirty('ipsec'))
@@ -133,8 +133,7 @@ if (is_subsystem_dirty('ipsec'))
 					<?=htmlspecialchars($secretent['pre-shared-key'])?>
 				</td>
 				<td>
-					<?php // TODO: this was a post. Why? ?>
-					<a class="btn btn-primary btn-xs" href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>">edit</a>
+					<a class="btn btn-primary btn-xs" href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>">edit user</a>
 				</td>
 			</tr>
 <?php $i++; endforeach; ?>
@@ -165,7 +164,9 @@ if (is_subsystem_dirty('ipsec'))
 	</table>
 </div>
 
-<a class="btn btn-success" href="vpn_ipsec_keys_edit.php"><?=gettext("add key")?></a>
+<nav class="action-buttons">
+	<a class="btn btn-success" href="vpn_ipsec_keys_edit.php"><?=gettext("add key")?></a>
+</nav>
 
 <div class="alert alert-info">
 	<strong><?=gettext("Note"); ?>:</strong><br />

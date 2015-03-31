@@ -51,6 +51,21 @@ tr.disabled th {
 	margin-bottom: 20px;
 }
 
+/** Content structure */
+.table-responsive {
+	clear: both;
+}
+
+.form-horizontal {
+	margin-bottom: 20px;
+	overflow: hidden;
+}
+
+.action-buttons {
+	text-align: right;
+	margin-bottom: 20px;
+}
+
 /** Form validation */
 .input-errors ul {
 	margin-top: 20px;
@@ -77,6 +92,7 @@ tr.disabled th {
 	margin-left: 10px;
 }
 
+/** Form tweaks */
 form .btn + .btn {
 	margin-left: 5px;
 }

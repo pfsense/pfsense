@@ -88,7 +88,8 @@ if(!is_array($config['installedpackages']['package'])):?>
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
 <?php else: ?>
-	<table class="table table-striped">
+	<div class="table-responsive">
+	<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th><span class="sr-only"><?=gettext("Status")?></span></th>
@@ -172,5 +173,6 @@ if(!is_array($config['installedpackages']['package'])):?>
 <?php endforeach;?>
 	</tbody>
 </table>
+</div>
 <?php endif; ?>
 <?php include("foot.inc")?>

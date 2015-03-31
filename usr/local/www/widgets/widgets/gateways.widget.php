@@ -42,7 +42,7 @@ $gateways_status = array();
 $gateways_status = return_gateways_status(true);
 
 ?>
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 <thead>
 <tr>
 	<th>Name</td>

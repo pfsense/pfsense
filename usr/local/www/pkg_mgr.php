@@ -161,7 +161,8 @@ if(!$pkg_info || !is_array($pkg_keys)):?>
 		<?=gettext("There are currently no packages available for installation.")?>
 	</div>
 <?php else: ?>
-	<table class="table table-striped">
+	<div class="table-responsive">
+	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
 		<th><?=gettext("Name")?></th>
@@ -239,6 +240,7 @@ if(!$pkg_info || !is_array($pkg_keys)):?>
 <?php
 	endforeach;
 endif;?>
-</tbody>
-</table>
+	</tbody>
+	</table>
+	</div>
 <?php include("foot.inc")?>

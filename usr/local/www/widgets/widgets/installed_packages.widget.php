@@ -58,7 +58,7 @@ if(is_array($config['installedpackages']['package'])) {
 		<div class="panel-body">You can install packages <a href="pkg_mgr.php">here</a>.</div>
 	</div>
 <?php else: ?>
-	<table class="table table-striped">
+	<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th>Package Name</th>

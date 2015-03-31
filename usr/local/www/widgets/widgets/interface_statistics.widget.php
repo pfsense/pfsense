@@ -52,7 +52,7 @@ $rows = array(
 $ifdescrs = get_configured_interface_with_descr();
 
 ?>
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 <thead>
 	<tr>
 		<td></td>

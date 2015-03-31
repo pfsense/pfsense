@@ -34,7 +34,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 ?>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th></th>

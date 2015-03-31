@@ -88,7 +88,7 @@ $curcfg = $config['system']['firmware'];
 $filesystems = get_mounted_filesystems();
 ?>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 	<tbody>
 		<tr>
 			<th><?=gettext("Name");?></td>

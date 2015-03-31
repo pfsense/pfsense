@@ -184,7 +184,8 @@ if($savemsg)
 	<?php print_info_box(gettext("No backups found."))?>
 <?php else: ?>
 	<form action="diag_confbak.php" method="get">
-	<table class="table table-striped">
+	<div class="table-responsive">
+	<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th><input type="submit" name="diff" class="btn btn-default" value="<?=gettext("Diff")?>" /></th>
@@ -245,6 +246,6 @@ if($savemsg)
 	<?php endif; ?>
 <?php endif?>
 	</table>
+	</div>
 	</form>
-</div>
 <?php include("foot.inc")?>

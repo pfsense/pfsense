@@ -463,7 +463,8 @@ $tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <form action="interfaces_assign.php" method="post">
-	<table class="table table-striped">
+	<div class="table-responsive">
+	<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th><?=gettext("Interface")?></th>
@@ -518,8 +519,11 @@ display_top_tabs($tab_array);
 <?php endif;?>
 		</tbody>
 	</table>
+	</div>
 
 	<input name="Submit" type="submit" class="btn btn-default" value="<?=gettext("Save")?>" /><br /><br />
-	<p><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
 </form>
+
+<p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
+
 <?php include("foot.inc")?>

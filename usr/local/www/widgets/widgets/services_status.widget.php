@@ -52,7 +52,7 @@ if(isset($_POST['servicestatusfilter'])) {
 	header("Location: /");
 }
 ?>
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 <thead>
 	<tr>
 		<th></th>

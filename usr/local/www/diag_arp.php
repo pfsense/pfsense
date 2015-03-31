@@ -289,35 +289,40 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 ?>
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th><?= gettext("Interface")?></th>
-			<th><?= gettext("IP address")?></th>
-			<th><?= gettext("MAC address")?></th>
-			<th><?= gettext("Hostname")?></th>
-		</tr>
-	</thead>
-	<tbody>
-	<?php foreach ($data as $entry): ?>
-		<tr>
-			<td><?=$hwif[$entry['interface']]?></td>
-			<td><?=$entry['ip']?></td>
-			<td>
-				<?=trim($entry['mac'])?>
-			<?php
-				$mac = trim($entry['mac']);
-				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th><?= gettext("Interface")?></th>
+				<th><?= gettext("IP address")?></th>
+				<th><?= gettext("MAC address")?></th>
+				<th><?= gettext("Hostname")?></th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($data as $entry): ?>
+			<tr>
+				<td><?=$hwif[$entry['interface']]?></td>
+				<td><?=$entry['ip']?></td>
+				<td>
+					<?=trim($entry['mac'])?>
+				<?php
+					$mac = trim($entry['mac']);
+					$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 
-				if (isset($mac_man[$mac_hi]))
-					print '<small>('. $mac_man[$mac_hi] .')</small>';
-?>
-			</td>
-			<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
-		</tr>
-	<?php endforeach?>
-	</tbody>
-</table>
-<p><?= gettext("NOTE: Local IPv6 peers use")?> <a href="diag_ndp.php"><?= gettext("NDP")?></a> <?= gettext("instead of ARP")?>.</p>
+					if (isset($mac_man[$mac_hi]))
+						print '<small>('. $mac_man[$mac_hi] .')</small>';
+	?>
+				</td>
+				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
+			</tr>
+		<?php endforeach?>
+		</tbody>
+	</table>
+</div>
+
+<p class="alert alert-info">
+	<strong>Note:</strong> <?= gettext("Local IPv6 peers use")?> <a href="diag_ndp.php"><?= gettext("NDP")?></a> <?= gettext("instead of ARP")?>.
+</p>
 
 <?php include("foot.inc")?>

@@ -95,7 +95,7 @@ else
 	var logWidgetLastRefresh = <?=time()?>;
 </script>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th><?=gettext("Act");?></th>

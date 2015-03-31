@@ -154,7 +154,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tbody>
 	</table>
 
-	<table class="table table-striped">
+	<table class="table table-striped table-hover">
 	<thead>
 		<th>Source</th>
 		<th>Destination</th>
@@ -180,7 +180,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 	</table>
 
 	<?php if (is_array($mobile['pool'])): ?>
-		<table class="table table-striped">
+		<table class="table table-striped table-hover">
 		<thead>
 			<th>User</th>
 			<th>IP</th>

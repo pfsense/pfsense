@@ -249,7 +249,7 @@ foreach ($iflist as $ifent => $ifname) {
 display_top_tabs($tab_array);
 ?>
 <div class="table-responsive">
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 <?php
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_first_tr");
 ?>

@@ -43,7 +43,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 $ifdescrs = get_configured_interface_with_descr();
 ?>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 <?php
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);

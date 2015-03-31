@@ -78,7 +78,7 @@ function gmirror_html_status() {
 	}
 
 ?>
-<table class="table table-striped">
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th>Name</td>

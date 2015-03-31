@@ -627,9 +627,8 @@ EOD;
 
 	$uniqueids = 'yes';
 	if (!empty($config['ipsec']['uniqueids'])) {
-		if (in_array($uniqueids, $ipsec_idhandling)) {
+		if (array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling))
 			$uniqueids = $config['ipsec']['uniqueids'];
-		}
 	}
 	$natfilterrules = false;
 	/* begin ipsec.conf */

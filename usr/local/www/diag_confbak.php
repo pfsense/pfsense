@@ -61,13 +61,13 @@ if (isset($_POST['backupcount'])) {
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	if($_POST['newver'] != "") {
 		if(config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0)
-		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), $confvers[$_POST['newver']]['description']);
+		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']));
 		else
 			$savemsg = gettext("Unable to revert to the selected configuration.");
 	}
 	if($_POST['rmver'] != "") {
 		unlink_if_exists($g['conf_path'] . '/backup/config-' . $_POST['rmver'] . '.xml');
-		$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']),$confvers[$_POST['rmver']]['description']);
+		$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']), htmlspecialchars($confvers[$_POST['rmver']]['description']));
 	}
 	conf_mount_ro();
 }
@@ -231,7 +231,7 @@ include("head.inc");
 							<td class="listlr"> <?= date(gettext("n/j/y H:i:s"), $config['revision']['time']) ?></td>
 							<td class="listr"> <?= $config['version'] ?></td>
 							<td class="listr"> <?= format_bytes(filesize("/conf/config.xml")) ?></td>
-							<td class="listr"> <?= $config['revision']['description'] ?></td>
+							<td class="listr"> <?= htmlspecialchars($config['revision']['description']) ?></td>
 							<td valign="middle" class="list nowrap"><b><?=gettext("Current");?></b></td>
 						</tr>
 						<?php
@@ -257,7 +257,7 @@ include("head.inc");
 							<td class="listlr"> <?= $date ?></td>
 							<td class="listr"> <?= $version['version'] ?></td>
 							<td class="listr"> <?= format_bytes($version['filesize']) ?></td>
-							<td class="listr"> <?= $version['description'] ?></td>
+							<td class="listr"> <?= htmlspecialchars($version['description']) ?></td>
 							<td valign="middle" class="list nowrap">
 							<a href="diag_confbak.php?newver=<?=$version['time'];?>">
 							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>" />

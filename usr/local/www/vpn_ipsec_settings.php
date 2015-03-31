@@ -51,6 +51,7 @@ $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse'])
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
 

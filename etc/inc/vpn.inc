@@ -1082,12 +1082,6 @@ EOD;
 			if (!empty($ealgosp1)) {
 				$ipsecconnect .= "\t{$ealgosp1}\n";
 			}
-			if (!empty($ealgoAHsp2arr)) {
-				$ipsecconnect .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-			}
-			if (!empty($ealgoESPsp2arr)) {
-				$ipsecconnect .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-			}
 			if (!empty($authentication)) {
 				$ipsecconnect .= "\t{$authentication}\n";
 			}
@@ -1107,6 +1101,12 @@ EOD;
 							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						}
 						$ipsecfin .= $ipsecconnect;
+						if (!empty($ealgoAHsp2arr)) {
+							$ipsecfin .= "\tah = " . $ealgoAHsp2arr[$idx] . "!\n";
+						}
+						if (!empty($ealgoESPsp2arr)) {
+							$ipsecfin .= "\tesp = " . $ealgoESPsp2arr[$idx] . "!\n";
+						}
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
 					}
@@ -1119,6 +1119,12 @@ EOD;
 					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				}
 				$ipsecfin .= $ipsecconnect;
+				if (!empty($ealgoAHsp2arr)) {
+					$ipsecfin .= "\tah = " . join(',', array_unique($ealgoAHsp2arr)) . "!\n";
+				}
+				if (!empty($ealgoESPsp2arr)) {
+					$ipsecfin .= "\tesp = " . join(',', array_unique($ealgoESPsp2arr)) . "!\n";
+				}
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
 					foreach ($rightsubnet_spec as $rightsubnet) {

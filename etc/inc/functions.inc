@@ -85,7 +85,7 @@ if (!function_exists("get_menu_messages")) {
 
 			## Get Query Arguments from URL ###
 			foreach ($_REQUEST as $key => $value) {
-				if ($key != "PHPSESSID") {
+				if ($key != session_name()) {
 					$requests[] = $key.'='.$value;
 				}
 			}

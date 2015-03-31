@@ -87,8 +87,11 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
 
-	if (strpos($_POST['name'], " ") !== false)
-		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+	if (preg_match('/[ \/]/', $_POST['name']))
+		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+
+	if (strlen($_POST['name']) > 16)
+		$input_errors[] = gettext("The 'name' field must be 16 characters or less.");
 
 	if (in_array($_POST['name'], $reserved_table_names))
 		$input_errors[] = sprintf(gettext("The name '%s' is a reserved word and cannot be used."), $_POST['name']);
@@ -200,7 +203,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16" />
+				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?> size="16" maxlength="16" />
 			</td>
 		</tr>
 		<tr align="left">
@@ -215,7 +218,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?> size="64" />
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?> size="64" />
 			</td>
 		</tr>
 

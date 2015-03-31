@@ -97,8 +97,11 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This monitor name has already been used.  Monitor names must be unique.");
 
-	if (strpos($_POST['name'], " ") !== false)
-		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+	if (preg_match('/[ \/]/', $_POST['name']))
+		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+
+	if (strlen($_POST['name']) > 16)
+		$input_errors[] = gettext("The 'name' field must be 16 characters or less.");
 
 	switch($_POST['type']) {
 		case 'icmp': {

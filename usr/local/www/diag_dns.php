@@ -35,7 +35,6 @@ s
 	pfSense_MODULE: dns
 */
 
-/* Bootstrap conversion: sbeaver@netgate.com */
 require("guiconfig.inc");
 define('NO_BUTTON', false);
 $pgtitle = array(gettext("Diagnostics"),gettext("DNS lookup"));

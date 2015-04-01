@@ -19,7 +19,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |diag_backup.php                              |                         |                        |                                                            |
 |diag_confbak.php                             |                         |                        |                                                            |
 |diag_defaults.php                            |                         |                        |                                                            |
-|diag_dns.php                                 | &#x1f504;               | sbeaver                       |                                                            |
+|diag_dns.php                                 | &#x1f504;               | sbeaver                |                                                            |
 |diag_dump_states.php                         |                         |                        |                                                            |
 |diag_dump_states_sources.php                 |                         |                        |                                                            |
 |diag_gmirror.php                             |                         |                        |                                                            |

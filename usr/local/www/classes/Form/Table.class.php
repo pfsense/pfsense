@@ -30,10 +30,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-
 /*
 	class expects a title and an 'array of arrrays', representing an array of rows in the table
-	Row 0 is assumed to contain the table column headers, rows 1 -> X contain the tablke data
+	Row 0 is assumed to contain the table column headers, rows 1 -> X contain the table data
 */
 class Form_Table extends Form_Input
 {

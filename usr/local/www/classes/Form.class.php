@@ -2,9 +2,6 @@
 /*
 	Form.class.php
 
-	Copyright© 2015 Rubicon Communications, LLC (Netgate)
-	This file is a part of pfSense®
-
 	Copyright (C) 2015 Sjon Hortensius
 	All rights reserved.
 
@@ -43,20 +40,15 @@ class Form extends Form_Element
 	// Empty is interpreted by all browsers to submit to the current URI
 	protected $_action;
 
-	public function __construct($name = null, $value = null)
+	public function __construct($EnableButton = true)
 	{
-		if(isset($name) && isset($value)) {
-		  $this->addGlobal(new Form_Button(
-			 $name,
-			 $value
-		  ));
-		} else {
+	    if($EnableButton) {
 		  $this->addGlobal(new Form_Button(
 			 'save',
 			 'Save'
 		  ));
-		}
-
+	    }
+	    	    
 	}
 
 	public function add(Form_Section $section)

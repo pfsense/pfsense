@@ -44,6 +44,8 @@ class Form_IpAddress extends Form_Input
 			$value,
 			array_combine(range(1, 32), range(1, 32))
 		);
+
+		return $this;
 	}
 
 	protected function _getInput()

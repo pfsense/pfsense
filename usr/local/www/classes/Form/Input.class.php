@@ -100,17 +100,32 @@ class Form_Input extends Form_Element
 	public function setReadonly()
 	{
 		$this->_attributes['readonly'] = 'readonly';
+
+		return $this;
 	}
 
 	public function setDisabled()
 	{
 		$this->_attributes['disabled'] = 'disabled';
+
+		return $this;
 	}
 
 	public function toggles($selector, $type = 'collapse')
 	{
-		$this->_attributes['data-target'] = $selector;
+		if (isset($selector))
+			$this->_attributes['data-target'] = $selector;
+
 		$this->_attributes['data-toggle'] = $type;
+
+		return $this;
+	}
+
+	public function setPattern($regexp)
+	{
+		$this->_attributes['pattern'] = $regexp;
+
+		return $this;
 	}
 
 	protected function _getInput()

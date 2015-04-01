@@ -2,6 +2,9 @@
 /*
 	diag_dns.php
 
+	Copyright© 2015 Rubicon Communications, LLC (Netgate)
+	This file is a part of pfSense®
+
 	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
@@ -15,7 +18,7 @@
 	2. Redistributions in binary form must reproduce the above copyright
 	notice, this list of conditions and the following disclaimer in the
 	documentation and/or other materials provided with the distribution.
-
+s
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -33,14 +36,18 @@
 */
 
 /* Bootstrap conversion: sbeaver@netgate.com */
-
-$pgtitle = array(gettext("Diagnostics"),gettext("DNS lookup"));
 require("guiconfig.inc");
-
+define('NO_BUTTON', false);
+$pgtitle = array(gettext("Diagnostics"),gettext("DNS lookup"));
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
 
-/* If this section of config.xml has not been populated yet we need to set it up 
+if(isset($_POST['create_alias']))
+	$host = $_POST['host'] = $_POST['alias'];
+
+$host_esc = escapeshellarg($host);
+
+/* If this section of config.xml has not been populated yet we need to set it up
 */
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
@@ -61,7 +68,9 @@ foreach($a_aliases as $a) {
 if(isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	if($_POST['override'])
 		$override = true;
+
 	$resolved = gethostbyname($host);
+
 	$type = "hostname";
 	if($resolved) {
 		$resolved = array();
@@ -69,25 +78,28 @@ if(isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 		$isfirst = true;
 		foreach($resolved as $re) {
 			if($re != "") {
-				if(!$isfirst) 
+				if(!$isfirst)
 					$addresses .= " ";
 				$addresses .= rtrim($re) . "/32";
 				$isfirst = false;
 			}
 		}
 		$newalias = array();
-		if($override) 
+
+	/*	if($override)  */
 			$alias_exists = false;
+
 		if($alias_exists == false) {
 			$newalias['name'] = $aliasname;
 			$newalias['type'] = "network";
 			$newalias['address'] = $addresses;
 			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
-			if($override) 
+			if($override)
 				$a_aliases[$id] = $newalias;
 			else
 				$a_aliases[] = $newalias;
 			write_config();
+
 			$createdalias = true;
 		}
 	}
@@ -95,12 +107,12 @@ if(isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 
 if ($_POST) {
 	unset($input_errors);
-	
+
 	$reqdfields = explode(" ", "host");
 	$reqdfieldsn = explode(",", "Host");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if (!is_hostname($host) && !is_ipaddr($host)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
 	} else {
@@ -170,151 +182,119 @@ function display_host_results ($address,$hostname,$dns_speeds) {
 	}
 }
 
-include("head.inc"); ?>
+include("head.inc");
 
-<?php
-	/* Dosplay any error messages resulting from user input */ 
-	if ($input_errors) 
-		print_input_errors($input_errors);
-	else if (!$resolved && $type)
-		{
-		$errors[] = gettext("Host") . ": " . "\"" . $host . "\"" . " " . gettext("could not be resolved");
-		print_errors($errors, gettext("DNS Lookup error:"));		
-	}
+/* Display any error messages resulting from user input */
+if ($input_errors)
+	print_input_errors($input_errors);
+else if (!$resolved && $type)
+	print('<div class="alert alert-warning" role="alert">' . gettext("Host \"") . $host . "\"" . gettext(" could not be resolved") . '</div>');
+
+if($createdalias)
+   print('<div class="alert alert-success" role="alert">Alias was created/updated successfully</div>');
 ?>
-  
+
+<?php if (!$input_errors && $ipaddr) { ?>
 <form action="diag_dns.php" method="post" name="iform" id="iform">
 
-<!-- First table displayes the DNS lookup form and the resulting IP addresses -->
-	<div class="table-responsive">
-	
-		<table class="table" summary="results">
-		<thead>
-			<tr>
-				<th width="30%">Host name</th>
-				<?php if ($resolved && $type) { ?> 
-				<th>IP Addresse(s)</th>
-				<?php } ?>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="active">
-				<td>
-					<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host)?>" />
-					<br /><br />
-					<button type="submit" class="btn btn-primary"><?=gettext("DNS Lookup");?></button>
-				</td>
-							
-				<td>
-					<?php if ($resolved && $type) { ?>
-					<font size="+1">
 <?php
-					$found = 0;
-					if(is_array($resolved)) { 
-						foreach($resolved as $hostitem) {
-							if($hostitem != "") {
-								echo $hostitem . "<br />";
-								$found++;
-							}
-						}
-					} else {
-						echo $resolved; 
-					} 
-				
-					if($found > 0) { ?>
-						</font> <font size='-1'">
-					<?PHP	if($alias_exists) { ?>
-							 An alias already exists for the hostname <?= htmlspecialchars($host) ?>. <br /> 
-							<input type="hidden" name="override" value="true"/>
-							<button type="submit" name="override" class="btn-xs btn-success"><?=gettext("Overwrite alias");?></button>
-							
-					<?PHP	} else {
-						if(!$createdalias) { ?>
-							<button type="submit" name="create_alias" class="btn-xs btn-success"><?=gettext("Create Alias from These Entries");?></button>
-					<?PHP	} else { ?>
-							Alias created with name <?= htmlspecialchars($newalias['name']) ?>
-					<?PHP	}
-						}
-					}
-					
+	unset($dns_results);
+	if ($resolved && $type) {
+		$dns_results = array();
+		$found = 0;
+		$dns_results[$found] = array("Address(es)");
+		if(is_array($resolved)) {
+			foreach($resolved as $hostitem) {
+				if($hostitem != "") {
+					$found++;
+					$dns_results[$found] = array($hostitem);
+				}
+			}
+		} else {
+			$dns_results[1] = array($resolved);
+	}
+ }
 ?>
 
-					<?php } ?>
-					</font>
-				</td>
-			</tr>				 
-		</tbody> 
-		</table>
-	</div>			
-			
-<!-- Second table displays the server resolution times -->		
-	<div class="table-responsive">
-		<table width="70%" class="table table-condensed" summary="results">
-		<?php		if($_POST): ?>
-		<thead>
-			<tr>
-				<th width="30%">Name server</th>
-				<th>Query time</th>
-			</tr>
-		</thead>
-		
-		<tbody>		
-
-
+<!-- Second table displays the server resolution times -->
 <?php
-		if(is_array($dns_speeds)) 
-			foreach($dns_speeds as $qt):
-?>
-			<tr class="active">
-				<td class="listlr">
-					<?=$qt['dns_server']?>
-				</td>
-				<td class="listr">
-					<?=$qt['query_time']?>
-				</td>
-			</tr>
-<?php
-			endforeach;
+	$timing_results = array();
+	$timing_results[0] = array("Name server", "Query time");
+
+	if(is_array($dns_speeds)) {
+		$i = 1;
+
+		foreach($dns_speeds as $qt):
+		  $timing_results[$i++] = array($qt['dns_server'], $qt['query_time']);
+		endforeach;
+	}
+
 ?>
 
+<!-- Third table displays "More information" -->
+<?php
+	$more_information = array();
+	$more_information[0] = array("");
+	$more_information[1] = array("<a href =\"/diag_ping.php?host=" . htmlspecialchars($host) . "&amp;interface=wan&amp;count=3\">" . gettext("Ping") . "</a>");
+	$more_information[2] = array("<a href =\"/diag_traceroute.php?host=" . htmlspecialchars($host) . "&amp;ttl=18\">" . gettext("Traceroute") . "</a>");
+	$more_information[3] = array("<font size=\"-1\">\r\n" . "NOTE: The following links are to external services, so their reliability cannot be guaranteed. They use only the first IP address returned above.\r\n");
+	$more_information[4] = array("<a target=\"_blank\" href=\"http://private.dnsstuff.com/tools/whois.ch?ip=" . $ipaddr . "\">" . gettext("IP WHOIS @ DNS Stuff") . "</a>");
+	$more_information[5] = array("<a target=\"_blank\" href=\"http://private.dnsstuff.com/tools/ipall.ch?ip=" . $ipaddr . "\">" . gettext("IP Info @ DNS Stuff") . "</a>");
+?>
 
-		<?php endif; ?>
-		</tbody>
+<?php
+}
 
-		</table>
-	</div>
-		
-<!-- Third table displays "More information" --> 
-	<div class="table-responsive">
-		<table class="table table-condensed" summary="results">
-		<?php		if($_POST && ($found > 0)) { ?>
-		<thead>
-			<tr>
-				<th width="30%">More information</th>
-				<th></th>
-			</tr>
-		</thead>
-	
-		<tbody>
-		<?php if (!$input_errors && $ipaddr) { ?>
-		<tr class="active">
-			<td width="78%" class="vtable">
-				<a href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping")?></a><br />
-				<a href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a>
-				<p><br />
-				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.<br />They use only the first IP address returned above.")?><br /><br />
-				<a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff")?></a><br />
-				<a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff")?></a>
-				</p>
-			</td>
-			<td></td>
-		</tr>
-		<?php } ?>
-		</tbody>
-		<?php } ?>
-		</table>
-	</div>	
-	
-</form>
-<?php include("foot.inc"); ?>
+require('classes/Form.class.php');
 
+$form = new Form(NO_BUTTON);
+$section = new Form_Section('DNS Lookup');
+
+if( isset($dns_results))
+	$section->addInput(new Form_Table("Results", $dns_results));
+
+if(isset($timing_results))
+	$section->addInput(new Form_Table("Timing", $timing_results));
+
+$form->addGlobal(new Form_Button(
+	'lookup',
+	'Lookup'
+));
+
+$section->addInput(new Form_Input(
+	'alias',
+	'',
+	'hidden',
+	$host,
+	['placeholder' => 'Description']
+));
+
+$section->addInput(new Form_Input(
+	'host',
+	'Host name',
+	'text',
+	$pconfig['descr'],
+	['placeholder' => 'Description']
+))->setWidth(3)->setHelp(gettext('Host name to look up.'));
+
+if($found > 0)
+	{
+	$form->addGlobal(new Form_Button(
+	   'create_alias',
+	   'Add alias'
+	))->removeClass('btn-primary')->addClass('btn-success');
+}
+
+$form->add($section);
+print $form;
+
+if($found > 0) {
+	print("<br />");
+	$form2 = new Form(NO_BUTTON);
+	$section2 = new Form_Section('More information');
+	$section2->addInput(new Form_Table("", $more_information));
+	$form2->add($section2);
+	print $form2;
+}
+include("foot.inc");
+?>

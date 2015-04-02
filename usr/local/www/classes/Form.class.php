@@ -30,7 +30,7 @@
 require_once('classes/Form/Element.class.php');
 require_once('classes/Form/Input.class.php');
 foreach (glob('classes/Form/*.class.php') as $file)
-	require_once($file);
+require_once($file);
 
 class Form extends Form_Element
 {
@@ -45,12 +45,15 @@ class Form extends Form_Element
 	protected $_global = array();
 	protected $_labelWidth = 2;
 
-	public function __construct()
+	public function __construct($EnableButton = true)
 	{
-		$this->addGlobal(new Form_Button(
-			'save',
-			'Save'
-		));
+	    if($EnableButton) {
+		  $this->addGlobal(new Form_Button(
+			 'save',
+			 'Save'
+		  ));
+	    }
+	    	    
 	}
 
 	public function add(Form_Section $section)

@@ -45,12 +45,15 @@ class Form extends Form_Element
 	protected $_global = array();
 	protected $_labelWidth = 2;
 
-	public function __construct()
+	public function __construct(Form_Button $submit = null)
 	{
-		$this->addGlobal(new Form_Button(
-			'save',
-			'Save'
-		));
+		if (!isset($submit))
+			$submit = new Form_Button(
+				'save',
+				'Save'
+			);
+
+		$this->addGlobal($submit);
 	}
 
 	public function add(Form_Section $section)

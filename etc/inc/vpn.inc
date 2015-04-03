@@ -641,6 +641,25 @@ EOD;
 		$ipsecconf .= "config setup\n\tuniqueids = {$uniqueids}\n";
 		$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
+		if (isset($config['ipsec']['shuntlaninterfaces'])) {
+			if ($config['interfaces']['lan']) {
+				$lanip = get_interface_ip("lan");
+				if (!empty($lanip) && is_ipaddrv4($lanip)) {
+					$lansn = get_interface_subnet("lan");
+					$lansa = gen_subnet($lanip, $lansn);
+					$ipsecconf .= <<<EOD
+conn bypasslan
+	leftsubnet={$lanip}/32
+	rightsubnet={$lansa}/{$lansn}
+	authby=never
+	type=pass
+	auto=route
+
+EOD;
+				}
+			}
+		}
+
 		foreach ($a_phase1 as $ph1ent) {
 			if (isset($ph1ent['disabled'])) {
 				continue;

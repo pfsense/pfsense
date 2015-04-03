@@ -1748,7 +1748,7 @@ function services_dhcrelay6_configure() {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
 					if (isset($gateway['defaultgw'])) {
-						$destif = $gateway['interface'];
+						$destif = get_real_interface($gateway['interface']);
 						break;
 					}
 				}

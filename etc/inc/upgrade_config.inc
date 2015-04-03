@@ -3738,6 +3738,9 @@ function upgrade_115_to_116() {
 function upgrade_116_to_117() {
 	global $config;
 
+	if (is_array($config['ipsec']))
+		$config['ipsec']['shuntlaninterfaces'] = true;
+
 	if (!isset($config['ipsec']['client']) ||
 	    !isset($config['ipsec']['client']['dns_split']) ||
 	    empty($config['ipsec']['client']['dns_split'])) {
@@ -3747,7 +3750,6 @@ function upgrade_116_to_117() {
 	$config['ipsec']['client']['dns_split'] =
 		preg_replace('/\s*,\s*/', ' ', trim($config['ipsec']['client']['dns_split']));
 
-	$config['ipsec']['shuntlaninterfaces'] = true;
 }
 
 function upgrade_117_to_118() {

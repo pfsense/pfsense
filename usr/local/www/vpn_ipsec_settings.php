@@ -157,7 +157,7 @@ if ($_POST) {
 		}
 
 		if($_POST['shuntlaninterfaces'] == "yes") {
-			$config['ipsec']['unityplugin'] = true;
+			$config['ipsec']['shuntlaninterfaces'] = true;
 		} elseif (isset($config['ipsec']['shuntlaninterfaces'])) {
 			unset($config['ipsec']['shuntlaninterfaces']);
 		}

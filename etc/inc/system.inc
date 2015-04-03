@@ -338,7 +338,7 @@ function system_hosts_generate() {
 			$dnsmasqcfg['hosts'] = array();
 
 		foreach ($dnsmasqcfg['hosts'] as $host) {
-			if ($host['host'])
+			if ($host['host'] || $host['host'] == "0")
 				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 			else
 				$lhosts .= "{$host['ip']}	{$host['domain']}\n";

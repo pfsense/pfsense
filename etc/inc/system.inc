@@ -373,7 +373,7 @@ function system_hosts_generate() {
 		}
 
 		foreach ($dnsmasqcfg['hosts'] as $host) {
-			if ($host['host']) {
+			if ($host['host'] || $host['host'] == "0") {
 				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 			} else {
 				$lhosts .= "{$host['ip']}	{$host['domain']}\n";
@@ -382,7 +382,7 @@ function system_hosts_generate() {
 				continue;
 			}
 			foreach ($host['aliases']['item'] as $alias) {
-				if ($alias['host']) {
+				if ($alias['host'] || $alias['host'] == "0") {
 					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
 				} else {
 					$lhosts .= "{$host['ip']}	{$alias['domain']}\n";

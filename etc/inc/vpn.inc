@@ -648,6 +648,7 @@ EOD;
 					$lansn = get_interface_subnet("lan");
 					$lansa = gen_subnet($lanip, $lansn);
 					$ipsecconf .= <<<EOD
+
 conn bypasslan
 	leftsubnet={$lanip}/32
 	rightsubnet={$lansa}/{$lansn}

@@ -2584,6 +2584,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
+	if (empty($src))
+		return '';
+
 	$src .= filter_generate_port($rule, $target, $isnat);
 
 	return $src;

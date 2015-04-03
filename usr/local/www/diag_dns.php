@@ -189,12 +189,6 @@ $form = new Form(new Form_Button(
 $section = new Form_Section('DNS Lookup');
 
 $section->addInput(new Form_Input(
-	'alias',
-	'',
-	'hidden'
-));
-
-$section->addInput(new Form_Input(
 	'host',
 	'Hostname',
 	'text',
@@ -212,8 +206,8 @@ if (!empty($resolved)) {
 $form->add($section);
 print $form;
 
-if (!$input_errors && $ipaddr) {
-	if ($resolved && $type) {
+if (!$input_errors && $type) {
+	if ($resolved) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">Results</div>
@@ -229,7 +223,7 @@ if (!$input_errors && $ipaddr) {
 			}
 		}
 	}
-}
+
 ?>
 		</ul>
 	</div>
@@ -274,5 +268,5 @@ if (!$input_errors && $ipaddr) {
 	</div>
 </div>
 <?php
-
+}
 include("foot.inc");

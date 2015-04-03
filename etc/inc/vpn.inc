@@ -961,7 +961,7 @@ EOD;
 					}
 				}
 
-				if (isset($a_client['pfs_group'])) {
+				if (isset($a_client['pfs_group']) && isset($ph2ent['mobile'])) {
 					$ph2ent['pfsgroup'] = $a_client['pfs_group'];
 				}
 

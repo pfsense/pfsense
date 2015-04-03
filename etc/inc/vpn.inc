@@ -389,6 +389,7 @@ syslog {
 	identifier = charon
 	# default level to the LOG_DAEMON facility
 	daemon {
+		ike_name = yes
 	}
 	# very minimalistic IKE auditing logs to LOG_AUTHPRIV
 	auth {

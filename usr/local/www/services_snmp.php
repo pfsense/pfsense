@@ -321,27 +321,6 @@ function enable_change(whichone) {
 		    <br /><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?><br />
 		  </td>
                 </tr>
-
-<?php 
-			/* disabled until some docs show up on what this does.
-                <tr>
-                  <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable">
-	 	   <input name="rwenable" id="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" />
-                    <strong>Enable Write Community String</strong>
-		  </td>
-                </tr>
-
-		<tr>
-		  <td width="22%" valign="top" class="vncellreq">Write community string</td>
-          <td width="78%" class="vtable">
-                    <input name="rwcommunity" type="text" class="formfld unknown" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>" />
-		    <br />Please use something other then &quot;private&quot; here<br />
-		  </td>
-                </tr>
-		    	*/ 
-?>
-
 		<tr><td>&nbsp;</td></tr>
 
                 <tr> 
@@ -351,8 +330,6 @@ function enable_change(whichone) {
 			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" /> <strong><?=gettext("Enable");?></strong></td></tr>
   			</table></td>
                 </tr>
-
-
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server");?></td>
                   <td width="78%" class="vtable">
@@ -360,7 +337,6 @@ function enable_change(whichone) {
                     <br /><?=gettext("Enter trap server name");?><br />
 		  </td>
                 </tr>
-
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server port ");?></td>
                   <td width="78%" class="vtable">

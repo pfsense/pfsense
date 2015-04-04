@@ -128,6 +128,13 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
+	public function setPlaceholder($text)
+	{
+		$this->_attributes['placeholder'] = $text;
+
+		return $this;
+	}
+
 	protected function _getInput()
 	{
 		return parent::__toString();

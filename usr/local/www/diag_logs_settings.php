@@ -380,13 +380,13 @@ function check_everything() {
 				<select name="sourceip" class="formselect">
 					<option value="">Default (any)</option>
 				<?php $sourceips = get_possible_traffic_source_addresses(false);
-					foreach ($sourceips as $sip):
+					foreach ($sourceips as $sipvalue => $sipname):
 						$selected = "";
-						if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $pconfig['sourceip']))
+						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $pconfig['sourceip']))
 							$selected = 'selected="selected"';
 				?>
-					<option value="<?=$sip['value'];?>" <?=$selected;?>>
-						<?=htmlspecialchars($sip['name']);?>
+					<option value="<?=$sipvalue;?>" <?=$selected;?>>
+						<?=htmlspecialchars($sipname);?>
 					</option>
 					<?php endforeach; ?>
 				</select>

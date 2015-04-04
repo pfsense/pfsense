@@ -410,10 +410,14 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 function ipsec_smp_dump_status() {
 	global $config, $g, $custom_listtags;
 
-	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-		log_error("IPsec daemon not running or has a problem!");
-		return;
-	}
+        if (isset($config['ipsec']['enable'])) {
+            if (!file_exists("{$g['varrun_path']}/charon.xml")) {
+                log_error("IPsec daemon not running or has a problem!");
+                return;
+            }
+        } else {
+            return;
+        }
 
 	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
 	if (!$fd) {

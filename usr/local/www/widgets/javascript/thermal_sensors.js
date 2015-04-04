@@ -2,7 +2,7 @@
 	$Id: thermal_sensors.js
 	Description:	
 		Javascript functions to get and show thermal sensors data in thermal_sensors.widget.php.
-		NOTE: depends on proper cofing in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
+		NOTE: depends on proper config in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 	File location: 
 		\usr\local\www\widgets\javascript\
 	Used by:

@@ -348,7 +348,7 @@ include("head.inc");
 					<input type="button" onclick="show_advanced('showstatisticsbox', 'showstatistics')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show statistics logging options");?>
 					</div>
 					<div id="showstatistics" style="display:none">
-					<strong><?php echo gettext("Warning: ")?></strong><?php echo gettext("these options will create persistant daily log files in /var/log/ntp."); ?>
+					<strong><?php echo gettext("Warning: ")?></strong><?php echo gettext("these options will create persistent daily log files in /var/log/ntp."); ?>
 					<br /><br />
 					<input name="clockstats" type="checkbox" class="formcheckbox" id="clockstats"<?php if($pconfig['clockstats']) echo " checked=\"checked\""; ?> />
 					<?php echo gettext("Enable logging of reference clock statistics (default: disabled)."); ?>
@@ -397,7 +397,7 @@ include("head.inc");
 					<input type="button" onclick="show_advanced('showleapsecbox', 'showleapsec')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Leap second configuration");?>
 					</div>
 					<div id="showleapsec" style="display:none">
-					<?php echo gettext("A leap second file allows NTP to advertize an upcoming leap second addition or subtraction.");?>
+					<?php echo gettext("A leap second file allows NTP to advertise an upcoming leap second addition or subtraction.");?>
 					<?php echo gettext("Normally this is only useful if this server is a stratum 1 time server.");?>
 					<br /><br />
 					<?php echo gettext("Enter Leap second configuration as text:");?><br />

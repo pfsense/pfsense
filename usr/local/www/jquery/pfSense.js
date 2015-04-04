@@ -27,10 +27,10 @@ $(function() {
 				$('.toggle-' + $(this).val() + '.in').collapse('hide');
 
 				// Disable all invisible inputs
-//				$('.toggle-' + $(this).val() + ' input').prop('disabled', true);
+				$('.toggle-' + $(this).val()).find('input,select,textarea').prop('disabled', true);
 			});
 
-			$('.toggle-' + selectedValue).collapse('show');
+			$('.toggle-' + selectedValue).collapse('show').find('input,select,textarea').prop('disabled', false);
 		});
 
 		// Trigger change to open currently selected item

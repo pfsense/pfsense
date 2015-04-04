@@ -66,9 +66,9 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |easyrule.php                                 |                         |                        |                                                            |
 |edit.php                                     |                         |                        |                                                            |
 |exec.php                                     |                         |                        |                                                            |
-|firewall_aliases.php                         |                         |                        |                                                            |
-|firewall_aliases_edit.php                    |                         |                        |                                                            |
-|firewall_aliases_import.php                  |                         |                        |                                                            |
+|firewall_aliases.php                         | &#x2705;                |                        |                                                            |
+|firewall_aliases_edit.php                    | &#x2705;                |                        |                                                            |
+|firewall_aliases_import.php                  | &#x2705;                |                        |                                                            |
 |firewall_nat.php                             |                         |                        |                                                            |
 |firewall_nat_1to1.php                        |                         |                        |                                                            |
 |firewall_nat_1to1_edit.php                   |                         |                        |                                                            |

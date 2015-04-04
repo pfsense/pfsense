@@ -92,6 +92,9 @@ if ($_POST) {
 	if (preg_match('/[ \/]/', $_POST['name']))
 		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
 
+	if (strlen($_POST['name']) > 32)
+		$input_errors[] = gettext("The 'name' field must be 32 characters or less.");
+
 	if ($_POST['port'] != "" && !is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, a port alias, or left blank.");
 

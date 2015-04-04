@@ -17,6 +17,7 @@
 /etc/inc/m0n0
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/etc/inc/array_intersect_key.inc
 /etc/isdn
 /etc/locate.rc
 /etc/mail.rc

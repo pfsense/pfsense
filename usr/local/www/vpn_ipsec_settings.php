@@ -46,17 +46,19 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['shuntlaninterfaces'] = isset($config['ipsec']['shuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	
+
 	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
 		$input_errors[] = "A valid value must be specified for Daemon debug.";
 	}
@@ -110,9 +112,9 @@ if ($_POST) {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
 		if ($pconfig['maxmss'] != '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";	
+			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
 	}
-	
+
 	if (!$input_errors) {
 
 		if (is_array($config['ipsec'])) {
@@ -135,7 +137,7 @@ if ($_POST) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
 		}
-		
+
 		if($_POST['enableinterfacesuse'] == "yes") {
 			if (!isset($config['ipsec']['enableinterfacesuse']))
 				$needsrestart = true;
@@ -152,6 +154,12 @@ if ($_POST) {
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
+
+		if($_POST['shuntlaninterfaces'] == "yes") {
+			$config['ipsec']['shuntlaninterfaces'] = true;
+		} elseif (isset($config['ipsec']['shuntlaninterfaces'])) {
+			unset($config['ipsec']['shuntlaninterfaces']);
 		}
 
 		if($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -324,6 +332,13 @@ $section->addInput(new Form_Checkbox(
 	'Disable Unity Plugin',
 	$pconfig['unityplugin']
 ))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+
+$section->addInput(new Form_Checkbox(
+	'shuntlaninterfaces',
+	'Bypass LAN address',
+	'Enable bypass for LAN interface ip',
+	$pconfig['shuntlaninterfaces']
+))->setHelp('Prevent LAN ip address to be processed for IPsec traffic.');
 
 $form->add($section);
 

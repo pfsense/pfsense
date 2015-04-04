@@ -576,6 +576,9 @@ if ($_POST['apply']) {
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
+			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
+				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
+			}
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
@@ -1154,7 +1157,7 @@ if ($_POST['apply']) {
 					$wancfg['adv_dhcp6_id_assoc_statement_address_enable'] = $_POST['adv_dhcp6_id_assoc_statement_address_enable'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address'] = $_POST['adv_dhcp6_id_assoc_statement_address'];
-				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_id']))
+				if (is_numericint($_POST['adv_dhcp6_id_assoc_statement_address_id']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address_id'] = $_POST['adv_dhcp6_id_assoc_statement_address_id'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_pltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_address_pltime'];
@@ -1165,16 +1168,16 @@ if ($_POST['apply']) {
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_enable'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_enable'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix'] = $_POST['adv_dhcp6_id_assoc_statement_prefix'];
-				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_id']))
+				if (is_numericint($_POST['adv_dhcp6_id_assoc_statement_prefix_id']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_id'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_id'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_pltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_pltime'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_vltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_vltime'];
 
-				if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_id']))
+				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_id']))
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_id'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_id'];
-				if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_len']))
+				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len']))
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
 
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname']))

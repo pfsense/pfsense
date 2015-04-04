@@ -176,15 +176,16 @@ function system_resolvconf_generate($dynupdate = false) {
 			}
 		}
 	} else {
+		$ns = array();
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if ($syscfg['domain']) {
 			$resolvconf .= "search {$syscfg['domain']}\n";
 		}
 	}
 	if (is_array($syscfg['dnsserver'])) {
-		foreach ($syscfg['dnsserver'] as $ns) {
-			if ($ns) {
-				$resolvconf .= "nameserver $ns\n";
+		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
+				$resolvconf .= "nameserver $sys_dnsserver\n";
 			}
 		}
 	}
@@ -372,7 +373,7 @@ function system_hosts_generate() {
 		}
 
 		foreach ($dnsmasqcfg['hosts'] as $host) {
-			if ($host['host']) {
+			if ($host['host'] || $host['host'] == "0") {
 				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 			} else {
 				$lhosts .= "{$host['ip']}	{$host['domain']}\n";
@@ -381,7 +382,7 @@ function system_hosts_generate() {
 				continue;
 			}
 			foreach ($host['aliases']['item'] as $alias) {
-				if ($alias['host']) {
+				if ($alias['host'] || $alias['host'] == "0") {
 					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
 				} else {
 					$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
@@ -1365,6 +1366,9 @@ url.access-deny             = ( "~", ".inc" )
 
 ######### Options that are good to be but not necessary to be changed #######
 
+## disable server header
+server.tag = ""
+
 ## bind to port (default: 80)
 
 EOD;
@@ -2141,7 +2145,7 @@ function system_check_reset_button() {
 		case 'wrap':
 		case 'FW7541':
 		case 'APU':
-		case 'C2358':
+		case 'RCC-VE':
 			break;
 		default:
 			return 0;
@@ -2197,7 +2201,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'APU', 'descr' => 'Netgate APU'));
 			break;
 		case 'RCC-VE':
-			return (array('name' => 'C2358', 'descr' => 'Netgate C2358'));
+			return (array('name' => 'RCC-VE', 'descr' => 'Netgate RCC-VE'));
 			break;
 	}
 

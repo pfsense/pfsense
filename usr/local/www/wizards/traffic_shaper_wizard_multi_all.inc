@@ -1159,7 +1159,7 @@ function apply_all_chosen_items() {
 			$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 			$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
 			if ($sched != HFSC) {
-				if ($penaltybwunit == "%")
+				if ($voipbwunit == "%")
 					$factor = $lanbw/100;
 				else
 					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
@@ -1214,7 +1214,7 @@ function apply_all_chosen_items() {
 		$remainbw = round($remainbw / $lanbw * 100, 2);
 
 		if (intval($remainbw) > 0 && intval($remainbw) > 40) {
-			$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+			$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
 			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
 			exit;
 		} else {

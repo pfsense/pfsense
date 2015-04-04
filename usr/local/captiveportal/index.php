@@ -173,14 +173,14 @@ EOD;
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
 		} else {
-			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
+			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
 		}
 	} else if (-1 == $timecredit) {  // valid but expired
 		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
+		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
 	} else {
 		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgnoaccess'] ? $config['voucher'][$cpzone]['msgnoaccess'] : $errormsg);
+		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg);
 	}
 
 } else if ($_POST['accept'] && $radius_enable) {

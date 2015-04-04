@@ -38,11 +38,13 @@ require("guiconfig.inc");
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
 
-if (is_array($config['aliases']['alias'])) {
-	$a_aliases = &$config['aliases']['alias'];
-} else {
-	$a_aliases = array();
+/* If this section of config.xml has not been populated yet we need to set it up 
+*/
+if (!is_array($config['aliases']['alias'])) {
+	$config['aliases']['alias'] = array();
 }
+$a_aliases = &$config['aliases']['alias'];
+
 $aliasname = str_replace(array(".","-"), "_", $host);
 $alias_exists = false;
 $counter=0;

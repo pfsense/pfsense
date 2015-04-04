@@ -410,7 +410,7 @@
 		<field>
 			<name>state</name>
 			<displayname>State or Province</displayname>
-			<description>Full State of Province name, not abbreviated (e.g. Kentucky, Indiana, Ontario).</description>
+			<description>Full State or Province name, not abbreviated (e.g. Kentucky, Indiana, Ontario).</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->state</bindstofield>

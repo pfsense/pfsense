@@ -107,6 +107,7 @@ class MainTable {
 	private function display_rows() {
 		global $g;
 		$cur_row = 0;
+		$encode_cols = array("name", "descr");
 		foreach ($this->content as $row) {
 			echo "<tr>\n";
 			for ($col = 0; $col < $this->columns - 1; $col++) {
@@ -118,15 +119,21 @@ class MainTable {
 				echo "  <td class=\"{$cl}\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
+						if (in_array($this->cname[$col], $encode_cols)) {
+							$data = htmlspecialchars($data);
+						}
 						echo "    {$data}<br />\n";
 					}
 				} else {
+					if (in_array($this->cname[$col], $encode_cols)) {
+						$row[$this->cname[$col]] = htmlspecialchars($row[$this->cname[$col]]);
+					}
 					echo "    " . $row[$this->cname[$col]] . "\n";
 				}
 				echo "  </td>\n";
 			}
 			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
-			echo "    <font color=\"#FFFFFF\">{$row[$this->cname[$this->columns - 1]]}</font>\n";
+			echo "    <font color=\"#FFFFFF\">" . htmlspecialchars($row[$this->cname[$this->columns - 1]]) . "</font>\n";
 			echo "  </td>\n";
 			echo "  <td class=\"list nowrap\">\n";
 			$this->display_buttons($cur_row);

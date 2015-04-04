@@ -361,7 +361,7 @@ function maxmss_checked(obj) {
 							<input name="shuntlaninterfaces" type="checkbox" id="shuntlaninterfaces" value="yes" <?php if ($pconfig['shuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Enable bypass for LAN interface ip"); ?></strong>
 							<br />
-							<?=gettext("Prevent LAN ip address to be proccessed for IPsec traffic."); ?>
+							<?=gettext("Prevent LAN ip address to be processed for IPsec traffic."); ?>
 						</td>
 					</tr>
 					<tr>

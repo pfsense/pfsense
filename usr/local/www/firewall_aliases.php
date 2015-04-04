@@ -260,4 +260,4 @@ display_top_tabs($tab_array);
 	</div>
 </div>
 
-<?php include("foot.inc")?>
+<?php include("foot.inc");

@@ -257,7 +257,6 @@ if ($_POST) {
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
 		// They can also put an IP range.
 		// This loop expands out that stuff so it can easily be validated.
-var_dump($_POST['address']);
 			foreach ($_POST['address'] as $idx => $post_address) {
 				if ($post_address != "") {
 					if ((strpos($post_address, "||") === false) && (substr($post_address, 0, 1) != "|") && (substr($post_address, -1, 1) != "|")) {

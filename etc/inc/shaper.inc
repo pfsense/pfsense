@@ -273,7 +273,7 @@ class altq_root_queue {
 	var $link;
 	var $available_bw; /* in b/s */
 
-	/* Accesor functions */
+	/* Accessor functions */
 	function GetAvailableBandwidth() {
 		return $this->available_bw;
 	}
@@ -857,7 +857,7 @@ class priq_queue {
 	/* This is here to help with form building and building rules/lists */
 	var $subqueues = array();
 
-	/* Accesor functions */
+	/* Accessor functions */
 	function GetAvailableBandwidth() {
 		return $this->available_bw;
 	}

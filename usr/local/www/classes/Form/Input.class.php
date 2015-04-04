@@ -70,6 +70,11 @@ class Form_Input extends Form_Element
 		return $this->_attributes['name'];
 	}
 
+	public function getId()
+	{
+		return $this->_attributes['id'];
+	}
+
 	public function setHelp($help, array $params = array())
 	{
 		$this->_help = $help;
@@ -131,6 +136,15 @@ class Form_Input extends Form_Element
 	public function setPlaceholder($text)
 	{
 		$this->_attributes['placeholder'] = $text;
+
+		return $this;
+	}
+
+	public function setIsRepeated()
+	{
+		$this->_attributes['name'] .= '[]';
+		// No I don't like this. Yes it works fine
+		$this->_attributes['id'] .= ':'.substr(uniqid(), 9);
 
 		return $this;
 	}

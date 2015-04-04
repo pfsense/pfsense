@@ -72,6 +72,19 @@ class Form_Group extends Form_Element
 		return $this;
 	}
 
+	public function enableDuplication($max = null)
+	{
+		$this->addClass('user-duplication');
+
+		if (isset($max))
+			$this->_attributes('data-duplicate-max', $max);
+
+		foreach ($this->_inputs as $input)
+			$input->setIsRepeated();
+
+		return $this;
+	}
+
 	public function __toString()
 	{
 		$element = parent::__toString();
@@ -96,7 +109,7 @@ class Form_Group extends Form_Element
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		$target = $this->_labelTarget->getName();
+		$target = $this->_labelTarget->getId();
 		$inputs = implode('', $this->_inputs);
 		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
 

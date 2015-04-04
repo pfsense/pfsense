@@ -48,6 +48,13 @@ class Form_IpAddress extends Form_Input
 		return $this;
 	}
 
+	public function setIsRepeated()
+	{
+		$this->_mask->setIsRepeated();
+
+		return parent::setIsRepeated();
+	}
+
 	protected function _getInput()
 	{
 		$input = parent::_getInput();

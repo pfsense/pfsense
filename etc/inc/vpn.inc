@@ -653,7 +653,7 @@ conn bypasslan
 	leftsubnet={$lanip}/32
 	rightsubnet={$lansa}/{$lansn}
 	authby=never
-	type=pass
+	type=passthrough
 	auto=route
 
 EOD;

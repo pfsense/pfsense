@@ -590,7 +590,7 @@ EOD;
 		$ipsecconf .= "config setup\n\tuniqueids = {$uniqueids}\n";
 		$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
-		if (isset($config['ipsec']['shuntlaninterfaces'])) {
+		if (!isset($config['ipsec']['noshuntlaninterfaces'])) {
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
@@ -599,11 +599,11 @@ EOD;
 					$ipsecconf .= <<<EOD
 
 conn bypasslan
-	leftsubnet={$lanip}/32
-	rightsubnet={$lansa}/{$lansn}
-	authby=never
-	type=passthrough
-	auto=route
+	leftsubnet = {$lanip}/32
+	rightsubnet = {$lansa}/{$lansn}
+	authby = never
+	type = passthrough
+	auto = route
 
 EOD;
 				}

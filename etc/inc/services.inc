@@ -140,14 +140,9 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
 		} else {
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
-<<<<<<< HEAD
 		}
 		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch ($dhcpv6ifconf['rapriority']) {
-=======
-
-		switch($dhcpv6ifconf['rapriority']) {
->>>>>>> 38253ce... Include additional subnets for RAs in radvd.conf. Ticket #4468
 			case "low":
 				$radvdconf .= "\tAdvDefaultPreference low;\n";
 				break;

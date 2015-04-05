@@ -38,7 +38,7 @@ require("guiconfig.inc");
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
 
-/* If this section of config.xml has not been populated yet we need to set it up 
+/* If this section of config.xml has not been populated yet we need to set it up
 */
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
@@ -209,7 +209,7 @@ $form->add($section);
 print $form;
 
 if (!$input_errors && $type) {
-	if ($resolved) {
+	if ($resolved):
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">Results</div>
@@ -224,12 +224,11 @@ if (!$input_errors && $type) {
 				$found++;
 			}
 		}
-	}
-
 ?>
 		</ul>
 	</div>
 </div>
+<? endif?>
 
 <!-- Second table displays the server resolution times -->
 <div class="panel panel-default">

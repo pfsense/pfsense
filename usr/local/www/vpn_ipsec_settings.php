@@ -46,7 +46,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
-$pconfig['shuntlaninterfaces'] = isset($config['ipsec']['shuntlaninterfaces']);
+$pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
@@ -156,10 +156,10 @@ if ($_POST) {
 			unset($config['ipsec']['unityplugin']);
 		}
 
-		if($_POST['shuntlaninterfaces'] == "yes") {
-			$config['ipsec']['shuntlaninterfaces'] = true;
-		} elseif (isset($config['ipsec']['shuntlaninterfaces'])) {
-			unset($config['ipsec']['shuntlaninterfaces']);
+		if($_POST['noshuntlaninterfaces'] == "yes") {
+			$config['ipsec']['noshuntlaninterfaces'] = true;
+		} elseif (isset($config['ipsec']['noshuntlaninterfaces'])) {
+			unset($config['ipsec']['noshuntlaninterfaces']);
 		}
 
 		if($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -356,12 +356,12 @@ function maxmss_checked(obj) {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Bypass LAN address"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Auto-exclude LAN address"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="shuntlaninterfaces" type="checkbox" id="shuntlaninterfaces" value="yes" <?php if ($pconfig['shuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable bypass for LAN interface ip"); ?></strong>
+							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if (!$pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable bypass for LAN interface IP"); ?></strong>
 							<br />
-							<?=gettext("Prevent LAN ip address to be proccessed for IPsec traffic."); ?>
+							<?=gettext("Exclude traffic from LAN subnet to LAN IP address from IPsec."); ?>
 						</td>
 					</tr>
 					<tr>

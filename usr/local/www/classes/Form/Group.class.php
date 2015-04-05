@@ -95,7 +95,7 @@ class Form_Group extends Form_Element
 
 		foreach ($this->_inputs as $input)
 		{
-			if (count($this->_inputs) > 1)
+			if (count($this->_inputs) > 1 && !$input->hasAttribute('placeholder'))
 				$input->setPlaceholder($input->getTitle());
 
 			$width = $input->getWidth();

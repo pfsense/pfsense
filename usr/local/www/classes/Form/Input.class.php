@@ -140,6 +140,12 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
+	public function hasAttribute($name)
+	{
+		// not strict, null should return false as well
+		return isset($this->_attributes[$name]);
+	}
+
 	public function setIsRepeated()
 	{
 		$this->_attributes['name'] .= '[]';

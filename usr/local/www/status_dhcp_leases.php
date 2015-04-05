@@ -85,6 +85,9 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	header("Location: status_dhcp_leases.php?all={$_GET['all']}");
 }
 
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
+
 include("head.inc");
 
 function leasecmp($a, $b) {
@@ -352,8 +355,6 @@ if(count($pools) > 0) {
 		</thead>
 		<tbody>
 <?php
-// Load MAC-Manufacturer table
-$mac_man = load_mac_manufacturer_table();
 foreach ($leases as $data):
 	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
 		continue;
@@ -384,7 +385,7 @@ foreach ($leases as $data):
 				<td><i class="icon <?=$icon?>"></i></td>
 				<td><?=$data['ip']?></td>
 				<td>
-					<?=$data['mac']?>
+					<?=$mac?>
 
 					<? if(isset($mac_man[$mac_hi])):?>
 						(<?=$mac_man[$mac_hi]?>)

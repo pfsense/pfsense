@@ -36,6 +36,7 @@ class Form_Group extends Form_Element
 	protected $_inputs = array();
 	protected $_labelTarget;
 	protected $_help;
+	protected $_helpParams = array();
 
 	public function __construct($title)
 	{
@@ -65,9 +66,10 @@ class Form_Group extends Form_Element
 		return $this->_parent->getLabelWidth();
 	}
 
-	public function setHelp($help)
+	public function setHelp($help, array $params = array())
 	{
 		$this->_help = $help;
+		$this->_helpParams = $params;
 
 		return $this;
 	}
@@ -111,7 +113,23 @@ class Form_Group extends Form_Element
 
 		$target = $this->_labelTarget->getId();
 		$inputs = implode('', $this->_inputs);
-		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
+
+		if (isset($this->_help))
+		{
+			$help = gettext($this->_help);
+
+			if (!empty($this->_helpParams))
+				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
+
+			$helpWidth = 12 - $this->getLabelWidth();
+			$help = <<<EOT
+	<div class="col-sm-{$helpWidth} col-sm-offset-{$this->getLabelWidth()}">
+		<span class="help-block">
+			{$help}
+		</span>
+	</div>
+EOT;
+		}
 
 		return <<<EOT
 	{$element}

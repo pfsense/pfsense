@@ -53,6 +53,9 @@ class Form_Input extends Form_Element
 		if (isset($type))
 			$this->_attributes['type'] = $type;
 
+		if ($type == 'number')
+			$attributes += array('min' => 1, 'step' => 1);
+
 		if (isset($value))
 			$this->_attributes['value'] = $value;
 

@@ -129,7 +129,7 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
 		else
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
-		// $radvdconf .= "\tDeprecatePrefix on;\n";
+
 		switch($dhcpv6ifconf['rapriority']) {
 			case "low":
 				$radvdconf .= "\tAdvDefaultPreference low;\n";
@@ -178,6 +178,41 @@ function services_radvd_configure($blacklist = array()) {
 		}
 		$radvdconf .= "\t};\n";
 
+		if (is_array($dhcpv6ifconf['subnets']['item'])) {
+			foreach ($dhcpv6ifconf['subnets']['item'] as $subnet) {
+				if (is_subnetv6($subnet)) {
+					$radvdconf .= "\tprefix {$subnet} {\n";
+					if($carpif == true) {
+						$radvdconf .= "\t\tDeprecatePrefix off;\n";
+					} else {
+						$radvdconf .= "\t\tDeprecatePrefix on;\n";
+					}
+					switch($dhcpv6ifconf['ramode']) {
+						case "managed":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous off;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "router":
+							$radvdconf .= "\t\tAdvOnLink off;\n";
+							$radvdconf .= "\t\tAdvAutonomous off;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "assist":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous on;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "unmanaged":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous on;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;				
+					}
+					$radvdconf .= "\t};\n";
+				}
+			}
+		}
 		if($carpif === true) {
 			$radvdconf .= "\troute ::/0 {\n";
 			$radvdconf .= "\t\tRemoveRoute off;\n";

@@ -2203,6 +2203,9 @@ function system_identify_specific_platform() {
 		case 'RCC-VE':
 			return (array('name' => 'RCC-VE', 'descr' => 'Netgate RCC-VE'));
 			break;
+		case 'A1SAi':
+			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
+			break;
 	}
 
 	/* the rest of the code only deals with 'embedded' platforms */

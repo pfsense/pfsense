@@ -87,38 +87,38 @@ include("head.inc");
 		print_input_errors($input_errors);
 ?>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover" summary="diag system activity">
-        <thead></thead>
-        <tbody>
-            <tr>
-                <td>
-                <table id="backuptable" align="center" summary="tabcont">
-                <thead></thead>
-                <tbody>
-                    <tr>
-                        <td>
-                        <table summary="results">
-                        <thead></thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                <div id="cpuactivitydiv">
-                                    <?=gettext("Gathering CPU activity, please wait...")?>
-                                </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
-                </td>
-            </tr>
-        </tbody>
-        </table>
-    </div>
+	<div class="table-responsive">
+		<table class="table table-striped table-hover" summary="diag system activity">
+		<thead></thead>
+		<tbody>
+			<tr>
+				<td>
+				<table id="backuptable" align="center" summary="tabcont">
+				<thead></thead>
+				<tbody>
+					<tr>
+						<td>
+						<table summary="results">
+						<thead></thead>
+						<tbody>
+							<tr>
+								<td>
+								<div id="cpuactivitydiv">
+									<?=gettext("Gathering CPU activity, please wait...")?>
+								</div>
+								</td>
+							</tr>
+						</tbody>
+						</table>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
 </div>
 
 <?php include("foot.inc"); ?>

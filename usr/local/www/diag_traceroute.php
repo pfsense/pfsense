@@ -59,18 +59,8 @@ function create_sourceaddresslist() {
 
 	$sourceips = get_possible_traffic_source_addresses(true);
 
-	foreach ($sourceips as $sipvalue => $sipname):
+	foreach ($sourceips as $sipvalue => $sipname)
 		$list[$sipname[value]] = $sipname[name];
-	endforeach;
-
-	return($list);
-}
-
-function create_hopslist() {
-	$list = array();
-
-	for($idx=1; $idx<MAX_TTL; $idx++)
-	   $list[$idx] = $idx;
 
 	return($list);
 }
@@ -141,8 +131,6 @@ $section->addInput(new Form_Select(
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('Select the protocol to use');
 
-$timezonelist = array("Here", "There");
-
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
@@ -154,7 +142,7 @@ $section->addInput(new Form_Select(
 	'ttl',
 	'Maximum nuber of hops',
 	$ttl,
-	create_hopslist()
+	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
 ))->setHelp('Select the maximum number of network hops to trace');
 
 $section->addInput(new Form_Checkbox(

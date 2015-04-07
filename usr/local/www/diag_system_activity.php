@@ -88,32 +88,14 @@ include("head.inc");
 ?>
 
 	<div class="table-responsive">
-		<table class="table table-striped table-hover" summary="diag system activity">
+		<table class="table table-striped table-hover" align="center" summary="diag system activity">
 		<thead></thead>
 		<tbody>
-			<tr>
+			<tr align="center">
 				<td>
-				<table id="backuptable" align="center" summary="tabcont">
-				<thead></thead>
-				<tbody>
-					<tr>
-						<td>
-						<table summary="results">
-						<thead></thead>
-						<tbody>
-							<tr>
-								<td>
-								<div id="cpuactivitydiv">
-									<?=gettext("Gathering CPU activity, please wait...")?>
-								</div>
-								</td>
-							</tr>
-						</tbody>
-						</table>
-						</td>
-					</tr>
-				</tbody>
-				</table>
+					<div id="cpuactivitydiv">
+					<?=gettext("Gathering CPU activity, please wait...")?>
+					</div>
 				</td>
 			</tr>
 		</tbody>

@@ -1,6 +1,6 @@
 ## Bootstrap Conversion Progress
 
-Use this table to list the php pages that have been converted to bootstrap, those that have yet to be converted, and those that are currently being worked on. 
+Use this table to list the php pages that have been converted to bootstrap, those that have yet to be converted, and those that are currently being worked on.
 
 The script used to generate the table can be found at the bottom of this page
 
@@ -96,7 +96,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |help.php                                     |                         |                        |                                                            |
 |ifstats.php                                  |                         |                        |                                                            |
 |index.php                                    | &#x2705;                |                        |                                                            |
-|interfaces.php                               |                         |                        |                                                            |
+|interfaces.php                               | &#x1f504;               | psophis                |                                                            |
 |interfaces_assign.php                        | &#x2705;                |                        |                                                            |
 |interfaces_bridge.php                        |                         |                        |                                                            |
 |interfaces_bridge_edit.php                   |                         |                        |                                                            |
@@ -104,16 +104,16 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |interfaces_gif_edit.php                      |                         |                        |                                                            |
 |interfaces_gre.php                           |                         |                        |                                                            |
 |interfaces_gre_edit.php                      |                         |                        |                                                            |
-|interfaces_groups.php                        |                         |                        |                                                            |
-|interfaces_groups_edit.php                   |                         |                        |                                                            |
+|interfaces_groups.php                        | &#x2705;                | psophis                |                                                            |
+|interfaces_groups_edit.php                   | &#x2705;                | psophis                |                                                            |
 |interfaces_lagg.php                          |                         |                        |                                                            |
 |interfaces_lagg_edit.php                     |                         |                        |                                                            |
 |interfaces_ppps.php                          |                         |                        |                                                            |
 |interfaces_ppps_edit.php                     |                         |                        |                                                            |
 |interfaces_qinq.php                          |                         |                        |                                                            |
 |interfaces_qinq_edit.php                     |                         |                        |                                                            |
-|interfaces_vlan.php                          | &#x2705;                |                        |                                                            |
-|interfaces_vlan_edit.php                     | &#x2705;                |                        |                                                            |
+|interfaces_vlan.php                          | &#x2705;                | psophis                |                                                            |
+|interfaces_vlan_edit.php                     | &#x2705;                | psophis                |                                                            |
 |interfaces_wireless.php                      |                         |                        |                                                            |
 |interfaces_wireless_edit.php                 |                         |                        |                                                            |
 |license.php                                  |                         |                        |                                                            |
@@ -207,7 +207,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |system_advanced_misc.php                     | &#x2705;                |                        |                                                            |
 |system_advanced_network.php                  | &#x2705;                |                        |                                                            |
 |system_advanced_notifications.php            | &#x2705;                |                        |                                                            |
-|system_advanced_sysctl.php                   |                         |                        |                                                            |
+|system_advanced_sysctl.php                   | &#x2705;                | psophis                |                                                            |
 |system_authservers.php                       |                         |                        |                                                            |
 |system_camanager.php                         |                         |                        |                                                            |
 |system_certmanager.php                       |                         |                        |                                                            |
@@ -259,9 +259,9 @@ The table can be generated by running this bash script on the directory in which
 ````bash
    mktable.sh pfsense-bootstrap/usr/local/www
 ````
-   
+
 You can then copy/paste the script output into this file. (Is that recursive?)
-   
+
 ````bash
 #!/bin/bash
 # mktable.sh
@@ -274,23 +274,23 @@ COMPLETED=' &#x2705;'
 INPROGRESS=' &#x1f504;'
 pushd $1
 
-printf "|%-45s|%-25s|%-24s|%-60s|\r\n" "Page/file" "Status" "User" "Comments" 
+printf "|%-45s|%-25s|%-24s|%-60s|\r\n" "Page/file" "Status" "User" "Comments"
 printf "|---------------------------------------------|:-------------------------:|------------------------|------------------------------------------------------------|\r\n"
 
 FILES=$(ls -1 *.php)
 
 for F in $FILES ; do
    printf "|%-45s|" $F
-   
+
    if(grep foot.inc $F >/dev/null 2>&1 ) ; then
       printf "%-25s" "$COMPLETED"
    else
       printf "%25s" "                  "
    fi
-   
+
    printf "|%24s|%60s|\r\n" " " " "
 
-done 
+done
 
 popd
 

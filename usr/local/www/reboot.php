@@ -44,7 +44,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if ($_POST['Submit'] == " " . gettext("No") . " ") {
+if (stristr($_POST['Submit'], gettext("No"))) {
 	header("Location: index.php");
 	exit;
 }
@@ -52,7 +52,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
-if ($_POST['Submit'] == " " . gettext("Yes") . " ") {
+if (stristr($_POST['Submit'], gettext("Yes"))) {
 	?><meta http-equiv=\"refresh\" content=\"70;url=/\"> <?php
 	print('<div class="alert alert-success" role="alert">'.gettext("The system is rebooting now. This may take one minute or so.").'</div>');
 
@@ -66,7 +66,7 @@ require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
-	' Yes '
+	gettext(' Yes ')
 ));
 
 $section = new Form_Section('Reboot');
@@ -78,7 +78,7 @@ $section->addInput(new Form_StaticText(
 
 $form->addGlobal(new Form_Button(
 		'Submit',
-		' No '
+		gettext(' No ')
 	))->removeClass('btn-primary')->addClass('btn-default');
 
 $form->add($section);

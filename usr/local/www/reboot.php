@@ -38,7 +38,7 @@
 ##|-PRIV
 
 // Set DEBUG to true to prevent the system_reboot() function from being called
-define("DEBUG", false);
+define("DEBUG", true);
 
 require("guiconfig.inc");
 require("functions.inc");
@@ -62,6 +62,26 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 		system_reboot();
 } else {
 
+
+?>
+
+<!-- Simple HTML version -->
+<div class="panel panel-default">
+	<div class="panel-heading">Are you sure you want to reboot the system?</div>
+	    <div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
+            <form action="reboot.php" method="post">
+                <input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
+                <input type="submit" class="btn btn-default" name="Submit" value="No">
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php
+
+/* Form.class version */
+
+/*
 require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
@@ -73,7 +93,7 @@ $section = new Form_Section('Reboot');
 
 $section->addInput(new Form_StaticText(
 	'',
-	'Click "Yes" to reboot the system imediately.<br />Click "No" to go to the system dashboard without rebooting. There will be a brief delay before the dashboard appears'
+	'Click "Yes" to reboot the system immediately.<br />Click "No" to go to the system dashboard without rebooting. There will be a brief delay before the dashboard appears'
 ));
 
 $form->addGlobal(new Form_Button(
@@ -83,6 +103,7 @@ $form->addGlobal(new Form_Button(
 
 $form->add($section);
 print $form;
+*/
 }
 
 include("foot.inc"); ?>

@@ -971,10 +971,6 @@ function install_package_xml($pkg) {
 
 	/* set up package logging streams */
 	if ($pkg_info['logging']) {
-		mwexec("/usr/sbin/fifolog_create -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
-		@chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
-		add_text_to_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);
-		pkg_debug("Adding text to file /etc/syslog.conf\n");
 		system_syslogd_start();
 	}
 

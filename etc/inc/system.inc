@@ -1952,6 +1952,15 @@ function system_reboot_sync() {
 	mwexec("/etc/rc.reboot > /dev/null 2>&1");
 }
 
+function custom_shutdown() {
+	$shell = @popen("/bin/sh", "w");
+
+	if ($shell) {
+		fwrite($shell, "[ -x /etc/rc.custom_shutdown ] && /etc/rc.custom_shutdown");
+		pclose($shell);
+	}
+}
+
 function system_reboot_cleanup() {
 	global $config, $cpzone;
 
@@ -1967,6 +1976,7 @@ function system_reboot_cleanup() {
 	voucher_save_db_to_config();
 	require_once("pkg-utils.inc");
 	stop_packages();
+	custom_shutdown();
 }
 
 function system_do_shell_commands($early = 0) {

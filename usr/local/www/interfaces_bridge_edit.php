@@ -149,8 +149,8 @@ if ($_POST) {
 		$i++;
 	}
 
-	if (!is_array($_POST['members']) || count($_POST['members']) < 2)
-		$input_errors[] = gettext("You must select at least 2 member interfaces for a bridge.");
+	if (!is_array($_POST['members']) || count($_POST['members']) < 1)
+		$input_errors[] = gettext("You must select at least one member interface for a bridge.");
 
 	if (is_array($_POST['members'])) {
 		foreach($_POST['members'] as $ifmembers) {

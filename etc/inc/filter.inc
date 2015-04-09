@@ -2032,7 +2032,13 @@ function filter_nat_rules_generate() {
 			if(isset($rule['destination']['any'])) {
 				/* With reflection enabled, destination of 'any' has side effects
 				 * that most people would not expect, so change it on reflection rules. */
-				$dstaddr_reflect = $FilterIflist[$natif]['ip'];
+				if (!empty($FilterIflist[$natif]['ip'])) {
+					$dstaddr_reflect = $FilterIflist[$natif]['ip'];
+				} else {
+					// no IP, bail 
+					continue;
+				}
+
 				if(!empty($FilterIflist[$natif]['sn']))
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 

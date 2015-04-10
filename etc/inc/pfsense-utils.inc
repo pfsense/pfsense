@@ -1018,6 +1018,17 @@ function setup_serial_port($when="save", $path="") {
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	if ($g['platform'] != "cdrom") {
+		$serial_only = false;
+
+		if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			$serial_only = true;
+		} else {
+			$specific_platform = system_identify_specific_platform();
+			if ($specific_platform['name'] == 'RCC-VE') {
+				$serial_only = true;
+			}
+		}
+
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if ($fd) {
@@ -1030,7 +1041,7 @@ function setup_serial_port($when="save", $path="") {
 					}
 				}
 			}
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			if ($serial_only === true) {
 				fwrite($fd, "-S{$serialspeed} -h");
 			} else if (is_serial_enabled()) {
 				fwrite($fd, "-S{$serialspeed} -D");
@@ -1058,12 +1069,11 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
-				$new_boot_config[] = 'boot_serial="YES"';
+			$new_boot_config[] = 'boot_serial="YES"';
+			if ($serial_only === true) {
 				$new_boot_config[] = 'console="comconsole"';
 			} else if (is_serial_enabled()) {
 				$new_boot_config[] = 'boot_multicons="YES"';
-				$new_boot_config[] = 'boot_serial="YES"';
 				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
 				switch ($primaryconsole) {
 					case "video":

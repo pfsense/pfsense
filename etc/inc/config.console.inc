@@ -556,4 +556,34 @@ EOD;
 	}
 }
 
+function check_for_alternate_interfaces() {
+	global $config;
+
+	// If the factory default configured WAN and/or LAN devices do not exist,
+	// then use alternate devices if they exist.
+	// These are devices on Alix (vr) and APU (re) systems, and this lets them boot a
+	// factory default config without being forced to do interface assignment
+	// over the serial port.
+
+	$other_devices_arr['wan'] = array("vr1", "re1");
+	$other_devices_arr['lan'] = array("vr0", "re2");
+	$interface_assignment_changed = false;
+
+	foreach ($other_devices_arr as $ifname => $other_devices) {
+		if (!does_interface_exist($config['interfaces'][$ifname]['if'])) {
+			foreach ($other_devices as $other_device) {
+				if (does_interface_exist($other_device)) {
+					$config['interfaces'][$ifname]['if'] = $other_device;
+					$interface_assignment_changed = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if ($interface_assignment_changed) {
+		write_config("Factory default boot detected WAN " . $config['interfaces']['wan']['if'] . " and LAN " . $config['interfaces']['lan']['if']);
+	}
+}
+
 ?>

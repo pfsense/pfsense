@@ -160,10 +160,10 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 						</tr>
 					</thead>
 					<tbody>
-<?php	if ($sort)
-		uksort($iparr, "sort_by_ip");
+<?php				if ($sort)
+						uksort($iparr, "sort_by_ip");
 
-	foreach($iparr as $ip => $ipinfo) { ?>
+					foreach($iparr as $ip => $ipinfo) { ?>
 						<tr>
 						<td><?php echo $ip; ?></td>
 						<td class="text-center"><?php echo $ipinfo['seen']; ?></td>
@@ -179,11 +179,10 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 										<td class="col-md-1 text-center" ><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
 										<td class="col-md-1 text-center" ><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
 									</tr>
-
 <?php } ?>
 								</tbody>
 
-							</table>	<!-- e-o-innter table -->
+							</table>	<!-- e-o-inner table -->
 						</td>
 					</tr>
 <?php } ?>
@@ -191,7 +190,6 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 			</table>
 		</div>
 	</div>
-
 <?php
 }
 

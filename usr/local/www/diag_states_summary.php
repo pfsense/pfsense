@@ -33,7 +33,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -120,7 +120,6 @@ if(count($states) > 0) {
 
 		addipinfo($allipinfo, $srcip, $proto, $srcport, $dstport);
 		addipinfo($allipinfo, $dstip, $proto, $srcport, $dstport);
-
 	}
 }
 
@@ -145,41 +144,53 @@ function build_port_info($portarr, $proto) {
 }
 
 function print_summary_table($label, $iparr, $sort = TRUE) { ?>
-
-<h3><?php echo $label; ?></h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states summary">
-	<tr>
-		<td class="listhdrr"><?=gettext("IP");?></td>
-		<td class="listhdrr"># <?=gettext("States");?></td>
-		<td class="listhdrr"><?=gettext("Proto");?></td>
-		<td class="listhdrr"># <?=gettext("States");?></td>
-		<td class="listhdrr"><?=gettext("Src Ports");?></td>
-		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
-	</tr>
-<?php   if ($sort)
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=$label?></div>
+			<div class="panel-body">
+			<!-- Outer table displays rows by IP-->
+				<table class="small table table-responsive table-hover table-condensed table-bordered">
+					<thead>
+						<tr class="info">
+							<th class="col-md-3"><?=gettext("IP");?></th>
+							<th class="col-md-1 text-center"># <?=gettext("States");?></th>
+							<th class="col-md-1"><?=gettext("Proto");?></th>
+							<th class="col-md-1 text-center"># <?=gettext("States");?></th>
+							<th class="col-md-1 text-center"><?=gettext("Src Ports");?></th>
+							<th class="col-md-1 text-center"><?=gettext("Dst Ports");?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php	if ($sort)
 		uksort($iparr, "sort_by_ip");
-	foreach($iparr as $ip => $ipinfo) { ?>
-	<tr>
-		<td class="vncell"><?php echo $ip; ?></td>
-		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
-	<tr>
-		<td class="list">&nbsp;</td>
-		<td class="list">&nbsp;</td>
-		<td class="listlr"><?php echo $proto; ?></td>
-		<td class="listr" align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
-		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
-	</tr>
-	<?php } ?>
-<?php } ?>
 
-</table>
+	foreach($iparr as $ip => $ipinfo) { ?>
+						<tr>
+						<td><?php echo $ip; ?></td>
+						<td class="text-center"><?php echo $ipinfo['seen']; ?></td>
+						<td colspan="4" >
+
+							<!-- Inner table displays a table of states within each IP row-->
+							<table class="table	 table-responsive table-hover table-striped table-condensed table-bordered">
+								<tbody>
+<?php							   foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+									<tr>
+										<td class="col-md-1"><?php echo $proto; ?></td>
+										<td class="col-md-1 text-center" ><?php echo $protoinfo['seen']; ?></td>
+										<td class="col-md-1 text-center" ><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
+										<td class="col-md-1 text-center" ><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
+									</tr>
+
+<?php } ?>
+								</tbody>
+
+							</table>	<!-- e-o-innter table -->
+						</td>
+					</tr>
+<?php } ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
 
 <?php
 }
@@ -187,16 +198,21 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
-echo "<body>";
+echo "";
 include("fbegin.inc");
 
+?>
+<div class="panel panel-default">
 
-print_summary_table(gettext("By Source IP"), $srcipinfo);
-print_summary_table(gettext("By Destination IP"), $dstipinfo);
-print_summary_table(gettext("Total per IP"), $allipinfo);
-print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
+<?php
+	print_summary_table(gettext("By Source IP"), $srcipinfo);
+	print_summary_table(gettext("By Destination IP"), $dstipinfo);
+	print_summary_table(gettext("Total per IP"), $allipinfo);
+	print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
 ?>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+</div>
+
+<?php
+include("foot.inc");
+?>

@@ -175,6 +175,10 @@ if ($_POST) {
 			if ($pconfig['iketype'] != 'ikev2')
 				$input_errors[] = gettext("EAP-TLS can only be used with IKEv2 type VPNs.");
 			break;
+		case "eap-radius":
+			if ($pconfig['iketype'] != 'ikev2')
+				$input_errors[] = gettext("EAP-RADIUS can only be used with IKEv2 type VPNs.");
+			break;
 		case "pre_shared_key":
 			// If this is a mobile PSK tunnel the user PSKs go on
 			//    the PSK tab, not here, so skip the check.
@@ -479,6 +483,7 @@ function methodsel_change() {
 	switch (value) {
 	case 'eap-mschapv2':
 	case 'eap-tls':
+	case 'eap-radius':
 		document.getElementById('opt_psk').style.display = 'none';
 		document.getElementById('opt_peerid').style.display = '';
 		document.getElementById('opt_cert').style.display = '';

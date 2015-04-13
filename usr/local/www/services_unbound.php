@@ -498,7 +498,8 @@ function show_advanced_dns() {
 </tr>
 <tr>
 	<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
-	" authoritative DNS server to be queried for that domain.");?></p></td>
+	" authoritative DNS server to be queried for that domain.");?>
+	<?=gettext("If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, using the same domain name.");?></p></td>
 </tr>
 </table>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" summary="results">

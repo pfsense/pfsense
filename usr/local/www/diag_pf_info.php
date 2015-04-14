@@ -107,7 +107,7 @@ include("head.inc");
 	<div class="panel panel-default">
 		<div class="row">
 			<div class=" checkbox col-sm-3">
-				<label class="pull-right"><input type="checkbox" checked="yes" id="RunBox">Run <small>(Un-check to freeze the page)</small></label>
+				<label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" checked="yes" id="RunBox">Run <small>(Un-check to freeze the page)</small></label>
 			</div>
 		</div>
 	</div>

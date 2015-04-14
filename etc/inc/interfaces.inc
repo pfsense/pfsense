@@ -1195,6 +1195,13 @@ function interface_vip_bring_down($vip) {
 		case "carp":
 			/* XXX: Is enough to delete ip address? */
 			if (does_interface_exist($vipif)) {
+				/* Notify package */
+				$pluginparams = array();
+				$pluginparams['type'] = 'carp';
+				$pluginparams['event'] = 'rc.carpbackup';
+				$pluginparams['interface'] = "{$vip['vhid']}@{$vipif}";
+				pkg_call_plugins('plugin_carp', $pluginparams);
+				
 				if (is_ipaddrv6($vip['subnet'])) {
 					mwexec("/sbin/ifconfig {$vipif} inet6 " . escapeshellarg($vip['subnet']) . " delete");
 				} else {

@@ -91,7 +91,7 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpbackup';
-$pluginparams['interface'] = $argv[1];
+$pluginparams['interface'] = $argument;
 pkg_call_plugins('plugin_carp', $pluginparams);
 
 ?>

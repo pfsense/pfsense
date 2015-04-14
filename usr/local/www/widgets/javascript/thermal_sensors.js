@@ -1,9 +1,9 @@
 /*
 	$Id: thermal_sensors.js
-	Description:	
+	Description:
 		Javascript functions to get and show thermal sensors data in thermal_sensors.widget.php.
 		NOTE: depends on proper config in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
-	File location: 
+	File location:
 		\usr\local\www\widgets\javascript\
 	Used by:
 		\usr\local\www\widgets\widgets\thermal_sensors.widget.php
@@ -36,7 +36,7 @@
 function showThermalSensorsData() {
 
 	//get data from thermal_sensors.widget.php
-	url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1" 
+	url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
 			//IE fix to disable cache when using http:// , just append timespan
 			+ new Date().getTime();
 
@@ -46,14 +46,14 @@ function showThermalSensorsData() {
 			var thermalSensorsData = data || "";
 			buildThermalSensorsData(thermalSensorsData);
 		},
-		error: function(jqXHR, status, error){
+		error: function(jqXHR, status, error) {
 			buildThermalSensorsDataRaw(
-				"Error getting data from [thermal_sensors.widget.php] - |" + 
-				"status: [" + (status || "") + "]|" + 
+				"Error getting data from [thermal_sensors.widget.php] - |" +
+				"status: [" + (status || "") + "]|" +
 				"error: [" + (error || "") + "]");
 		}
 	});
-	
+
 	//call itself in 11 seconds
 	window.setTimeout(showThermalSensorsData, 11000);
 }
@@ -62,21 +62,20 @@ function buildThermalSensorsData(thermalSensorsData) {
 	//NOTE: variable thermal_sensors_widget_showRawOutput is declared/set in "thermal_sensors.widget.php"
 	if (thermal_sensors_widget_showRawOutput) {
 		buildThermalSensorsDataRaw(thermalSensorsData);
-	}
-	else {
+	} else {
 		buildThermalSensorsDataGraph(thermalSensorsData);
 	}
 }
 
 function buildThermalSensorsDataRaw(thermalSensorsData) {
-	
+
 	var thermalSensorsContent = "";
-	
+
 	if (thermalSensorsData && thermalSensorsData != "") {
 		thermalSensorsContent = thermalSensorsData.replace(/\|/g, "<br />");
 		//rawData = thermalSensorsData.split("|").join("<br />");
 	}
-	
+
 	loadThermalSensorsContainer(thermalSensorsContent);
 }
 
@@ -88,7 +87,7 @@ function loadThermalSensorsContainer (thermalSensorsContent) {
 	} else {
 		jQuery('#thermalSensorsContainer').html("No Thermal Sensors data available.<br /><br />");
 		jQuery('<div/>').html(
-				"<span>* You can configure a proper Thermal Sensor / Module under <br />" + 
+				"<span>* You can configure a proper Thermal Sensor / Module under <br />" +
 				"&nbsp;&nbsp;&nbsp;<a href='system_advanced_misc.php'>System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>"
 				).appendTo('#thermalSensorsContainer');
 	}
@@ -100,51 +99,51 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 	var normalColor = "LimeGreen";
 	var normalColorShadowTop = "Lime";
 	var normalColorShadowBottom = "Green";
-	
+
 	var warningColor = "Orange";
 	var warningColorShadowBottom = "Chocolate";
-	
+
 	var criticalColor = "Red";
 	var criticalColorShadowBottom = "DarkRed";
-	
+
 	//local variables
 	var barBgColor = normalColor; //green/normal as default
 	var barBgColorShadowTop = normalColorShadowTop; //green/normal as default
 	var barBgColorShadowBottom = normalColorShadowBottom; //green/normal as default
-		
+
 	var thermalSensorsArray = new Array();
-	
-	if (thermalSensorsData && thermalSensorsData != ""){
+
+	if (thermalSensorsData && thermalSensorsData != "") {
 		thermalSensorsArray = thermalSensorsData.split("|");
 	}
 
 	var thermalSensorsHTMLContent = "";
 	var itemsToPulsate = new Array();
-	
+
 	//generate graph for each temperature sensor and append to thermalSensorsHTMLContent string
 	for (var i = 0; i < thermalSensorsArray.length; i++) {
-	
+
 		var sensorDataArray = thermalSensorsArray[i].split(":");
 		var sensorName = sensorDataArray[0].trim();
 		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
 
 		var pulsateTimes = 0;
 		var pulsateDuration = 0;
-		
+
 		var warningTempThresholdPosition = 0;
 		var criticalTempThresholdPosition = 0;
-		
-		//NOTE: the following variables are declared/set in "thermal_sensors.widget.php": 
-		//		thermal_sensors_widget_coreWarningTempThreshold, thermal_sensors_widget_coreCriticalTempThreshold, 
+
+		//NOTE: the following variables are declared/set in "thermal_sensors.widget.php":
+		//		thermal_sensors_widget_coreWarningTempThreshold, thermal_sensors_widget_coreCriticalTempThreshold,
 		//		thermal_sensors_widget_zoneWarningTempThreshold, thermal_sensors_widget_zoneCriticalTempThreshold
 		//		thermal_sensors_widget_pulsateWarning, thermal_sensors_widget_pulsateCritical
-		
+
 		//set graph color and pulsate parameters
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			
+
 			warningTempThresholdPosition = thermal_sensors_widget_coreWarningTempThreshold;
 			criticalTempThresholdPosition = thermal_sensors_widget_coreCriticalTempThreshold;
-			
+
 			if (thermalSensorValue < thermal_sensors_widget_coreWarningTempThreshold) {
 				barBgColor = normalColor;
 				barBgColorShadowTop = normalColorShadowTop;
@@ -165,21 +164,21 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 				pulsateDuration = thermal_sensors_widget_pulsateCritical ? 900 : 0;
 			}
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			
+
 			warningTempThresholdPosition = thermal_sensors_widget_zoneWarningTempThreshold;
 			criticalTempThresholdPosition = thermal_sensors_widget_zoneCriticalTempThreshold;
 
 			if (thermalSensorValue < thermal_sensors_widget_zoneWarningTempThreshold) {
-			
+
 				barBgColor = normalColor;
 				barBgColorShadowTop = normalColorShadowTop;
 				barBgColorShadowBottom = normalColorShadowBottom;
 				pulsateTimes = 0;
 				pulsateDuration = 0;
 
-			} else if (thermalSensorValue >= thermal_sensors_widget_zoneWarningTempThreshold 
-						&& thermalSensorValue < thermal_sensors_widget_zoneCriticalTempThreshold) {
-						
+			} else if (thermalSensorValue >= thermal_sensors_widget_zoneWarningTempThreshold &&
+			    thermalSensorValue < thermal_sensors_widget_zoneCriticalTempThreshold) {
+
 				barBgColor = warningColor;
 				barBgColorShadowTop = warningColor;
 				barBgColorShadowBottom = warningColorShadowBottom;
@@ -187,7 +186,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 				pulsateDuration = thermal_sensors_widget_pulsateWarning ? 900 : 0;
 
 			} else { // thermalSensorValue > thermal_sensors_widget_zoneCriticalTempThreshold
-			
+
 				barBgColor = criticalColor;
 				barBgColorShadowTop = criticalColor;
 				barBgColorShadowBottom = criticalColorShadowBottom;
@@ -203,44 +202,44 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 
 		//build temperature item/row for a sensor
 		//NOTE: additional styles are set in 'thermal_sensors.widget.php'
-		var thermalSensorRow = 	"<div class='thermalSensorRow' id='thermalSensorRow" + i + "' >" + 
+		var thermalSensorRow = 	"<div class='thermalSensorRow' id='thermalSensorRow" + i + "' >" +
 							//sensor name and temperature value
-							"	<div class='thermalSensorTextShell'><div class='thermalSensorText' id='thermalSensorText" + i + "'>" + sensorName + ": </div><div class='thermalSensorValue' id='thermalSensorValue" + i + "'>" + thermalSensorValue + " &deg;C</div></div>" + 
+							"	<div class='thermalSensorTextShell'><div class='thermalSensorText' id='thermalSensorText" + i + "'>" + sensorName + ": </div><div class='thermalSensorValue' id='thermalSensorValue" + i + "'>" + thermalSensorValue + " &deg;C</div></div>" +
 							//temperature bar
-							"	<div class='thermalSensorBarShell' id='thermalSensorBarShell" + i + "' >" + 
-							"		<div class='thermalSensorBar' id='thermalSensorBar" + i + "' style='background-color: " + barBgColor + "; border-top-color: " + barBgColorShadowTop + "; border-bottom-color: " + barBgColorShadowBottom + "; width:" + thermalSensorValue + "%;' ></div>" + 
+							"	<div class='thermalSensorBarShell' id='thermalSensorBarShell" + i + "' >" +
+							"		<div class='thermalSensorBar' id='thermalSensorBar" + i + "' style='background-color: " + barBgColor + "; border-top-color: " + barBgColorShadowTop + "; border-bottom-color: " + barBgColorShadowBottom + "; width:" + thermalSensorValue + "%;' ></div>" +
 							//threshold targets (warning and critical)
-							"		<div class='thermalSensorWarnThresh' id='thermalSensorWarnThresh" + i + "' style='left:" + warningTempThresholdPosition  + "%;' ></div>" + 
-							"		<div class='thermalSensorCritThresh' id='thermalSensorCritThresh" + i + "' style='left:" + criticalTempThresholdPosition + "%;' ></div>" + 
+							"		<div class='thermalSensorWarnThresh' id='thermalSensorWarnThresh" + i + "' style='left:" + warningTempThresholdPosition  + "%;' ></div>" +
+							"		<div class='thermalSensorCritThresh' id='thermalSensorCritThresh" + i + "' style='left:" + criticalTempThresholdPosition + "%;' ></div>" +
 							//temperature scale (max 100 C)
-							"		<div class='thermal_sensors_widget_scale000'></div>" + 
-							"		<div class='thermal_sensors_widget_scale010'></div>" + 
-							"		<div class='thermal_sensors_widget_scale020'></div>" + 
-							"		<div class='thermal_sensors_widget_scale030'></div>" + 
-							"		<div class='thermal_sensors_widget_scale040'></div>" + 
-							"		<div class='thermal_sensors_widget_scale050'></div>" + 
-							"		<div class='thermal_sensors_widget_scale060'></div>" + 
-							"		<div class='thermal_sensors_widget_scale070'></div>" + 
-							"		<div class='thermal_sensors_widget_scale080'></div>" + 
-							"		<div class='thermal_sensors_widget_scale090'></div>" + 
-							"		<div class='thermal_sensors_widget_scale100'></div>" + 
-							"		<div class='thermal_sensors_widget_mark100'>100&deg;</div>" + 
-							"	</div>" + 
+							"		<div class='thermal_sensors_widget_scale000'></div>" +
+							"		<div class='thermal_sensors_widget_scale010'></div>" +
+							"		<div class='thermal_sensors_widget_scale020'></div>" +
+							"		<div class='thermal_sensors_widget_scale030'></div>" +
+							"		<div class='thermal_sensors_widget_scale040'></div>" +
+							"		<div class='thermal_sensors_widget_scale050'></div>" +
+							"		<div class='thermal_sensors_widget_scale060'></div>" +
+							"		<div class='thermal_sensors_widget_scale070'></div>" +
+							"		<div class='thermal_sensors_widget_scale080'></div>" +
+							"		<div class='thermal_sensors_widget_scale090'></div>" +
+							"		<div class='thermal_sensors_widget_scale100'></div>" +
+							"		<div class='thermal_sensors_widget_mark100'>100&deg;</div>" +
+							"	</div>" +
 							"</div>";
-						
+
 		//collect parameters for warning/critical items we need to pulsate
 		if (pulsateTimes > 0) {
 			var params = i + "|" + barBgColor + "|" + pulsateTimes + "|" + pulsateDuration;
 			itemsToPulsate.push(params);
 		}
-		
+
 		//append HTML item
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
 	}
-	
+
 	//load generated graph into thermalSensorsContainer (DIV defined in "thermal_sensors.widget.php")
 	loadThermalSensorsContainer(thermalSensorsHTMLContent);
-	
+
 	if (itemsToPulsate.length > 0) {
 		//pulsate/flash warning/critical items we collected
 		pulsateThermalSensorsItems(itemsToPulsate);
@@ -248,10 +247,10 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 }
 
 function pulsateThermalSensorsItems(itemsToPulsate) {
-	
+
 	//pulsate/flash warning/critical items we collected
 	for (var i = 0; i < itemsToPulsate.length; i++) {
-	
+
 		var pulsateParams = itemsToPulsate[i].split("|");
 		var rowNum = parseInt(pulsateParams[0]);
 		//var textColor = pulsateParams[1];
@@ -260,36 +259,38 @@ function pulsateThermalSensorsItems(itemsToPulsate) {
 
 		//pulsate temp Value
 		var divThermalSensorValue = jQuery("#thermalSensorValue" + rowNum); //get temp value by id
-		divThermalSensorValue.effect("pulsate", { 
-				 times: pulsateTimes
-				,easing: 'linear' //'easeInExpo' 
+		divThermalSensorValue.effect("pulsate", {
+			times: pulsateTimes,
+			easing: 'linear' //'easeInExpo'
 		}, pulsateDuration);
 		////set Temp Value color
-		//divThermalSensorValue.css( { color: textColor } );		
-		
+		//divThermalSensorValue.css({ color: textColor });
+
 		//pulsate temp Bar
 		var divThermalSensorBar = jQuery("#thermalSensorBar" + rowNum); //get temp bar by id
-		divThermalSensorBar.effect("pulsate", { 
-				 times: pulsateTimes
-				,easing: 'linear' //'easeInExpo' 
+		divThermalSensorBar.effect("pulsate", {
+			times: pulsateTimes,
+			easing: 'linear' //'easeInExpo'
 		}, pulsateDuration);
-		
+
 	}
 }
 
-function getSensorFriendlyName(sensorFullName){
+function getSensorFriendlyName(sensorFullName) {
 	var rzone = /^hw\.acpi\.thermal\.tz([0-9]+)\.temperature$/;
 	var rcore = /^dev\.cpu\.([0-9]+)\.temperature$/;
 
-	if (rzone.test(sensorFullName))
+	if (rzone.test(sensorFullName)) {
 		return "Zone " + rzone.exec(sensorFullName)[1];
+	}
 
-	if (rcore.test(sensorFullName))
+	if (rcore.test(sensorFullName)) {
 		return "Core " + rcore.exec(sensorFullName)[1];
+	}
 
 	return sensorFullName;
 }
 
-function getThermalSensorValue(stringValue){
+function getThermalSensorValue(stringValue) {
 	return (+parseFloat(stringValue) || 0).toFixed(1);
 }

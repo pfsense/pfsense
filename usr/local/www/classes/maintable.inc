@@ -1,31 +1,31 @@
 <?php
 /* $Id$ */
 /*
-        part of pfSense (https://www.pfsense.org/)
+	part of pfSense (https://www.pfsense.org/)
 
-        Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
-        All rights reserved.
+	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -52,7 +52,7 @@ class MainTable {
 	}
 
 	function add_content_array($rows) {
-		foreach($rows as $row) {
+		foreach ($rows as $row) {
 			$this->content[] = $row;
 			$this->rows++;
 		}
@@ -160,16 +160,20 @@ class MainTable {
 	private function display_buttons($row) {
 		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"display buttons\">\n";
 		echo "      <tr>\n";
-		if ($this->buttons['move'])
+		if ($this->buttons['move']) {
 			echo $this->display_button('move', $row);
-		if ($this->buttons['edit'])
+		}
+		if ($this->buttons['edit']) {
 			echo $this->display_button('edit', $row);
+		}
 		echo "      </tr>\n";
 		echo "      <tr>\n";
-		if ($this->buttons['del'])
+		if ($this->buttons['del']) {
 			echo $this->display_button('del', $row);
-		if ($this->buttons['dup'])
+		}
+		if ($this->buttons['dup']) {
 			echo $this->display_button('dup', $row);
+		}
 		echo "      </tr>\n";
 		echo "    </table>\n";
 	}

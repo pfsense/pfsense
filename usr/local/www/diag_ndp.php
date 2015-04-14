@@ -1,7 +1,7 @@
 <?php
 /*
 	diag_ndp.php
-	part of the pfSense project	(https://www.pfsense.org)
+	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
 	All rights reserved.
@@ -34,7 +34,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
-	pfSense_MODULE:	arp
+	pfSense_MODULE: arp
 */
 
 ##|+PRIV
@@ -60,8 +60,8 @@ foreach ($ifdescrs as $key =>$interface) {
 	$hwif[$config['interfaces'][$key]['if']] = $interface;
 }
 
-/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address 
-[3] => Netif [4] => Expire [5] => S 
+/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address
+[3] => Netif [4] => Expire [5] => S
 [6] => Flags ) */
 $data = array();
 array_shift($rawdata);
@@ -77,10 +77,10 @@ foreach ($rawdata as $line) {
 
 /* FIXME: Not ipv6 compatible dns resolving. PHP needs fixing */
 function _getHostName($mac,$ip)
-{       
+{
 	if(is_ipaddr($ip)) {
 		list($ip, $scope) = explode("%", $ip);
-		if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
+		if(gethostbyaddr($ip) != "" and gethostbyaddr($ip) != $ip)
 			return gethostbyaddr($ip);
 		else
 			return "";
@@ -97,7 +97,7 @@ foreach ($data as &$entry) {
 	else
 		$entry['dnsresolve'] = "Z_ ";
 }
-                
+
 // Sort the data alpha first
 $data = msort($data, "dnsresolve");
 
@@ -109,70 +109,50 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
-
-<div id="loading">
-	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /><?= gettext("Loading, please wait..."); ?>
-	<p>&nbsp;</p>
+<div class="panel panel-default">
+    <div class="table-responsive">
+		<table class="table table-striped table-hover" summary="tabcont">
+		    <thead>
+    			<tr class="info">
+    				<th><?= gettext("IPv6 address"); ?></th>
+    				<th><?= gettext("MAC address"); ?></th>
+    				<th><?= gettext("Hostname"); ?></th>
+    				<th><?= gettext("Interface"); ?></th>
+    				<th></th>
+    			</tr>
+			</thead>
+			<tbody>
+    			<?php foreach ($data as $entry): ?>
+    				<tr>
+    					<td><?=$entry['ipv6']?>
+    					</td>
+    					<td>
+    						<?php
+    						$mac=trim($entry['mac']);
+    						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+    						print $mac;
+    						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+    						?>
+    					</td>
+    					<td>
+    						<?php
+    						echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);
+    						?>
+    					</td>
+    					<td>
+    						<?php
+    						if(isset($hwif[$entry['interface']]))
+    							echo $hwif[$entry['interface']];
+    						else
+    							echo $entry['interface'];
+    						?>
+    					</td>
+    				</tr>
+    			<?php endforeach; ?>
+			</tbody>
+		</table>
+    </div>
 </div>
 
-<?php
-
-// Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
-ob_implicit_flush(1);
-
-?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag ndp">
-	<tr>
-		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcont">
-				<tr>
-					<td class="listhdrr"><?= gettext("IPv6 address"); ?></td>
-					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
-					<td class="listhdrr"><?= gettext("Hostname"); ?></td>
-					<td class="listhdr"><?= gettext("Interface"); ?></td>
-					<td class="list"></td>
-				</tr>
-				<?php foreach ($data as $entry): ?>
-					<tr>
-						<td class="listlr"><?=$entry['ipv6'];?></td>
-						<td class="listr">
-							<?php
-							$mac=trim($entry['mac']);
-							$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-							print $mac;
-							if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
-							?>
-						</td>
-						<td class="listr">
-							<?php
-							echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);
-							?>
-						</td>
-						<td class="listr">
-							<?php 
-							if(isset($hwif[$entry['interface']]))
-								echo $hwif[$entry['interface']];
-							else
-								echo $entry['interface'];
-							?>
-						</td>
-					</tr>
-				<?php endforeach; ?>
-			</table>
-		</td>
-	</tr>
-</table>
-
-<?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-//<![CDATA[
-	jQuery('#loading').html('');
-//]]>
-</script>
-</body>
-</html>
+<?php include("foot.inc"); ?>

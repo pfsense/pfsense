@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	header
+	pfSense_MODULE: header
 */
 
 ##|+PRIV
@@ -42,6 +42,9 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
 ##|*MATCH=halt.php*
 ##|-PRIV
+
+// Set DEBUG to true to prevent the system_halt() function from being called
+define("DEBUG", true);
 
 require("guiconfig.inc");
 require("functions.inc");
@@ -54,24 +57,34 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
 include('head.inc');
+
+if (stristr($_POST['Submit'], gettext("Yes"))) {
+	?><meta http-equiv=\"refresh\" content=\"70;url=/\"> <?php
+	print('<div class="alert alert-success" role="alert">'.gettext("The system is halting now. This may take one minute or so.").'</div>');
+
+	if(DEBUG)
+	   print("Not actually halting (DEBUG is set true)<br>");
+	else
+		system_halt();
+} else {
+
+
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
-	print_info_box(gettext("The system is halting now. This may take one minute.")); ?>
-<pre>
-<?php 	system_halt(); ?>
-</pre>
-<?php else: ?>
-<form action="halt.php" method="post">
-	<p><strong><?=gettext("Are you sure you want to halt the system?");?></strong></p>
-	<p>
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes"); ?> " />
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No"); ?> " />
-	</p>
-</form>
-<?php endif; ?>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<!-- Simple HTML version -->
+<div class="panel panel-default">
+	<div class="panel-heading">Are you sure you want to halt the system?</div>
+		<div class="panel-body">Click "Yes" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)<br /><br />
+			<form action="halt.php" method="post">
+				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
+				<input type="submit" class="btn btn-default" name="Submit" value="No">
+			</form>
+		</div>
+	</div>
+</div>
+
+<?php
+}
+include("foot.inc");
+?>
+

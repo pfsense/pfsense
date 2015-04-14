@@ -291,6 +291,7 @@ function voucher_expire($voucher_received) {
 
 				/* Check if this voucher has any active sessions */
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
+				$cpentry = $cpentry[0];
 				if (!empty($cpentry)) {
 					captiveportal_disconnect($cpentry,null,13);
 					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");

@@ -30,7 +30,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/top
-	pfSense_MODULE: system
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV
@@ -43,11 +43,6 @@
 require("guiconfig.inc");
 
 $pgtitle = gettext("Diagnostics: pfInfo");
-
-if (stristr($_POST['Submit'], gettext("No"))) {
-	header("Location: index.php");
-	exit;
-}
 
 if($_REQUEST['getactivity']) {
 	$text = `/sbin/pfctl -vvsi`;
@@ -65,72 +60,55 @@ include("head.inc");
 
 ?>
 
+
 <script type="text/javascript">
+jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
 //<![CDATA[
-	var run = true;
-
 	function getpfinfo() {
-		scroll(0,0);
-		var url = "/diag_pf_info.php";
-		var pars = 'getactivity=yes';
-if(run)
-		jQuery.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
+		jQuery.ajax({
+			type: "POST",
+			url: "/diag_pf_info.php",
+			data: 'getactivity=yes',
+			async: false,
+			complete: activitycallback
+		});
 	}
-
 	function activitycallback(transport) {
-		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText	+ '<\/pre><\/font>');
-		setTimeout('getpfinfo()', 2500);
+		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		setTimeout('getpfinfo()', 2000);
 	}
-	setTimeout('getpfinfo()', 1000);
 //]]>
 </script>
-
 <div id="maincontent">
 <?php
 	if($savemsg) {
 		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
-		echo "</div>";
+		echo "</div>";	
 	}
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-	<div class="panel panel-default">
-		<div class="row">
-			<div class=" checkbox col-sm-3">
-				<label class="pull-right"><input type="checkbox" checked="yes" id="RunBox">Run <small>(Un-check to freeze the page)</small></label>
-			</div>
-		</div>
-	</div>
-
-	<div class="panel panel-default panel-info">
-		<div class="panel-heading">Output</div>
-		<div class="panel panel-body" id="pfactivitydiv">
-			<?=gettext("Gathering PF information, please wait...")?>
-		</div>
-	</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag pf info">
+  <tr>
+	<td>
+	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
+		<tr>
+			<td align="center">
+				<table summary="results">
+					<tr><td>
+						<div id="pfactivitydiv">
+							<?=gettext("Gathering PF information, please wait...")?>
+						</div>
+					</td></tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	</td>
+  </tr>
+</table>
 </div>
-
 <?php include("foot.inc"); ?>
-
-<!-- JS allows the viewer to stop the automatic page refresh by un-clicking the "Run" checkbox -->
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function(){
-	$('#RunBox').change(function(){
-		if($(this).prop('checked') === true) {
-		   run = true;
-		   getpfinfo()
-		}
-		else
-		   run = false;
-	});
-});
-//]]>
-</script>
+</body>
+</html>

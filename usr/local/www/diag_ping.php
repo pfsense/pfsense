@@ -56,7 +56,7 @@ function create_sourceaddresslist() {
 	$sourceips = get_possible_traffic_source_addresses(true);
 
 	foreach ($sourceips as $sipvalue => $sipname)
-		$list[$sipname[value]] = $sipname[name];
+		$list[$sipname['value']] = $sipname['name'];
 
 	return($list);
 }
@@ -144,7 +144,7 @@ $form = new Form(new Form_Button(
 	'Ping'
 ));
 
-$section = new Form_Section('Traceroute');
+$section = new Form_Section('Ping');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -179,12 +179,16 @@ $form->add($section);
 print $form;
 
 if($do_ping && !empty($result) && !$input_errors) {
-	print("<div class=\"panel panel-info\">" . "<div class=\"panel-heading\">Results</div>");
+?>
+	<div class="panel panel-info">
+	   <div class="panel-heading">Results</div>
+<?php
+    // ToDo: Revert to nl2br() and remove &nbsp;when the CSS has been adjusted
 	print("&nbsp;&nbsp;" . str_replace("\n", "<br />&nbsp;&nbsp;", $result));
-	print('</div></div>');
+?>
+    </div>
+</div>
+<?php
 }
 
 include("foot.inc");
-
-?>
-

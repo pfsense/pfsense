@@ -54,7 +54,6 @@ fi
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
-kldstat -qm zfs
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
 	kldstat -qm zfs

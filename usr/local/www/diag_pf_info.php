@@ -73,14 +73,17 @@ include("head.inc");
 		scroll(0,0);
 		var url = "/diag_pf_info.php";
 		var pars = 'getactivity=yes';
-if(run)
-		jQuery.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
+
+        if(run) {
+    		jQuery.ajax(
+    			url,
+    			{
+    				type: 'post',
+    				data: pars,
+    				complete: activitycallback
+    			});
+    			
+        }
 	}
 
 	function activitycallback(transport) {

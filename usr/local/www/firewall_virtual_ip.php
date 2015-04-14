@@ -108,6 +108,26 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
+		/* make sure no OpenVPN server or client references this entry */
+		$openvpn_types_a = array("openvpn-server" => gettext("server"), "openvpn-client" => gettext("client"));
+		foreach ($openvpn_types_a as $openvpn_type => $openvpn_type_text) {
+			if (is_array($config['openvpn'][$openvpn_type])) {
+				foreach ($config['openvpn'][$openvpn_type] as $openvpn) {
+					if ($openvpn['ipaddr'] <> "") {
+						if ($openvpn['ipaddr'] == $a_vip[$_GET['id']]['subnet']) {
+							if (strlen($openvpn['description'])) {
+								$openvpn_desc = $openvpn['description'];
+							} else {
+								$openvpn_desc = $openvpn['ipaddr'] . ":" . $openvpn['local_port'];
+							}
+							$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by OpenVPN %s %s."), $openvpn_type_text, $openvpn_desc);
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet'])) {
 			$is_ipv6 = true;
 			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);

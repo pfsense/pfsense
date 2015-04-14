@@ -40,7 +40,7 @@ require_once("captiveportal.inc");
 $errormsg = "Invalid credentials specified.";
 
 header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0");
+header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Connection: close");
 

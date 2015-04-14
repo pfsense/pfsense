@@ -1263,7 +1263,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	header("Content-type: image/png");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	header("Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0");
+	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
 	$file= "/usr/local/www/themes/{$g['theme']}/images/misc/rrd_error.png";
 	readfile($file);
@@ -1273,7 +1273,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 		header("Content-type: image/png");
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		header("Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0");
+		header("Cache-Control: no-cache, no-store, must-revalidate");
 		header("Pragma: no-cache");
 		readfile($file);
 	}

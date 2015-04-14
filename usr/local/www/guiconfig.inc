@@ -47,7 +47,7 @@ if(!$nocsrf) {
 if (!$omit_nocacheheaders) {
 	header("Expires: 0");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	header("Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0");
+	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
 }
 

@@ -7,6 +7,7 @@
 	Used by:
 		\usr\local\www\widgets\widgets\thermal_sensors.widget.php
 
+
 */
 
 //set variable for custom title

@@ -60,7 +60,7 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	kldstat -qm zfs
 	if [ $? = 0 ]; then
 		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-		if [ $ZFSAVAILABLE -eq 0 ]; then
+		if [ $ZFSFSAVAILABLE -eq 0 ]; then
 			kldunload zfs
 		elif [ -f /usr/bin/grep ]; then
 			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`

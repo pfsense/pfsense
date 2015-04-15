@@ -518,7 +518,6 @@
 						log_error("SelfHost: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					$server = "https://carol.selfhost.de/nic/update";
 					$port = "";
 					if($this->_dnsServer)

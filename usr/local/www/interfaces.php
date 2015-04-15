@@ -636,8 +636,14 @@ if ($_POST['apply']) {
 		if (!is_ipaddrv4($_POST['ipaddr']))
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		else {
-			if (is_ipaddr_configured($_POST['ipaddr'], $if, true))
-				$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
+			$where_ipaddr_configured = where_is_ipaddr_configured($_POST['ipaddr'], $if, true, true, $_POST['subnet']);
+			if (count($where_ipaddr_configured)) {
+				$subnet_conflict_text = sprintf(gettext("IPv4 address %s is being used by or overlaps with:"), $_POST['ipaddr'] . "/" . $_POST['subnet']);
+				foreach ($where_ipaddr_configured as $subnet_conflict) {
+					$subnet_conflict_text .= " " . convert_friendly_interface_to_friendly_descr($subnet_conflict['if']) . " (" . $subnet_conflict['ip_or_subnet'] . ")";
+				}
+				$input_errors[] = $subnet_conflict_text;
+			}
 
 			/* Do not accept network or broadcast address, except if subnet is 31 or 32 */
 			if ($_POST['subnet'] < 31) {
@@ -661,8 +667,14 @@ if ($_POST['apply']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6']))
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		else {
-			if (is_ipaddr_configured($_POST['ipaddrv6'], $if, true))
-				$input_errors[] = gettext("This IPv6 address is being used by another interface or VIP.");
+			$where_ipaddr_configured = where_is_ipaddr_configured($_POST['ipaddrv6'], $if, true, true, $_POST['subnetv6']);
+			if (count($where_ipaddr_configured)) {
+				$subnet_conflict_text = sprintf(gettext("IPv6 address %s is being used by or overlaps with:"), $_POST['ipaddrv6'] . "/" . $_POST['subnetv6']);
+				foreach ($where_ipaddr_configured as $subnet_conflict) {
+					$subnet_conflict_text .= " " . convert_friendly_interface_to_friendly_descr($subnet_conflict['if']) . " (" . $subnet_conflict['ip_or_subnet'] . ")";
+				}
+				$input_errors[] = $subnet_conflict_text;
+			}
 
 			foreach ($staticroutes as $route_subnet) {
 				list($network, $subnet) = explode("/", $route_subnet);

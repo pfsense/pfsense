@@ -180,14 +180,16 @@ print $form;
 
 if($do_ping && !empty($result) && !$input_errors) {
 ?>
-	<div class="panel panel-info">
-	   <div class="panel-heading">Results</div>
-<?php
-    // ToDo: Revert to nl2br() and remove &nbsp;when the CSS has been adjusted
-	print("&nbsp;&nbsp;" . str_replace("\n", "<br />&nbsp;&nbsp;", $result));
-?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">Results</h2>
+		</div>
+		<div class="panel-body">
+			<pre>
+<?= $result ?>
+			</pre>
+		</div>
     </div>
-</div>
 <?php
 }
 

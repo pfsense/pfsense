@@ -2,22 +2,22 @@
 /*
 	graph.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2006 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
 	and Jonathan Watt <jwatt@jwatt.org>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -45,8 +45,7 @@ require("guiconfig.inc");
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
-header("Cache-Control: no-store, no-cache, must-revalidate" ); // HTTP/1.1
-header("Cache-Control: post-check=0, pre-check=0", FALSE );
+header("Cache-Control: no-cache, no-store, must-revalidate" ); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 header("Content-type: image/svg+xml");
 
@@ -99,7 +98,7 @@ $fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
 if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
 	$themetxt = file_get_contents("/usr/local/www/themes/{$g['theme']}/graph.php");
 	eval($themetxt);
-} 
+}
 
 /********* Graph DATA **************/
 print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
@@ -315,7 +314,7 @@ function plot_data(obj) {
         rmax *= 1.25;
       else
         rmax *= 2;
-      
+
       if (i == 8)
         rmax *= 1.024;
     }

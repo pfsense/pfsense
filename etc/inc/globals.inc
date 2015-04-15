@@ -43,6 +43,7 @@ $g = array(
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
 	"unbound_chroot_path" => "/var/unbound",
+	"var_path" => "/var",
 	"varrun_path" => "/var/run",
 	"varetc_path" => "/var/etc",
 	"vardb_path" => "/var/db",

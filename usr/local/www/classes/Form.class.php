@@ -53,7 +53,9 @@ class Form extends Form_Element
 				'Save'
 			);
 
-		$this->addGlobal($submit);
+        // If no title is provided, don't add the button
+        if(!empty($submit->getName())
+		    $this->addGlobal($submit);
 	}
 
 	public function add(Form_Section $section)

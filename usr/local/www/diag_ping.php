@@ -157,7 +157,7 @@ $group->add(new Form_Checkbox(
 	'ipproto',
 	null,
 	'IPv4',
-	('ipv4' == $ipproto),
+	('ipv6' != $ipproto), # negative check, so this would be checked by default
 	'ipv4'
 ))->displayAsRadio();
 $group->add(new Form_Checkbox(

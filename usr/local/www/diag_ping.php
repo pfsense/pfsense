@@ -53,12 +53,10 @@ define('DEFAULT_COUNT', 3);
 function create_sourceaddresslist() {
 	$list = array('any' => 'Any');
 
-	$sourceips = get_possible_traffic_source_addresses(true);
-
-	foreach ($sourceips as $sipvalue => $sipname)
+	foreach (get_possible_traffic_source_addresses(true) as $sipname)
 		$list[$sipname['value']] = $sipname['name'];
 
-	return($list);
+	return $list;
 }
 
 if ($_POST || $_REQUEST['host']) {
@@ -132,15 +130,15 @@ if($do_ping) {
 
 }
 
-include("head.inc"); ?>
+include('head.inc');
 
-<?php if ($input_errors)
+if ($input_errors)
 	print_input_errors($input_errors);
 
 require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
-	'Submit',
+	'submit',
 	'Ping'
 ));
 
@@ -151,26 +149,26 @@ $section->addInput(new Form_Input(
 	'Hostname',
 	'text',
 	$host,
-	['placeholder' => 'Hostname to ping.']
+	['placeholder' => 'Hostname to ping']
 ));
 
-$section->addInput(new Form_Select(
+$section->addInput(new Form_Checkbox(
 	'ipproto',
 	'IP Protocol',
 	$pconfig['protocol'],
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp('Select the protocol to use');
+))->displayAsRadio()->setHelp('Select the protocol to use');
 
 $section->addInput(new Form_Select(
 	'sourceip',
-	'Source Address',
+	'Source address',
 	$pconfig['source'],
 	create_sourceaddresslist()
 ))->setHelp('Select source address for the ping');
 
 $section->addInput(new Form_Select(
 	'count',
-	'Maximum nuber of pings',
+	'Maximum number of pings',
 	$count,
 	array_combine(range(1, MAX_COUNT), range(1, MAX_COUNT))
 ))->setHelp('Select the maximum number pings');
@@ -184,13 +182,13 @@ if($do_ping && !empty($result) && !$input_errors) {
 		<div class="panel-heading">
 			<h2 class="panel-title">Results</h2>
 		</div>
+
 		<div class="panel-body">
-			<pre>
-<?= $result ?>
-			</pre>
+			<pre><?= $result ?></pre>
 		</div>
-    </div>
+	</div>
+</div>
 <?php
 }
 
-include("foot.inc");
+include('foot.inc');

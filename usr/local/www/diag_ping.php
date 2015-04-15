@@ -152,12 +152,23 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Hostname to ping']
 ));
 
-$section->addInput(new Form_Checkbox(
+$group = new Form_Group('IP Protocol');
+$group->add(new Form_Checkbox(
 	'ipproto',
-	'IP Protocol',
-	$pconfig['protocol'],
-	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->displayAsRadio()->setHelp('Select the protocol to use');
+	null,
+	'IPv4',
+	('ipv4' == $pconfig['protocol']),
+	'ipv4'
+))->displayAsRadio();
+$group->add(new Form_Checkbox(
+	'ipproto',
+	null,
+	'IPv6',
+	('ipv6' == $pconfig['protocol']),
+	'ipv6'
+))->displayAsRadio();
+$group->setHelp('Select the protocol to use');
+$section->add($group);
 
 $section->addInput(new Form_Select(
 	'sourceip',
@@ -187,7 +198,6 @@ if($do_ping && !empty($result) && !$input_errors) {
 			<pre><?= $result ?></pre>
 		</div>
 	</div>
-</div>
 <?php
 }
 

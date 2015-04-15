@@ -77,10 +77,10 @@ $showAllOption = $showAll ? "" : "?showAll";
 		$elements = ($tabindex == 0 ? 7 : 7);
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
-<a name="<?=$name?>"></a>
+
 <div class="table table-responsive">
-<br />
-<table class="table table-hover table-striped table-condensed summary="results">
+
+<table class="table table-hover table-striped table-condensed" id="<?=$name?>">
 	<thead>
 		<tr>
 			<th>
@@ -134,16 +134,16 @@ Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6
 			<br />
 The information listed for each socket is:
 			<br /><br />
-			<table>
-				<tr><td class="col-sm-3">USER			  </td><td>The user who owns the socket.</td></tr>
-				<tr><td class="col-sm-3">COMMAND		  </td><td>The command which holds the socket.</td></tr>
-				<tr><td class="col-sm-3">PID			  </td><td>The process ID of the command which holds the socket.</td></tr>
-				<tr><td class="col-sm-3">FD				  </td><td>The file descriptor number of the socket.</td></tr>
-				<tr><td class="col-sm-3">PROTO			  </td><td>The transport protocol associated with the socket for Internet sockets, or the type of socket (stream or data-gram) for UNIX sockets.</td></tr>
-				<tr><td class="col-sm-3">ADDRESS		  </td><td>(UNIX sockets only) For bound sockets, this is the file-name of the socket.	For other sockets, it is the name, PID and file descriptor number of the peer, or ``(none)'' if the socket is neither bound nor connected.</td></tr>
-				<tr><td class="col-sm-3">LOCAL ADDRESS	  </td><td>(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</td></tr>
-				<tr><td class="col-sm-3">FOREIGN ADDRESS  </td><td>(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</td></tr>
-			</table>
+			<dl class="dl-horizontal responsive">
+				<dt>USER</dt>           <dd>The user who owns the socket.</dd>
+				<dt>COMMAND</dt>        <dd>The command which holds the socket.</dd>
+				<dt>PID</dt>            <dd>The process ID of the command which holds the socket.</dd>
+				<dt>FD</dt>             <dd>The file descriptor number of the socket.</dd>
+				<dt>PROTO</dt>          <dd>The transport protocol associated with the socket for Internet sockets, or the type of socket (stream or data-gram) for UNIX sockets.</dd>
+				<dt>ADDRESS</dt>        <dd>(UNIX sockets only) For bound sockets, this is the file-name of the socket.	For other sockets, it is the name, PID and file descriptor number of the peer, or ``(none)'' if the socket is neither bound nor connected.</dd>
+				<dt>LOCAL ADDRESS</dt>  <dd>(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</dd>
+				<dt>FOREIGN ADDRESS</dt><dd>(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</dd>
+            </dl>
 		</div>
 	</div>
 </div>

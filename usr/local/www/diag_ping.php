@@ -157,14 +157,14 @@ $group->add(new Form_Checkbox(
 	'ipproto',
 	null,
 	'IPv4',
-	('ipv4' == $pconfig['protocol']),
+	('ipv4' == $ipproto),
 	'ipv4'
 ))->displayAsRadio();
 $group->add(new Form_Checkbox(
 	'ipproto',
 	null,
 	'IPv6',
-	('ipv6' == $pconfig['protocol']),
+	('ipv6' == $ipproto),
 	'ipv6'
 ))->displayAsRadio();
 $group->setHelp('Select the protocol to use');

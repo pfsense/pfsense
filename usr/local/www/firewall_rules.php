@@ -276,6 +276,13 @@ include("head.inc");
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tablehead");
 			?>
+			<?php
+				if ('FloatingRules' == $if) {
+			?>
+					<td width="3%" class="listhdrr"><?=gettext('Interfaces');?></td>
+			<?php
+				}
+			?>
 			<td width="6%" class="listhdrr"><?=gettext("Proto");?></td>
 			<td width="12%" class="listhdrr"><?=gettext("Source");?></td>
 			<td width="6%" class="listhdrr"><?=gettext("Port");?></td>
@@ -417,7 +424,7 @@ include("head.inc");
 		continue;
 	$isadvset = firewall_check_for_advanced_options($filterent);
 	if($isadvset)
-		$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\" alt=\"avanced\" />";
+		$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\" alt=\"advanced\" />";
 	else
 		$advanced_set = "";
 ?>
@@ -612,6 +619,55 @@ include("head.inc");
 			</td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
+			?>
+			<?php
+				if ('FloatingRules' == $if) {
+			?>
+					<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+					<?=$textss;?>
+			<?php
+					if (isset($filterent['interface'])) {
+						$selected_interfaces = explode(',', $filterent['interface']);
+						unset($selected_descs);
+						foreach ($selected_interfaces as $interface) {
+							if (isset($ifdescs[$interface])) {
+								$selected_descs[] = $ifdescs[$interface];
+							} else {
+								switch ($interface) {
+								case 'l2tp':
+									if ($config['l2tp']['mode'] == 'server')
+										$selected_descs[] = 'L2TP VPN';
+									break;
+								case 'pptp':
+									if ($config['pptpd']['mode'] == 'server')
+										$selected_descs[] = 'PPTP VPN';
+									break;
+								case 'pppoe':
+									if (is_pppoe_server_enabled())
+										$selected_descs[] = 'PPPoE Server';
+									break;
+								case 'enc0':
+									if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+										$selected_descs[] = 'IPsec';
+									break;
+								case 'openvpn':
+									if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client'])
+										$selected_descs[] = 'OpenVPN';
+									break;
+								default:
+									$selected_descs[] = $interface;
+									break;
+								}
+							}
+						}
+
+						echo implode('<br/>', $selected_descs);
+					}
+			?>
+					<?=$textse;?>
+					</td>
+			<?php
+				}
 			?>
 			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>

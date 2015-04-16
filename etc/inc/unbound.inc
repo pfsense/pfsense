@@ -243,6 +243,8 @@ EOF;
 					$dnsservers[] = $nameserver;
 				}
 			}
+		} else {
+			$ns = array();
 		}
 		$sys_dnsservers = array_unique(get_dns_servers());
 		foreach ($sys_dnsservers as $sys_dnsserver) {

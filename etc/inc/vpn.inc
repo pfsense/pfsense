@@ -374,6 +374,28 @@ EOD;
 
 	$strongswan .= "\tplugins {\n";
 
+	$a_servers = auth_get_authserver_list();
+	foreach ($a_servers as $id => $pconfig) {
+		if ($id == $config['ipsec']['client']['user_source'] && $pconfig['type'] == "radius") {
+			$strongswan .= <<<EOD
+		eap-radius {
+			class_group = yes
+			eap_start = no
+			servers {
+				primary {
+					address = {$pconfig['host']}
+					secret = {$pconfig['radius_secret']}
+					auth_port = {$pconfig['radius_auth_port']}
+					acct_port = {$pconfig['radius_acct_port']}
+				}
+			}
+		}
+
+EOD;
+			break;
+		}
+	}
+
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
 		if ($a_client['pool_address'] && $a_client['pool_netbits'])
@@ -500,7 +522,7 @@ EOD;
 				continue;
 
 			if (strstr($ph1ent['authentication_method'], 'rsa') ||
-			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls'))) {
+			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius'))) {
 				$certline = '';
 
 				$ikeid = $ph1ent['ikeid'];
@@ -774,6 +796,18 @@ EOD;
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 				} else {
 					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				}
+				break;
+			case 'eap-radius':
+				if (isset($ph1ent['mobile'])) {
+					$authentication = "eap_identity=%identity\n\t";
+					$authentication .= "leftauth=pubkey\n\trightauth=eap-radius";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				} else {
+					$authentication = "leftauth=eap-radius\n\trightauth=eap-radius";
 					if (!empty($ph1ent['certref']))
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 				}

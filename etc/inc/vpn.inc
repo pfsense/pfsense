@@ -107,6 +107,9 @@ function vpn_ipsec_configure($restart = false)
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
+	
+	/* service may have been enabled, disabled, or otherwise changed in a way requiring rule updates */
+	filter_configure();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -122,8 +125,6 @@ function vpn_ipsec_configure($restart = false)
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
 		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
-
-		filter_configure();
 
 		return 0;
 	}

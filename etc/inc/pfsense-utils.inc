@@ -1069,11 +1069,12 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 
-			$new_boot_config[] = 'boot_serial="YES"';
 			if ($serial_only === true) {
+				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'console="comconsole"';
 			} else if (is_serial_enabled()) {
 				$new_boot_config[] = 'boot_multicons="YES"';
+				$new_boot_config[] = 'boot_serial="YES"';
 				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
 				switch ($primaryconsole) {
 					case "video":

@@ -754,7 +754,7 @@ function enable_change() {
 								<td width="78%" class="vtable">
 									<select name='weight' class='formfldselect' id='weight'>
 									<?php
-										for ($i = 1; $i < 6; $i++) {
+										for ($i = 1; $i < 21; $i++) {
 											$selected = "";
 											if ($pconfig['weight'] == $i)
 												$selected = "selected='selected'";

@@ -34,8 +34,8 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
-if($_GET['action']) {
-	if($_GET['action'] == "kill") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];
 		$remipp = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
@@ -67,12 +67,14 @@ function kill_client($port, $remipp) {
 			$line = fgets($fp, 1024);
 
 			$info = stream_get_meta_data($fp);
-			if ($info['timed_out'])
+			if ($info['timed_out']) {
 				break;
+			}
 
 			/* parse header list line */
-			if (strpos($line, "INFO:") !== false)
+			if (strpos($line, "INFO:") !== false) {
 				continue;
+			}
 			if (strpos($line, "SUCCESS") !== false) {
 				$killed = 0;
 			}
@@ -109,7 +111,7 @@ $clients = openvpn_get_active_clients();
 
 	function killComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
@@ -132,45 +134,46 @@ $clients = openvpn_get_active_clients();
 	<tr>
 		<td>
 			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="2">
-			<tr>
-				<td class="listhdrr">Name/Time</td>
-				<td class="listhdrr">Real/Virtual IP</td>
-			</tr>
-			<?php $rowIndex = 0;
-			foreach ($server['conns'] as $conn):
+				<tr>
+					<td class="listhdrr">Name/Time</td>
+					<td class="listhdrr">Real/Virtual IP</td>
+				</tr>
+		<?php
+		$rowIndex = 0;
+		foreach ($server['conns'] as $conn):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;
-			?>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listMRlr">
-					<?=$conn['common_name'];?>
-				</td>
-				<td class="listMRr">
-					<?=$conn['remote_host'];?>
-				</td>
-				<td class='listMR' rowspan="2">
-					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
-					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
-					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
-				</td>
-			</tr>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listMRlr">
-					<?=$conn['connect_time'];?>
-				</td>
-				<td class="listMRr">
-					<?=$conn['virtual_addr'];?>
-				</td>
-			</tr>
+		?>
+				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+					<td class="listMRlr">
+						<?=$conn['common_name'];?>
+					</td>
+					<td class="listMRr">
+						<?=$conn['remote_host'];?>
+					</td>
+					<td class='listMR' rowspan="2">
+						<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
+						   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
+						   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
+						   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
+					</td>
+				</tr>
+				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+					<td class="listMRlr">
+						<?=$conn['connect_time'];?>
+					</td>
+					<td class="listMRr">
+						<?=$conn['virtual_addr'];?>
+					</td>
+				</tr>
 
-			<?php endforeach; ?>
-			<tfoot>
-			<tr>
-				<td colspan="6" class="list" height="12"></td>
-			</tr>
-			</tfoot>
-		</table>
+		<?php endforeach; ?>
+				<tfoot>
+					<tr>
+						<td colspan="6" class="list" height="12"></td>
+					</tr>
+				</tfoot>
+			</table>
 		</td>
 	</tr>
 </table>
@@ -235,41 +238,41 @@ $clients = openvpn_get_active_clients();
 	</tr>
 	<tr>
 		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="listhdrr">Name/Time</td>
-			<td class="listhdrr">Remote/Virtual IP</td>
-		</tr>
+			<tr>
+				<td class="listhdrr">Name/Time</td>
+				<td class="listhdrr">Remote/Virtual IP</td>
+			</tr>
 
-<?php foreach ($clients as $client): ?>
-		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
-			<td class="listlr">
-				<?=$client['name'];?>
-			</td>
-			<td class="listr">
-				<?=$client['remote_host'];?>
-			</td>
-			<td rowspan="2" align="center">
-			<?php
-			if ($client['status'] == "up") {
-				/* tunnel is up */
-				$iconfn = "interface_up";
-			} else {
-				/* tunnel is down */
-				$iconfn = "interface_down";
-			}
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
-			?>
-			</td>
-		</tr>
-		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
-			<td class="listlr">
-				<?=$client['connect_time'];?>
-			</td>
-			<td class="listr">
-				<?=$client['virtual_addr'];?>
-			</td>
-		</tr>
-<?php endforeach; ?>
+	<?php foreach ($clients as $client): ?>
+			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$client['name'];?>
+				</td>
+				<td class="listr">
+					<?=$client['remote_host'];?>
+				</td>
+				<td rowspan="2" align="center">
+				<?php
+				if ($client['status'] == "up") {
+					/* tunnel is up */
+					$iconfn = "interface_up";
+				} else {
+					/* tunnel is down */
+					$iconfn = "interface_down";
+				}
+				echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
+				?>
+				</td>
+			</tr>
+			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$client['connect_time'];?>
+				</td>
+				<td class="listr">
+					<?=$client['virtual_addr'];?>
+				</td>
+			</tr>
+	<?php endforeach; ?>
 		</table>
 	</tr>
 </table>

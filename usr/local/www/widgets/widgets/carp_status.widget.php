@@ -42,11 +42,12 @@ $carp_enabled = get_carp_status();
 ?>
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="carp status">
 <?php
-	if(is_array($config['virtualip']['vip'])) {
+	if (is_array($config['virtualip']['vip'])) {
 		$carpint=0;
-		foreach($config['virtualip']['vip'] as $carp) {
-			if ($carp['mode'] != "carp")
+		foreach ($config['virtualip']['vip'] as $carp) {
+			if ($carp['mode'] != "carp") {
 				continue;
+			}
 			$ipaddress = $carp['subnet'];
 			$password = $carp['password'];
 			$netmask = $carp['subnet_bits'];
@@ -62,7 +63,7 @@ $carp_enabled = get_carp_status();
 	</td>
 	<td width="65%"  class="listr">
 <?php
-			if($carp_enabled == false) {
+			if ($carp_enabled == false) {
 				$status = "DISABLED";
 				echo "<img src='/themes/".$g['theme']."/images/icons/icon_block.gif' title=\"$status\" alt=\"$status\" />";
 			} else {

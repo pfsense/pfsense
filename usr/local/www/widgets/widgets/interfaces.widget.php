@@ -51,12 +51,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	if ($ifinfo['ppplink']) {
 		$icon = '3g';
 	} else if (is_interface_wireless($ifdescr)) {
-		if($ifinfo['status'] == "associated")
+		if ($ifinfo['status'] == "associated") {
 			$icon = 'wlan';
-		else
+		} else {
 			$icon = 'wlan_d';
-	} else
+		}
+	} else {
 		$icon = 'cablenic';
+	}
 
 	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
 		$known_status = true;
@@ -73,8 +75,9 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		$up_display = "none";
 		$down_display = "none";
 		$block_display = "inline";
-	} else
+	} else {
 		$known_status = false;
+	}
 ?>
 	<tr>
 		<td class="vncellt" rowspan="2">
@@ -83,8 +86,9 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				<u><?=htmlspecialchars($ifname);?></u>
 			</span>
 <?php
-		if ($ifinfo['dhcplink'])
+		if ($ifinfo['dhcplink']) {
 			echo "<br />(DHCP)";
+		}
 ?>
 		</td>
 <?php

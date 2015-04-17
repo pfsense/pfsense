@@ -119,7 +119,7 @@ require("head.inc");
     		}
     		//]]>
     		</script>
-    		<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" cols=""></textarea>
+    		<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
     	</div>
     </div>
 </div>

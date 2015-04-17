@@ -109,50 +109,47 @@ include("head.inc");
 
 ?>
 
-
-<div class="panel panel-default">
-    <div class="table-responsive">
-		<table class="table table-striped table-hover" summary="tabcont">
-		    <thead>
-    			<tr class="info">
-    				<th><?= gettext("IPv6 address"); ?></th>
-    				<th><?= gettext("MAC address"); ?></th>
-    				<th><?= gettext("Hostname"); ?></th>
-    				<th><?= gettext("Interface"); ?></th>
-    				<th></th>
-    			</tr>
-			</thead>
-			<tbody>
-    			<?php foreach ($data as $entry): ?>
-    				<tr>
-    					<td><?=$entry['ipv6']?>
-    					</td>
-    					<td>
-    						<?php
-    						$mac=trim($entry['mac']);
-    						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-    						print $mac;
-    						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
-    						?>
-    					</td>
-    					<td>
-    						<?php
-    						echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);
-    						?>
-    					</td>
-    					<td>
-    						<?php
-    						if(isset($hwif[$entry['interface']]))
-    							echo $hwif[$entry['interface']];
-    						else
-    							echo $entry['interface'];
-    						?>
-    					</td>
-    				</tr>
-    			<?php endforeach; ?>
-			</tbody>
-		</table>
-    </div>
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+	    <thead>
+			<tr class="info">
+				<th><?= gettext("IPv6 address"); ?></th>
+				<th><?= gettext("MAC address"); ?></th>
+				<th><?= gettext("Hostname"); ?></th>
+				<th><?= gettext("Interface"); ?></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ($data as $entry): ?>
+				<tr>
+					<td><?=$entry['ipv6']?>
+					</td>
+					<td>
+						<?php
+						$mac=trim($entry['mac']);
+						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+						print $mac;
+						if(isset($mac_man[$mac_hi]))
+						    print "<br />{$mac_man[$mac_hi]}"; 
+						?>
+					</td>
+					<td>
+						<?php
+						echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);
+						?>
+					</td>
+					<td>
+						<?php
+						if(isset($hwif[$entry['interface']]))
+							echo $hwif[$entry['interface']];
+						else
+							echo $entry['interface'];
+						?>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
 </div>
 
 <?php include("foot.inc"); ?>

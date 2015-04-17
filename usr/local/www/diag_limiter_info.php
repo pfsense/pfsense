@@ -77,6 +77,7 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
+	    jQuery('#limiteractivitytitle').html('Limiter Information');
 		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText	+ '<\/pre><\/font>');
 		setTimeout('getlimiteractivity()', 2000);
 	}
@@ -94,20 +95,11 @@ include("head.inc");
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover" align="center" summary="limiter information">
-			<thead></thead>
-			<tbody>
-				<tr align="center">
-					<td>
-						<div id="limiteractivitydiv">
-							<?=gettext("Gathering Limiter information, please wait...")?>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	
+	
+<div class="panel panel-default">	
+	<div id="limiteractivitytitle" class="panel-heading"><?=gettext("Gathering Limiter information, please wait...")?></div>
+	<div id="limiteractivitydiv" class="panel-body"></div>
 </div>
 
 <?php include("foot.inc"); ?>

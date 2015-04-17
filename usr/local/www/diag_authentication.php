@@ -104,20 +104,19 @@ $section->addInput(new Form_Input(
 	'username',
 	'Username',
 	'text',
-	htmlspecialchars($pconfig['username']),
+	$pconfig['username'],
 	['placeholder' => 'Username']
 ));
 
 $section->addInput(new Form_Input(
 	'password',
-	'Pasword',
-	'text',
-	htmlspecialchars($pconfig['password']),
+	'Password',
+	'password',
+	$pconfig['password'],
 	['placeholder' => 'Password']
 ));
 
 $form->add($section);
 print $form;
 
-include("foot.inc")
-?>
+include("foot.inc");

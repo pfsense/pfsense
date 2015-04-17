@@ -95,7 +95,7 @@ if [ "$LOWMEM" != "TRUE" ]; then
 fi
 # Config read/write
 PHPMODULES="$PHPMODULES xml libxml dom"
-PHPMODULES="$PHPMODULES simplexml xmlreader xmlwriter"
+PHPMODULES="$PHPMODULES SimpleXML xmlreader xmlwriter"
 # Downloading via HTTP/FTP (pkg mgr, etc)
 PHPMODULES="$PHPMODULES curl date"
 # Internationalization
@@ -123,7 +123,7 @@ PHPMODULES="$PHPMODULES shmop"
 PHPMODULES="$PHPMODULES zlib"
 # SQLlite & Database
 PHPMODULES="$PHPMODULES spl"
-PHPMODULES="$PHPMODULES pdo"
+PHPMODULES="$PHPMODULES PDO"
 PHPMODULES="$PHPMODULES sqlite3"
 # RADIUS
 PHPMODULES="$PHPMODULES radius"

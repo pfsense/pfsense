@@ -68,10 +68,10 @@ pre {
 <?php 
 include("fbegin.inc"); 
 
-// Highlates the words "PASSED", "FAILED", and "WARNING".
+// Highlights the words "PASSED", "FAILED", and "WARNING".
 function add_colors($string)
 {
-	// To add words keep arrayes matched by numbers
+	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
@@ -186,7 +186,7 @@ switch($action) {
 				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 				write_config();
 
-				// Don't know what all this means, but it addes the config changed header when config is saved
+				// Don't know what all this means, but it adds the config changed header when config is saved
 				$retval = 0;
 				config_lock();
 				if(stristr($retval, "error") <> true)
@@ -450,7 +450,9 @@ switch($action) {
 // print back button on pages
 if(isset($_POST['submit']) && $_POST['submit'] != "Save")
 {
-	echo '<br /><a href="' . $_SERVER['PHP_SELF'] . '">' . gettext("Back") . '</a>';
+?>
+	<input type="button" class="formbtn" value="<?=gettext("Back");?>" onclick="window.location.href='<?=$_SERVER['PHP_SELF'];?>'" />
+<?php
 }
 ?>
 <br />

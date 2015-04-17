@@ -55,7 +55,7 @@ function restore_rrd() {
 
 	$rrdrestore = "";
 	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != "pfSense")) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}

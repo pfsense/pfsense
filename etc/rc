@@ -46,7 +46,7 @@ fi
 
 if [ "${PLATFORM}" = "nanobsd" ]; then
 	kldstat -qm zfs
-	if [ $? = 0 ]; then
+	if [ $? -eq 0 ]; then
 		kldunload zfs
 	fi
 fi
@@ -54,13 +54,12 @@ fi
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
-kldstat -qm zfs
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
 	kldstat -qm zfs
-	if [ $? = 0 ]; then
+	if [ $? -eq 0 ]; then
 		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-		if [ $ZFSAVAILABLE -eq 0 ]; then
+		if [ $ZFSFSAVAILABLE -eq 0 ]; then
 			kldunload zfs
 		elif [ -f /usr/bin/grep ]; then
 			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
@@ -80,7 +79,7 @@ else
 		/sbin/mount -uw / 2>/dev/null
 		mount_rc=$?
 		attempts=0
-		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+		while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
 			/sbin/fsck -y /
 			/sbin/fsck -y /cf
 			/sbin/mount -uw / 2>/dev/null
@@ -91,7 +90,7 @@ else
 		/sbin/mount -a 2>/dev/null
 		mount_rc=$?
 		attempts=0
-		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+		while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
 			/sbin/fsck -y /
 			/sbin/mount -a 2>/dev/null
 			mount_rc=$?
@@ -117,7 +116,7 @@ else
 			/sbin/mount -uw /cf 2>/dev/null
 			mount_rc=$?
 			attempts=0
-			while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+			while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
 				/sbin/umount /cf
 				/sbin/fsck -y /cf
 				/sbin/mount -w /cf 2>/dev/null
@@ -318,10 +317,6 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Remove old nameserver resolution files
 /bin/rm -f /var/etc/nameserver*
-
-# Create uploadbar tmp directory
-/bin/mkdir -p /tmp/uploadbar
-/bin/chmod 0777 /tmp/uploadbar
 
 echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`

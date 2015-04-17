@@ -16,14 +16,15 @@ jQuery(document).ready(
 function fbBrowse(path) {
 	jQuery("#fileContent").fadeOut();
 
-	if(jQuery("#fbCurrentDir"))
+	if (jQuery("#fbCurrentDir")) {
 		jQuery("#fbCurrentDir").html("Loading ...");
+	}
 
 	jQuery.ajax(
 		"/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
 		{ type: "get", complete: fbComplete }
 	);
-	
+
 }
 
 function fbComplete(req) {
@@ -36,7 +37,7 @@ function fbComplete(req) {
 		fbFile:  function() { jQuery("#fbTarget").val(this.id);             }
 	}
 
-	for(var type in actions) {
+	for (var type in actions) {
 		jQuery("#fbBrowser ." + type).each(
 			function() {
 				jQuery(this).click(actions[type]);

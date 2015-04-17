@@ -298,11 +298,6 @@ if ($_POST) {
 			$input_errors[] = gettext("You can not assign an IPv6 Gateway to an IPv4 Filter rule");
 		}
 	}
-
-	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp") && ($_POST['proto'] != "icmp")) {
-		if($_POST['ipprotocol'] == "inet46")
-			$input_errors[] =  gettext("You can not assign a protocol other than ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
-	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")){
 		if($_POST['ipprotocol'] == "inet46")
 			$input_errors[] =  gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
@@ -993,7 +988,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select <?=$edit_disabled;?> name="proto" class="formselect" onchange="proto_change()">
 <?php
-				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF any carp pfsync");
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF SCTP any carp pfsync");
 				foreach ($protocols as $proto): ?>
 					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>

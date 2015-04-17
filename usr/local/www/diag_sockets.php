@@ -74,8 +74,8 @@ $showAllOption = $showAll ? "" : "?showAll";
 		$internet4 = shell_exec('sockstat -4');
 		$internet6 = shell_exec('sockstat -6');
 	} else {
-		$internet4 = shell_exec('sockstat -4lL');
-		$internet6 = shell_exec('sockstat -6lL');
+		$internet4 = shell_exec('sockstat -4l');
+		$internet6 = shell_exec('sockstat -6l');
 	}
 	foreach (array(&$internet4, &$internet6) as $tabindex => $table) {
 		$elements = ($tabindex == 0 ? 7 : 7);

@@ -576,6 +576,9 @@ if ($_POST['apply']) {
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
+			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
+				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
+			}
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
@@ -633,8 +636,14 @@ if ($_POST['apply']) {
 		if (!is_ipaddrv4($_POST['ipaddr']))
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		else {
-			if (is_ipaddr_configured($_POST['ipaddr'], $if, true))
-				$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
+			$where_ipaddr_configured = where_is_ipaddr_configured($_POST['ipaddr'], $if, true, true, $_POST['subnet']);
+			if (count($where_ipaddr_configured)) {
+				$subnet_conflict_text = sprintf(gettext("IPv4 address %s is being used by or overlaps with:"), $_POST['ipaddr'] . "/" . $_POST['subnet']);
+				foreach ($where_ipaddr_configured as $subnet_conflict) {
+					$subnet_conflict_text .= " " . convert_friendly_interface_to_friendly_descr($subnet_conflict['if']) . " (" . $subnet_conflict['ip_or_subnet'] . ")";
+				}
+				$input_errors[] = $subnet_conflict_text;
+			}
 
 			/* Do not accept network or broadcast address, except if subnet is 31 or 32 */
 			if ($_POST['subnet'] < 31) {
@@ -658,8 +667,14 @@ if ($_POST['apply']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6']))
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		else {
-			if (is_ipaddr_configured($_POST['ipaddrv6'], $if, true))
-				$input_errors[] = gettext("This IPv6 address is being used by another interface or VIP.");
+			$where_ipaddr_configured = where_is_ipaddr_configured($_POST['ipaddrv6'], $if, true, true, $_POST['subnetv6']);
+			if (count($where_ipaddr_configured)) {
+				$subnet_conflict_text = sprintf(gettext("IPv6 address %s is being used by or overlaps with:"), $_POST['ipaddrv6'] . "/" . $_POST['subnetv6']);
+				foreach ($where_ipaddr_configured as $subnet_conflict) {
+					$subnet_conflict_text .= " " . convert_friendly_interface_to_friendly_descr($subnet_conflict['if']) . " (" . $subnet_conflict['ip_or_subnet'] . ")";
+				}
+				$input_errors[] = $subnet_conflict_text;
+			}
 
 			foreach ($staticroutes as $route_subnet) {
 				list($network, $subnet) = explode("/", $route_subnet);
@@ -1154,7 +1169,7 @@ if ($_POST['apply']) {
 					$wancfg['adv_dhcp6_id_assoc_statement_address_enable'] = $_POST['adv_dhcp6_id_assoc_statement_address_enable'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address'] = $_POST['adv_dhcp6_id_assoc_statement_address'];
-				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_id']))
+				if (is_numericint($_POST['adv_dhcp6_id_assoc_statement_address_id']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address_id'] = $_POST['adv_dhcp6_id_assoc_statement_address_id'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_pltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_address_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_address_pltime'];
@@ -1165,16 +1180,16 @@ if ($_POST['apply']) {
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_enable'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_enable'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix'] = $_POST['adv_dhcp6_id_assoc_statement_prefix'];
-				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_id']))
+				if (is_numericint($_POST['adv_dhcp6_id_assoc_statement_prefix_id']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_id'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_id'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_pltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_pltime'];
 				if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_vltime']))
 					$wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_vltime'];
 
-				if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_id']))
+				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_id']))
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_id'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_id'];
-				if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_len']))
+				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len']))
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
 
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname']))
@@ -2950,6 +2965,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<select name="standard" class="formselect" id="standard">
 								<?php
 								$rowIndex = 0;
+								echo "<option ";
+								if ($pconfig['standard'] == "auto") {
+									echo "selected=\"selected\" ";
+								}
+								echo "value=\"auto\">auto</option>\n";
 								foreach($wl_modes as $wl_standard => $wl_channels) {
 									$rowIndex++;
 									echo "<option ";

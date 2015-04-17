@@ -126,6 +126,7 @@ $p1_authentication_methods = array(
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
 	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
+	'eap-radius' => array( 'name' => 'EAP-RADIUS', 'mobile' => true),
 	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
@@ -410,10 +411,14 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 function ipsec_smp_dump_status() {
 	global $config, $g, $custom_listtags;
 
-	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-		log_error("IPsec daemon not running or has a problem!");
-		return;
-	}
+        if (isset($config['ipsec']['enable'])) {
+            if (!file_exists("{$g['varrun_path']}/charon.xml")) {
+                log_error("IPsec daemon not running or has a problem!");
+                return;
+            }
+        } else {
+            return;
+        }
 
 	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
 	if (!$fd) {

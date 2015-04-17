@@ -46,11 +46,13 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
 
@@ -152,6 +154,12 @@ if ($_POST) {
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
+
+		if($_POST['noshuntlaninterfaces'] == "yes") {
+			$config['ipsec']['noshuntlaninterfaces'] = true;
+		} elseif (isset($config['ipsec']['noshuntlaninterfaces'])) {
+			unset($config['ipsec']['noshuntlaninterfaces']);
 		}
 
 		if($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -345,6 +353,15 @@ function maxmss_checked(obj) {
 							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
 							<br />
 							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Auto-exclude LAN address"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if (!$pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable bypass for LAN interface IP"); ?></strong>
+							<br />
+							<?=gettext("Exclude traffic from LAN subnet to LAN IP address from IPsec."); ?>
 						</td>
 					</tr>
 					<tr>

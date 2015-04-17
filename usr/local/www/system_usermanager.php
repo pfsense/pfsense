@@ -299,7 +299,7 @@ if ($_POST['save']) {
 		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
 		/* the user name was modified */
-		if ($_POST['usernamefld'] <> $_POST['oldusername']) {
+		if (!empty($_POST['oldusername']) && ($_POST['usernamefld'] <> $_POST['oldusername'])) {
 			$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
 			local_user_del($userent);
 		}
@@ -361,8 +361,8 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
-		local_user_set_groups($userent,$_POST['groups']);
 		local_user_set($userent);
+		local_user_set_groups($userent,$_POST['groups']);
 		write_config();
 
 		if(is_dir("/etc/inc/privhooks"))

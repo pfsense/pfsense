@@ -43,6 +43,7 @@ $g = array(
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
 	"unbound_chroot_path" => "/var/unbound",
+	"var_path" => "/var",
 	"varrun_path" => "/var/run",
 	"varetc_path" => "/var/etc",
 	"vardb_path" => "/var/db",
@@ -160,12 +161,13 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.udp.checksum" => 1,
 	"net.bpf.zerocopy_enable" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
-	"vfs.forcesync" => "0",
+	"vfs.forcesync" => "1",
 	"net.inet6.ip6.rfc6204w3" => 1,
 	"net.enc.out.ipsec_bpf_mask" => "0x0001",
 	"net.enc.out.ipsec_filter_mask" => "0x0001",
 	"net.enc.in.ipsec_bpf_mask" => "0x0002",
 	"net.enc.in.ipsec_filter_mask" => "0x0002",
+	"net.key.preferred_oldsa" => "0",
 	"net.inet.carp.senderr_demotion_factor" => 0, /* Do not demote CARP for interface send errors */
 	"net.pfsync.carp_demotion_factor" => 0 /* Do not demote CARP for pfsync errors */
 );

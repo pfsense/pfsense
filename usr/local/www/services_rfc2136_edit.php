@@ -60,6 +60,9 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
 	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
+	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
+	if (!$pconfig['recordtype'])
+		$pconfig['recordtype'] = "both";
 	$pconfig['descr'] = $a_rfc2136[$id]['descr'];
 
 }
@@ -95,6 +98,7 @@ if ($_POST) {
 		$rfc2136['server'] = $_POST['server'];
 		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
 		$rfc2136['usepublicip'] = $_POST['usepublicip'] ? true : false;
+		$rfc2136['recordtype'] = $_POST['recordtype'];
 		$rfc2136['interface'] = $_POST['interface'];
 		$rfc2136['descr'] = $_POST['descr'];
 
@@ -204,6 +208,14 @@ include("head.inc");
 				<strong><?=gettext("If the interface IP is private, attempt to fetch and use the public IP instead.");?></strong>
 			</td>
 		</tr>
+                <tr>
+                  <td valign="top" class="vncellreq"><?=gettext("Record Type");?> </td>
+                  <td class="vtable">
+                    <input name="recordtype" type="radio" value="A" <?php if ($pconfig['recordtype'] == "A") echo "checked=\"checked\""; ?> /> <?=gettext("A (IPv4)");?> &nbsp;
+                    <input name="recordtype" type="radio" value="AAAA" <?php if ($pconfig['recordtype'] == "AAAA") echo "checked=\"checked\""; ?> /> <?=gettext("AAAA (IPv6)");?> &nbsp;
+                    <input name="recordtype" type="radio" value="both" <?php if ($pconfig['recordtype'] == "both") echo "checked=\"checked\""; ?> /> <?=gettext("Both");?>
+                  </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">

@@ -190,6 +190,41 @@ function services_radvd_configure($blacklist = array()) {
 		}
 		$radvdconf .= "\t};\n";
 
+		if (is_array($dhcpv6ifconf['subnets']['item'])) {
+			foreach ($dhcpv6ifconf['subnets']['item'] as $subnet) {
+				if (is_subnetv6($subnet)) {
+					$radvdconf .= "\tprefix {$subnet} {\n";
+					if ($carpif == true) {
+						$radvdconf .= "\t\tDeprecatePrefix off;\n";
+					} else {
+						$radvdconf .= "\t\tDeprecatePrefix on;\n";
+					}
+					switch ($dhcpv6ifconf['ramode']) {
+						case "managed":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous off;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "router":
+							$radvdconf .= "\t\tAdvOnLink off;\n";
+							$radvdconf .= "\t\tAdvAutonomous off;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "assist":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous on;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;
+						case "unmanaged":
+							$radvdconf .= "\t\tAdvOnLink on;\n";
+							$radvdconf .= "\t\tAdvAutonomous on;\n";
+							$radvdconf .= "\t\tAdvRouterAddr on;\n";
+							break;				
+					}
+					$radvdconf .= "\t};\n";
+				}
+			}
+		}
 		if ($carpif === true) {
 			$radvdconf .= "\troute ::/0 {\n";
 			$radvdconf .= "\t\tRemoveRoute off;\n";
@@ -1748,7 +1783,7 @@ function services_dhcrelay6_configure() {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
 					if (isset($gateway['defaultgw'])) {
-						$destif = $gateway['interface'];
+						$destif = get_real_interface($gateway['interface']);
 						break;
 					}
 				}
@@ -2422,7 +2457,7 @@ EOD;
 
 				conf_mount_rw();
 				/* Update IPv4 if we have it. */
-				if (is_ipaddrv4($wanip)) {
+				if (is_ipaddrv4($wanip) && $dnsupdate['recordtype'] != "AAAA") {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
@@ -2438,7 +2473,7 @@ EOD;
 				}
 
 				/* Update IPv6 if we have it. */
-				if (is_ipaddrv6($wanipv6)) {
+				if (is_ipaddrv6($wanipv6) && $dnsupdate['recordtype'] != "A") {
 					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";

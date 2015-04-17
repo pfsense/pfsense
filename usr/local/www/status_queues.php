@@ -30,7 +30,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl
 	pfSense_MODULE:	shaper
 */
@@ -44,14 +44,13 @@
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
-header("Cache-Control: no-store, no-cache, must-revalidate" ); // HTTP/1.1
-header("Cache-Control: post-check=0, pre-check=0", FALSE );
+header("Cache-Control: no-cache, no-store, must-revalidate" ); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 
 require("guiconfig.inc");
 class QueueStats {
 	public $queuename;
-	public $queuelength;	
+	public $queuelength;
 	public $pps;
 	public $bandwidth;
 	public $borrows;
@@ -59,7 +58,7 @@ class QueueStats {
 	public $drops;
 }
 if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid")) {
-	/* Start in the background so we don't hang up the GUI */	
+	/* Start in the background so we don't hang up the GUI */
 	mwexec_bg("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
 	/* Give it a moment to start up */
 	sleep(1);
@@ -77,7 +76,7 @@ $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 	if ($altqstats == -1)
 		$error = "No queue statistics could be read.";
 }
-if ($_REQUEST['getactivity']) {	
+if ($_REQUEST['getactivity']) {
 	$statistics = array();
 	$bigger_stat = 0;
 	$stat_type = $_REQUEST['stats'];
@@ -99,7 +98,7 @@ if ($_REQUEST['getactivity']) {
 			if ($bigger_stat < $q->bandwidth)
 				$bigger_stat = $q->bandwidth;
 		}
-	}	
+	}
 	$finscript = "";
 	foreach($statistics as $q) {
 		if ($stat_type == "0")
@@ -176,9 +175,9 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 		<td class="listhdr" width="1%"><?=gettext("Borrows"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Suspends"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Drops"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Length"); ?></td>		
+		<td class="listhdr" width="1%"><?=gettext("Length"); ?></td>
 	</tr>
-	<?php 
+	<?php
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
 	processQueues($altqstats, 0, "")?>
 <?php endif; ?>
@@ -203,7 +202,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php include("fend.inc"); ?>
 </body>
 </html>
-<?php 
+<?php
 function processQueues($altqstats, $level, $parent_name){
 	global $g;
 	global $if_queue_list;
@@ -252,7 +251,7 @@ function processQueues($altqstats, $level, $parent_name){
 			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
 			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
 			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";			
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";
 			?>
 		</tr>
 		<?php
@@ -266,7 +265,7 @@ function statsQueues($xml){
 	$current = new QueueStats();
 	$child = new QueueStats();
 	$current->queuename = $xml['name'] . $xml['interface'];
-	$current->queuelength = $xml['qlength'];		
+	$current->queuelength = $xml['qlength'];
 	$current->pps = $xml['measured'];
 	$current->bandwidth = $xml['measuredspeedint'];
 	$current->borrows = intval($xml['borrows']);

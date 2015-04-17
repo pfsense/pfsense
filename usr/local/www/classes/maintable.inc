@@ -1,31 +1,31 @@
 <?php
 /* $Id$ */
 /*
-        part of pfSense (https://www.pfsense.org/)
+	part of pfSense (https://www.pfsense.org/)
 
-        Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
-        All rights reserved.
+	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -52,7 +52,7 @@ class MainTable {
 	}
 
 	function add_content_array($rows) {
-		foreach($rows as $row) {
+		foreach ($rows as $row) {
 			$this->content[] = $row;
 			$this->rows++;
 		}
@@ -107,6 +107,7 @@ class MainTable {
 	private function display_rows() {
 		global $g;
 		$cur_row = 0;
+		$encode_cols = array("name", "descr");
 		foreach ($this->content as $row) {
 			echo "<tr>\n";
 			for ($col = 0; $col < $this->columns - 1; $col++) {
@@ -118,15 +119,21 @@ class MainTable {
 				echo "  <td class=\"{$cl}\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
+						if (in_array($this->cname[$col], $encode_cols)) {
+							$data = htmlspecialchars($data);
+						}
 						echo "    {$data}<br />\n";
 					}
 				} else {
+					if (in_array($this->cname[$col], $encode_cols)) {
+						$row[$this->cname[$col]] = htmlspecialchars($row[$this->cname[$col]]);
+					}
 					echo "    " . $row[$this->cname[$col]] . "\n";
 				}
 				echo "  </td>\n";
 			}
 			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
-			echo "    <font color=\"#FFFFFF\">{$row[$this->cname[$this->columns - 1]]}</font>\n";
+			echo "    <font color=\"#FFFFFF\">" . htmlspecialchars($row[$this->cname[$this->columns - 1]]) . "</font>\n";
 			echo "  </td>\n";
 			echo "  <td class=\"list nowrap\">\n";
 			$this->display_buttons($cur_row);
@@ -153,16 +160,20 @@ class MainTable {
 	private function display_buttons($row) {
 		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"display buttons\">\n";
 		echo "      <tr>\n";
-		if ($this->buttons['move'])
+		if ($this->buttons['move']) {
 			echo $this->display_button('move', $row);
-		if ($this->buttons['edit'])
+		}
+		if ($this->buttons['edit']) {
 			echo $this->display_button('edit', $row);
+		}
 		echo "      </tr>\n";
 		echo "      <tr>\n";
-		if ($this->buttons['del'])
+		if ($this->buttons['del']) {
 			echo $this->display_button('del', $row);
-		if ($this->buttons['dup'])
+		}
+		if ($this->buttons['dup']) {
 			echo $this->display_button('dup', $row);
+		}
 		echo "      </tr>\n";
 		echo "    </table>\n";
 	}

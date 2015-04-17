@@ -972,8 +972,13 @@ function pfSense_clear_globals() {
 	$error = error_get_last();
 
 	if ($error !== NULL) {
-		if ($error['type'] != E_NOTICE) {
+		if ($error['type'] == E_ERROR) {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
+			print($errorstr);
+			log_error($errorstr);
+		} else
+		if ($error['type'] != E_NOTICE) {
+			$errorstr = "PHP WARNING: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			// XXX: comment out for now, should re-enable post-2.2
 			//print($errorstr);
 			//log_error($errorstr);

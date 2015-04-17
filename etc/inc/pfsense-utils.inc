@@ -1018,6 +1018,17 @@ function setup_serial_port($when="save", $path="") {
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	if ($g['platform'] != "cdrom") {
+		$serial_only = false;
+
+		if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			$serial_only = true;
+		} else {
+			$specific_platform = system_identify_specific_platform();
+			if ($specific_platform['name'] == 'RCC-VE') {
+				$serial_only = true;
+			}
+		}
+
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if ($fd) {
@@ -1030,7 +1041,7 @@ function setup_serial_port($when="save", $path="") {
 					}
 				}
 			}
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			if ($serial_only === true) {
 				fwrite($fd, "-S{$serialspeed} -h");
 			} else if (is_serial_enabled()) {
 				fwrite($fd, "-S{$serialspeed} -D");
@@ -1058,7 +1069,7 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			if ($serial_only === true) {
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'console="comconsole"';
 			} else if (is_serial_enabled()) {
@@ -1755,7 +1766,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 60, $timeout = 0) {
+function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 60, $timeout = 0) {
 	global $config, $g;
 
 	$fp = fopen($destination, "wb");
@@ -1809,8 +1820,6 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_URL, $url_file);
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	/* Don't verify SSL peers since we don't have the certificates to do so. */
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
@@ -2711,12 +2720,40 @@ function load_mac_manufacturer_table() {
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
+ *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
+ *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
+ *     If check_subnets is true and cidrprefix is specified, 
+ *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
- *   returns true if the IP Address is
- *   configured and present on this device.
+ *   returns true if the IP Address is configured and present on this device or overlaps a configured subnet.
 */
-function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false) {
+function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false, $cidrprefix = "") {
+	if (count(where_is_ipaddr_configured($ipaddr, $ignore_if, $check_localip, $check_subnets, $cidrprefix))) {
+		return true;
+	}
+	return false;
+}
+
+/****f* pfsense-utils/where_is_ipaddr_configured
+ * NAME
+ *   where_is_ipaddr_configured
+ * INPUTS
+ *   IP Address to check.
+ *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
+ *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
+ *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
+ *     If check_subnets is true and cidrprefix is specified, 
+ *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
+ * RESULT
+ *   Returns an array of the interfaces 'if' plus IP address or subnet 'ip_or_subnet' that match or overlap the IP address to check.
+ *   If there are no matches then an empty array is returned.
+*/
+function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false, $cidrprefix = "") {
 	global $config;
+
+	$where_configured = array();
 
 	$pos = strpos($ignore_if, '_virtualip');
 	if ($pos !== false) {
@@ -2730,26 +2767,44 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
 	if ($check_subnets) {
+		$cidrprefix = intval($cidrprefix);
+		if ($isipv6) {
+			if (($cidrprefix < 1) || ($cidrprefix > 128)) {
+				$cidrprefix = 128;
+			}
+		} else {
+			if (($cidrprefix < 1) || ($cidrprefix > 32)) {
+				$cidrprefix = 32;
+			}
+		}
 		$iflist = get_configured_interface_list();
 		foreach ($iflist as $if => $ifname) {
 			if ($ignore_if == $if) {
 				continue;
 			}
 
-			if ($isipv6 === true) {
-				$bitmask = get_interface_subnetv6($if);
-				$subnet = gen_subnetv6(get_interface_ipv6($if), $bitmask);
+			if ($isipv6) {
+				$if_ipv6 = get_interface_ipv6($if);
+				$if_snbitsv6 = get_interface_subnetv6($if);
+				if ($if_ipv6 && $if_snbitsv6 && check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
+					$where_entry = array();
+					$where_entry['if'] = $if;
+					$where_entry['ip_or_subnet'] = get_interface_ipv6($if) . "/" . get_interface_subnetv6($if);
+					$where_configured[] = $where_entry;
+				}
 			} else {
-				$bitmask = get_interface_subnet($if);
-				$subnet = gen_subnet(get_interface_ip($if), $bitmask);
-			}
-
-			if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask)) {
-				return true;
+				$if_ipv4 = get_interface_ip($if);
+				$if_snbitsv4 = get_interface_subnet($if);
+				if ($if_ipv4 && $if_snbitsv4 && check_subnets_overlap($ipaddr, $cidrprefix, $if_ipv4, $if_snbitsv4)) {
+					$where_entry = array();
+					$where_entry['if'] = $if;
+					$where_entry['ip_or_subnet'] = get_interface_ip($if) . "/" . get_interface_subnet($if);
+					$where_configured[] = $where_entry;
+				}
 			}
 		}
 	} else {
-		if ($isipv6 === true) {
+		if ($isipv6) {
 			$interface_list_ips = get_configured_ipv6_addresses();
 		} else {
 			$interface_list_ips = get_configured_ip_addresses();
@@ -2760,7 +2815,10 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 				continue;
 			}
 			if (strcasecmp($ipaddr, $ilips) == 0) {
-				return true;
+				$where_entry = array();
+				$where_entry['if'] = $if;
+				$where_entry['ip_or_subnet'] = $ilips;
+				$where_configured[] = $where_entry;
 			}
 		}
 	}
@@ -2772,21 +2830,30 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = $vip['if'];
+			$where_entry['ip_or_subnet'] = $vip['ipaddr'];
+			$where_configured[] = $where_entry;
 		}
 	}
 
 	if ($check_localip) {
 		if (is_array($config['pptpd']) && !empty($config['pptpd']['localip']) && (strcasecmp($ipaddr, $config['pptpd']['localip']) == 0)) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = 'pptp';
+			$where_entry['ip_or_subnet'] = $config['pptpd']['localip'];
+			$where_configured[] = $where_entry;
 		}
 
 		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = 'l2tp';
+			$where_entry['ip_or_subnet'] = $config['l2tp']['localip'];
+			$where_configured[] = $where_entry;
 		}
 	}
 
-	return false;
+	return $where_configured;
 }
 
 /****f* pfsense-utils/pfSense_handle_custom_code

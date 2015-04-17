@@ -28,7 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/bin/rm	/usr/local/bin/rrdtool
 	pfSense_MODULE:	system
 */
@@ -554,11 +554,11 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$g++;
 	}
 	$graphcmd .= "CDEF:\"tput-in_bits_pass={$graphtputbip}{$operand}\" ";
-	$graphcmd .= "CDEF:\"tput-out_bits_pass={$graphtputbop}{$operand}\" "; 
+	$graphcmd .= "CDEF:\"tput-out_bits_pass={$graphtputbop}{$operand}\" ";
 	$graphcmd .= "CDEF:\"tput-bits_io_pass={$graphtputbtp}{$operand}\" ";
 
 	$graphcmd .= "CDEF:\"tput-in_bits_block={$graphtputbib}{$operand}\" ";
-	$graphcmd .= "CDEF:\"tput-out_bits_block={$graphtputbob}{$operand}\" "; 
+	$graphcmd .= "CDEF:\"tput-out_bits_block={$graphtputbob}{$operand}\" ";
 	$graphcmd .= "CDEF:\"tput-bits_io_block={$graphtputbtb}{$operand}\" ";
 
 	$graphcmd .= "CDEF:\"tput-out_bits_pass_neg=tput-out_bits_pass,$multiplier,*\" ";
@@ -996,7 +996,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--height 200 --width 620 ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
-		$t = 0; 
+		$t = 0;
 	} else {
 		$a_queues = array();
 		$i = 0;
@@ -1155,7 +1155,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "AREA:\"$curif-totalusers_d#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
 	$graphcmd .= "GPRINT:\"$curif-totalusers_d:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
@@ -1177,7 +1177,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for ntpd (was: mbuf) usage stats */
@@ -1226,7 +1226,7 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 else {
 	$data = false;
 	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
-} 
+}
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
@@ -1236,7 +1236,7 @@ if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
 			flush();
 			usleep(500);
-	}			
+	}
 } else {
 	if($data)
 		$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
@@ -1263,8 +1263,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	header("Content-type: image/png");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	header("Cache-Control: no-store, no-cache, must-revalidate");
-	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
 	$file= "/usr/local/www/themes/{$g['theme']}/images/misc/rrd_error.png";
 	readfile($file);
@@ -1274,8 +1273,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 		header("Content-type: image/png");
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		header("Cache-Control: no-store, no-cache, must-revalidate");
-		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Cache-Control: no-cache, no-store, must-revalidate");
 		header("Pragma: no-cache");
 		readfile($file);
 	}

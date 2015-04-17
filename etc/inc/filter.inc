@@ -848,7 +848,7 @@ function filter_generate_gateways() {
 			if (!is_ipaddr($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			}
-			if (is_ipaddr($gwip) && !empty($int)) {
+			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down'])) {
 				$route = "route-to ( {$int} {$gwip} )";
 			}
 			if (($route === "") && isset($config['system']['skip_rules_gw_down'])) {
@@ -2203,7 +2203,14 @@ function filter_nat_rules_generate() {
 			if (isset($rule['destination']['any'])) {
 				/* With reflection enabled, destination of 'any' has side effects
 				 * that most people would not expect, so change it on reflection rules. */
-				$dstaddr_reflect = $FilterIflist[$natif]['ip'];
+				
+				if (!empty($FilterIflist[$natif]['ip'])) {
+					$dstaddr_reflect = $FilterIflist[$natif]['ip'];
+				} else {
+					// no IP, bail
+					continue;
+				}
+				
 				if (!empty($FilterIflist[$natif]['sn'])) {
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 				}
@@ -2430,11 +2437,11 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			$matches = "";
 			if ($rule['ipprotocol'] == "inet6") {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if (!is_ipaddrv6($opt_ip)) {
+					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sav6'];
+					if (!is_ipaddrv6($opt_sa)) {
 						return "";
 					}
-					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
+					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
@@ -2447,11 +2454,11 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				}
 			} else {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-					if (!is_ipaddrv4($opt_ip)) {
+					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sa'];
+					if (!is_ipaddrv4($opt_sa)) {
 						return "";
 					}
-					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
+					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
@@ -2583,6 +2590,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		}
 		$src = " {$not} {$expsrc}";
 	}
+
+	if (empty($src))
+		return '';
 
 	$src .= filter_generate_port($rule, $target, $isnat);
 
@@ -3088,13 +3098,19 @@ function filter_rules_generate() {
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
-
-	$ipfrules .= <<<EOD
+	
+	if (!isset($config['system']['no_apipa_block'])) {
+		$ipfrules .= <<<EOD
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,
 # and clients "MUST NOT" send such packets to a router. FreeBSD won't route 169.254./16, but
 # route-to can override that, causing problems such as in redmine #2073
 block in {$log['block']} quick from 169.254.0.0/16 to any tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
 block in {$log['block']} quick from any to 169.254.0.0/16 tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
+
+EOD;
+	}
+
+	$ipfrules .= <<<EOD
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------

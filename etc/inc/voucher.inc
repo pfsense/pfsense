@@ -226,7 +226,7 @@ EOF;
 }
 
 function voucher_expire($voucher_received) {
-	global $g, $config, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	// XMLRPC Call over to the master Voucher node
 	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
@@ -292,6 +292,8 @@ function voucher_expire($voucher_received) {
 				/* Check if this voucher has any active sessions */
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
 				if (!empty($cpentry)) {
+					if (empty($cpzoneid) && !empty($config['captiveportal'][$cpzone]))
+						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 					captiveportal_disconnect($cpentry,null,13);
 					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];

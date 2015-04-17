@@ -7,18 +7,19 @@ $options = getopt("s::");
 
 $message = "";
 
-if($options['s'] <> "") {
+if ($options['s'] <> "") {
 	$subject = $options['s'];
 }
 
 
 $in = file("php://stdin");
-foreach($in as $line){
+foreach ($in as $line){
 	$message .= "$line";
 }
 
-if (!empty($subject))
+if (!empty($subject)) {
 	send_smtp_message($message, $subject);
-else
+} else {
 	send_smtp_message($message);
+}
 ?>

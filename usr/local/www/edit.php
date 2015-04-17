@@ -50,7 +50,7 @@ if($_POST['action']) {
 			} elseif(is_dir($_POST['file'])) {
 				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
 			} elseif(! is_file($_POST['file'])) {
-				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '.|');
+				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if($data === false) {
@@ -100,7 +100,8 @@ require("head.inc");
 <div class="panel panel-info">
 	<div class="panel-heading">
         <?=gettext("Save / Load from path"); ?>:
-        <input type="text"   class="formfld file" id="fbTarget" size="45" />
+<!--        <input type="text"   class="formfld file" id="fbTarget" size="45%"/> -->
+        <input type="text"   class="form-control" id="fbTarget"/>        
         <input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
         <input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
         <input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />

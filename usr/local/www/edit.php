@@ -46,24 +46,25 @@ if($_POST['action']) {
 	switch($_POST['action']) {
 		case 'load':
 			if(strlen($_POST['file']) < 1) {
-				echo "|5|" . gettext("No file name specified") . ".|";
+			    print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} elseif(is_dir($_POST['file'])) {
-				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
+				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
 			} elseif(! is_file($_POST['file'])) {
-				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
+				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '.|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if($data === false) {
-					echo "|1|" . gettext("Failed to read file") . ".|";
+					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
-					echo "|0|{$_POST['file']}|{$data}|";	
+					print("|0|{$_POST['file']}|{$data}|");	
 				}
 			}
 			exit;
+			
 		case 'save':
 			if(strlen($_POST['file']) < 1) {
-				echo "|" . gettext("No file name specified") . ".|";
+				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -75,11 +76,11 @@ if($_POST['action']) {
 					disable_security_checks();
 				}
 				if($ret === false) {
-					echo "|" . gettext("Failed to write file") . ".|";
-				} elseif($ret <> strlen($_POST['data'])) {
-					echo "|" . gettext("Error while writing file") . ".|";
+					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to write file") . '</div>' . '|');
+				} elseif($ret != strlen($_POST['data'])) {
+					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Error while writing file") . '</div>' . '|');
 				} else {
-					echo "|" . gettext("File successfully saved") . ".|";
+					print('|' . '<div class="alert alert-success" role="alert">' . gettext("File saved successfully") . '</div>' . '|');
 				}
 			}
 			exit;
@@ -89,23 +90,55 @@ if($_POST['action']) {
 
 $closehead = false;
 require("head.inc");
-outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
+?>
+
+<!-- file status box -->
+<div style="display:none; background:#eeeeee;" id="fileStatusBox">
+		<strong id="fileStatus"></strong>
+</div>
+
+<div class="panel panel-info">
+	<div class="panel-heading">
+        <?=gettext("Save / Load from path"); ?>:
+        <input type="text"   class="formfld file" id="fbTarget" size="45" />
+        <input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
+        <input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
+        <input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+    </div>
+    
+	<div class="panel-body">
+        <div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;">
+        </div>
+    
+    	<div style="background:#eeeeee;" id="fileOutput">
+    		<script type="text/javascript">
+    		//<![CDATA[
+    		window.onload=function(){
+    			document.getElementById("fileContent").wrap='off';
+    		}
+    		//]]>
+    		</script>
+    		<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" cols=""></textarea>
+    	</div>
+    </div>
+</div>
+
+<?php include("foot.inc"); 
+
 outputJavaScriptFileInline("filebrowser/browser.js");
 outputJavaScriptFileInline("javascript/base64.js");
-
 ?>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
+<!-- Since the jQuery, bootstrap etc libraries are included from foot.inc, JavaScript functions that require jQuery need to move down here -->
+<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
 
 <script type="text/javascript">	
 //<![CDATA[
 	function loadFile() {
-		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
+	    jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
-
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
 				data: "action=load&file=" + jQuery("#fbTarget").val(),
 				complete: loadComplete
@@ -121,7 +154,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 		if(values.shift() == "0") {
 			var file = values.shift();
 			var fileContent = Base64.decode(values.join("|"));
-			jQuery("#fileStatus").html("<?=gettext("File successfully loaded"); ?>.");
+			
 			jQuery("#fileContent").val(fileContent);
 
 			var lang = "none";
@@ -144,14 +177,13 @@ outputJavaScriptFileInline("javascript/base64.js");
 	}
 
 	function saveFile(file) {
-		jQuery("#fileStatus").html("<?=gettext("Saving file"); ?> ...");
-		jQuery("#fileStatusBox").show(500);
-		
+	    jQuery("#fileStatus").html("");
+	    jQuery("#fileStatusBox").show(500);
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g,"%2B");
 		
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
 				data: "action=save&file=" + jQuery("#fbTarget").val() +
 							"&data=" + fileContent,
@@ -162,73 +194,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	}
-//]]>
-</script>
 
-<!-- file status box -->
-<div style="display:none; background:#eeeeee;" id="fileStatusBox">
-	<div class="vexpl" style="padding-left:15px;">
-		<strong id="fileStatus"></strong>
-	</div>
-</div>
-
-<br />
-
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="file editor">
-	<tr>
-		<td class="tabcont" align="center">
-
-<!-- controls -->
-<table width="100%" cellpadding="9" cellspacing="9" summary="controls">
-	<tr>
-		<td align="center" class="list">
-			<?=gettext("Save / Load from path"); ?>:
-			<input type="text"   class="formfld file" id="fbTarget"         size="45" />
-			<input type="button" class="formbtn"      onclick="loadFile();" value="<?=gettext('Load');?>" />
-			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />
-			<input type="button" class="formbtn"      onclick="saveFile();" value="<?=gettext('Save');?>" />
-			<br />
-			<?php
-			/*
-			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");
-			*/
-			?>
-		</td>
-	</tr>
-</table>
-
-<!-- filebrowser -->
-<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
-
-<!-- file viewer/editor -->
-<table width="100%" summary="file editor">
-	<tr>
-		<td valign="top">
-			<div style="background:#eeeeee;" id="fileOutput">
-				<script type="text/javascript">
-				//<![CDATA[
-				window.onload=function(){
-					document.getElementById("fileContent").wrap='off';
-				}
-				//]]>
-				</script>
-				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" cols=""></textarea>
-			</div>
-		</td>
-	</tr>
-</table>
-
-		</td>
-	</tr>
-</table>
-
-<script type="text/javascript" src="/code-syntax-highlighter/shCore.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushCss.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
-<script type="text/javascript">
-//<![CDATA[
 	jQuery(window).load(
 		function() {
 			jQuery("#fbTarget").focus();
@@ -241,14 +207,10 @@ outputJavaScriptFileInline("javascript/base64.js");
 	<?php if($_GET['action'] == "load"): ?>
 		jQuery(window).load(
 			function() {
-				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path']);?>");
+				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
 				loadFile();
 			}
 		);
 	<?php endif; ?>
 //]]>
 </script>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>

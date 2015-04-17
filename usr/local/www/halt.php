@@ -50,7 +50,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if (stristr($_POST['Submit'], gettext("No"))) {
+if ($_POST['save'] == 'No') {
 	header("Location: index.php");
 	exit;
 }
@@ -58,8 +58,8 @@ if (stristr($_POST['Submit'], gettext("No"))) {
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
 include('head.inc');
 
-if (stristr($_POST['Submit'], gettext("Yes"))) {
-	?><meta http-equiv=\"refresh\" content=\"70;url=/\"> <?php
+if ($_POST['save'] == 'Yes') {
+	print('<meta http-equiv="refresh" content="70;url=/">');
 	print('<div class="alert alert-success" role="alert">'.gettext("The system is halting now. This may take one minute or so.").'</div>');
 
 	if(DEBUG)
@@ -68,23 +68,23 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 		system_halt();
 } else {
 
-
 ?>
 
 <!-- Simple HTML version -->
 <div class="panel panel-default">
-	<div class="panel-heading">Are you sure you want to halt the system?</div>
-		<div class="panel-body">Click "Yes" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)<br /><br />
-			<form action="halt.php" method="post">
-				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
-				<input type="submit" class="btn btn-default" name="Submit" value="No">
-			</form>
-		</div>
+	<div class="panel-heading">
+		<h2 class="panel-title">Are you sure you want to halt the system?</h2>
+	</div>
+	<div class="panel-body">
+		<p>Click "Yes" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)</p>
+		<form action="halt.php" method="post">
+			<input type="submit" class="btn btn-danger pull-center" name="save" value="Yes">
+			<input type="submit" class="btn btn-default" name="save" value="No">
+		</form>
 	</div>
 </div>
 
 <?php
 }
-include("foot.inc");
-?>
 
+include("foot.inc");

@@ -63,77 +63,57 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require('classes/Form.class.php');
+$form = new Form(false);
+$form->addGlobal(new Form_Input(
+	'getactivity',
+	null,
+	'hidden',
+	'yes'
+));
+$section = new Form_Section('Auto update page');
+
+$section->addInput(new Form_Checkbox(
+	'refresh',
+	'Refresh',
+	'Automatically refresh the output below',
+	true
+));
+
+$form->add($section);
+print $form;
+
 ?>
-
-<script type="text/javascript">
-//<![CDATA[
-	var run = true;
-
+<script>
 	function getpfinfo() {
-		scroll(0,0);
-		var url = "/diag_pf_info.php";
-		var pars = 'getactivity=yes';
+		if (!$('#refresh').is(':checked'))
+			return;
 
-        if(run) {
-    		jQuery.ajax(
-    			url,
-    			{
-    				type: 'post',
-    				data: pars,
-    				complete: activitycallback
-    			});
-    			
-        }
+		$.ajax(
+			'/diag_pf_info.php',
+			{
+				type: 'post',
+				data: $(document.forms[0]).serialize(),
+				success: function (data) {
+					$('#xhrOutput').html(data);
+				},
+		});
 	}
 
-	function activitycallback(transport) {
-		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText	+ '<\/pre><\/font>');
-		setTimeout('getpfinfo()', 2500);
-	}
-	setTimeout('getpfinfo()', 1000);
-//]]>
+	events.push(function(){
+		setInterval('getpfinfo()', 2500);
+		getpfinfo();
+	});
 </script>
 
-<div id="maincontent">
-<?php
-	if($savemsg) {
-		echo "<div id=\"savemsg\">";
-		print_info_box($savemsg);
-		echo "</div>";
-	}
-	if ($input_errors)
-		print_input_errors($input_errors);
-?>
-	<div class="panel panel-default">
-		<div class="row">
-			<div class=" checkbox col-sm-3">
-				<label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" checked="yes" id="RunBox">Run <small>(Un-check to freeze the page)</small></label>
-			</div>
-		</div>
-	</div>
-
-	<div class="panel panel-default panel-info">
-		<div class="panel-heading">Output</div>
-		<div class="panel panel-body" id="pfactivitydiv">
-			<?=gettext("Gathering PF information, please wait...")?>
-		</div>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext('Output')?></div>
+	<div class="panel panel-body">
+		<pre id="xhrOutput"><?=gettext("Gathering PF information, please wait...")?></pre>
 	</div>
 </div>
 
-<?php include("foot.inc"); ?>
-
-<!-- JS allows the viewer to stop the automatic page refresh by un-clicking the "Run" checkbox -->
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function(){
-	$('#RunBox').change(function(){
-		if($(this).prop('checked') === true) {
-		   run = true;
-		   getpfinfo()
-		}
-		else
-		   run = false;
-	});
-});
-//]]>
-</script>
+<?php include("foot.inc");

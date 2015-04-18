@@ -31,7 +31,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
+	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
 	pfSense_MODULE:	routing
 */
 ##|+PRIV
@@ -77,162 +77,141 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-
-	function update_routes(section) {
-		var url = "diag_routes.php";
-		var limit = jQuery('#limit option:selected').text();
-		var filter = jQuery('#filter').val();
-		var params = "isAjax=true&limit=" + limit + "&filter=" + filter;
-		
-		if (jQuery('#resolve').is(':checked'))
-			params += "&resolve=true";
-		if (section == "IPv6")
-			params += "&IPv6=true";
-
-    	jQuery.ajax(
-    			url,
-    			{
-    				type: 'post',
-    				data: params,
-    				complete: update_routes_callback
-    			});		
-	}
-
-	function update_routes_callback(transport) {
-		// First line contains section
-		var responseTextArr = transport.responseText.split("\n");
-		var section = responseTextArr.shift();
-		var tbody = '';
-		var field = '';
-		var elements = 8;
-		var tr_class = '';
-        
-		var thead = '<tr class="info"><th class="listtopic" colspan="' + elements + '">' + section + '<\/th><\/tr>' + "\n";
-		
-		for (var i = 0; i < responseTextArr.length; i++) {
-			if (responseTextArr[i] == "")
-				continue;
-			var tmp = '';
-			if (i == 0) {
-				tr_class = 'listhdrr';
-				tmp += '<tr class="sortableHeaderRowIdentifier">' + "\n";
-			} else {
-				tr_class = 'listlr';
-				tmp += '<tr>' + "\n";
-			}
-			var j = 0;
-			var entry = responseTextArr[i].split(" ");
-			for (var k = 0; k < entry.length; k++) {
-				if (entry[k] == "")
-					continue;
-				if (i == 0 && j == (elements - 1))
-					tr_class = 'listhdr';
-				tmp += '<td class="' + tr_class + '">' + entry[k] + '<\/td>' + "\n";
-				if (i > 0)
-					tr_class = 'listr';
-				j++;
-			}
-
-			tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
-
-			if (i == 0)
-				thead += tmp;
-			else
-				tbody += tmp;
-		}
-
-		jQuery('#' + section + ' > thead').html(thead);
-		jQuery('#' + section + ' > tbody').html(tbody);
-	}
-
-//]]>
-</script>
-
-<script type="text/javascript">
-//<![CDATA[
-        
-	function update_all_routes() {
-		update_routes("IPv4");
-		update_routes("IPv6");
-	}
-
-	setTimeout('update_all_routes()', 5000);
-
-//]]>
-</script>
-
-<?php
-
 require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
-	'',
-	''
+	'update',
+	'Update'
 ));
-
+$form->addGlobal(new Form_Input(
+	'isAjax',
+	null,
+	'hidden',
+	1
+));
 $section = new Form_Section('Traceroute');
 
 $section->addInput(new Form_Checkbox(
 	'resolve',
+	'Resolve names',
 	'Enable',
-	'',
 	$resolve
-))->setHelp('Enabling name resolution may cause the query should take longer. You can stop it at any time by clicking the Stop button in your browser.');
+))->setHelp('Enabling name resolution may cause the query should take longer.'.
+	' You can stop it at any time by clicking the Stop button in your browser.');
 
-
+$validLimits = array('10', '50', '100', '200', '500', '1000', 'all');
 $section->addInput(new Form_Select(
 	'limit',
 	'Rows to display',
 	$limit,
-	array_combine(array("10", "50", "100", "200", "500", "1000", gettext("all")), array("10", "50", "100", "200", "500", "1000", gettext("all")))
+	array_combine($validLimits, $validLimits)
 ));
 
 $section->addInput(new Form_Input(
 	'filter',
 	'Filter',
 	'text',
-	$host,
-	['placeholder' => '']
+	$host
 ))->setHelp('Use a regular expression to filter IP address or hostnames');
 
 $form->add($section);
-	
 print $form;
-
 ?>
+<script>
+function update_routes(section) {
+	$.ajax(
+		'/diag_routes.php',
+		{
+			type: 'post',
+			data: $(document.forms[0]).serialize() +'&'+ section +'=true',
+			success: update_routes_callback,
+	});
+}
 
-<input type="button" class="btn btn-default" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" /><br /><br />
+function update_routes_callback(html) {
+	// First line contains section
+	var responseTextArr = html.split("\n");
+	var section = responseTextArr.shift();
+	var tbody = '';
+	var field = '';
+	var tr_class = '';
+	var thead = '<tr>';
 
-    <table class="table table-striped table-compact" id="IPv4">
-	    <thead>
-		    <tr>
-		        <th>IPv4</th>
-		    </tr>
-	    </thead>
-	    <tbody>
-		    <tr>
-		        <td class="listhdrr"><?=gettext("Gathering data, please wait...")?></td>
-		    </tr>
-	    </tbody>
-    </table>
+	for (var i = 0; i < responseTextArr.length; i++) {
+		if (responseTextArr[i] == "")
+			continue;
+		var tmp = '<tr>';
+		var j = 0;
+		var entry = responseTextArr[i].split(" ");
+		for (var k = 0; k < entry.length; k++) {
+			if (entry[k] == "")
+				continue;
+			if (i == 0)
+				tmp += '<th>' + entry[k] + '<\/th>';
+			else
+				tmp += '<td>' + entry[k] + '<\/td>';
+			j++;
+		}
 
-    <table table class="table table-striped table-compact" id="IPv6">
-	    <thead>
-		    <tr>
-		        <th>IPv6</th>
-		    </tr>
-	    </thead>
-	    <tbody>
-		    <tr>
-		        <td class="listhdrr"><?=gettext("Gathering data, please wait...")?></td>
-		    </tr>
-	    </tbody>
-    </table>
+		tmp += '<td><\/td>';
 
+		if (i == 0)
+			thead += tmp;
+		else
+			tbody += tmp;
+	}
+
+	$('#' + section + ' > thead').html(thead);
+	$('#' + section + ' > tbody').html(tbody);
+}
+
+function update_all_routes() {
+	update_routes("IPv4");
+	update_routes("IPv6");
+}
+
+events.push(function(){
+	setInterval('update_all_routes()', 5000);
+	update_all_routes();
+
+	$(document.forms[0]).on('submit', function(e){
+		update_all_routes();
+
+		e.preventDefault();
+	});
+});
+</script>
+
+<div class="panel panel-default">
+	<div class="panel-heading">IPv4 Routes</div>
+	<div class="panel panel-body">
+		<table class="table table-striped table-compact" id="IPv4">
+		<thead>
+			<!-- filled by xhr -->
+		</thead>
+		<tbody>
+			<tr>
+				<td><?=gettext("Gathering data, please wait...")?></td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
 </div>
 
-<?php include("foot.inc"); ?>
+<div class="panel panel-default">
+	<div class="panel-heading">IPv6 Routes</div>
+	<div class="panel panel-body">
+		<table class="table table-striped table-compact" id="IPv6">
+		<thead>
+			<!-- filled by xhr -->
+		</thead>
+		<tbody>
+			<tr>
+				<td><?=gettext("Gathering data, please wait...")?></td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+</div>
+
+<?php include("foot.inc");

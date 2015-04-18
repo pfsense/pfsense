@@ -67,6 +67,9 @@ $(function() {
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover()
 
+	// Focus first input
+	$(':input:enabled:visible:first').focus();
+
 	runEvents();
 	bindCollapseToOptions();
 	allowUserGroupDuplication();

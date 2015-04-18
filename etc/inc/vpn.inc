@@ -353,6 +353,11 @@ function vpn_ipsec_configure($restart = false)
 		conf_mount_ro();
 	}
 
+	$makebeforebreak = '';
+	if (isset($config['ipsec']['makebeforebreak'])) {
+		$makebeforebreak = 'make_before_break = yes';
+	}
+
 	if (isset($config['ipsec']['enableinterfacesuse'])) {
 		if (!empty($ifacesuse)) {
 			$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
@@ -383,6 +388,7 @@ install_routes = no
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
 {$ifacesuse}
+{$makebeforebreak}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.

@@ -43,6 +43,9 @@
 
 include('guiconfig.inc');
 
+$limit='100';
+$filter='';
+
 if (isset($_REQUEST['isAjax'])) {
 	$netstat = "/usr/bin/netstat -rW";
 	if (isset($_REQUEST['IPv6'])) {
@@ -51,6 +54,7 @@ if (isset($_REQUEST['isAjax'])) {
 	} else {
 		$netstat .= " -f inet";
 		echo "IPv4\n";
+
 	}
 	if (!isset($_REQUEST['resolve']))
 		$netstat .= " -n";
@@ -74,9 +78,6 @@ $shortcut_section = "routing";
 include('head.inc');
 
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -86,17 +87,19 @@ include('head.inc');
 		var limit = jQuery('#limit option:selected').text();
 		var filter = jQuery('#filter').val();
 		var params = "isAjax=true&limit=" + limit + "&filter=" + filter;
+		
 		if (jQuery('#resolve').is(':checked'))
 			params += "&resolve=true";
 		if (section == "IPv6")
 			params += "&IPv6=true";
-		var myAjax = new Ajax.Request(
-			url,
-			{
-				method: 'post',
-				parameters: params,
-				onComplete: update_routes_callback
-			});
+
+    	jQuery.ajax(
+    			url,
+    			{
+    				type: 'post',
+    				data: params,
+    				complete: update_routes_callback
+    			});		
 	}
 
 	function update_routes_callback(transport) {
@@ -107,8 +110,9 @@ include('head.inc');
 		var field = '';
 		var elements = 8;
 		var tr_class = '';
-
-		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '<\/strong><\/td><\/tr>' + "\n";
+        
+		var thead = '<tr class="info"><th class="listtopic" colspan="' + elements + '">' + section + '<\/th><\/tr>' + "\n";
+		
 		for (var i = 0; i < responseTextArr.length; i++) {
 			if (responseTextArr[i] == "")
 				continue;
@@ -132,15 +136,15 @@ include('head.inc');
 					tr_class = 'listr';
 				j++;
 			}
-			// The 'Expire' field might be blank
-			if (j == (elements - 1))
-				tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
-			tmp += '<\/tr>' + "\n";
+
+			tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
+
 			if (i == 0)
 				thead += tmp;
 			else
 				tbody += tmp;
 		}
+
 		jQuery('#' + section + ' > thead').html(thead);
 		jQuery('#' + section + ' > tbody').html(tbody);
 	}
@@ -150,89 +154,85 @@ include('head.inc');
 
 <script type="text/javascript">
 //<![CDATA[
-
+        
 	function update_all_routes() {
 		update_routes("IPv4");
 		update_routes("IPv6");
 	}
 
-	jQuery(document).ready(function(){setTimeout('update_all_routes()', 5000);});
+	setTimeout('update_all_routes()', 5000);
 
 //]]>
 </script>
 
-<div id="mainarea">
-<form action="diag_routes.php" method="post">
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="diag routes">
-
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
-<td class="vtable" width="78%">
-<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo "checked=\"checked\""; ?> /><?=gettext("Enable");?>
-<br />
-<span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
-</td>
-</tr>
-
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Number of rows");?></td>
-<td class="vtable" width="78%">
-<select id="limit" name="limit">
 <?php
-	foreach (array("10", "50", "100", "200", "500", "1000", gettext("all")) as $item) {
-		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected=\"selected\"" : "") . ">{$item}</option>\n";
-	}
+
+require('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'',
+	''
+));
+
+$section = new Form_Section('Traceroute');
+
+$section->addInput(new Form_Checkbox(
+	'resolve',
+	'Enable',
+	'',
+	$resolve
+))->setHelp('Enabling name resolution may cause the query should take longer. You can stop it at any time by clicking the Stop button in your browser.');
+
+
+$section->addInput(new Form_Select(
+	'limit',
+	'Rows to display',
+	$limit,
+	array_combine(array("10", "50", "100", "200", "500", "1000", gettext("all")), array("10", "50", "100", "200", "500", "1000", gettext("all")))
+));
+
+$section->addInput(new Form_Input(
+	'filter',
+	'Filter',
+	'text',
+	$host,
+	['placeholder' => '']
+))->setHelp('Use a regular expression to filter IP address or hostnames');
+
+$form->add($section);
+	
+print $form;
+
 ?>
-</select>
-<br />
-<span class="expl"><?=gettext("Select how many rows to display.");?></span>
-</td>
-</tr>
 
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Filter expression");?></td>
-<td class="vtable" width="78%">
-<input type="text" class="formfld search" name="filter" id="filter" />
-<br />
-<span class="expl"><?=gettext("Use a regular expression to filter IP address or hostnames.");?></span>
-</td>
-</tr>
+<input type="button" class="btn btn-default" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" /><br /><br />
 
-<tr>
-<td class="vncellreq" width="22%">&nbsp;</td>
-<td class="vtable" width="78%">
-<input type="button" class="formbtn" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" />
-<br />
-<br />
-<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
-</td>
-</tr>
+    <table class="table table-striped table-compact" id="IPv4">
+	    <thead>
+		    <tr>
+		        <th>IPv4</th>
+		    </tr>
+	    </thead>
+	    <tbody>
+		    <tr>
+		        <td class="listhdrr"><?=gettext("Gathering data, please wait...")?></td>
+		    </tr>
+	    </tbody>
+    </table>
 
-</table>
-</form>
-
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv4" summary="ipv4 routes">
-	<thead>
-		<tr><td class="listtopic"><strong>IPv4</strong></td></tr>
-	</thead>
-	<tbody>
-		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
-	</tbody>
-</table>
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv6" summary="ipv6 routes">
-	<thead>
-		<tr><td class="listtopic"><strong>IPv6</strong></td></tr>
-	</thead>
-	<tbody>
-		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
-	</tbody>
-</table>
+    <table table class="table table-striped table-compact" id="IPv6">
+	    <thead>
+		    <tr>
+		        <th>IPv6</th>
+		    </tr>
+	    </thead>
+	    <tbody>
+		    <tr>
+		        <td class="listhdrr"><?=gettext("Gathering data, please wait...")?></td>
+		    </tr>
+	    </tbody>
+    </table>
 
 </div>
 
-<?php
-include('fend.inc');
-?>
-
-</body>
-</html>
+<?php include("foot.inc"); ?>

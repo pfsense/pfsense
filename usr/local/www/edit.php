@@ -46,7 +46,7 @@ if($_POST['action']) {
 	switch($_POST['action']) {
 		case 'load':
 			if(strlen($_POST['file']) < 1) {
-			    print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
+				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} elseif(is_dir($_POST['file'])) {
 				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
 			} elseif(! is_file($_POST['file'])) {
@@ -57,11 +57,11 @@ if($_POST['action']) {
 					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
-					print("|0|{$_POST['file']}|{$data}|");	
+					print("|0|{$_POST['file']}|{$data}|");
 				}
 			}
 			exit;
-			
+
 		case 'save':
 			if(strlen($_POST['file']) < 1) {
 				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
@@ -88,55 +88,42 @@ if($_POST['action']) {
 	exit;
 }
 
-$closehead = false;
 require("head.inc");
 ?>
-
 <!-- file status box -->
 <div style="display:none; background:#eeeeee;" id="fileStatusBox">
 		<strong id="fileStatus"></strong>
 </div>
 
-<div class="panel panel-info">
-	<div class="panel-heading">
-        <?=gettext("Save / Load from path"); ?>:
-<!--        <input type="text"   class="formfld file" id="fbTarget" size="45%"/> -->
-        <input type="text"   class="form-control" id="fbTarget"/>        
-        <input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
-        <input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
-        <input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
-    </div>
-    
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext("Save / Load a file from the filesystem")?></div>
 	<div class="panel-body">
-        <div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;">
-        </div>
-    
-    	<div style="background:#eeeeee;" id="fileOutput">
-    		<script type="text/javascript">
-    		//<![CDATA[
-    		window.onload=function(){
-    			document.getElementById("fileContent").wrap='off';
-    		}
-    		//]]>
-    		</script>
-    		<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
-    	</div>
-    </div>
+		<form>
+			<input type="text" class="form-control" id="fbTarget"/>
+			<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
+			<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
+			<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+		</form>
+
+		<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
+
+		<div style="background:#eeeeee;" id="fileOutput">
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function(){
+				document.getElementById("fileContent").wrap='off';
+			}
+			//]]>
+			</script>
+			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
+		</div>
+
+	</div>
 </div>
 
-<?php include("foot.inc"); 
-
-outputJavaScriptFileInline("filebrowser/browser.js");
-outputJavaScriptFileInline("javascript/base64.js");
-?>
-
-<!-- Since the jQuery, bootstrap etc libraries are included from foot.inc, JavaScript functions that require jQuery need to move down here -->
-<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-
-<script type="text/javascript">	
-//<![CDATA[
+<script>
 	function loadFile() {
-	    jQuery("#fileStatus").html("");
+		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
@@ -154,35 +141,24 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 		if(values.shift() == "0") {
 			var file = values.shift();
-			var fileContent = Base64.decode(values.join("|"));
-			
+			var fileContent = window.atob(values.join("|"));
+
 			jQuery("#fileContent").val(fileContent);
-
-			var lang = "none";
-				 if(file.indexOf(".php") > 0) lang = "php";
-			else if(file.indexOf(".inc") > 0) lang = "php";
-			else if(file.indexOf(".xml") > 0) lang = "xml";
-			else if(file.indexOf(".js" ) > 0) lang = "js";
-			else if(file.indexOf(".css") > 0) lang = "css";
-
-			if(jQuery("#highlight").checked && lang != "none") {
-				jQuery("fileContent").prop("className",lang + ":showcolumns");
-				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
-			}
 		}
 		else {
 			jQuery("#fileStatus").html(values[0]);
 			jQuery("#fileContent").val("");
 		}
+
 		jQuery("#fileContent").show(1000);
 	}
 
 	function saveFile(file) {
-	    jQuery("#fileStatus").html("");
-	    jQuery("#fileStatusBox").show(500);
+		jQuery("#fileStatus").html("");
+		jQuery("#fileStatusBox").show(500);
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g,"%2B");
-		
+
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
@@ -196,22 +172,14 @@ outputJavaScriptFileInline("javascript/base64.js");
 		);
 	}
 
-	jQuery(window).load(
-		function() {
-			jQuery("#fbTarget").focus();
-
-			NiftyCheck();
-			Rounded("div#fileStatusBox", "all", "#ffffff", "#eeeeee", "smooth");
-		}
-	);
-
 	<?php if($_GET['action'] == "load"): ?>
-		jQuery(window).load(
-			function() {
-				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
-				loadFile();
-			}
-		);
+		events.push(function() {
+			jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			loadFile();
+		});
 	<?php endif; ?>
-//]]>
 </script>
+
+<?php include("foot.inc");
+
+outputJavaScriptFileInline("filebrowser/browser.js");

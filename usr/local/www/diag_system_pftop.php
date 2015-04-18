@@ -169,12 +169,12 @@ print $form;
 </script>
 <?php
 ?>
-	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Output')?></div>
-		<div class="panel panel-body">
-			<pre id="xhrOutput"><?=gettext("Gathering pfTOP activity, please wait...")?></pre>
-		</div>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext('Output')?></div>
+	<div class="panel panel-body">
+		<pre id="xhrOutput"><?=gettext("Gathering pfTOP activity, please wait...")?></pre>
 	</div>
+</div>
 
 <script>
 events.push(function(){

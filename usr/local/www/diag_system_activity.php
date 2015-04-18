@@ -53,55 +53,38 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<script type="text/javascript">
-//<![CDATA[
-	function getcpuactivity() {
-		scroll(0,0);
-		var url = "/diag_system_activity.php";
-		var pars = 'getactivity=yes';
-		jQuery.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
-	}
-	function activitycallback(transport) {
-		jQuery('#cpuactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText	+ '<\/pre><\/font>');
-		setTimeout('getcpuactivity()', 2500);
-	}
-	setTimeout('getcpuactivity()', 1000);
-//]]>
+?>
+<script>
+function getcpuactivity() {
+	$.ajax(
+		'/diag_system_activity.php',
+		{
+			method: 'post',
+			data: {
+				getactivity: 'yes'
+			},
+			dataType: "html",
+			success: function (data) {
+				$('#xhrOutput').html(data);
+			},
+		}
+	);
+}
+
+events.push(function(){
+	setInterval('getcpuactivity()', 2500);
+	getcpuactivity();
+});
 </script>
-<div id="maincontent">
-<?php
-	if($savemsg) {
-		echo "<div id=\"savemsg\">";
-		print_info_box($savemsg);
-		echo "</div>";
-	}
-	if ($input_errors)
-		print_input_errors($input_errors);
-?>
 
-	<div class="table-responsive">
-		<table class="table table-striped table-hover" align="center" summary="diag system activity">
-		<thead></thead>
-		<tbody>
-			<tr align="center">
-				<td>
-					<div id="cpuactivitydiv">
-					<?=gettext("Gathering CPU activity, please wait...")?>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-		</table>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext('CPU Activity')?></div>
+	<div class="panel panel-body">
+		<pre id="xhrOutput"><?=gettext("Gathering CPU activity, please wait...")?></pre>
 	</div>
 </div>
 
-<?php include("foot.inc"); ?>
-
+<?php include("foot.inc");

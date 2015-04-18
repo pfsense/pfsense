@@ -67,7 +67,7 @@ if($_REQUEST['getactivity']) {
 	}
 
 	$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
-	echo $text;
+	echo trim($text);
 	exit;
 }
 
@@ -90,111 +90,100 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 	$numstate = "100";
 }
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require('classes/Form.class.php');
+$form = new Form(false);
+$form->addGlobal(new Form_Input(
+	'getactivity',
+	null,
+	'hidden',
+	'yes'
+));
+$section = new Form_Section('pfTop Configuration');
+
+$validViews = array(
+	'default', 'label', 'long',
+	'queue', 'rules', 'size',
+	'speed', 'state', 'time',
+);
+$section->addInput(new Form_Select(
+	'viewtype',
+	'View',
+	$viewtype,
+	array_combine($validViews, $validViews)
+));
+
+$section->addInput(new Form_Select(
+	'sorttype',
+	'Sort by',
+	$sorttype,
+	array(
+		'none' => 'None',
+		'age' => 'Age',
+		'bytes' => 'Bytes',
+		'dest' => 'Destination Address',
+		'dport' => 'Destination Port',
+		'exp' => 'Expiry',
+		'peak' => 'Peak',
+		'pkt' => 'Packet',
+		'rate' => 'Rate',
+		'size' => 'Size',
+		'sport' => 'Source Port',
+		'src' => 'Source Address',
+	)
+));
+
+$validStates = array(50, 100, 200, 500, 100, 'all');
+$section->addInput(new Form_Select(
+	'states',
+	'Maximum # of States',
+	$numstate,
+	array_combine($validStates, $validStates)
+));
+
+$form->add($section);
+print $form;
 ?>
 
-<form method="post" action="diag_system_pftop.php">
-<script type="text/javascript">
-//<![CDATA[
+<script>
 	function getpftopactivity() {
-		var url = "/diag_system_pftop.php";
-		var pars = 'getactivity=yes&sorttype=' + jQuery('#sorttype').val() + '&viewtype=' + jQuery('#viewtype').val() + '&states=' + jQuery('#states').val();
-		jQuery.ajax(
-			url,
+		$.ajax(
+			'/diag_system_pftop.php',
 			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
+				method: 'post',
+				data: $(document.forms[0]).serialize(),
+				dataType: "html",
+				success: function (data) {
+					$('#xhrOutput').html(data);
+				},
+			}
+		);
 	}
-	function activitycallback(transport) {
-		jQuery('#pftopactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
-		setTimeout('getpftopactivity()', 2500);
-	}
-	setTimeout('getpftopactivity()', 1000);
-//]]>
+
+	events.push(function(){
+		setInterval('getpftopactivity()', 2500);
+		getpftopactivity();
+	});
 </script>
-
-
 <?php
-	if($savemsg) {
-		echo "<div id=\"savemsg\">";
-		print_info_box($savemsg);
-		echo "</div>";	
-	}
-	
-	if ($input_errors)
-		print_input_errors($input_errors);
 ?>
-    
 	<div class="panel panel-default">
-        <div class="row">
-			<div class="form-group col-sm-2" id='viewtypediv'><?=gettext("View type:"); ?>
-				<select  class="form-control col-sm-2" name='viewtype' id='viewtype'>
-					<option value='default' <?=($viewtype == "default") ? "selected=\"selected\"" : ""; ?>><?=gettext("Default")?></option>
-					<option value='label' <?=($viewtype == "label") ? "selected=\"selected\"" : ""; ?>><?=gettext("Label")?></option>
-					<option value='long' <?=($viewtype == "long") ? "selected=\"selected\"" : ""; ?>><?=gettext("Long")?></option>
-					<option value='queue' <?=($viewtype == "queue") ? "selected=\"selected\"" : ""; ?>><?=gettext("Queue")?></option>
-					<option value='rules' <?=($viewtype == "rules") ? "selected=\"selected\"" : ""; ?>><?=gettext("Rules")?></option>
-					<option value='size' <?=($viewtype == "size") ? "selected=\"selected\"" : ""; ?>><?=gettext("Size")?></option>
-					<option value='speed' <?=($viewtype == "speed") ? "selected=\"selected\"" : ""; ?>><?=gettext("Speed")?></option>
-					<option value='state' <?=($viewtype == "state") ? "selected=\"selected\"" : ""; ?>><?=gettext("State")?></option>
-					<option value='time' <?=($viewtype == "time") ? "selected=\"selected\"" : ""; ?>><?=gettext("Time")?></option>
-				</select>
-			</div>
-		    <div class="form-group col-sm-2" id='sorttypediv'><?=gettext("Sort type:"); ?>
-				<select class="form-control col-sm-2" name='sorttype' id='sorttype'>
-					<option value='age' <?=($sorttype == "age") ? "selected=\"selected\"" : ""; ?>><?=gettext("Age")?></option>
-					<option value='bytes' <?=($sorttype == "bytes") ? "selected=\"selected\"" : ""; ?>><?=gettext("Bytes")?></option>
-					<option value='dest' <?=($sorttype == "dest") ? "selected=\"selected\"" : ""; ?>><?=gettext("Destination Address")?></option>
-					<option value='dport' <?=($sorttype == "dport") ? "selected=\"selected\"" : ""; ?>><?=gettext("Destination Port")?></option>
-					<option value='exp' <?=($sorttype == "exp") ? "selected=\"selected\"" : ""; ?>><?=gettext("Expiry")?></option>
-					<option value='none' <?=($sorttype == "none") ? "selected=\"selected\"" : ""; ?>><?=gettext("None")?></option>
-					<option value='peak' <?=($sorttype == "peak") ? "selected=\"selected\"" : ""; ?>><?=gettext("Peak")?></option>
-					<option value='pkt' <?=($sorttype == "pkt") ? "selected=\"selected\"" : ""; ?>><?=gettext("Packet")?></option>
-					<option value='rate' <?=($sorttype == "rate") ? "selected=\"selected\"" : ""; ?>><?=gettext("Rate")?></option>
-					<option value='size' <?=($sorttype == "size") ? "selected=\"selected\"" : ""; ?>><?=gettext("Size")?></option>
-					<option value='sport' <?=($sorttype == "sport") ? "selected=\"selected\"" : ""; ?>><?=gettext("Source Port")?></option>
-					<option value='src' <?=($sorttype == "src") ? "selected=\"selected\"" : ""; ?>><?=gettext("Source Address")?></option>
-				</select>
-			</div>
-		    <div class="form-group col-sm-2" id='statesdiv'><?=gettext("# of States:"); ?>
-				<select class="form-control col-sm-2 name=" states' id='states'>
-					<option value='50' <?=($numstate == "50") ? "selected=\"selected\"" : ""; ?>>50</option>
-					<option value='100' <?=($numstate == "100") ? "selected=\"selected\"" : ""; ?>>100</option>
-					<option value='200' <?=($numstate == "200") ? "selected=\"selected\"" : ""; ?>>200</option>
-					<option value='500' <?=($numstate == "500") ? "selected=\"selected\"" : ""; ?>>500</option>
-					<option value='1000' <?=($numstate == "1000") ? "selected=\"selected\"" : ""; ?>>1000</option>
-					<option value='all' <?=($numstate == "all") ? "selected=\"selected\"" : ""; ?>>all</option>
-				</select>
-			</div>
-        </div>
-    </div>
+		<div class="panel-heading"><?=gettext('Output')?></div>
+		<div class="panel panel-body">
+			<pre id="xhrOutput"><?=gettext("Gathering pfTOP activity, please wait...")?></pre>
+		</div>
+	</div>
 
-    <div class="panel panel-default panel-info">
-        <div class="panel-heading">Output</div>
-	    <div class="panel panel-body" id="pftopactivitydiv">
-	        <?=gettext("Gathering pfTOP activity, please wait...")?>
-	    </div>									
-    </div>
-    
-    </div>
-</form>
-    
-<?php include("foot.inc"); ?>
-
-<script type="text/javascript">
-//<![CDATA[
-jQuery("#viewtype").change(function() {
-	var selected = jQuery("#viewtype option:selected");
-	switch(selected.val()) {
-		case "queue":
-		case "label":
-		case "rules":
-			jQuery("#sorttype, #sorttypediv, #statesdiv, #states").hide();
-			break;
-		default:
-			jQuery("#sorttype, #sorttypediv, #statesdiv, #states").show();
-	}
+<script>
+events.push(function(){
+	$('#viewtype').on('change', function(){
+		if (['queue', 'label', 'rules'].indexOf($(this).val()) > -1)
+			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').hide();
+		else
+			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
+	});
 });
-//]]>
 </script>
+<?php include("foot.inc");

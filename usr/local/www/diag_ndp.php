@@ -106,37 +106,36 @@ $mac_man = load_mac_manufacturer_table();
 
 $pgtitle = array(gettext("Diagnostics"),gettext("NDP Table"));
 include("head.inc");
-
 ?>
 
 <div class="table-responsive">
 	<table class="table table-striped table-hover">
-	    <thead>
-			<tr class="info">
+	<thead>
+			<tr>
 				<th><?= gettext("IPv6 address"); ?></th>
 				<th><?= gettext("MAC address"); ?></th>
 				<th><?= gettext("Hostname"); ?></th>
 				<th><?= gettext("Interface"); ?></th>
 			</tr>
-		</thead>
-		<tbody>
+	</thead>
+	<tbody>
 			<?php foreach ($data as $entry): ?>
 				<tr>
-					<td><?=$entry['ipv6']?>
-					</td>
+					<td><?=$entry['ipv6']?></td>
 					<td>
 						<?php
 						$mac=trim($entry['mac']);
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-						print $mac;
-						if(isset($mac_man[$mac_hi]))
-						    print "<br />{$mac_man[$mac_hi]}"; 
 						?>
+						<?=$mac?>
+
+						<? if(isset($mac_man[$mac_hi])):?>
+							(<?=$mac_man[$mac_hi]?>)
+						<?endif?>
+
 					</td>
 					<td>
-						<?php
-						echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);
-						?>
+						<?=htmlspecialchars(str_replace("Z_ ", "", $entry['dnsresolve']))?>
 					</td>
 					<td>
 						<?php
@@ -148,8 +147,8 @@ include("head.inc");
 					</td>
 				</tr>
 			<?php endforeach; ?>
-		</tbody>
+	</tbody>
 	</table>
 </div>
 
-<?php include("foot.inc"); ?>
+<?php include("foot.inc");

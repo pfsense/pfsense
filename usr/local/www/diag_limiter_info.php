@@ -61,46 +61,36 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<script type="text/javascript">
-//<![CDATA[
+?>
+<script>
 	function getlimiteractivity() {
-		var url = "/diag_limiter_info.php";
-		var pars = 'getactivity=yes';
-		jQuery.ajax(
-			url,
+		$.ajax(
+			'/diag_limiter_info.php',
 			{
 				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
-	}
-	function activitycallback(transport) {
-	    jQuery('#limiteractivitytitle').html('Limiter Information');
-		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText	+ '<\/pre><\/font>');
-		setTimeout('getlimiteractivity()', 2000);
-	}
-	setTimeout('getlimiteractivity()', 5000);
-//]]>
-</script>
-<div id="maincontent">
-<?php
-	if($savemsg) {
-		echo "<div id=\"savemsg\">";
-		print_info_box($savemsg);
-		echo "</div>";
+				data: {
+					getactivity: 'yes'
+				},
+				success: function (data) {
+					$('#xhrOutput').html(data);
+				},
+		});
 	}
 
-	if ($input_errors)
-		print_input_errors($input_errors);
-?>
-	
-	
-<div class="panel panel-default">	
-	<div id="limiteractivitytitle" class="panel-heading"><?=gettext("Gathering Limiter information, please wait...")?></div>
-	<div id="limiteractivitydiv" class="panel-body"></div>
+	events.push(function(){
+		setInterval('getlimiteractivity()', 2500);
+		getlimiteractivity();
+	});
+</script>
+
+<div class="panel panel-default">
+	<div class="panel-heading">Limiter Information</div>
+	<div class="panel-body">
+		<pre id="xhrOutput"><?=gettext("Gathering Limiter information, please wait...")?></pre>
+	</div>
 </div>
 
-<?php include("foot.inc"); ?>
-
+<?php include("foot.inc");

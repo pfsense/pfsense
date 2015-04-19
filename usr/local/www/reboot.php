@@ -65,7 +65,6 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 
 ?>
 
-<!-- Simple HTML version -->
 <div class="panel panel-default">
 	<div class="panel-heading">Are you sure you want to reboot the system?</div>
 	    <div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
@@ -79,31 +78,6 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 
 <?php
 
-/* Form.class version */
-
-/*
-require('classes/Form.class.php');
-
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext(' Yes ')
-));
-
-$section = new Form_Section('Reboot');
-
-$section->addInput(new Form_StaticText(
-	'',
-	'Click "Yes" to reboot the system immediately.<br />Click "No" to go to the system dashboard without rebooting. There will be a brief delay before the dashboard appears'
-));
-
-$form->addGlobal(new Form_Button(
-		'Submit',
-		gettext(' No ')
-	))->removeClass('btn-primary')->addClass('btn-default');
-
-$form->add($section);
-print $form;
-*/
 }
 
 include("foot.inc"); ?>

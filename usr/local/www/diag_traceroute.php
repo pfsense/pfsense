@@ -190,7 +190,7 @@ if (!$input_errors && $do_traceroute) {
 	else
 		print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
 
-	print("</dev></div>");
+	print("</div></div>");
 }
 
 include("foot.inc");

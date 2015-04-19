@@ -19,18 +19,20 @@ $(function() {
 			var options = $(this).find('option');
 			var selectedValue = $(this).find(':selected').val();
 
-			// Hide related collapsables which are visible (.in)
 			options.each(function(){
 				if ($(this).val() == selectedValue)
 					return;
 
-				$('.toggle-' + $(this).val() + '.in').collapse('hide');
+				targets = $('.toggle-'+ $(this).val() +'.in:not(.toggle-'+ selectedValue +')');
+
+				// Hide related collapsables which are visible (.in)
+				targets.collapse('hide');
 
 				// Disable all invisible inputs
-				$('.toggle-' + $(this).val()).find('input,select,textarea').prop('disabled', true);
+				targets.find(':input').prop('disabled', true);
 			});
 
-			$('.toggle-' + selectedValue).collapse('show').find('input,select,textarea').prop('disabled', false);
+			$('.toggle-' + selectedValue).collapse('show').find(':input').prop('disabled', false);
 		});
 
 		// Trigger change to open currently selected item

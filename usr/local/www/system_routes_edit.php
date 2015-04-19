@@ -244,8 +244,9 @@ $section->addInput(new Form_Select(
 	'gateway',
 	'Gateway',
 	$pconfig['gateway'],
-	$allGateways + ['_pfNewGateway_' => 'Create a new gateway below']
-))->toggles(null)->setHelp('Choose which gateway this route applies to or add a new one');
+	$allGateways
+))->setHelp('Choose which gateway this route applies to or <a href="'.
+	'/system_gateways_edit.php">add a new one first</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',
@@ -261,44 +262,6 @@ $section->addInput(new Form_Input(
 	'text',
 	htmlspecialchars($pconfig['descr'])
 ))->setHelp('You may enter a description here for your reference (not parsed).');
-
-$form->add($section);
-
-$section = new Form_Section('Add a new gateway');
-$section->addClass('toggle-_pfNewGateway_ collapse');
-
-$section->addInput(new Form_Checkbox(
-	'defaultgw',
-	'Default gateway',
-	'Make this the default',
-	false
-));
-
-$section->addInput(new Form_Select(
-	'addinterfacegw',
-	'Interface',
-	null,
-	get_configured_interface_with_descr()
-));
-
-$section->addInput(new Form_Input(
-	'name',
-	'Gateway Name',
-	'text',
-	'GW'
-));
-
-$section->addInput(new Form_Input(
-	'gatewayip',
-	'Gateway IP',
-	'text'
-));
-
-$section->addInput(new Form_Input(
-	'gatewaydescr',
-	'Description',
-	'text'
-));
 
 $form->add($section);
 

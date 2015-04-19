@@ -19,18 +19,20 @@ $(function() {
 			var options = $(this).find('option');
 			var selectedValue = $(this).find(':selected').val();
 
-			// Hide related collapsables which are visible (.in)
 			options.each(function(){
 				if ($(this).val() == selectedValue)
 					return;
 
-				$('.toggle-' + $(this).val() + '.in').collapse('hide');
+				targets = $('.toggle-'+ $(this).val() +'.in:not(.toggle-'+ selectedValue +')');
+
+				// Hide related collapsables which are visible (.in)
+				targets.collapse('hide');
 
 				// Disable all invisible inputs
-				$('.toggle-' + $(this).val()).find('input,select,textarea').prop('disabled', true);
+				targets.find(':input').prop('disabled', true);
 			});
 
-			$('.toggle-' + selectedValue).collapse('show').find('input,select,textarea').prop('disabled', false);
+			$('.toggle-' + selectedValue).collapse('show').find(':input').prop('disabled', false);
 		});
 
 		// Trigger change to open currently selected item
@@ -61,13 +63,52 @@ $(function() {
 
 			if (group == group.parentNode.lastElementChild)
 				plus.clone(true).appendTo(group);
-		})
+		});
 	};
+
+	// Find all ipaddress masks and make dynamic based on address family of input
+	var syncIpAddressMasks = function()
+	{
+		$('span.pfIpMask + select').each(function (idx, select){
+			var input = $(select).prevAll('input[type=text]');
+
+			input.on('change', function(e){
+				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+				if (!isV6)
+					max = 32;
+
+				if (input.val() == "")
+					return;
+
+				while (select.options.length > max)
+					select.remove(0);
+
+				if (select.options.length < max)
+				{
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+				}
+			})
+
+			// Fire immediately
+			input.change();
+		});
+	};
+
+	// Add confirm to all btn-danger buttons
+	$('.btn-danger').on('click', function(e){
+		if (!confirm('Are you sure you wish to '+ $.trim(this.textContent) +'?'))
+			e.preventDefault();
+	});
 
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover()
 
+	// Focus first input
+	$(':input:enabled:visible:first').focus();
+
 	runEvents();
 	bindCollapseToOptions();
 	allowUserGroupDuplication();
+	syncIpAddressMasks();
 });

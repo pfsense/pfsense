@@ -255,6 +255,8 @@ include("head.inc");
 
 ?>
 
+<h2>Rules</h2>
+
 <form method="post">
 <div class="table-responsive">
 	<table class="table table-striped table-hover">

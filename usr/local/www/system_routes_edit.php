@@ -212,205 +212,96 @@ if ($_POST) {
 $pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
 $shortcut_section = "routing";
 include("head.inc");
-?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
-<?php include("fbegin.inc");?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="system_routes_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system routes edit">
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit route entry"); ?></td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>" />
-					/
-					<select name="network_subnet" class="formselect ipv4v6" id="network_subnet">
-					<?php for ($i = 128; $i >= 1; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected=\"selected\""; ?>>
-							<?=$i;?>
-						</option>
-					<?php endfor; ?>
-					</select>
-					<br /><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
-				<td width="78%" class="vtable">
-					<select name="gateway" id="gateway" class="formselect">
-					<?php
-						foreach ($a_gateways as $gateway) {
-							echo "<option value='{$gateway['name']}' ";
-							if ($gateway['name'] == $pconfig['gateway'])
-								echo "selected=\"selected\"";
-							echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
-						}
-					?>
-					</select> <br />
-					<div id='addgwbox'>
-						<?=gettext("Choose which gateway this route applies to or"); ?> <a onclick="show_add_gateway();" href="#"><?=gettext("add a new one.");?></a>
-					</div>
-					<div id='notebox'>
-					</div>
-					<div style="display:none" id="status">
-					</div>
-					<div style="display:none" id="addgateway">
-						<table border="1" style="background:#990000; border-style: none none none none; width:225px;" summary="add gateway">
-							<tr>
-								<td>
-									<table bgcolor="#990000" cellpadding="1" cellspacing="1" summary="add">
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td colspan="2" align="center"><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td width="45%" align="right"><font color="white"><?=gettext("Default gateway:"); ?></font></td><td><input type="checkbox" id="defaultgw" name="defaultgw" /></td>
-										</tr>
-										<tr>
-											<td width="45%" align="right"><font color="white"><?=gettext("Interface:"); ?></font></td>
-											<td>
-												<select name="addinterfacegw" id="addinterfacegw">
-												<?php $gwifs = get_configured_interface_with_descr();
-													foreach($gwifs as $fif => $dif)
-														echo "<option value=\"{$fif}\">{$dif}</option>\n";
-												?>
-												</select>
-											</td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></font></td><td><input id="name" name="name" value="GW" /></td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Gateway IP:"); ?></font></td><td><input id="gatewayip" name="gatewayip" /></td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Description:"); ?></font></td><td><input id="gatewaydescr" name="gatewaydescr" /></td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td colspan="2" align="center">
-												<div id='savebuttondiv'>
-													<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
-													<input id="gwsave" type="button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave();' />
-													<input id="gwcancel" type="button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway();' />
-												</div>
-											</td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
-				<td width="78%" class="vtable">
-					<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
-					<strong><?=gettext("Disable this static route");?></strong><br />
-					<span class="vexpl"><?=gettext("Set this option to disable this static route without removing it from the list.");?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-					<?php if (isset($id) && $a_routes[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<?php endif; ?>
-				</td>
-			</tr>
-		</table>
-	</form>
-<script type="text/javascript">
-//<![CDATA[
-	var gatewayip;
-	var name;
-	function show_add_gateway() {
-		document.getElementById("addgateway").style.display = '';
-		document.getElementById("addgwbox").style.display = 'none';
-		document.getElementById("gateway").style.display = 'none';
-		document.getElementById("save").style.display = 'none';
-		document.getElementById("cancel").style.display = 'none';
-		document.getElementById("gwsave").style.display = '';
-		document.getElementById("gwcancel").style.display = '';
-		jQuery('#notebox').html("");
-	}
-	function hide_add_gateway() {
-		document.getElementById("addgateway").style.display = 'none';
-		document.getElementById("addgwbox").style.display = '';
-		document.getElementById("gateway").style.display = '';
-		document.getElementById("save").style.display = '';
-		document.getElementById("cancel").style.display = '';
-		document.getElementById("gwsave").style.display = '';
-		document.getElementById("gwcancel").style.display = '';
-	}
-	function hide_add_gatewaysave() {
-		document.getElementById("addgateway").style.display = 'none';
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> One moment please...');
-		var iface = jQuery('#addinterfacegw').val();
-		name = jQuery('#name').val();
-		var descr = jQuery('#gatewaydescr').val();
-		gatewayip = jQuery('#gatewayip').val();
-		addrtype = jQuery('#addrtype').val();
-		var defaultgw = '';
-		if (jQuery('#defaultgw').checked)
-			defaultgw = 'yes';
-		var url = "system_gateways_edit.php";
-		var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
-		jQuery.ajax(
-			url,
-		{
-			type: 'post',
-				data: pars,
-				error: report_failure,
-				complete: save_callback
-		});
-	}
-	function addOption(selectbox,text,value)
-	{
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.append(optn);
-		selectbox.prop('selectedIndex',selectbox.children('option').length-1);
-		jQuery('#notebox').html("<p><strong><?=gettext("NOTE:");?><\/strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_blank' href='system_gateways.php'>", "<\/a>");?> <\/strong><\/p>");
-	}
-	function report_failure() {
-		alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");
-		hide_add_gateway();
-	}
-	function save_callback(transport) {
-		var response = transport.responseText;
-		if (response) {
-			document.getElementById("addgateway").style.display = 'none';
-			hide_add_gateway();
-			jQuery('#status').html('');
-			addOption(jQuery('#gateway'), name, name);
-		} else {
-			report_failure();
-		}
-	}
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
-	var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require('classes/Form.class.php');
+$form = new Form;
+
+if (isset($id) && $a_routes[$id]) {
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$section = new Form_Section('Edit route entry');
+
+$section->addInput(new Form_IpAddress(
+	'network_subnet',
+	'Destination network',
+	$pconfig['network']
+))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
+
+$allGateways = array_combine(
+	array_map(function($g){ return $g['name']; }, $a_gateways),
+	array_map(function($g){ return $g['name'] .' - '. $g['gateway']; }, $a_gateways)
+);
+$section->addInput(new Form_Select(
+	'gateway',
+	'Gateway',
+	$pconfig['gateway'],
+	$allGateways + ['_pfNewGateway_' => 'Create a new gateway below']
+))->toggles(null)->setHelp('Choose which gateway this route applies to or add a new one');
+
+$section->addInput(new Form_Checkbox(
+	'disabled',
+	'Disabled',
+	'Disable this static route',
+	$pconfig['disabled']
+))->setHelp('Set this option to disable this static route without removing it from '.
+	'the list.');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	htmlspecialchars($pconfig['descr'])
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$form->add($section);
+
+$section = new Form_Section('Add a new gateway');
+$section->addClass('toggle-_pfNewGateway_ collapse');
+
+$section->addInput(new Form_Checkbox(
+	'defaultgw',
+	'Default gateway',
+	'Make this the default',
+	false
+));
+
+$section->addInput(new Form_Select(
+	'addinterfacegw',
+	'Interface',
+	null,
+	get_configured_interface_with_descr()
+));
+
+$section->addInput(new Form_Input(
+	'name',
+	'Gateway Name',
+	'text',
+	'GW'
+));
+
+$section->addInput(new Form_Input(
+	'gatewayip',
+	'Gateway IP',
+	'text'
+));
+
+$section->addInput(new Form_Input(
+	'gatewaydescr',
+	'Description',
+	'text'
+));
+
+$form->add($section);
+
+print $form;
+
+include("foot.inc");

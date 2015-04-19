@@ -50,42 +50,46 @@ require_once("guiconfig.inc");
 // Set default table
 $tablename = "sshlockout";
 
-if($_REQUEST['type'])
+if ($_REQUEST['type']) {
 	$tablename = $_REQUEST['type'];
+}
 
-if($_REQUEST['delete']) {
-	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
+if ($_REQUEST['delete']) {
+	if (is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
 		echo htmlentities($_REQUEST['delete']);
 	}
 	exit;
 }
 
-if($_REQUEST['deleteall']) {
+if ($_REQUEST['deleteall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
-	if(is_array($entries)) {
-		foreach($entries as $entryA) {
+	if (is_array($entries)) {
+		foreach ($entries as $entryA) {
 			$entry = trim($entryA);
 			exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T delete " . escapeshellarg($entry), $delete);
 		}
 	}
 }
 
-if((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download'])) {
+if ((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download'])) {
 	mwexec_bg("/etc/rc.update_bogons.sh now");
 	$maxtimetowait = 0;
 	$loading = true;
-	while($loading == true) {
+	while ($loading == true) {
 		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-		if($isrunning == "")
+		if ($isrunning == "") {
 			$loading = false;
+		}
 		$maxtimetowait++;
-		if($maxtimetowait > 89)
+		if ($maxtimetowait > 89) {
 			$loading = false;
+		}
 		sleep(1);
 	}
-	if($maxtimetowait < 90)
+	if ($maxtimetowait < 90) {
 		$savemsg = gettext("The bogons database has been updated.");
+	}
 }
 
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
@@ -121,12 +125,14 @@ include("head.inc");
 
 <?=gettext("Table:");?>
 <select id="type" onchange="method_change(jQuery('#type').val());" name="type">
-	<?php foreach ($tables as $table) {
+	<?php
+	foreach ($tables as $table) {
 		echo "<option value=\"{$table}\"";
-		if ($tablename == $table)
+		if ($tablename == $table) {
 			echo " selected=\"selected\"";
-		echo ">{$table}</option>\n";
 		}
+		echo ">{$table}</option>\n";
+	}
 	?>
 </select>
 
@@ -136,37 +142,44 @@ include("head.inc");
 	<tr>
 		<td class="listhdrr"><?=gettext("IP Address");?></td>
 	</tr>
-<?php $count = 0; foreach($entries as $entryA): ?>
-	<?php $entry = trim($entryA); ?>
+<?php
+	$count = 0;
+	foreach ($entries as $entryA):
+		$entry = trim($entryA);
+?>
 	<tr id="<?=$entry?>">
 		<td>
 			<?php echo $entry; ?>
 		</td>
 		<td>
-			<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
+			<?php if (($tablename != "bogons") && ($tablename != "bogonsv6")) { ?>
 			<a onclick="del_entry('<?=htmlspecialchars($entry)?>');">
 				<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" />
 			</a>
 			<?php } ?>
 		</td>
 	</tr>
-<?php $count++; endforeach; ?>
 <?php
-	if($count == 0)
-		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+		$count++;
+	endforeach;
+	if ($count == 0) {
+		if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
 			echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
-		else
+		} else {
 			echo "<tr><td>" . gettext("No entries exist in this table.");
+		}
+	}
 ?>
 
 <?php
-	if($count > 0)
-		if( ($tablename == "bogons") || ($tablename == "bogonsv6") ) {
+	if ($count > 0) {
+		if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
 			$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
 			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
-		}
-		else
+		} else {
 			echo "<tr><td>" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
+		}
+	}
 ?>
 </td></tr>
 </table>

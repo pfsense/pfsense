@@ -1,32 +1,32 @@
 <?php
 /* $Id$ */
 /*
-    diag_confbak.php
-    Copyright (C) 2005 Colin Smith
-    Copyright (C) 2010 Jim Pingle
-    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-    All rights reserved.
+	diag_confbak.php
+	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2010 Jim Pingle
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -59,20 +59,21 @@ if (isset($_POST['backupcount'])) {
 
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	if($_POST['newver'] != "") {
-		if(config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0)
-		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']));
-		else
+	if ($_POST['newver'] != "") {
+		if (config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
+			$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']));
+		} else {
 			$savemsg = gettext("Unable to revert to the selected configuration.");
+		}
 	}
-	if($_POST['rmver'] != "") {
+	if ($_POST['rmver'] != "") {
 		unlink_if_exists($g['conf_path'] . '/backup/config-' . $_POST['rmver'] . '.xml');
 		$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']), htmlspecialchars($confvers[$_POST['rmver']]['description']));
 	}
 	conf_mount_ro();
 }
 
-if($_GET['getcfg'] != "") {
+if ($_GET['getcfg'] != "") {
 	$file = $g['conf_path'] . '/backup/config-' . $_GET['getcfg'] . '.xml';
 
 	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");
@@ -86,8 +87,9 @@ if($_GET['getcfg'] != "") {
 	exit;
 }
 
-if (($_GET['diff'] == 'Diff') && isset($_GET['oldtime']) && isset($_GET['newtime'])
-      && is_numeric($_GET['oldtime']) && (is_numeric($_GET['newtime']) || ($_GET['newtime'] == 'current'))) {
+if (($_GET['diff'] == 'Diff') && isset($_GET['oldtime']) && isset($_GET['newtime']) &&
+    (is_numeric($_GET['oldtime'])) &&
+	(is_numeric($_GET['newtime']) || ($_GET['newtime'] == 'current'))) {
 	$diff = "";
 	$oldfile = $g['conf_path'] . '/backup/config-' . $_GET['oldtime'] . '.xml';
 	$oldtime = $_GET['oldtime'];
@@ -115,8 +117,9 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<?php
 		include("fbegin.inc");
-		if($savemsg)
+		if ($savemsg) {
 			print_info_box($savemsg);
+		}
 	?>
 	<?php if ($diff) { ?>
 	<table align="center" width="100%" border="0" cellspacing="0" style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;" summary="diag confbak">
@@ -160,32 +163,32 @@ include("head.inc");
 					<form action="diag_confbak.php" method="post">
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 
-<?PHP if ($_GET["newver"] || $_GET["rmver"]): ?>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?PHP echo gettext("Confirm Action"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell">&nbsp;</td>
-						<td width="78%" class="vtable">
+<?php if ($_GET["newver"] || $_GET["rmver"]): ?>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic"><?php echo gettext("Confirm Action"); ?></td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">&nbsp;</td>
+							<td width="78%" class="vtable">
 
-							<strong><?PHP echo gettext("Please confirm the selected action"); ?></strong>:
-							<br />
-							<br /><strong><?PHP echo gettext("Action"); ?>:</strong>
-						<?PHP	if (!empty($_GET["newver"])) {
-							echo gettext("Restore from Configuration Backup");
-							$target_config = $_GET["newver"]; ?>
-							<input type="hidden" name="newver" value="<?PHP echo htmlspecialchars($_GET["newver"]); ?>" />
-						<?PHP	} elseif (!empty($_GET["rmver"])) {
-							echo gettext("Remove Configuration Backup");
-							$target_config = $_GET["rmver"]; ?>
-							<input type="hidden" name="rmver" value="<?PHP echo htmlspecialchars($_GET["rmver"]); ?>" />
-						<?PHP	} ?>
-							<br /><strong><?PHP echo gettext("Target Configuration"); ?>:</strong>
-							<?PHP echo sprintf(gettext('Timestamp %1$s'), date(gettext("n/j/y H:i:s"), $target_config)); ?>
-							<br /><input type="submit" name="confirm" value="<?PHP echo gettext("Confirm"); ?>" />
-						</td>
-					</tr>
-<?PHP else: ?>
+								<strong><?php echo gettext("Please confirm the selected action"); ?></strong>:
+								<br />
+								<br /><strong><?php echo gettext("Action"); ?>:</strong>
+							<?php if (!empty($_GET["newver"])) {
+								echo gettext("Restore from Configuration Backup");
+								$target_config = $_GET["newver"]; ?>
+								<input type="hidden" name="newver" value="<?php echo htmlspecialchars($_GET["newver"]); ?>" />
+							<?php } elseif (!empty($_GET["rmver"])) {
+								echo gettext("Remove Configuration Backup");
+								$target_config = $_GET["rmver"]; ?>
+								<input type="hidden" name="rmver" value="<?php echo htmlspecialchars($_GET["rmver"]); ?>" />
+							<?php } ?>
+								<br /><strong><?php echo gettext("Target Configuration"); ?>:</strong>
+								<?php echo sprintf(gettext('Timestamp %1$s'), date(gettext("n/j/y H:i:s"), $target_config)); ?>
+								<br /><input type="submit" name="confirm" value="<?php echo gettext("Confirm"); ?>" />
+							</td>
+						</tr>
+<?php else: ?>
 
 						<tr>
 							<td width="10%">&nbsp;</td>
@@ -236,11 +239,12 @@ include("head.inc");
 						</tr>
 						<?php
 							$c = 0;
-							foreach($confvers as $version):
-								if($version['time'] != 0)
+							foreach ($confvers as $version):
+								if ($version['time'] != 0) {
 									$date = date(gettext("n/j/y H:i:s"), $version['time']);
-								else
+								} else {
 									$date = gettext("Unknown");
+								}
 						?>
 						<tr valign="top">
 							<td class="list">

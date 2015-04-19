@@ -71,7 +71,7 @@ $mobile = ipsec_dump_mobile();
 			<td>
 				<div id="mainarea">
 				<?php if (isset($mobile['pool']) && is_array($mobile['pool'])): ?>
-					<?php foreach($mobile['pool'] as $pool): ?>
+					<?php foreach ($mobile['pool'] as $pool): ?>
 						<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="4" valign="top" class="listtopic">

@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
+/*
 	pfSense_MODULE:	captiveportal
 */
 
@@ -48,11 +48,13 @@ require("guiconfig.inc");
 $portal_logfile = "{$g['varlog_path']}/portalauth.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($portal_logfile);
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Portal Auth"));
 $shortcut_section = "captiveportal";
@@ -81,7 +83,7 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td>
+	<td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  <tr>

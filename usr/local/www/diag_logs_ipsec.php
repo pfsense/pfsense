@@ -32,8 +32,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk	
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk
 	pfSense_MODULE:	ipsec
 */
 
@@ -50,11 +50,13 @@ require("ipsec.inc");
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($ipsec_logfile);
+}
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
@@ -66,7 +68,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs ipsec">
- 	<tr>
+	<tr>
 		<td>
 <?php
 	$tab_array = array();
@@ -83,17 +85,17 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  		</td>
+		</td>
 	</tr>
 	<tr>
-    	<td>
+		<td>
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  		<tr>
+				<tr>
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"),$nentries);?></td>
-		  		</tr>
+				</tr>
 				<?php
-				foreach($ipsec_logarr as $logent){
+				foreach ($ipsec_logarr as $logent) {
 					$logent = htmlspecialchars($logent);
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";

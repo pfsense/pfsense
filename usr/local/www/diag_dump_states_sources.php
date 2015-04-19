@@ -29,7 +29,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
 	pfSense_MODULE:	filter
 */
 
@@ -43,8 +43,8 @@
 require_once("guiconfig.inc");
 
 /* handle AJAX operations */
-if($_GET['action']) {
-	if($_GET['action'] == "remove") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "remove") {
 		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_GET['srcip']) . " -K " . escapeshellarg($_GET['dstip']));
 			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
@@ -56,10 +56,9 @@ if($_GET['action']) {
 }
 
 /* get our states */
-if($_GET['filter']) {
+if ($_GET['filter']) {
 	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
-}
-else {
+} else {
 	exec("/sbin/pfctl -s Sources", $sources);
 }
 
@@ -92,7 +91,7 @@ include("head.inc");
 
 	function removeComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>');
 			return;
 		}
@@ -154,10 +153,11 @@ include("head.inc");
 				<tbody>
 <?php
 $row = 0;
-if(count($sources) > 0) {
-	foreach($sources as $line) {
-		if($row >= 1000)
+if (count($sources) > 0) {
+	foreach ($sources as $line) {
+		if ($row >= 1000) {
 			break;
+		}
 
 		// 192.168.20.2 -> 216.252.56.1 ( states 10, connections 0, rate 0.0/0s )
 
@@ -185,8 +185,7 @@ if(count($sources) > 0) {
 		<?php
 		$row++;
 	}
-}
-else {
+} else {
 	echo "<tr>
 			<td class='list' colspan='5' align='center' valign='top'>
 			  " . gettext("No source tracking entries were found.") . "

@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	openvpn
 */
 
@@ -52,11 +52,13 @@ require_once("vpn.inc");
 $openvpn_logfile = "{$g['varlog_path']}/openvpn.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($openvpn_logfile);
+}
 
 include("head.inc");
 
@@ -64,7 +66,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs openvpn">
- 	<tr>
+	<tr>
 		<td>
 <?php
 	$tab_array = array();
@@ -81,21 +83,21 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  		</td>
+		</td>
 	</tr>
 	<tr>
-    	<td>
+		<td>
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  		<tr>
+				<tr>
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s OpenVPN log entries"),$nentries)?></td>
-		  		</tr>
+				</tr>
 				<?php dump_clog($openvpn_logfile, $nentries); ?>
 				<tr>
 					<td>
 						<br />
 						<form action="diag_logs_openvpn.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+							<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

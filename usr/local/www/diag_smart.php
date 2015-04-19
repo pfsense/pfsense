@@ -65,8 +65,8 @@ pre {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php 
-include("fbegin.inc"); 
+<?php
+include("fbegin.inc");
 
 // Highlights the words "PASSED", "FAILED", and "WARNING".
 function add_colors($string)
@@ -87,14 +87,10 @@ function add_colors($string)
 function update_email($email)
 {
 	// Did they pass an email?
-	if(!empty($email))
-	{
+	if (!empty($email)) {
 		// Put it in the smartd.conf file
 		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . escapeshellarg($email) . "/' /usr/local/etc/smartd.conf");
-	}
-	// Nope
-	else
-	{
+	} else {
 		// Remove email flags in smartd.conf
 		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
 	}
@@ -114,7 +110,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 	echo "Device does not exist, bailing.";
 	return;
 }
-switch($action) {
+switch ($action) {
 	// Testing devices
 	case 'test':
 	{
@@ -171,32 +167,28 @@ switch($action) {
 	// Config changes, users email in xml config and write changes to smartd.conf
 	case 'config':
 	{
-		if(isset($_POST['submit']))
-		{
+		if (isset($_POST['submit'])) {
 			// DOES NOT WORK YET...
-			if($_POST['testemail'])
-			{
+			if ($_POST['testemail']) {
 // FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
 				$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
 				smartmonctl("stop");
 				smartmonctl("start");
-			}
-			else
-			{
+			} else {
 				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 				write_config();
 
 				// Don't know what all this means, but it adds the config changed header when config is saved
 				$retval = 0;
 				config_lock();
-				if(stristr($retval, "error") <> true)
+				if (stristr($retval, "error") <> true) {
 					$savemsg = get_std_save_message($retval);
-				else
+				} else {
 					$savemsg = $retval;
+				}
 				config_unlock();
 
-				if($_POST['email'])
-				{
+				if ($_POST['email']) {
 					// Write the changes to the smartd.conf file
 					update_email($_POST['smartmonemail']);
 				}
@@ -206,7 +198,9 @@ switch($action) {
 			}
 		}
 		// Was the config changed? if so , print the message
-		if ($savemsg) print_info_box($savemsg);
+		if ($savemsg) {
+			print_info_box($savemsg);
+		}
 		// Get users email from the xml file
 		$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
 
@@ -220,7 +214,7 @@ switch($action) {
 					$tab_array[0] = array(gettext("Information/Tests"), false, $_SERVER['PHP_SELF'] . "?action=default");
 					$tab_array[1] = array(gettext("Config"), true, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
-				?>
+					?>
 				</td>
 			</tr>
 		</table>
@@ -291,7 +285,7 @@ switch($action) {
 					$tab_array[0] = array(gettext("Information/Tests"), true, $_SERVER['PHP_SELF']);
 					//$tab_array[1] = array("Config", false, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
-				?>
+					?>
 				</td>
 			</tr>
 		</table>
@@ -317,8 +311,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -356,8 +349,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -393,8 +385,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -423,8 +414,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -448,15 +438,18 @@ switch($action) {
 }
 
 // print back button on pages
-if(isset($_POST['submit']) && $_POST['submit'] != "Save")
-{
+if (isset($_POST['submit']) && $_POST['submit'] != "Save") {
 ?>
 	<input type="button" class="formbtn" value="<?=gettext("Back");?>" onclick="window.location.href='<?=$_SERVER['PHP_SELF'];?>'" />
 <?php
 }
 ?>
 <br />
-<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
+<?php
+if ($ulmsg) {
+	echo "<p><strong>" . $ulmsg . "</strong></p>\n";
+}
+?>
 
 <?php include("fend.inc"); ?>
 </body>

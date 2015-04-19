@@ -1,31 +1,31 @@
 <?php
 /* $Id$ */
 /*
-    diag_system_pftop.php
-    Copyright (C) 2008-2009 Scott Ullrich
-    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-    All rights reserved.
+	diag_system_pftop.php
+	Copyright (C) 2008-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -48,10 +48,10 @@ $viewtypes = array('default', 'label', 'long', 'queue', 'rules', 'size', 'speed'
 $viewall = array('queue', 'label', 'rules');
 $numstates = array('50', '100', '200', '500', '1000', 'all');
 
-if($_REQUEST['getactivity']) {
-	if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
-		&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
-		&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
+if ($_REQUEST['getactivity']) {
+	if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
+	    $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes) &&
+	    $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
 		$viewtype = escapeshellarg($_REQUEST['viewtype']);
 		if (in_array($_REQUEST['viewtype'], $viewall)) {
 			$sorttype = "";
@@ -73,9 +73,9 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
-	&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
-	&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
+if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
+    $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes) &&
+    $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
 	$viewtype = escapeshellarg($_REQUEST['viewtype']);
 	if (in_array($_REQUEST['viewtype'], $viewall)) {
 		$sorttype = "";
@@ -116,13 +116,14 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 </script>
 <div id="maincontent">
 <?php
-	if($savemsg) {
+	if ($savemsg) {
 		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
-		echo "</div>";	
+		echo "</div>";
 	}
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 		<div id="mainarea" style="padding-bottom: 0px;">
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="diag system pftop">
@@ -178,18 +179,18 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 					<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 						<tr>
 							<td align="center">
-									<table summary="results">
-										<tr>
-											<td>
-												<div id="pftopactivitydiv"><?=gettext("Gathering pfTOP activity, please wait...");?></div>
-											</td>
-										</tr>
-									</table>
+								<table summary="results">
+									<tr>
+										<td>
+											<div id="pftopactivitydiv"><?=gettext("Gathering pfTOP activity, please wait...");?></div>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</table>
 				</td>
-		  </tr>
+			</tr>
 		</table>
 	</div>
 </div>

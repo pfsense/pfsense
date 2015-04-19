@@ -13,11 +13,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -58,11 +58,13 @@ function adjust_gmt($dt) {
 }
 
 function remove_duplicate($array, $field) {
-	foreach ($array as $sub)
+	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];
+	}
 	$unique = array_unique($cmp);
-	foreach ($unique as $k => $rien)
+	foreach ($unique as $k => $rien) {
 		$new[] = $array[$k];
+	}
 	return $new;
 }
 
@@ -78,7 +80,7 @@ $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 /* We then split the leases file by } */
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
-/* stuff the leases file in a proper format into a array by line */
+/* stuff the leases file in a proper format into an array by line */
 exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 
@@ -88,19 +90,19 @@ $i = 0;
 $l = 0;
 $p = 0;
 // Put everything together again
-while($i < $leases_count) {
+while ($i < $leases_count) {
 	/* split the line by space */
 	$data = explode(" ", $leases_content[$i]);
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
 	/* with less then 20 fields there is nothing useful */
-	if($fcount < 20) {
+	if ($fcount < 20) {
 		$i++;
 		continue;
 	}
-	while($f < $fcount) {
-		switch($data[$f]) {
+	while ($f < $fcount) {
+		switch ($data[$f]) {
 			case "failover":
 				$pools[$p]['name'] = $data[$f+2];
 				$pools[$p]['mystate'] = $data[$f+7];
@@ -166,7 +168,7 @@ while($i < $leases_count) {
 			case "hardware":
 				$leases[$l]['mac'] = $data[$f+2];
 				/* check if it's online and the lease is active */
-				if($leases[$l]['act'] == "active") {
+				if ($leases[$l]['act'] == "active") {
 					$online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
 					if ($online == 1) {
 						$leases[$l]['online'] = 'online';
@@ -177,11 +179,11 @@ while($i < $leases_count) {
 				$f = $f+2;
 				break;
 			case "client-hostname":
-				if($data[$f+1] <> "") {
+				if ($data[$f+1] <> "") {
 					$leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($leases[$l]['ip']);
-					if($hostname <> "") {
+					if ($hostname <> "") {
 						$leases[$l]['hostname'] = $hostname;
 					}
 				}
@@ -198,11 +200,11 @@ while($i < $leases_count) {
 }
 
 /* remove duplicate items by mac address */
-if(count($leases) > 0) {
+if (count($leases) > 0) {
 	$leases = remove_duplicate($leases,"ip");
 }
 
-if(count($pools) > 0) {
+if (count($pools) > 0) {
 	$pools = remove_duplicate($pools,"name");
 	asort($pools);
 }
@@ -225,8 +227,9 @@ $ifdescrs = get_configured_interface_with_descr();
 
 foreach ($ifdescrs as $key => $interface) {
 	$thisif = convert_friendly_interface_to_real_interface_name($key);
-	if (!empty($thisif))
+	if (!empty($thisif)) {
 		$hwif[$thisif] = $interface;
+	}
 }
 
 $data = array();
@@ -245,15 +248,16 @@ foreach ($rawdata as $line) {
 function _getHostName($mac,$ip) {
 	global $dhcpmac, $dhcpip;
 
-	if ($dhcpmac[$mac])
+	if ($dhcpmac[$mac]) {
 		return $dhcpmac[$mac];
-	else if ($dhcpip[$ip])
+	} else if ($dhcpip[$ip]) {
 		return $dhcpip[$ip];
-	else{
+	} else {
 		exec("host -W 1 " . escapeshellarg($ip), $output);
 		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/',$output[0],$matches)) {
-			if ($matches[1] <> $ip)
-				return $matches[1]; 
+			if ($matches[1] <> $ip) {
+				return $matches[1];
+			}
 		}
 	}
 	return "";
@@ -276,28 +280,34 @@ include("head.inc");
 <?php
 
 // Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+for ($i = 0; $i < ob_get_level(); $i++) {
+	ob_end_flush();
+}
 ob_implicit_flush(1);
 
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
 $dnsavailable=1;
-$dns = trim(_getHostName("", "8.8.8.8")); 
-if ($dns == ""){
-	$dns = trim(_getHostName("", "8.8.4.4")); 
-	if ($dns == "") $dnsavailable =0;
+$dns = trim(_getHostName("", "8.8.8.8"));
+if ($dns == "") {
+	$dns = trim(_getHostName("", "8.8.4.4"));
+	if ($dns == "") {
+		$dnsavailable = 0;
+	}
 }
 
 foreach ($data as &$entry) {
-	if ($dnsavailable){
+	if ($dnsavailable) {
 		$dns = trim(_getHostName($entry['mac'], $entry['ip']));
-	}else
+	} else {
 		$dns="";
-	if(trim($dns))
+	}
+	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
-	else
+	} else {
 		$entry['dnsresolve'] = "Z_ ";
+	}
 }
 
 // Sort the data alpha first
@@ -325,7 +335,7 @@ $mac_man = load_mac_manufacturer_table();
 						$mac=trim($entry['mac']);
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 						print $mac;
-						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+						if (isset($mac_man[$mac_hi])) { print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 						?>
 						</td>
 						<td class="listr">

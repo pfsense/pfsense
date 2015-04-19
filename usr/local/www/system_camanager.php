@@ -346,10 +346,10 @@ foreach ($a_ca as $i => $ca):
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
 	list($startdate, $enddate) = cert_get_dates($ca['crt']);
-	if($subj == $issuer)
-		$issuer_name = "<em>" . gettext("self-signed") . "</em>";
+	if ($subj == $issuer)
+		$issuer_name = gettext("self-signed");
 	else
-		$issuer_name = "<em>" . gettext("external") . "</em>";
+		$issuer_name = gettext("external");
 	$subj = htmlspecialchars($subj);
 	$issuer = htmlspecialchars($issuer);
 	$certcount = 0;
@@ -372,21 +372,14 @@ foreach ($a_ca as $i => $ca):
 		<tr>
 			<td><?=$name?></td>
 			<td><?=$internal?></td>
-			<td><?=$issuer_name?></td>
+			<td><i><?=$issuer_name?></i></td>
 			<td><?=$certcount?></td>
-			<td><?=$subj?><br />
-				<table>
-					<tr>
-						<td>&nbsp;</td>
-						<td><?=gettext("Valid From")?>:</td>
-						<td><?=$startdate ?></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><?=gettext("Valid Until")?>:</td>
-						<td><?=$enddate ?></td>
-					</tr>
-				</table>
+			<td>
+				<?=$subj?>
+				<br />
+				<small>
+					<?=gettext("Valid From")?>: <b><?=$startdate ?></b>, <?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
+				</small>
 			</td>
 			<td>
 				<a href="system_camanager.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">

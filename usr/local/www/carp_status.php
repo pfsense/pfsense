@@ -1,30 +1,30 @@
 <?php
 /*
-    carp_status.php
-    Copyright (C) 2004 Scott Ullrich
-    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-    All rights reserved.
+	carp_status.php
+	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 ##|+PRIV
@@ -52,38 +52,39 @@ unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
 $status = intval($status);
-if($_POST['carp_maintenancemode'] <> "") {
+if ($_POST['carp_maintenancemode'] <> "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
-if($_POST['disablecarp'] <> "") {
-	if($status > 0) {
+if ($_POST['disablecarp'] <> "") {
+	if ($status > 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
-		if(is_array($config['virtualip']['vip'])) {
+		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			$found_dhcpdv6 = false;
 			foreach ($viparr as $vip) {
 				$carp_iface = "{$vip['interface']}_vip{$vip['vhid']}";
 				switch ($vip['mode']) {
-				case "carp":
-					interface_vip_bring_down($vip);
-					interface_ipalias_cleanup($carp_iface);
+					case "carp":
+						interface_vip_bring_down($vip);
+						interface_ipalias_cleanup($carp_iface);
 
-					/*
-					 * Reconfigure radvd when necessary
-					 * XXX: Is it the best way to do it?
-					 */
-					if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-						foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-							if ($dhcpv6ifconf['rainterface'] != $carp_iface)
-								continue;
+						/*
+						 * Reconfigure radvd when necessary
+						 * XXX: Is it the best way to do it?
+						 */
+						if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+							foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+								if ($dhcpv6ifconf['rainterface'] != $carp_iface) {
+									continue;
+								}
 
-							services_radvd_configure();
-							break;
+								services_radvd_configure();
+								break;
+							}
 						}
-					}
 
-					sleep(1);
-					break;
+						sleep(1);
+						break;
 				}
 			}
 		}
@@ -91,18 +92,19 @@ if($_POST['disablecarp'] <> "") {
 		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
-		if(is_array($config['virtualip']['vip'])) {
+		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			foreach ($viparr as $vip) {
 				switch ($vip['mode']) {
-				case "carp":
-					interface_carp_configure($vip);
-					sleep(1);
-					break;
-				case 'ipalias':
-					if (strpos($vip['interface'], '_vip'))
-						interface_ipalias_configure($vip);
-					break;
+					case "carp":
+						interface_carp_configure($vip);
+						sleep(1);
+						break;
+					case 'ipalias':
+						if (strpos($vip['interface'], '_vip')) {
+							interface_ipalias_configure($vip);
+						}
+						break;
 				}
 			}
 		}
@@ -153,23 +155,23 @@ include("head.inc");
 			<td>
 <?php
 			$carpcount = 0;
-			if(is_array($config['virtualip']['vip'])) {
-				foreach($config['virtualip']['vip'] as $carp) {
+			if (is_array($config['virtualip']['vip'])) {
+				foreach ($config['virtualip']['vip'] as $carp) {
 					if ($carp['mode'] == "carp") {
 						$carpcount++;
 						break;
 					}
 				}
 			}
-			if($carpcount > 0) {
-				if($status > 0) {
+			if ($carpcount > 0) {
+				if ($status > 0) {
 					$carp_enabled = true;
 					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\" />";
 				} else {
 					$carp_enabled = false;
 					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
 				}
-				if(isset($config["virtualip_carp_maintenancemode"])) {
+				if (isset($config["virtualip_carp_maintenancemode"])) {
 					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\" />";
 				} else {
 					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Persistent CARP Maintenance Mode") . "\" />";
@@ -193,24 +195,25 @@ include("head.inc");
 					echo "</body></html>";
 					return;
 				}
-				if(is_array($config['virtualip']['vip'])) {
-					foreach($config['virtualip']['vip'] as $carp) {
-						if ($carp['mode'] != "carp")
+				if (is_array($config['virtualip']['vip'])) {
+					foreach ($config['virtualip']['vip'] as $carp) {
+						if ($carp['mode'] != "carp") {
 							continue;
+						}
 						$ipaddress = $carp['subnet'];
 						$vhid = $carp['vhid'];
 						$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 						echo "<tr>";
 						$align = "style=\"vertical-align:middle\"";
-						if($carp_enabled == false) {
+						if ($carp_enabled == false) {
 							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disabled\" />";
 							$status = "DISABLED";
 						} else {
-							if($status == "MASTER") {
+							if ($status == "MASTER") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass.gif\" alt=\"master\" />";
-							} else if($status == "BACKUP") {
+							} else if ($status == "BACKUP") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
-							} else if($status == "INIT") {
+							} else if ($status == "INIT") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
 							} else {
 								$icon = "";

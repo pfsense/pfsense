@@ -42,102 +42,120 @@ $shortcuts = array();
 /* Load and process custom shortcuts. */
 function get_shortcut_files($directory) {
 	$dir_array = array();
-	if(!is_dir($directory)) 
+	if (!is_dir($directory)) {
 		return;
+	}
 	if ($dh = opendir($directory)) {
 		while (($file = readdir($dh)) !== false) {
 			$canadd = 0;
-			if($file == ".") 
+			if ($file == ".") {
 				$canadd = 1;
-			if($file == "..") 
+			}
+			if ($file == "..") {
 				$canadd = 1;
-			if($canadd == 0)
+			}
+			if ($canadd == 0) {
 				array_push($dir_array, $file);
+			}
 		}
 		closedir($dh);
 	}
-	if(!is_array($dir_array))
+	if (!is_array($dir_array)) {
 		return;
+	}
 	return $dir_array;
 }
 
 function get_shortcut_by_service_name($servicename) {
 	global $shortcuts;
 	foreach ($shortcuts as $name => $shortcut) {
-		if (!empty($shortcut['service']) && ($shortcut['service'] == $servicename))
+		if (!empty($shortcut['service']) && ($shortcut['service'] == $servicename)) {
 			return $name;
+		}
 	}
 	return null;
 }
 
 function get_shortcut_main_link($shortcut_section, $addspace = true, $service = array()) {
 	global $g, $shortcuts;
-	if(empty($shortcut_section))
+	if (empty($shortcut_section)) {
 		return "";
+	}
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	switch ($shortcut_section) {
 		case "openvpn":
-			if (!empty($service['mode']) && is_numeric($service['id']))
+			if (!empty($service['mode']) && is_numeric($service['id'])) {
 				$link = "vpn_openvpn_{$service['mode']}.php?act=edit&amp;id={$service['id']}";
-			else
+			} else {
 				$link = $shortcuts[$shortcut_section]['main'];
+			}
 			break;
 		case "captiveportal":
-			if (!empty($service['zone']))
+			if (!empty($service['zone'])) {
 				$link = "services_captiveportal.php?zone={$service['zone']}";
-			else
+			} else {
 				$link = $shortcuts[$shortcut_section]['main'];
+			}
 			break;
 		default:
 			$link = $shortcuts[$shortcut_section]['main'];
 			break;
 	}
-	if(!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}"))
+	if (!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}")) {
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" border=\"0\" alt=\"plus\" /></a>";
+	}
 }
 
 function get_shortcut_status_link($shortcut_section, $addspace = true, $service = array()) {
 	global $g, $shortcuts, $cpzone;
-	if(empty($shortcut_section))
+	if (empty($shortcut_section)) {
 		return "";
+	}
 	$space = ($addspace) ? "&nbsp;" : "" ;
-	if (!empty($cpzone))
+	if (!empty($cpzone)) {
 		$zone = $cpzone;
-	elseif (!empty($service['zone']))
+	} elseif (!empty($service['zone'])) {
 		$zone = $service['zone'];
+	}
 	switch ($shortcut_section) {
 		case "captiveportal":
-			if (!empty($zone))
+			if (!empty($zone)) {
 				$link = "status_captiveportal.php?zone={$zone}";
-			else
+			} else {
 				$link = $shortcuts[$shortcut_section]['status'];
+			}
 			break;
 		default:
 			$link = $shortcuts[$shortcut_section]['status'];
 			break;
 	}
-	if(!empty($link))
+	if (!empty($link)) {
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_service_status.gif\" border=\"0\" alt=\"status\" /></a>";
+	}
 }
 
 function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
-	if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
+	if (!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
 		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_logs.gif\" border=\"0\" alt=\"logs\" /></a>";
 	}
 }
 
 // Load shortcuts
 $dir_array = get_shortcut_files("/usr/local/www/shortcuts");
-foreach ($dir_array as $file) 
-	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc")) 
+foreach ($dir_array as $file) {
+	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc")) {
 		include("/usr/local/www/shortcuts/{$file}");
-if(is_dir("/usr/local/pkg/shortcuts")) {
+	}
+}
+if (is_dir("/usr/local/pkg/shortcuts")) {
 	$dir_array = get_shortcut_files("/usr/local/pkg/shortcuts");
-	foreach ($dir_array as $file) 
-		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc")) 
+	foreach ($dir_array as $file) {
+		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc")) {
 			include("/usr/local/pkg/shortcuts/{$file}");
+		}
+	}
 }
 
 $shortcuts['relayd'] = array();

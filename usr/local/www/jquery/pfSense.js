@@ -61,7 +61,36 @@ $(function() {
 
 			if (group == group.parentNode.lastElementChild)
 				plus.clone(true).appendTo(group);
-		})
+		});
+	};
+
+	// Find all ipaddress masks and make dynamic based on address family of input
+	var syncIpAddressMasks = function()
+	{
+		$('span.pfIpMask + select').each(function (idx, select){
+			var input = $(select).prevAll('input[type=text]');
+
+			input.on('change', function(e){
+				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+				if (!isV6)
+					max = 32;
+
+				if (input.val() == "")
+					return;
+
+				while (select.options.length > max)
+					select.remove(0);
+
+				if (select.options.length < max)
+				{
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+				}
+			})
+
+			// Fire immediately
+			input.change();
+		});
 	};
 
 	// Add confirm to all btn-danger buttons
@@ -79,4 +108,5 @@ $(function() {
 	runEvents();
 	bindCollapseToOptions();
 	allowUserGroupDuplication();
+	syncIpAddressMasks();
 });

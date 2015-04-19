@@ -33,7 +33,9 @@ class Form_IpAddress extends Form_Input
 
 	public function __construct($name, $title, $value)
 	{
-		parent::__construct($name, $title, null, $value);
+		parent::__construct($name, $title, 'text', $value);
+
+		$this->_attributes['pattern'] = '[a-f0-9:.]';
 	}
 
 	public function addMask($name, $value)
@@ -65,7 +67,7 @@ class Form_IpAddress extends Form_Input
 		return <<<EOT
 		<div class="input-group">
 			$input
-			<span class="input-group-addon input-group-inbetween">/</span>
+			<span class="input-group-addon input-group-inbetween pfIpMask">/</span>
 			{$this->_mask}
 		</div>
 EOT;

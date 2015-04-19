@@ -50,7 +50,7 @@ include("head.inc");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
-	<meta http-equiv=\"refresh\" content=\"70;url=/\">
+	<meta http-equiv="refresh" content="70;url=/">
 	<div class="alert alert-success" role="alert">
 		<?=gettext("The system is rebooting now. This may take one minute or so.")?>
 	</div>
@@ -68,13 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="panel panel-default">
 	<div class="panel-heading">Are you sure you want to reboot the system?</div>
-		<div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
-			<form action="reboot.php" method="post">
-				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
-				<a href="/" class="btn btn-default">No</a>
-			</form>
-
-		</div>
+	<div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
+		<form action="reboot.php" method="post">
+			<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
+			<a href="/" class="btn btn-default">No</a>
+		</form>
 	</div>
 </div>
 

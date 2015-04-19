@@ -44,22 +44,23 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if (stristr($_POST['Submit'], gettext("No"))) {
-	header("Location: index.php");
-	exit;
-}
-
 $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
-if (stristr($_POST['Submit'], gettext("Yes"))) {
-	?><meta http-equiv=\"refresh\" content=\"70;url=/\"> <?php
-	print('<div class="alert alert-success" role="alert">'.gettext("The system is rebooting now. This may take one minute or so.").'</div>');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+?>
+	<meta http-equiv=\"refresh\" content=\"70;url=/\">
+	<div class="alert alert-success" role="alert">
+		<?=gettext("The system is rebooting now. This may take one minute or so.")?>
+	</div>
+<?php
 
 	if(DEBUG)
-	   print("Not actually rebooting (DEBUG is set true)<br>");
+	   print("Not actually rebooting (DEBUG is set true)");
 	else
 		system_reboot();
+
 } else {
 
 
@@ -67,13 +68,14 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 
 <div class="panel panel-default">
 	<div class="panel-heading">Are you sure you want to reboot the system?</div>
-	    <div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
-            <form action="reboot.php" method="post">
-                <input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
-                <input type="submit" class="btn btn-default" name="Submit" value="No">
-            </form>
-        </div>
-    </div>
+		<div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
+			<form action="reboot.php" method="post">
+				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
+				<a href="/" class="btn btn-default">No</a>
+			</form>
+
+		</div>
+	</div>
 </div>
 
 <?php
@@ -81,4 +83,3 @@ if (stristr($_POST['Submit'], gettext("Yes"))) {
 }
 
 include("foot.inc"); ?>
-

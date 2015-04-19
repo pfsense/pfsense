@@ -73,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 ?>
 
+
 <div class="panel panel-default">
 	<div class="panel-heading">Are you sure you want to halt the system?</div>
 	<div class="panel-body">Click "Yes" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)<br /><br />

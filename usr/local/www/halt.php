@@ -58,19 +58,21 @@ if ($_POST['save'] == 'No') {
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
 include('head.inc');
 
-if ($_POST['save'] == 'Yes') {
-	print('<meta http-equiv="refresh" content="70;url=/">');
-	print('<div class="alert alert-success" role="alert">'.gettext("The system is halting now. This may take one minute or so.").'</div>');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+?>
+	<meta http-equiv="refresh" content="70;url=/">
+	<div class="alert alert-success" role="alert">
+		<?=gettext("The system is halting now. This may take one minute or so.")?>
+	</div>
 
+<?php
 	if(DEBUG)
 	   print("Not actually halting (DEBUG is set true)<br>");
 	else
 		system_halt();
 } else {
-
 ?>
 
-<!-- Simple HTML version -->
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">Are you sure you want to halt the system?</h2>
@@ -79,7 +81,7 @@ if ($_POST['save'] == 'Yes') {
 		<p>Click "Yes" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)</p>
 		<form action="halt.php" method="post">
 			<input type="submit" class="btn btn-danger pull-center" name="save" value="Yes">
-			<input type="submit" class="btn btn-default" name="save" value="No">
+			<a href="/" class="btn btn-default">No</a>
 		</form>
 	</div>
 </div>

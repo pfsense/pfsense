@@ -80,4 +80,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-include("foot.inc"); ?>
+include("foot.inc");

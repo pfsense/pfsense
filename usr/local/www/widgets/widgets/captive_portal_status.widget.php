@@ -123,8 +123,8 @@ if ($_GET['order']) {
 		<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
 <?php endif; ?>
 		<td>
-			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" onclick="return confirm('Do you really want to disconnect this client?')">
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" alt="x" />
+			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" class="btn btn-xs btn-danger">
+				delete
 			</a>
 		</td>
 	</tr>

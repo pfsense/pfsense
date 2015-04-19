@@ -254,7 +254,7 @@ foreach ($a_gateways as $i => $gateway):
 				copy
 			</a>
 <? if (is_numeric($gateway['attribute'])): ?>
-			<a class="btn btn-xs btn-danger" href="system_gateways.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway?")?>')">
+			<a class="btn btn-xs btn-danger" href="system_gateways.php?act=del&amp;id=<?=$i?>">
 				delete
 			</a>
 			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">

@@ -42,7 +42,7 @@ class Form_IpAddress extends Form_Input
 			$name,
 			null,
 			$value,
-			array_combine(range(32, 1), range(32, 1))
+			array_combine(range(128, 1), range(128, 1))
 		);
 
 		return $this;

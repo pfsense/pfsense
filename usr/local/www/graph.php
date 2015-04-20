@@ -55,21 +55,24 @@ $ifnum = get_real_interface($ifnum);
 $ifname=@$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-if (isset($config["widgets"]["trafficgraphs"]["scale_type"]))
+if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
 	$scale_type = $config["widgets"]["trafficgraphs"]["scale_type"];
-else
+} else {
 	$scale_type = "up";
+}
 
 $nb_plot=120;                   //NB plot in graph
-if ($_GET["timeint"])
+if ($_GET["timeint"]) {
 	$time_interval = $_GET["timeint"];		//Refresh time Interval
-else
+} else {
 	$time_interval = 3;
+}
 
-if ($_GET["initdelay"])
+if ($_GET["initdelay"]) {
 	$init_delay = $_GET["initdelay"];		//Initial Delay
-else
+} else {
 	$init_delay = 3;
+}
 
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
@@ -95,7 +98,7 @@ $width=200;             //SVG internal width : do not modify
 $fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
 
 /* check for custom theme colors */
-if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
+if (file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
 	$themetxt = file_get_contents("/usr/local/www/themes/{$g['theme']}/graph.php");
 	eval($themetxt);
 }
@@ -149,8 +152,7 @@ if (typeof getURL == 'undefined') {
     var http_request = null;
     if (typeof XMLHttpRequest != 'undefined') {
       http_request = new XMLHttpRequest();
-    }
-    else if (typeof ActiveXObject != 'undefined') {
+    } else if (typeof ActiveXObject != 'undefined') {
       try {
         http_request = new ActiveXObject('Msxml2.XMLHTTP');
       } catch (e) {
@@ -276,8 +278,7 @@ function plot_data(obj) {
       max = plot_in[index_plot];
     if (plot_out[index_plot] > max)
       max = plot_out[index_plot];
-  }
-  else if (scale_type == 'follow') {
+  } else if (scale_type == 'follow') {
     i = 0;
     max = 0;
     while (i < plot_in.length) {

@@ -53,6 +53,8 @@ $tablename = "sshlockout";
 if($_REQUEST['type'])
 	$tablename = $_REQUEST['type'];
 
+print("Tablename is: " . $tablename . "<br>");
+
 if($_REQUEST['delete']) {
 	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
@@ -95,11 +97,28 @@ include("head.inc");
 
 if ($savemsg)
 	print_info_box($savemsg);
+
+require('classes/Form.class.php');
+$form = new Form(false);
+$form->addGlobal(new Form_Input(
+	'showtables',
+	null,
+	'hidden',
+	'yes'
+));
+$section = new Form_Section('Table to display');
+
+$section->addInput(new Form_Select(
+	'type',
+	'Table',
+	$tablename,
+	array_combine($tables, $tables)
+));
+
+$form->add($section);
+print $form;
 ?>
 
-<div class="panel panel-default">
-	<div class="panel-body">
-		<form method="post" action="diag_tables.php">
 
 <script type="text/javascript">
 //<![CDATA[
@@ -121,72 +140,63 @@ if ($savemsg)
 //]]>
 </script>
 
-			<div class="form-group col-sm-3" id='viewtypediv'>
-				<label><?=gettext("Table:")?></label>
-				<select class="form-control col-sm-2" id="type" onchange="method_change(jQuery('#type').val());" name="type">
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead>
+		   <tr id="tblheader">
+			  <th class="default">
+				  <?=gettext("IP Address")?>
+			  </th>
+		   </tr>
+		</thead>
 <?php
-				foreach ($tables as $table) {
-					echo "<option value=\"{$table}\"";
-					if ($tablename == $table)
-						echo " selected=\"selected\"";
-
-					echo ">{$table}</option>\n";
-				 }
+		$count = 0; foreach($entries as $entryA):
+		$entry = trim($entryA);
 ?>
-				</select>
-			</div>
-
-			<div class="table-responsive">
-				<table class="table table-striped table-hover" summary="tables">
-					<thead>
-					   <tr>
-						  <th class="info">
-							  <?=gettext("IP Address")?>
-						  </th>
-					   </tr>
-					</thead>
-<?php
-					$count = 0; foreach($entries as $entryA):
-					$entry = trim($entryA);
-?>
-					<tbody>
-						<tr id="<?=$entry?>">
-							<td>
-								<?=$entry; ?>
-							</td>
-							<td>
-								<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
-								<a class="btn btn-xs btn-default" onclick="del_entry('<?=htmlspecialchars($entry)?>');">Remove
-								</a>
-								<?php } ?>
-							</td>
-						</tr>
+		<tbody>
+			<tr id="<?=$entry?>">
+				<td>
+					<?=$entry; ?>
+				</td>
+				<td>
+					<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
+					<a class="btn btn-xs btn-default" onclick="del_entry('<?=htmlspecialchars($entry)?>');">Remove
+					</a>
+					<?php } ?>
+				</td>
+			</tr>
 
 <?php
-						$count++; endforeach;
+			$count++; endforeach;
 
-						if($count == 0)
-							if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
-								echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
-							else
-								echo "<tr><td>" . gettext("No entries exist in this table.");
+			if($count == 0)
+				if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+					echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
+				else
+					echo "<tr><td>" . gettext("No entries exist in this table.");
 
-						if($count > 0)
-							if( ($tablename == "bogons") || ($tablename == "bogonsv6")) {
-								$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
-								echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
-							}
-							else
-								echo "<tr><td>" . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("Delete ") . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table?");
+			if($count > 0)
+				if( ($tablename == "bogons") || ($tablename == "bogonsv6")) {
+					$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
+					echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
+				}
+				else
+					echo "<tr><td>" . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("Delete ") . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table?");
 ?>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</form>
-	</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
+
+<script>
+events.push(function(){
+	$('#type').on('change', function(){
+	$('#tblheader').html('<th class="warning">Fetching table data</th>')
+	method_change(jQuery('#type').val());
+	});
+});
+</script>
 
 <?php include("foot.inc"); ?>
 

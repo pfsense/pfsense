@@ -376,7 +376,7 @@ function maxmss_checked(obj) {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Auto-exclude LAN address"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if (!$pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
+							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if ($pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Enable bypass for LAN interface IP"); ?></strong>
 							<br />
 							<?=gettext("Exclude traffic from LAN subnet to LAN IP address from IPsec."); ?>

@@ -137,7 +137,7 @@ display_top_tabs($tab_array);
 						<td>
 							<table>
 								<tr>
-									<td bgcolor="$bgcolor">&nbsp;<?=$online?>
+									<td bgcolor="<?=$bgcolor?>">&nbsp;<?=$online?>
 									</td>
 								</tr>
 								<tr>

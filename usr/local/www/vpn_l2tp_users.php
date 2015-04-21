@@ -88,7 +88,7 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Configuration"), false, "vpn_l2tp.php");
 	$tab_array[1] = array(gettext("Users"), true, "vpn_l2tp_users.php");
-	display_top_tabs($tab_array, false, 'pills');
+	display_top_tabs($tab_array);
 ?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover">

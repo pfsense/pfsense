@@ -96,7 +96,7 @@ if (is_subsystem_dirty('ipsec'))
 	$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
 	$tab_array[2] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
 	$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-	display_top_tabs($tab_array, false, 'pills');
+	display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">

@@ -280,7 +280,7 @@ function enable_change(enable_over) {
 $tab_array = array();
 $tab_array[0] = array(gettext("Configuration"), true, "vpn_l2tp.php");
 $tab_array[1] = array(gettext("Users"), false, "vpn_l2tp_users.php");
-display_top_tabs($tab_array, false, 'pills');
+display_top_tabs($tab_array);
 ?>
 
 	<div class="panel panel-default">

@@ -902,7 +902,7 @@ function echo_array($array,$return_me=false){
  * RESULT
  *   null
  ******/
-function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'tabs') {
+function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') {
 	global $config;
 	global $g;
 	global $tab_array_indent;

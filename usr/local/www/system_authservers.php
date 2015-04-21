@@ -484,20 +484,22 @@ $group->add(new Form_Button(
 ));
 $section->add($group);
 
-$group = new Form_Group('Extended Query');
-$group->add(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'ldap_extended_enabled',
-	'Enable Extended Query',
-	null,
+	'Extended query',
+	'Enable extended query',
 	$pconfig['ldap_extended_enabled']
 ))->toggles('.toggle-extended');
 
+$group = new Form_Group('Query');
+$group->addClass('toggle-extended collapse');
 $group->add(new Form_Input(
 	'ldap_extended_query',
-	'Extended Query',
+	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)')->addClass('toggle-extended collapse');
+))->setHelp('Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)');
+
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(

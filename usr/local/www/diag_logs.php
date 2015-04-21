@@ -105,12 +105,12 @@ $section->addInput(new Form_Input(
 $form->addGlobal(new Form_Button(
 	'filtersubmit',
 	'Filter'
-))->removeClass('btn-primary')->addClass('btn-default');
+))->removeClass('btn-primary')->addClass('btn-default')->addClass('btn-sm');
 
 $form->addGlobal(new Form_Button(
 	'clear',
 	'Clear log'
-))->removeClass('btn-primary')->addClass('btn-danger');
+))->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
 
 $form->add($section);
 print $form;

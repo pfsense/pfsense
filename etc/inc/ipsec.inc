@@ -675,16 +675,16 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
 		break;
 
-	case "address";
+	case "address":
 		$thisid_data = $id_data;
 		break;
 
-	case "fqdn";
-	case "keyid tag";
-	case "user_fqdn";
+	case "fqdn":
+	case "keyid tag":
+	case "user_fqdn":
 		$thisid_data = $id_data;
 		break;
-	case "asn1dn";
+	case "asn1dn":
 		$thisid_data = $id_data;
 		if( $thisid_data && $thisid_data[0] != '"')
 			$thisid_data = "\"{$thisid_data}\"";

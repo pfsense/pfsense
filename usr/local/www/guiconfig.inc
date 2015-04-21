@@ -551,6 +551,54 @@ function clear_all_log_files() {
 	return;
 }
 
+// This version of dump_clog() does not output <td></td> or any other table elements. It can be renamed
+// and the dump_clog() removed once all of the diag_log*.php files have been converted to Bootstrap
+function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	global $g, $config;
+	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$logarr = "";
+	$grepline = "  ";
+	if(is_array($grepfor))
+		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+	if(is_array($grepinvert))
+		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
+	if (is_dir($logfile)) {
+		$logarr = array("File $logfile is a directory.");
+	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
+		$logarr = array("Log file started.");
+	} else {
+		if($config['system']['disablesyslogclog']) {
+			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+		} else {
+			if(isset($config['system']['usefifolog']))
+				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+			else
+				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+		}
+	}
+	echo "\n";
+	
+	foreach ($logarr as $logent) {
+			$logent = preg_split("/\s+/", $logent, 6);
+
+			if ($withorig) {
+					if(isset($config['system']['usefifolog'])) {
+						$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
+						$entry_text = htmlspecialchars($logent[5]);
+					} else {
+						$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+						$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
+						$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
+					}
+					echo "{$entry_date_time}";
+					echo " " . "{$entry_text}"  . "\n";
+			} else {
+					echo htmlspecialchars($logent[5]) . "\n";
+			}
+
+	}
+}
+
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";

@@ -162,39 +162,41 @@ print $form;
 
 	<div class="panel-body">
 		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
-		<table class="table">
-			<thead>
-				<tr>
-					<th><?=gettext("Interface")?></th>
-					<th><?=gettext("MAC address")?></th>
-					<th><?=gettext("Description")?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($a_wol as $i => $wolent): ?>
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
 					<tr>
-						<td>
-							<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
-						</td>
-						<td>
-							<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
-						</td>
-						<td>
-							<?=htmlspecialchars($wolent['descr']);?>
-						</td>
-						<td>
-							<a class="btn btn-xs btn-primary" href="services_wol_edit.php?id=<?=$i?>">
-								edit
-							</a>
-							<a class="btn btn-xs btn-danger" href="services_wol.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?")?>')">
-								delete
-							</a>
-						</td>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("MAC address")?></th>
+						<th><?=gettext("Description")?></th>
+						<th></th>
 					</tr>
-				<?php endforeach?>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<?php foreach ($a_wol as $i => $wolent): ?>
+						<tr>
+							<td>
+								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
+							</td>
+							<td>
+								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
+							</td>
+							<td>
+								<?=htmlspecialchars($wolent['descr']);?>
+							</td>
+							<td>
+								<a class="btn btn-xs btn-primary" href="services_wol_edit.php?id=<?=$i?>">
+									edit
+								</a>
+								<a class="btn btn-xs btn-danger" href="services_wol.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?")?>')">
+									delete
+								</a>
+							</td>
+						</tr>
+					<?php endforeach?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">

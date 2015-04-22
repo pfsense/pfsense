@@ -43,15 +43,16 @@ $(function() {
 	var allowUserGroupDuplication = function()
 	{
 		var groups = $('div.form-group.user-duplication');
-		var plus = $('<a><i class="icon icon-plus"></i></a>');
-		var minus = $('<a><i class="icon icon-minus"></i></a>')
+		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
+		var plus = $('<a class="btn btn-xs btn-success">Duplicate</a>');
+		var minus = $('<a class="btn btn-xs btn-danger">Delete</a>')
 
 		minus.on('click', function(){
-			$(this).parent('div.form-group').remove();
+			$(this).parents('div.form-group').remove();
 		});
 
 		plus.on('click', function(){
-			var group = $(this).parent('div.form-group');
+			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
 			clone.find('*').removeAttr('value');
@@ -59,10 +60,11 @@ $(function() {
 		});
 
 		groups.each(function(idx, group){
-			minus.clone(true).appendTo(group);
+			var controlsClone = controlsContainer.clone(true).appendTo(group);
+			minus.clone(true).appendTo(controlsClone);
 
 			if (group == group.parentNode.lastElementChild)
-				plus.clone(true).appendTo(group);
+				plus.clone(true).appendTo(controlsClone);
 		});
 	};
 

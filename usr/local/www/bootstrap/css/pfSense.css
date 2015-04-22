@@ -102,6 +102,10 @@ form .btn + .btn {
 	border-left: 0;
 }
 
+.user-duplication .controls {
+	margin-top: 10px;
+}
+
 /** Page footer */
 .footer {
 	position: absolute;

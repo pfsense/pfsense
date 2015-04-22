@@ -53,15 +53,15 @@ function upload_crash_report($files) {
 		$post["file{$counter}"] = "@{$file}";
 		$counter++;
 	}
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_VERBOSE, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
-    $response = curl_exec($ch);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
+	$response = curl_exec($ch);
 	return $response;
 }
 
@@ -101,8 +101,10 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		if (!is_dir("/var/crash"))
 			mkdir("/var/crash", 0750, true);
 		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
-		if(file_exists("/tmp/PHP_errors.log"))
+		if(file_exists("/tmp/PHP_errors.log")) {
 			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
+		}
+		exec("find /var/crash -type l -exec rm {} +");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<br/>";

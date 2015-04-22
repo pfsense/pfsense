@@ -163,7 +163,7 @@ print $form;
 	<div class="panel-body">
 		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
 		<div class="table-responsive">
-			<table class="table">
+			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
 						<th><?=gettext("Interface")?></th>

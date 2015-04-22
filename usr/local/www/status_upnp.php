@@ -102,16 +102,16 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
           <td class="listlr">
 		<?php print $rdr_port;?>
           </td>
-          <td class="listlr">
+          <td class="listr">
 		<?php print $rdr_proto;?>
           </td>
-          <td class="listlr">
+          <td class="listr">
 		<?php print $rdr_ip;?>
           </td>
-          <td class="listlr">
+          <td class="listr">
 		<?php print $rdr_iport;?>
           </td>
-          <td class="listlr">
+          <td class="listr">
 		<?php print $rdr_label;?>
           </td>
         </tr>

@@ -121,10 +121,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext('Save')
-));
+$form = new Form;
 
 if (isset($id) && $a_wol[$id]) {
 	$form->addGlobal(new Form_Input(
@@ -135,28 +132,28 @@ if (isset($id) && $a_wol[$id]) {
 	));
 }
 
-$section = new Form_Section(gettext("Edit WOL entry"));
+$section = new Form_Section('Edit WOL entry');
 
 // How do we incorporate: if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""
 $section->addInput(new Form_Select(
 	'interface',
-	gettext("Interface"),
+	'Interface',
 	$pconfig['interface'],
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface this host is connected to.');
 
 $section->addInput(new Form_Input(
 	'mac',
-	gettext("MAC address"),
+	'MAC address',
 	'text',
-	htmlspecialchars($pconfig['mac'])
+	$pconfig['mac']
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
 
 $section->addInput(new Form_Input(
 	'descr',
-	gettext("Description"),
+	'Description',
 	'text',
-	htmlspecialchars($pconfig['descr'])
+	$pconfig['descr']
 ))->setHelp(gettext('You may enter a description here for your reference (not parsed).'));
 
 

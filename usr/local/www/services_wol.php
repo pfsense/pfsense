@@ -117,10 +117,9 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"),gettext("Wake on LAN"));
 include("head.inc");
 
-$description = gettext("This service can be used to wake up (power on) computers by sending special") . '\'' . gettext("Magic Packets") . '\'' . gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");
 ?>
 
-<p><?=$description?></p>
+<p><?=gettext("This service can be used to wake up (power on) computers by sending special") . '\'' . gettext("Magic Packets") . '\'' . gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ")?></p>
 
 <?php
 
@@ -132,23 +131,23 @@ if ($savemsg)
 
 $form = new Form(new Form_Button(
 	'Submit',
-	gettext('Send')
+	'Send'
 ));
 
-$section = new Form_Section(gettext("Wake on LAN"));
+$section = new Form_Section('Wake on LAN');
 
-// How do we incorporate: if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""
 $section->addInput(new Form_Select(
 	'interface',
-	gettext("Interface"),
-	$if,
+	'Interface',
+	(!link_interface_to_bridge($if) ? $if : null),
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface the host to be woken up is connected to.');
 
 $section->addInput(new Form_Input(
 	'mac',
-	gettext("MAC address"),
-	htmlspecialchars($mac)
+	'MAC address',
+	'text',
+	$mac
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
 
 
@@ -173,7 +172,7 @@ print $form;
 				</tr>
 			</thead>
 			<tbody>
-				<?php $i = 0; foreach ($a_wol as $wolent): ?>
+				<?php foreach ($a_wol as $i => $wolent): ?>
 					<tr>
 						<td>
 							<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
@@ -193,7 +192,7 @@ print $form;
 							</a>
 						</td>
 					</tr>
-				<?php $i++; endforeach?>
+				<?php endforeach?>
 			</tbody>
 		</table>
 	</div>

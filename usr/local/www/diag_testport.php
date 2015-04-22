@@ -56,17 +56,6 @@ define('NC_TIMEOUT', 10);
 $do_testport = false;
 $retval = 1;
 
-function create_sourceaddresslist() {
-	$list = array('any' => 'Any');
-
-	$sourceips = get_possible_traffic_source_addresses(true);
-
-	foreach ($sourceips as $sipvalue => $sipname)
-		$list[$sipname[value]] = $sipname[name];
-
-	return($list);
-}
-
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 
@@ -204,8 +193,8 @@ if ($input_errors)
 else {
 	// New page
 	if(empty($result) && $retval != 0 && !$showtext) {	    
-	    print('<div class="alert alert-warning" role="alert">' . 'This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
-	          ' This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.' . '</div>');
+	    print('<div class="alert alert-warning" role="alert">This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
+	          ' This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.</div>');
 	}
 
 	// Good host & port
@@ -213,7 +202,7 @@ else {
 		if(!$showtext)
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful").'</div>');
 		else
-			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from teh host will be shown below the form.' . '</div>');
+			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from teh host will be shown below the form.</div>');
 	}
 
 	// netcat exit value != 0
@@ -228,7 +217,7 @@ require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
-	gettext('Test')
+	'Test'
 ));
 
 $section = new Form_Section('Test Port');
@@ -237,7 +226,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'Hostname',
 	'text',
-	htmlspecialchars($host),
+	$host,
 	['placeholder' => 'Hostname to look up.']
 ));
 
@@ -245,7 +234,7 @@ $section->addInput(new Form_Input(
 	'port',
 	'Port',
 	'text',
-	htmlspecialchars($port),
+	$port,
 	['placeholder' => 'Port to test.']
 ));
 
@@ -253,40 +242,44 @@ $section->addInput(new Form_Input(
 	'srcport',
 	'Source Port',
 	'text',
-	htmlspecialchars($srcport),
+	$srcport,
 	['placeholder' => 'Typically left blank.']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'showtext',
-	'Show Remote Text',
-	'',
+	'Remote text',
+	'Show remote text',
 	$showtext
-))->setHelp(gettext("Shows the text given by the server when connecting to the port. If checked it will take 10+ seconds to display in a panel below this form."));
+))->setHelp("Shows the text given by the server when connecting to the port. If checked it will take 10+ seconds to display in a panel below this form.");
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
-	$pconfig['source'],
-	create_sourceaddresslist()
+	$sourceip,
+	array_merge(array('' => 'Any'), get_possible_traffic_source_addresses(true))
 ))->setHelp('Select source address for the trace');
 
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$pconfig['protocol'],
+	$ipprotocol,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp(gettext("If you force IPv4 or IPv6 and use a hostname that does not contain a result using that protocol, it will result in an error." .
-					" For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work."));
+))->setHelp("If you force IPv4 or IPv6 and use a hostname that does not contain a result using that protocol, it will result in an error." .
+					" For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work.");
 
 $form->add($section);
 print $form;
 
-if($ncoutput && !empty($result) && $showtext && $retval == 0)
-	{
-	print("<div class=\"panel panel-default\">" . "<div class=\"panel-heading\">Received Remote Text</div>" . "<div class=\"panel-body\">");
-	print(nl2br($ncoutput));
-	print("</dev></div>");
-	}
+if($ncoutput && !empty($result) && $showtext && $retval == 0): ?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">Received Remote Text</h2>
+		</div>
+		<div class="panel-body">
+			<pre><?= $ncoutput ?></pre>
+		</div>
+	</div>
+<?php endif;
 
-include("foot.inc"); ?>
+include("foot.inc");

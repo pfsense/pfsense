@@ -206,12 +206,12 @@ if($bogons || ($count > 0)) {
 		$section2->addInput(new Form_Button(
 			'Download',
 			'Download'
-		))->setHelp(gettext('Download the latest bogon data'))->removeClass('btn -primary')->addClass('btn-warning btn-sm');
+		))->setHelp('Download the latest bogon data')->removeClass('btn -primary')->addClass('btn-warning btn-sm');
 	} else if($count > 0) {
 		$section2->addInput(new Form_Button(
 			'deleteall',
 			'Clear Table'
-		))->setHelp(gettext('Clear all of the entries in this table'))->removeClass('btn-primary')->addClass('btn-danger');
+		))->setHelp('Clear all of the entries in this table')->removeClass('btn-primary')->addClass('btn-danger');
 	}
 
 	$form2->add($section2);

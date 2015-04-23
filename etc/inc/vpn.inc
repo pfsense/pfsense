@@ -1100,7 +1100,7 @@ EOD;
 					$tempsubnets = array();
 					foreach ($leftsubnet_spec as $leftsubnet)
 						$tempsubnets[$leftsubnet] = $leftsubnet;
-					$ipsecfin .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}

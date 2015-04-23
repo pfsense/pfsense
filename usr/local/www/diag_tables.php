@@ -49,11 +49,10 @@ require_once("guiconfig.inc");
 
 // Set default table
 $tablename = "sshlockout";
+$bogons = false;
 
 if($_REQUEST['type'])
 	$tablename = $_REQUEST['type'];
-
-print("Tablename is: " . $tablename . "<br>");
 
 if($_REQUEST['delete']) {
 	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
@@ -63,7 +62,7 @@ if($_REQUEST['delete']) {
 	exit;
 }
 
-if($_REQUEST['deleteall']) {
+if($_POST['deleteall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if(is_array($entries)) {
 		foreach($entries as $entryA) {
@@ -73,21 +72,25 @@ if($_REQUEST['deleteall']) {
 	}
 }
 
-if((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download'])) {
-	mwexec_bg("/etc/rc.update_bogons.sh now");
-	$maxtimetowait = 0;
-	$loading = true;
-	while($loading == true) {
-		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-		if($isrunning == "")
-			$loading = false;
-		$maxtimetowait++;
-		if($maxtimetowait > 89)
-			$loading = false;
-		sleep(1);
+if(($tablename == "bogons") || ($tablename == "bogonsv6")) {
+	$bogons = true;
+
+	if($_POST['Download']) {
+		mwexec_bg("/etc/rc.update_bogons.sh now");
+		$maxtimetowait = 0;
+		$loading = true;
+		while($loading == true) {
+			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
+			if($isrunning == "")
+				$loading = false;
+			$maxtimetowait++;
+			if($maxtimetowait > 89)
+				$loading = false;
+			sleep(1);
+		}
+		if($maxtimetowait < 90)
+			$savemsg = gettext("The bogons database has been updated.");
 	}
-	if($maxtimetowait < 90)
-		$savemsg = gettext("The bogons database has been updated.");
 }
 
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
@@ -106,6 +109,7 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	'yes'
 ));
+
 $section = new Form_Section('Table to display');
 
 $section->addInput(new Form_Select(
@@ -118,7 +122,6 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 ?>
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -141,53 +144,80 @@ print $form;
 </script>
 
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed">
 		<thead>
 		   <tr id="tblheader">
-			  <th class="default">
+			  <th>
 				  <?=gettext("IP Address")?>
 			  </th>
 		   </tr>
 		</thead>
-<?php
-		$count = 0; foreach($entries as $entryA):
-		$entry = trim($entryA);
-?>
 		<tbody>
+<?php
+
+
+		$count = 0;
+		foreach($entries as $entryA):
+			$entry = trim($entryA);
+?>
 			<tr id="<?=$entry?>">
 				<td>
 					<?=$entry; ?>
 				</td>
 				<td>
-					<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
-					<a class="btn btn-xs btn-default" onclick="del_entry('<?=htmlspecialchars($entry)?>');">Remove
-					</a>
+					<?php if (!$bogons) { ?>
+					<a class="btn btn-xs btn-default" onclick="del_entry('<?=htmlspecialchars($entry)?>');">Remove</a>
 					<?php } ?>
 				</td>
 			</tr>
-
 <?php
-			$count++; endforeach;
-
-			if($count == 0)
-				if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
-					echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
-				else
-					echo "<tr><td>" . gettext("No entries exist in this table.");
-
-			if($count > 0)
-				if( ($tablename == "bogons") || ($tablename == "bogonsv6")) {
-					$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
-					echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
-				}
-				else
-					echo "<tr><td>" . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("Delete ") . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table?");
+			$count++;
+		endforeach;
 ?>
-				</td>
-			</tr>
 		</tbody>
 	</table>
 </div>
+<?php
+		if($count == 0) {
+?>
+		<div class="alert alert-warning" role="alert">No entries exist in this table</div>
+<?php	} 
+
+if($bogons || ($count > 0)) {
+	$form2 = new Form(false);
+
+	$form2->addGlobal(new Form_Input(
+		'cleartables',
+		null,
+		'hidden',
+		$tablename
+	));
+
+	$section2 = new Form_Section('Table Data');
+
+	if($bogons) {
+		$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
+
+		$section2->addInput(new Form_StaticText(
+			'Last update',
+			$last_updated
+		));
+
+		$section2->addInput(new Form_Button(
+			'Download',
+			'Download'
+		))->setHelp(gettext('Download the latest bogon data'))->removeClass('btn -primary')->addClass('btn-warning btn-sm');
+	} else if($count > 0) {
+		$section2->addInput(new Form_Button(
+			'deleteall',
+			'Clear Table'
+		))->setHelp(gettext('Clear all of the entries in this table'))->removeClass('btn-primary')->addClass('btn-danger');
+	}
+
+	$form2->add($section2);
+	print $form2;
+}
+?>
 
 <script>
 events.push(function(){

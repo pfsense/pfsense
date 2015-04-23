@@ -42,6 +42,13 @@
 
 require("guiconfig.inc");
 
+define('COLOR', true);
+define('LIGHTGREEN', '#90EE90');
+define('LIGHTCORAL', '#F08080');
+define('KHAKI',		 '#F0E68C');
+define('LIGHTGRAY',	 '#D3D3D3');
+define('WHITE',		 '#FFFFFF');
+
 $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);
@@ -74,13 +81,13 @@ display_top_tabs($tab_array);
 <?php	foreach ($a_gateways as $gname => $gateway) {
 ?>
 		<tr>
-			<td class="listlr">
+			<td>
 				<?=$gateway['name'];?>
 			</td>
-			<td class="listr" align="center" >
+			<td>
 				<?php echo lookup_gateway_ip_by_name($gname);?>
 			</td>
-			<td class="listr" align="center" >
+			<td>
 <?php			if ($gateways_status[$gname])
 					echo $gateways_status[$gname]['monitorip'];
 				else
@@ -104,58 +111,46 @@ display_top_tabs($tab_array);
 				$counter++;
 ?>
 			</td>
-			<td>
-				<table>
 <?php
-					if ($gateways_status[$gname]) {
-						$status = $gateways_status[$gname];
-						if (stristr($status['status'], "force_down")) {
-							$online = gettext("Offline (forced)");
-							$bgcolor = "#F08080";  // lightcoral
-						} elseif (stristr($status['status'], "down")) {
-							$online = gettext("Offline");
-							$bgcolor = "#F08080";  // lightcoral
-						} elseif (stristr($status['status'], "loss")) {
-							$online = gettext("Warning, Packetloss").': '.$status['loss'];
-							$bgcolor = "#F0E68C";  // khaki
-						} elseif (stristr($status['status'], "delay")) {
-							$online = gettext("Warning, Latency").': '.$status['delay'];
-							$bgcolor = "#F0E68C";  // khaki
-						} elseif ($status['status'] == "none") {
-							$online = gettext("Online");
-							$bgcolor = "#90EE90";  // lightgreen
-						}
-					} else if (isset($gateway['monitor_disable'])) {
-							$online = gettext("Online");
-							$bgcolor = "#90EE90";  // lightgreen
-					} else {
-						$online = gettext("Pending");
-						$bgcolor = "#D3D3D3";  // lightgray
-					}
+			if ($gateways_status[$gname]) {
+				$status = $gateways_status[$gname];
+				if (stristr($status['status'], "force_down")) {
+					$online = gettext("Offline (forced)");
+					$bgcolor = LIGHTCORAL;
+				} elseif (stristr($status['status'], "down")) {
+					$online = gettext("Offline");
+					$bgcolor = LIGHTCORAL;
+				} elseif (stristr($status['status'], "loss")) {
+					$online = gettext("Warning, Packetloss").': '.$status['loss'];
+					$bgcolor = KHAKI;
+				} elseif (stristr($status['status'], "delay")) {
+					$online = gettext("Warning, Latency").': '.$status['delay'];
+					$bgcolor = KHAKI;
+				} elseif ($status['status'] == "none") {
+					$online = gettext("Online");
+					$bgcolor = LIGHTGREEN;
+				}
+			} else if (isset($gateway['monitor_disable'])) {
+					$online = gettext("Online");
+					$bgcolor = LIGHTGREEN;
+			} else {
+				$online = gettext("Pending");
+				$bgcolor = LIGHTGRAY;
+			}
+
+			$lastchange = $gateways_status[$gname]['lastcheck'];
+
+			if(!COLOR)
+			   $bgcolor = WHITE;
 ?>
-					<tr>
-						<td>
-							<table>
-								<tr>
-									<td bgcolor="<?=$bgcolor?>">&nbsp;<?=$online?>
-									</td>
-								</tr>
-								<tr>
-									<td>
-<?php
-										$lastchange = $gateways_status[$gname]['lastcheck'];
-										if(!empty($lastchange)) { ?>
-											<?=gettext("Last check:")?><br /><?=$lastchange?>
-										<?php
-										}
-?>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
+
+			<td bgcolor="<?=$bgcolor?>">
+				<strong><?=$online?></strong> <?php
+				if(!empty($lastchange)) { ?>
+					<br /><i>Last checked <?=$lastchange?></i>
+<?php			} ?>
 			</td>
+
 			<td>
 				<?=$gateway['descr']; ?>
 			</td>
@@ -163,6 +158,5 @@ display_top_tabs($tab_array);
 <?php } ?>	<!-- End-of-foreach -->
 	</table>
 </div>
-
 
 <?php include("foot.inc"); ?>

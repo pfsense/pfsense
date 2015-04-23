@@ -134,11 +134,10 @@ if (isset($id) && $a_wol[$id]) {
 
 $section = new Form_Section('Edit WOL entry');
 
-// How do we incorporate: if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""
 $section->addInput(new Form_Select(
 	'interface',
 	'Interface',
-	$pconfig['interface'],
+	(link_interface_to_bridge($pconfig['interface']) ? null : $pconfig['interface']),
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface this host is connected to.');
 

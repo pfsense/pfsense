@@ -139,7 +139,7 @@ $section = new Form_Section('Wake on LAN');
 $section->addInput(new Form_Select(
 	'interface',
 	'Interface',
-	(!link_interface_to_bridge($if) ? $if : null),
+	(link_interface_to_bridge($if) ? null : $if),
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface the host to be woken up is connected to.');
 

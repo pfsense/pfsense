@@ -490,7 +490,7 @@ if (isset($_POST['submit'])) {
 	}
 }
 
-if (isset($_POST['submit']) || isset($_POST['apply'])) {
+if ((isset($_POST['submit']) || isset($_POST['apply'])) && (!$input_errors)) {
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;

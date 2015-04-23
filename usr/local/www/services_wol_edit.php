@@ -120,7 +120,6 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-
 $form = new Form;
 
 if (isset($id) && $a_wol[$id]) {
@@ -154,7 +153,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ))->setHelp(gettext('You may enter a description here for your reference (not parsed).'));
-
 
 $form->addGlobal(new Form_Button(
 	'cancel',

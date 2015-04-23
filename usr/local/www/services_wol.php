@@ -130,7 +130,7 @@ if ($savemsg)
 	print_info_box($savemsg);
 
 $form = new Form(new Form_Button(
-	'Submit',
+	'submit',
 	'Send'
 ));
 
@@ -149,7 +149,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$mac
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
-
 
 $form->add($section);
 print $form;
@@ -188,7 +187,7 @@ print $form;
 								<a class="btn btn-xs btn-primary" href="services_wol_edit.php?id=<?=$i?>">
 									edit
 								</a>
-								<a class="btn btn-xs btn-danger" href="services_wol.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?")?>')">
+								<a class="btn btn-xs btn-danger" href="services_wol.php?act=del&amp;id=<?=$i?>">
 									delete
 								</a>
 							</td>

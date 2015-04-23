@@ -2,6 +2,7 @@
 /*
 	diag_testport.php
 	Copyright (C) 2013 Jim P (jimp@pfsense.org)
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	All rights reserved.
 
@@ -192,7 +193,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 else {
 	// New page
-	if(empty($result) && $retval != 0 && !$showtext) {	    
+	if(empty($result) && $retval != 0 && !$showtext) {
 	    print('<div class="alert alert-warning" role="alert">This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
 	          ' This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.</div>');
 	}

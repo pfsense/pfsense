@@ -67,95 +67,99 @@ $tab_array[] = array(gettext("Gateway Groups"), false, "status_gateway_groups.ph
 display_top_tabs($tab_array);
 ?>
 
-<div id="mainarea" class="table-responsive">
+<div class="table-responsive">
 	<table class="table table-hover table-compact table-striped">
-		<tr>
-			<th class="col-md-1"><?=gettext("Name"); ?></th>
-			<th class="col-md-1"><?=gettext("Gateway"); ?></th>
-			<th class="col-md-1"><?=gettext("Monitor"); ?></th>
-			<th class="col-md-1"><?=gettext("RTT"); ?></th>
-			<th class="col-md-1"><?=gettext("Loss"); ?></th>
-			<th class="col-md-3"><?=gettext("Status"); ?></th>
-			<th class="col-md-3"><?=gettext("Description"); ?></th>
-		</tr>
-<?php	foreach ($a_gateways as $gname => $gateway) {
+		<thead>
+			<tr>
+				<th class="col-md-1"><?=gettext("Name"); ?></th>
+				<th class="col-md-1"><?=gettext("Gateway"); ?></th>
+				<th class="col-md-1"><?=gettext("Monitor"); ?></th>
+				<th class="col-md-1"><?=gettext("RTT"); ?></th>
+				<th class="col-md-1"><?=gettext("Loss"); ?></th>
+				<th class="col-md-3"><?=gettext("Status"); ?></th>
+				<th class="col-md-3"><?=gettext("Description"); ?></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php		foreach ($a_gateways as $gname => $gateway) {
 ?>
-		<tr>
-			<td>
-				<?=$gateway['name'];?>
-			</td>
-			<td>
-				<?php echo lookup_gateway_ip_by_name($gname);?>
-			</td>
-			<td>
-<?php			if ($gateways_status[$gname])
-					echo $gateways_status[$gname]['monitorip'];
-				else
-					echo $gateway['monitorip'];
+			<tr>
+				<td>
+					<?=$gateway['name'];?>
+				</td>
+				<td>
+					<?php echo lookup_gateway_ip_by_name($gname);?>
+				</td>
+				<td>
+<?php				if ($gateways_status[$gname])
+						echo $gateways_status[$gname]['monitorip'];
+					else
+						echo $gateway['monitorip'];
 ?>
-			</td>
-			<td>
-<?php		if ($gateways_status[$gname])
-				echo $gateways_status[$gname]['delay'];
-			else
-				echo gettext("Pending");
-		?>
-			<?php $counter++; ?>
-			</td>
-			<td>
+				</td>
+				<td>
 <?php			if ($gateways_status[$gname])
-					echo $gateways_status[$gname]['loss'];
+					echo $gateways_status[$gname]['delay'];
 				else
 					echo gettext("Pending");
-
-				$counter++;
 ?>
-			</td>
+				<?php $counter++; ?>
+				</td>
+				<td>
+<?php				if ($gateways_status[$gname])
+						echo $gateways_status[$gname]['loss'];
+					else
+						echo gettext("Pending");
+
+					$counter++;
+?>
+				</td>
 <?php
-			if ($gateways_status[$gname]) {
-				$status = $gateways_status[$gname];
-				if (stristr($status['status'], "force_down")) {
-					$online = gettext("Offline (forced)");
-					$bgcolor = LIGHTCORAL;
-				} elseif (stristr($status['status'], "down")) {
-					$online = gettext("Offline");
-					$bgcolor = LIGHTCORAL;
-				} elseif (stristr($status['status'], "loss")) {
-					$online = gettext("Warning, Packetloss").': '.$status['loss'];
-					$bgcolor = KHAKI;
-				} elseif (stristr($status['status'], "delay")) {
-					$online = gettext("Warning, Latency").': '.$status['delay'];
-					$bgcolor = KHAKI;
-				} elseif ($status['status'] == "none") {
-					$online = gettext("Online");
-					$bgcolor = LIGHTGREEN;
+				if ($gateways_status[$gname]) {
+					$status = $gateways_status[$gname];
+					if (stristr($status['status'], "force_down")) {
+						$online = gettext("Offline (forced)");
+						$bgcolor = LIGHTCORAL;
+					} elseif (stristr($status['status'], "down")) {
+						$online = gettext("Offline");
+						$bgcolor = LIGHTCORAL;
+					} elseif (stristr($status['status'], "loss")) {
+						$online = gettext("Warning, Packetloss").': '.$status['loss'];
+						$bgcolor = KHAKI;
+					} elseif (stristr($status['status'], "delay")) {
+						$online = gettext("Warning, Latency").': '.$status['delay'];
+						$bgcolor = KHAKI;
+					} elseif ($status['status'] == "none") {
+						$online = gettext("Online");
+						$bgcolor = LIGHTGREEN;
+					}
+				} else if (isset($gateway['monitor_disable'])) {
+						$online = gettext("Online");
+						$bgcolor = LIGHTGREEN;
+				} else {
+					$online = gettext("Pending");
+					$bgcolor = LIGHTGRAY;
 				}
-			} else if (isset($gateway['monitor_disable'])) {
-					$online = gettext("Online");
-					$bgcolor = LIGHTGREEN;
-			} else {
-				$online = gettext("Pending");
-				$bgcolor = LIGHTGRAY;
-			}
 
-			$lastchange = $gateways_status[$gname]['lastcheck'];
+				$lastchange = $gateways_status[$gname]['lastcheck'];
 
-			if(!COLOR)
-			   $bgcolor = WHITE;
+				if(!COLOR)
+				   $bgcolor = WHITE;
 ?>
 
-			<td bgcolor="<?=$bgcolor?>">
-				<strong><?=$online?></strong> <?php
-				if(!empty($lastchange)) { ?>
-					<br /><i>Last checked <?=$lastchange?></i>
-<?php			} ?>
-			</td>
+				<td bgcolor="<?=$bgcolor?>">
+					<strong><?=$online?></strong> <?php
+					if(!empty($lastchange)) { ?>
+						<br /><i>Last checked <?=$lastchange?></i>
+<?php				} ?>
+				</td>
 
-			<td>
-				<?=$gateway['descr']; ?>
-			</td>
-		</tr>
-<?php } ?>	<!-- End-of-foreach -->
+				<td>
+					<?=$gateway['descr']; ?>
+				</td>
+			</tr>
+<?php	} ?>	<!-- End-of-foreach -->
+		</tbody>
 	</table>
 </div>
 

@@ -1179,6 +1179,11 @@ EOD;
 							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						}
 						$ipsecfin .= $ipsecconnect;
+						/*
+						 * This is for making strongswan consider the various similar
+						 * connection profiles as different and forces it to create
+						 * separate IKE SAs for each subnet from P2
+						 */
 						$ipsecfin .= "\tkeyingtries = {$keyingtries}\n";
 						$keyingtries++;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";

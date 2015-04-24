@@ -1226,11 +1226,10 @@ EOD;
 	if ($restart === true) {
 		mwexec("/usr/local/sbin/ipsec restart", false);
 	} else {
-		if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
-			/* Read secrets */
-			mwexec("/usr/local/sbin/ipsec rereadall", false);
+		if (isvalidpid("{$g['varrun_path']}/starter.charon.pid")) {
 			/* Update configuration changes */
-			mwexec("/usr/local/sbin/ipsec update", false);
+			/* Read secrets */
+			sigkillbypid("{$g['varrun_path']}/starter.charon.pid", 'USR1');
 		} else {
 			mwexec("/usr/local/sbin/ipsec start", false);
 		}

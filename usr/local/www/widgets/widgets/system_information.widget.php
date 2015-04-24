@@ -73,7 +73,7 @@ if($_REQUEST['getupdatestatus']) {
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 ?>
 <div class="alert alert-warning" role="alert">
-	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here</a> to view.</a>
+	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
 </div>
 <?php
  		} else

@@ -71,13 +71,13 @@ display_top_tabs($tab_array);
 	<table class="table table-hover table-compact table-striped">
 		<thead>
 			<tr>
-				<th class="col-md-1"><?=gettext("Name"); ?></th>
-				<th class="col-md-1"><?=gettext("Gateway"); ?></th>
-				<th class="col-md-1"><?=gettext("Monitor"); ?></th>
-				<th class="col-md-1"><?=gettext("RTT"); ?></th>
-				<th class="col-md-1"><?=gettext("Loss"); ?></th>
-				<th class="col-md-3"><?=gettext("Status"); ?></th>
-				<th class="col-md-3"><?=gettext("Description"); ?></th>
+				<th><?=gettext("Name"); ?></th>
+				<th><?=gettext("Gateway"); ?></th>
+				<th><?=gettext("Monitor"); ?></th>
+				<th><?=gettext("RTT"); ?></th>
+				<th><?=gettext("Loss"); ?></th>
+				<th><?=gettext("Status"); ?></th>
+				<th><?=gettext("Description"); ?></th>
 			</tr>
 		</thead>
 		<tbody>

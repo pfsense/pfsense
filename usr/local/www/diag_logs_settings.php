@@ -89,9 +89,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files();
 	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
-
-	print_r($_POST);
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -384,7 +381,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_StaticText(
 	'Reset Logs',
 	 new Form_Button('resetlogs', 'Reset Log Files', null)
-))->setHelp(gettext('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.'));
+))->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
 
 
 // Remote logging section ------------------------------------------------
@@ -527,7 +524,6 @@ enable_change(false);
 </script>
 
 <?php include("foot.inc"); ?>
-
 <script>
 //<![CDATA[
 setRemoteServers();

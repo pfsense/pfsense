@@ -100,17 +100,23 @@ class Form extends Form_Element
 	{
 		$element = parent::__toString();
 		$html = implode('', $this->_sections);
+		$buttons = '';
 
 		foreach ($this->_global as $global)
 		{
-			if (!$global instanceof Form_Button)
-				continue;
-
-			$global->setWidth(12 - $this->getLabelWidth());
-			$global->column->addClass('col-sm-offset-'. $this->_labelWidth);
+			if ($global instanceof Form_Button)
+				$buttons .= $global;
+			else
+				$html .= $global;
 		}
 
-		$html .= implode('', $this->_global);
+		if (!empty($buttons))
+		{
+			$group = new Form_Element;
+			$group->addClass('col-sm-offset-'. $this->_labelWidth, 'col-sm-'. (12 - $this->_labelWidth));
+
+			$html .= $group . $buttons .'</div>';
+		}
 
 		return <<<EOT
 	{$element}

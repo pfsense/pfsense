@@ -305,7 +305,7 @@ $section->addInput(new Form_Input(
 	'nentries',
 	'GUI Log Entries',
 	'text',
-	htmlspecialchars($pconfig['nentries']),
+	$pconfig['nentries'],
 	['placeholder' => '']
 ))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
 
@@ -313,7 +313,7 @@ $section->addInput(new Form_Input(
 	'logfilesize',
 	'Log file size (Bytes)',
 	'text',
-	htmlspecialchars($pconfig['logfilesize']),
+	$pconfig['logfilesize'],
 	['placeholder' => 'Bytes']
 ))->setHelp($logfilesizeHelp);
 
@@ -378,9 +378,16 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disablelocallogging']
 ));
 
+$resetlogsbtn = new Form_Button(
+    'resetlogs', 
+    'Reset Log Files'
+);
+
+$resetlogsbtn->removeClass("btn-primary")->addClass("btn-danger btn-xs");
+
 $section->addInput(new Form_StaticText(
 	'Reset Logs',
-	 new Form_Button('resetlogs', 'Reset Log Files', null)
+	 $resetlogsbtn
 ))->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
 
 
@@ -423,7 +430,7 @@ $section2->addInput(new Form_Input(
 	'remoteserver',
 	'Server 1',
 	'text',
-	htmlspecialchars($pconfig['remoteserver']),
+	$pconfig['remoteserver'],
 	['placeholder' => 'IP[:port]']
 ));
 
@@ -431,7 +438,7 @@ $section2->addInput(new Form_Input(
 	'remoteserver2',
 	'Server 2',
 	'text',
-	htmlspecialchars($pconfig['remoteserver2']),
+	$pconfig['remoteserver2'],
 	['placeholder' => 'IP[:port]']
 ));
 
@@ -439,7 +446,7 @@ $section2->addInput(new Form_Input(
 	'remoteserver3',
 	'Server 3',
 	'text',
-	htmlspecialchars($pconfig['remoteserver3']),
+	$pconfig['remoteserver3'],
 	['placeholder' => 'IP[:port]']
 ))->setHelp('IP addresses or IP:Port of remote syslog servers');
 
@@ -515,12 +522,6 @@ $form->add($section);
 $form->add($section2);
 print $form;
 ?>
-
-<!-- Setting the button to class btn-danger makes it red, but also causes
-a confirmation dialog to be automatically presented when the button is clicked -->
-<script>
-	document.getElementById("resetlogs").className = "btn btn-danger btn-xs";
-</script>
 
 <script type="text/javascript">
 //<![CDATA[

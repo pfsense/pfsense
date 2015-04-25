@@ -504,7 +504,12 @@ $section2->addInput(new Form_Checkbox(
 	'',
 	'Wireless events',
 	$pconfig['hostapd']
-))->setHelp('<br /><strong>Note:</strong><br />syslog sends UDP datagrams to port 514 on the specified remote syslog server, unless another port is specified. Be sure to set syslogd on the remote server to accept syslog messages frompfSense.');
+));
+
+$section2->addInput(new Form_StaticText(
+	'Note',
+	'syslog sends UDP datagrams to port 514 on the specified remote syslog server, unless another port is specified. Be sure to set syslogd on the remote server to accept syslog messages frompfSense.'
+));
 
 $form->add($section);
 $form->add($section2);

@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/kill	/usr/bin/tar
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -178,7 +178,6 @@ if ($_POST) {
 	if (!$input_errors) {
 		update_if_changed("hostname", $config['system']['hostname'], $_POST['hostname']);
 		update_if_changed("domain", $config['system']['domain'], $_POST['domain']);
-
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
@@ -388,7 +387,7 @@ $section->addInput(new Form_Select(
 	'timezone',
 	'Timezone',
 	$pconfig['timezone'],
-	$timezonelist
+	array_combine($timezonelist, $timezonelist)
 ))->setHelp('Select the location closest to you');
 $section->addInput(new Form_Input(
 	'timeservers',

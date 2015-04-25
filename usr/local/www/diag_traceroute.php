@@ -46,7 +46,7 @@ require("guiconfig.inc");
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
 include("head.inc");
-	
+
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
@@ -73,7 +73,7 @@ if ($_POST || $_REQUEST['host']) {
 	$reqdfields = explode(" ", "host ttl");
 	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
-    
+
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
 		$input_errors[] = sprintf(gettext("Maximum number of hops must be between 1 and %s"), MAX_TTL);
 	}
@@ -85,8 +85,8 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 
 	if (!$input_errors)
-        $host = $_REQUEST['host'];
-        
+		$host = $_REQUEST['host'];
+
 	$sourceip = $_REQUEST['sourceip'];
 	$do_traceroute = true;
 	$ttl = $_REQUEST['ttl'];
@@ -95,7 +95,7 @@ if ($_POST || $_REQUEST['host']) {
 
 } else {
 	$resolve = false;
-    $useicmp = false;
+	$useicmp = false;
 }
 
 if (!isset($do_traceroute)) {
@@ -106,7 +106,7 @@ if (!isset($do_traceroute)) {
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
@@ -180,17 +180,19 @@ if (!$input_errors && $do_traceroute) {
 		$srcip = "-s " . escapeshellarg($ifaddr);
 
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
-	print("<div class=\"panel panel-default\">" . "<div class=\"panel-heading\">Results</div>" . "<div class=\"panel-body\">");
-
-	if ($result = shell_exec($cmd))
-		{
-		//print("Command: " . $cmd . "<br />");
-		print(nl2br($result));
-		}
-	else
-		print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
-
-	print("</div></div>");
+?>
+	<div class="panel panel-default">
+		<div class="panel-heading">Results</div>
+		<div class="panel-body">
+<?php
+		if ($result = shell_exec($cmd))
+			print(nl2br($result));
+		else
+			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
+?>
+		</div>
+	</div>
+<?php
 }
 
 include("foot.inc");

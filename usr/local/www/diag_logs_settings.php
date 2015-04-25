@@ -322,14 +322,14 @@ $section->addInput(new Form_Checkbox(
 	'Log firewall default blocks',
 	'Log packets matched from the default block rules in the ruleset',
 	$pconfig['logdefaultblock']
-))->setHelp(gettext('Packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.'));
+))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
 	'Log packets matched from the default pass rules put in the ruleset',
 	$pconfig['logdefaultpass']
-))->setHelp(gettext('Packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected. '));
+))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected. ');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
@@ -350,7 +350,7 @@ $section->addInput(new Form_Checkbox(
 	'Web Server Log',
 	'Log errors from the web server process',
 	$pconfig['loglighttpd']
-))->setHelp(gettext('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log'));
+))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log');
 
 $section->addInput(new Form_Checkbox(
 	'rawfilter',
@@ -374,13 +374,13 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'disablelocallogging',
 	'Local Logging',
-	$g['platform'] == 'pfSense' ? gettext("Disable writing log files to the local disk") : gettext("Disable writing log files to the local RAM disk"),
+	$g['platform'] == 'pfSense' ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
 	$pconfig['disablelocallogging']
 ));
 
 $resetlogsbtn = new Form_Button(
-    'resetlogs', 
-    'Reset Log Files'
+	'resetlogs',
+	'Reset Log Files'
 );
 
 $resetlogsbtn->removeClass("btn-primary")->addClass("btn-danger btn-xs");
@@ -389,7 +389,6 @@ $section->addInput(new Form_StaticText(
 	'Reset Logs',
 	 $resetlogsbtn
 ))->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
-
 
 // Remote logging section ------------------------------------------------
 $section2 = new Form_Section('Remote Logging Options');
@@ -417,16 +416,23 @@ $section2->addInput(new Form_Select(
 	'IP Protocol',
 	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp(gettext("This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried."));
+))->setHelp('This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
 
 $section2->addInput(new Form_Checkbox(
 	'enable',
 	'Enable Remote Logging',
 	'Send log messages to remote syslog server',
 	$pconfig['enable']
-));
+))->toggles('.toggle-remote-servers');
 
-$section2->addInput(new Form_Input(
+// Group colapses/appears based on 'enable' checkbox above
+$group = new Form_Group('Remote log servers');
+$group->addClass('toggle-remote-servers', 'collapse');
+
+if ($pconfig['enable'])
+	$group->addClass('in');
+
+$group->add(new Form_Input(
 	'remoteserver',
 	'Server 1',
 	'text',
@@ -434,7 +440,7 @@ $section2->addInput(new Form_Input(
 	['placeholder' => 'IP[:port]']
 ));
 
-$section2->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'remoteserver2',
 	'Server 2',
 	'text',
@@ -442,20 +448,15 @@ $section2->addInput(new Form_Input(
 	['placeholder' => 'IP[:port]']
 ));
 
-$section2->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'remoteserver3',
 	'Server 3',
 	'text',
 	$pconfig['remoteserver3'],
 	['placeholder' => 'IP[:port]']
-))->setHelp('IP addresses or IP:Port of remote syslog servers');
-
-$section2->addInput(new Form_Checkbox(
-	'logall',
-	'Remote Syslog Contents',
-	'Everything!',
-	$pconfig['logall']
 ));
+
+$section2->add($group);
 
 $section2->addInput(new Form_Checkbox(
 	'system',
@@ -530,24 +531,3 @@ enable_change(false);
 </script>
 
 <?php include("foot.inc"); ?>
-<script>
-//<![CDATA[
-setRemoteServers();
-
-$("#enable").click( function(){
-	setRemoteServers();
-});
-
-function setRemoteServers() {
-	if(enable.checked == 1) {
-		$("#remoteserver" ).prop('disabled', false);
-		$("#remoteserver2").prop('disabled', false);
-		$("#remoteserver3").prop('disabled', false);
-	} else	{
-		$("#remoteserver" ).prop('disabled', true);
-		$("#remoteserver2").prop('disabled', true);
-		$("#remoteserver3").prop('disabled', true);
-	}
-}
-//]]>
-</script>

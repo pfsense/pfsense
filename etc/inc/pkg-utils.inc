@@ -919,25 +919,6 @@ function install_package_xml($pkg) {
 			$static_output .= gettext("done.") . "\n";
 			update_output_window($static_output);
 		}
-		/* integrated tab items */
-		if (is_array($pkg_config['tabs']['tab'])) {
-			$static_output .= gettext("Integrated Tab items... ");
-			update_output_window($static_output);
-			foreach ($pkg_config['tabs']['tab'] as $tab) {
-				if (is_array($config['installedpackages']['tab'])) {
-					foreach ($config['installedpackages']['tab'] as $atab) {
-						if ($atab['name'] == $tab['name']) {
-							continue 2;
-						}
-					}
-				} else {
-					$config['installedpackages']['tab'] = array();
-				}
-				$config['installedpackages']['tab'][] = $tab;
-			}
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
-		}
 		/* services */
 		if (is_array($pkg_config['service'])) {
 			$static_output .= gettext("Services... ");
@@ -1041,29 +1022,11 @@ function delete_package_xml($pkg) {
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
-	$tabs =& $config['installedpackages']['tab'];
 	$menus =& $config['installedpackages']['menu'];
 	$services = &$config['installedpackages']['service'];
 	$pkg_info =& $packages[$pkgid];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
-		/* remove tab items */
-		if (is_array($pkg_config['tabs'])) {
-			$static_output .= gettext("Tabs items... ");
-			update_output_window($static_output);
-			if (is_array($pkg_config['tabs']['tab']) && is_array($tabs)) {
-				foreach ($pkg_config['tabs']['tab'] as $tab) {
-					foreach ($tabs as $key => $insttab) {
-						if ($insttab['name'] == $tab['name']) {
-							unset($tabs[$key]);
-							break;
-						}
-					}
-				}
-			}
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
-		}
 		/* remove menu items */
 		if (is_array($pkg_config['menu'])) {
 			$static_output .= gettext("Menu items... ");

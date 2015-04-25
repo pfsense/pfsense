@@ -5425,11 +5425,10 @@ function get_interfaces_with_gateway() {
 	foreach ($config['interfaces'] as $ifdescr => $ifname) {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
-			case "ppp";
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
-			case "ppp";
+			case "ppp":
 				$ints[$ifdescr] = $ifdescr;
 				break;
 			default:
@@ -5454,7 +5453,7 @@ function interface_has_gateway($friendly) {
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
-			case "ppp";
+			case "ppp":
 				return true;
 			break;
 			default:

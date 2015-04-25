@@ -49,52 +49,6 @@ if(!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-/* This function will remove entries from dhcpd.leases that would otherwise
- * overlap with static DHCP reservations. If we don't clean these out,
- * then DHCP will print a warning in the logs about a duplicate lease
- */
-function dhcp_clean_leases() {
-	global $g, $config;
-	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
-	if (!file_exists($leasesfile))
-		return;
-	/* Build list of static MACs */
-	$staticmacs = array();
-	foreach($config['interfaces'] as $ifname => $ifarr)
-		if (is_array($config['dhcpd'][$ifname]['staticmap']))
-			foreach($config['dhcpd'][$ifname]['staticmap'] as $static)
-				$staticmacs[] = $static['mac'];
-	/* Read existing leases */
-	$leases_contents = explode("\n", file_get_contents($leasesfile));
-	$newleases_contents = array();
-	$i=0;
-	while ($i < count($leases_contents)) {
-		/* Find a lease definition */
-		if (substr($leases_contents[$i], 0, 6) == "lease ") {
-			$templease = array();
-			$thismac = "";
-			/* Read to the end of the lease declaration */
-			do {
-				if (substr($leases_contents[$i], 0, 20) == "  hardware ethernet ")
-					$thismac = substr($leases_contents[$i], 20, 17);
-				$templease[] = $leases_contents[$i];
-				$i++;
-			} while ($leases_contents[$i-1] != "}");
-			/* Check for a matching MAC address and if not present, keep it. */
-			if (! in_array($thismac, $staticmacs))
-				$newleases_contents = array_merge($newleases_contents, $templease);
-		} else {
-			/* It's a line we want to keep, copy it over. */
-			$newleases_contents[] = $leases_contents[$i];
-			$i++;
-		}
-	}
-	/* Write out the new leases file */
-	$fd = fopen($leasesfile, 'w');
-	fwrite($fd, implode("\n", $newleases_contents));
-	fclose($fd);
-}
-
 $if = $_GET['if'];
 if (!empty($_POST['if']))
 	$if = $_POST['if'];
@@ -540,9 +494,6 @@ if (isset($_POST['submit']) || isset($_POST['apply'])) {
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
-	/* Stop DHCP so we can cleanup leases */
-	killbyname("dhcpd");
-	dhcp_clean_leases();
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
 	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{

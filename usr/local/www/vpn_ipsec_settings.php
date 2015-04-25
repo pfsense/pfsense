@@ -46,6 +46,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
@@ -154,6 +155,12 @@ if ($_POST) {
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
+
+		if($_POST['makebeforebreak'] == "yes") {
+			$config['ipsec']['makebeforebreak'] = true;
+		} elseif (isset($config['ipsec']['makebeforebreak'])) {
+			unset($config['ipsec']['makebeforebreak']);
 		}
 
 		if($_POST['noshuntlaninterfaces'] == "yes") {
@@ -356,9 +363,20 @@ function maxmss_checked(obj) {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Make before Break"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="makebeforebreak" type="checkbox" id="makebeforebreak" value="yes" <?php if ($pconfig['makebeforebreak'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Initiate IKEv2 reauthentication with a make-before-break"); ?></strong>
+							<br />
+							<?=gettext("instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication " .
+								"by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps " .
+								"during reauthentication, but requires support for overlapping SAs by the peer.");?>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Auto-exclude LAN address"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if (!$pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
+							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if ($pconfig['noshuntlaninterfaces'] == true) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Enable bypass for LAN interface IP"); ?></strong>
 							<br />
 							<?=gettext("Exclude traffic from LAN subnet to LAN IP address from IPsec."); ?>

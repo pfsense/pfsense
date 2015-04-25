@@ -9,4 +9,3 @@ upload.sh
 .settings/
 # PhpStorm
 .idea
-*.php-e

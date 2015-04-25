@@ -181,7 +181,7 @@ if ($act != "edit" ): ?>
 					<td>
 					<a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"><?=gettext('Edit'); ?></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"><?=gettext('Delete/Reset'); ?></a>
+						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?"); ?>')"><?=gettext('Delete/Reset'); ?></a>
 						<?php endif; ?>
 					</td>
 				</tr>

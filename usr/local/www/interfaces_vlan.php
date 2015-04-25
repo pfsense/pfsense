@@ -117,7 +117,7 @@ display_top_tabs($tab_array);
 		<td><?=htmlspecialchars($vlan['descr']);?></td>
 		<td>
 			<a class="btn btn-primary btn-sm" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-			<a class="btn btn-danger btn-sm" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td>
+			<a class="btn btn-danger btn-sm" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this VLAN?")?>')"><?=gettext('Delete')?></a></td>
 		</td>
 	</tr>
 	<?php

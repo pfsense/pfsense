@@ -111,7 +111,7 @@ include("head.inc");
 				</td>
 				<td>
 					<a class="btn btn-xs btn-primary" href="vpn_l2tp_users_edit.php?id=<?=$i?>"><?= gettext('edit') ?></a>
-			        <a class="btn btn-xs btn-danger" href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>"><?=gettext("delete")?></a>
+			        <a class="btn btn-xs btn-danger" href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?")?>')"><?=gettext("delete")?></a>
 				</td>
 			</tr>
 <?php $i++; endforeach?>

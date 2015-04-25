@@ -227,6 +227,8 @@ include("head.inc");
 $nrules = 0;
 
 ?>
+<form action="firewall_rules.php" method="post">
+
 <?php if ($savemsg) print_info_box($savemsg);?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true); ?>
@@ -654,6 +656,7 @@ display_top_tabs($tab_array);
 	<a href="#" role="button" class="btn btn-danger">
 		<?=gettext("delete selected");?>
 	</a>
+	<!-- onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />-->
 <?php endif;?>
 </nav>
 
@@ -683,4 +686,5 @@ display_top_tabs($tab_array);
 <?php endif;?>
 </p>
 	<input type="hidden" name="if" value="<?=htmlspecialchars($if);?>" />
+</form>
 <?php include("foot.inc");?>

@@ -1,7 +1,7 @@
 <?php
 /*
 	diag_authentication.php
-	part of the pfSense project (https://www.pfsense.org)
+	part of the pfSense project	(https://www.pfsense.org)
 	Copyright (C) 2010 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
@@ -29,7 +29,7 @@
 */
 
 /*
-	pfSense_MODULE: auth
+	pfSense_MODULE:	auth
 */
 
 ##|+PRIV
@@ -51,19 +51,16 @@ if ($_POST) {
 	if (!$authcfg)
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
 
-	if (empty($_POST['username']) || empty($_POST['password']))
+	if (empty($_POST['username']) || empty($_POST['passwordfld']))
 		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
-		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
+		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
-			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br />";
-			$savemsg .= "<ul>";
+			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
 			foreach ($groups as $group)
-				$savemsg .= "<li>" . "{$group} " . "</li>";
-			$savemsg .= "</ul>";
-
+				$savemsg .= "{$group} ";
 		} else {
 			$input_errors[] = gettext("Authentication failed.");
 		}
@@ -74,49 +71,42 @@ $shortcut_section = "authentication";
 include("head.inc");
 
 ?>
-<?php
-if ($input_errors)
-	print_input_errors($input_errors);
+<?php if ($input_errors) print_input_errors($input_errors)?>
+<?php if ($savemsg) print_info_box($savemsg)?>
+	<div id="container">
+		<form class="form-horizontal" action="diag_authentication.php" method="post">
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Authentication Server")?></label>
+				<div class="col-sm-10">
+					<select name="authmode" id="authmode" class="formselect" >
+					<?php
+							foreach (auth_get_authserver_list() as $auth_server):
+								$selected = ($auth_server['name'] == $pconfig['authmode'])
+					?>
+						<option value="<?=$auth_server['name']?>" <?=($selected?'selected="selected"':'')?>>
+							<?=$auth_server['name']?>
+						</option>
+					<?php   endforeach?>
+					</select>
+				</div>
+			</div>
 
-if ($savemsg)
-	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Username")?></label>
+				<div class="col-sm-10">
+					<input name="username" value="<?=htmlspecialchars($pconfig['username'])?>" />
+				</div>
+			</div>
 
-require('classes/Form.class.php');
+			<div class="form-group">
+				<label for="authmode" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="password" type="password" value="<?=htmlspecialchars($pconfig['password'])?>" />
+				</div>
+			</div>
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext('Test')
-));
-
-$section = new Form_Section('Authentication Test');
-
-foreach (auth_get_authserver_list() as $auth_server)
-	$serverlist[$auth_server['name']] = $auth_server['name'];
-
-$section->addInput(new Form_Select(
-	'authmode',
-	'Authentication Server',
-	$pconfig['authmode'],
-	$serverlist
-))->setHelp('Select the authentication server to test against');
-
-$section->addInput(new Form_Input(
-	'username',
-	'Username',
-	'text',
-	$pconfig['username'],
-	['placeholder' => 'Username']
-));
-
-$section->addInput(new Form_Input(
-	'password',
-	'Password',
-	'password',
-	$pconfig['password'],
-	['placeholder' => 'Password']
-));
-
-$form->add($section);
-print $form;
-
-include("foot.inc");
+			<button type="submit" class="btn btn-primary"><?=gettext("Test");?></button>
+		</form>
+	</div>
+</div>
+<?php include("foot.inc")?>

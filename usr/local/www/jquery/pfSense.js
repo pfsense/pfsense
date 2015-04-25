@@ -97,17 +97,8 @@ $(function() {
 		});
 	};
 
-	// Add confirm to all btn-danger buttons
-	$('.btn-danger').on('click', function(e){
-		if (!confirm('Are you sure you wish to '+ $.trim(this.textContent) +'?'))
-			e.preventDefault();
-	});
-
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover()
-
-	// Focus first input
-	$(':input:enabled:visible:first').focus();
 
 	runEvents();
 	bindCollapseToOptions();

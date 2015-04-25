@@ -156,7 +156,7 @@ if (is_subsystem_dirty('ipsec'))
 				</td>
 				<td>
 					<a class="btn btn-primary btn-xs" href="vpn_ipsec_keys_edit.php?id=<?=$i?>">edit key</a>
-					<a class="btn btn-danger btn-xs" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>">delete key</a>
+					<a class="btn btn-danger btn-xs" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')">delete key</a>
 				</td>
 			</tr>
 <?php $i++; endforeach; ?>

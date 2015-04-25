@@ -115,7 +115,7 @@ display_top_tabs($tab_array);
 		<td><?=htmlspecialchars($ifgroupentry['descr']);?></td>
 		<td>
 			<a class="btn btn-primary btn-sm" role="button" href="interfaces_groups_edit.php?id=<?=$i; ?>"><?=gettext('Edit'); ?></a>
-			<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"><?=gettext("Delete"); ?></a>
+			<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!"); ?>')"><?=gettext("Delete"); ?></a>
 		</td>
 	</tr>
 	<?php $i++; endforeach; endif; ?>

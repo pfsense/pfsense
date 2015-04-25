@@ -492,7 +492,7 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 <?php if ($ifname != 'wan'):?>
-				<input type="submit" name="del[<?=$ifname?>]" class="btn btn-danger" value="<?=gettext("delete interface")?>"/>
+				<input type="submit" name="del[<?=$ifname?>]" class="btn btn-danger" value="<?=gettext("delete interface")?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?"); ?>')"/>
 <?php endif;?>
 			</td>
 		</tr>

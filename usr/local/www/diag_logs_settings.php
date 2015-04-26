@@ -33,7 +33,7 @@
 */
 
 /*
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -89,7 +89,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files();
 	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -187,9 +186,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Settings"));
 $closehead = false;
 include("head.inc");
-
 ?>
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -254,234 +251,283 @@ function check_everything() {
 }
 //]]>
 </script>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="diag_logs_settings.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs settings">
-<tr><td>
+
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
-	display_top_tabs($tab_array);
+
+$logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
+					'<br /><br />' .
+					gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. ") .
+					gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly.") . '<br /><br />' .
+					gettext("Disk space currently used by log files is: ") . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
+					gettext(" Remaining disk space for log files: ") . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
+
+$remoteloghelp =	gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses.") .
+					gettext("If you pick a single IP, remote syslog severs must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
+					"<br /><br />" .
+					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
+if ($input_errors)
+	print_input_errors($input_errors);
+else if($savemsg)
+	print('<div class="alert alert-success" role="alert">'.$savemsg.'</div>');
+
+$tab_array = array();
+$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
+$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
+$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
+$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
+$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
+$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
+$tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
+display_top_tabs($tab_array);
+
+require('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
+
+// General logging section ------------------------------------------------
+$section = new Form_Section('General Logging Options');
+
+$section->addInput(new Form_Checkbox(
+	'reverse',
+	'Forward/Reverse Display',
+	'Show log entries in reverse order (newest entries on top)',
+	$pconfig['reverse']
+));
+
+$section->addInput(new Form_Input(
+	'nentries',
+	'GUI Log Entries',
+	'text',
+	$pconfig['nentries'],
+	['placeholder' => '']
+))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
+
+$section->addInput(new Form_Input(
+	'logfilesize',
+	'Log file size (Bytes)',
+	'text',
+	$pconfig['logfilesize'],
+	['placeholder' => 'Bytes']
+))->setHelp($logfilesizeHelp);
+
+$section->addInput(new Form_Checkbox(
+	'logdefaultblock',
+	'Log firewall default blocks',
+	'Log packets matched from the default block rules in the ruleset',
+	$pconfig['logdefaultblock']
+))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.');
+
+$section->addInput(new Form_Checkbox(
+	'logdefaultpass',
+	null,
+	'Log packets matched from the default pass rules put in the ruleset',
+	$pconfig['logdefaultpass']
+))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected. ');
+
+$section->addInput(new Form_Checkbox(
+	'logbogons',
+	null,
+	'Log packets blocked by \'Block Bogon Networks\' rules',
+	$pconfig['logbogons']
+));
+
+$section->addInput(new Form_Checkbox(
+	'logprivatenets',
+	null,
+	'Log packets blocked by \'Block Private Networks\' rules',
+	$pconfig['logprivatenets']
+));
+
+$section->addInput(new Form_Checkbox(
+	'loglighttpd',
+	'Web Server Log',
+	'Log errors from the web server process',
+	$pconfig['loglighttpd']
+))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log');
+
+$section->addInput(new Form_Checkbox(
+	'rawfilter',
+	'Raw Logs',
+	'Show raw filter logs)',
+	$pconfig['rawfilter']
+))->setHelp(gettext('If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information, but it is more difficult to read'));
+
+$section->addInput(new Form_Select(
+	'filterdescriptions',
+	'Where to show rule descriptions',
+	!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
+	array(
+		'0' => 'Dont load descriptions',
+		'1' => 'Display as column',
+		'2' => 'Display as second row'
+	)
+))->setHelp('Show the applied rule description below or in the firewall log rows' . '<br />' .
+			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets');
+
+$section->addInput(new Form_Checkbox(
+	'disablelocallogging',
+	'Local Logging',
+	$g['platform'] == 'pfSense' ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
+	$pconfig['disablelocallogging']
+));
+
+$resetlogsbtn = new Form_Button(
+	'resetlogs',
+	'Reset Log Files'
+);
+
+$resetlogsbtn->removeClass("btn-primary")->addClass("btn-danger btn-xs");
+
+$section->addInput(new Form_StaticText(
+	'Reset Logs',
+	 $resetlogsbtn
+))->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
+
+// Remote logging section ------------------------------------------------
+$section2 = new Form_Section('Remote Logging Options');
+
+$sourceips = get_possible_traffic_source_addresses(false);
+
+$selected = "";
+
+foreach ($sourceips as $sa) {
+	$rllist[$sa['value']] = $sa['name'];
+
+	if (!link_interface_to_bridge($sa['value']) && ($sa['value'] == $pconfig['sourceip']))
+		$selected = $sa['value'];
+}
+
+$section2->addInput(new Form_Select(
+	'sourceip',
+	'Source Address',
+	$selected,
+	$rllist
+))->setHelp($remoteloghelp);
+
+$section2->addInput(new Form_Select(
+	'ipproto',
+	'IP Protocol',
+	$ipproto,
+	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
+))->setHelp('This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
+
+$section2->addInput(new Form_Checkbox(
+	'enable',
+	'Enable Remote Logging',
+	'Send log messages to remote syslog server',
+	$pconfig['enable']
+))->toggles('.toggle-remote-servers');
+
+// Group colapses/appears based on 'enable' checkbox above
+$group = new Form_Group('Remote log servers');
+$group->addClass('toggle-remote-servers', 'collapse');
+
+if ($pconfig['enable'])
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'remoteserver',
+	'Server 1',
+	'text',
+	$pconfig['remoteserver'],
+	['placeholder' => 'IP[:port]']
+));
+
+$group->add(new Form_Input(
+	'remoteserver2',
+	'Server 2',
+	'text',
+	$pconfig['remoteserver2'],
+	['placeholder' => 'IP[:port]']
+));
+
+$group->add(new Form_Input(
+	'remoteserver3',
+	'Server 3',
+	'text',
+	$pconfig['remoteserver3'],
+	['placeholder' => 'IP[:port]']
+));
+
+$section2->add($group);
+
+$section2->addInput(new Form_Checkbox(
+	'system',
+	'',
+	'System Events',
+	$pconfig['system']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'filter',
+	'',
+	'Firewall Events',
+	$pconfig['filter']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'dhcp',
+	'',
+	'DHCP service events',
+	$pconfig['dhcp']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'portalauth',
+	'',
+	'Portal Auth events',
+	$pconfig['portalauth']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'vpn',
+	'',
+	'VPN (PPTP, IPsec, OpenVPN) events',
+	$pconfig['vpn']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'apinger',
+	'',
+	'Gateway Monitor events',
+	$pconfig['apinger']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'relayd',
+	'',
+	'Server Load Balancer events',
+	$pconfig['relayd']
+));
+
+$section2->addInput(new Form_Checkbox(
+	'hostapd',
+	'',
+	'Wireless events',
+	$pconfig['hostapd']
+));
+
+$section2->addInput(new Form_StaticText(
+	'Note',
+	'syslog sends UDP datagrams to port 514 on the specified remote syslog server, unless another port is specified. Be sure to set syslogd on the remote server to accept syslog messages frompfSense.'
+));
+
+$form->add($section);
+$form->add($section2);
+print $form;
 ?>
-</td></tr>
-<tr>
-	<td>
-	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("General Logging Options");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vtable">Forward/Reverse Display</td>
-			<td width="78%" class="vtable"> <input name="reverse" type="checkbox" id="reverse" value="yes" <?php if ($pconfig['reverse']) echo "checked=\"checked\""; ?> />
-			<strong><?=gettext("Show log entries in reverse order (newest entries on top)");?></strong></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vtable">GUI Log Entries to Display</td>
-			<td width="78%" class="vtable">
-			<input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>" /><br />
-			<?=gettext("Hint: This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.") ?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vtable">Log File Size (Bytes)</td>
-			<td width="78%" class="vtable">
-			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=htmlspecialchars($pconfig['logfilesize']);?>" /><br />
-			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
-			<br /><br />
-			<?=gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. "); ?>
-			<?=gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly."); ?>
-			<?=gettext("Disk space currently used by log files: ") ?><?= exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'"); ?>.
-			<?=gettext("Remaining disk space for log files: ") ?><?= exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'"); ?>.
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vtable">Log Firewall Default Blocks</td>
-			<td class="vtable">
-				<input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets matched from the default block rules put in the ruleset");?></strong><br />
-				<?=gettext("Hint: packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.");?>
-				<br />
-				<input name="logdefaultpass" type="checkbox" id="logdefaultpass" value="yes" <?php if ($pconfig['logdefaultpass']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets matched from the default pass rules put in the ruleset");?></strong><br />
-				<?=gettext("Hint: packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected.");?>
-				<br />
-				<input name="logbogons" type="checkbox" id="logbogons" value="yes" <?php if ($pconfig['logbogons']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets blocked by 'Block Bogon Networks' rules");?></strong><br />
-				<br />
-				<input name="logprivatenets" type="checkbox" id="logprivatenets" value="yes" <?php if ($pconfig['logprivatenets']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets blocked by 'Block Private Networks' rules");?></strong><br />
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vtable">Web Server Log</td>
-			<td class="vtable"> <input name="loglighttpd" type="checkbox" id="loglighttpd" value="yes" <?php if ($pconfig['loglighttpd']) echo "checked=\"checked\""; ?> />
-			<strong><?=gettext("Log errors from the web server process.");?></strong><br />
-			<?=gettext("Hint: If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log.");?></td>
-		</tr>
-		<tr>
-			<td valign="top" class="vtable">Raw Logs</td>
-			<td class="vtable"> <input name="rawfilter" type="checkbox" id="rawfilter" value="yes" <?php if ($pconfig['rawfilter']) echo "checked=\"checked\""; ?> />
-			<strong><?=gettext("Show raw filter logs");?></strong><br />
-			<?=gettext("Hint: If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information, but it is more difficult to read.");?></td>
-		</tr>
-		<tr>
-			<td valign="top" class="vtable">Filter descriptions</td>
-			<td class="vtable">
-				<select name="filterdescriptions" id="filterdescriptions" >
-				  <option value="0"<?=!isset($pconfig['filterdescriptions'])?" selected=\"selected\"":""?>>Dont load descriptions</option>
-				  <option value="1"<?=($pconfig['filterdescriptions'])==="1"?" selected=\"selected\"":""?>>Display as column</option>
-				  <option value="2"<?=($pconfig['filterdescriptions'])==="2"?" selected=\"selected\"":""?>>Display as second row</option>
-				</select>
-				<strong><?=gettext("Show the applied rule description below or in the firewall log rows.");?></strong>
-				<br />
-				<?=gettext("Displaying rule descriptions for all lines in the log might affect performance with large rule sets.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vtable">Local Logging</td>
-			<td width="78%" class="vtable"> <input name="disablelocallogging" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-			<?php if ($g['platform'] == "pfSense"): ?>
-			<strong><?=gettext("Disable writing log files to the local disk");?></strong></td>
-			<?php else: ?>
-			<strong><?=gettext("Disable writing log files to the local RAM disk");?></strong></td>
-			<?php endif; ?>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">Reset Logs</td>
-			<td width="78%">
-				<input name="resetlogs" type="submit" class="formbtn" value="<?=gettext("Reset Log Files"); ?>"  onclick="return confirm('<?=gettext('Do you really want to reset the log files? This will erase all local log data.');?>')" />
-				<br /><br />
-				<?= gettext("Note: Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes."); ?>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Remote Logging Options");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="sourceip" class="formselect">
-					<option value="">Default (any)</option>
-				<?php $sourceips = get_possible_traffic_source_addresses(false);
-					foreach ($sourceips as $sipvalue => $sipname):
-						$selected = "";
-						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $pconfig['sourceip']))
-							$selected = 'selected="selected"';
-				?>
-					<option value="<?=$sipvalue;?>" <?=$selected;?>>
-						<?=htmlspecialchars($sipname);?>
-					</option>
-					<?php endforeach; ?>
-				</select>
-				<br />
-				<?= gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses."); ?>
-				<?= gettext("If you pick a single IP, remote syslog severs must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces."); ?>
-				<br /><br />
-				<?= gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses."); ?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("IP Protocol"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="ipproto" class="formselect">
-					<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
-					<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
-				</select>
-				<br />
-				<?= gettext("This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried."); ?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Enable Remote Logging");?></td>
-			<td width="78%" class="vtable"> <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-				<strong><?=gettext("Send log messages to remote syslog server");?></strong></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Remote Syslog Servers");?></td>
-			<td width="78%" class="vtable">
-				<table summary="remtote syslog servers">
-					<tr>
-						<td><?=gettext("Server") . " 1";?></td>
-						<td><input name="remoteserver" id="remoteserver" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver']);?>" /></td>
-					</tr>
-					<tr>
-						<td><?=gettext("Server") . " 2";?></td>
-						<td><input name="remoteserver2" id="remoteserver2" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver2']);?>" /></td>
-					</tr>
-					<tr>
-						<td><?=gettext("Server") . " 3";?></td>
-						<td><input name="remoteserver3" id="remoteserver3" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver3']);?>" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><?=gettext("IP addresses of remote syslog servers, or an IP:port.");?></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Remote Syslog Contents");?></td>
-			<td width="78%" class="vtable">
-				<input name="logall" id="logall" type="checkbox" value="yes" <?php if ($pconfig['logall']) echo "checked=\"checked\""; ?> onclick="check_everything();" />
-				<?=gettext("Everything");?><br /><br />
-				<input name="system" id="system" type="checkbox" value="yes" onclick="enable_change(false)" <?php if ($pconfig['system']) echo "checked=\"checked\""; ?> />
-				<?=gettext("System events");?><br />
-				<input name="filter" id="filter" type="checkbox" value="yes" <?php if ($pconfig['filter']) echo "checked=\"checked\""; ?> />
-				<?=gettext("Firewall events");?><br />
-				<input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked=\"checked\""; ?> />
-				<?=gettext("DHCP service events");?><br />
-				<input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked=\"checked\""; ?> />
-				<?=gettext("Portal Auth events");?><br />
-				<input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked=\"checked\""; ?> />
-				<?=gettext("VPN (PPTP, IPsec, OpenVPN) events");?><br />
-				<input name="apinger" id="apinger" type="checkbox" value="yes" <?php if ($pconfig['apinger']) echo "checked=\"checked\""; ?> />
-				<?=gettext("Gateway Monitor events");?><br />
-				<input name="relayd" id="relayd" type="checkbox" value="yes" <?php if ($pconfig['relayd']) echo "checked=\"checked\""; ?> />
-				<?=gettext("Server Load Balancer events");?><br />
-				<input name="hostapd" id="hostapd" type="checkbox" value="yes" <?php if ($pconfig['hostapd']) echo "checked=\"checked\""; ?> />
-				<?=gettext("Wireless events");?><br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" height="53" valign="top">&nbsp;</td>
-			<td width="78%"><strong><span class="red"><?=gettext("Note:")?></span></strong><br />
-			<?=gettext("syslog sends UDP datagrams to port 514 on the specified " .
-			"remote syslog server, unless another port is specified. Be sure to set syslogd on the " .
-			"remote server to accept syslog messages from");?> <?=$g['product_name']?>.
-			</td>
-		</tr>
-	</table>
-	</div>
-</td></tr>
-</table>
-</form>
+
 <script type="text/javascript">
 //<![CDATA[
 enable_change(false);
 //]]>
 </script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php include("foot.inc"); ?>

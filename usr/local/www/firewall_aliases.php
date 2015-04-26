@@ -245,12 +245,14 @@ display_top_tabs($tab_array);
 	</tbody>
 </table>
 
-<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success">
-	<?=gettext("add new alias");?>
-</a>
-<a href="firewall_aliases_import.php" role="button" class="btn btn-default">
-	<?=gettext("bulk import");?>
-</a>
+<nav class="action-buttons">
+	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success">
+		<?=gettext("add new alias");?>
+	</a>
+	<a href="firewall_aliases_import.php" role="button" class="btn btn-default">
+		<?=gettext("bulk import");?>
+	</a>
+</nav>
 
 <br/><br/>
 <div class="panel panel-default">

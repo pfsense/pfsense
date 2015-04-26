@@ -100,6 +100,11 @@ $(function() {
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover()
 
+	// Force correct initial state for toggleable checkboxes
+	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function(idx, el){
+		$( $(el).attr('data-target') ).addClass('collapse');
+	});
+
 	runEvents();
 	bindCollapseToOptions();
 	allowUserGroupDuplication();

@@ -184,75 +184,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Settings"));
-$closehead = false;
 include("head.inc");
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-function enable_change(enable_over) {
-	if (document.iform.enable.checked || enable_over) {
-		document.iform.remoteserver.disabled = 0;
-		document.iform.remoteserver2.disabled = 0;
-		document.iform.remoteserver3.disabled = 0;
-		document.iform.filter.disabled = 0;
-		document.iform.dhcp.disabled = 0;
-		document.iform.portalauth.disabled = 0;
-		document.iform.vpn.disabled = 0;
-		document.iform.apinger.disabled = 0;
-		document.iform.relayd.disabled = 0;
-		document.iform.hostapd.disabled = 0;
-		document.iform.system.disabled = 0;
-		document.iform.logall.disabled = 0;
-		check_everything();
-	} else {
-		document.iform.remoteserver.disabled = 1;
-		document.iform.remoteserver2.disabled = 1;
-		document.iform.remoteserver3.disabled = 1;
-		document.iform.filter.disabled = 1;
-		document.iform.dhcp.disabled = 1;
-		document.iform.portalauth.disabled = 1;
-		document.iform.vpn.disabled = 1;
-		document.iform.apinger.disabled = 1;
-		document.iform.relayd.disabled = 1;
-		document.iform.hostapd.disabled = 1;
-		document.iform.system.disabled = 1;
-		document.iform.logall.disabled = 1;
-	}
-}
-function check_everything() {
-	if (document.iform.logall.checked) {
-		document.iform.filter.disabled = 1;
-		document.iform.filter.checked = false;
-		document.iform.dhcp.disabled = 1;
-		document.iform.dhcp.checked = false;
-		document.iform.portalauth.disabled = 1;
-		document.iform.portalauth.checked = false;
-		document.iform.vpn.disabled = 1;
-		document.iform.vpn.checked = false;
-		document.iform.apinger.disabled = 1;
-		document.iform.apinger.checked = false;
-		document.iform.relayd.disabled = 1;
-		document.iform.relayd.checked = false;
-		document.iform.hostapd.disabled = 1;
-		document.iform.hostapd.checked = false;
-		document.iform.system.disabled = 1;
-		document.iform.system.checked = false;
-	} else {
-		document.iform.filter.disabled = 0;
-		document.iform.dhcp.disabled = 0;
-		document.iform.portalauth.disabled = 0;
-		document.iform.vpn.disabled = 0;
-		document.iform.apinger.disabled = 0;
-		document.iform.relayd.disabled = 0;
-		document.iform.hostapd.disabled = 0;
-		document.iform.system.disabled = 0;
-	}
-}
-//]]>
-</script>
-
-<?php
 
 $logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
 					'<br /><br />' .
@@ -267,8 +199,8 @@ $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
 if ($input_errors)
 	print_input_errors($input_errors);
-else if($savemsg)
-	print('<div class="alert alert-success" role="alert">'.$savemsg.'</div>');
+else if ($savemsg)
+	print_info_box($savemsg);
 
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -291,7 +223,6 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-// General logging section ------------------------------------------------
 $section = new Form_Section('General Logging Options');
 
 $section->addInput(new Form_Checkbox(
@@ -378,59 +309,38 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disablelocallogging']
 ));
 
-$resetlogsbtn = new Form_Button(
+$section->addInput(new Form_Button(
 	'resetlogs',
 	'Reset Log Files'
-);
+))->addClass('btn-danger btn-xs')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
 
-$resetlogsbtn->removeClass("btn-primary")->addClass("btn-danger btn-xs");
+$form->add($section);
+$section = new Form_Section('Remote Logging Options');
+$section->addClass('toggle-remote');
 
-$section->addInput(new Form_StaticText(
-	'Reset Logs',
-	 $resetlogsbtn
-))->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable Remote Logging',
+	'Send log messages to remote syslog server',
+	$pconfig['enable']
+))->toggles('.toggle-remote .panel-body .form-group:not(:first-child)');
 
-// Remote logging section ------------------------------------------------
-$section2 = new Form_Section('Remote Logging Options');
-
-$sourceips = get_possible_traffic_source_addresses(false);
-
-$selected = "";
-
-foreach ($sourceips as $sa) {
-	$rllist[$sa['value']] = $sa['name'];
-
-	if (!link_interface_to_bridge($sa['value']) && ($sa['value'] == $pconfig['sourceip']))
-		$selected = $sa['value'];
-}
-
-$section2->addInput(new Form_Select(
+$section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
-	$selected,
-	$rllist
+	link_interface_to_bridge($pconfig['sourceip']) ? null : $pconfig['sourceip'],
+	get_possible_traffic_source_addresses(false)
 ))->setHelp($remoteloghelp);
 
-$section2->addInput(new Form_Select(
+$section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
 	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
 
-$section2->addInput(new Form_Checkbox(
-	'enable',
-	'Enable Remote Logging',
-	'Send log messages to remote syslog server',
-	$pconfig['enable']
-))->toggles('.toggle-remote-servers');
-
 // Group colapses/appears based on 'enable' checkbox above
 $group = new Form_Group('Remote log servers');
-$group->addClass('toggle-remote-servers', 'collapse');
-
-if ($pconfig['enable'])
-	$group->addClass('in');
 
 $group->add(new Form_Input(
 	'remoteserver',
@@ -456,78 +366,72 @@ $group->add(new Form_Input(
 	['placeholder' => 'IP[:port]']
 ));
 
-$section2->add($group);
+$section->add($group);
 
-$section2->addInput(new Form_Checkbox(
+$group = new Form_Group('Remote Syslog Contents');
+$group->add(new Form_Checkbox(
 	'system',
-	'',
+	null,
 	'System Events',
 	$pconfig['system']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'filter',
-	'',
+	null,
 	'Firewall Events',
 	$pconfig['filter']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'dhcp',
-	'',
+	null,
 	'DHCP service events',
 	$pconfig['dhcp']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'portalauth',
-	'',
+	null,
 	'Portal Auth events',
 	$pconfig['portalauth']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'vpn',
-	'',
+	null,
 	'VPN (PPTP, IPsec, OpenVPN) events',
 	$pconfig['vpn']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'apinger',
-	'',
+	null,
 	'Gateway Monitor events',
 	$pconfig['apinger']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'relayd',
-	'',
+	null,
 	'Server Load Balancer events',
 	$pconfig['relayd']
 ));
 
-$section2->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'hostapd',
-	'',
+	null,
 	'Wireless events',
 	$pconfig['hostapd']
 ));
 
-$section2->addInput(new Form_StaticText(
-	'Note',
-	'syslog sends UDP datagrams to port 514 on the specified remote syslog server, unless another port is specified. Be sure to set syslogd on the remote server to accept syslog messages frompfSense.'
-));
+$group->setHelp('syslog sends UDP datagrams to port 514 on the specified remote '.
+	'syslog server, unless another port is specified. Be sure to set syslogd on '.
+	'the remote server to accept syslog messages from pfSense.');
+
+$section->add($group);
 
 $form->add($section);
-$form->add($section2);
 print $form;
-?>
 
-<script type="text/javascript">
-//<![CDATA[
-enable_change(false);
-//]]>
-</script>
-
-<?php include("foot.inc"); ?>
+include("foot.inc");

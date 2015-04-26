@@ -287,24 +287,21 @@ function verify_gzip_file($fname) {
 }
 
 function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
-	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
+	global $g;
 
 	if(empty($value)) {
 		$value = gettext("Apply changes");
 	}
 
-	// Set the Nifty background color if one is not set already (defaults to white)
-	if($nifty_background == "")
-		$nifty_background = "#FFF";
+	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
+		$msg .= '<form method="post"><input type="submit" class="btn btn-default" name="apply" value="'.$value.'" />';
 
-	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$dismiss = "alert-dismissible";
-		$button = '<button type="submit" class="btn btn-primary" name="login" value="'.$value.'">'.$name.'</button>';
+		if ($_POST['if'])
+			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 
-		if($_POST['if'])
-			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
+		$msg .'</form>';
 	} else
-		$button = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
 
 	echo '<div class="alert alert-warning" role="alert">'.$msg.'</div>';
 }
@@ -577,7 +574,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		}
 	}
 	echo "\n";
-	
+
 	foreach ($logarr as $logent) {
 			$logent = preg_split("/\s+/", $logent, 6);
 

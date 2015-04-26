@@ -60,12 +60,6 @@ class Form_Group extends Form_Element
 		$this->_labelTarget = $input;
 	}
 
-	// Potentially allow overloading
-	public function getLabelWidth()
-	{
-		return $this->_parent->getLabelWidth();
-	}
-
 	public function setHelp($help, array $params = array())
 	{
 		$this->_help = $help;
@@ -92,7 +86,7 @@ class Form_Group extends Form_Element
 		$element = parent::__toString();
 
 		// Automatically determine width for inputs without explicit set
-		$spaceLeft = 12 - $this->getLabelWidth();
+		$spaceLeft = Form::MAX_INPUT_WIDTH;
 		$missingWidth = array();
 
 		foreach ($this->_inputs as $input)
@@ -116,14 +110,16 @@ class Form_Group extends Form_Element
 
 		if (isset($this->_help))
 		{
+			$group = new Form_Element;
+			$group->addClass('col-sm-'. Form::MAX_INPUT_WIDTH, 'col-sm-offset-'. Form::LABEL_WIDTH);
+
 			$help = gettext($this->_help);
 
 			if (!empty($this->_helpParams))
 				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
 
-			$helpWidth = 12 - $this->getLabelWidth();
 			$help = <<<EOT
-	<div class="col-sm-{$helpWidth} col-sm-offset-{$this->getLabelWidth()}">
+	{$group}
 		<span class="help-block">
 			{$help}
 		</span>
@@ -131,9 +127,12 @@ class Form_Group extends Form_Element
 EOT;
 		}
 
+		$label = new Form_Element('label', false, ['for' => $target]);
+		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
+
 		return <<<EOT
 	{$element}
-		<label for="{$target}" class="col-sm-{$this->getLabelWidth()} control-label">
+		{$label}
 			{$this->_title}
 		</label>
 		{$inputs}

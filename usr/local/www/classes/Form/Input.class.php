@@ -93,8 +93,8 @@ class Form_Input extends Form_Element
 
 	public function setWidth($size)
 	{
-		if ($size < 1 || $size > 12)
-			throw new Exception('Incorrect size, pass a number between 1 and 12');
+		if ($size < 1 || $size > Form::MAX_INPUT_WIDTH)
+			throw new Exception('Incorrect size, pass a number between 1 and '.Form::MAX_INPUT_WIDTH);
 
 		$this->column->removeClass('col-sm-'. $this->_columnWidth);
 

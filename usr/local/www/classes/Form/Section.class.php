@@ -62,12 +62,6 @@ class Form_Section extends Form_Element
 		return $input;
 	}
 
-	// Potentially allow overloading
-	public function getLabelWidth()
-	{
-		return $this->_parent->getLabelWidth();
-	}
-
 	public function __toString()
 	{
 		$element = parent::__toString();

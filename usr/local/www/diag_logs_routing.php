@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	routing
 */
 
@@ -46,11 +46,13 @@ require("guiconfig.inc");
 $routing_logfile = "{$g['varlog_path']}/routing.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($routing_logfile);
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Routing"));
 $shortcut_section = "routing";
@@ -61,7 +63,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs system routing">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), true, "diag_logs.php");
@@ -77,8 +80,10 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr><td class="tabnavtbl">
+		</td>
+	</tr>
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("General"), false, "/diag_logs.php");
@@ -86,25 +91,32 @@ include("head.inc");
 	$tab_array[] = array(gettext("Routing"), true, "/diag_logs_routing.php");
 	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
 	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
-        display_top_tabs($tab_array);
+	display_top_tabs($tab_array);
 ?>
-                </td>
-        </tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Routing daemon log entries"),$nentries);?></td>
-		  </tr>
-		  <?php dump_clog($routing_logfile, $nentries); ?>
-		<tr><td><br /><form action="diag_logs_routing.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" /></form></td></tr>
-		</table>
-	</div>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
+					<tr>
+						<td colspan="2" class="listtopic">
+							<?php printf(gettext("Routing daemon log entries"),$nentries);?>
+						</td>
+					</tr>
+					<?php dump_clog($routing_logfile, $nentries); ?>
+					<tr>
+						<td>
+							<br />
+							<form action="diag_logs_routing.php" method="post">
+								<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+							</form>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

@@ -32,8 +32,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk	
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk
 	pfSense_MODULE:
 */
 
@@ -49,11 +49,13 @@ require("guiconfig.inc");
 $ppp_logfile = "{$g['varlog_path']}/ppp.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($ppp_logfile);
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("PPP"));
 include("head.inc");
@@ -62,7 +64,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs ppp">
- 	<tr>
+	<tr>
 		<td>
 <?php
 	$tab_array = array();
@@ -79,21 +81,21 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  		</td>
+		</td>
 	</tr>
 	<tr>
-    	<td>
+		<td>
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  		<tr>
+				<tr>
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s PPP log entries"),$nentries);?></td>
-		  		</tr>
+				</tr>
 				<?php dump_clog($ppp_logfile, $nentries); ?>
 				<tr>
 					<td>
 						<br />
 						<form action="diag_logs_ppp.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+							<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

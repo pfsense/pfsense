@@ -1,6 +1,6 @@
 <?php
 /*
-    diag_packet_capture.php
+	diag_packet_capture.php
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved
 
@@ -74,16 +74,18 @@ function fixup_host($value, $position) {
 	$host = strip_host_logic($value);
 	$not = has_not($value) ? "not " : "";
 	$andor = ($position > 0) ? get_host_boolean($value, $host) : "";
-	if (is_ipaddr($host))
+	if (is_ipaddr($host)) {
 		return "{$andor}host {$not}" . $host;
-	elseif (is_subnet($host))
+	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
-	else
+	} else {
 		return "";
+	}
 }
 
-if ($_POST['downloadbtn'] == gettext("Download Capture"))
+if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 	$nocsrf = true;
+}
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
@@ -101,8 +103,9 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable']))
+if (isset($config['ipsec']['enable'])) {
 	$interfaces['ipsec'] = "IPsec";
+}
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -132,7 +135,7 @@ if ($_POST) {
 	if ($proto !== "" && !in_array(strip_not($proto), $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}
-	
+
 	if ($host != "") {
 		$host_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $host);
 		if (strpos($host_string, '#') === false) {
@@ -191,8 +194,9 @@ if ($_POST) {
 			$action = gettext("Start");
 
 			//delete previous packet capture if it exists
-			if (file_exists($fp.$fn))
+			if (file_exists($fp.$fn)) {
 				unlink ($fp.$fn);
+			}
 
 		} elseif ($_POST['stopbtn']!= "") {
 			$action = gettext("Stop");
@@ -243,8 +247,6 @@ include("fbegin.inc");
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 			<td width="32%" class="vtable">
 			<select name="interface">
-			<?php
-			?>
 			<?php foreach ($interfaces as $iface => $ifacename): ?>
 				<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected=\"selected\""; ?>>
 				<?php echo $ifacename;?>
@@ -257,7 +259,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Promiscuous");?></td>
 			<td width="51%" class="vtable">
-			<input name="promiscuous" type="checkbox"<?php if($_POST['promiscuous']) echo " checked=\"checked\""; ?> />
+			<input name="promiscuous" type="checkbox"<?php if ($_POST['promiscuous']) echo " checked=\"checked\""; ?> />
 			<br /><?=gettext("If checked, the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("will be performed using promiscuous mode.");?>
 			<br /><b><?=gettext("Note");?>: </b><?=gettext("Some network adapters do not support or work well in promiscuous mode.");?>
 			</td>
@@ -343,7 +345,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Reverse DNS Lookup");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="dnsquery" type="checkbox" <?php if($_POST['dnsquery']) echo " checked=\"checked\""; ?> />
+			<input name="dnsquery" type="checkbox" <?php if ($_POST['dnsquery']) echo " checked=\"checked\""; ?> />
 			<br /><?=gettext("This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.");?>
 			<br /><b><?=gettext("Note");?>: </b><?=gettext("This option can cause delays for large packet captures.");?>
 			</td>
@@ -356,14 +358,15 @@ include("fbegin.inc");
 			/* check to see if packet capture tcpdump is already running */
 			$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'")));
 
-			if ($processcheck != "")
+			if ($processcheck != "") {
 				$processisrunning = true;
-			else
+			} else {
 				$processisrunning = false;
+			}
 
-			if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
+			if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
 				echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\" />&nbsp;";
-			else {
+			} else {
 				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\" />&nbsp;";
 			}
 			if (file_exists($fp.$fn) and $processisrunning != true) {
@@ -381,32 +384,37 @@ include("fbegin.inc");
 		<td valign="top" colspan="2">
 <?php
 		echo "<font face=\"terminal\" size=\"2\">";
-		if ($processisrunning == true)
+		if ($processisrunning == true) {
 			echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br />");
+		}
 
 		if ($do_tcpdump) {
 			$matches = array();
 
-			if (in_array($fam, $fams))
+			if (in_array($fam, $fams)) {
 				$matches[] = $fam;
+			}
 
 			if (in_array($proto, $protos)) {
 				$matches[] = fixup_not($proto);
 			}
 
-			if ($port != "")
+			if ($port != "") {
 				$matches[] = "port ".fixup_not($port);
+			}
 
 			if ($host != "") {
 				$hostmatch = "";
 				$hostcount = 0;
 				foreach ($hosts as $h) {
 					$h = fixup_host($h, $hostcount++);
-					if (!empty($h))
+					if (!empty($h)) {
 						$hostmatch .= " " . $h;
+					}
 				}
-				if (!empty($hostmatch))
+				if (!empty($hostmatch)) {
 					$matches[] = "({$hostmatch})";
+				}
 			}
 
 			if ($count != "0" ) {
@@ -430,7 +438,7 @@ include("fbegin.inc");
 ?>
 				<script type="text/javascript">
 				//<![CDATA[
-				window.onload=function(){
+				window.onload=function() {
 					document.getElementById("packetsCaptured").wrap='off';
 				}
 				//]]>
@@ -439,19 +447,19 @@ include("fbegin.inc");
 <?php
 				$detail_args = "";
 				switch ($detail) {
-				case "full":
-					$detail_args = "-vv -e";
-					break;
-				case "high":
-					$detail_args = "-vv";
-					break;
-				case "medium":
-					$detail_args = "-v";
-					break;
-				case "normal":
-				default:
-					$detail_args = "-q";
-					break;
+					case "full":
+						$detail_args = "-vv -e";
+						break;
+					case "high":
+						$detail_args = "-vv";
+						break;
+					case "medium":
+						$detail_args = "-v";
+						break;
+					case "normal":
+					default:
+						$detail_args = "-q";
+						break;
 				}
 				system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
 

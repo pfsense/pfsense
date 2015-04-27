@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
+/*
 	pfSense_MODULE:	system
 */
 
@@ -49,20 +49,25 @@ require("guiconfig.inc");
 $system_logfile = "{$g['varlog_path']}/gateways.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($system_logfile);
+}
 
-if ($_GET['filtertext'])
+if ($_GET['filtertext']) {
 	$filtertext = htmlspecialchars($_GET['filtertext']);
+}
 
-if ($_POST['filtertext'])
+if ($_POST['filtertext']) {
 	$filtertext = htmlspecialchars($_POST['filtertext']);
+}
 
-if ($filtertext)
+if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Gateways"));
 $shortcut_section = "gateways";
@@ -92,7 +97,8 @@ include("head.inc");
 ?>
 		</td>
 	</tr>
-  <tr><td class="tabnavtbl">
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("General"), false, "/diag_logs.php");
@@ -112,26 +118,27 @@ include("head.inc");
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"),$nentries); ?></td>
 				</tr>
 				<?php
-					if($filtertext)
+					if ($filtertext) {
 						dump_clog($system_logfile, $nentries, true, array("$filtertext"));
-					else
+					} else {
 						dump_clog($system_logfile, $nentries, true, array());
+					}
 				?>
 				<tr>
 					<td align="left" valign="top">
 						<form id="filterform" name="filterform" action="diag_logs_gateways.php" method="post" style="margin-top: 14px;">
-              				<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
+							<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
 						</form>
 					</td>
 					<td align="right" valign="top" >
 						<form id="clearform" name="clearform" action="diag_logs_gateways.php" method="post" style="margin-top: 14px;">
-              				<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
-              				<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
+							<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
+							<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 						</form>
 					</td>
 				</tr>
 			</table>
-	    	</div>
+			</div>
 		</td>
 	</tr>
 </table>

@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	filter
 */
 
@@ -54,8 +54,9 @@ $nentries = 50;
 /* AJAX related routines */
 handle_ajax($nentries, $nentries + 20);
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($filter_logfile);
+}
 
 $filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
 
@@ -76,10 +77,11 @@ include("head.inc");
 	var isPaused = false;
 	var nentries = <?php echo $nentries; ?>;
 <?php
-	if(isset($config['syslog']['reverse']))
+	if (isset($config['syslog']['reverse'])) {
 		echo "var isReverse = true;\n";
-	else
+	} else {
 		echo "var isReverse = false;\n";
+	}
 ?>
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
@@ -91,14 +93,16 @@ include("head.inc");
 			dstIP = row[5];
 		}
 
-		if ( row[4] == '' )
+		if ( row[4] == '' ) {
 			srcPort = '';
-		else
+		} else {
 			srcPort = ':' + row[4];
-		if ( row[6] == '' )
+		}
+		if ( row[6] == '' ) {
 			dstPort = '';
-		else
+		} else {
 			dstPort = ':' + row[6];
+		}
 
 		var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
 			'<td class="listMRr nowrap">' + row[1] + '</td>' +
@@ -128,7 +132,7 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
- </td></tr>
+  </td></tr>
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -137,10 +141,10 @@ include("head.inc");
 	$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
 	display_top_tabs($tab_array);
 ?>
-		</td>
-	</tr>
+	</td>
+  </tr>
   <tr>
-     <td>
+	<td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 			<thead>
@@ -172,15 +176,17 @@ include("head.inc");
 				$dstIP = htmlspecialchars($filterent['dstip']);
 			}
 
-			if ($filterent['srcport'])
+			if ($filterent['srcport']) {
 				$srcPort = ":" . htmlspecialchars($filterent['srcport']);
-			else
+			} else {
 				$srcPort = "";
+			}
 
-			if ($filterent['dstport'])
+			if ($filterent['dstport']) {
 				$dstPort = ":" . htmlspecialchars($filterent['dstport']);
-			else
+			} else {
 				$dstPort = "";
+			}
 			?>
 			<tr class="<?=$evenRowClass?>">
 				<td class="listMRlr nowrap" align="center">
@@ -193,8 +199,9 @@ include("head.inc");
 				<td class="listMRr nowrap"><?php echo $srcIP . $srcPort;?></td>
 				<td class="listMRr nowrap"><?php echo $dstIP . $dstPort;?></td>
 				<?php
-					if ($filterent['proto'] == "TCP")
+					if ($filterent['proto'] == "TCP") {
 						$filterent['proto'] .= ":{$filterent['tcpflags']}";
+					}
 				?>
 				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
 			</tr>
@@ -202,7 +209,7 @@ include("head.inc");
 			</tbody>
 		</table>
 	</div>
-     </td>
+	 </td>
   </tr>
 </table>
 <p><span class="vexpl"><a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F"><?=gettext("TCP Flags"); ?></a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>

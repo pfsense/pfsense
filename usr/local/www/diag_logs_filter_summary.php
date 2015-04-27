@@ -9,11 +9,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -27,8 +27,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
-	pfSense_BUILDER_BINARIES:	
+/*
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	filter
 */
 
@@ -60,10 +60,10 @@ foreach (array_keys($fields) as $f) {
 $totals = array();
 
 function cmp($a, $b) {
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a < $b) ? 1 : -1;
+	if ($a == $b) {
+		return 0;
+	}
+	return ($a < $b) ? 1 : -1;
 }
 
 function stat_block($summary, $stat, $num) {
@@ -84,8 +84,9 @@ function stat_block($summary, $stat, $num) {
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
-				if ($service)
+				if ($service) {
 					$outstr .= ": {$service}";
+				}
 			}
 			print "<tr><td>{$outstr}</td><td width=\"50\" align=\"right\">{$summary[$stat][$k[$i]]}</td></tr>";
 		}
@@ -125,14 +126,16 @@ function pie_block($summary, $stat, $num) {
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
 			print "		{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
-			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
+			if (!(($i == ($numentries - 1)) && ($leftover <= 0))) {
 				print ",\n";
-			else
+			} else {
 				print "\n";
+			}
 		}
 	}
-	if ($leftover > 0)
+	if ($leftover > 0) {
 		print "		{ data: d{$stat}{$i}, label: \"Other\"}\n";
+	}
 	print "	],\n";
 	print "	{\n";
 	print "		pies: {show: true, autoScale: true},\n";
@@ -150,18 +153,21 @@ function pie_block($summary, $stat, $num) {
 foreach ($filterlog as $fe) {
 	$specialfields = array('srcport', 'dstport');
 	foreach (array_keys($fields) as $field) {
-		if (!in_array($field, $specialfields))
+		if (!in_array($field, $specialfields)) {
 			$summary[$field][$fe[$field]]++;
+		}
 	}
 	/* Handle some special cases */
-	if ($fe['srcport'])
+	if ($fe['srcport']) {
 		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
-	else
+	} else {
 		$summary['srcport'][$fe['srcport']]++;
-	if ($fe['dstport'])
+	}
+	if ($fe['dstport']) {
 		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
-	else
+	} else {
 		$summary['dstport'][$fe['dstport']]++;
+	}
 }
 
 include("head.inc"); ?>
@@ -199,7 +205,7 @@ include("head.inc"); ?>
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
- </td></tr>
+  </td></tr>
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -208,10 +214,10 @@ include("head.inc"); ?>
 	$tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
 	display_top_tabs($tab_array);
 ?>
-		</td>
-	</tr>
+	</td>
+  </tr>
   <tr>
-    <td>
+	<td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
 		<tr><td align="center">
@@ -220,7 +226,7 @@ include("head.inc"); ?>
 <?=gettext("NOTE: IE8 users must enable compatibility view.")?>
 
 <?php
-foreach(array_keys($fields) as $field) {
+foreach (array_keys($fields) as $field) {
 	pie_block($summary, $field , $entriesperblock);
 	echo "<br /><br />";
 	stat_block($summary, $field , $entriesperblock);

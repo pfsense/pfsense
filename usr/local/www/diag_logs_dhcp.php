@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	dhcpserver
 */
 
@@ -48,8 +48,9 @@ require("guiconfig.inc");
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
 if ($_POST['clear']) {
 	clear_log_file($dhcpd_logfile);
@@ -84,7 +85,7 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td>
+	<td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  <tr>

@@ -72,20 +72,23 @@ if ($_GET['act'] == 'connect') {
 	}
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
-		else
+		} else {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+		}
 	}
 } else if ($_GET['act'] == 'childdisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
+		}
 	}
 }
 
-if (!is_array($config['ipsec']['phase1']))
-    $config['ipsec']['phase1'] = array();
+if (!is_array($config['ipsec']['phase1'])) {
+	$config['ipsec']['phase1'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
@@ -141,12 +144,13 @@ $status = ipsec_smp_dump_status();
 				$ipsecconnected[$con_id] = $ph1idx = $con_id;
 			}
 
-			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id']))
+			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 				$icon = "pass";
-			elseif (!isset($config['ipsec']['enable']))
+			} elseif (!isset($config['ipsec']['enable'])) {
 				$icon = "block";
-			else
+			} else {
 				$icon = "reject";
+			}
 ?>
 			<tr>
 				<td class="listlr">
@@ -156,71 +160,79 @@ $status = ipsec_smp_dump_status();
 				</td>
 				<td class="listr">
 <?php
-				if (!is_array($ikesa['local']))
+				if (!is_array($ikesa['local'])) {
 					echo gettext("Unknown");
-				else {
+				} else {
 					if (!empty($ikesa['local']['identification'])) {
-						if ($ikesa['local']['identification'] == '%any')
+						if ($ikesa['local']['identification'] == '%any') {
 							echo gettext('Any identifier');
-						else
+						} else {
 							echo htmlspecialchars($ikesa['local']['identification']);
-					} else
+						}
+					} else {
 						echo gettext("Unknown");
+					}
 				}
 ?>
 				</td>
 				<td class="listr">
 <?php
-				if (!is_array($ikesa['local']))
+				if (!is_array($ikesa['local'])) {
 					echo gettext("Unknown");
-				else {
-					if (!empty($ikesa['local']['address']))
+				} else {
+					if (!empty($ikesa['local']['address'])) {
 						echo htmlspecialchars($ikesa['local']['address']) . '<br/>' .
 							gettext('Port: ') . htmlspecialchars($ikesa['local']['port']);
-					else
+					} else {
 						echo gettext("Unknown");
-					if ($ikesa['local']['port'] == '4500')
+					}
+					if ($ikesa['local']['port'] == '4500') {
 						echo " NAT-T";
+					}
 				}
 ?>
 				</td>
 				<td class="listr">
 <?php
-				if (!is_array($ikesa['remote']))
+				if (!is_array($ikesa['remote'])) {
 					echo gettext("Unknown");
-				else {
+				} else {
 					$identity = "";
 					if (!empty($ikesa['remote']['identification'])) {
-						if ($ikesa['remote']['identification'] == '%any')
+						if ($ikesa['remote']['identification'] == '%any') {
 							$identity = 'Any identifier';
-						else
+						} else {
 							$identity = htmlspecialchars($ikesa['remote']['identification']);
+						}
 					}
 
 					if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth'][0]['identity'])) {
 						echo htmlspecialchars($ikesa['remote']['auth'][0]['identity']);
 						echo "<br/>{$identity}";
 					} else {
-						if (empty($identity))
+						if (empty($identity)) {
 							echo gettext("Unknown");
-						else
+						} else {
 							echo $identity;
+						}
 					}
 				}
 ?>
 				</td>
 				<td class="listr">
 <?php
-				if (!is_array($ikesa['remote']))
+				if (!is_array($ikesa['remote'])) {
 					echo gettext("Unknown");
-				else {
-					if (!empty($ikesa['remote']['address']))
+				} else {
+					if (!empty($ikesa['remote']['address'])) {
 						echo htmlspecialchars($ikesa['remote']['address']) . '<br/>' .
 							gettext('Port: ') . htmlspecialchars($ikesa['remote']['port']);
-					else
+					} else {
 						echo gettext("Unknown");
-					if ($ikesa['remote']['port'] == '4500')
+					}
+					if ($ikesa['remote']['port'] == '4500') {
 						echo " NAT-T";
+					}
 				}
 ?>
 				</td>
@@ -312,30 +324,36 @@ $status = ipsec_smp_dump_status();
 <?php
 							if (is_array($childsa['local']) &&
 							    is_array($childsa['local']['networks']) &&
-							    is_array($childsa['local']['networks']['network']))
-								foreach ($childsa['local']['networks']['network'] as $lnets)
+							    is_array($childsa['local']['networks']['network'])) {
+								foreach ($childsa['local']['networks']['network'] as $lnets) {
 									echo htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
-							else
+								}
+							} else {
 								echo gettext("Unknown");
+							}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-							if (is_array($childsa['local']))
+							if (is_array($childsa['local'])) {
 								echo gettext("Local: ") . htmlspecialchars($childsa['local']['spi']);
-							if (is_array($childsa['remote']))
+							}
+							if (is_array($childsa['remote'])) {
 								echo "<br/>" . gettext("Remote: ") . htmlspecialchars($childsa['remote']['spi']);
+							}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
 							if (is_array($childsa['remote']) &&
 							    is_array($childsa['remote']['networks']) &&
-							    is_array($childsa['remote']['networks']['network']))
-								foreach ($childsa['remote']['networks']['network'] as $rnets)
+							    is_array($childsa['remote']['networks']['network'])) {
+								foreach ($childsa['remote']['networks']['network'] as $rnets) {
 									echo htmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
-							else
+								}
+							} else {
 								echo gettext("Unknown");
+							}
 ?>
 							</td>
 							<td class="listr nowrap">
@@ -407,11 +425,13 @@ $status = ipsec_smp_dump_status();
 
 	$rgmap = array();
 	foreach ($a_phase1 as $ph1ent):
-		if (isset($ph1ent['disabled']))
+		if (isset($ph1ent['disabled'])) {
 			continue;
+		}
 		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
-		if ($ipsecconnected[$ph1ent['ikeid']])
+		if ($ipsecconnected[$ph1ent['ikeid']]) {
 			continue;
+		}
 ?>
 			<tr>
 				<td class="listlr">
@@ -422,37 +442,41 @@ $status = ipsec_smp_dump_status();
 				<td class="listr">
 <?php
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
-				if (empty($myid_data))
+				if (empty($myid_data)) {
 					echo gettext("Unknown");
-				else
+				} else {
 					echo htmlspecialchars($myid_data);
+				}
 ?>
 				</td>
 				<td class="listr">
 <?php
 				$ph1src = ipsec_get_phase1_src($ph1ent);
-				if (empty($ph1src))
+				if (empty($ph1src)) {
 					echo gettext("Unknown");
-				else
+				} else {
 					echo htmlspecialchars($ph1src);
+				}
 ?>
 				</td>
 				<td class="listr">
 <?php
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
-				if (empty($peerid_data))
+				if (empty($peerid_data)) {
 					echo gettext("Unknown");
-				else
+				} else {
 					echo htmlspecialchars($peerid_data);
+				}
 ?>
 				</td>
 				<td class="listr">
 <?php
 				$ph1src = ipsec_get_phase1_dst($ph1ent);
-				if (empty($ph1src))
+				if (empty($ph1src)) {
 					echo gettext("Unknown");
-				else
+				} else {
 					echo htmlspecialchars($ph1src);
+				}
 ?>
 				</td>
 				<td class="listr" >

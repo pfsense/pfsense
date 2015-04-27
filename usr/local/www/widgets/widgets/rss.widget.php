@@ -34,7 +34,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if($_POST['rssfeed']) {
+if ($_POST['rssfeed']) {
 	$config['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
 	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
 	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
@@ -44,37 +44,45 @@ if($_POST['rssfeed']) {
 }
 
 // Use saved feed and max items
-if($config['widgets']['rssfeed'])
+if ($config['widgets']['rssfeed']) {
 	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);
+}
 
-if($config['widgets']['rssmaxitems'])
+if ($config['widgets']['rssmaxitems']) {
 	$max_items =  $config['widgets']['rssmaxitems'];
+}
 
-if(is_numeric($config['widgets']['rsswidgetheight']))
+if (is_numeric($config['widgets']['rsswidgetheight'])) {
 	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
+}
 
-if(is_numeric($config['widgets']['rsswidgettextlength']))
+if (is_numeric($config['widgets']['rsswidgettextlength'])) {
 	$rsswidgettextlength =  $config['widgets']['rsswidgettextlength'];
+}
 
 // Set a default feed if none exists
-if(!$rss_feed_s) {
+if (!$rss_feed_s) {
 	$rss_feed_s = "https://blog.pfsense.org";
 	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 
-if(!$max_items)
+if (!$max_items) {
 	$max_items = 10;
+}
 
-if(!$rsswidgetheight)
+if (!$rsswidgetheight) {
 	$rsswidgetheight = 300;
+}
 
-if(!$rsswidgettextlength)
+if (!$rsswidgettextlength) {
 	$rsswidgettextlength = 140;	// oh twitter, how do we love thee?
+}
 
-if($config['widgets']['rssfeed'])
+if ($config['widgets']['rssfeed']) {
 	$textarea_txt =  str_replace(",", "\n", $config['widgets']['rssfeed']);
-else
+} else {
 	$textarea_txt = "";
+}
 
 ?>
 
@@ -93,8 +101,9 @@ else
 					<select name='rssmaxitems' id='rssmaxitems'>
 						<option value='<?= $max_items ?>'><?= $max_items ?></option>
 						<?php
-							for($x=100; $x<5100; $x=$x+100)
+							for ($x=100; $x<5100; $x=$x+100) {
 								echo "<option value='{$x}'>{$x}</option>\n";
+							}
 						?>
 					</select>
 				</td>
@@ -107,8 +116,9 @@ else
 					<select name='rsswidgetheight' id='rsswidgetheight'>
 						<option value='<?= $rsswidgetheight ?>'><?= $rsswidgetheight ?>px</option>
 						<?php
-							for($x=100; $x<5100; $x=$x+100)
+							for ($x=100; $x<5100; $x=$x+100) {
 								echo "<option value='{$x}'>{$x}px</option>\n";
+							}
 						?>
 					</select>
 				</td>
@@ -121,8 +131,9 @@ else
 					<select name='rsswidgettextlength' id='rsswidgettextlength'>
 						<option value='<?= $rsswidgettextlength ?>'><?= $rsswidgettextlength ?></option>
 						<?php
-							for($x=10; $x<5100; $x=$x+10)
+							for ($x=10; $x<5100; $x=$x+10) {
 								echo "<option value='{$x}'>{$x}</option>\n";
+							}
 						?>
 					</select>
 				</td>
@@ -141,7 +152,7 @@ else
 
 <div id="rss-widgets" style="padding: 5px; height: <?=$rsswidgetheight?>px; overflow:scroll;">
 <?php
-	if(!is_dir("/tmp/simplepie")) {
+	if (!is_dir("/tmp/simplepie")) {
 		mkdir("/tmp/simplepie");
 		mkdir("/tmp/simplepie/cache");
 	}
@@ -149,9 +160,10 @@ else
 	exec("chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
 	function textLimit($string, $length, $replacer = '...') {
-	  if(strlen($string) > $length)
-	  return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
-	  return $string;
+		if (strlen($string) > $length) {
+			return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
+		}
+		return $string;
 	}
 	$feed = new SimplePie();
 	$feed->set_cache_location("/tmp/simplepie/");
@@ -159,7 +171,7 @@ else
 	$feed->init();
 	$feed->handle_content_type();
 	$counter = 1;
-	foreach($feed->get_items() as $item) {
+	foreach ($feed->get_items() as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
 		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
@@ -168,8 +180,9 @@ else
 		echo textLimit($content, $rsswidgettextlength) . "<br />";
 		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br />";
 		$counter++;
-		if($counter > $max_items)
+		if ($counter > $max_items) {
 			break;
+		}
 		echo "<hr/>";
 	}
 ?>

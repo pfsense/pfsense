@@ -42,7 +42,7 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
-if(isset($_POST['servicestatusfilter'])) {
+if (isset($_POST['servicestatusfilter'])) {
 	$config['widgets']['servicestatusfilter'] = htmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved Service Status Filter via Dashboard");
 	header("Location: ../../index.php");
@@ -69,20 +69,23 @@ $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
-	foreach($services as $service) {
-		if((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name'])))
+	foreach ($services as $service) {
+		if ((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name']))) {
 			continue;
-		if (empty($service['description']))
+		}
+		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
+		}
 		$service_desc = explode(".",$service['description']);
 		echo "<tr><td class=\"listlr\">" . $service['name'] . "</td>\n";
 		echo "<td class=\"listr\">" . $service_desc[0] . "</td>\n";
 		// if service is running then listr else listbg
 		$bgclass = null;
-		if (get_service_status($service))
+		if (get_service_status($service)) {
 			$bgclass = "listr";
-		else
+		} else {
 			$bgclass = "listbg";
+		}
 		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, false, true) . "</td>\n";
 		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service) . "</td></tr>\n";
 	}

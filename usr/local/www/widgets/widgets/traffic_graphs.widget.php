@@ -54,8 +54,9 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable']))
+if (isset($config['ipsec']['enable'])) {
 	$ifdescrs['enc0'] = "IPsec";
+}
 
 if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {
@@ -106,7 +107,7 @@ if (isset($a_config["scale_type"])) {
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
 	Default AutoScale:
-		<?php 
+		<?php
 			$scale_type_up="checked=\"checked\"";
 			$scale_type_follow="";
 			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
@@ -114,8 +115,7 @@ if (isset($a_config["scale_type"])) {
 				if ($selected_radio == "up") {
 					$scale_type_up = "checked=\"checked\"";
 					$scale_type_follow="";
-				}
-				else if ($selected_radio == "follow") {
+				} else if ($selected_radio == "follow") {
 					$scale_type_up="";
 					$scale_type_follow = "checked=\"checked\"";
 				}

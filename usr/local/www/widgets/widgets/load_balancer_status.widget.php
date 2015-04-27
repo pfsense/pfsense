@@ -60,8 +60,9 @@ $relay_hosts = get_lb_summary();
 
 $lb_logfile = "{$g['varlog_path']}/relayd.log";
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
 ?>
 
@@ -71,7 +72,10 @@ if (!$nentries)
 		<td width="10%" class="listhdrr">Pool</td>
 		<td width="30%" class="listhdr">Description</td>
 	</tr>
-	<?php $i = 0; foreach ($a_vs as $vsent): ?>
+<?php
+$i = 0;
+foreach ($a_vs as $vsent):
+?>
 	<tr>
 		<?php
 		switch (trim($rdr_a[$vsent['name']]['status'])) {
@@ -85,7 +89,7 @@ if (!$nentries)
 				break;
 			default:
 				$bgcolor = "#D3D3D3";  // lightgray
-				 $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+				$rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
 		}
 		?>
 		<td class="listlr">
@@ -94,54 +98,58 @@ if (!$nentries)
 			<?=$vsent['ipaddr'].":".$vsent['port'];?><br />
 		</td>
 		<td class="listr" align="center" >
-		<table border="0" cellpadding="0" cellspacing="2" summary="status">
-		<?php
-		foreach ($a_pool as $pool) {
-			if ($pool['name'] == $vsent['poolname']) {
-				$pool_hosts=array();
-				foreach ((array) $pool['servers'] as $server) {
-					$svr['ip']['addr']=$server;
-					$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
-					$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
-					$pool_hosts[]=$svr;
-				}
-				foreach ((array) $pool['serversdisabled'] as $server) {
-					$svr['ip']['addr']="$server";
-					$svr['ip']['state']='disabled';
-					$svr['ip']['avail']='disabled';
-					$pool_hosts[]=$svr;
-				}
-				asort($pool_hosts);
-				foreach ((array) $pool_hosts as $server) {
-					if($server['ip']['addr']!="") {
-						switch ($server['ip']['state']) {
-							case 'up':
-								$bgcolor = "#90EE90";  // lightgreen
-								$checked = "checked";
-								break;
-							case 'disabled':
-								$bgcolor = "#FFFFFF";  // white
-								$checked = "";
-								break;
-							default:
-								$bgcolor = "#F08080";  // lightcoral
-								$checked = "checked";
+			<table border="0" cellpadding="0" cellspacing="2" summary="status">
+			<?php
+			foreach ($a_pool as $pool) {
+				if ($pool['name'] == $vsent['poolname']) {
+					$pool_hosts=array();
+					foreach ((array) $pool['servers'] as $server) {
+						$svr['ip']['addr']=$server;
+						$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
+						$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
+						$pool_hosts[]=$svr;
+					}
+					foreach ((array) $pool['serversdisabled'] as $server) {
+						$svr['ip']['addr']="$server";
+						$svr['ip']['state']='disabled';
+						$svr['ip']['avail']='disabled';
+						$pool_hosts[]=$svr;
+					}
+					asort($pool_hosts);
+					foreach ((array) $pool_hosts as $server) {
+						if ($server['ip']['addr']!="") {
+							switch ($server['ip']['state']) {
+								case 'up':
+									$bgcolor = "#90EE90";  // lightgreen
+									$checked = "checked";
+									break;
+								case 'disabled':
+									$bgcolor = "#FFFFFF";  // white
+									$checked = "";
+									break;
+								default:
+									$bgcolor = "#F08080";  // lightcoral
+									$checked = "checked";
+							}
+							echo "<tr>";
+							echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
+							if ($server['ip']['avail']) {
+							  echo " ({$server['ip']['avail']}) ";
+							}
+							echo "&nbsp;</td></tr>";
 						}
-						echo "<tr>";
-						echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
-						if($server['ip']['avail'])
-						  echo " ({$server['ip']['avail']}) ";
-						echo "&nbsp;</td></tr>";
 					}
 				}
 			}
-		}
-		?>
-		</table>
+			?>
+			</table>
 		</td>
 		<td class="listbg" >
 			<font color="#FFFFFF"><?=$vsent['descr'];?></font>
 		</td>
 	</tr>
-	<?php $i++; endforeach; ?>
+<?php
+	$i++;
+endforeach;
+?>
 </table>

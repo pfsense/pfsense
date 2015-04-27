@@ -40,9 +40,9 @@ require_once("/usr/local/www/widgets/include/thermal_sensors.inc");
 //=========================================================================
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
 if (isset($_GET["getThermalSensorsData"])) {
-    //get Thermal Sensors data and return
-    echo getThermalSensorsData();
-    return;
+	//get Thermal Sensors data and return
+	echo getThermalSensorsData();
+	return;
 }
 //=========================================================================
 
@@ -86,11 +86,9 @@ function saveThresholdSettings(&$configArray, &$postArray, $warningValueKey, $cr
 		$criticalValue = (int) $postArray[$criticalValueKey];
 	}
 
-	if (
-		($warningValue >= MIN_THRESHOLD_VALUE && $warningValue <= MAX_THRESHOLD_VALUE) &&
-		($criticalValue >= MIN_THRESHOLD_VALUE && $criticalValue <= MAX_THRESHOLD_VALUE) &&
-		($warningValue < $criticalValue)
-	) {
+	if (($warningValue >= MIN_THRESHOLD_VALUE && $warningValue <= MAX_THRESHOLD_VALUE) &&
+	    ($criticalValue >= MIN_THRESHOLD_VALUE && $criticalValue <= MAX_THRESHOLD_VALUE) &&
+	    ($warningValue < $criticalValue)) {
 		//all validated ok, save to config array
 		$configArray[WIDGETS_CONFIG_SECTION_KEY][THERMAL_SENSORS_WIDGET_SUBSECTION_KEY][$warningValueKey] = $warningValue;
 		$configArray[WIDGETS_CONFIG_SECTION_KEY][THERMAL_SENSORS_WIDGET_SUBSECTION_KEY][$criticalValueKey] = $criticalValue;
@@ -98,7 +96,7 @@ function saveThresholdSettings(&$configArray, &$postArray, $warningValueKey, $cr
 }
 
 function saveGraphDisplaySettings(&$configArray, &$postArray, $valueKey) {
-    $configArray[WIDGETS_CONFIG_SECTION_KEY][THERMAL_SENSORS_WIDGET_SUBSECTION_KEY][$valueKey] = isset($postArray[$valueKey]) ? 1 : 0;
+	$configArray[WIDGETS_CONFIG_SECTION_KEY][THERMAL_SENSORS_WIDGET_SUBSECTION_KEY][$valueKey] = isset($postArray[$valueKey]) ? 1 : 0;
 }
 
 //=========================================================================
@@ -172,95 +170,95 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" id="iform_thermal_sensors_settings" name="iform_thermal_sensors_settings">
 	<table width="100%" border="0" summary="thermal sensors widget">
 		<tr>
-		<td align="left" colspan="2">
-			<span style="font-weight: bold" >Thresholds in &deg;C (1 to 100):</span>
-		</td>
-		<td align="right" colspan="1">
-			<span style="font-weight: bold" >Display settings:</span>
-		</td>
+			<td align="left" colspan="2">
+				<span style="font-weight: bold" >Thresholds in &deg;C (1 to 100):</span>
+			</td>
+			<td align="right" colspan="1">
+				<span style="font-weight: bold" >Display settings:</span>
+			</td>
 		</tr>
 		<tr>
-		<td align="right">
-			Zone Warning:
-		</td>
-		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown"
-			   name="thermal_sensors_widget_zone_warning_threshold"
-			   id="thermal_sensors_widget_zone_warning_threshold"
-			   value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
-		</td>
-		<td align="right">
-			<label for="thermal_sensors_widget_show_raw_output">Show raw output (no graph): </label>
-			<input type="checkbox"
-			   id="thermal_sensors_widget_show_raw_output"
-			   name="thermal_sensors_widget_show_raw_output"
-			   value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked='checked'" : ""; ?> />
-		</td>
+			<td align="right">
+				Zone Warning:
+			</td>
+			<td>
+				<input type="text" maxlength="3" size="3" class="formfld unknown"
+				    name="thermal_sensors_widget_zone_warning_threshold"
+				    id="thermal_sensors_widget_zone_warning_threshold"
+				    value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
+			</td>
+			<td align="right">
+				<label for="thermal_sensors_widget_show_raw_output">Show raw output (no graph): </label>
+				<input type="checkbox"
+				    id="thermal_sensors_widget_show_raw_output"
+				    name="thermal_sensors_widget_show_raw_output"
+				    value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked='checked'" : ""; ?> />
+			</td>
 		</tr>
 		<tr>
-		<td align="right">
-			Zone Critical:
-		</td>
-		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown"
-			   name="thermal_sensors_widget_zone_critical_threshold"
-			   id="thermal_sensors_widget_zone_critical_threshold"
-			   value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
-		</td>
-		<td align="right">
-			<label for="thermal_sensors_widget_show_full_sensor_name">Show full sensor name: </label>
-			<input type="checkbox"
-			   id="thermal_sensors_widget_show_full_sensor_name"
-			   name="thermal_sensors_widget_show_full_sensor_name"
-			   value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked='checked'" : ""; ?> />
-		</td>
+			<td align="right">
+				Zone Critical:
+			</td>
+			<td>
+				<input type="text" maxlength="3" size="3" class="formfld unknown"
+				    name="thermal_sensors_widget_zone_critical_threshold"
+				    id="thermal_sensors_widget_zone_critical_threshold"
+				    value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
+			</td>
+			<td align="right">
+				<label for="thermal_sensors_widget_show_full_sensor_name">Show full sensor name: </label>
+				<input type="checkbox"
+				    id="thermal_sensors_widget_show_full_sensor_name"
+				    name="thermal_sensors_widget_show_full_sensor_name"
+				    value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked='checked'" : ""; ?> />
+			</td>
 		</tr>
 		<tr>
-		<td align="right">
-			Core Warning:
-		</td>
-		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown"
-			   name="thermal_sensors_widget_core_warning_threshold"
-			   id="thermal_sensors_widget_core_warning_threshold"
-			   value="<?= $thermal_sensors_widget_coreWarningTempThreshold ?>" />
-		</td>
-		<td align="right">
-			<label for="thermal_sensors_widget_pulsate_warning">Pulsate Warning: </label>
-			<input type="checkbox"
-			   id="thermal_sensors_widget_pulsate_warning"
-			   name="thermal_sensors_widget_pulsate_warning"
-			   value="<?= $thermal_sensors_widget_pulsateWarning; ?>" <?= ($thermal_sensors_widget_pulsateWarning) ? " checked='checked'" : ""; ?> />
-		</td>
+			<td align="right">
+				Core Warning:
+			</td>
+			<td>
+				<input type="text" maxlength="3" size="3" class="formfld unknown"
+				    name="thermal_sensors_widget_core_warning_threshold"
+				    id="thermal_sensors_widget_core_warning_threshold"
+				    value="<?= $thermal_sensors_widget_coreWarningTempThreshold ?>" />
+			</td>
+			<td align="right">
+				<label for="thermal_sensors_widget_pulsate_warning">Pulsate Warning: </label>
+				<input type="checkbox"
+				    id="thermal_sensors_widget_pulsate_warning"
+				    name="thermal_sensors_widget_pulsate_warning"
+				    value="<?= $thermal_sensors_widget_pulsateWarning; ?>" <?= ($thermal_sensors_widget_pulsateWarning) ? " checked='checked'" : ""; ?> />
+			</td>
 		</tr>
 		<tr>
-		<td align="right">
-			Core Critical:
-		</td>
-		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown"
-			   name="thermal_sensors_widget_core_critical_threshold"
-			   id="thermal_sensors_widget_core_critical_threshold"
-			   value="<?= $thermal_sensors_widget_coreCriticalTempThreshold ?>" />
-		</td>
-		<td align="right">
-			<label for="thermal_sensors_widget_pulsate_critical">Pulsate Critical: </label>
-			<input type="checkbox"
-			   id="thermal_sensors_widget_pulsate_critical"
-			   name="thermal_sensors_widget_pulsate_critical"
-			   value="<?= $thermal_sensors_widget_pulsateCritical; ?>" <?= ($thermal_sensors_widget_pulsateCritical) ? " checked='checked'" : ""; ?> />
-		</td>
+			<td align="right">
+				Core Critical:
+			</td>
+			<td>
+				<input type="text" maxlength="3" size="3" class="formfld unknown"
+				    name="thermal_sensors_widget_core_critical_threshold"
+				    id="thermal_sensors_widget_core_critical_threshold"
+				    value="<?= $thermal_sensors_widget_coreCriticalTempThreshold ?>" />
+			</td>
+			<td align="right">
+				<label for="thermal_sensors_widget_pulsate_critical">Pulsate Critical: </label>
+				<input type="checkbox"
+				    id="thermal_sensors_widget_pulsate_critical"
+				    name="thermal_sensors_widget_pulsate_critical"
+				    value="<?= $thermal_sensors_widget_pulsateCritical; ?>" <?= ($thermal_sensors_widget_pulsateCritical) ? " checked='checked'" : ""; ?> />
+			</td>
 		</tr>
 		<tr>
-		<td align="right" colspan="3">
-			<input type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="formbtn" value="Save" />
-		</td>
+			<td align="right" colspan="3">
+				<input type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="formbtn" value="Save" />
+			</td>
 		</tr>
 		<tr>
-		<td align="left" colspan="3">
-			<span>* You can configure a proper Thermal Sensor / Module under <br />
-			&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php">System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>
-		</td>
+			<td align="left" colspan="3">
+				<span>* You can configure a proper Thermal Sensor / Module under <br />
+				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php">System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>
+			</td>
 		</tr>
 	</table>
 	</form>

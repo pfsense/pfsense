@@ -41,8 +41,8 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if(is_array($config['installedpackages']['package'])) {
-	foreach($config['installedpackages']['package'] as $instpkg) {
+if (is_array($config['installedpackages']['package'])) {
+	foreach ($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
@@ -58,16 +58,17 @@ $updateavailable = false;
 		<td width="30%" class="listhdrr">Package Version</td>
 	</tr>
 	<?php
-	if($config['installedpackages']['package'] != "") {
+	if ($config['installedpackages']['package'] != "") {
 		$instpkgs = array();
-		foreach($config['installedpackages']['package'] as $instpkg)
+		foreach ($config['installedpackages']['package'] as $instpkg) {
 			$instpkgs[] = $instpkg['name'];
+		}
 		natcasesort($instpkgs);
 		$y=1;
 		foreach ($instpkgs as $index => $pkgname){
 
 			$pkg = $config['installedpackages']['package'][$index];
-			if($pkg['name'] <> "") { ?>
+			if ($pkg['name'] <> "") { ?>
 				<tr valign="top">
 				<td class="listlr">
 					<?= $pkg['name'] ?>
@@ -78,14 +79,14 @@ $updateavailable = false;
 				<td class="listr">
 				<?php
 				$latest_package = $currentvers[$pkg['name']]['version'];
-				if($latest_package == false) {
+				if ($latest_package == false) {
 					// We can't determine this package's version status.
 					echo "Current: Unknown.<br />Installed: " . $pkg['version'];
-				} elseif(strcmp($pkg['version'], $latest_package) > 0) {
+				} elseif (strcmp($pkg['version'], $latest_package) > 0) {
 					/* we're running a newer version of the package */
 					echo "Current: {$latest_package}";
 					echo "<br />Installed: {$pkg['version']}";
-				} elseif(strcmp($pkg['version'], $latest_package) < 0) {
+				} elseif (strcmp($pkg['version'], $latest_package) < 0) {
 					/* our package is out of date */
 					$updateavailable = true;
 					?>
@@ -115,7 +116,7 @@ $updateavailable = false;
 //<![CDATA[
 	window.onload = function(in_event)
 	{
-		for (y=1; y<=<?php echo $y;?>; y++){
+		for (y=1; y<=<?php echo $y;?>; y++) {
 			textID = "#updatediv-" + y;
 			jQuery(textID).effect('pulsate');
 		}

@@ -292,13 +292,14 @@ function getAllowedPages($username) {
 	// obtain ldap groups if we are in ldap mode
 	if ($authcfg['type'] == "ldap") {
 		$allowed_groups = @ldap_get_groups($username, $authcfg);
-	} else {
+	}
+	if (!$allowed_groups) {
 		// search for a local user by name
 		$local_user = getUserEntry($username);
-		getPrivPages($local_user, $allowed_pages);
 
-		// obtain local groups if we have a local user
+		// obtain local user pages and groups if we have a local user
 		if ($local_user) {
+			getPrivPages($local_user, $allowed_pages);
 			$allowed_groups = local_user_get_groups($local_user);
 		}
 	}

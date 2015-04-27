@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  *
@@ -33,8 +33,9 @@ $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
 // see if they want local, remote or all IPs returned
 $filter = $_GET['filter'];
 
-if ($filter == "")
+if ($filter == "") {
 	$filter = "local";
+}
 
 if ($filter == "local") {
 	$ratesubnet = "-c " . $intsubnet;
@@ -47,18 +48,19 @@ if ($filter == "local") {
 
 //get the sort method
 $sort = $_GET['sort'];
-if ($sort == "out") 
-	{$sort_method = "-T";}
-else
-	{$sort_method = "-R";}
+if ($sort == "out") {
+	$sort_method = "-T";
+} else {
+	$sort_method = "-R";
+}
 
 // get the desired format for displaying the host name or IP
 $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
 // If hostname display is requested and the DNS forwarder does not already have DHCP static names registered,
 // then load the DHCP static mappings into an array keyed by IP address.
-if (($hostipformat != "") && ((!isset($config['dnsmasq']['enable']) || !isset($config['dnsmasq']['regdhcpstatic']))
-	|| (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic'])))) {
+if (($hostipformat != "") && ((!isset($config['dnsmasq']['enable']) || !isset($config['dnsmasq']['regdhcpstatic'])) ||
+    (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic'])))) {
 	if (is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $ifdata) {
 			if (is_array($ifdata['staticmap'])) {
@@ -75,14 +77,14 @@ if (($hostipformat != "") && ((!isset($config['dnsmasq']['enable']) || !isset($c
 $_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 $someinfo = false;
-for ($x=2; $x<12; $x++){
+for ($x=2; $x<12; $x++) {
 
-    $bandwidthinfo = $listedIPs[$x];
+	$bandwidthinfo = $listedIPs[$x];
 
-   // echo $bandwidthinfo;
-    $emptyinfocounter = 1;
-    if ($bandwidthinfo != "") {
-        $infoarray = explode (":",$bandwidthinfo);
+	// echo $bandwidthinfo;
+	$emptyinfocounter = 1;
+	if ($bandwidthinfo != "") {
+		$infoarray = explode (":",$bandwidthinfo);
 		if (($filter == "all") ||
 		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
 		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
@@ -93,8 +95,9 @@ for ($x=2; $x<12; $x++){
 				$addrdata = gethostbyaddr($infoarray[0]);
 				if ($addrdata == $infoarray[0]) {
 					// gethostbyaddr() gave us back the IP address, so try the static mapping array
-					if ($iplookup[$infoarray[0]] != "")
+					if ($iplookup[$infoarray[0]] != "") {
 						$addrdata = $iplookup[$infoarray[0]];
+					}
 				} else {
 					if ($hostipformat == "hostname") {
 						// Only pass back the first part of the name, not the FQDN.
@@ -115,7 +118,7 @@ unset($bandwidthinfo, $_grb);
 unset($listedIPs);
 
 //no bandwidth usage found
-if ($someinfo == false)
-    echo gettext("no info");
-
+if ($someinfo == false) {
+	echo gettext("no info");
+}
 ?>

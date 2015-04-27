@@ -47,8 +47,9 @@
 	$if = $_GET['if'];
 
 	$realif = get_real_interface($if);
-	if(!$realif)
+	if (!$realif) {
 		$realif = $if; // Need for IPsec case interface.
+	}
 
 	$ifinfo = pfSense_get_interface_stats($realif);
 

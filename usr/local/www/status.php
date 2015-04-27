@@ -8,7 +8,7 @@
  *
  */
 /*
-        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop	
+	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
 	pfSense_MODULE:	support
 */
@@ -95,8 +95,8 @@ function doCmdT($title, $command) {
 			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
 		}
 	}
-    echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
-    echo "</table>\n";
+	echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
+	echo "</table>\n";
 }
 
 /* Execute a command, giving it a title which is the same as the command. */
@@ -154,8 +154,9 @@ defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
-		if (isset($cpdata['enable']))
+		if (isset($cpdata['enable'])) {
 			defCmdT("ipfw -x {$cpdata['zoneid']} show", "/sbin/ipfw -x {$cpdata['zoneid']} show");
+		}
 	}
 }
 
@@ -197,14 +198,14 @@ defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
 
-if(isset($config['system']['usefifolog']))  {
+if (isset($config['system']['usefifolog']))  {
 	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
 } else {
 	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
 }
-	
+
 defCmd("ls /conf");
 defCmd("ls /var/run");
 

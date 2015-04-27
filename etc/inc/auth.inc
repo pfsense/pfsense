@@ -1336,7 +1336,11 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		if ($debug) {
 			printf(gettext("Radius Auth succeeded")."<br />\n");
 		}
-		$ret = true;
+		if($attributes) {
+			$ret = $attributes;
+		} else {
+			$ret = true;
+		}
 	} else {
 		$retvalue['auth_val'] = 3;
 		if ($debug) {
@@ -1409,7 +1413,7 @@ function auth_get_authserver_list() {
 }
 
 function getUserGroups($username, $authcfg) {
-	global $config;
+	global $config,$radiusgroups;
 
 	$allowed_groups = array();
 
@@ -1418,6 +1422,7 @@ function getUserGroups($username, $authcfg) {
 			$allowed_groups = @ldap_get_groups($username, $authcfg);
 			break;
 		case 'radius':
+			 $allowed_groups = $radiusgroups;
 			break;
 		default:
 			$user = getUserEntry($username);
@@ -1438,6 +1443,7 @@ function getUserGroups($username, $authcfg) {
 }
 
 function authenticate_user($username, $password, $authcfg = NULL, &$attributes = array()) {
+	global $radiusgroups;
 
 	if (!$authcfg) {
 		return local_backed($username, $password);
@@ -1451,8 +1457,11 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 			}
 			break;
 		case 'radius':
-			if (radius_backed($username, $password, $authcfg, $attributes)) {
-				$authenticated = true;
+			$radius_backed = radius_backed($username, $password, $authcfg, $attributes);
+			if ($radius_backed) {
+				$authenticated = $radius_backed;
+				$radiusgroups = $authenticated['groups'];
+				$_SESSION['radiusgroups'] = $radiusgroups;
 			}
 			break;
 		default:

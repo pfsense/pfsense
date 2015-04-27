@@ -371,6 +371,17 @@ foreach ($leases as $data) {
 					$data['if'] = $dhcpif;
 					break;
 				}
+				// Check if the IP is in the range of any DHCP pools
+				if (is_array($dhcpifconf['pool'])) {
+					foreach ($dhcpifconf['pool'] as $dhcppool) {
+						if (is_array($dhcppool['range'])) {
+							if (($lip >= ip2ulong($dhcppool['range']['from'])) && ($lip <= ip2ulong($dhcppool['range']['to']))) {
+								$data['if'] = $dhcpif;
+								break 2;
+							}
+						}
+					}
+				}
 			}
 		}
 		echo "<tr>\n";

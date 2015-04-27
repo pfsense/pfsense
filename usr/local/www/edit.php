@@ -42,41 +42,42 @@
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
-if($_POST['action']) {
-	switch($_POST['action']) {
+if ($_POST['action']) {
+	switch ($_POST['action']) {
 		case 'load':
-			if(strlen($_POST['file']) < 1) {
+			if (strlen($_POST['file']) < 1) {
 				echo "|5|" . gettext("No file name specified") . ".|";
-			} elseif(is_dir($_POST['file'])) {
+			} elseif (is_dir($_POST['file'])) {
 				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
-			} elseif(! is_file($_POST['file'])) {
+			} elseif (! is_file($_POST['file'])) {
 				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
-				if($data === false) {
+				if ($data === false) {
 					echo "|1|" . gettext("Failed to read file") . ".|";
 				} else {
 					$data = base64_encode($data);
-					echo "|0|{$_POST['file']}|{$data}|";	
+					echo "|0|{$_POST['file']}|{$data}|";
 				}
 			}
 			exit;
 		case 'save':
-			if(strlen($_POST['file']) < 1) {
+			if (strlen($_POST['file']) < 1) {
 				echo "|" . gettext("No file name specified") . ".|";
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
 				conf_mount_ro();
-				if($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
-					if(file_exists("/tmp/config.cache"))
+				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
+					if (file_exists("/tmp/config.cache")) {
 						unlink("/tmp/config.cache");
+					}
 					disable_security_checks();
 				}
-				if($ret === false) {
+				if ($ret === false) {
 					echo "|" . gettext("Failed to write file") . ".|";
-				} elseif($ret <> strlen($_POST['data'])) {
+				} elseif ($ret <> strlen($_POST['data'])) {
 					echo "|" . gettext("Error while writing file") . ".|";
 				} else {
 					echo "|" . gettext("File successfully saved") . ".|";
@@ -98,7 +99,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 //<![CDATA[
 	function loadFile() {
 		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
@@ -118,25 +119,24 @@ outputJavaScriptFileInline("javascript/base64.js");
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
 
-		if(values.shift() == "0") {
+		if (values.shift() == "0") {
 			var file = values.shift();
 			var fileContent = Base64.decode(values.join("|"));
 			jQuery("#fileStatus").html("<?=gettext("File successfully loaded"); ?>.");
 			jQuery("#fileContent").val(fileContent);
 
 			var lang = "none";
-				 if(file.indexOf(".php") > 0) lang = "php";
-			else if(file.indexOf(".inc") > 0) lang = "php";
-			else if(file.indexOf(".xml") > 0) lang = "xml";
-			else if(file.indexOf(".js" ) > 0) lang = "js";
-			else if(file.indexOf(".css") > 0) lang = "css";
+			if (file.indexOf(".php") > 0) lang = "php";
+			else if (file.indexOf(".inc") > 0) lang = "php";
+			else if (file.indexOf(".xml") > 0) lang = "xml";
+			else if (file.indexOf(".js" ) > 0) lang = "js";
+			else if (file.indexOf(".css") > 0) lang = "css";
 
-			if(jQuery("#highlight").checked && lang != "none") {
+			if (jQuery("#highlight").checked && lang != "none") {
 				jQuery("fileContent").prop("className",lang + ":showcolumns");
 				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
 			}
-		}
-		else {
+		} else {
 			jQuery("#fileStatus").html(values[0]);
 			jQuery("#fileContent").val("");
 		}
@@ -146,10 +146,10 @@ outputJavaScriptFileInline("javascript/base64.js");
 	function saveFile(file) {
 		jQuery("#fileStatus").html("<?=gettext("Saving file"); ?> ...");
 		jQuery("#fileStatusBox").show(500);
-		
+
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g,"%2B");
-		
+
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
 				type: "post",
@@ -207,7 +207,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 			<div style="background:#eeeeee;" id="fileOutput">
 				<script type="text/javascript">
 				//<![CDATA[
-				window.onload=function(){
+				window.onload=function() {
 					document.getElementById("fileContent").wrap='off';
 				}
 				//]]>
@@ -238,7 +238,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 		}
 	);
 
-	<?php if($_GET['action'] == "load"): ?>
+	<?php if ($_GET['action'] == "load"): ?>
 		jQuery(window).load(
 			function() {
 				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path']);?>");

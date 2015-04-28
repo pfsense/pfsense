@@ -752,11 +752,8 @@
 					$post_data['hostname'] = $this->_dnsHost;
 					$post_data['myip'] = $this->_dnsIP;
 					$post_data['offline'] = 'no';
-
-                    $server = "https://domains.google.com/nic/update";
+					$server = "https://domains.google.com/nic/update";
 					$port = "";
-                    curl_setopt($ch, CURLOPT_SSLVERSION, 6);
-                    curl_setopt($ch, CURLOPT_USERAGENT, 'Chrome/41.0');
 					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);

@@ -32,6 +32,7 @@
 	 *    - City Network (citynetwork.se)
 	 *    - GleSYS (glesys.com)
 	 *    - DNSimple (dnsimple.com)
+	 *    - Google Domains (domains.google.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -76,6 +77,7 @@
 	 *  City Network    - Last Tested: 13 November 2013
 	 *  GleSYS          - Last Tested: 3 February 2015
 	 *  DNSimple        - Last Tested: 09 February 2015
+	 *  Google Domains  - Last Tested: 27 April 2015
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -249,6 +251,7 @@
 					case 'ovh-dynhost':
 					case 'citynetwork':
 					case 'dnsimple':
+                    case 'googledomains':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -739,6 +742,21 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json','Content-Type: application/json','X-DNSimple-Token: ' . $token));
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+					break;
+                case 'googledomains':
+					$needsIP = FALSE;
+					if ($this->_dnsVerboseLog) {
+						log_error("Google Domains: ({$this->_dnsHost}) DNS update() starting.");
+					}
+					$post_data['username:password'] = $this->_dnsUser . ':' . $this->_dnsPass;
+					$post_data['hostname'] = $this->_dnsHost;
+					$post_data['myip'] = $this->_dnsIP;
+					$post_data['offline'] = 'no';
+					$server = "https://domains.google.com/nic/update";
+					$port = "";
+					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				default:
 					break;
@@ -1286,6 +1304,31 @@
 						$status = "phpDynDNS ({$this->_dnsHost}): (Unknown Response)";
 						log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$body}");
 						$this->_debug($body);
+					}
+					break;
+                case 'googledomains':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Not A FQDN";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
+                    } else if (preg_match('/nohost/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Hostname does not exist or DynDNS not enabled";
+                    } else if (preg_match('/badagent/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Bad request";
+                    } else if (preg_match('/abuse/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Dynamic DNS access has been blocked!";
+                    } else if (preg_match('/911/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Error on Google's end, retry in 5 minutes";
+					} else {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Unknown Response)";
+						log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$data}");
+						$this->_debug($data);
 					}
 					break;
 			}

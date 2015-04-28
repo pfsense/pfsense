@@ -196,7 +196,7 @@ if ($carpcount > 0):
 		<td>
 			<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
 			<td><?=$ipaddress?></td>
-			<td><i class="icon icon-<?=$icon?>">$status</td>
+			<td><i class="icon icon-<?=$icon?>">$status</i></td>
 	</tr>
 <?php }?>
 </table>

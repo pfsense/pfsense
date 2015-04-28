@@ -54,6 +54,7 @@ tr.disabled th {
 /** Content structure */
 .table-responsive {
 	clear: both;
+	margin-bottom: 0px;
 }
 
 .form-horizontal {

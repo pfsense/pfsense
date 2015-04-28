@@ -46,7 +46,7 @@ class Form extends Form_Element
 	protected $_sections = array();
 	protected $_global = array();
 
-	public function __construct(Form_Button $submit = null)
+	public function __construct($submit = null)
 	{
 		if (!isset($submit))
 			$submit = new Form_Button(
@@ -54,7 +54,8 @@ class Form extends Form_Element
 				'Save'
 			);
 
-		$this->addGlobal($submit);
+		if (false !== $submit)
+			$this->addGlobal($submit);
 	}
 
 	public function add(Form_Section $section)

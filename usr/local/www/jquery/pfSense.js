@@ -97,6 +97,12 @@ $(function() {
 		});
 	};
 
+	// Add confirm to all btn-danger buttons
+	$('.btn-danger').on('click', function(e){
+		if (!confirm('Are you sure you wish to '+ $.trim(this.textContent) +'?'))
+			e.preventDefault();
+	});
+
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover()
 
@@ -104,6 +110,9 @@ $(function() {
 	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function(idx, el){
 		$( $(el).attr('data-target') ).addClass('collapse');
 	});
+
+	// Focus first input
+	$(':input:enabled:visible:first').focus();
 
 	runEvents();
 	bindCollapseToOptions();

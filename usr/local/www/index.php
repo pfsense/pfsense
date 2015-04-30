@@ -56,6 +56,14 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
+// Customize Dashboard Theme
+if ($config['theme_dashboard'] != $config['theme'] && $_SERVER['PHP_SELF'] == "/index.php") {
+	if (!isset($g['theme_revert'])) {
+		$g['theme_revert'] = $config['theme'];
+	}
+	$config['theme'] = $g['theme'] = $config['theme_dashboard'];
+}
+
 if (isset($_REQUEST['closenotice'])) {
 	close_notice($_REQUEST['closenotice']);
 	echo get_menu_messages();

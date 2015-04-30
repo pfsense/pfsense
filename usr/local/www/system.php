@@ -190,7 +190,8 @@ if ($_POST) {
 
 		/* pfSense themes */
 		if (! $g['disablethemeselection']) {
-			update_if_changed("System Theme", $config['theme'], $_POST['theme']);	
+			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
+			update_if_changed("Dashboard Theme", $config['theme_dashboard'], $_POST['theme_dashboard']);
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
@@ -508,6 +509,32 @@ include("head.inc");
 					<strong>
 						<?=gettext("This will change the look and feel of"); ?>
 						<?=$g['product_name'];?>.
+					</strong>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">&nbsp;</td>
+				<td width="78%" class="vtable">
+					<select name="theme_dashboard">
+						<?php
+							$files = return_dir_as_array("/usr/local/www/themes/");
+							foreach($files as $f):
+								if ((substr($f, 0, 1) == "_") && !isset($config['system']['developer']))
+									continue;
+								if ($f == "CVS")
+									continue;
+									$curtheme = "pfsense";
+								if ($config['theme_dashboard'])
+									$curtheme = $config['theme_dashboard'];
+									$selected = "";
+								if($f == $curtheme)
+									$selected = " selected=\"selected\"";
+						?>
+						<option <?=$selected;?>><?=$f;?></option>
+						<?php endforeach; ?>
+					</select>
+					<strong>
+						<?=gettext("Theme for Dashboard only."); ?>
 					</strong>
 				</td>
 			</tr>

@@ -80,6 +80,13 @@ class Form extends Form_Element
 		return $input;
 	}
 
+	public function setMultipartEncoding()
+	{
+		$this->_attributes['enctype'] = 'multipart/form-data';
+
+		return $this;
+	}
+
 	protected function _setParent()
 	{
 		throw new Exception('Form does not have a parent');

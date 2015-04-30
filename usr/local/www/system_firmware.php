@@ -203,7 +203,7 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg);
 
-if ($fwinfo <> "")
+if ($fwinfo != "")
 	print_info_box($fwinfo);
 
 $tab_array = array();
@@ -236,14 +236,20 @@ if ($sig_warning && !$input_errors) {
 		require('classes/Form.class.php');
 
 		if (!is_subsystem_dirty('rebootreq')) {
+			// Provide a button to enable firmware upgrades
 			if (!is_subsystem_dirty('firmware')) {
-				$enablebtn = new Form_Button(Submit, 'Enable firmware upload', null);
+				$enablebtn = new Form_Button(
+					'Submit',
+					'Enable firmware upload'
+					);
+
 				$enablebtn->addClass('btn-warning');
 				$form = new Form($enablebtn);
 				$section = new Form_Section('Invoke ' . $g['product_name'] .' Manual Upgrade');
 				$section->addInput(new Form_StaticText('Enable', 'Click the "Enable firmware upload" button below to begin.'));
 			}
 			else {
+				// Upgrades are now enabled
 				$form = new Form(new Form_Button(
 					Submit,
 					'Disable firmware upload',
@@ -286,7 +292,7 @@ if ($sig_warning && !$input_errors) {
 					'File to upload (' . $type . ')',
 					'file',
 					'',
-					['placeholder' => '']
+					['placeholder' => null]
 				);
 
 				$section->addInput($filepicker)->setHelp('Choose the file you wish to upload');

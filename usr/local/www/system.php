@@ -523,10 +523,10 @@ include("head.inc");
 									continue;
 								if ($f == "CVS")
 									continue;
-									$curtheme = "pfsense";
+								$curtheme = "pfsense";
 								if ($config['theme_dashboard'])
 									$curtheme = $config['theme_dashboard'];
-									$selected = "";
+								$selected = "";
 								if($f == $curtheme)
 									$selected = " selected=\"selected\"";
 						?>

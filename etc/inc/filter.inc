@@ -121,7 +121,7 @@ $icmp6types = array(
 global $tracker;
 global $negate_tracker;
 $tracker = 1000000000;
-$tracker = 10000000;
+$negate_tracker = 10000000;
 
 function filter_rule_tracker($tracker) {
 	global $tracker;

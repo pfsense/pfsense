@@ -63,6 +63,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
+		$check_carp = false;
 		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
                         $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
 			foreach ($toapplylist as $vid => $ovip) {
@@ -77,6 +78,7 @@ if ($_POST) {
                         			interface_proxyarp_configure($a_vip[$vid]['interface']);
                         			break;
                 			case "carp":
+						$check_carp = true;
                         			interface_carp_configure($a_vip[$vid]);
 						break;
                 			default:
@@ -86,6 +88,10 @@ if ($_POST) {
         		}
 			@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
 		}
+		/* Before changing check #4633 */
+                if ($check_carp === true && !get_carp_status())
+                        set_single_sysctl("net.inet.carp.allow", "1");
+
 		$retval = 0;
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);

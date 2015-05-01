@@ -1222,7 +1222,12 @@ function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
 	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $table, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
 	if (is_array($ipfwoutput)) {
-		return $ipfwoutput['timestamp'];
+		/* Workaround for #46652 */
+		if ($ipfwoutput['packets'] > 0) { 
+			return $ipfw_tbl1['timestamp']; 
+		} else {
+			return $ipfwoutput['timestamp'];
+		}
 	}
 
 	return 0;

@@ -3766,19 +3766,18 @@ function filter_generate_ipsec_rules($log = array()) {
 			unset($gateway);
 			/* add endpoint routes to correct gateway on interface if the
 			remote endpoint is not on this interface's subnet  */
-			if((is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
+			if ((isset($ph1ent['mobile']) || is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
 				$parentifsubnet = get_interface_ip($parentinterface) . "/" . get_interface_subnet($parentinterface);
-				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+				if (isset($ph1ent['mobile']) || !ip_in_subnet($rgip, $parentifsubnet)) {
 					$gateway = get_interface_gateway($parentinterface);
 					$interface = $FilterIflist[$parentinterface]['if'];
 	
 					$route_to = " route-to ( $interface $gateway ) ";
 					$reply_to = " reply-to ( $interface $gateway ) ";	
 				}
-			}
-			if((is_ipaddrv6($rgip)) && (interface_has_gatewayv6($parentinterface))) {
+			} else if ((isset($ph1ent['mobile']) || is_ipaddrv6($rgip)) && (interface_has_gatewayv6($parentinterface))) {
 				$parentifsubnet = get_interface_ipv6($parentinterface) . "/" . get_interface_subnetv6($parentinterface);
-				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+				if (isset($ph1ent['mobile']) || !ip_in_subnet($rgip, $parentifsubnet)) {
 					$gateway = get_interface_gateway_v6($parentinterface);
 					$interface = $FilterIflist[$parentinterface]['if'];
 	
@@ -3788,7 +3787,7 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 
 			/* Just in case */
-			if((!is_ipaddr($gateway) || empty($interface))) {
+			if (!is_ipaddr($gateway) || empty($interface)) {
 				$route_to = " ";
 				$reply_to = " ";
 			}
@@ -3801,7 +3800,7 @@ pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
-			if($ph1ent['nat_traversal'] != "off" ) {
+			if ($ph1ent['nat_traversal'] != "off" ) {
 				$ipfrules .= <<<EOD
 pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"

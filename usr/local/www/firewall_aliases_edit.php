@@ -586,7 +586,7 @@ $section->addInput(new Form_Select(
 	'Type',
 	isset($pconfig['type']) ? $pconfig['type'] : $tab,
 	$types
-))->toggles(null);
+))->toggles();
 
 $form->add($section);
 

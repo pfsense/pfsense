@@ -389,14 +389,14 @@ $section->addInput($input = new Form_Select(
 	'Type',
 	$pconfig['type'],
 	$auth_server_types
-))->toggles('.toggle-type');
+))->toggles();
 
 if ($act == 'edit')
 	$input->setDisabled();
 
 $form->add($section);
 $section = new Form_Section('LDAP Server Settings');
-$section->addClass('toggle-type collapse');
+$section->addClass('toggle-ldap collapse');
 
 if (!isset($pconfig['type']) || $pconfig['type'] == 'ldap')
 	$section->addClass('in');
@@ -575,7 +575,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 $section = new Form_Section('Radius Server Settings');
-$section->addClass('toggle-type collapse');
+$section->addClass('toggle-radius collapse');
 
 $section->addInput(new Form_Input(
 	'radius_host',

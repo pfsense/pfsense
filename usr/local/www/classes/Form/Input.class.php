@@ -119,7 +119,7 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
-	public function toggles($selector, $type = 'collapse')
+	public function toggles($selector = null, $type = 'collapse')
 	{
 		if (isset($selector))
 			$this->_attributes['data-target'] = $selector;

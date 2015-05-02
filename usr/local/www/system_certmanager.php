@@ -678,7 +678,7 @@ if (!isset($id))
 		'Method',
 		$pconfig['method'],
 		$cert_methods
-	))->toggles(null);
+	))->toggles();
 }
 
 $section->addInput(new Form_Input(

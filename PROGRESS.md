@@ -37,12 +37,12 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |diag_logs_ipsec.php                          |                         |                        |                                                            |
 |diag_logs_ntpd.php                           |                         |                        |                                                            |
 |diag_logs_openvpn.php                        |                         |                        |                                                            |
-|diag_logs.php                                |                         |                        |                                                            |
+|diag_logs.php                                | &#x2705;                |                        |                                                            |
 |diag_logs_ppp.php                            |                         |                        |                                                            |
 |diag_logs_relayd.php                         |                         |                        |                                                            |
 |diag_logs_resolver.php                       |                         |                        |                                                            |
 |diag_logs_routing.php                        |                         |                        |                                                            |
-|diag_logs_settings.php                       |                         |                        |                                                            |
+|diag_logs_settings.php                       | &#x2705;                |                        |                                                            |
 |diag_logs_vpn.php                            |                         |                        |                                                            |
 |diag_logs_wireless.php                       |                         |                        |                                                            |
 |diag_nanobsd.php                             |                         |                        |                                                            |
@@ -55,13 +55,13 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |diag_resetstate.php                          |                         |                        |                                                            |
 |diag_routes.php                              | &#x2705;                |                        |                                                            |
 |diag_smart.php                               |                         |                        |                                                            |
-|diag_sockets.php                             |                         |                        |                                                            |
+|diag_sockets.php                             | &#x2705;                |                        |                                                            |
 |diag_states_summary.php                      | &#x2705;                |                        |                                                            |
 |diag_system_activity.php                     | &#x2705;                |                        |                                                            |
 |diag_system_pftop.php                        | &#x2705;                |                        |                                                            |
-|diag_tables.php                              |                         |                        |                                                            |
-|diag_testport.php                            |                         |                        |                                                            |
-|diag_traceroute.php                          |                         |                        |                                                            |
+|diag_tables.php                              | &#x2705;                |                        |                                                            |
+|diag_testport.php                            | &#x2705;                |                        |                                                            |
+|diag_traceroute.php                          | &#x2705;                |                        |                                                            |
 |easyrule.php                                 |                         |                        |                                                            |
 |edit.php                                     | &#x2705;                |                        |                                                            |
 |exec.php                                     | &#x2705;                |                        |                                                            |
@@ -133,7 +133,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |pkg_mgr.php                                  | &#x2705;                |                        |                                                            |
 |pkg_mgr_settings.php                         |                         |                        |                                                            |
 |pkg.php                                      |                         |                        |                                                            |
-|reboot.php                                   |                         |                        |                                                            |
+|reboot.php                                   | &#x2705;                |                        |                                                            |
 |restart_httpd.php                            |                         |                        |                                                            |
 |services_captiveportal_filemanager.php       |                         |                        |                                                            |
 |services_captiveportal_hostname_edit.php     |                         |                        |                                                            |
@@ -172,8 +172,8 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |services_unbound_domainoverride_edit.php     |                         |                        |                                                            |
 |services_unbound_host_edit.php               |                         |                        |                                                            |
 |services_unbound.php                         |                         |                        |                                                            |
-|services_wol_edit.php                        |                         |                        |                                                            |
-|services_wol.php                             |                         |                        |                                                            |
+|services_wol_edit.php                        | &#x2705;                |                        |                                                            |
+|services_wol.php                             | &#x2705;                |                        |                                                            |
 |stats.php                                    |                         |                        |                                                            |
 |status_captiveportal_expire.php              |                         |                        |                                                            |
 |status_captiveportal.php                     |                         |                        |                                                            |
@@ -207,8 +207,8 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |system_advanced_notifications.php            | &#x2705;                |                        |                                                            |
 |system_advanced_sysctl.php                   |                         |                        |                                                            |
 |system_authservers.php                       | &#x2705;                |                        |                                                            |
-|system_camanager.php                         |                         |                        |                                                            |
-|system_certmanager.php                       |                         |                        |                                                            |
+|system_camanager.php                         | &#x2705;                |                        |                                                            |
+|system_certmanager.php                       | &#x2705;                |                        |                                                            |
 |system_crlmanager.php                        |                         |                        |                                                            |
 |system_firmware_auto.php                     |                         |                        |                                                            |
 |system_firmware_check.php                    |                         |                        |                                                            |
@@ -223,8 +223,8 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |system_groupmanager.php                      | &#x2705;                |                        |                                                            |
 |system_hasync.php                            |                         |                        |                                                            |
 |system.php                                   | &#x2705;                |                        |                                                            |
-|system_routes_edit.php                       |                         |                        |                                                            |
-|system_routes.php                            |                         |                        |                                                            |
+|system_routes_edit.php                       | &#x2705;                |                        |                                                            |
+|system_routes.php                            | &#x2705;                |                        |                                                            |
 |system_usermanager_addprivs.php              |                         |                        |                                                            |
 |system_usermanager_passwordmg.php            |                         |                        |                                                            |
 |system_usermanager.php                       | &#x2705;                |                        |                                                            |

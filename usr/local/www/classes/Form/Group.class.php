@@ -40,7 +40,7 @@ class Form_Group extends Form_Element
 
 	public function __construct($title)
 	{
-		$this->_title = gettext($title);
+		$this->_title = $title;
 	}
 
 	public function add(Form_Input $input)
@@ -130,10 +130,12 @@ EOT;
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
+		$title = htmlspecialchars(gettext($this->_title));
+
 		return <<<EOT
 	{$element}
 		{$label}
-			{$this->_title}
+			{$title}
 		</label>
 		{$inputs}
 		{$help}

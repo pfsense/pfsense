@@ -59,7 +59,7 @@ class Form_Select extends Form_Input
 			else
 				$selected = ($this->_value == $value);
 
-			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. gettext($name) .'</option>';
+			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. htmlspecialchars(gettext($name)) .'</option>';
 		}
 
 		return <<<EOT

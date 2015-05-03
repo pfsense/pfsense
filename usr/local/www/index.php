@@ -57,7 +57,7 @@ require_once('notices.inc');
 require_once("pkg-utils.inc");
 
 // Customize Dashboard Theme
-if ($config['theme_dashboard'] != $config['theme'] && $_SERVER['PHP_SELF'] == "/index.php") {
+if (isset($config['theme_dashboard']) && $config['theme_dashboard'] != $config['theme'] && $_SERVER['PHP_SELF'] == "/index.php") {
 	if (!isset($g['theme_revert'])) {
 		$g['theme_revert'] = $config['theme'];
 	}

@@ -236,8 +236,8 @@ if ($sig_warning && !$input_errors) {
 		require('classes/Form.class.php');
 
 		if (!is_subsystem_dirty('rebootreq')) {
-			// Provide a button to enable firmware upgrades
-			if (!is_subsystem_dirty('firmware')) {
+			// Provide a button to enable firmware upgrades. Upgrades should be disabled on initial page load
+			if (!is_subsystem_dirty('firmware') || !$_POST) {
 				$enablebtn = new Form_Button(
 					'Submit',
 					'Enable firmware upload'
@@ -268,8 +268,7 @@ if ($sig_warning && !$input_errors) {
 					'UPLOAD_IDENTIFIER',
 					'',
 					'hidden',
-					$upload_id,
-					['placeholder' => '']
+					$upload_id
 					));
 
 				if(stristr($_FILES['ulfile']['name'],"nanobsd")) {
@@ -277,8 +276,7 @@ if ($sig_warning && !$input_errors) {
 						'isnano',
 						'',
 						'hidden',
-						'yes',
-						['placeholder' => '']
+						'yes'
 						));
 				}
 
@@ -291,8 +289,7 @@ if ($sig_warning && !$input_errors) {
 					'ulfile',
 					'File to upload (' . $type . ')',
 					'file',
-					'',
-					['placeholder' => null]
+					''
 				);
 
 				$section->addInput($filepicker)->setHelp('Choose the file you wish to upload');

@@ -65,7 +65,7 @@ class Form_Section extends Form_Element
 	public function __toString()
 	{
 		$element = parent::__toString();
-		$title = gettext($this->_title);
+		$title = htmlspecialchars(gettext($this->_title));
 		$body = implode('', $this->_groups);
 
 		return <<<EOT

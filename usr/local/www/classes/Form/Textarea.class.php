@@ -48,7 +48,6 @@ class Form_Textarea extends Form_Input
 
 		return <<<EOT
 	{$element}
-		{$options}
 	</textarea>
 EOT;
 	}

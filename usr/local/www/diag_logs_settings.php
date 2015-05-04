@@ -205,14 +205,14 @@ else if ($savemsg)
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "diag_logs.php");
 $tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
 $tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 

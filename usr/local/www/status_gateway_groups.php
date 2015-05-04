@@ -63,18 +63,18 @@ $shortcut_section = "gateway-groups";
 include("head.inc");
 
 $tab_array = array();
-		$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
-		$tab_array[1] = array(gettext("Gateway Groups"), true, "status_gateway_groups.php");
-		display_top_tabs($tab_array);
+	$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
+	$tab_array[1] = array(gettext("Gateway Groups"), true, "status_gateway_groups.php");
+	display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">
 	<table class="table table-hover table-condensed table-striped">
-	   <thead>
+		<thead>
 			<tr>
-				<th class="col-md-3"><?=gettext("Group Name"); ?></th>
-				<th class="col-md-5"><?=gettext("Gateways"); ?></th>
-				<th class="col-md-4"><?=gettext("Description"); ?></th>
+				<th><?=gettext("Group Name"); ?></th>
+				<th><?=gettext("Gateways"); ?></th>
+				<th><?=gettext("Description"); ?></th>
 			</tr>
 		</thead>
 		<tbody>

@@ -163,10 +163,6 @@ if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 
 $pgtitle = array(gettext("Status"),gettext("NTP"));
 $shortcut_section = "ntp";
 
-function print_cell($contents) {
-	printf('<td>%s</td>', $contents);
-}
-
 include("head.inc");
 ?>
 
@@ -206,18 +202,18 @@ include("head.inc");
 
 					$i = 0;
 					foreach ($ntpq_servers as $server): ?>
-						<tr> <?php
-							print_cell($server['status']);
-							print_cell($server['server']);
-							print_cell($server['refid']);
-							print_cell($server['stratum']);
-							print_cell($server['type']);
-							print_cell($server['when']);
-							print_cell($server['poll']);
-							print_cell($server['reach']);
-							print_cell($server['delay']);
-							print_cell($server['offset']);
-							print_cell($server['jitter']); ?>
+						<tr>
+							<td><?=$server['status']?></td>
+							<td><?=$server['server']?></td>
+							<td><?=$server['refid']?></td>
+							<td><?=$server['stratum']?></td>
+							<td><?=$server['type']?></td>
+							<td><?=$server['when']?></td>
+							<td><?=$server['poll']?></td>
+							<td><?=$server['reach']?></td>
+							<td><?=$server['delay']?></td>
+							<td><?=$server['offset']?></td>
+							<td><?=$server['jitter']?></td>
 						</tr> <?php
 					   $i++;
 				   endforeach;

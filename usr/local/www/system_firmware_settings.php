@@ -100,134 +100,134 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg);
 
-	$tab_array = array();
-	$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-	$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
-	$tab_array[] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
-	if($g['hidedownloadbackup'] == false)
-		$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+$tab_array = array();
+$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+$tab_array[] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
+if($g['hidedownloadbackup'] == false)
+	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
 
-	display_top_tabs($tab_array);
+display_top_tabs($tab_array);
 
-	require('classes/Form.class.php');
+require('classes/Form.class.php');
 
-	$form = new Form();
+$form = new Form();
 
-	$section = new Form_Section('Firmware Branch');
+$section = new Form_Section('Firmware Branch');
 
-	if(is_array($preset_urls_split)) {
-		$urllist = array();
+if(is_array($preset_urls_split)) {
+	$urllist = array();
 
-		foreach($preset_urls_split as $pus) {
-			$pus_text = explode("\t", $pus);
-			if (empty($pus_text[0]))
-				continue;
-			if (stristr($pus_text[0], php_uname("m")) !== false) {
-				$yourarch = " (Current architecture)";
-				$choice = $pus_text[1];
-			} else {
-				$yourarch = "";
-			}
-
-			$urllist[$pus_text[1]] = $pus_text[0] . $yourarch;
+	foreach($preset_urls_split as $pus) {
+		$pus_text = explode("\t", $pus);
+		if (empty($pus_text[0]))
+			continue;
+		if (stristr($pus_text[0], php_uname("m")) !== false) {
+			$yourarch = " (Current architecture)";
+			$choice = $pus_text[1];
+		} else {
+			$yourarch = "";
 		}
 
-		$section->addInput(new Form_Select(
-		   'preseturls',
-		   'Default Auto Update URLs',
-		   $choice,
-		   $urllist
-		   ))->setHelp('Entries denoted by "Current architecture" match the architecture of your current installation, ' .
-		   'such as ' . php_uname("m") .'. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes.');
-
-		$form->add($section);
+		$urllist[$pus_text[1]] = $pus_text[0] . $yourarch;
 	}
 
-	$section = new Form_Section('Firmware Auto Update URL');
+	$section->addInput(new Form_Select(
+	   'preseturls',
+	   'Default Auto Update URLs',
+	   $choice,
+	   $urllist
+	   ))->setHelp('Entries denoted by "Current architecture" match the architecture of your current installation, ' .
+	   'such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes.', [php_uname("m")]);
+
+	$form->add($section);
+}
+
+$section = new Form_Section('Firmware Auto Update URL');
+
+$section->addInput(new Form_Checkbox(
+	'alturlenable',
+	'Unofficial',
+	'Allow the use of an "unofficial" server for firmware upgrades',
+	isset($curcfg['alturl']['enable'])
+	));
+
+$section->addInput(new Form_Input(
+	'firmwareurl',
+	'Base URL',
+	'text'
+	))->setHelp('This is where %s will check for newer firmware versions when the <a href="system_firmware_check.php">' .
+				'System: Firmware: Auto Update</a> page is viewed', [$g['product_name']]);
+
+$form->add($section);
+
+$section = new Form_Section('Updates');
+
+$section->addInput(new Form_Checkbox(
+	'allowinvalidsig',
+	'Unsigned images',
+	'Allow auto-update firmware images with a missing or invalid digital signature to be used',
+	isset($curcfg['allowinvalidsig'])
+	));
+
+$section->addInput(new Form_Checkbox(
+	'disablecheck',
+	'Dashboard check',
+	'Disable the automatic dashboard auto-update check',
+	isset($curcfg['disablecheck'])
+	));
+
+$form->add($section);
+
+if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense") {
+	$section = new Form_Section('GitSync');
 
 	$section->addInput(new Form_Checkbox(
-		'alturlenable',
-		'Unofficial',
-		'Allow the use of an "unofficial" server for firmware upgrades',
-		isset($curcfg['alturl']['enable'])
-		));
+		'synconupgrade',
+		'Auto sync on update',
+		'After updating, sync with the following repository/branch before reboot',
+		isset($gitcfg['synconupgrade'])
+		))->setHelp('After updating, sync with the following repository/branch before reboot');
+
+	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
+		if(is_array($output_str) && !empty($output_str[0]))
+			$lastrepositoryurl = $output_str[0];
+		unset($output_str);
+	}
 
 	$section->addInput(new Form_Input(
-		firmwareurl,
-		'Base URL',
-		'text'
-		))->setHelp('This is where ' . $g['product_name'] . 'will check for newer firmware versions when the ' .
-					'<a href="system_firmware_check.php">' . 'System: Firmware: Auto Update' . '</a>' . ' page is viewed');
+		'repositoryurl',
+		'Repository URL',
+		'text',
+		($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
+		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', [$lastrepositoryurl]);
 
-	$form->add($section);
-
-	$section = new Form_Section('Updates');
-
-	$section->addInput(new Form_Checkbox(
-		'allowinvalidsig',
-		'Unsigned images',
-		'Allow auto-update firmware images with a missing or invalid digital signature to be used',
-		isset($curcfg['allowinvalidsig'])
-		));
-
-	$section->addInput(new Form_Checkbox(
-		'disablecheck',
-		'Dashboard check',
-		'Disable the automatic dashboard auto-update check',
-		isset($curcfg['disablecheck'])
-		));
-
-	$form->add($section);
-
-	if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense") {
-		$section = new Form_Section('GitSync');
-
-		$section->addInput(new Form_Checkbox(
-			'synconupgrade',
-			'Auto sync on update',
-			'After updating, sync with the following repository/branch before reboot',
-			isset($gitcfg['synconupgrade'])
-			))->setHelp('After updating, sync with the following repository/branch before reboot');
-
-		if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
-			exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
-			if(is_array($output_str) && !empty($output_str[0]))
-				$lastrepositoryurl = $output_str[0];
-			unset($output_str);
-		}
-
-		$section->addInput(new Form_Input(
-			repositoryurl,
-			'Repository URL',
-			'text',
-			($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
-			))->setHelp('The most recently used repository was ' . $lastrepositoryurl . '. This repository will be used if the field is left blank.');
-
-		if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
-			exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
-			if(is_array($output_str)) {
-				foreach($output_str as $output_line) {
-					if(strstr($output_line, '* ')) {
-						$lastbranch = substr($output_line, 2);
-						break;
-					}
+	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
+		if(is_array($output_str)) {
+			foreach($output_str as $output_line) {
+				if(strstr($output_line, '* ')) {
+					$lastbranch = substr($output_line, 2);
+					break;
 				}
 			}
-			unset($output_str);
 		}
+		unset($output_str);
+	}
 
-		$section->addInput(new Form_Input(
-			branch,
-			'Branch name',
-			'text',
-			($gitcfg['branch'] ? $gitcfg['branch'] : '')
-			))->setHelp('The most recently used branch was "' . $lastbranch . '". (Usually the branch name is master)' .
-						'<br />Note: Sync will not be performed if a branch is not specified');
+	$section->addInput(new Form_Input(
+		'branch',
+		'Branch name',
+		'text',
+		($gitcfg['branch'] ? $gitcfg['branch'] : '')
+		))->setHelp('The most recently used branch was "%s". (Usually the branch name is master)' .
+					'<br />Note: Sync will not be performed if a branch is not specified', [$lastbranch]);
 
-		$form->add($section);
-	} // e-o-if(file_exista()
+	$form->add($section);
+} // e-o-if(file_exista()
 
-	print($form);
+print($form);
 ?>
 
 <script>

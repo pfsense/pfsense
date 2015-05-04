@@ -94,7 +94,7 @@ $here = getcwd();
 $rrddbpath = "/var/db/rrd/";
 chdir($rrddbpath);
 $databases = glob('*.rrd');
-chdir($here);       // Need to go back home otherwise the 'include/requires fail!
+chdir($here);		// Need to go back home otherwise the 'include/requires fail!
 
 foreach($databases as $database) {
 	if(stristr($database, "wireless")) {
@@ -118,52 +118,33 @@ $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
 include("head.inc");
 
-$tab_array = array();
-$tabactive = ($curcat == "system") ? True:False;
-$tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
-$tabactive = ($curcat == "traffic") ? True:False;
-$tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
-$tabactive = ($curcat == "packets") ? True:False;
-$tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
-$tabactive = ($curcat == "quality") ? True:False;
-$tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
+$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
+$tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_graph.php?cat=traffic");
+$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
+$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
 if($queues) {
-	$tabactive = ($curcat == "queues") ? True:False;
-	$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
-	$tabactive = ($curcat == "queuedrops") ? True:False;
-	$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
+	$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
+	$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 }
 
-if($wireless) {
-	$tabactive = ($curcat == "wireless") ? True:False;
-	$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
-}
+if($wireless)
+	$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
 
-if($cellular) {
-	$tabactive = ($curcat == "cellular") ? True:False;
-	$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
-}
+if($cellular)
+	$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
 
-if($vpnusers) {
-	if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
-		$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
-}
-if($captiveportal) {
-	$tabactive = ($curcat == "captiveportal") ? True:False;
-	$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
-}
+if($vpnusers)
+	$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 
-if(isset($config['ntpd']['statsgraph'])) {
-	$tabactive = ($curcat == "ntpd") ? True:False;
-	$tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
-}
+if($captiveportal)
+	$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
 
-$tabactive = ($curcat == "custom") ? True:False;
-$tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
+if(isset($config['ntpd']['statsgraph']))
+	$tab_array[] = array(gettext("NTP"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 
-$tabactive = ($curcat == "settings") ? True:False;
-$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
+$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
+$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");
 
 display_top_tabs($tab_array);
 
@@ -175,10 +156,7 @@ if ($savemsg)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'Submit',
-	'Save'
-));
+$form = new Form;
 
 $section = new Form_Section('Graph settings');
 
@@ -208,7 +186,7 @@ $section->addInput(new Form_Select(
 	'Default period',
 	$pconfig['period'],
 	$periods
-))->setHelp('<strong>Note:</strong> Graphs will not be allowed to be recreated within a 1 minute interval, please ' .
+))->setHelp('Graphs will not be allowed to be recreated within a 1 minute interval, please ' .
 			'take this into account after changing the style.');
 
 $form->addGlobal(new Form_Button(

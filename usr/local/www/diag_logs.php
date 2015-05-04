@@ -32,8 +32,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
-	pfSense_MODULE:	system
+/*
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -45,13 +45,19 @@
 
 require("guiconfig.inc");
 
-$system_logfile = "{$g['varlog_path']}/system.log";
+// The logs to display are specified in a GET argument. Default to 'system' logs
+if(!$_GET['logfile'])
+	$logfile = 'system';
+else
+	$logfile = $_GET['logfile'];
+
+$system_logfile = "{$g['varlog_path']}/{$logfile}.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) 
+if ($_POST['clear'])
 	clear_log_file($system_logfile);
 
 if ($_GET['filtertext'])
@@ -67,26 +73,28 @@ $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("General"));
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), true, "diag_logs.php");
+$tab_array[] = array(gettext("System"), ($logfile == 'system'), "diag_logs.php");
 $tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "diag_logs.php?logfile=ppp");
 $tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
+$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "diag_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-$tab_array[] = array(gettext("General"), true, "/diag_logs.php");
-$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
-$tab_array[] = array(gettext("Routing"), false, "/diag_logs_routing.php");
-$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
-$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
-display_top_tabs($tab_array, false, 'nav nav-tabs');
+if(($logfile == 'system') || ($logfile == 'gateways') || ($logfile == 'routing') || ($logfile == 'resolver') || ($logfile == 'wireless')) {
+	$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/diag_logs.php");
+	$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/diag_logs.php?logfile=gateways");
+	$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/diag_logs.php?logfile=routing");
+	$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/diag_logs.php?logfile=resolver");
+	$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/diag_logs.php?logfile=wireless");
+	display_top_tabs($tab_array, false, 'nav nav-tabs');
+}
 
 require('classes/Form.class.php');
 
@@ -116,16 +124,21 @@ $form->add($section);
 print $form;
 
 ?>
-    <div class="panel panel-default">
-        <div class="panel-heading"><?=gettext("Last ")?><?=$nentries?><?=gettext(" log entries")?></div>
-	    <pre>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></div>
+		<pre>
 <?php
-    	if($filtertext)
-    		dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), array("ppp"));
-    	else
-    		dump_clog_no_table($system_logfile, $nentries, true, array(), array("ppp"));
+		if(($logfile == 'resolver') || ($logfile == 'system'))
+			$inverse = array("ppp");
+		else
+			$inverse = null;
+
+		if($filtertext)
+			dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
+		else
+			dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);
 ?>
-    	</pre>
+		</pre>
 	</div>
 
 <?php include("foot.inc"); ?>

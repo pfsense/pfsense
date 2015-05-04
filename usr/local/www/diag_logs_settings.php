@@ -205,14 +205,14 @@ else if ($savemsg)
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "diag_logs.php");
 $tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
 $tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
@@ -223,6 +223,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
+// General logging section ------------------------------------------------
 $section = new Form_Section('General Logging Options');
 
 $section->addInput(new Form_Checkbox(
@@ -312,24 +313,29 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Button(
 	'resetlogs',
 	'Reset Log Files'
-))->addClass('btn-danger btn-xs')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
+))->addClass("btn-danger btn-xs")->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
 
 $form->add($section);
-$section = new Form_Section('Remote Logging Options');
-$section->addClass('toggle-remote');
 
-$section->addInput(new Form_Checkbox(
-	'enable',
-	'Enable Remote Logging',
-	'Send log messages to remote syslog server',
-	$pconfig['enable']
-))->toggles('.toggle-remote .panel-body .form-group:not(:first-child)');
+// Remote logging section ------------------------------------------------
+$section = new Form_Section('Remote Logging Options');
+
+$sourceips = get_possible_traffic_source_addresses(false);
+
+$selected = "";
+
+foreach ($sourceips as $sa) {
+	$rllist[$sa['value']] = $sa['name'];
+
+	if (!link_interface_to_bridge($sa['value']) && ($sa['value'] == $pconfig['sourceip']))
+		$selected = $sa['value'];
+}
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
-	link_interface_to_bridge($pconfig['sourceip']) ? null : $pconfig['sourceip'],
-	get_possible_traffic_source_addresses(false)
+	$selected,
+	$rllist
 ))->setHelp($remoteloghelp);
 
 $section->addInput(new Form_Select(
@@ -339,8 +345,19 @@ $section->addInput(new Form_Select(
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
 
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable Remote Logging',
+	'Send log messages to remote syslog server',
+	$pconfig['enable']
+))->toggles('.toggle-remote');
+
 // Group colapses/appears based on 'enable' checkbox above
 $group = new Form_Group('Remote log servers');
+$group->addClass('toggle-remote', 'collapse');
+
+if ($pconfig['enable'])
+	$group->addClass('in');
 
 $group->add(new Form_Input(
 	'remoteserver',
@@ -368,70 +385,73 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$group = new Form_Group('Remote Syslog Contents');
+$group = new Form_Group('');
+$group->addClass('toggle-remote', 'collapse');
+
+if ($pconfig['enable'])
+	$group->addClass('in');
+
 $group->add(new Form_Checkbox(
 	'system',
-	null,
+	'',
 	'System Events',
 	$pconfig['system']
 ));
 
 $group->add(new Form_Checkbox(
 	'filter',
-	null,
+	'',
 	'Firewall Events',
 	$pconfig['filter']
 ));
 
 $group->add(new Form_Checkbox(
 	'dhcp',
-	null,
+	'',
 	'DHCP service events',
 	$pconfig['dhcp']
 ));
 
 $group->add(new Form_Checkbox(
 	'portalauth',
-	null,
+	'',
 	'Portal Auth events',
 	$pconfig['portalauth']
 ));
 
 $group->add(new Form_Checkbox(
 	'vpn',
-	null,
+	'',
 	'VPN (PPTP, IPsec, OpenVPN) events',
 	$pconfig['vpn']
 ));
 
 $group->add(new Form_Checkbox(
 	'apinger',
-	null,
+	'',
 	'Gateway Monitor events',
 	$pconfig['apinger']
 ));
 
 $group->add(new Form_Checkbox(
 	'relayd',
-	null,
+	'',
 	'Server Load Balancer events',
 	$pconfig['relayd']
 ));
 
 $group->add(new Form_Checkbox(
 	'hostapd',
-	null,
+	'',
 	'Wireless events',
 	$pconfig['hostapd']
 ));
 
-$group->setHelp('syslog sends UDP datagrams to port 514 on the specified remote '.
-	'syslog server, unless another port is specified. Be sure to set syslogd on '.
-	'the remote server to accept syslog messages from pfSense.');
+$group->setHelp('<strong>Note</strong>' . 'syslog sends UDP datagrams to port 514 on the specified remote syslog server, unless another port is specified. Be sure to set syslogd on the remote server to accept syslog messages frompfSense.');
 
 $section->add($group);
 
 $form->add($section);
 print $form;
 
-include("foot.inc");
+include("foot.inc"); ?>

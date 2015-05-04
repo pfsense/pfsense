@@ -67,6 +67,8 @@ function services_radvd_configure($blacklist = array()) {
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		if (!isset($dhcpv6ifconf['enable']))
+			continue;
 		if (!is_array($config['interfaces'][$dhcpv6if]))
 			continue;
 		if (!isset($config['interfaces'][$dhcpv6if]['enable']))
@@ -305,7 +307,7 @@ function services_radvd_configure($blacklist = array()) {
 		else
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		$radvdconf .= "\tAdvOtherConfigFlag on;\n";
-		$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t\tAdvRouterAddr on;\n";
@@ -1089,12 +1091,12 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	else
 		sleep(1);
 
-	/* we add a fake entry for interfaces that are set to track6 another WAN */
+	/* we add a fake entry for interfaces that are set to track6 another WAN unless DHCP has been configured */
 	foreach ($Iflist as $ifname) {
 		/* Do not put in the config an interface which is down */
 		if (isset($blacklist[$ifname]))
 			continue;
-		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
+		if (!empty($config['interfaces'][$ifname]['track6-interface']) && (empty($dhcpdv6cfg[$ifname]) || !isset($dhcpdv6cfg[$ifname]['enable']))) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
 			if(!is_ipaddrv6($ifcfgipv6))

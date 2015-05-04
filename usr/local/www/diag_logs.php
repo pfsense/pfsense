@@ -87,7 +87,7 @@ $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-if(($logfile == 'system') || ($logfile == 'gateways') || ($logfile == 'routing') || ($logfile == 'resolver') || ($logfile == 'wireless')) {
+if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless')))	 {
 	$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/diag_logs.php");
 	$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/diag_logs.php?logfile=gateways");
 	$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/diag_logs.php?logfile=routing");

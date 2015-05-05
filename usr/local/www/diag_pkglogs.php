@@ -105,12 +105,14 @@ if($pkgwithlogging == false) {
 
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=printf(gettext('Last %1$s %2$s log entries'),$nentries,$curtab)?></div>
-		<pre>
+		<div>class="panel-body">
+			<pre>
 <?php
-		$package =& $config['installedpackages']['package'][$apkgid];
-		dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+			$package = $config['installedpackages']['package'][$apkgid];
+			dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
 ?>
-		</pre>
+			</pre>
+		</div>
 	</div>
 
 <?php }

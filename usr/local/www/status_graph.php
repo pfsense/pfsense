@@ -130,136 +130,92 @@ include("head.inc");
 require('classes/Form.class.php');
 
 $form = new Form(false);
-$form->addClass('auto-submit');
+$form->addClass('auto-submit', 'form-inline');
 
 $section = new Form_Section('Graph settings');
 
-$group = new Form_Group('Options');
-
-$group->add(new Form_Select(
+$section->addInput(new Form_Select(
 	'if',
-	'',
+	'Interface ',
 	$curif,
 	iflist()
-))->setHelp('Interface');
+));
 
-$group->add(new Form_Select(
+$section->addInput(new Form_Select(
 	'sort',
-	'',
+	'Sort by',
 	$cursort,
 	array (
-		'in'  => 'Bw In',
-		'out' => 'BW Out'
+		'in'	=> 'Bandwidth In',
+		'out'	=> 'Bandwidth Out'
 	)
-))->setHelp('Sort by');
+));
 
-$group->add(new Form_Select(
+$section->addInput(new Form_Select(
 	'filter',
-	'',
+	'Filter',
 	$curfilter,
 	array (
-		'local'	 => 'Local',
-		'remote' => 'Remote',
-		'all'	 => 'All'
+		'local'	=> 'Local',
+		'remote'=> 'Remote',
+		'all'	=> 'All'
 	)
-))->setHelp('Filter');
+));
 
-$group->add(new Form_Select(
+$section->addInput(new Form_Select(
 	'hostipformat',
-	' ',
+	'Display',
 	$curhostipformat,
 	array (
-		''		   => 'IP Address',
-		'hostname' => 'Host Name',
-		'fqdn'	   => 'FQDN'
+		''			=> 'IP Address',
+		'hostname'	=> 'Host Name',
+		'fqdn'		=> 'FQDN'
 	)
-))->setHelp('Display');
-
-$section->add($group);
+));
 
 $form->add($section);
 print $form;
 
 ?>
+<script>
 
-<script type="text/javascript">
-//<![CDATA[
 function updateBandwidth(){
-	var hostinterface = jQuery("#if").val();
-	var sorting = jQuery("#sort").val();
-	var filter = jQuery("#filter").val();
-	var hostipformat = jQuery("#hostipformat").val();
-	bandwidthAjax(hostinterface, sorting, filter, hostipformat);
-}
-
-function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&filter=" + filter + "&hostipformat=" + hostipformat;
-
-	var opt = {
-		// Use GET
-		type: 'get',
-		error: function(req) {
-			/* XXX: Leave this for debugging purposes: Handle 404
-			if(req.status == 404)
-				alert('Error 404: location "' + uri + '" was not found.');
-		*/
-			/* Handle other errors
-			else
-				alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
-		*/
-		},
-		success: function(data) {
-			updateBandwidthHosts(data);
-		}
-	}
-	jQuery.ajax(uri, opt);
-}
-
-function updateBandwidthHosts(data){
-	var hosts_split = data.split("|");
-	d = document;
-	//parse top ten bandwidth abuser hosts
-	for (var y=0; y<10; y++){
-		if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
-			hostinfo = hosts_split[y].split(";");
-
-			//update host ip info
-			var HostIpID = "hostip" + y;
-			var hostip = d.getElementById(HostIpID);
-			hostip.innerHTML = hostinfo[0];
-
-			//update bandwidth inbound to host
-			var hostbandwidthInID = "bandwidthin" + y;
-			var hostbandwidthin = d.getElementById(hostbandwidthInID);
-			hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
-
-			//update bandwidth outbound from host
-			var hostbandwidthOutID = "bandwidthout" + y;
-			var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-			hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
-
-			//make the row appear if hidden
-			var rowid = "#host" + y;
-			if (jQuery(rowid).css('display') == "none"){
-				//hide rows that contain no data
-				jQuery(rowid).show(1000);
-			}
-		}
-		else
+	$.ajax(
+		'/bandwidth_by_ip.php',
 		{
-			var rowid = "#host" + y;
-			if (jQuery(rowid).css('display') != "none"){
-				//hide rows that contain no data
-				jQuery(rowid).fadeOut(2000);
-			}
-		}
-	}
+			type: 'get',
+			data: $(document.forms[0]).serialize(),
+			success: function (data) {
+				var hosts_split = data.split("|");
 
-	setTimeout('updateBandwidth()', 1000);
+				$('#top10-hosts').empty();
+
+				//parse top ten bandwidth abuser hosts
+				for (var y=0; y<10; y++){
+					if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
+						hostinfo = hosts_split[y].split(";");
+
+						$('#top10-hosts').append('<tr>'+
+							'<td>'+ hostinfo[0] +'</td>'+
+							'<td>'+ hostinfo[1] +' Bits/sec</td>'+
+							'<td>'+ hostinfo[2] +' Bits/sec</td>'+
+						'</tr>');
+					}
+				}
+			},
+	});
 }
-//]]>
-</script>
 
+events.push(function(){
+	$('form.auto-submit').on('change', function(){
+		$(this).submit();
+	});
+
+	setInterval('updateBandwidth()', 1000);
+
+	updateBandwidth();
+});
+</script>
 <?php
 
 /* link the ipsec interface magically */
@@ -267,57 +223,34 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 	$ifdescrs['enc0'] = "IPsec";
 
 ?>
-
-<div id="niftyOutter" class="panel panel-default">
-	<div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-		<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
-		  <param name="id" value="graph" />
-		  <param name="type" value="image/svg+xml" />
-		  <param name="width" value="<? echo $width; ?>" />
-		  <param name="height" value="<? echo $height; ?>" />
-		  <param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
-		</object>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Traffic graph</h2>
 	</div>
-	<div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
-			<tr>
-				<td ><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
-				<td><?=gettext("Bandwidth In"); ?></td>
-				<td><?=gettext("Bandwidth Out"); ?></td>
-		   </tr>
-
-<?php
-			for($idx=0; $idx<10; $idx++) { ?>
-				<tr id="host<?=$idx?>" >
-					<td id="hostip<?=$idx?>">
-					</td>
-					<td id="bandwidthin<?=$idx?>">
-					</td>
-					<td id="bandwidthout<?=$idx?>">
-					</td>
-				</tr>
-<?php
-			}
-?>
-
-		</table>
+	<div class="panel-body">
+		<div class="col-sm-6">
+			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
+				<param name="id" value="graph" />
+				<param name="type" value="image/svg+xml" />
+				<param name="width" value="<? echo $width; ?>" />
+				<param name="height" value="<? echo $height; ?>" />
+				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+			</object>
+		</div>
+		<div class="col-sm-6">
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
+						<th><?=gettext("Bandwidth In"); ?></th>
+						<th><?=gettext("Bandwidth Out"); ?></th>
+					</tr>
+				</thead>
+				<tbody id="top10-hosts">
+					<!-- to be added by javascript -->
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<div style="clear: both;"></div>
 </div>
-
-<div class="alert alert-warning">
-	<strong><?=gettext("Note: "); ?>:</strong><?=gettext("the "); ?><a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.</p>
-
-<script>
-events.push(function(){
-	$('.auto-submit').on('change', function(){
-	$(this).submit();
-	});
-});
-
-events.push(function(){
-	jQuery(document).ready(updateBandwidth);
-});
-</script>
-
-<?php include("foot.inc"); ?>
+<?php include("foot.inc");

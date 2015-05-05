@@ -34,7 +34,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/setkey
-	pfSense_MODULE:	ipsec
+	pfSense_MODULE: ipsec
 */
 
 ##|+PRIV
@@ -44,6 +44,8 @@
 ##|*MATCH=diag_ipsec_sad.php*
 ##|-PRIV
 
+define(DEBUG, true); // Enable the substitution of dummy data for testing
+
 require("guiconfig.inc");
 require("ipsec.inc");
 
@@ -51,7 +53,12 @@ $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-$sad = ipsec_dump_sad();
+if(DEBUG) { // Dummy data for testing. Remove prior tp production!
+	$sad = array ( '0' => array ( 'dst' => '208.123.73.7', 'src' => '184.57.8.247', 'proto' => 'esp', 'spi' => 'cb32e40f', 'reqid' => '00000001', 'ealgo' => 'aes-gcm-16', 'data' => '6904 B' ),
+				   '1' => array ( 'dst' => '184.57.8.247', 'src' => '208.123.73.7', 'proto' => 'esp', 'spi' => 'cac33f03', 'reqid' => '00000001', 'ealgo' => 'aes-gcm-16', 'data' => '4095 B' ) );
+}
+else
+	$sad = ipsec_dump_sad();
 
 /* delete any SA? */
 if ($_GET['act'] == "del") {
@@ -63,79 +70,74 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+$tab_array = array();
+$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
+$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
+$tab_array[2] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
+$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+$tab_array[4] = array(gettext("Logs"), false, "diag_logs.php?logfile=ipsec");
+display_top_tabs($tab_array);
+
+if (count($sad)) {
 ?>
+	<div table-responsive>
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><?=gettext("Source")?></th>
+					<th><?=gettext("Destination")?></th>
+					<th><?=gettext("Protocol")?></th>
+					<th><?=gettext("SPI")?></th>
+					<th><?=gettext("Enc. alg.")?></th>
+					<th><?=gettext("Auth. alg.")?></th>
+					<th><?=gettext("Data")?></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php foreach ($sad as $sa) { ?>
+			<tr>
+				<td>
+					<?=htmlspecialchars($sa['src'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($sa['dst'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars(strtoupper($sa['proto']))?>
+				</td>
+				<td>
+					<?=htmlspecialchars($sa['spi'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($sa['ealgo'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($sa['aalgo'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($sa['data'])?></td>
+				<td>
+					<?php
+						$args = "src=" . rawurlencode($sa['src']);
+						$args .= "&amp;dst=" . rawurlencode($sa['dst']);
+						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
+						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
+					?>
+					<a class="btn btn-xs btn-danger" href="diag_ipsec_sad.php?act=del&amp;<?=$args?>">Delete</a>
+				</td>
+			</tr>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<?php include("fbegin.inc"); ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec sad">
-		<tr>
-			<td>
-				<?php
-					$tab_array = array();
-					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-					$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-					$tab_array[2] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
-					$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-					$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
-					display_top_tabs($tab_array);
-				?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div id="mainarea">
-					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<?php if (count($sad)): ?>
-						<tr>
-							<td class="listhdrr nowrap"><?=gettext("Source");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Destination");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Protocol");?></td>
-							<td class="listhdrr nowrap"><?=gettext("SPI");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Enc. alg.");?></td>
-							<td class="listhdr nowrap"><?=gettext("Auth. alg.");?></td>
-							<td class="listhdr nowrap"><?=gettext("Data");?></td>
-							<td class="list nowrap"></td>
-						</tr>
-						<?php foreach ($sad as $sa): ?>
-						<tr>
-							<td class="listlr"><?=htmlspecialchars($sa['src']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['dst']);?></td>
-							<td class="listr"><?=htmlspecialchars(strtoupper($sa['proto']));?></td>
-							<td class="listr"><?=htmlspecialchars($sa['spi']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
-							<td class="list nowrap">
-								<?php
-									$args = "src=" . rawurlencode($sa['src']);
-									$args .= "&amp;dst=" . rawurlencode($sa['dst']);
-									$args .= "&amp;proto=" . rawurlencode($sa['proto']);
-									$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
-								?>
-								<a href="diag_ipsec_sad.php?act=del&amp;<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-								</a>
-							</td>
-						</tr>
-						<?php endforeach; ?>
-						<?php else: ?>
-						<tr>
-							<td>
-								<p><strong><?=gettext("No IPsec security associations.");?></strong></p>
-							</td>
-						</tr>
-						<?php endif; ?>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
+			<?php
+			} ?>
+			</tbody>
+		</table>
+	</div>
+<?php
+		}
+else
+	print_info_box(gettext('No IPsec security associations.'));
 
-<p class="vexpl">
-<span class="red"><strong><?=gettext("Note:");?><br /></strong></span>
-<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
-</p>
+print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

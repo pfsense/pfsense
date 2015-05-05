@@ -172,12 +172,13 @@ $tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_ali
 display_top_tabs($tab_array);
 
 ?>
-<table class="table table-striped">
+<div class="table-responsive">
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<td><?=gettext("Name")?></td>
-			<td><?=gettext("Values")?></td>
-			<td><?=gettext("Description")?></td>
+			<th><?=gettext("Name")?></th>
+			<th><?=gettext("Values")?></th>
+			<th><?=gettext("Description")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -244,6 +245,7 @@ display_top_tabs($tab_array);
 <?php endforeach?>
 	</tbody>
 </table>
+</div>
 
 <nav class="action-buttons">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success">

@@ -1207,7 +1207,7 @@ EOD;
 			if($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
-			$dnscfgv6 .= "	deny client-updates;\n";
+			$dnscfgv6 .= "	{$dhcpv6ifconf['ddnsclientupdates']} client-updates;\n";
 			$dnscfgv6 .= "	ddns-update-style interim;\n";
 			$nsupdate = true;
 		}

@@ -19,7 +19,7 @@
 		</div>
 	</footer>
 
-	<script src="/jquery/jquery-1.11.1.min.js"></script>
+	<script src="/jquery/jquery-1.11.2.min.js"></script>
 	<script src="/jquery/jquery-ui-1.11.2.min.js"></script>
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>

@@ -34,6 +34,8 @@ foreach (glob('classes/Form/*.class.php') as $file)
 
 class Form extends Form_Element
 {
+	const LABEL_WIDTH = 2;
+	const MAX_INPUT_WIDTH = 10;
 	protected $_tagName = 'form';
 	protected $_attributes = array(
 		'class' => array('form-horizontal' => true),
@@ -43,9 +45,8 @@ class Form extends Form_Element
 	);
 	protected $_sections = array();
 	protected $_global = array();
-	protected $_labelWidth = 2;
 
-	public function __construct(Form_Button $submit = null)
+	public function __construct($submit = null)
 	{
 		if (!isset($submit))
 			$submit = new Form_Button(
@@ -53,7 +54,8 @@ class Form extends Form_Element
 				'Save'
 			);
 
-		$this->addGlobal($submit);
+		if (false !== $submit)
+			$this->addGlobal($submit);
 	}
 
 	public function add(Form_Section $section)
@@ -64,14 +66,6 @@ class Form extends Form_Element
 		return $section;
 	}
 
-	public function setLabelWidth($size)
-	{
-		if ($size < 1 || $size > 12)
-			throw new Exception('Incorrect size, pass a number between 1 and 12');
-
-		$this->_labelWidth = (int)$size;
-	}
-
 	public function setAction($url)
 	{
 		$this->_attributes['action'] = $url;
@@ -79,16 +73,18 @@ class Form extends Form_Element
 		return $this;
 	}
 
-	public function getLabelWidth()
-	{
-		return $this->_labelWidth;
-	}
-
 	public function addGlobal(Form_Input $input)
 	{
 		array_push($this->_global, $input);
 
 		return $input;
+	}
+
+	public function setMultipartEncoding()
+	{
+		$this->_attributes['enctype'] = 'multipart/form-data';
+
+		return $this;
 	}
 
 	protected function _setParent()
@@ -100,17 +96,23 @@ class Form extends Form_Element
 	{
 		$element = parent::__toString();
 		$html = implode('', $this->_sections);
+		$buttons = '';
 
 		foreach ($this->_global as $global)
 		{
-			if (!$global instanceof Form_Button)
-				continue;
-
-			$global->setWidth(12 - $this->getLabelWidth());
-			$global->column->addClass('col-sm-offset-'. $this->_labelWidth);
+			if ($global instanceof Form_Button)
+				$buttons .= $global;
+			else
+				$html .= $global;
 		}
 
-		$html .= implode('', $this->_global);
+		if (!empty($buttons))
+		{
+			$group = new Form_Element;
+			$group->addClass('col-sm-'. Form::MAX_INPUT_WIDTH, 'col-sm-offset-'. Form::LABEL_WIDTH);
+
+			$html .= $group . $buttons .'</div>';
+		}
 
 		return <<<EOT
 	{$element}

@@ -345,7 +345,7 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 					<td>
 					<?php if ($i < (count($a_server) - 1)): ?>
 						<a href="system_authservers.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-						<a href="system_authservers.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" onclick="return confirm('<?=gettext("Do you really want to delete this Server?")?>')">delete</a>
+						<a href="system_authservers.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
 					<?php endif?>
 					</td>
 				</tr>
@@ -389,14 +389,14 @@ $section->addInput($input = new Form_Select(
 	'Type',
 	$pconfig['type'],
 	$auth_server_types
-))->toggles('.toggle-type');
+))->toggles();
 
 if ($act == 'edit')
 	$input->setDisabled();
 
 $form->add($section);
 $section = new Form_Section('LDAP Server Settings');
-$section->addClass('toggle-type collapse');
+$section->addClass('toggle-ldap collapse');
 
 if (!isset($pconfig['type']) || $pconfig['type'] == 'ldap')
 	$section->addClass('in');
@@ -575,7 +575,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 $section = new Form_Section('Radius Server Settings');
-$section->addClass('toggle-type collapse');
+$section->addClass('toggle-radius collapse');
 
 $section->addInput(new Form_Input(
 	'radius_host',

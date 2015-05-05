@@ -102,12 +102,10 @@ if ($savemsg)
 	print_info_box($savemsg);
 
 require('classes/Form.class.php');
-$form = new Form(false);
-$form->addGlobal(new Form_Input(
-	'showtables',
-	null,
-	'hidden',
-	'yes'
+$form = new Form(
+	new Form_Button(
+		null,
+		'Show'
 ));
 
 $section = new Form_Section('Table to display');
@@ -123,110 +121,85 @@ $form->add($section);
 print $form;
 ?>
 
-<script type="text/javascript">
-//<![CDATA[
-	function method_change(entrytype) {
-		window.location='diag_tables.php?type=' + entrytype;
-	}
-	function del_entry(entry) {
-		jQuery.ajax("diag_tables.php?type=<?=htmlspecialchars($tablename)?>&delete=" + entry, {
-		complete: function(response) {
-			if (200 == response.status) {
-				// Escape all dots to not confuse jQuery selectors
-				name = response.responseText.replace(/\./g,'\\.');
-				name = name.replace(/\//g,'\\/');
-				jQuery('#' + name).fadeOut(1000);
-			}
-		}
+<script>
+events.push(function(){
+	$('a[data-entry]').on('click', function(){
+		var el = $(this);
+
+		$.ajax(
+			'/diag_tables.php',
+			{
+				type: 'post',
+				data: {
+					type: '<?=htmlspecialchars($tablename)?>',
+					delete: $(this).data('entry')
+				},
+				success: function(){
+					el.parents('tr').remove();
+				},
 		});
-	}
-//]]>
+	});
+});
 </script>
 
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed">
 		<thead>
-		   <tr id="tblheader">
-			  <th>
-				  <?=gettext("IP Address")?>
-			  </th>
-		   </tr>
+			<tr>
+				<th><?=gettext("IP Address")?></th>
+			</tr>
 		</thead>
 		<tbody>
 <?php
-
-
-		$count = 0;
-		foreach($entries as $entryA):
-			$entry = trim($entryA);
+		foreach ($entries as $entry):
+			$entry = trim($entry);
 ?>
-			<tr id="<?=$entry?>">
+			<tr>
 				<td>
-					<?=$entry; ?>
+					<?=$entry?>
 				</td>
 				<td>
-					<?php if (!$bogons) { ?>
-					<a class="btn btn-xs btn-default" onclick="del_entry('<?=htmlspecialchars($entry)?>');">Remove</a>
-					<?php } ?>
+					<?php if (!$bogons): ?>
+						<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>">Remove</a>
+					<?php endif ?>
 				</td>
 			</tr>
-<?php
-			$count++;
-		endforeach;
-?>
+<?php endforeach ?>
 		</tbody>
 	</table>
 </div>
+<?php if (empty($entries)): ?>
+	<div class="alert alert-warning" role="alert">No entries exist in this table</div>
+<?php endif ?>
+
 <?php
-		if($count == 0) {
-?>
-		<div class="alert alert-warning" role="alert">No entries exist in this table</div>
-<?php	} 
 
-if($bogons || ($count > 0)) {
-	$form2 = new Form(false);
+if ($bogons || !empty($entries)) {
+	$form = new Form;
 
-	$form2->addGlobal(new Form_Input(
-		'cleartables',
-		null,
-		'hidden',
-		$tablename
-	));
+	$section = new Form_Section('Table Data');
 
-	$section2 = new Form_Section('Table Data');
-
-	if($bogons) {
+	if ($bogons) {
 		$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 
-		$section2->addInput(new Form_StaticText(
+		$section->addInput(new Form_StaticText(
 			'Last update',
 			$last_updated
 		));
 
-		$section2->addInput(new Form_Button(
+		$section->addInput(new Form_Button(
 			'Download',
 			'Download'
-		))->setHelp('Download the latest bogon data')->removeClass('btn -primary')->addClass('btn-warning btn-sm');
-	} else if($count > 0) {
-		$section2->addInput(new Form_Button(
+		))->setHelp('Download the latest bogon data')->addClass('btn-warning');
+	} elseif (!empty($entries)) {
+		$section->addInput(new Form_Button(
 			'deleteall',
 			'Clear Table'
-		))->setHelp('Clear all of the entries in this table')->removeClass('btn-primary')->addClass('btn-danger');
+		))->setHelp('Clear all of the entries in this table')->addClass('btn-danger');
 	}
 
-	$form2->add($section2);
-	print $form2;
+	$form->add($section);
+	print $form;
 }
-?>
 
-<script>
-events.push(function(){
-	$('#type').on('change', function(){
-	$('#tblheader').html('<th class="warning">Fetching table data</th>')
-	method_change(jQuery('#type').val());
-	});
-});
-</script>
-
-<?php include("foot.inc"); ?>
-
+include("foot.inc");

@@ -212,6 +212,7 @@ if ($local_ip == false) {
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
 	<title><?=gettext("Login"); ?></title>
+	<script>var events = events || [];</script>
 </head>
 <body id="login" class="no-menu">
 	<div id="jumbotron">
@@ -262,24 +263,21 @@ if ($local_ip == false) {
 				</div>
 			</div>
 		</div>
-	</div>
-	<script src="/jquery/jquery-1.11.1.min.js"></script>
-	<script>
-	$(function() {
-		document.cookie=
-			"cookie_test=1" +
-			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-		if (document.cookie.indexOf("cookie_test") == -1)
-			document.getElementById("no_cookies").className = '';
+		<script>
+		events.push(function() {
+			document.cookie=
+				"cookie_test=1" +
+				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-		// Delete it
-		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-	});
-	</script>
-</body>
-</html>
+			if (document.cookie.indexOf("cookie_test") == -1)
+				document.getElementById("no_cookies").className = '';
+
+			// Delete it
+			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		});
+		</script>
 <?php
-} // end function
+require('foot.inc');
 
-?>
+} // end function

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_logs_filter.php
-	part of pfSense 
+	part of pfSense
 	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	originally based on m0n0wall (http://m0n0.ch/wall)
@@ -33,8 +33,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
-	pfSense_MODULE:	filter
+/*
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -51,12 +51,12 @@ require_once("filter_log.inc");
 if (isset($_POST['resolve'])) {
 	$ip = strtolower($_POST['resolve']);
 	$res = (is_ipaddr($ip) ? gethostbyaddr($ip) : '');
-	
+
 	if ($res && $res != $ip)
 		$response = array('resolve_ip' => $ip, 'resolve_text' => $res);
 	else
 		$response = array('resolve_ip' => $ip, 'resolve_text' => gettext("Cannot resolve"));
-	
+
 	echo json_encode(str_replace("\\","\\\\", $response)); // single escape chars can break JSON decode
 	exit;
 }
@@ -131,19 +131,19 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter">
   <tr><td>
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+display_top_tabs($tab_array);
 ?>
  </td></tr>
   <tr><td class="tabnavtbl">
@@ -157,14 +157,14 @@ include("head.inc");
 		</td>
 	</tr>
   <tr>
-    <td>
+	<td>
 	<div id="mainarea">
 		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" style="sortableMultirow:<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
 			<tr>
 				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
 				<div id="filterlogentries_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>">
 					<form id="filterlogentries" name="filterlogentries" action="diag_logs_filter.php" method="post">
-						<?php 
+						<?php
 							$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 							if ($filterfieldsarray['interface'] == "All") $interface = "";
 						?>
@@ -173,8 +173,8 @@ include("head.inc");
 						<td rowspan="2">
 							<div align="center"><?=gettext("Action");?></div>
 							<div align="left">
-							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
-							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
+							<input id="actpass"	  name="actpass"   type="checkbox" value="Pass"	  <?php if (in_arrayi('Pass',	$Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
+							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',	$Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
 							</div>
 						</td>
 						<td>
@@ -238,10 +238,10 @@ include("head.inc");
 							<div align="center" style="vertical-align:top;">
 							<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
-							<?php						
+							<?php
 							$iflist = get_configured_interface_with_descr(false, true);
 							//$iflist = get_interface_list();
-							// Allow extending of the firewall edit interfaces 
+							// Allow extending of the firewall edit interfaces
 							pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
 							foreach ($iflist as $if => $ifdesc)
 								$interfaces[$if] = $ifdesc;
@@ -260,7 +260,7 @@ include("head.inc");
 								$interfaces["enc0"] = "IPsec";
 
 							/* add openvpn/tun interfaces */
-							if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+							if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 								$interfaces["openvpn"] = "OpenVPN";
 
 							foreach ($interfaces as $iface => $ifacename): ?>
@@ -297,13 +297,13 @@ include("head.inc");
 					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
 				</div>
-				</td>	
+				</td>
 			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$iflist = get_configured_interface_with_descr(false, true);
 	if ($iflist[$interfacefilter])
 		$interfacefilter = $iflist[$interfacefilter];
-	if ($filterlogentries_submit) 
+	if ($filterlogentries_submit)
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filterfieldsarray);
 	else
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
@@ -314,7 +314,7 @@ include("head.inc");
 					printf(gettext("Last %s firewall log entries."),count($filterlog));
 				else
 					echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
-			    printf(gettext("Max(%s)"),$nentries);?>
+				printf(gettext("Max(%s)"),$nentries);?>
 			  </td>
 			</tr>
 			<tr class="sortableHeaderRowIdentifier">
@@ -332,7 +332,7 @@ include("head.inc");
 			if ($config['syslog']['filterdescriptions'])
 				buffer_rules_load();
 			$rowIndex = 0;
-			foreach ($filterlog as $filterent): 
+			foreach ($filterlog as $filterent):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;?>
 			<tr class="<?=$evenRowClass?>">
@@ -347,10 +347,10 @@ include("head.inc");
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/out.gif" alt="Direction=OUT" title="Direction=OUT"/>
 				<?php endif; ?>
 				<?php echo htmlspecialchars($filterent['interface']);?></td>
-			  <?php 
+			  <?php
 			  if ($config['syslog']['filterdescriptions'] === "1")
 				echo("<td class=\"listMRr nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act'])."</td>");
-				
+
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
 			  if($filterent['version'] == '6') {
@@ -358,7 +358,7 @@ include("head.inc");
 				$filterent['srcip'] = "[{$filterent['srcip']}]";
 				$filterent['dstip'] = "[{$filterent['dstip']}]";
 			  } else {
-			        $ipproto = "inet";
+					$ipproto = "inet";
 			  }
 
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
@@ -390,7 +390,7 @@ include("head.inc");
 			  <td colspan="4" class="listMRDescriptionR listMRr nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act']);?></td>
 			</tr>
 			<?php endif;
-			endforeach; 
+			endforeach;
 			buffer_rules_clear(); ?>
 <?php else: ?>
 		  <tr>
@@ -444,18 +444,18 @@ function resolve_ip_callback(transport) {
 	var response = jQuery.parseJSON(transport.responseText);
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
-	
+
 	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
 	jQuery('img.ICON-' + resolve_class).removeAttr('title');
 	jQuery('img.ICON-' + resolve_class).removeAttr('alt');
 	jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
-	jQuery('img.ICON-' + resolve_class).prop('onclick', null); 
+	jQuery('img.ICON-' + resolve_class).prop('onclick', null);
 	  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
 }
 
 // From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
 function htmlspecialchars(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 //]]>
 </script>

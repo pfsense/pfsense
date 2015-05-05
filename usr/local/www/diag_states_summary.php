@@ -33,7 +33,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -120,7 +120,6 @@ if(count($states) > 0) {
 
 		addipinfo($allipinfo, $srcip, $proto, $srcport, $dstport);
 		addipinfo($allipinfo, $dstip, $proto, $srcport, $dstport);
-
 	}
 }
 
@@ -134,7 +133,6 @@ function build_port_info($portarr, $proto) {
 	$ports = array();
 	asort($portarr);
 	foreach (array_reverse($portarr, TRUE) as $port => $count) {
-		$str = "";
 		$service = getservbyport($port, strtolower($proto));
 		$port = "{$proto}/{$port}";
 		if ($service)
@@ -144,59 +142,68 @@ function build_port_info($portarr, $proto) {
 	return implode($ports, ', ');
 }
 
-function print_summary_table($label, $iparr, $sort = TRUE) { ?>
-
-<h3><?php echo $label; ?></h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states summary">
-	<tr>
-		<td class="listhdrr"><?=gettext("IP");?></td>
-		<td class="listhdrr"># <?=gettext("States");?></td>
-		<td class="listhdrr"><?=gettext("Proto");?></td>
-		<td class="listhdrr"># <?=gettext("States");?></td>
-		<td class="listhdrr"><?=gettext("Src Ports");?></td>
-		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
-	</tr>
-<?php   if ($sort)
+function print_summary_table($label, $iparr, $sort = TRUE)
+{
+	if ($sort)
 		uksort($iparr, "sort_by_ip");
-	foreach($iparr as $ip => $ipinfo) { ?>
-	<tr>
-		<td class="vncell"><?php echo $ip; ?></td>
-		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-		<td class="vncell">&nbsp;</td>
-	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
-	<tr>
-		<td class="list">&nbsp;</td>
-		<td class="list">&nbsp;</td>
-		<td class="listlr"><?php echo $proto; ?></td>
-		<td class="listr" align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
-		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
-	</tr>
-	<?php } ?>
-<?php } ?>
 
-</table>
+?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title"><?=$label?></h2>
+		</div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-hover table-condensed table-striped">
+					<thead>
+						<tr>
+							<th ><?=gettext("IP");?></th>
+							<th class="text-center"># <?=gettext("States");?></th>
+							<th ><?=gettext("Proto");?></th>
+							<th class="text-center"># <?=gettext("States");?></th>
+							<th class="text-center"><?=gettext("Src Ports");?></th>
+							<th class="text-center"><?=gettext("Dst Ports");?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php foreach($iparr as $ip => $ipinfo):
+	$protocolCount = count($ipinfo['protos']);
+	$rowSpan = '';
+	$i = 0;
 
+	if ($protocolCount > 1)
+		$rowSpan = ' rowspan="' . $protocolCount . '"';
+?>
+						<tr>
+							<td<?= $rowSpan ?>><?php echo $ip; ?></td>
+							<td<?= $rowSpan ?> class="text-center"><?php echo $ipinfo['seen']; ?></td>
+
+<?php foreach($ipinfo['protos'] as $proto => $protoinfo): ?>
+<?php if ($protocolCount > 1 && $i > 0): ?>
+							</tr><tr>
+<?php endif; ?>
+							<td><?php echo $proto; ?></td>
+							<td class="text-center" ><?php echo $protoinfo['seen']; ?></td>
+							<td class="text-center" ><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
+							<td class="text-center" ><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
+<?php $i++; endforeach; ?>
+						</tr>
+<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 <?php
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
-echo "<body>";
-include("fbegin.inc");
-
 
 print_summary_table(gettext("By Source IP"), $srcipinfo);
 print_summary_table(gettext("By Destination IP"), $dstipinfo);
 print_summary_table(gettext("Total per IP"), $allipinfo);
 print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
-?>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

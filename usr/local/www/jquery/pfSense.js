@@ -90,15 +90,29 @@ $(function() {
 					for (var i=select.options.length; i<=max; i++)
 						select.options.add(new Option(i, i), 0);
 				}
-			})
+			});
 
 			// Fire immediately
 			input.change();
 		});
 	};
 
+	// Add confirm to all btn-danger buttons
+	$('.btn-danger').on('click', function(e){
+		if (!confirm('Are you sure you wish to '+ $.trim(this.textContent) +'?'))
+			e.preventDefault();
+	});
+
 	// Enable popovers globally
-	$('[data-toggle="popover"]').popover()
+	$('[data-toggle="popover"]').popover();
+
+	// Force correct initial state for toggleable checkboxes
+	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function() {
+		$( $(this).data('target') ).addClass('collapse');
+	});
+
+	// Focus first input
+	$(':input:enabled:visible:first').focus();
 
 	runEvents();
 	bindCollapseToOptions();

@@ -370,6 +370,7 @@ if(! $g['disablehelpmenu']) {
 		</div>
 	</div>
 
+<?php if(are_notices_pending()):?>
 	<div class="modal fade" id="notices" role="dialog" aria-labelledby="noticesTitle" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -420,6 +421,7 @@ foreach($noticeCategories as $category => $catNotices):?>
 			</div>
 		</div>
 	</div>
+<?php endif; ?>
 
 </nav>
 <div class="container">

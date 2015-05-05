@@ -31,7 +31,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -47,13 +47,23 @@ $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php
-
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
+
+$pconfig['ttl'] = DEFAULT_TTL;
+$pconfig['ipproto'] = 'IPv4';
+$pconfig['sourceip'] = 'Any';
+
+function create_sourceaddresslist() {
+	$list = array('any' => 'Any');
+
+	$sourceips = get_possible_traffic_source_addresses(true);
+
+	foreach ($sourceips as $sipvalue => $sipname)
+		$list[$sipname[value]] = $sipname[name];
+
+	return($list);
+}
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
@@ -74,14 +84,19 @@ if ($_POST || $_REQUEST['host']) {
 	if (($ipproto == "ipv6") && is_ipaddrv4($host))
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 
-	if (!$input_errors) {
-		$sourceip = $_REQUEST['sourceip'];
-		$do_traceroute = true;
-		$ttl = $_REQUEST['ttl'];
-		$resolve = $_REQUEST['resolve'];
-	}
-} else
-	$resolve = true;
+	if (!$input_errors)
+		$host = $_REQUEST['host'];
+
+	$sourceip = $_REQUEST['sourceip'];
+	$do_traceroute = true;
+	$ttl = $_REQUEST['ttl'];
+	$resolve = $_REQUEST['resolve'];
+	$useicmp = $_REQUEST['useicmp'];
+
+} else {
+	$resolve = false;
+	$useicmp = false;
+}
 
 if (!isset($do_traceroute)) {
 	$do_traceroute = false;
@@ -89,100 +104,67 @@ if (!isset($do_traceroute)) {
 	$ttl = DEFAULT_TTL;
 }
 
-?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="diag_traceroute.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="diag traceroute">
-<tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Traceroute");?></td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
-	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="ipproto" class="formselect">
-			<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
-			<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="sourceip" class="formselect">
-			<option value="">Any</option>
-		<?php   $sourceips = get_possible_traffic_source_addresses(true);
-			foreach ($sourceips as $sipvalue => $sipname):
-				$selected = "";
-				if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip))
-					$selected = "selected=\"selected\"";
-		?>
-			<option value="<?=$sipvalue;?>" <?=$selected;?>>
-				<?=htmlspecialchars($sipname);?>
-			</option>
-			<?php endforeach; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Maximum number of hops");?></td>
-	<td width="78%" class="vtable">
-		<select name="ttl" class="formfld" id="ttl">
-			<?php for ($i = 1; $i <= MAX_TTL; $i++): ?>
-				<option value="<?=$i;?>" <?php if ($i == $ttl) echo "selected=\"selected\""; ?>><?=$i;?></option>
-			<?php endfor; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Reverse Address Lookup");?></td>
-	<td width="78%" class="vtable">
-		<input name="resolve" type="checkbox"<?php echo (!isset($resolve) ? "" : " checked=\"checked\""); ?> />
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
-	<td width="78%" class="vtable">
-		<input name="useicmp" type="checkbox"<?php if($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top">&nbsp;</td>
-	<td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Traceroute");?>" />
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-	<span class="vexpl">
-		<span class="red"><b><?=gettext("Note: ");?></b></span>
-		<?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?>
-		<br /><br />
-		<?=gettext("Using a source interface/IP address that does not match selected type (IPv4, IPv6) will result in an error or empty output.");?>
-	</span>
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-<?php
-if ($do_traceroute) {
-	echo "<font face=\"terminal\" size=\"2\">\n";
-	echo "<strong>" . gettext("Traceroute output:") . "</strong><br />\n";
-	ob_end_flush();
-?>
-	<script type="text/javascript">
-	//<![CDATA[
-	window.onload=function(){
-		document.getElementById("tracerouteCaptured").wrap='off';
-	}
-	//]]>
-	</script>
-<?php
-	echo "<textarea id=\"tracerouteCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'traceroute',
+	'Traceroute'
+));
+
+$section = new Form_Section('Traceroute');
+
+$section->addInput(new Form_Input(
+	'host',
+	'Hostname',
+	'text',
+	$host,
+	['placeholder' => 'Hostname to trace.']
+));
+
+$section->addInput(new Form_Select(
+	'ipproto',
+	'IP Protocol',
+	$pconfig['protocol'],
+	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
+))->setHelp('Select the protocol to use');
+
+$section->addInput(new Form_Select(
+	'sourceip',
+	'Source Address',
+	$pconfig['source'],
+	create_sourceaddresslist()
+))->setHelp('Select source address for the trace');
+
+$section->addInput(new Form_Select(
+	'ttl',
+	'Maximum nuber of hops',
+	$ttl,
+	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
+))->setHelp('Select the maximum number of network hops to trace');
+
+$section->addInput(new Form_Checkbox(
+	'resolve',
+	'Reverse Address Lookup',
+	'',
+	$resolve
+))->setHelp('When checked, traceroute will attempt to perform a PTR lookup to locate hostnames for hops along the path. Will slow down the process as it has to wait for DNS replies.');
+
+$section->addInput(new Form_Checkbox(
+	'useicmp',
+	gettext("Use ICMP"),
+	'',
+	$useicmp
+))->setHelp('By default, traceroute uses UDP but that may be blocked by some routers. Check this box to use ICMP instead, which may succeed. ');
+
+$form->add($section);
+print $form;
+
+/* Show the traceroute results */
+if (!$input_errors && $do_traceroute) {
+
 	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
 	$n = isset($resolve) ? "" : "-n";
 
@@ -198,15 +180,20 @@ if ($do_traceroute) {
 		$srcip = "-s " . escapeshellarg($ifaddr);
 
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+?>
+	<div class="panel panel-default">
+		<div class="panel-heading">Results</div>
+		<div class="panel-body">
+<?php
+		if ($result = shell_exec($cmd))
+			print(nl2br($result));
+		else
+			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
+?>
+		</div>
+	</div>
+<?php
+}
 
-	//echo "Traceroute command: {$cmd}\n";
-	system($cmd);
-	echo "</textarea>&nbsp;</font>";
-} ?>
-	</td>
-</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");
+?>

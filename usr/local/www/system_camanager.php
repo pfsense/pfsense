@@ -449,7 +449,7 @@ if (!isset($id) || $act == "edit")
 		'Method',
 		$pconfig['method'],
 		$ca_methods
-	))->toggles(null);
+	))->toggles();
 }
 
 $form->add($section);

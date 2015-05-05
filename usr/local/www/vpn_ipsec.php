@@ -360,8 +360,7 @@ include("head.inc");
 			<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
 			<button class="btn btn-xs btn-default" type="submit" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("move selected entries before this")?></button>
 			<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("edit phase1 entry"); ?>">edit</a>
-			<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>"
-					onclick="return confirm('<?=gettext("Do you really want to delete this phase1 and all associated phase2 entries?"); ?>')">delete</button>
+			<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>">delete</button>
 <?php if (!isset($ph1ent['mobile'])): ?>
 			<a class="btn btn-xs btn-success" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("copy phase1 entry"); ?>">copy</a>
 <?php endif; ?>
@@ -474,8 +473,7 @@ include("head.inc");
 								<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
 								<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("move selected entries before this")?></button>
 								<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("edit phase2 entry"); ?>">edit</a>
-								<button class="btn btn-xs btn-danger" type="submit" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>"
-										onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">delete</button>
+								<button class="btn btn-xs btn-danger" type="submit" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 								<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("add a new Phase 2 based on this one"); ?>">copy</a>
 							</td>
 						</tr>

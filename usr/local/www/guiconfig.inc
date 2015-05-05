@@ -293,17 +293,20 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		$value = gettext("Apply changes");
 	}
 
+	$msg = '<div class="pull-left">' . $msg . '</div>';
+
+
 	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$msg .= '<form method="post"><input type="submit" class="btn btn-default" name="apply" value="'.$value.'" />';
+		$msg .= '<form method="post" class="pull-right"><input type="submit" class="btn btn-default" name="apply" value="'.$value.'" />';
 
 		if ($_POST['if'])
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 
-		$msg .'</form>';
+		$msg .= '</form>';
 	} else
 		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
 
-	echo '<div class="alert alert-warning" role="alert">'.$msg.'</div>';
+	echo '<div class="alert alert-warning clearfix" role="alert">'.$msg.'</div>';
 }
 
 function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {

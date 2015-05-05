@@ -63,9 +63,9 @@ $shortcut_section = "gateway-groups";
 include("head.inc");
 
 $tab_array = array();
-	$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
-	$tab_array[1] = array(gettext("Gateway Groups"), true, "status_gateway_groups.php");
-	display_top_tabs($tab_array);
+$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
+$tab_array[1] = array(gettext("Gateway Groups"), true, "status_gateway_groups.php");
+display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">
@@ -78,10 +78,10 @@ $tab_array = array();
 			</tr>
 		</thead>
 		<tbody>
-			<?php $i = 0; foreach ($a_gateway_groups as $gateway_group): ?>
+			<?php foreach ($a_gateway_groups as $gateway_group): ?>
 			<tr>
 				<td>
-					<?=$gateway_group['name'];?>
+					<?=htmlspecialchars($gateway_group['name'])?>
 				</td>
 				<td>
 					<table class="table table-bordered table-condensed">
@@ -173,9 +173,9 @@ $tab_array = array();
 					<?=htmlspecialchars($gateway_group['descr'])?>
 				</td>
 			</tr>
-			<?php $i++; endforeach; ?>
+			<?php endforeach; ?>
 		</tbody>
 	</table>
 </div>
 
-<?php include("foot.inc"); ?>
+<?php include("foot.inc");

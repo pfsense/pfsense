@@ -1207,6 +1207,7 @@ EOD;
 			if($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
+			$dnscfgv6 .= "	deny client-updates;\n";
 			$dnscfgv6 .= "	ddns-update-style interim;\n";
 			$nsupdate = true;
 		}
@@ -1226,19 +1227,25 @@ EOD;
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 		}
 
-		if ($dhcpv6ifconf['domain']) {
-			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain']; 
-			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
-			$ddns_zones[] = $newzone;
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			$ifcfgsnv6 = "64";
+			$subnetv6 = gen_subnetv6($dhcpv6ifconf['range']['from'], $ifcfgsnv6);
 		}
 
-		if (is_ipaddrv6($ifcfgipv6)) {
-			$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
-		} else {
-			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
-			$dhcpdv6conf .= "subnet6 {$subnet6}/64";
+		$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
+
+		if ($dhcpv6ifconf['ddnsdomain']) {
+			$newzone = array();
+			$newzone['domain-name'] = $dhcpv6ifconf['ddnsdomain'];
+			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
+			$ddns_zones[] = $newzone;
+			$reversezone = array();
+			$unpacked = unpack('H*hex', inet_pton($subnetv6));
+			$reversezone['domain-name'] = implode('.', array_reverse(str_split(substr($unpacked['hex'], 0, 16)))).'.ip6.arpa';
+			$reversezone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
+			$ddns_zones[] = $reversezone;
 		}
+
 		$dhcpdv6conf .= " {\n";
 
 		$dhcpdv6conf .= <<<EOD
@@ -1327,7 +1334,7 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain'])
+		if ($dhcpv6ifconf['ddnsdomain'])
 		{
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
 			$dhcpdv6conf .= dhcpdzones($ddns_zones, $dhcpv6ifconf);

@@ -45,12 +45,7 @@ require('classes/Form.class.php');
 function filterDestinationServers(array $destinationServers)
 {
 	return array_unique(
-		array_filter(
-			$destinationServers,
-			function($val) {
-				return !empty($val);
-			}
-		)
+		array_filter($destinationServers)
 	);
 }
 
@@ -127,7 +122,7 @@ include("head.inc");
 
 if ($dhcpd_enabled)
 {
-	echo "DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
+	echo '<div class="alert alert-danger">DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.</div>';
 	include("foot.inc");
 	exit;
 }
@@ -141,7 +136,6 @@ if ($savemsg)
 $form = new Form;
 
 $section = new Form_Section('DHCP Relay configuration');
-$form->add($section);
 
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -192,6 +186,7 @@ else
 	foreach ($pconfig['server'] as $idx => $server)
 		$section->add(createDestinationServerInputGroup($server));
 
+$form->add($section);
 print $form;
 
 include("foot.inc");

@@ -28,7 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	c
+/*
 	pfSense_MODULE: system
 */
 
@@ -178,7 +178,7 @@ if($curcat == "custom") {
 }
 
 if (is_numeric($_GET['end'])) {
-		$end = $_GET['end'];
+	$end = $_GET['end'];
 } else if ($_GET['end']) {
 	$end = strtotime($_GET['end']);
 	if ($end === FALSE || $end === -1) {
@@ -400,58 +400,45 @@ function make_tabs() {
 	global $curcat;
 
 	$tab_array = array();
-	$tabactive = ($curcat == "system") ? True:False;
-	$tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
-	$tabactive = ($curcat == "traffic") ? True:False;
-	$tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
-	$tabactive = ($curcat == "packets") ? True:False;
-	$tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
-	$tabactive = ($curcat == "quality") ? True:False;
-	$tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
+	$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
+	$tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_graph.php?cat=traffic");
+	$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
+	$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
 	if($queues) {
-		$tabactive = ($curcat == "queues") ? True:False;
-		$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
-		$tabactive = ($curcat == "queuedrops") ? True:False;
-		$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
+		$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
+		$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 	}
 
 	if($wireless) {
-		$tabactive = ($curcat == "wireless") ? True:False;
-		$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
+		$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
 	}
 
 	if($cellular) {
-		$tabactive = ($curcat == "cellular") ? True:False;
-		$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
+		$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
 	}
 
 	if($vpnusers) {
-		if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
-			$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
+		$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 	}
+
 	if($captiveportal) {
-		$tabactive = ($curcat == "captiveportal") ? True:False;
-		$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
+		$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
 	}
 
 	if(isset($config['ntpd']['statsgraph'])) {
-		$tabactive = ($curcat == "ntpd") ? True:False;
-		$tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
+		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 	}
 
-	$tabactive = ($curcat == "custom") ? True:False;
-	$tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
-
-	$tabactive = ($curcat == "settings") ? True:False;
-	$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
+	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
+	$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");
 
 	return($tab_array);
 }
 
 // Create the selectable list of graphs
 function build_options() {
-	global $curcat, $cusom_databases, $ui_databases;
+	global $curcat, $custom_databases, $ui_databases;
 
 	$optionslist = array();
 

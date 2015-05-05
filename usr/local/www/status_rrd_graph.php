@@ -567,9 +567,7 @@ if($curcat == 'custom') {
 
 	$form->add($section);
 	print $form;
-}
 
-if($curcat == "custom") {
 	$tz = date_default_timezone_get();
 	$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
 	$start_fmt = strftime("%m/%d/%Y %H:%M:%S", $start);

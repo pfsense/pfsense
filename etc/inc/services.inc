@@ -2522,7 +2522,7 @@ EOD;
 	return 0;
 }
 
-?>
+/* configure cron service */
 function configure_cron() {
 	global $g, $config;
 

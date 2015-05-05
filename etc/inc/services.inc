@@ -1315,8 +1315,15 @@ host s_{$dhcpv6if}_{$i} {
 	host-identifier option dhcp6.client-id {$sm['duid']};
 
 EOD;
-				if ($sm['ipaddrv6'])
-					$dhcpdv6conf .= "	fixed-address6 {$sm['ipaddrv6']};\n";
+				if ($sm['ipaddrv6']) {
+					$ipaddrv6 = $sm['ipaddrv6'];
+					if ($ifcfgv6['ipaddrv6'] == 'track6') {
+						$prefix = explode(':', Net_IPv6::uncompress($ifcfgipv6));
+						$suffix = explode(':', Net_IPv6::uncompress($ipaddrv6));
+						$ipaddrv6 = Net_IPv6::compress(implode(':', array_merge(array_slice($prefix, 0, 4), array_slice($suffix, 4))));
+					}
+					$dhcpdv6conf .= "	fixed-address6 {$ipaddrv6};\n";
+				}
 
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);

@@ -104,8 +104,6 @@ if ($_POST) {
 		$reqdfields = explode(" ", "pollport");
 		$reqdfieldsn = array(gettext("Polling Port"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-
-
 	}
 
 	if ($_POST['trapenable']) {
@@ -124,7 +122,6 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 
-
 /* disabled until some docs show up on what this does.
 	if ($_POST['rwenable']) {
 			   $reqdfields = explode(" ", "rwcommunity");
@@ -132,8 +129,6 @@ if ($_POST) {
 			   do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 */
-
-
 
 	if (!$input_errors) {
 		$config['snmpd']['enable'] = $_POST['enable'] ? true : false;
@@ -167,9 +162,24 @@ if ($_POST) {
 	}
 }
 
+function build_iplist() {
+	$listenips = get_possible_listen_ips();
+	$iplist = array();
+	$iplist[''] = 'All';
+
+	foreach ($listenips as $lip => $ldescr) {
+		$iplist[$lip] = $ldescr;
+	}
+	unset($listenips);
+
+	return($iplist);
+}
+
 $closehead = false;
 $pgtitle = array(gettext("Services"),gettext("SNMP"));
 $shortcut_section = "snmp";
+
+include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
@@ -177,7 +187,6 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg);
 
-include("head.inc");
 require('classes/Form.class.php');
 
 $form = new Form();
@@ -194,7 +203,11 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 $section = new Form_Section('SNMP Daemon settings');
-$section->addClass('toggle-snmp', 'collapse');
+
+if($pconfig['enable'])
+	$section->addClass('toggle-snmp', 'in');
+else
+	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Input(
 	'pollport',
@@ -223,11 +236,15 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['rocommunity']
 ))->setHelp('The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.');
+
 $form->add($section);
 
-
 $section = new Form_Section('SNMP Traps Enable');
-$section->addClass('toggle-snmp', 'collapse');
+
+if($pconfig['enable'])
+	$section->addClass('toggle-snmp', 'in');
+else
+	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Checkbox(
 	'trapenable',
@@ -239,14 +256,18 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 $section = new Form_Section('SNMP Trap settings');
-$section->addClass('toggle-snmp toggle-traps', 'collapse');
+
+if($pconfig['trapenable'])
+	$section->addClass('toggle-traps', 'in');
+else
+	$section->addClass('toggle-traps', 'collapse');
 
 $section->addInput(new Form_Input(
 	'trapserver',
 	'Trap server',
 	'text',
 	$pconfig['trapserver']
-))->setHelp('Enter the trap server name)');
+))->setHelp('Enter the trap server name');
 
 $section->addInput(new Form_Input(
 	'trapserverport',
@@ -265,47 +286,52 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 $section = new Form_Section('SNMP Modules');
-$section->addClass('toggle-snmp toggle-traps', 'collapse');
+
+if($pconfig['enable'])
+	$section->addClass('toggle-snmp', 'in');
+else
+	$section->addClass('toggle-snmp', 'collapse');
+
 $group = new Form_Group('SNMP modules');
 
 $group->add(new Form_Checkbox(
 	'mibii',
-	'',
-	'Mibii',
+	null,
+	'MibII',
 	$pconfig['mibii']
 ));
 
 $group->add(new Form_Checkbox(
 	'netgraph',
-	'',
+	null,
 	'Netgraph',
 	$pconfig['netgraph']
 ));
 
 $group->add(new Form_Checkbox(
 	'pf',
-	'',
+	null,
 	'PF',
 	$pconfig['pf']
 ));
 
 $group->add(new Form_Checkbox(
 	'hostres',
-	'',
+	null,
 	'Host Resources',
 	$pconfig['hostres']
 ));
 
 $group->add(new Form_Checkbox(
 	'ucd',
-	'',
+	null,
 	'UCD',
 	$pconfig['ucd']
 ));
 
 $group->add(new Form_Checkbox(
 	'regex',
-	'',
+	null,
 	'Regex',
 	$pconfig['regex']
 ));
@@ -314,26 +340,35 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');
-$section->addClass('toggle-snmp', 'collapse');
 
-$listenips = get_possible_listen_ips();
-$iplist = array();
-$iplist[''] = 'All';
-
-foreach ($listenips as $lip => $ldescr) {
-	$iplist[$lip] = $ldescr;
-}
-unset($listenips);
+if($pconfig['enable'])
+	$section->addClass('toggle-snmp', 'in');
+else
+	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Select(
 	'bindip',
 	'Bind Interface',
 	$pconfig['bindip'],
-	$iplist
+	build_iplist()
 ));
 
 $form->add($section);
 
 print($form);
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+
+// hostres requires mibii so we force that here
+events.push(function(){
+	$('#hostres').change(function(){
+		if($('#hostres').is(':checked'))
+			$('#mibii').attr('checked', 'checked');
+	});
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

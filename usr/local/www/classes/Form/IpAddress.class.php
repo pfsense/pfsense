@@ -35,7 +35,7 @@ class Form_IpAddress extends Form_Input
 	{
 		parent::__construct($name, $title, 'text', $value);
 
-		$this->_attributes['pattern'] = '[a-f0-9:.]';
+		$this->_attributes['pattern'] = '[a-f0-9:.]*';
 	}
 
 	public function addMask($name, $value)
@@ -52,7 +52,8 @@ class Form_IpAddress extends Form_Input
 
 	public function setIsRepeated()
 	{
-		$this->_mask->setIsRepeated();
+		if ($this->_mask)
+			$this->_mask->setIsRepeated();
 
 		return parent::setIsRepeated();
 	}

@@ -288,7 +288,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<form action="/" method="post" id="widgetSequence">
 		<input type="hidden" name="sequence" value="" />
 
-		<button type="submit" class="btn btn-default">Store widget configuration</button>
+		<button type="submit" class="btn btn-primary">Store widget configuration</button>
 	</form>
 </div>
 

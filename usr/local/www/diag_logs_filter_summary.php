@@ -74,7 +74,7 @@ function stat_block($summary, $stat, $num) {
 	uasort($summary[$stat] , 'cmp');
 	print('<div class="table-responsive">');
 	print('<table class="table table-striped table-hover table-condensed">');
-	print('<tr><th>' . $fields[$stat] . '</th>' . '<th>' . gettext("Data points") . '</th></tr>');
+	print('<tr><th>' . $fields[$stat] . '</th>' . '<th>' . gettext("Data points") . '</th><th></th></tr>');
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
@@ -84,19 +84,23 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_log.gif\" alt=\"log\" /></a> {$outstr}";
+				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-success" title="' . gettext("Reverse Resolve with DNS") . '">Lookup</a></td></tr>');
+
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
 				if ($service)
 					$outstr .= ": {$service}";
+
 			}
-			print "<tr><td>{$outstr}</td><td>{$summary[$stat][$k[$i]]}</td></tr>";
+			
+			if(!is_ipaddr($outstr))
+				print('<tr><td>' . $outstr . '</td><td>' . $summary[$stat][$k[$i]] . '</td><td></td></tr>');
 		}
 	}
 	$leftover = $gotlines - $total;
 	if ($leftover > 0) {
-		print "<tr><td>Other</td><td>{$leftover}</td></tr>";
+		print "<tr><td>Other</td><td>{$leftover}</td><td></td>";
 	}
 	print "</table>";
 	print('</div>');

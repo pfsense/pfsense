@@ -295,9 +295,8 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
-
 	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$msg .= '<form method="post" class="pull-right"><input type="submit" class="btn btn-default" name="apply" value="'.$value.'" />';
+		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="'.$value.'">'.$name.'</button>';
 
 		if ($_POST['if'])
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";

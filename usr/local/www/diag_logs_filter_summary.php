@@ -91,9 +91,8 @@ function stat_block($summary, $stat, $num) {
 				$service = getservbyport($port, strtolower($proto));
 				if ($service)
 					$outstr .= ": {$service}";
-
 			}
-			
+
 			if(!is_ipaddr($outstr))
 				print('<tr><td>' . $outstr . '</td><td>' . $summary[$stat][$k[$i]] . '</td><td></td></tr>');
 		}
@@ -106,10 +105,10 @@ function stat_block($summary, $stat, $num) {
 	print('</div>');
 }
 
+// Create the JSON document for the chart to be displayed
+// Todo: Be good to investigate building this with json_encode and friends some time
 function pie_block($summary, $stat, $num, $chartnum) {
 	global $fields, $segcolors, $gotlines, $numcolors;
-
-	$thelabel = "Pie Time";
 
 	echo <<<PIEEND
 <script>

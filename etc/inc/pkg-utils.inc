@@ -217,34 +217,18 @@ function resync_all_package_configs($show_message = false) {
 	conf_mount_ro();
 }
 
-function uninstall_package($pkg_name) {
+function uninstall_package($package_name) {
 	global $config, $static_output;
 
-	$id = get_package_id($pkg_name);
+	$id = get_package_id($package_name);
 	if ($id >= 0) {
-		stop_service(get_package_internal_name($config['installedpackages']['package'][$id]));
-		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package_pbi'];
+		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
+		stop_service($internal_name);
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
-		if (is_array($pkg_depends)) {
-			foreach ($pkg_depends as $pkg_depend) {
-				delete_package($pkg_depend);
-			}
-		} else {
-			// The packages (1 or more) are all in one long string.
-			// We need to pass them 1 at a time to delete_package.
-			// Compress any multiple whitespace (sp, tab, cr, lf...) into a single space char.
-			$pkg_dep_str = preg_replace("'\s+'", ' ', $pkg_depends);
-			// Get rid of any leading or trailing space.
-			$pkg_dep_str = trim($pkg_dep_str);
-			// Now we have a space-separated string. Make it into an array and process it.
-			$pkg_dep_array = explode(" ", $pkg_dep_str);
-			foreach ($pkg_dep_array as $pkg_depend) {
-				delete_package($pkg_depend);
-			}
-		}
+		pkg_delete($internal_name);
 	}
-	delete_package_xml($pkg_name);
+	delete_package_xml($package_name);
 
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);

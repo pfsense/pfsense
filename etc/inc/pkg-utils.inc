@@ -1093,29 +1093,6 @@ function delete_package_xml($pkg) {
 	write_config("Removed {$pkg} package.\n");
 }
 
-function expand_to_bytes($size) {
-	$conv = array(
-			"G" =>	"3",
-			"M" =>  "2",
-			"K" =>  "1",
-			"B" =>  "0"
-		);
-	$suffix = substr($size, -1);
-	if (!in_array($suffix, array_keys($conv))) {
-		return $size;
-	}
-	$size = substr($size, 0, -1);
-	for ($i = 0; $i < $conv[$suffix]; $i++) {
-		$size *= 1024;
-	}
-	return $size;
-}
-
-function get_pkg_db() {
-	global $g;
-	return return_dir_as_array($g['vardb_path'] . '/pkg');
-}
-
 function pkg_reinstall_all() {
 	global $g, $config;
 
@@ -1250,22 +1227,6 @@ function package_skip_tests($index,$requested_version) {
 
 	/* Do not skip package list */
 	return false;
-}
-
-function get_pkg_interfaces_select_source($include_localhost=false) {
-	$interfaces = get_configured_interface_with_descr();
-	$ssifs = array();
-	foreach ($interfaces as $iface => $ifacename) {
-		$tmp["name"]  = $ifacename;
-		$tmp["value"] = $iface;
-		$ssifs[] = $tmp;
-	}
-	if ($include_localhost) {
-		$tmp["name"]  = "Localhost";
-		$tmp["value"] = "lo0";
-		$ssifs[] = $tmp;
-	}
-	return $ssifs;
 }
 
 function verify_all_package_servers() {

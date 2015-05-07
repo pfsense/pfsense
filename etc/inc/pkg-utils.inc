@@ -309,103 +309,34 @@ function sync_package($package_name) {
 	}
 }
 
-function install_package($package, $pkg_info = "", $force_install = false) {
-	global $g, $config, $static_output, $pkg_interface;
+/* Read info.xml installed by package and return an array */
+function read_package_config($package_name) {
+	global $g;
 
-	/* safe side. Write config below will send to ro again. */
-	conf_mount_rw();
+	$pkg_info_xml = '/usr/local/share/' . $g['pkg_prefix'] . $package_name . '/info.xml';
 
-	if ($pkg_interface == "console") {
-		echo "\n";
+	if (!file_exists($pkg_info_xml)) {
+		return false;
 	}
-	/* fetch package information if needed */
-	if (empty($pkg_info) or !is_array($pkg_info[$package])) {
-		$pkg_info = get_pkg_info(array($package));
-		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
-		if (empty($pkg_info)) {
-			conf_mount_ro();
-			return -1;
-		}
-	}
-	if (!$force_install) {
-		$compatible = true;
-		$version = rtrim(file_get_contents("/etc/version"));
 
-		if (isset($pkg_info['required_version'])) {
-			$compatible = (pfs_version_compare("", $version, $pkg_info['required_version']) >= 0);
-		}
-		if (isset($pkg_info['maximum_version'])) {
-			$compatible = $compatible && (pfs_version_compare("", $version, $pkg_info['maximum_version']) <= 0);
-		}
+	$pkg_info = parse_xml_config_pkg($pkg_info_xml, 'pfsensepkgs');
 
-		if (!$compatible) {
-			log_error(sprintf(gettext('Package %s is not supported on this version.'), $pkg_info['name']));
-			$static_output .= sprintf(gettext("Package %s is not supported on this version."), $pkg_info['name']);
-			update_status($static_output);
+	if (empty($pkg_info)) {
+		return false;
+	}
 
-			conf_mount_ro();
-			return -1;
-		}
-	}
-	pkg_debug(gettext("Beginning package installation.") . "\n");
-	log_error(sprintf(gettext('Beginning package installation for %s .'), $pkg_info['name']));
-	$static_output .= sprintf(gettext("Beginning package installation for %s ."), $pkg_info['name']);
-	update_status($static_output);
-
-	/* fetch the package's configuration file */
-	pkg_fetch_config_file($package, $pkg_info);
-
-	/* add package information to config.xml */
-	$pkgid = get_package_id($pkg_info['name']);
-	$static_output .= gettext("Saving updated package information...") . " ";
-	update_output_window($static_output);
-	if ($pkgid == -1) {
-		$config['installedpackages']['package'][] = $pkg_info;
-		$changedesc = sprintf(gettext("Installed %s package."),$pkg_info['name']);
-		$to_output = gettext("done.") . "\n";
-	} else {
-		$config['installedpackages']['package'][$pkgid] = $pkg_info;
-		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
-		$to_output = gettext("overwrite!") . "\n";
-	}
-	if (file_exists('/conf/needs_package_sync')) {
-		@unlink('/conf/needs_package_sync');
-	}
-	conf_mount_ro();
-	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
-	$static_output .= $to_output;
-	update_output_window($static_output);
-	/* install other package components */
-	if (!install_package_xml($package)) {
-		uninstall_package($package);
-		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
-		$static_output .= gettext("Failed to install package.") . "\n";
-		update_output_window($static_output);
-		return -1;
-	} else {
-		$static_output .= gettext("Writing configuration... ");
-		update_output_window($static_output);
-		write_config($changedesc);
-		log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
-		$static_output .= gettext("done.") . "\n";
-		update_output_window($static_output);
-		if ($pkg_info['after_install_info']) {
-			update_output_window($pkg_info['after_install_info']);
-		}
-	}
+	/* it always returns an array with 1 item */
+	return $pkg_info['package'][0];
 }
 
-function get_after_install_info($package) {
-	global $pkg_info;
-	/* fetch package information if needed */
-	if (!$pkg_info or !is_array($pkg_info[$package])) {
-		$pkg_info = get_pkg_info(array($package));
-		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
+function get_after_install_info($package_name) {
+	$pkg_config = read_pkg_config($package_name);
+
+	if (isset($pkg_config['after_install_info'])) {
+		return $pkg_config['after_install_info'];
 	}
-	if ($pkg_info['after_install_info']) {
-		return $pkg_info['after_install_info'];
-	}
+
+	return '';
 }
 
 function eval_once($toeval) {
@@ -421,20 +352,68 @@ function eval_once($toeval) {
 	return;
 }
 
-function install_package_xml($pkg) {
+function install_package($package_name) {
 	global $g, $config, $static_output, $pkg_interface;
 
-	if (($pkgid = get_package_id($pkg)) == -1) {
-		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");
+	if ($pkg_interface == "console") {
+		echo "\n";
+	}
+
+	return pkg_install($package_name);
+}
+
+function install_package_xml($package_name) {
+	global $g, $config, $static_output, $pkg_interface;
+
+	if ($pkg_interface == "console") {
+		echo "\n";
+	}
+
+	if (($pkg_info = read_package_config($package_name)) == false) {
+		return false;
+	}
+
+	/* safe side. Write config below will send to ro again. */
+	conf_mount_rw();
+
+	pkg_debug(gettext("Beginning package installation.") . "\n");
+	log_error(sprintf(gettext('Beginning package installation for %s .'), $pkg_info['name']));
+	$static_output .= sprintf(gettext("Beginning package installation for %s .\n"), $pkg_info['name']);
+	update_status($static_output);
+
+	/* add package information to config.xml */
+	$pkgid = get_package_id($pkg_info['name']);
+	$static_output .= gettext("Saving updated package information...") . " ";
+	update_output_window($static_output);
+	if ($pkgid == -1) {
+		$config['installedpackages']['package'][] = $pkg_info;
+		$changedesc = sprintf(gettext("Installed %s package."),$pkg_info['name']);
+		$to_output = gettext("done.") . "\n";
+	} else {
+		$config['installedpackages']['package'][$pkgid] = $pkg_info;
+		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
+		$to_output = gettext("overwrite!") . "\n";
+	}
+	unlink_if_exists('/conf/needs_package_sync');
+	conf_mount_ro();
+	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
+	$static_output .= $to_output;
+	update_output_window($static_output);
+
+	if (($pkgid = get_package_id($package_name)) == -1) {
+		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
 			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
 			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 		}
-		sleep(1);
+
+		uninstall_package($package_name);
+		write_config($changedesc);
+		log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+		$static_output .= gettext("Failed to install package.") . "\n";
+		update_output_window($static_output);
 		return false;
-	} else {
-		$pkg_info = $config['installedpackages']['package'][$pkgid];
 	}
 
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
@@ -449,8 +428,7 @@ function install_package_xml($pkg) {
 			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] = $pkg_config['filter_rules_needed'];
 		}
 		update_output_window($static_output);
-
-		pkg_fetch_additional_files($pkg, $pkg_info);
+		/* modify system files */
 
 		/*   if a require exists, include it.  this will
 		 *   show us where an error exists in a package
@@ -467,7 +445,12 @@ function install_package_xml($pkg) {
 				$missing_include = true;
 				$static_output .= "Include " . basename($pkg_config['include_file']) . " is missing!\n";
 				update_output_window($static_output);
-				/* XXX: Should undo the steps before this?! */
+
+				uninstall_package($package_name);
+				write_config($changedesc);
+				log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+				$static_output .= gettext("Failed to install package.") . "\n";
+				update_output_window($static_output);
 				return false;
 			}
 		}
@@ -486,28 +469,6 @@ function install_package_xml($pkg) {
 			if ($pkg_config['custom_php_install_command']) {
 				$static_output .= gettext("Executing custom_php_install_command()...");
 				update_output_window($static_output);
-				/* XXX: create symlinks for conf files into the PBI directories.
-				 *	change packages to store configs at /usr/pbi/pkg/etc and remove this
-				 */
-				eval_once($pkg_config['custom_php_install_command']);
-				// Note: pkg may be mixed-case, e.g. "squidGuard" but the PBI names are lowercase.
-				// e.g. "squidguard-1.4_4-i386" so feed lowercase to pbi_info below.
-				// Also add the "-" so that examples like "squid-" do not match "squidguard-".
-				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
-				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
-				$pbidir0 = $pbidirarray[0];
-				exec("find /usr/local/etc/ -name *.conf | grep " . escapeshellarg($pkg),$files);
-				foreach ($files as $f) {
-					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
-					if (is_file($pbiconf) || is_link($pbiconf)) {
-						unlink($pbiconf);
-					}
-					if (is_dir(dirname($pbiconf))) {
-						symlink($f,$pbiconf);
-					} else {
-						log_error("The dir for {$pbiconf} does not exist. Cannot add symlink to {$f}.");
-					}
-				}
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= gettext("done.") . "\n";
 				update_output_window($static_output);
@@ -566,13 +527,28 @@ function install_package_xml($pkg) {
 			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
 			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 		}
-		sleep(1);
+
+		uninstall_package($package_name);
+		write_config($changedesc);
+		log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+		$static_output .= gettext("Failed to install package.") . "\n";
+		update_output_window($static_output);
 		return false;
 	}
 
 	/* set up package logging streams */
 	if ($pkg_info['logging']) {
 		system_syslogd_start();
+	}
+
+	$static_output .= gettext("Writing configuration... ");
+	update_output_window($static_output);
+	write_config($changedesc);
+	log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
+	$static_output .= gettext("done.") . "\n";
+	update_output_window($static_output);
+	if ($pkg_info['after_install_info']) {
+		update_output_window($pkg_info['after_install_info']);
 	}
 
 	return true;

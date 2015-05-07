@@ -571,36 +571,6 @@ function install_package_xml($pkg) {
 		$pkg_info = $config['installedpackages']['package'][$pkgid];
 	}
 
-	/* pkg_add the package and its dependencies */
-	if ($pkg_info['depends_on_package_base_url'] != "") {
-		if ($pkg_interface == "console") {
-			echo "\n";
-		}
-		update_status(gettext("Installing") . " " . $pkg_info['name'] . " " . gettext("and its dependencies."));
-		$static_output .= gettext("Downloading") . " " . $pkg_info['name'] . " " . gettext("and its dependencies... ");
-		$static_orig = $static_output;
-		$static_output .= "\n";
-		update_output_window($static_output);
-		foreach ((array) $pkg_info['depends_on_package_pbi'] as $pkgdep) {
-			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
-			$static_output = $static_orig . "\nChecking for package installation... ";
-			update_output_window($static_output);
-			if (!is_pkg_installed($pkg_name)) {
-				if (!pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url'])) {
-					$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
-					update_output_window($static_output);
-					pkg_debug(gettext("Package WAS NOT installed properly.") . "\n");
-					if ($pkg_interface <> "console") {
-						echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-						echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
-					}
-					sleep(1);
-					return false;
-				}
-			}
-		}
-	}
-
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if (file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= gettext("Loading package configuration... ");

@@ -149,9 +149,7 @@ include("head.inc");
 		$categories=array();
 		if(is_array($pkg_keys)) {
 			foreach($pkg_keys as $key) {
-				if (!package_skip_tests($pkg_info[$key],$requested_version))
-					$categories[$pkg_info[$key]['category']]++;
-				}
+				$categories[$pkg_info[$key]['category']]++;
 			}
 		ksort($categories);
 		$cm_count=0;
@@ -204,9 +202,6 @@ include("head.inc");
 				foreach($pkg_keys as $key):
 					$index = &$pkg_info[$key];
 					if(get_package_id($index['name']) >= 0 )
-						continue;
-
-					if (package_skip_tests($index,$requested_version))
 						continue;
 
 					/* get history/changelog git dir */

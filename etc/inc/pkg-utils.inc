@@ -296,44 +296,6 @@ function sync_package($package_name) {
 	}
 }
 
-function get_pbi_binaries($pbi) {
-	$result = array();
-
-	if (empty($pbi)) {
-		return $result;
-	}
-
-	$gb = exec("/usr/local/sbin/pbi_info {$pbi} | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
-	$pbi_prefix = $pbi_prefix[0];
-
-	if (empty($pbi_prefix)) {
-		return $result;
-	}
-
-	foreach (array('bin', 'sbin') as $dir) {
-		if (!is_dir("{$pbi_prefix}/{$dir}")) {
-			continue;
-		}
-
-		$files = glob("{$pbi_prefix}/{$dir}/*.pbiopt");
-		foreach ($files as $f) {
-			$pbiopts = file($f, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			foreach ($pbiopts as $pbiopt) {
-				if (!preg_match('/^TARGET:\s+(.*)$/', $pbiopt, $matches)) {
-					continue;
-				}
-
-				$result[] = array(
-					'target' => preg_replace('/\.pbiopt$/', '', $f),
-					'link_name' => $matches[1]);
-			}
-		}
-	}
-
-	return $result;
-}
-
-
 function install_package($package, $pkg_info = "", $force_install = false) {
 	global $g, $config, $static_output, $pkg_interface;
 

@@ -1175,20 +1175,6 @@ function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 	return $size;
 }
 
-function squash_from_bytes($size, $round = "") {
-	$conv = array(1 => "B", "K", "M", "G");
-	foreach ($conv as $div => $suffix) {
-		$sizeorig = $size;
-		if (($size /= 1024) < 1) {
-			if ($round) {
-				$sizeorig = round($sizeorig, $round);
-			}
-			return $sizeorig . $suffix;
-		}
-	}
-	return;
-}
-
 function pkg_reinstall_all() {
 	global $g, $config;
 

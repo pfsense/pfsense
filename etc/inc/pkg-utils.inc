@@ -554,27 +554,19 @@ function install_package_xml($package_name) {
 	return true;
 }
 
-function delete_package($pkg) {
-	global $config, $g, $static_output, $vardb;
+function delete_package($package_name) {
+	global $config, $g, $static_output;
 
-	if (!$pkg) {
+	if (!is_package_installed($package_name)) {
 		return;
 	}
 
-	// Note: $pkg has the full PBI package name followed by ".pbi". Strip off ".pbi".
-	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
-
-	if ($pkg) {
-		$static_output .= sprintf(gettext("Starting package deletion for %s..."),$pkg);
-	}
+	$static_output .= sprintf(gettext("Starting package deletion for %s..."),$package_name);
 	update_output_window($static_output);
 
-	pkg_delete($pkg);
+	pkg_delete($package_name);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
-
-	/* Rescan directories for what has been left and avoid fooling other programs. */
-	mwexec("/sbin/ldconfig");
 
 	return;
 }

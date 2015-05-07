@@ -200,7 +200,6 @@ function resync_all_package_configs($show_message = false) {
 		if ($show_message == true) {
 			echo " " . $package['name'];
 		}
-		get_pkg_depends($package['name'], "all");
 		if (platform_booting() != true) {
 			stop_service(get_package_internal_name($package));
 		}
@@ -216,90 +215,6 @@ function resync_all_package_configs($show_message = false) {
 
 	@unlink("/conf/needs_package_sync");
 	conf_mount_ro();
-}
-
-/*
- * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's dependencies.
- *
- * $filetype = "all" || ".xml", ".tgz", etc.
- * $format = "files" (full filenames) || "names" (stripped / parsed depend names)
- * $return_nosync = 1 (return depends that have nosync set) | 0 (ignore packages with nosync)
- *
- */
-function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
-	global $config;
-
-	$pkg_id = get_package_id($pkg_name);
-	if ($pkg_id == -1) {
-		return -1; // This package doesn't really exist - exit the function.
-	} else if (!isset($config['installedpackages']['package'][$pkg_id])) {
-		return; // No package belongs to the pkg_id passed to this function.
-	}
-
-	$package =& $config['installedpackages']['package'][$pkg_id];
-	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error(sprintf(gettext('The %1$s package is missing required dependencies and must be reinstalled. %2$s'), $package['name'], $package['configurationfile']));
-		uninstall_package($package['name']);
-		if (install_package($package['name']) < 0) {
-			log_error("Failed reinstalling package {$package['name']}.");
-			return false;
-		}
-	}
-	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-	if (!empty($pkg_xml['additional_files_needed'])) {
-		foreach ($pkg_xml['additional_files_needed'] as $item) {
-			if ($return_nosync == 0 && isset($item['nosync'])) {
-				continue; // Do not return depends with nosync set if not required.
-			}
-			$depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
-			$depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
-			if (($filetype != "all") && (!preg_match("/{$filetype}/i", $depend_file))) {
-				if (($filetype != "all") && (strtolower(substr($depend_file, -strlen($filetype))) != strtolower($filetype))) {
-					continue;
-				}
-			}
-			if ($item['prefix'] != "") {
-				$prefix = $item['prefix'];
-			} else {
-				$prefix = "/usr/local/pkg/";
-			}
-			// Ensure that the prefix exists to avoid installation errors.
-			if (!is_dir($prefix)) {
-				exec("/bin/mkdir -p {$prefix}");
-			}
-			if (!file_exists($prefix . $depend_file)) {
-				log_error(sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']));
-			}
-			switch ($format) {
-				case "files":
-					$depends[] = $prefix . $depend_file;
-					break;
-				case "names":
-					switch ($filetype) {
-						case "all":
-							if (preg_match("/\.xml/i", $depend_file)) {
-								$depend_xml = parse_xml_config_pkg("/usr/local/pkg/{$depend_file}", "packagegui");
-								if (!empty($depend_xml)) {
-									$depends[] = $depend_xml['name'];
-								}
-							} else {
-								$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
-							}
-							break;
-						case ".xml":
-							$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-							if (!empty($depend_xml)) {
-								$depends[] = $depend_xml['name'];
-							}
-							break;
-						default:
-							$depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
-							break;
-					}
-			}
-		}
-		return $depends;
-	}
 }
 
 function uninstall_package($pkg_name) {

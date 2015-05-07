@@ -451,27 +451,6 @@ function remove_text_from_file($file, $text) {
 }
 
 /*
- * add_text_to_file($file, $text): adds $text to $file.
- * replaces the text if it already exists.
- */
-function add_text_to_file($file, $text, $replace = false) {
-	if (file_exists($file) and is_writable($file)) {
-		$filecontents = file($file);
-		$filecontents = array_map('rtrim', $filecontents);
-		array_push($filecontents, $text);
-		if ($replace) {
-			$filecontents = array_unique($filecontents);
-		}
-
-		$file_text = implode("\n", $filecontents);
-
-		@file_put_contents($file, $file_text);
-		return true;
-	}
-	return false;
-}
-
-/*
  *   after_sync_bump_adv_skew(): create skew values by 1S
  */
 function after_sync_bump_adv_skew() {

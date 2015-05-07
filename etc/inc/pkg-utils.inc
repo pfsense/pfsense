@@ -894,22 +894,6 @@ function install_package_xml($pkg) {
 	return true;
 }
 
-function does_package_depend($pkg) {
-	// Should not happen, but just in case.
-	if (!$pkg) {
-		return;
-	}
-	$pkg_var_db_dir = glob("/var/db/pkg/{$pkg}*");
-	// If this package has dependency then return true
-	foreach ($pkg_var_db_dir as $pvdd) {
-		if (file_exists("{$vardb}/{$pvdd}/+REQUIRED_BY") && count(file("{$vardb}/{$pvdd}/+REQUIRED_BY")) > 0) {
-			return true;
-		}
-	}
-	// Did not find a record of dependencies, so return false.
-	return false;
-}
-
 function delete_package($pkg) {
 	global $config, $g, $static_output, $vardb;
 

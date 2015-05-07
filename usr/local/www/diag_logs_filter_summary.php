@@ -263,7 +263,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
 $tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
 $tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
-display_top_tabs($tab_array);
+display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 $infomsg = sprintf('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).', $gotlines, $lines);
 print_info_box($infomsg);

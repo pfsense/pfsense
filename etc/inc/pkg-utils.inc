@@ -817,18 +817,6 @@ function install_package_xml($pkg) {
 			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] = $pkg_config['filter_rules_needed'];
 		}
 		update_output_window($static_output);
-		/* modify system files */
-		if (is_array($pkg_config['modify_system']) && is_array($pkg_config['modify_system']['item'])) {
-			$static_output .= gettext("System files... ");
-			update_output_window($static_output);
-			foreach ($pkg_config['modify_system']['item'] as $ms) {
-				if ($ms['textneeded']) {
-					add_text_to_file($ms['modifyfilename'], $ms['textneeded']);
-				}
-			}
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
-		}
 
 		pkg_fetch_additional_files($pkg, $pkg_info);
 
@@ -1108,19 +1096,6 @@ function delete_package_xml($pkg) {
 			if ($pkg_config['custom_php_pre_deinstall_command'] <> "") {
 				eval_once($pkg_config['custom_php_pre_deinstall_command']);
 			}
-		}
-		/* system files */
-		if (is_array($pkg_config['modify_system']) && is_array($pkg_config['modify_system']['item'])) {
-			$static_output .= gettext("System files... ");
-			update_output_window($static_output);
-			foreach ($pkg_config['modify_system']['item'] as $ms) {
-				if ($ms['textneeded']) {
-					remove_text_from_file($ms['modifyfilename'], $ms['textneeded']);
-				}
-			}
-
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
 		}
 		/* deinstall commands */
 		if ($pkg_config['custom_php_deinstall_command'] <> "") {

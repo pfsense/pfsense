@@ -204,7 +204,7 @@ function resync_all_package_configs($show_message = false) {
 		if (platform_booting() != true) {
 			stop_service(get_package_internal_name($package));
 		}
-		sync_package($idx, true, true);
+		sync_package($package['name']);
 		if ($pkg_interface == "console") {
 			echo "\n" . gettext("Syncing packages:");
 		}
@@ -335,12 +335,9 @@ function uninstall_package($pkg_name) {
 	update_output_window($static_output);
 }
 
-/*
- * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
- */
-function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
-	global $config;
-	global $builder_package_install;
+/* Run <custom_php_resync_config_command> */
+function sync_package($package_name) {
+	global $config, $builder_package_install;
 
 	// If this code is being called by pfspkg_installer
 	// which the builder system uses then return (ignore).
@@ -351,13 +348,9 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	if (empty($config['installedpackages']['package'])) {
 		return;
 	}
-	if (!is_numeric($pkg_name)) {
-		$pkg_id = get_package_id($pkg_name);
-		if ($pkg_id == -1) {
-			return -1; // This package doesn't really exist - exit the function.
-		}
-	} else {
-		$pkg_id = $pkg_name;
+
+	if (($pkg_id = get_package_id($package_name)) == -1) {
+		return; // This package doesn't really exist - exit the function.
 	}
 
 	if (!is_array($config['installedpackages']['package'][$pkg_id])) {
@@ -368,24 +361,30 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
 		delete_package_xml($package['name']);
-		return -1;
+		return;
 	}
+
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 	if (isset($pkg_config['nosync'])) {
 		return;
 	}
+
 	/* Bring in package include files */
 	if (!empty($pkg_config['include_file'])) {
 		$include_file = $pkg_config['include_file'];
 		if (file_exists($include_file)) {
 			require_once($include_file);
 		} else {
-			/* XXX: What the heck is this?! */
 			log_error("Reinstalling package {$package['name']} because its include file({$include_file}) is missing!");
 			uninstall_package($package['name']);
 			if (install_package($package['name']) < 0) {
 				log_error("Reinstalling package {$package['name']} failed. Take appropriate measures!!!");
-				return -1;
+				return;
+			}
+			if (file_exists($include_file)) {
+				require_once($include_file);
+			} else {
+				return;
 			}
 		}
 	}
@@ -395,48 +394,6 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	}
 	if (!empty($pkg_config['custom_php_resync_config_command'])) {
 		eval($pkg_config['custom_php_resync_config_command']);
-	}
-	if ($sync_depends == true) {
-		$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
-		if (is_array($depends)) {
-			foreach ($depends as $item) {
-				if (!file_exists($item)) {
-					require_once("notices.inc");
-					file_notice($package['name'], sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']), "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-					log_error("Could not find {$item}. Reinstalling package.");
-					uninstall_package($pkg_name);
-					if (install_package($pkg_name) < 0) {
-						log_error("Reinstalling package {$package['name']} failed. Take appropriate measures!!!");
-						return -1;
-					}
-				} else {
-					$item_config = parse_xml_config_pkg($item, "packagegui");
-					if (empty($item_config)) {
-						continue;
-					}
-					if (isset($item_config['nosync'])) {
-						continue;
-					}
-					if (!empty($item_config['include_file'])) {
-						if (file_exists($item_config['include_file'])) {
-							require_once($item_config['include_file']);
-						} else {
-							log_error("Not calling package sync code for dependency {$item_config['name']} of {$package['name']} because some include files are missing.");
-							continue;
-						}
-					}
-					if ($item_config['custom_php_global_functions'] <> "") {
-						eval($item_config['custom_php_global_functions']);
-					}
-					if ($item_config['custom_php_resync_config_command'] <> "") {
-						eval($item_config['custom_php_resync_config_command']);
-					}
-					if ($show_message == true) {
-						print " " . $item_config['name'];
-					}
-				}
-			}
-		}
 	}
 }
 

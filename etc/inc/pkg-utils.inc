@@ -181,29 +181,6 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	return $resp ? $resp : array();
 }
 
-function get_pkg_sizes($pkgs = 'all') {
-	global $config, $g;
-
-	$freebsd_machine = php_uname("m");
-	$params = array(
-		"pkg" => $pkgs,
-		"freebsd_version" => get_freebsd_version(),
-		"freebsd_machine" => $freebsd_machine
-	);
-	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
-	$xmlrpc_base_url = get_active_xml_rpc_base_url();
-	$cli = new XML_RPC_Client($g['xmlrpcpath'], $xmlrpc_base_url);
-	$resp = $cli->send($msg, 10);
-	if (!is_object($resp)) {
-		log_error("Could not get response from XMLRPC server!");
-	} else if (!$resp->faultCode()) {
-		$raw_versions = $resp->value();
-		return xmlrpc_value_to_php($raw_versions);
-	}
-
-	return array();
-}
-
 /*
  * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
  * This function may also print output to the terminal indicating progress.
@@ -1196,24 +1173,6 @@ function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 		}
 	}
 	return $size;
-}
-
-function get_package_install_size($pkg = 'all', $pkg_info = "") {
-	global $config, $g;
-	if ((!is_array($pkg)) and ($pkg != 'all')) {
-		$pkg = array($pkg);
-	}
-	$pkgdb = get_pkg_db();
-	if (!$pkg_info) {
-		$pkg_info = get_pkg_sizes($pkg);
-	}
-	foreach ($pkg as $apkg) {
-		if (!$pkg_info[$apkg]) {
-			continue;
-		}
-		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));
-	}
-	return $toreturn;
 }
 
 function squash_from_bytes($size, $round = "") {

@@ -126,61 +126,36 @@ function pkg_delete($pkg_name) {
 	}
 }
 
-/****f* pkg-utils/is_package_installed
- * NAME
- *   is_package_installed - Check whether a package is installed.
- * INPUTS
- *   $packagename	- name of the package to check
- * RESULT
- *   boolean	- true if the package is installed, false otherwise
- * NOTES
- *   This function is deprecated - get_pkg_id() can already check for installation.
- ******/
-function is_package_installed($packagename) {
-	$pkg = get_pkg_id($packagename);
-	if ($pkg == -1) {
-		return false;
-	}
-	return true;
+/* Check if package is present in config.xml */
+function is_package_installed($package_name) {
+	return (get_package_id($package_name) != -1);
 }
 
-/****f* pkg-utils/get_pkg_id
- * NAME
- *   get_pkg_id - Find a package's numeric ID.
- * INPUTS
- *   $pkg_name	- name of the package to check
- * RESULT
- *   integer    - -1 if package is not found, >-1 otherwise
- ******/
-function get_pkg_id($pkg_name) {
+/* Find package array index */
+function get_package_id($package_name) {
 	global $config;
 
-	if (is_array($config['installedpackages']['package'])) {
-		foreach ($config['installedpackages']['package'] as $idx => $pkg) {
-			if ($pkg['name'] == $pkg_name) {
-				return $idx;
-			}
+	if (!is_array($config['installedpackages']['package'])) {
+		return -1;
+	}
+
+	foreach ($config['installedpackages']['package'] as $idx => $pkg) {
+		if ($pkg['name'] == $package_name) {
+			return $idx;
 		}
 	}
+
 	return -1;
 }
 
-/****f* pkg-utils/get_pkg_internal_name
- * NAME
- *   get_pkg_internal_name - Find a package's internal name (e.g. squid3 internal name is squid)
- * INPUTS
- *   $package - array of package data from config
- * RESULT
- *   string - internal name (if defined) or default to package name
- ******/
-function get_pkg_internal_name($package) {
-	if (isset($package['internal_name']) && ($package['internal_name'] != "")) {
+/* Return internal_name when it's defined, otherwise, returns name */
+function get_package_internal_name($package_data) {
+	if (isset($package_data['internal_name']) && ($package_data['internal_name'] != "")) {
 		/* e.g. name is Ipguard-dev, internal name is ipguard */
-		$pkg_internal_name = $package['internal_name'];
+		return $package_data['internal_name'];
 	} else {
-		$pkg_internal_name = $package['name'];
+		return $package_data['name'];
 	}
-	return $pkg_internal_name;
 }
 
 /****f* pkg-utils/get_pkg_info
@@ -257,7 +232,7 @@ function resync_all_package_configs($show_message = false) {
 		}
 		get_pkg_depends($package['name'], "all");
 		if (platform_booting() != true) {
-			stop_service(get_pkg_internal_name($package));
+			stop_service(get_package_internal_name($package));
 		}
 		sync_package($idx, true, true);
 		if ($pkg_interface == "console") {
@@ -298,7 +273,7 @@ function is_freebsd_pkg_installed($pkg) {
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
 	global $config;
 
-	$pkg_id = get_pkg_id($pkg_name);
+	$pkg_id = get_package_id($pkg_name);
 	if ($pkg_id == -1) {
 		return -1; // This package doesn't really exist - exit the function.
 	} else if (!isset($config['installedpackages']['package'][$pkg_id])) {
@@ -375,9 +350,9 @@ function uninstall_package($pkg_name) {
 	global $config, $static_output;
 	global $builder_package_install;
 
-	$id = get_pkg_id($pkg_name);
+	$id = get_package_id($pkg_name);
 	if ($id >= 0) {
-		stop_service(get_pkg_internal_name($config['installedpackages']['package'][$id]));
+		stop_service(get_package_internal_name($config['installedpackages']['package'][$id]));
 		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package_pbi'];
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
@@ -426,7 +401,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		return;
 	}
 	if (!is_numeric($pkg_name)) {
-		$pkg_id = get_pkg_id($pkg_name);
+		$pkg_id = get_package_id($pkg_name);
 		if ($pkg_id == -1) {
 			return -1; // This package doesn't really exist - exit the function.
 		}
@@ -708,7 +683,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 	pkg_fetch_config_file($package, $pkg_info);
 
 	/* add package information to config.xml */
-	$pkgid = get_pkg_id($pkg_info['name']);
+	$pkgid = get_package_id($pkg_info['name']);
 	$static_output .= gettext("Saving updated package information...") . " ";
 	update_output_window($static_output);
 	if ($pkgid == -1) {
@@ -776,7 +751,7 @@ function eval_once($toeval) {
 function install_package_xml($pkg) {
 	global $g, $config, $static_output, $pkg_interface, $config_parsed;
 
-	if (($pkgid = get_pkg_id($pkg)) == -1) {
+	if (($pkgid = get_package_id($pkg)) == -1) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
@@ -1006,7 +981,7 @@ function delete_package_xml($pkg) {
 
 	conf_mount_rw();
 
-	$pkgid = get_pkg_id($pkg);
+	$pkgid = get_package_id($pkg);
 	if ($pkgid == -1) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
@@ -1327,7 +1302,7 @@ function stop_packages() {
 	if (is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
-			$internal_name = get_pkg_internal_name($package);
+			$internal_name = get_package_internal_name($package);
 			stop_service($internal_name);
 			unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 			echo "done.\n";

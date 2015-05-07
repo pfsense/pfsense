@@ -204,7 +204,7 @@ include("head.inc");
 			if(is_array($pkg_keys)) {
 				foreach($pkg_keys as $key):
 					$index = &$pkg_info[$key];
-					if(get_pkg_id($index['name']) >= 0 )
+					if(get_package_id($index['name']) >= 0 )
 						continue;
 
 					if (package_skip_tests($index,$requested_version))

@@ -718,46 +718,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 function pkg_reinstall_all() {
 	global $g, $config;
 
-	@unlink('/conf/needs_package_sync');
-	if (is_array($config['installedpackages']['package'])) {
-		echo gettext("One moment please, reinstalling packages...\n");
-		echo gettext(" >>> Trying to fetch package info...");
-		log_error(gettext("Attempting to reinstall all packages"));
-		$pkg_info = get_pkg_info();
-		if ($pkg_info) {
-			echo " Done.\n";
-		} else {
-			$xmlrpc_base_url = get_active_xml_rpc_base_url();
-			$error = sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
-			echo "\n{$error}\n";
-			log_error(gettext("Cannot reinstall packages: ") . $error);
-			return;
-		}
-		$todo = array();
-		$all_names = array();
-		foreach ($config['installedpackages']['package'] as $package) {
-			$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-			$all_names[] = $package['name'];
-		}
-		$package_name_list = gettext("List of packages to reinstall: ") . implode(", ", $all_names);
-		echo " >>> {$package_name_list}\n";
-		log_error($package_name_list);
-
-		foreach ($todo as $pkgtodo) {
-			$static_output = "";
-			if ($pkgtodo['name']) {
-				log_error(gettext("Uninstalling package") . " {$pkgtodo['name']}");
-				uninstall_package($pkgtodo['name']);
-				log_error(gettext("Finished uninstalling package") . " {$pkgtodo['name']}");
-				log_error(gettext("Reinstalling package") . " {$pkgtodo['name']}");
-				install_package($pkgtodo['name'], '', true);
-				log_error(gettext("Finished installing package") . " {$pkgtodo['name']}");
-			}
-		}
-		log_error(gettext("Finished reinstalling all packages."));
-	} else {
-		echo "No packages are installed.";
-	}
+	// XXX: implement
+	return;
 }
 
 function stop_packages() {

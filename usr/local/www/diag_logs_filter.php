@@ -342,6 +342,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 		printf(gettext(" (Maximum %s)"),$nentries)?>
 	</div>
 	<div class="panel-body">
+	   <div class="table-responsive">
 		<table class="table table striped table-hover table-compact">
 			<tr>
 				<th><?=gettext("Act")?></th>
@@ -460,6 +461,7 @@ else
 }
 ?>
 		</table>
+		</div>
 	</div>
 </div>
 

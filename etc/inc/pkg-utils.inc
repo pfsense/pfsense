@@ -343,10 +343,6 @@ function uninstall_package($pkg_name) {
 	update_output_window($static_output);
 }
 
-function force_remove_package($pkg_name) {
-	delete_package_xml($pkg_name);
-}
-
 /*
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
@@ -379,7 +375,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	$package =& $config['installedpackages']['package'][$pkg_id];
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
-		force_remove_package($package['name']);
+		delete_package_xml($package['name']);
 		return -1;
 	}
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");

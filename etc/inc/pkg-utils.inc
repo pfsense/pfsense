@@ -113,6 +113,19 @@ function is_pkg_installed($pkg_name) {
 	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name);
 }
 
+/* Install package, $pkg_name should not contain prefix */
+function pkg_install($pkg_name) {
+	global $g;
+
+	pkg_remove_prefix($pkg_name);
+
+	if (!is_pkg_installed($pkg_name)) {
+		return pkg_call("install -q -y " . $g['pkg_prefix'] . $pkg_name);
+	}
+
+	return false;
+}
+
 /* Delete package from FreeBSD, $pkg_name should not contain prefix */
 function pkg_delete($pkg_name) {
 	global $g;

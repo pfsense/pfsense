@@ -113,6 +113,7 @@ if (is_array($config['dhcpdv6'][$if])){
 	if (empty($pconfig['ddnsclientupdates'])) {
 		$pconfig['ddnsclientupdates'] = 'allow';
 	}
+	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
@@ -309,6 +310,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
+		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
@@ -347,8 +349,10 @@ if ($_POST) {
 			}
 		} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
 			$retvaldns = services_unbound_configure();
-			if ($retvaldns == 0)
+			if ($retvaldns == 0) {
 				clear_subsystem_dirty('unbound');
+				clear_subsystem_dirty('staticmaps');
+			}
 		} else {
 			$retvaldhcp = services_dhcpd_configure();
 			if ($retvaldhcp == 0)
@@ -719,7 +723,9 @@ display_top_tabs($tab_array);
 					<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="allow" <?php if($pconfig['ddnsclientupdates'] == 'allow') echo " checked=\"checked\""; ?> >Allow</input>
 					<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="deny" <?php if($pconfig['ddnsclientupdates'] == 'deny') echo " checked=\"checked\""; ?> >Deny</input>
 					<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="ignore" <?php if($pconfig['ddnsclientupdates'] == 'ignore') echo " checked=\"checked\""; ?> >Ignore</input><br />
-					<?=gettext("How Forward entries are handled when client indicates they wish to update DNS.  Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will do the updates and the client should not, Ignore specifies that DHCP will do the update and the client can also attempt the update usually using a different domain name.");?>
+					<?=gettext("How Forward entries are handled when client indicates they wish to update DNS.  Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will do the updates and the client should not, Ignore specifies that DHCP will do the update and the client can also attempt the update usually using a different domain name.");?><br />
+					<input style="vertical-align:middle" type="checkbox" name="ddnsreverse" id="ddnsreverse" <?php if($pconfig['ddnsreverse']) echo " checked=\"checked\""; ?> />&nbsp;
+					<?=gettext("Add reverse DNS entries.");?>
 					</p>
 				</div>
 			</td>

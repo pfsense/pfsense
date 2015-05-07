@@ -571,14 +571,14 @@ function delete_package($package_name) {
 	return;
 }
 
-function delete_package_xml($pkg) {
+function delete_package_xml($package_name, $when = "post-deinstall") {
 	global $g, $config, $static_output, $pkg_interface;
 
 	conf_mount_rw();
 
-	$pkgid = get_package_id($pkg);
+	$pkgid = get_package_id($package_name);
 	if ($pkgid == -1) {
-		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $pkg, "\n\n");
+		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
 			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
@@ -589,8 +589,8 @@ function delete_package_xml($pkg) {
 		conf_mount_ro();
 		return;
 	}
-	pkg_debug(sprintf(gettext("Removing %s package... "),$pkg));
-	$static_output .= sprintf(gettext("Removing %s components..."),$pkg) . "\n";
+	pkg_debug(sprintf(gettext("Removing %s package... "),$package_name));
+	$static_output .= sprintf(gettext("Removing %s components..."),$package_name) . "\n";
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
@@ -648,7 +648,7 @@ function delete_package_xml($pkg) {
 		 * XXX: Otherwise inclusion of config.inc again invalidates actions taken.
 		 * 	Same is done during installation.
 		 */
-		write_config("Intermediate config write during package removal for {$pkg}.");
+		write_config("Intermediate config write during package removal for {$package_name}.");
 
 		/*
 		 * If a require exists, include it.  this will
@@ -672,7 +672,7 @@ function delete_package_xml($pkg) {
 		 * NOTE: It is not possible to handle parse errors on eval.
 		 * So we prevent it from being run at all to not interrupt all the other code.
 		 */
-		if ($missing_include == false) {
+		if ($when == "deinstall" && $missing_include == false) {
 			/* evaluate this package's global functions and pre deinstall commands */
 			if ($pkg_config['custom_php_global_functions'] <> "") {
 				eval_once($pkg_config['custom_php_global_functions']);
@@ -682,7 +682,7 @@ function delete_package_xml($pkg) {
 			}
 		}
 		/* deinstall commands */
-		if ($pkg_config['custom_php_deinstall_command'] <> "") {
+		if ($when == "post-deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
 			$static_output .= gettext("Deinstall commands... ");
 			update_output_window($static_output);
 			if ($missing_include == false) {
@@ -693,36 +693,6 @@ function delete_package_xml($pkg) {
 			}
 			update_output_window($static_output);
 		}
-		if ($pkg_config['include_file'] <> "") {
-			$static_output .= gettext("Removing package instructions...");
-			update_output_window($static_output);
-			pkg_debug(sprintf(gettext("Remove '%s'"), $pkg_config['include_file']) . "\n");
-			unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
-		}
-		/* remove all additional files */
-		if (is_array($pkg_config['additional_files_needed'])) {
-			$static_output .= gettext("Auxiliary files... ");
-			update_output_window($static_output);
-			foreach ($pkg_config['additional_files_needed'] as $afn) {
-				$filename = get_filename_from_url($afn['item'][0]);
-				if ($afn['prefix'] <> "") {
-					$prefix = $afn['prefix'];
-				} else {
-					$prefix = "/usr/local/pkg/";
-				}
-				unlink_if_exists($prefix . $filename);
-			}
-			$static_output .= gettext("done.") . "\n";
-			update_output_window($static_output);
-		}
-		/* package XML file */
-		$static_output .= gettext("Package XML... ");
-		update_output_window($static_output);
-		unlink_if_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile']);
-		$static_output .= gettext("done.") . "\n";
-		update_output_window($static_output);
 	}
 	/* syslog */
 	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfile_name'] <> "") {
@@ -742,7 +712,7 @@ function delete_package_xml($pkg) {
 	unset($config['installedpackages']['package'][$pkgid]);
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);
-	write_config("Removed {$pkg} package.\n");
+	write_config("Removed {$package_name} package.\n");
 }
 
 function pkg_reinstall_all() {

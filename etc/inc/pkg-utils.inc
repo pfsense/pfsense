@@ -304,7 +304,6 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 
 function uninstall_package($pkg_name) {
 	global $config, $static_output;
-	global $builder_package_install;
 
 	$id = get_package_id($pkg_name);
 	if ($id >= 0) {
@@ -340,7 +339,7 @@ function uninstall_package($pkg_name) {
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
-	global $config, $config_parsed;
+	global $config;
 	global $builder_package_install;
 
 	// If this code is being called by pfspkg_installer
@@ -701,7 +700,7 @@ function eval_once($toeval) {
 }
 
 function install_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface, $config_parsed;
+	global $g, $config, $static_output, $pkg_interface;
 
 	if (($pkgid = get_package_id($pkg)) == -1) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");

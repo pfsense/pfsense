@@ -1105,20 +1105,22 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 	}
 }
 
-function add_package_tabs($tabgroup, & $tab_array) {
+function add_package_tabs($pkgname, &$tab_array) {
 	global $config, $g;
 
-	if (!is_array($config['installedpackages'])) {
-		return;
-	}
-	if (!is_array($config['installedpackages']['tab'])) {
+	$pkg = get_pkg_data($pkgname);
+
+	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
 		return;
 	}
 
-	foreach ($config['installedpackages']['tab'] as $tab) {
-		if ($tab['group'] !== $group) {
-			continue;
-		}
+	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg['configurationfile'], "packagegui");
+
+	if (!isset($pkg_config['tabs']['tab'])) {
+		return;
+	}
+
+	foreach($pkg_config['tabs']['tab'] as $tab) {
 		$tab_entry = array();
 		if ($tab['name']) {
 			$tab_entry[] = $tab['name'];

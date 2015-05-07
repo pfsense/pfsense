@@ -83,27 +83,47 @@ if (!isset($g['platform'])) {
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 }
 
-/****f* pkg-utils/remove_package
- * NAME
- *   remove_package - Removes package from FreeBSD if it exists
- * INPUTS
- *   $packagestring	- name/string to check for
- * RESULT
- *   none
- * NOTES
- *
- ******/
-function remove_freebsd_package($packagestring) {
-	// The packagestring passed in must be the full PBI package name,
-	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386"
-	// It must NOT have ".pbi" on the end.
-	$links = get_pbi_binaries(escapeshellarg($packagestring));
-	foreach ($links as $link) {
-		if (is_link("/usr/local/{$link['link_name']}")) {
-			@unlink("/usr/local/{$link['link_name']}");
-		}
+/* Remove pkg_prefix from package name if it's present */
+function pkg_remove_prefix(&$pkg_name) {
+	global $g;
+
+	if (substr($pkg_name, 0, strlen($g['pkg_prefix'])) == $g['pkg_prefix']) {
+		$pkg_name = substr($pkg_name, strlen($g['pkg_prefix']));
 	}
-	exec("/usr/local/sbin/pbi_delete " . escapeshellarg($packagestring) . " 2>>/tmp/pbi_delete_errors.txt");
+}
+
+/* Execute a pkg call */
+function pkg_call($params) {
+	if (empty($params)) {
+		return false;
+	}
+
+	// XXX: Use proper call with fifo to collect statistics
+	$_gc = exec("env ASSUME_ALWAYS_YES=1 /usr/sbin/pkg " . escapeshellarg($params), $output, $rc);
+
+	return ($rc == 0);
+}
+
+/* Check if package is installed */
+function is_pkg_installed($pkg_name) {
+	global $g;
+
+	pkg_remove_prefix($pkg_name);
+
+	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name);
+}
+
+/* Delete package from FreeBSD, $pkg_name should not contain prefix */
+function pkg_delete($pkg_name) {
+	global $g;
+
+	pkg_remove_prefix($pkg_name);
+
+	if (is_pkg_installed($pkg_name)) {
+		pkg_call("delete -q -y " . $g['pkg_prefix'] . $pkg_name);
+		/* Cleanup unecessary dependencies */
+		pkg_call("autoremove -y -q");
+	}
 }
 
 /****f* pkg-utils/is_package_installed
@@ -971,7 +991,7 @@ function delete_package($pkg) {
 	}
 	update_output_window($static_output);
 
-	remove_freebsd_package($pkg);
+	pkg_delete($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 

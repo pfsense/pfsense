@@ -1150,31 +1150,6 @@ function get_pkg_db() {
 	return return_dir_as_array($g['vardb_path'] . '/pkg');
 }
 
-function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
-	if (!$pkgdb) {
-		$pkgdb = get_pkg_db();
-	}
-	if (!is_array($alreadyseen)) {
-		$alreadyseen = array();
-	}
-	if (!is_array($depend)) {
-		$depend = array();
-	}
-	foreach ($depend as $adepend) {
-		$pkgname = reverse_strrchr($adepend['name'], '.');
-		if (in_array($pkgname, $alreadyseen)) {
-			continue;
-		} elseif (!in_array($pkgname, $pkgdb)) {
-			$size += expand_to_bytes($adepend['size']);
-			$alreadyseen[] = $pkgname;
-			if (is_array($adepend['depend'])) {
-				$size += walk_depend($adepend['depend'], $pkgdb, $alreadyseen);
-			}
-		}
-	}
-	return $size;
-}
-
 function pkg_reinstall_all() {
 	global $g, $config;
 

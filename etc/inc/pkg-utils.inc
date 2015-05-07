@@ -226,20 +226,6 @@ function resync_all_package_configs($show_message = false) {
 }
 
 /*
- * is_freebsd_pkg_installed() - Check /var/db/pkg to determine whether or not a FreeBSD
- *				package is installed.
- */
-function is_freebsd_pkg_installed($pkg) {
-	if (!$pkg) {
-		return;
-	}
-	$output = "";
-	$_gb = exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg) . ' 2>/dev/null', $output, $retval);
-
-	return (intval($retval) == 0);
-}
-
-/*
  * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
@@ -755,7 +741,7 @@ function install_package_xml($pkg) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
 			$static_output = $static_orig . "\nChecking for package installation... ";
 			update_output_window($static_output);
-			if (!is_freebsd_pkg_installed($pkg_name)) {
+			if (!is_pkg_installed($pkg_name)) {
 				if (!pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url'])) {
 					$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
 					update_output_window($static_output);

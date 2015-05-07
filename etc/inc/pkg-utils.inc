@@ -78,15 +78,9 @@ if (!function_exists("pkg_debug")) {
 	}
 }
 
-$vardb = "/var/db/pkg";
-safe_mkdir($vardb);
-$g['platform'] = trim(file_get_contents("/etc/platform"));
-
-if (!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
-	conf_mount_rw();
-	safe_mkdir("/usr/local/pkg");
-	safe_mkdir("/usr/local/pkg/pf");
-	conf_mount_ro();
+global $g;
+if (!isset($g['platform'])) {
+	$g['platform'] = trim(file_get_contents("/etc/platform"));
 }
 
 /****f* pkg-utils/remove_package

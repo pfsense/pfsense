@@ -40,7 +40,6 @@
 */
 
 require_once("globals.inc");
-require_once("xmlrpc.inc");
 require_once("service-utils.inc");
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");

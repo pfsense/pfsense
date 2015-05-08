@@ -117,3 +117,16 @@ form .btn + .btn {
 	padding-top: 21px;
 	text-align: center;
 }
+
+/** Homepage / dashboard */
+#widgetSequence {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	padding: 20px 0;
+	width: 100%;
+	z-index: 100;
+	text-align: center;
+	background: rgba(255, 255, 255, 0.6);
+	border-top: 1px solid #ddd;
+}

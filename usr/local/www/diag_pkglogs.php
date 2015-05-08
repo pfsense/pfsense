@@ -41,8 +41,8 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
-	pfSense_MODULE:	pkgs
+	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -56,9 +56,6 @@ require("guiconfig.inc");
 require("pkg-utils.inc");
 
 if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
-
-//if ($_POST['clear']) 
-//	clear_log_file($logfile);
 
 $i = 0;
 $pkgwithlogging = false;
@@ -86,56 +83,38 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 $pgtitle = array(gettext("Status"),gettext("Package logs"));
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-	<td>
-    <?php
-	if($pkgwithlogging == false) {
-		print_info_box(gettext("No packages with logging facilities are currently installed."));
-		echo '</ul></td></tr></table>';
-		include("fend.inc");
-		exit;
-	}
+if($pkgwithlogging == false) {
+	print_info_box(gettext("No packages with logging facilities are currently installed."));
+} else {
 	$tab_array = array();
 	foreach($config['installedpackages']['package'] as $package) {
 		if(is_array($package['logging'])) {
-			if(!($logtab = $package['logging']['logtab'])) $logtab = $package['name'];
-			if($apkg == $package['name']) { 
+			if(!($logtab = $package['logging']['logtab']))
+				$logtab = $package['name'];
+
+			if($apkg == $package['name']) {
 				$curtab = $logtab;
 				$tab_array[] = array(sprintf(gettext("%s"),$logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
 			} else {
 				$tab_array[] = array(sprintf(gettext("%s"),$logtab), false, "diag_pkglogs.php?pkg=".$package['name']);
 			}
 		}
-       	 }
+	}
 	display_top_tabs($tab_array);
-    ?> 
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext('Last %1$s %2$s log entries'),$nentries,$curtab); ?></td>
-		  </tr>
-		  <?php
-			$package =& $config['installedpackages']['package'][$apkgid];
-			dump_clog($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries);
-		?>
-		</table>
-<!--
-<form action="diag_pkglogs.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
-</form>
--->
+?>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=printf(gettext('Last %1$s %2$s log entries'),$nentries,$curtab)?></div>
+		<div>class="panel-body">
+			<pre>
+<?php
+			$package = $config['installedpackages']['package'][$apkgid];
+			dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+?>
+			</pre>
 		</div>
-	</td>
-  </tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+	</div>
+
+<?php }
+
+include("foot.inc"); ?>

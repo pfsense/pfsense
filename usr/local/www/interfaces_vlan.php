@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -98,31 +98,39 @@ $tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
 $tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
+
+print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
+		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
+		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
+		'%s handbook for information on supported cards.'),$g['product_name']));
 ?>
-<table class="table">
-	<caption><?php printf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
-	'VLAN tagging properly. On cards that do not explicitly support it, VLAN '.
-	'tagging will still work, but the reduced MTU may cause problems. See the '.
-	'%s handbook for information on supported cards.'),$g['product_name'])?></caption>
-	<tr>
-		<th class="col-sm-3"><?=gettext('Interface');?></th>
-		<th class="col-sm-3"><?=gettext('VLAN tag');?></th>
-		<th><?=gettext('Description');?></th>
-		<th class="col-sm-2"><a class="btn btn-primary btn-sm" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a></th>
-	</tr>
-	<?php $i = 0; foreach ($a_vlans as $vlan): ?>
-	<tr>
-		<td><?=htmlspecialchars($vlan['if']);?></td>
-		<td><?=htmlspecialchars($vlan['tag']);?></td>
-		<td><?=htmlspecialchars($vlan['descr']);?></td>
-		<td>
-			<a class="btn btn-primary btn-sm" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-			<a class="btn btn-danger btn-sm" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td>
-		</td>
-	</tr>
-	<?php
-		$i++;
-	endforeach;
-	?>
-</table>
-<?php include("foot.inc")?>
+<div class="table-responsive">
+	<table class="table">
+		<caption><?php ?></caption>
+		<tr>
+			<th><?=gettext('Interface');?></th>
+			<th><?=gettext('VLAN tag');?></th>
+			<th><?=gettext('Description');?></th>
+		</tr>
+<?php
+	$i = 0;
+	foreach ($a_vlans as $vlan) {
+?>
+		<tr>
+			<td><?=htmlspecialchars($vlan['if']);?></td>
+			<td><?=htmlspecialchars($vlan['tag']);?></td>
+			<td><?=htmlspecialchars($vlan['descr']);?></td>
+			<td>
+				<a class="btn btn-primary btn-xs" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
+				<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td>
+			</td>
+		</tr>
+		<?php
+			$i++;
+	}
+?>
+	</table>
+	<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+</div>
+<?php
+include("foot.inc");

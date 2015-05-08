@@ -109,14 +109,9 @@ function stat_block($summary, $stat, $num) {
 // Todo: Be good to investigate building this with json_encode and friends some time
 function pie_block($summary, $stat, $num, $chartnum) {
 	global $fields, $segcolors, $gotlines, $numcolors;
-
-	echo <<<PIEEND
+?>
 <script>
-var pie = new d3pie("pieChart
-PIEEND;
-print($chartnum);
-	echo <<<PIEEND2
-", {
+var pie = new d3pie("pieChart<?=$chartnum?>", {
 	"header": {
 		"title": {
 			"text": "",
@@ -144,8 +139,7 @@ print($chartnum);
 	"data": {
 		"sortOrder": "value-desc",
 		"content": [
-PIEEND2;
-
+<?php
 	uasort($summary[$stat] , 'cmp');
 	$k = array_keys($summary[$stat]);
 	$total = 0;
@@ -177,8 +171,7 @@ PIEEND2;
 		print(', "color": "' . $segcolors[$i % $numcolors] . '"');
 		print("}");
 	}
-
-echo <<<PIEEND3
+?>
 		]
 	},
 	"labels": {
@@ -222,8 +215,7 @@ echo <<<PIEEND3
 	"callbacks": {}
 });
 </script>
-
-PIEEND3;
+<?php
 }
 
 foreach ($filterlog as $fe) {

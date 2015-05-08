@@ -99,7 +99,7 @@ function pkg_call($params) {
 	}
 
 	// XXX: Use proper call with fifo to collect statistics
-	$_gc = exec("env ASSUME_ALWAYS_YES=true /usr/sbin/pkg " . escapeshellarg($params), $output, $rc);
+	$_gc = exec(escapeshellcmd("env ASSUME_ALWAYS_YES=true /usr/sbin/pkg {$params}"), $output, $rc);
 
 	return ($rc == 0);
 }

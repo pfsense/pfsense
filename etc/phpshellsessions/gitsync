@@ -79,7 +79,7 @@ if (!file_exists($GIT_BIN)) {
 	require_once("pkg-utils.inc");
 
 	echo "Cannot find git, installing...\n";
-	if (!pkg_install('git')) {
+	if (!pkg_call('install -y -q git-lite')) {
 		echo "\nERROR: Unable to install git pkg.\n";
 		return;
 	}

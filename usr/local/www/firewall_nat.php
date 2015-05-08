@@ -328,6 +328,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 			<td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new NAT based on this one");?>" width="17" height="17" border="0" alt="add" /></a></td>
                       </tr>
                     </table>
+			</td>
 		</tr>
   	     <?php $i++; $nnats++; endforeach; ?>
                 <tr>

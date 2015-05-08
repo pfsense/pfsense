@@ -141,11 +141,11 @@ foreach ($a_bridges as $bridge) {
 ?>
 				</td>
 				<td>
-					<?=htmlspecialchars($bridge['descr'])?>&nbsp;
+					<?=htmlspecialchars($bridge['descr'])?>
 				</td>
 				<td>
-					<a href="interfaces_bridge_edit.php?id=<?=$i?>" class="btn btn-default btn-xs">Edit</a>&nbsp;
-					<a href="interfaces_bridge.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs">Delete</a>
+					<a href="interfaces_bridge_edit.php?id=<?=$i?>" class="btn btn-default btn-xs"><?=gettext("Edit")?></a>
+					<a href="interfaces_bridge.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
 				</td>
 			</tr>
 <?php
@@ -155,7 +155,7 @@ foreach ($a_bridges as $bridge) {
 		</tbody>
 	</table>
 
-	<a href="interfaces_bridge_edit.php" class="btn btn-success">Add</a>
+	<a href="interfaces_bridge_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
 
 </div>
 

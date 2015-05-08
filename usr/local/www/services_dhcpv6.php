@@ -342,8 +342,10 @@ if ($_POST) {
 			}
 		} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
 			$retvaldns = services_unbound_configure();
-			if ($retvaldns == 0)
+			if ($retvaldns == 0) {
 				clear_subsystem_dirty('unbound');
+				clear_subsystem_dirty('staticmaps');
+			}
 		} else {
 			$retvaldhcp = services_dhcpd_configure();
 			if ($retvaldhcp == 0)

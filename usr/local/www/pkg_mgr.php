@@ -151,6 +151,7 @@ include("head.inc");
 			foreach($pkg_keys as $key) {
 				$categories[$pkg_info[$key]['category']]++;
 			}
+		}
 		ksort($categories);
 		$cm_count=0;
 		$tab_array = array();

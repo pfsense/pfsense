@@ -123,22 +123,25 @@ $form->addGlobal(new Form_Button(
 $form->add($section);
 print $form;
 
-?>
-	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></div>
-		<pre>
-<?php
-		if(($logfile == 'resolver') || ($logfile == 'system'))
-			$inverse = array("ppp");
-		else
-			$inverse = null;
+if($logfile == 'dhcpd')
+	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
 
-		if($filtertext)
-			dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
-		else
-			dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);
 ?>
-		</pre>
-	</div>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></div>
+	<pre>
+<?php
+	if(($logfile == 'resolver') || ($logfile == 'system'))
+		$inverse = array("ppp");
+	else
+		$inverse = null;
+
+	if($filtertext)
+		dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
+	else
+		dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);
+?>
+	</pre>
+</div>
 
 <?php include("foot.inc"); ?>

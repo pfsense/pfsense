@@ -161,6 +161,11 @@ function get_package_id($package_name) {
 	return -1;
 }
 
+/* Keep backward compatibility since snort/suricata use this function */
+function get_pkg_id($package_name) {
+	return get_package_id($package_name);
+}
+
 /* Return internal_name when it's defined, otherwise, returns name */
 function get_package_internal_name($package_data) {
 	if (isset($package_data['internal_name']) && ($package_data['internal_name'] != "")) {

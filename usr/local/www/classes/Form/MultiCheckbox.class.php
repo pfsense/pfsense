@@ -1,6 +1,6 @@
 <?php
 /*
-	IpAddress.class.php
+	Form_MultiCheckbox.class.php
 
 	Copyright (C) 2015 Sjon Hortensius
 	All rights reserved.
@@ -26,51 +26,15 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-
-class Form_IpAddress extends Form_Input
+class Form_MultiCheckbox extends Form_Checkbox
 {
-	protected $_mask;
-
-	public function __construct($name, $title, $value)
+	public function setHelp($help, array $params = array())
 	{
-		parent::__construct($name, $title, 'text', $value);
-
-		$this->_attributes['pattern'] = '[a-f0-9:.]*';
+		throw new Exception('MultiCheckboxes do not support help-texts, please use $group->setHelp instead');
 	}
 
-	public function addMask($name, $value)
+	public function __toString()
 	{
-		$this->_mask = new Form_Select(
-			$name,
-			null,
-			$value,
-			array_combine(range(128, 1), range(128, 1))
-		);
-
-		return $this;
-	}
-
-	public function setIsRepeated()
-	{
-		if (isset($this->_mask))
-			$this->_mask->setIsRepeated();
-
-		return parent::setIsRepeated();
-	}
-
-	protected function _getInput()
-	{
-		$input = parent::_getInput();
-
-		if (!isset($this->_mask))
-			return $input;
-
-		return <<<EOT
-		<div class="input-group">
-			$input
-			<span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-			{$this->_mask}
-		</div>
-EOT;
+		return (string)$this->_getInput();
 	}
 }

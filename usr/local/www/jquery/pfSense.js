@@ -3,15 +3,8 @@
  */
 
 $(function() {
-	// Run in-page defined events
-	var runEvents = function()
-	{
-		while (func = window.events.shift())
-			func();
-	};
-
 	// Attach collapsable behaviour to select options
-	var bindCollapseToOptions = function()
+	(function()
 	{
 		var selects = $('select[data-toggle="collapse"]');
 
@@ -37,10 +30,10 @@ $(function() {
 
 		// Trigger change to open currently selected item
 		selects.trigger('change');
-	};
+	})();
 
 	// Add +/- buttons to certain Groups; to allow adding multiple entries
-	var allowUserGroupDuplication = function()
+	(function()
 	{
 		var groups = $('div.form-group.user-duplication');
 		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
@@ -66,36 +59,33 @@ $(function() {
 			if (group == group.parentNode.lastElementChild)
 				plus.clone(true).appendTo(controlsClone);
 		});
-	};
+	})();
 
 	// Find all ipaddress masks and make dynamic based on address family of input
-	var syncIpAddressMasks = function()
-	{
-		$('span.pfIpMask + select').each(function (idx, select){
-			var input = $(select).prevAll('input[type=text]');
+	$('span.pfIpMask + select').each(function (idx, select){
+		var input = $(select).prevAll('input[type=text]');
 
-			input.on('change', function(e){
-				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
-				if (!isV6)
-					max = 32;
+		input.on('change', function(e){
+			var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+			if (!isV6)
+				max = 32;
 
-				if (input.val() == "")
-					return;
+			if (input.val() == "")
+				return;
 
-				while (select.options.length > max)
-					select.remove(0);
+			while (select.options.length > max)
+				select.remove(0);
 
-				if (select.options.length < max)
-				{
-					for (var i=select.options.length; i<=max; i++)
-						select.options.add(new Option(i, i), 0);
-				}
-			});
-
-			// Fire immediately
-			input.change();
+			if (select.options.length < max)
+			{
+				for (var i=select.options.length; i<=max; i++)
+					select.options.add(new Option(i, i), 0);
+			}
 		});
-	};
+
+		// Fire immediately
+		input.change();
+	});
 
 	// Add confirm to all btn-danger buttons
 	$('.btn-danger').on('click', function(e){
@@ -108,6 +98,20 @@ $(function() {
 			e.preventDefault();
 	});
 
+	// Add toggle-all when there are multiple checkboxes
+	$('.control-label + .checkbox.multi').each(function(idx, col){
+		var a = $('<a class="btn btn-xs btn-default">toggle all</a>');
+		a.on('click', function(){
+			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
+				all = wrap.find('input[type=checkbox]'),
+				checked = wrap.find('input[type=checkbox]:checked');
+
+			all.prop('checked', (all.length != checked.length));
+		})
+
+		a.appendTo($(col).prev('.control-label'));
+	})
+
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover();
 
@@ -119,8 +123,7 @@ $(function() {
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 
-	runEvents();
-	bindCollapseToOptions();
-	allowUserGroupDuplication();
-	syncIpAddressMasks();
+	// Run in-page defined events
+	while (func = window.events.shift())
+		func();
 });

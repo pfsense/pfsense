@@ -118,7 +118,7 @@ $section->addInput(new Form_Input(
 	'Filter expression',
 	'text',
 	$_POST['filter'],
-	['placeholder' => '']
+	['placeholder' => 'Simple filter such as 192.168, v6, icmp or ESTABLISHED']
 ));
 
 $filterbtn = new Form_Button('filterbtn', 'Filter', null);

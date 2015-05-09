@@ -368,57 +368,57 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$group = new Form_Group('Remote Syslog Contents');
-$group->add(new Form_Checkbox(
+$group = new Form_MultiCheckboxGroup('Remote Syslog Contents');
+$group->add(new Form_MultiCheckbox(
 	'system',
 	null,
 	'System Events',
 	$pconfig['system']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'filter',
 	null,
 	'Firewall Events',
 	$pconfig['filter']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'dhcp',
 	null,
 	'DHCP service events',
 	$pconfig['dhcp']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'portalauth',
 	null,
 	'Portal Auth events',
 	$pconfig['portalauth']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'vpn',
 	null,
 	'VPN (PPTP, IPsec, OpenVPN) events',
 	$pconfig['vpn']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'apinger',
 	null,
 	'Gateway Monitor events',
 	$pconfig['apinger']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'relayd',
 	null,
 	'Server Load Balancer events',
 	$pconfig['relayd']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'hostapd',
 	null,
 	'Wireless events',

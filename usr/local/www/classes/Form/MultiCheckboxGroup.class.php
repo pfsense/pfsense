@@ -1,6 +1,6 @@
 <?php
 /*
-	IpAddress.class.php
+	Form_MultiCheckboxGroup.class.php
 
 	Copyright (C) 2015 Sjon Hortensius
 	All rights reserved.
@@ -26,51 +26,39 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-
-class Form_IpAddress extends Form_Input
+class Form_MultiCheckboxGroup extends Form_Group
 {
-	protected $_mask;
-
-	public function __construct($name, $title, $value)
+	public function add(Form_MultiCheckbox $input)
 	{
-		parent::__construct($name, $title, 'text', $value);
-
-		$this->_attributes['pattern'] = '[a-f0-9:.]*';
+		return parent::add($input);
 	}
 
-	public function addMask($name, $value)
+	public function __toString()
 	{
-		$this->_mask = new Form_Select(
-			$name,
-			null,
-			$value,
-			array_combine(range(128, 1), range(128, 1))
-		);
+		$element = Form_Element::__toString();
+		$column = new Form_Element;
+		$column->addClass('checkbox', 'multi', 'col-sm-10');
 
-		return $this;
-	}
+		$inputs = implode('', $this->_inputs);
+		$help = $this->_getHelp();
 
-	public function setIsRepeated()
-	{
-		if (isset($this->_mask))
-			$this->_mask->setIsRepeated();
+		$label = new Form_Element('label');
+		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
-		return parent::setIsRepeated();
-	}
-
-	protected function _getInput()
-	{
-		$input = parent::_getInput();
-
-		if (!isset($this->_mask))
-			return $input;
+		$title = htmlspecialchars(gettext($this->_title));
 
 		return <<<EOT
-		<div class="input-group">
-			$input
-			<span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-			{$this->_mask}
+	{$element}
+		{$label}
+			{$title}
+		</label>
+
+		{$column}
+			{$inputs}
 		</div>
+
+		{$help}
+	</div>
 EOT;
 	}
 }

@@ -53,8 +53,15 @@ class Form_Input extends Form_Element
 		if (isset($type))
 			$this->_attributes['type'] = $type;
 
-		if ($type == 'number')
-			$attributes += array('min' => 1, 'step' => 1);
+		switch ($type)
+		{
+			case 'number':
+				$attributes += array('min' => 1, 'step' => 1);
+			break;
+			case 'file':
+				unset($this->_attributes['class']['form-control']);
+			break;
+		}
 
 		if (isset($value))
 			$this->_attributes['value'] = $value;

@@ -81,6 +81,28 @@ class Form_Group extends Form_Element
 		return $this;
 	}
 
+	protected function _getHelp()
+	{
+		if (!isset($this->_help))
+			return null;
+
+		$group = new Form_Element;
+		$group->addClass('col-sm-'. Form::MAX_INPUT_WIDTH, 'col-sm-offset-'. Form::LABEL_WIDTH);
+
+		$help = gettext($this->_help);
+
+		if (!empty($this->_helpParams))
+			$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
+
+		return <<<EOT
+	{$group}
+		<span class="help-block">
+			{$help}
+		</span>
+	</div>
+EOT;
+	}
+
 	public function __toString()
 	{
 		$element = parent::__toString();
@@ -107,25 +129,7 @@ class Form_Group extends Form_Element
 
 		$target = $this->_labelTarget->getId();
 		$inputs = implode('', $this->_inputs);
-
-		if (isset($this->_help))
-		{
-			$group = new Form_Element;
-			$group->addClass('col-sm-'. Form::MAX_INPUT_WIDTH, 'col-sm-offset-'. Form::LABEL_WIDTH);
-
-			$help = gettext($this->_help);
-
-			if (!empty($this->_helpParams))
-				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
-
-			$help = <<<EOT
-	{$group}
-		<span class="help-block">
-			{$help}
-		</span>
-	</div>
-EOT;
-		}
+		$help = $this->_getHelp();
 
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');

@@ -30,7 +30,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -69,56 +69,76 @@ $shortcut_section = "interfaces";
 include("head.inc");
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), true, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), true, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
+print_info_box(gettext('Interface Groups allow you to setup rules for multiple interfaces without duplicating the rules.<br />' .
+					   'If you remove members from an interface group, the group rules are no longer applicable to that interface.'));
 ?>
-<table class="table">
-	<caption><strong><?=gettext('NOTE: '); ?></strong><?=gettext(
-	'Interface Groups allow you to create rules that apply to multiple ' .
-	'interfaces without duplicating the rules. If you remove members from an ' .
-	'interface group, the group rules no longer apply to that interface.');?></caption>
-	<tr>
-		<th class="col-sm-3"><?=gettext('Name');?></th>
-		<th><?=gettext('Members');?></th>
-		<th class="col-sm-3"><?=gettext('Description');?></th>
-		<th class="col-sm-2"><a class="btn btn-primary btn-sm" href="interfaces_groups_edit.php" role="button"><?=gettext("Add Group");?></a></th>
-	</tr>
-		<?php if (count($a_ifgroups)):
-			$i = 0; foreach ($a_ifgroups as $ifgroupentry): ?>
-	<tr>
-		<td><?=htmlspecialchars($ifgroupentry['ifname']); ?></td>
-		<td> <?php
-			$members_arr = explode(" ", $ifgroupentry['members']);
-			$iflist = get_configured_interface_with_descr(false, true);
-			$memberses_arr = array();
-			foreach ($members_arr as $memb)
-				$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
-			unset($iflist);
-			$memberses = implode(", ", $memberses_arr);
-			echo $memberses;
-			if(count($members_arr) < 10) {
-				echo '';
-			} else {
-				echo '...';
-			}
-		?></td>
-		<td><?=htmlspecialchars($ifgroupentry['descr']);?></td>
-		<td>
-			<a class="btn btn-primary btn-sm" role="button" href="interfaces_groups_edit.php?id=<?=$i; ?>"><?=gettext('Edit'); ?></a>
-			<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"><?=gettext("Delete"); ?></a>
-		</td>
-	</tr>
-	<?php $i++; endforeach; endif; ?>
-</table>
-<?php include("fend.inc"); ?>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext('Name');?></th>
+				<th><?=gettext('Members');?></th>
+				<th><?=gettext('Description');?></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php foreach ($a_ifgroups as $i => $ifgroupentry): ?>
+			<tr>
+				<td>
+					<?=htmlspecialchars($ifgroupentry['ifname']); ?>
+				</td>
+				<td>
+<?php
+		$members_arr = explode(" ", $ifgroupentry['members']);
+		$iflist = get_configured_interface_with_descr(false, true);
+		$memberses_arr = array();
+		foreach ($members_arr as $memb)
+			$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
 
+		unset($iflist);
+		$memberses = implode(", ", $memberses_arr);
+		echo $memberses;
+		if(count($members_arr) >= 10) {
+			echo '&hellip;';
+		}
+?>
+				</td>
+				<td>
+					<?=htmlspecialchars($ifgroupentry['descr']);?>
+				</td>
+				<td>
+					<a class="btn btn-default btn-sm" role="button" href="interfaces_groups_edit.php?id=<?=$i; ?>">
+						<?=gettext('Edit'); ?>
+					</a>
+					<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>">
+						<?=gettext("Delete"); ?>
+					</a>
+				</td>
+			</tr>
+<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+
+<nav class="action-buttons">
+	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
+		<?=gettext("Add Group");?>
+	</a>
+</nav>
+
+<?php
+
+include("fend.inc");

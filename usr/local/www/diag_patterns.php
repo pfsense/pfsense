@@ -27,7 +27,7 @@
 */
 
 /*
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -39,8 +39,11 @@
 
 require("guiconfig.inc");
 
+// Defining this here ensures that both instances (button name and POST check) are identical
+$buttonlabel = gettext("Upload Pattern file");
+
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
-if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+if (($_POST['submit'] == $buttonlabel) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	if(fileExtension($_FILES['ulfile']['name'])) {
 		if (!is_array($config['l7shaper']['custom_pat']))
 			$config['l7shaper']['custom_pat'] = array();
@@ -49,9 +52,12 @@ if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_F
 		write_config(sprintf(gettext("Added custom l7 pattern %s"), $_FILES['ulfile']['name']));
 		move_uploaded_file($_FILES['ulfile']['tmp_name'], "/usr/local/share/protocols/" . $_FILES['ulfile']['name']);
 		$ulmsg = gettext("Uploaded file to") . " /usr/local/share/protocols/" . htmlentities($_FILES['ulfile']['name']);
+		$class = 'alert-success';
 	}
-	else
-		$ulmsg = gettext("Warning: You must upload a file with .pat extension.");
+	else {
+		$ulmsg = gettext("Error: You must upload a file with .pat extension.");
+		$class = 'alert-danger';
+	}
 }
 
 //Check if file has correct extension (.pat)
@@ -62,35 +68,32 @@ function fileExtension($nameFile) {
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Add layer7 pattern"));
 include("head.inc");
-?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
-<div id="mainarea">
-<form action="diag_patterns.php" method="post" enctype="multipart/form-data" name="frmPattern">
-<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="upload pattern">
-	<tr>
-		<td colspan="4" valign="top" class="listtopic"><?=gettext("Upload layer7 pattern file");?></td>
-	</tr>
-	<tr>
-		<td align="right"><strong><?=gettext("File to upload:");?></strong></td>
-		<td valign="top" class="label">
-			<input name="ulfile" type="file" class="formfld file" id="ulfile" />
-		</td>
-	</tr>
-	<tr>
-		<td valign="top">&nbsp;&nbsp;&nbsp;</td>
-		<td valign="top" class="label">
-			<input name="submit" type="submit" class="button" id="upload" value="<?=gettext("Upload Pattern file");?>" />
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2" valign="top" height="16"></td>
-	</tr>
-</table>
-</form>
-</div>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if($ulmsg)
+	print_info_box($ulmsg, $class);
+
+require('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	submit,
+	$buttonlabel,
+	null
+));
+
+$form->setMultipartEncoding();
+
+$section = new Form_Section('Upload Layer7 pattern file');
+
+$filepicker = new Form_Input(
+	'ulfile',
+	'File to upload',
+	'file',
+	''
+);
+
+$section->addInput($filepicker)->setHelp('Choose the file you wish to upload (*.pat)');
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

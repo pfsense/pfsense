@@ -163,6 +163,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 <!-- Raw logs are displayed as preformatted text. vpn logs are displayed as a table-->
 <div class="panel panel-default">
 	<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$vpns[$vpntype]?><?=gettext(" log entries")?></div>
+	<div class="panel-body">
 <?php
 		if ($mode != "raw") {
 ?>
@@ -180,8 +181,8 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 <?php
 					$rows = dump_clog_vpn("/var/log/vpn.log", $nentries);	// dump_clog_vpn provides all the need <td></td>/<tr></tr> tags
 ?>
-				</tbody>
-			</table>
+					</tbody>
+				</table>
 <?php
 			if($rows == 0)
 				print_info_box('No logs to display');
@@ -193,20 +194,20 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 		<pre>
 <?php
-			if(dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
-				print('No logs to display');
+		if(dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
+			print('No logs to display');
 ?>
 		</pre>
 <?php
 		}
 ?>
-	<p>
-		<form action="diag_logs_vpn.php" method="post">
-			<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
-			<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
-			<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
-		</form>
-	</p>
+		<p>
+			<form action="diag_logs_vpn.php" method="post">
+				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
+				<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
+				<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+			</form>
+		</p>
+	</div>
 </div>
-
 <?php include("foot.inc");

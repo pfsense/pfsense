@@ -366,8 +366,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 		buffer_rules_load();
 
 	$rowIndex = 0;
-	foreach ($filterlog as $filterent) {
-		$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+	foreach ($filterlog as $rowindex => $filterent) {
 		$rowIndex++;
 ?>
 			<tr>

@@ -73,43 +73,27 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
 include("head.inc");
 ?>
 
-<script type="text/javascript">
-//<![CDATA[
-	function removeState(srcip, dstip) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
-		}
+<script>
+events.push(function(){
+	$('a[data-entry]').on('click', function(){
+		var el = $(this);
+		var data = $(this).data('entry').split('|');
 
-		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
-
-		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME']?>",
+		$.ajax(
+			'/diag_dump_states.php',
 			{
-				type: "post",
+				type: 'post',
 				data: {
-					action: "remove",
-					srcip: srcip,
-					dstip: dstip
+					action: 'remove',
+					srcip: data[0],
+					dstip: data[1]
 				},
-				complete: removeComplete
-			}
-		);
-	}
-
-	function removeComplete(req) {
-		var values = req.responseText.split("|");
-		if(values[3] != "0") {
-			alert('<?=gettext("An error occurred.")?>');
-			return;
-		}
-
-		jQuery('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
-		);
-	}
-//]]>
+				success: function(){
+					el.parents('tr').remove();
+				},
+		});
+	});
+});
 </script>
 
 <?php
@@ -141,25 +125,24 @@ $filterbtn = new Form_Button('filterbtn', 'Filter', null);
 $filterbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
 $section->addInput(new Form_StaticText(
 	'',
-	 $filterbtn
+	$filterbtn
 ));
 
 if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))) {
 	$killbtn = new Form_Button('killfilter', 'Kill States');
 	$killbtn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
 	$section->addInput(new Form_StaticText(
-	   'Kill filtered states',
-	   $killbtn
+		'Kill filtered states',
+		$killbtn
 	))->setHelp('Remove all states to and from the filtered address');
 }
 
 $form->add($section);
 print $form;
 ?>
-
-<table class="table table-striped table-hover table-compact">
+<table class="table table-striped">
 	<thead>
-		<tr class="info">
+		<tr>
 			<th><?=gettext("Int")?></th>
 			<th><?=gettext("Proto")?></th>
 			<th><?=gettext("Source -> Router -> Destination")?></th>
@@ -194,7 +177,6 @@ print $form;
 		$parts = explode(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 ?>
-
 		<tr id="r:<?= $srcip ?>:<?= $dstip ?>">
 			<td><?= $iface ?></td>
 			<td><?= $proto ?></td>
@@ -202,9 +184,8 @@ print $form;
 			<td><?= $state ?></td>
 
 			<td>
-				<a class="btn btn-xs btn-danger"
-				   onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" name="i:<?= $srcip ?>:<?= $dstip ?>"
-				   title="<?= gettext('Remove all state entries from ') ?><?= $srcip ?><?= gettext(' to ') ?><?= $dstip ?>" alt="">Remove</a>
+				<a class="btn btn-xs btn-danger" data-entry="<?=$srcip?>|<?=$dstip?>"
+					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>">Remove</a>
 			</td>
 		</tr>
 <?php $row++; } ?>
@@ -221,4 +202,4 @@ if ($row == 0) {
 	print('<p class="alert alert-warning">' . $errmsg . '</p>');
 }
 
-include("foot.inc"); ?>
+include("foot.inc");

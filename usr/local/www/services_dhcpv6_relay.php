@@ -41,16 +41,37 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require('classes/Form.class.php');
+
+function filterDestinationServers(array $destinationServers)
+{
+	return array_unique(
+		array_filter($destinationServers)
+	);
+}
 
 $pconfig['enable'] = isset($config['dhcrelay6']['enable']);
 if (empty($config['dhcrelay6']['interface']))
 	$pconfig['interface'] = array();
 else
 	$pconfig['interface'] = explode(",", $config['dhcrelay6']['interface']);
-$pconfig['server'] = $config['dhcrelay6']['server'];
+
+$pconfig['server'] = filterDestinationServers(
+	explode(',', $config['dhcrelay6']['server'])
+);
 $pconfig['agentoption'] = isset($config['dhcrelay6']['agentoption']);
 
-$iflist = get_configured_interface_with_descr();
+$iflist = array_intersect_key(
+	get_configured_interface_with_descr(),
+	array_flip(
+		array_filter(
+			array_keys(get_configured_interface_with_descr()),
+			function($if) {
+				return is_ipaddrv6(get_interface_ipv6($if));
+			}
+		)
+	)
+);
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -69,6 +90,10 @@ if (is_array($config['dhcpdv6'])) {
 if ($_POST) {
 
 	unset($input_errors);
+
+	if ($_POST['server'])
+		$_POST['server'] = filterDestinationServers($_POST['server']);
+
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -79,8 +104,7 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($_POST['server']) {
-			$checksrv = explode(",", $_POST['server']);
-			foreach ($checksrv as $srv) {
+			foreach ($_POST['server'] as $srv) {
 				if (!is_ipaddrv6($srv))
 					$input_errors[] = gettext("A valid Destination Server IPv6 address  must be specified.");
 			}
@@ -107,106 +131,73 @@ $pgtitle = array(gettext("Services"),gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
 include("head.inc");
 
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-function enable_change(enable_over) {
-	if (document.iform.enable.checked || enable_over) {
-		document.iform.server.disabled = 0;
-		document.iform.interface.disabled = 0;
-		document.iform.agentoption.disabled = 0;
-	} else {
-		document.iform.server.disabled = 1;
-		document.iform.interface.disabled = 1;
-		document.iform.agentoption.disabled = 1;
-	}
+if ($dhcpd_enabled)
+{
+	echo '<div class="alert alert-danger">DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.</div>';
+	include("foot.inc");
+	exit;
 }
-//]]>
-</script>
-</head>
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+$form = new Form;
+
+$section = new Form_Section('DHCPv6 Relay configuration');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable DHCPv6 relay on interface',
+	$pconfig['enable']
+))->toggles('.form-group:not(:first-child)');
+
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface(s)',
+	$pconfig['interface'],
+	$iflist,
+	true
+))->setHelp('Interfaces without an IPv6 address will not be shown.');
 
 
+$section->addInput(new Form_Checkbox(
+	'agentoption',
+	'',
+	'Append circuit ID and agent ID to requests',
+	'yes',
+	$pconfig['agentoption']
+))->setHelp(
+	'If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request.',
+	[$g['product_name']]
+);
 
-<form action="services_dhcpv6_relay.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors)?>
-<?php if ($savemsg) print_info_box($savemsg)?>
+function createDestinationServerInputGroup($value = null)
+{
+	$group = new Form_Group('Destination server');
+	$group->enableDuplication();
 
-<table>
-  <tr>
-	<td>
-	<div>
-			  <table>
-		<tr>
-<?php 
-	if ($dhcpd_enabled) {
-		echo "<td>DHCPv6 Server is currently enabled.  Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.";
-			echo "</td></tr></table></div></td></tr></table></form>";
-			include("fend.inc"); 
-			echo "</body></html>";
-			exit;
-		}
-?>
+	$group->add(new Form_IpAddress(
+		'server',
+		'Destination server',
+		$value
+	))->setHelp(
+		'This is the IPv6 address of the server to which DHCPv6 requests are relayed.'
+	)->setIsRepeated();
 
-			<td><?=gettext("DHCPv6 Relay configuration")?></td>
-		</tr>
-		<tr>
-						<td>Enable</td>
-						<td>
-			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""?> onclick="enable_change(false)" />
-						  <strong><?php printf(gettext("Enable DHCPv6 relay on interface"))?></strong>
-			</td>
-		</tr>
-		<tr>
-						<td>Interface(s)</td>
-						<td>
-				<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
-			<?php
-								foreach ($iflist as $ifent => $ifdesc) {
-					if (!is_ipaddrv6(get_interface_ipv6($ifent)))
-						continue;
-					echo "<option value=\"{$ifent}\"";
-					if (in_array($ifent, $pconfig['interface']))
-						echo " selected=\"selected\"";
-					echo ">{$ifdesc}</option>\n";
-				}
-			?>
-								</select>
-				<br /><?=gettext("Interfaces without an IPv6 address will not be shown.")?>
-			</td>
-		</tr>
-		<tr>
-				  <td>&nbsp;</td>
-					  <td>
-<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""?> />
-					  <strong><?=gettext("Append circuit ID and agent ID to requests")?></strong><br />
-					  <?php printf(gettext("If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request."), $g['product_name'])?></td>
-		</tr>
-		<tr>
-						<td><?=gettext("Destination server")?></td>
-						<td>
-						  <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server'])?>" />
-						  <br />
-			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ")?>
-						</td>
-		</tr>
-		<tr>
-						<td>&nbsp;</td>
-						<td>
-						  <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save")?>" onclick="enable_change(true)" />
-						</td>
-		</tr>
-	</table>
-	</div>
-	</td>
-  </tr>
-</table>
-</form>
-<script type="text/javascript">
-//<![CDATA[
-enable_change(false);
-//]]>
-</script>
-<?php include("foot.inc")?>
-</body>
-</html>
+	return $group;
+}
+
+if (!isset($pconfig['server']) || count($pconfig['server']) < 1)
+	$section->add(createDestinationServerInputGroup());
+else
+	foreach ($pconfig['server'] as $idx => $server)
+		$section->add(createDestinationServerInputGroup($server));
+
+$form->add($section);
+print $form;
+
+include("foot.inc");

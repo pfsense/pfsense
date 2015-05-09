@@ -18,7 +18,7 @@
 	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHƒANTABILITY
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
 	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
@@ -186,13 +186,13 @@ if (is_numeric($_GET['end'])) {
 		$end = $now;
 	}
 } else {
-		$end = $now;
+	$end = $now;
 }
 
 /* this should never happen */
 if($end < $start) {
 	log_error("start $start is smaller than end $end");
-		$end = $now;
+	$end = $now;
 }
 
 $seconds = $end - $start;

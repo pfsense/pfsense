@@ -60,17 +60,7 @@ $pconfig['server'] = filterDestinationServers(
 );
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 
-$iflist = array_intersect_key(
-	get_configured_interface_with_descr(),
-	array_flip(
-		array_filter(
-			array_keys(get_configured_interface_with_descr()),
-			function($if) {
-				return is_ipaddr(get_interface_ip($if));
-			}
-		)
-	)
-);
+$iflist = get_configured_interface_with_descr();
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -160,7 +150,7 @@ $section->addInput(new Form_Select(
 	$pconfig['interface'],
 	$iflist,
 	true
-))->setHelp('Interfaces without an IP address will not be shown.');
+));
 
 $section->addInput(new Form_Checkbox(
 	'agentoption',

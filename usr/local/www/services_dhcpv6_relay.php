@@ -126,17 +126,17 @@ function enable_change(enable_over) {
 </script>
 </head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="services_dhcpv6_relay.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcpv6 relay">
+
+<form action="services_dhcpv6_relay.php" method="post" name="iform" id="iform">
+<?php if ($input_errors) print_input_errors($input_errors)?>
+<?php if ($savemsg) print_info_box($savemsg)?>
+
+<table>
   <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+	<td>
+	<div>
+			  <table>
 		<tr>
 <?php 
 	if ($dhcpd_enabled) {
@@ -148,21 +148,21 @@ function enable_change(enable_over) {
 		}
 ?>
 
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCPv6 Relay configuration"); ?></td>
+			<td><?=gettext("DHCPv6 Relay configuration")?></td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncellreq">Enable</td>
-                        <td width="78%" class="vtable">
-			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-                          <strong><?php printf(gettext("Enable DHCPv6 relay on interface"));?></strong>
+						<td>Enable</td>
+						<td>
+			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""?> onclick="enable_change(false)" />
+						  <strong><?php printf(gettext("Enable DHCPv6 relay on interface"))?></strong>
 			</td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncellreq">Interface(s)</td>
-                        <td width="78%" class="vtable">
+						<td>Interface(s)</td>
+						<td>
 				<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
 			<?php
-                                foreach ($iflist as $ifent => $ifdesc) {
+								foreach ($iflist as $ifent => $ifdesc) {
 					if (!is_ipaddrv6(get_interface_ipv6($ifent)))
 						continue;
 					echo "<option value=\"{$ifent}\"";
@@ -171,34 +171,34 @@ function enable_change(enable_over) {
 					echo ">{$ifdesc}</option>\n";
 				}
 			?>
-                                </select>
-				<br /><?=gettext("Interfaces without an IPv6 address will not be shown."); ?>
+								</select>
+				<br /><?=gettext("Interfaces without an IPv6 address will not be shown.")?>
 			</td>
 		</tr>
 		<tr>
-	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                      <td width="78%" class="vtable">
-<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""; ?> />
-                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
-                      <?php printf(gettext("If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request."), $g['product_name']); ?></td>
+				  <td>&nbsp;</td>
+					  <td>
+<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""?> />
+					  <strong><?=gettext("Append circuit ID and agent ID to requests")?></strong><br />
+					  <?php printf(gettext("If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request."), $g['product_name'])?></td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
-                        <td width="78%" class="vtable">
-                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
-                          <br />
-			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ");?>
-                        </td>
+						<td><?=gettext("Destination server")?></td>
+						<td>
+						  <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server'])?>" />
+						  <br />
+			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ")?>
+						</td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%">
-                          <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-                        </td>
+						<td>&nbsp;</td>
+						<td>
+						  <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save")?>" onclick="enable_change(true)" />
+						</td>
 		</tr>
 	</table>
 	</div>
-    </td>
+	</td>
   </tr>
 </table>
 </form>
@@ -207,6 +207,6 @@ function enable_change(enable_over) {
 enable_change(false);
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include("foot.inc")?>
 </body>
 </html>

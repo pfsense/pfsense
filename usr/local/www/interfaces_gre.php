@@ -62,9 +62,9 @@ function gre_inuse($num) {
 
 if ($_GET['act'] == "del") {
 	if (!isset($_GET['id']))
-				$input_errors[] = gettext("Wrong parameters supplied");
-		else if (empty($a_gres[$_GET['id']]))
-				$input_errors[] = gettext("Wrong index supplied");
+		$input_errors[] = gettext("Wrong parameters supplied");
+	else if (empty($a_gres[$_GET['id']]))
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	else if (gre_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
@@ -86,36 +86,31 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[6] = array(gettext("GRE"), true, "interfaces_gre.php");
-$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), true, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed">
 		<thead>
 			<tr>
-			  <th><?=gettext("Interface"); ?></th>
-			  <th><?=gettext("Tunnel to . . ."); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th></th>
+				<th><?=gettext("Interface"); ?></th>
+				<th><?=gettext("Tunnel to &hellip;"); ?></th>
+				<th><?=gettext("Description"); ?></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-<?php
-
-$i = 0;
-
-foreach ($a_gres as $gre) {
-?>
-			<tr ondblclick="document.location='interfaces_gre_edit.php?id=<?=$i?>'">
+<?php foreach ($a_gres as $i => $gre): ?>
+			<tr>
 				<td>
 					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']))?>
 				</td>
@@ -126,17 +121,23 @@ foreach ($a_gres as $gre) {
 					<?=htmlspecialchars($gre['descr'])?>
 				</td>
 				<td>
-					<a href="interfaces_gre_edit.php?id=<?=$i?>" class="btn btn-default btn-xs"><?=gettext("Edit")?></a>
-					<a href="interfaces_gre.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
+					<a href="interfaces_gre_edit.php?id=<?=$i?>" class="btn btn-default btn-xs">
+						<?=gettext("Edit")?>
+					</a>
+					<a href="interfaces_gre.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs">
+						<?=gettext("Delete")?>
+					</a>
 				</td>
 			</tr>
-<?php
-	$i++;
-}
-?>
+<?php endforeach; ?>
 		</tbody>
 	</table>
-	<a href="interfaces_gre_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
 </div>
+
+<nav class="action-buttons">
+	<a href="interfaces_gre_edit.php" class="btn btn-success">
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 include("foot.inc");

@@ -99,7 +99,12 @@ $(function() {
 
 	// Add confirm to all btn-danger buttons
 	$('.btn-danger').on('click', function(e){
-		if (!confirm('Are you sure you wish to '+ $.trim(this.textContent) +'?'))
+		var q = 'Are you sure you wish to '+ $.trim(this.textContent) +'?';
+
+		if ($(this).attr('title') != undefined)
+			q = $(this).attr('title')+'?';
+
+		if (!confirm(q))
 			e.preventDefault();
 	});
 

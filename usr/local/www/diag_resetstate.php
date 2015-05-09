@@ -43,8 +43,6 @@
 ##|*MATCH=diag_resetstate.php*
 ##|-PRIV
 
-define("DEBUG", true);	// Displays "success" messages, but does not call the functions that reset the firewall state tables
-
 require("guiconfig.inc");
 require_once("filter.inc");
 
@@ -52,8 +50,7 @@ if ($_POST) {
 	$savemsg = "";
 
 	if ($_POST['statetable']) {
-		if(!DEBUG)
-		  filter_flush_state_table();
+		filter_flush_state_table();
 
 		if ($savemsg)
 			$savemsg .= " ";
@@ -62,8 +59,7 @@ if ($_POST) {
 	}
 
 	if ($_POST['sourcetracking']) {
-		if(!DEBUG)
-		  mwexec("/sbin/pfctl -F Sources");
+		mwexec("/sbin/pfctl -F Sources");
 
 		if ($savemsg)
 			$savemsg .= " <br />";
@@ -79,7 +75,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 if ($savemsg)
-	print('<div class="alert alert-success" role="alert">'.$savemsg.'</div>');
+	print_info_box($savemsg, 'alert-success');
 
 $statetabelhelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
@@ -98,10 +94,12 @@ $sourcetablehelp =	'Resetting the source tracking table will remove all source/d
 
 $tab_array = array();
 $tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
+
 if (isset($config['system']['lb_use_sticky']))
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
-	$tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
-	display_top_tabs($tab_array);
+
+$tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
+display_top_tabs($tab_array);
 
 require('classes/Form.class.php');
 
@@ -123,7 +121,7 @@ $section->addInput(new Form_Checkbox(
 	true
 ))->setHelp($statetabelhelp);
 
-if(DEBUG || isset($config['system']['lb_use_sticky'])) {
+if(isset($config['system']['lb_use_sticky'])) {
 	$section->addInput(new Form_Checkbox(
 		'sourcetracking',
 		'Source Tracking',

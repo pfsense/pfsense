@@ -155,7 +155,9 @@ foreach ($a_bridges as $bridge) {
 		</tbody>
 	</table>
 
-	<a href="interfaces_bridge_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	<nav class="action-buttons">
+		<a href="interfaces_bridge_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	</nav>
 
 </div>
 

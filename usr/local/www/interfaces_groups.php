@@ -131,13 +131,13 @@ print_info_box(gettext('Interface Groups allow you to setup rules for multiple i
 <?php endforeach; ?>
 		</tbody>
 	</table>
-
-	<nav class="action-buttons">
-		<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
-			<?=gettext("Add Group");?>
-		</a>
-	</nav>
 </div>
+
+<nav class="action-buttons">
+	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
+		<?=gettext("Add Group");?>
+	</a>
+</nav>
 
 <?php
 

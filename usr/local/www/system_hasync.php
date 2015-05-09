@@ -174,157 +174,161 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />' .
 			'Do not use the Synchronize Config to IP and password option on backup cluster members!');
 
-$section->addInput(new Form_Checkbox(
+$group = new Form_MultiCheckboxGroup('Select options to sync');
+
+$group->add(new Form_MultiCheckbox(
 	'synchronizeusers',
 	'Synchronize Users and Groups',
-	'Sync the users and groups over to the other HA host',
+	'Sync the users and groups over ',
 	($pconfig['synchronizeusers'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizeauthservers',
 	'Synchronize Auth Servers',
-	'Sync the authentication servers (e.g. LDAP, RADIUS) over to the other HA host',
+	'Sync the authentication servers (e.g. LDAP, RADIUS) over ',
 	($pconfig['synchronizeauthservers'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizecerts',
 	'Synchronize Certificates',
-	'Sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over to the other HA host ',
+	'Sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over  ',
 	($pconfig['synchronizecerts'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizerules',
 	'Synchronize Rules',
-	'Sync the firewall rules to the other HA host',
+	'Sync the firewall rules ',
 	($pconfig['synchronizerules'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizeschedules',
 	'Synchronize Firewall schedules',
-	'Sync the firewall schedules to the other HA host',
+	'Sync the firewall schedules ',
 	($pconfig['synchronizeschedules'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizealiases',
 	'Synchronize Firewall aliasas',
-	'Sync the firewall aliasas to the other HA host',
+	'Sync the firewall aliasas ',
 	($pconfig['synchronizealiasas'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizenat',
 	'Synchronize NAT',
-	'Sync NAT rules to the other HA host',
+	'Sync NAT rules ',
 	($pconfig['synchronizenat'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizeipsec',
 	'Synchronize IPsec',
-	'Automatically IPsec configuration to the other HA host',
+	'Automatically IPsec configuration ',
 	($pconfig['synchronizeipsec'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
 	'Synchronize OpenVPN',
-	'Automatically OpenVPN configuration to the other HA host',
+	'Automatically OpenVPN configuration ',
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizedhcpd',
 	'Synchronize DHCPD',
-	'Sync DHCP Server settings to the other HA host',
+	'Sync DHCP Server settings ',
 	($pconfig['synchronizedhcpd'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizewol',
 	'Synchronize Wake on LAN',
-	'Sync WoL Server settings to the other HA host',
+	'Sync WoL Server settings ',
 	($pconfig['synchronizewol'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizestaticroutes',
 	'Synchronize Static Routes',
-	'Sync Static Route configuration to the other HA host',
+	'Sync Static Route configuration ',
 	($pconfig['synchronizestaticroutes'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizelb',
 	'Synchronize Load Balancer',
-	'Sync Load Balancer configuration to the other HA host',
+	'Sync Load Balancer configuration ',
 	($pconfig['synchronizelb'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizevirtualip',
 	'Synchronize Virtual IPs',
-	'Sync Virtual IPs to the other HA host',
+	'Sync Virtual IPs ',
 	($pconfig['synchronizevirtualip'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaper',
 	'Synchronize traffic shaper (queues)',
-	'Sync the Traffic Shaper configuration to the other HA host',
+	'Sync the Traffic Shaper configuration ',
 	($pconfig['synchronizetrafficshaper'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaperlimiter',
 	'Synchronize traffic shaper (limiter)',
-	'Sync the Traffic Shaper configuration for limiters to the other HA host',
+	'Sync the Traffic Shaper configuration for limiters ',
 	($pconfig['synchronizetrafficshaperlimiter'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaperlayer7',
 	'Synchronize traffic shaper (layer 7)',
-	'Sync the Traffic Shaper configuration for layer 7 to the other HA host',
+	'Sync the Traffic Shaper configuration for layer 7 ',
 	($pconfig['synchronizetrafficshaperlayer7'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizednsforwarder',
 	'Synchronize traffic shaper (Forwarder/Resolver)',
-	'Sync the DNS Forwarder and DNS Resolver configurations to the other HA host',
+	'Sync the DNS Forwarder and DNS Resolver configurations ',
 	($pconfig['synchronizednsforwarder'] === 'on'),
 	'on'
 ));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'synchronizecaptiveportal',
 	'Synchronize Captive Portal)',
-	'Sync the Captive Portal configurations to the other HA host',
+	'Sync the Captive Portal configurations ',
 	($pconfig['synchronizecaptiveportal'] === 'on'),
 	'on'
 ));
+
+$section->add($group);
 
 $form->add($section);
 

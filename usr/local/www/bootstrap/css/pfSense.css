@@ -110,6 +110,10 @@ form .btn + .btn {
 	display: block;
 }
 
+.checkbox.multi .btn {
+	margin-top: 5px;
+}
+
 /** Page footer */
 .footer {
 	position: absolute;

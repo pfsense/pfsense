@@ -95,12 +95,7 @@ print_info_box(gettext('Interface Groups allow you to setup rules for multiple i
 			</tr>
 		</thead>
 		<tbody>
-
-<?php
-if (count($a_ifgroups)) {
-	$i = 0;
-	foreach ($a_ifgroups as $ifgroupentry) {
-?>
+<?php foreach ($a_ifgroups as $i => $ifgroupentry): ?>
 			<tr>
 				<td>
 					<?=htmlspecialchars($ifgroupentry['ifname']); ?>
@@ -116,10 +111,8 @@ if (count($a_ifgroups)) {
 		unset($iflist);
 		$memberses = implode(", ", $memberses_arr);
 		echo $memberses;
-		if(count($members_arr) < 10) {
-			echo '';
-		} else {
-			echo '...';
+		if(count($members_arr) >= 10) {
+			echo '&hellip;';
 		}
 ?>
 				</td>
@@ -127,18 +120,23 @@ if (count($a_ifgroups)) {
 					<?=htmlspecialchars($ifgroupentry['descr']);?>
 				</td>
 				<td>
-					<a class="btn btn-default btn-sm" role="button" href="interfaces_groups_edit.php?id=<?=$i; ?>"><?=gettext('Edit'); ?></a>
-					<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"><?=gettext("Delete"); ?></a>
+					<a class="btn btn-default btn-sm" role="button" href="interfaces_groups_edit.php?id=<?=$i; ?>">
+						<?=gettext('Edit'); ?>
+					</a>
+					<a class="btn btn-danger btn-sm" role="button" href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>">
+						<?=gettext("Delete"); ?>
+					</a>
 				</td>
 			</tr>
-<?php
-	$i++;
-	};
-}
-?>
+<?php endforeach; ?>
 		</tbody>
 	</table>
-	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button"><?=gettext("Add Group");?></a>
+
+	<nav class="action-buttons">
+		<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
+			<?=gettext("Add Group");?>
+		</a>
+	</nav>
 </div>
 
 <?php

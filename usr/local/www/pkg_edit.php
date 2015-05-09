@@ -114,7 +114,7 @@ if($config['installedpackages'] && !is_array($config['installedpackages'][xml_sa
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
 // If the first entry in the array is an empty <config/> tag, kill it.
-if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) 
+if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0)
 	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == ""))
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 
@@ -286,21 +286,21 @@ else
 //<![CDATA[
 	//Everything inside it will load as soon as the DOM is loaded and before the page contents are loaded
 	jQuery(document).ready(function() {
-		
+
 		//Sortable function
 		jQuery('#mainarea table tbody').sortable({
 			items: 'tr.sortable',
 			cursor: 'move',
 			distance: 10,
 			opacity: 0.8,
-			helper: function(e,ui){  
-				ui.children().each(function(){  
-					jQuery(this).width(jQuery(this).width());  
+			helper: function(e,ui){
+				ui.children().each(function(){
+					jQuery(this).width(jQuery(this).width());
 				});
-			return ui;  
+			return ui;
 			},
 		});
-		
+
 		//delete current line jQuery function
 		jQuery('#maintable td .delete').live('click', function() {
 			//do not remove first line
@@ -309,7 +309,7 @@ else
 				return false;
 			}
 	    });
-	    
+
 		//add new line jQuery function
 		jQuery('#mainarea table .add').click(function() {
 			//get table size and assign as new id
@@ -433,7 +433,7 @@ if ($pkg['tabs'] <> "") {
 	$cols = 0;
 	$savevalue = gettext("Save");
 	if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
-	/* If a package's XML has <advanced_options/> configured, then setup 
+	/* If a package's XML has <advanced_options/> configured, then setup
 	 * the table rows for the fields that have <advancedfield/> set.
 	 * These fields will be placed below other fields in a seprate area titled 'Advanced Features'.
 	 * These advanced fields are not normally configured and generally left to default to 'default settings'.
@@ -443,9 +443,9 @@ if ($pkg['tabs'] <> "") {
 		$adv_filed_count = 0;
 		$advanced = "<td>&nbsp;</td>";
 		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br /></td></tr>\n";
-		}		
+		}
 	foreach ($pkg['fields']['field'] as $pkga) {
-		if ($pkga['type'] == "sorting") 
+		if ($pkga['type'] == "sorting")
 			continue;
 
 		if ($pkga['type'] == "listtopic") {
@@ -495,7 +495,7 @@ if ($pkg['tabs'] <> "") {
 				$advanced .= $input;
 				$adv_filed_count++;
 				}
-			else 
+			else
 				echo $input;
 		}
 		if($pkga['combinefields']=="begin"){
@@ -673,7 +673,7 @@ if ($pkg['tabs'] <> "") {
 					$cols = " cols='{$pkga['cols']}' ";
 				if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value))
 					$value = base64_decode($value);
-				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');		  
+				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');
 				$input = "<textarea {$rows} {$cols} name='{$pkga['fieldname']}'{$wrap}>{$value}</textarea>\n";
 				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -884,7 +884,7 @@ if ($pkg['tabs'] <> "") {
 							$fieldname = $rowhelper['fieldname'];
 							if($type == "option")
 								$options = &$rowhelper['options']['option'];
-							if($rowhelper['size']) 
+							if($rowhelper['size'])
 								$size = $rowhelper['size'];
 							else if ($pkga['size'])
 								$size = $pkga['size'];
@@ -905,10 +905,10 @@ if ($pkg['tabs'] <> "") {
 				</tr>
 				<tbody></tbody>
 				</table>
-	
+
 				<!-- <br /><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
 				<br /><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
-				<br /><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<br /><?php if($pkga['rowhelper']['description'] != "") echo $pkga['rowhelper']['description']; ?>
 				<script type="text/javascript">
 				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
@@ -918,7 +918,7 @@ if ($pkg['tabs'] <> "") {
 				//typesel_change();
 				//]]>
 				</script>
-		
+
 				<?php
 				break;
 		    }
@@ -947,7 +947,7 @@ if ($pkg['tabs'] <> "") {
   	#print advanced settings if any after reading all fields
 	if (isset($advanced) && $adv_filed_count > 0)
 		echo $advanced;
-  
+
 	?>
   <tr>
 	<td>&nbsp;</td>
@@ -1026,29 +1026,72 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "</select>\n";
 			break;
 		case "interfaces_selection":
-			$size = ($size ? "size=\"{$size}\"" : '');
-			$multiple = '';
-			if (isset($rowhelper['multiple'])) {
-				$fieldname .= '[]';
-				$multiple = "multiple=\"multiple\"";
-			}
-			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
-			$ifaces = get_configured_interface_with_descr();
-			$additional_ifaces = $rowhelper['add_to_interfaces_selection'];
-			if (!empty($additional_ifaces))
-				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
-			if(is_array($value))
-				$values = $value;
-			else
-				$values  =  explode(',',  $value);
-			$ifaces["lo0"] = "loopback";
-			echo "<option><name></name><value></value></option>/n";
-			foreach($ifaces as $ifname => $iface) {
-				$text .="<option value=\"{$ifname}\">$iface</option>";
-				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected="selected"' : '').">{$iface}</option>\n";
-				}
-			echo "</select>\n";
-			break;
+			$ips=array();
+				$interface_regex=(isset($rowhelper['hideinterfaceregex']) ? $rowhelper['hideinterfaceregex'] : "nointerfacestohide");
+				if (is_array($config['interfaces']))
+					foreach ($config['interfaces'] as $iface_key=>$iface_value){
+						if (isset($iface_value['enable']) && ! preg_match("/$interface_regex/",$iface_key)){
+							$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
+							if (isset($rowhelper['showips']))
+								$iface_description .= " address";
+							$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
+							}
+					}
+				if (is_array($config['virtualip']) && isset($rowhelper['showvirtualips']))
+					foreach ($config['virtualip']['vip'] as $vip){
+						if (! preg_match("/$interface_regex/",$vip['interface']))
+						$vip_description=($vip['descr'] !="" ? " ({$vip['descr']}) " : " ");
+						  switch ($vip['mode']){
+							case "ipalias":
+							case "carp":
+									$ips[]=array(   'ip'=> $vip['subnet'],'description' => "{$vip['subnet']} $vip_description");
+								break;
+							case "proxyarp":
+								if ($vip['type']=="network"){
+									$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
+									$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
+									$len = $end - $start;
+									for ($i = 0; $i <= $len; $i++)
+										$ips[]= array('ip'=>long2ip32($start+$i),'description'=> long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
+									}
+								else{
+									$ips[]= array('ip'=>$vip['subnet'],'description'=> "{$vip['subnet']} $vip_description");
+									}
+								break;
+							}
+					}
+				sort($ips);
+				if (isset($rowhelper['showlistenall']))
+					array_unshift($ips,array('ip'=> 'All', 'description'=> 'Listen on All interfaces/ip addresses '));
+				if (! preg_match("/$interface_regex/","loopback")){
+					$iface_description=(isset($rowhelper['showips']) ? "127.0.0.1 (loopback)" : "loopback");
+					array_push($ips,array('ip'=> 'lo0', 'description'=> $iface_description));
+					}
+
+				#show interfaces array on gui
+				$size = ($rowhelper['size'] ? "size=\"{$rowhelper['size']}\"" : '');
+				$multiple = '';
+				$fieldname = $rowhelper['fieldname'];
+				if (isset($rowhelper['multiple'])) {
+					$fieldname .= '[]';
+					$multiple = 'multiple="multiple"';
+					}
+				$input = "<select style='height:22px;' id='{$rowhelper['fieldname']}{$trc}' name=\"{$fieldname}{$trc}\" {$size} {$multiple}>\n";
+				if(is_array($value))
+					$values = $value;
+				else
+					$values  =  explode(',',  $value);
+				foreach($ips as $iface){
+					$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
+					$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
+					}
+				$input .= "</select>\n<br />\n";
+				if(isset($rowhelper['advancedfield']) && isset($adv_filed_count))
+					$advanced .= $input;
+				else
+					echo $input;
+				break;
+
 		case "select_source":
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
 			if(isset($rowhelper['show_disable_value']))
@@ -1062,7 +1105,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 				echo "<option value='{$source_value}'".($source_value == $value?" selected=\"selected\"":"").">{$source_name}</option>\n";
 				}
 			echo "</select>\n";
-			break;		
+			break;
 		}
 	echo "</td>\n";
 }

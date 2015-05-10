@@ -133,7 +133,7 @@ else
 	<div class="form-group">
 		<label for="rssmaxitems" class="col-sm-3 control-label"># Stories</label>
 		<div class="col-sm-6">
-			<input type="number" name="rsswidgetheight" value="<?=$max_items?>" min="1" max="100" class="form-control" />
+			<input type="number" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
 		</div>
 	</div>
 

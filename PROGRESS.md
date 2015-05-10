@@ -19,39 +19,28 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |diag_confbak.php                             | &#x2705;                |                        |                                                            |
 |diag_defaults.php                            | &#x2705;                |                        |                                                            |
 |diag_dns.php                                 | &#x2705;                |                        |                                                            |
-|diag_dump_states.php                         |                         |                        |                                                            |
+|diag_dump_states.php                         | &#x2705;                |                        |                                                            |
 |diag_dump_states_sources.php                 |                         |                        |                                                            |
 |diag_gmirror.php                             |                         |                        |                                                            |
 |diag_ipsec_leases.php                        |                         |                        |                                                            |
 |diag_ipsec.php                               |                         |                        |                                                            |
 |diag_ipsec_sad.php                           |                         |                        |                                                            |
-|diag_ipsec_spd.php                           |                         |                        |                                                            |
+|diag_ipsec_spd.php                           | &#x2705;                |                        |                                                            |
 |diag_ipsec_xml.php                           |                         |                        |                                                            |
 |diag_limiter_info.php                        | &#x2705;                |                        |                                                            |
-|diag_logs_auth.php                           |                         |                        |                                                            |
-|diag_logs_dhcp.php                           |                         |                        |                                                            |
-|diag_logs_filter_dynamic.php                 |                         |                        |                                                            |
+|diag_logs_filter_dynamic.php                 | &#x2705;                |                        |                                                            |
 |diag_logs_filter.php                         |                         |                        |                                                            |
-|diag_logs_filter_summary.php                 |                         |                        |                                                            |
-|diag_logs_gateways.php                       |                         |                        |                                                            |
-|diag_logs_ipsec.php                          |                         |                        |                                                            |
-|diag_logs_ntpd.php                           |                         |                        |                                                            |
-|diag_logs_openvpn.php                        |                         |                        |                                                            |
+|diag_logs_filter_summary.php                 | &#x2705;                |                        |                                                            |
 |diag_logs.php                                | &#x2705;                |                        |                                                            |
-|diag_logs_ppp.php                            |                         |                        |                                                            |
-|diag_logs_relayd.php                         |                         |                        |                                                            |
-|diag_logs_resolver.php                       |                         |                        |                                                            |
-|diag_logs_routing.php                        |                         |                        |                                                            |
 |diag_logs_settings.php                       | &#x2705;                |                        |                                                            |
-|diag_logs_vpn.php                            |                         |                        |                                                            |
-|diag_logs_wireless.php                       |                         |                        |                                                            |
+|diag_logs_vpn.php                            | &#x2705;                |                        |                                                            |
 |diag_nanobsd.php                             |                         |                        |                                                            |
 |diag_ndp.php                                 | &#x2705;                |                        |                                                            |
 |diag_packet_capture.php                      |                         |                        |                                                            |
-|diag_patterns.php                            |                         |                        |                                                            |
+|diag_patterns.php                            | &#x2705;                |                        |                                                            |
 |diag_pf_info.php                             | &#x2705;                |                        |                                                            |
 |diag_ping.php                                | &#x2705;                |                        |                                                            |
-|diag_pkglogs.php                             |                         |                        |                                                            |
+|diag_pkglogs.php                             | &#x2705;                |                        |                                                            |
 |diag_resetstate.php                          |                         |                        |                                                            |
 |diag_routes.php                              | &#x2705;                |                        |                                                            |
 |diag_smart.php                               |                         |                        |                                                            |
@@ -99,9 +88,9 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |interfaces_bridge_edit.php                   |                         |                        |                                                            |
 |interfaces_bridge.php                        |                         |                        |                                                            |
 |interfaces_gif_edit.php                      |                         |                        |                                                            |
-|interfaces_gif.php                           |                         |                        |                                                            |
+|interfaces_gif.php                           | &#x2705;                |                        |                                                            |
 |interfaces_gre_edit.php                      |                         |                        |                                                            |
-|interfaces_gre.php                           |                         |                        |                                                            |
+|interfaces_gre.php                           | &#x2705;                |                        |                                                            |
 |interfaces_groups_edit.php                   |                         |                        |                                                            |
 |interfaces_groups.php                        |                         |                        |                                                            |
 |interfaces_lagg_edit.php                     |                         |                        |                                                            |
@@ -149,10 +138,10 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |services_captiveportal_zones.php             |                         |                        |                                                            |
 |services_dhcp_edit.php                       |                         |                        |                                                            |
 |services_dhcp.php                            |                         |                        |                                                            |
-|services_dhcp_relay.php                      |                         |                        |                                                            |
+|services_dhcp_relay.php                      | &#x2705;                |                        |                                                            |
 |services_dhcpv6_edit.php                     |                         |                        |                                                            |
 |services_dhcpv6.php                          |                         |                        |                                                            |
-|services_dhcpv6_relay.php                    |                         |                        |                                                            |
+|services_dhcpv6_relay.php                    | &#x2705;                |                        |                                                            |
 |services_dnsmasq_domainoverride_edit.php     |                         |                        |                                                            |
 |services_dnsmasq_edit.php                    |                         |                        |                                                            |
 |services_dnsmasq.php                         |                         |                        |                                                            |
@@ -183,20 +172,20 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |status_dhcp_leases.php                       | &#x2705;                |                        |                                                            |
 |status_dhcpv6_leases.php                     | &#x2705;                |                        |                                                            |
 |status_filter_reload.php                     |                         |                        |                                                            |
-|status_gateway_groups.php                    |                         |                        |                                                            |
-|status_gateways.php                          |                         |                        |                                                            |
+|status_gateway_groups.php                    | &#x2705;                |                        |                                                            |
+|status_gateways.php                          | &#x2705;                |                        |                                                            |
 |status_graph_cpu.php                         |                         |                        |                                                            |
-|status_graph.php                             |                         |                        |                                                            |
-|status_interfaces.php                        |                         |                        |                                                            |
+|status_graph.php                             | &#x2705;                |                        |                                                            |
+|status_interfaces.php                        | &#x2705;                |                        |                                                            |
 |status_lb_pool.php                           |                         |                        |                                                            |
-|status_lb_vs.php                             |                         |                        |                                                            |
-|status_ntpd.php                              |                         |                        |                                                            |
+|status_lb_vs.php                             | &#x2705;                |                        |                                                            |
+|status_ntpd.php                              | &#x2705;                |                        |                                                            |
 |status_openvpn.php                           |                         |                        |                                                            |
 |status.php                                   |                         |                        |                                                            |
 |status_queues.php                            |                         |                        |                                                            |
 |status_rrd_graph_img.php                     |                         |                        |                                                            |
 |status_rrd_graph.php                         |                         |                        |                                                            |
-|status_rrd_graph_settings.php                |                         |                        |                                                            |
+|status_rrd_graph_settings.php                | &#x2705;                |                        |                                                            |
 |status_services.php                          |                         |                        |                                                            |
 |status_upnp.php                              |                         |                        |                                                            |
 |status_wireless.php                          |                         |                        |                                                            |
@@ -212,7 +201,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |system_crlmanager.php                        |                         |                        |                                                            |
 |system_firmware_auto.php                     |                         |                        |                                                            |
 |system_firmware_check.php                    |                         |                        |                                                            |
-|system_firmware.php                          |                         |                        |                                                            |
+|system_firmware.php                          | &#x2705;                |                        |                                                            |
 |system_firmware_restorefullbackup.php        |                         |                        |                                                            |
 |system_firmware_settings.php                 |                         |                        |                                                            |
 |system_gateway_groups_edit.php               |                         |                        |                                                            |
@@ -221,7 +210,7 @@ Use the &#x1f504; emoji (`&#x1f504;`) to show that the bootstrap conversion is i
 |system_gateways.php                          | &#x2705;                |                        |                                                            |
 |system_groupmanager_addprivs.php             | &#x2705;                |                        |                                                            |
 |system_groupmanager.php                      | &#x2705;                |                        |                                                            |
-|system_hasync.php                            |                         |                        |                                                            |
+|system_hasync.php                            | &#x2705;                |                        |                                                            |
 |system.php                                   | &#x2705;                |                        |                                                            |
 |system_routes_edit.php                       | &#x2705;                |                        |                                                            |
 |system_routes.php                            | &#x2705;                |                        |                                                            |
@@ -273,8 +262,8 @@ COMPLETED=' &#x2705;'
 INPROGRESS=' &#x1f504;'
 pushd $1
 
-printf "|%-45s|%-25s|%-24s|%-60s|\r\n" "Page/file" "Status" "User" "Comments"
-printf "|---------------------------------------------|:-------------------------:|------------------------|------------------------------------------------------------|\r\n"
+printf "|%-45s|%-25s|%-24s|%-60s|\n" "Page/file" "Status" "User" "Comments"
+printf "|---------------------------------------------|:-------------------------:|------------------------|------------------------------------------------------------|\n"
 
 FILES=$(ls -1 *.php)
 
@@ -287,7 +276,7 @@ for F in $FILES ; do
       printf "%25s" "                  "
    fi
 
-   printf "|%24s|%60s|\r\n" " " " "
+   printf "|%24s|%60s|\n" " " " "
 
 done
 

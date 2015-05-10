@@ -99,18 +99,19 @@ $(function() {
 	});
 
 	// Add toggle-all when there are multiple checkboxes
-	$('.control-label + .checkbox.multi').each(function(idx, col){
+	$('.control-label + .checkbox.multi').each(function() {
 		var a = $('<a class="btn btn-xs btn-default">toggle all</a>');
-		a.on('click', function(){
+
+		a.on('click', function() {
 			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
 				all = wrap.find('input[type=checkbox]'),
 				checked = wrap.find('input[type=checkbox]:checked');
 
 			all.prop('checked', (all.length != checked.length));
-		})
+		});
 
-		a.appendTo($(col).prev('.control-label'));
-	})
+		a.appendTo($(this));
+	});
 
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover();

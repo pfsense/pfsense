@@ -226,8 +226,9 @@ if ($sig_warning && !$input_errors) {
 	print_info_box($sig_warning);
 ?>
 	<form action="system_firmware.php" method="post" enctype="multipart/form-data">
-	<input name="sig_override" type="submit" class="btn btn-danger" id="sig_override" value=" <?=gettext("Yes");?> " />
-	<input name="sig_no" type="submit" class="btn btn-default" id="sig_no" value=" <?=gettext("No"); ?> " />
+		<input name="sig_override" type="submit" class="btn btn-danger" id="sig_override" value=" <?=gettext("Yes");?> " />
+		<input name="sig_no" type="submit" class="btn btn-default" id="sig_no" value=" <?=gettext("No"); ?> " />
+	</form>
 <?php
 
 } else {
@@ -250,10 +251,7 @@ if ($sig_warning && !$input_errors) {
 			}
 			else {
 				// Upgrades are now enabled
-				$form = new Form(new Form_Button(
-					Submit,
-					'Disable firmware upload',
-					null));
+				$form = new Form('Disable firmware upload');
 
 				$form->setMultipartEncoding();
 

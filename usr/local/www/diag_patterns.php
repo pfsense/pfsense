@@ -74,11 +74,7 @@ if($ulmsg)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	submit,
-	$buttonlabel,
-	null
-));
+$form = new Form($buttonlabel);
 
 $form->setMultipartEncoding();
 
@@ -87,8 +83,7 @@ $section = new Form_Section('Upload Layer7 pattern file');
 $filepicker = new Form_Input(
 	'ulfile',
 	'File to upload',
-	'file',
-	''
+	'file'
 );
 
 $section->addInput($filepicker)->setHelp('Choose the file you wish to upload (*.pat)');

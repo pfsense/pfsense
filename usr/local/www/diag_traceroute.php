@@ -109,10 +109,7 @@ if ($input_errors)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'traceroute',
-	'Traceroute'
-));
+$form = new Form('Traceroute');
 
 $section = new Form_Section('Traceroute');
 

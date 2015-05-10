@@ -102,11 +102,7 @@ if ($savemsg)
 	print_info_box($savemsg);
 
 require('classes/Form.class.php');
-$form = new Form(
-	new Form_Button(
-		null,
-		'Show'
-));
+$form = new Form('Show'));
 
 $section = new Form_Section('Table to display');
 

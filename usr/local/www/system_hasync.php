@@ -111,7 +111,7 @@ include("head.inc");
 
 require('classes/Form.class.php');
 
-$form = new Form();
+$form = new Form;
 
 $section = new Form_Section('State Synchronization Settings (pfsync)');
 

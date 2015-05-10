@@ -83,10 +83,7 @@ if ($savemsg)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext('Test')
-));
+$form = new Form('Test'));
 
 $section = new Form_Section('Authentication Test');
 

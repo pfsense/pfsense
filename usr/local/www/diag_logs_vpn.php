@@ -30,9 +30,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/local/sbin/clog
-	pfSense_MODULE:	vpn
+	pfSense_MODULE: vpn
 */
 
 ##|+PRIV
@@ -41,6 +41,9 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Logs: VPN' page.
 ##|*MATCH=diag_logs_vpn.php*
 ##|-PRIV
+
+
+$vpns = array('pptp' => 'PPTP', 'poes' => 'PPPoE', 'l2tp' => 'L2TP');
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"));
 require("guiconfig.inc");
@@ -89,40 +92,37 @@ function dump_clog_vpn($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	$logarr = "";
-	
-	if(isset($config['system']['usefifolog'])) 
+
+	if(isset($config['system']['usefifolog']))
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	else 
+	else
 		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 
+	$rows = 0;
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
 		$iftype = substr($llent[1], 0, 4);
 		if ($iftype != $vpntype)
 			continue;
+
+		$rows++;
 		echo "<tr>\n";
-		echo "<td class=\"listlr nowrap\">" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
+		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
 		if ($llent[0] == "login")
-			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\" alt=\"in\" /></td>\n";
+			echo "<td>&#x25c0;</td>\n";
 		else
-			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\" alt=\"out\" /></td>\n";
+			echo "<td>&#x25ba;</td>\n";
 
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
+		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";
+		echo "<td>" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
 		echo "</tr>\n";
 	}
+	return($rows);
 }
 
 include("head.inc");
-
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs vpn">
-  <tr><td class="tabnavtbl">
-<?php
 
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -137,60 +137,77 @@ $tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn")
 $tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
+
+$tab_array = array();
+$tab_array[] = array(gettext("PPTP Logins"),
+			(($vpntype == "pptp") && ($mode != "raw")),
+			"/diag_logs_vpn.php?vpntype=pptp");
+$tab_array[] = array(gettext("PPTP Raw"),
+			(($vpntype == "pptp") && ($mode == "raw")),
+			"/diag_logs_vpn.php?vpntype=pptp&amp;mode=raw");
+$tab_array[] = array(gettext("PPPoE Logins"),
+			(($vpntype == "poes") && ($mode != "raw")),
+			"/diag_logs_vpn.php?vpntype=poes");
+$tab_array[] = array(gettext("PPPoE Raw"),
+			(($vpntype == "poes") && ($mode == "raw")),
+			"/diag_logs_vpn.php?vpntype=poes&amp;mode=raw");
+$tab_array[] = array(gettext("L2TP Logins"),
+			(($vpntype == "l2tp") && ($mode != "raw")),
+			"/diag_logs_vpn.php?vpntype=l2tp");
+$tab_array[] = array(gettext("L2TP Raw"),
+			(($vpntype == "l2tp") && ($mode == "raw")),
+			"/diag_logs_vpn.php?vpntype=l2tp&amp;mode=raw");
+display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
-  </td></tr>
-  <tr><td class="tabnavtbl">
+
+<!-- Raw logs are displayed as preformatted text. vpn logs are displayed as a table-->
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$vpns[$vpntype]?><?=gettext(" log entries")?></div>
+	<div class="panel-body">
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("PPTP Logins"),
-				(($vpntype == "pptp") && ($mode != "raw")),
-				"/diag_logs_vpn.php?vpntype=pptp");
-	$tab_array[] = array(gettext("PPTP Raw"),
-				(($vpntype == "pptp") && ($mode == "raw")),
-				"/diag_logs_vpn.php?vpntype=pptp&amp;mode=raw");
-	$tab_array[] = array(gettext("PPPoE Logins"),
-				(($vpntype == "poes") && ($mode != "raw")),
-				"/diag_logs_vpn.php?vpntype=poes");
-	$tab_array[] = array(gettext("PPPoE Raw"),
-				(($vpntype == "poes") && ($mode == "raw")),
-				"/diag_logs_vpn.php?vpntype=poes&amp;mode=raw");
-	$tab_array[] = array(gettext("L2TP Logins"),
-				(($vpntype == "l2tp") && ($mode != "raw")),
-				"/diag_logs_vpn.php?vpntype=l2tp");
-	$tab_array[] = array(gettext("L2TP Raw"),
-				(($vpntype == "l2tp") && ($mode == "raw")),
-				"/diag_logs_vpn.php?vpntype=l2tp&amp;mode=raw");
-	display_top_tabs($tab_array);
+		if ($mode != "raw") {
 ?>
-  </td></tr>
-  <tr>
-    <td class="tabcont">
-	<form action="diag_logs_vpn.php" method="post">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-		<tr>
-		<td colspan="4" class="listtopic">
-			<?php printf(gettext('Last %1$s %2$s VPN log entries'),$nentries,$vpns[$vpntype]);?></td>
-		</tr>
-		<?php if ($mode != "raw"): ?>
-		<tr>
-			<td class="listhdrr"><?=gettext("Time");?></td>
-			<td class="listhdrr"><?=gettext("Action");?></td>
-			<td class="listhdrr"><?=gettext("User");?></td>
-			<td class="listhdrr"><?=gettext("IP address");?></td>
-		</tr>
-			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
-		<?php else: 
-			dump_clog("/var/log/{$logname}.log", $nentries);
-		      endif; ?>
-	</table>
-	<br />
-	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>" />
-	<input type="hidden" name="mode" id="mode" value="<?=$mode;?>" />
-	<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
-	</form>
-	</td>
-  </tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Time")?></th>
+						<th><?=gettext("Action")?></th>
+						<th><?=gettext("User")?></th>
+						<th><?=gettext("IP address")?></th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+					$rows = dump_clog_vpn("/var/log/vpn.log", $nentries);	// dump_clog_vpn provides all the need <td></td>/<tr></tr> tags
+?>
+					</tbody>
+				</table>
+<?php
+			if($rows == 0)
+				print_info_box('No logs to display');
+?>
+		</div>
+<?php
+		}
+		else {
+?>
+		<pre>
+<?php
+		if(dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
+			print('No logs to display');
+?>
+		</pre>
+<?php
+		}
+?>
+		<p>
+			<form action="diag_logs_vpn.php" method="post">
+				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
+				<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
+				<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+			</form>
+		</p>
+	</div>
+</div>
+<?php include("foot.inc");

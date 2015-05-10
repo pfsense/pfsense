@@ -965,7 +965,7 @@ include("head.inc");
 				</select>
 				<input type="hidden" id="floating" name="floating" value="floating" />
 			</td>
-		<tr>
+		</tr>
 <?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>

@@ -184,10 +184,7 @@ if ($createdalias)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'lookup',
-	'Lookup'
-));
+$form = new Form('Lookup');
 $section = new Form_Section('DNS Lookup');
 
 $section->addInput(new Form_Input(

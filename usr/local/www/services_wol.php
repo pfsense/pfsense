@@ -129,10 +129,7 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg);
 
-$form = new Form(new Form_Button(
-	'submit',
-	'Send'
-));
+$form = new Form('Send');
 
 $section = new Form_Section('Wake on LAN');
 

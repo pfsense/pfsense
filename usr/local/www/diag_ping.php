@@ -137,10 +137,7 @@ if ($input_errors)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'submit',
-	'Ping'
-));
+$form = new Form('Ping');
 
 $section = new Form_Section('Ping');
 

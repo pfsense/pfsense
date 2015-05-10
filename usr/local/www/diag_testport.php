@@ -216,10 +216,7 @@ else {
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'Submit',
-	'Test'
-));
+$form = new Form('Test');
 
 $section = new Form_Section('Test Port');
 

@@ -79,10 +79,7 @@ include('head.inc');
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'update',
-	'Update'
-));
+$form = new Form('Update');
 $form->addGlobal(new Form_Input(
 	'isAjax',
 	null,

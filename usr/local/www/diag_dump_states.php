@@ -177,7 +177,7 @@ print $form;
 		$parts = explode(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 ?>
-		<tr id="r:<?= $srcip ?>:<?= $dstip ?>">
+		<tr>
 			<td><?= $iface ?></td>
 			<td><?= $proto ?></td>
 			<td><?= $info ?></td>

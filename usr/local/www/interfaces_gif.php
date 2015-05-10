@@ -103,7 +103,7 @@ display_top_tabs($tab_array);
 		<thead>
 			<tr>
 				<th><?=gettext("Interface"); ?></th>
-				<th><?=gettext("Tunnel to . . ."); ?></th>
+				<th><?=gettext("Tunnel to &hellip;"); ?></th>
 				<th><?=gettext("Description"); ?></th>
 				<th></th>
 			</tr>

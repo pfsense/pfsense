@@ -187,19 +187,19 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
-  foreach ($a_maps as $mapent) {
-    if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
-      continue;
-      /* The fully qualified hostname (hostname + '.' + domainname) must be unique.
-        The unqualified hostname does not have to be unique as long as the fully
-        qualified hostname is unique. */
+	foreach ($a_maps as $mapent) {
+		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
+			continue;
+		/* The fully qualified hostname (hostname + '.' + domainname) must be unique.
+		 * The unqualified hostname does not have to be unique as long as the fully
+		 * qualified hostname is unique. */
 		$existingFqn = "{$mapent['hostname']}.{$mapent['domain']}";
-    $candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
-    if ((($existingFqn == $candidateFqn) && $mapent['hostname']) || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr'] ) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-      $input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
-      break;
-    }
-  }
+		$candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
+		if ((($existingFqn == $candidateFqn) && $mapent['hostname']) || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr'] ) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
+			$input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
+			break;
+		}
+	}
 
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {

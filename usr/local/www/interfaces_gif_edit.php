@@ -157,7 +157,7 @@ $form->addGlobal(new Form_Button(
 $section = new Form_Section('GIF Configuration');
 
 $section->addInput(new Form_Select(
-	'filterdescriptions',
+	'if',
 	'Parent Interface',
 	$pconfig['if'],
 	build_parent_list()

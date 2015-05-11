@@ -220,9 +220,6 @@ if (is_array($layer7_rules_list)) {
         }
 }
 $tree .= "</ul>";
-
-$output = "<table summary=\"output form\">";
-$output .= $output_form;
 $closehead = false;
 include("head.inc");
 ?>
@@ -435,8 +432,9 @@ function removeRow(tbl,row) {
 			</td>
 			<td width="75%" valign="top" align="center">
 			<div id="shaperarea" style="position:relative">
+			<table summary="output form">
 			<?php
-				echo $output;
+				echo $output_form;
 			?>
 
 			<!-- Layer 7 rules form -->
@@ -524,20 +522,18 @@ function removeRow(tbl,row) {
 								<?php foreach($avail_behaviours_action as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
 								<?php endforeach; ?>
-								</select>
 							<?php endif; ?>
 							<?php if($l7rule->GetRStructure() == "queue"): ?>
 								<?php foreach($avail_behaviours_altq as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
 								<?php endforeach; ?>
-								</select>
 							<?php endif; ?>
 							<?php if($l7rule->GetRStructure() == "limiter"): ?>
 								<?php foreach($avail_behaviours_limiter as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
 								<?php endforeach; ?>
-								</select>
 							<?php endif; ?>
+							</select>
 						</td>
 						<td>
 							<a onclick="removeRow('maintable',this.parentNode.parentNode); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>

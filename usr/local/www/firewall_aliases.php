@@ -47,8 +47,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['aliases']['alias']))
+if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
+}
 $a_aliases = &$config['aliases']['alias'];
 
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
@@ -61,12 +62,14 @@ if ($_POST) {
 		/* reload all components that use aliases */
 		$retval = filter_configure();
 
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
-		if ($retval == 0)
+		if (stristr($retval, "error") <> true) {
+			$savemsg = get_std_save_message($retval);
+		} else {
+			$savemsg = $retval;
+		}
+		if ($retval == 0) {
 			clear_subsystem_dirty('aliases');
+		}
 	}
 }
 
@@ -105,7 +108,7 @@ if ($_GET['act'] == "del") {
 		find_alias_reference(array('load_balancer', 'virtual_server'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
-		if($is_alias_referenced == true) {
+		if ($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_aliases[$_GET['id']]);
@@ -121,33 +124,36 @@ if ($_GET['act'] == "del") {
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
 	global $config;
-	if(!$origname || $is_alias_referenced)
+	if (!$origname || $is_alias_referenced) {
 		return;
-
-	$sectionref = &$config;
-	foreach($section as $sectionname) {
-		if(is_array($sectionref) && isset($sectionref[$sectionname]))
-			$sectionref = &$sectionref[$sectionname];
-		else
-			return;
 	}
 
-	if(is_array($sectionref)) {
-		foreach($sectionref as $itemkey => $item) {
+	$sectionref = &$config;
+	foreach ($section as $sectionname) {
+		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
+			$sectionref = &$sectionref[$sectionname];
+		} else {
+			return;
+		}
+	}
+
+	if (is_array($sectionref)) {
+		foreach ($sectionref as $itemkey => $item) {
 			$fieldfound = true;
 			$fieldref = &$sectionref[$itemkey];
-			foreach($field as $fieldname) {
-				if(is_array($fieldref) && isset($fieldref[$fieldname]))
+			foreach ($field as $fieldname) {
+				if (is_array($fieldref) && isset($fieldref[$fieldname])) {
 					$fieldref = &$fieldref[$fieldname];
-				else {
+				} else {
 					$fieldfound = false;
 					break;
 				}
 			}
-			if($fieldfound && $fieldref == $origname) {
+			if ($fieldfound && $fieldref == $origname) {
 				$is_alias_referenced = true;
-				if(is_array($item))
+				if (is_array($item)) {
 					$referenced_by = $item['descr'];
+				}
 				break;
 			}
 		}
@@ -205,23 +211,26 @@ include("head.inc");
 					foreach ($a_aliases as $i=> $alias){
 						unset ($show_alias);
 						switch ($tab){
-						case "all":
-							$show_alias= true;
-							break;
-						case "ip":
-						case "host":
-						case "network":
-							if (preg_match("/(host|network)/",$alias["type"]))
+							case "all":
 								$show_alias= true;
-							break;
-						case "url":
-							if (preg_match("/(url)/i",$alias["type"]))
-								$show_alias= true;
-							break;
-						case "port":
-							if($alias["type"] == "port")
-								$show_alias= true;
-							break;
+								break;
+							case "ip":
+							case "host":
+							case "network":
+								if (preg_match("/(host|network)/",$alias["type"])) {
+									$show_alias= true;
+								}
+								break;
+							case "url":
+								if (preg_match("/(url)/i",$alias["type"])) {
+									$show_alias= true;
+								}
+								break;
+							case "port":
+								if ($alias["type"] == "port") {
+									$show_alias= true;
+								}
+								break;
 						}
 						if ($show_alias) {
 					?>
@@ -234,10 +243,10 @@ include("head.inc");
 						if ($alias["url"]) {
 							echo $alias["url"] . "<br />";
 						} else {
-							if(is_array($alias["aliasurl"])) {
+							if (is_array($alias["aliasurl"])) {
 								$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 								echo $aliasurls;
-								if(count($aliasurls) > 10) {
+								if (count($aliasurls) > 10) {
 									echo "...<br />";
 								}
 								echo "<br />\n";
@@ -245,7 +254,7 @@ include("head.inc");
 							$tmpaddr = explode(" ", $alias['address']);
 							$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 							echo $addresses;
-							if(count($tmpaddr) > 10) {
+							if (count($tmpaddr) > 10) {
 								echo "...";
 							}
 						}

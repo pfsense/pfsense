@@ -817,7 +817,14 @@ include("head.inc");
 			<tr>
 				<td class="listt"></td>
 				<td class="listt"></td>
-				<td class="listlr" colspan="10" align="center" valign="middle">
+	<?php
+		if ($_REQUEST['if'] == "FloatingRules") {
+			$ncolumns = "11";
+		} else {
+			$ncolumns = "10";
+		}
+	?>
+				<td class="listlr" colspan=<?=$ncolumns;?> align="center" valign="middle">
 					<span class="gray">
 	<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
 					<?=gettext("No floating rules are currently defined."); ?><br /><br />

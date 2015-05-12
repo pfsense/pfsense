@@ -113,7 +113,10 @@ $p1_dhgroups = array(
 	21 => '21 (nist ecp521)',
 	22 => '22 (1024(sub 160) bit)',
 	23 => '23 (2048(sub 224) bit)',
-	24 => '24 (2048(sub 256) bit)'
+	24 => '24 (2048(sub 256) bit)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 global $p2_halgos;

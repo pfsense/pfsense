@@ -57,9 +57,6 @@ if ($_POST) {
 }
 
 $curcfg = $config['system']['altpkgrepo'];
-
-print_r($curcfg);
-
 $closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Settings"));
 include("head.inc");

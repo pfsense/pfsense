@@ -170,7 +170,10 @@ $p2_pfskeygroups = array(
 	18 => '18 (8192 bit)',
 	19 => '19 (nist ecp256)',
 	20 => '20 (nist ecp384)',
-	21 => '21 (nist ecp521)'
+	21 => '21 (nist ecp521)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 /*

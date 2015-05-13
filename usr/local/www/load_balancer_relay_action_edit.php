@@ -49,20 +49,22 @@ if (!is_array($config['load_balancer']['lbaction'])) {
 }
 $a_action = &$config['load_balancer']['lbaction'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_action[$id]) {
-  $pconfig = array();
+	$pconfig = array();
 	$pconfig = $a_action[$id];
 } else {
-  // XXX - TODO, this isn't sane for this page :)
+	// XXX - TODO, this isn't sane for this page :)
 	/* Some sane page defaults */
 	$pconfig['protocol'] = 'http';
 	$pconfig['direction'] = 'request';
-	$pconfig['type'] = 'cookie';	
+	$pconfig['type'] = 'cookie';
 	$pconfig['action'] = 'change';
 }
 
@@ -102,19 +104,17 @@ $actions['direction']['response']['header'] = $hr_actions;
 //$action['http']['tcp'] = array();
 //$action['http']['ssl'] = array();
 
-
-
 if ($_POST) {
 	$changecount++;
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
-  // Peel off the action and type from the post and fix $pconfig
-  $action = explode('_', $pconfig['action']);
-  $pconfig['action'] = $action[2];
-  $pconfig['type'] = $action[1];
-  unset($pconfig["type_{$pconfig['direction']}"]);
+	// Peel off the action and type from the post and fix $pconfig
+	$action = explode('_', $pconfig['action']);
+	$pconfig['action'] = $action[2];
+	$pconfig['type'] = $action[1];
+	unset($pconfig["type_{$pconfig['direction']}"]);
 
 	/* input validation */
 	$reqdfields = explode(" ", "name protocol direction action descr");
@@ -123,48 +123,54 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our monitor names are unique */
-	for ($i=0; isset($config['load_balancer']['lbactions'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['lbactions'][$i]['name']) && ($i != $id))
+	for ($i=0; isset($config['load_balancer']['lbactions'][$i]); $i++) {
+		if (($_POST['name'] == $config['load_balancer']['lbactions'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This action name has already been used.  Action names must be unique.");
+		}
+	}
 
-	if (strpos($_POST['name'], " ") !== false)
+	if (strpos($_POST['name'], " ") !== false) {
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+	}
 
 	if (!$input_errors) {
 		$actent = array();
-		if(isset($id) && $a_action[$id])
+		if (isset($id) && $a_action[$id]) {
 			$actent = $a_action[$id];
-		if($actent['name'] != "")
+		}
+		if ($actent['name'] != "") {
 			$changedesc .= " " . sprintf(gettext("modified '%s' action:"), $actent['name']);
-		
+		}
+
 		update_if_changed("name", $actent['name'], $pconfig['name']);
 		update_if_changed("protocol", $actent['protocol'], $pconfig['protocol']);
 		update_if_changed("type", $actent['type'], $pconfig['type']);
 		update_if_changed("direction", $actent['direction'], $pconfig['direction']);
 		update_if_changed("description", $actent['descr'], $pconfig['descr']);
-    update_if_changed("action", $actent['action'], $pconfig['action']);
-    switch ($pconfig['action']) {
-      case "append":
-      case "change":
-      case "expect":
-      case "filter": {
-        update_if_changed("value", $actent['options']['value'], $pconfig['option_action_value']);
-        update_if_changed("key", $actent['options']['akey'], $pconfig['option_action_key']);
-        break; 
-      }
-      case "hash":
-      case "log": {
-        update_if_changed("key", $actent['options']['akey'], $pconfig['option_action_key']);
-        break;
-      }
-    }
-    
+		update_if_changed("action", $actent['action'], $pconfig['action']);
+		switch ($pconfig['action']) {
+			case "append":
+			case "change":
+			case "expect":
+			case "filter": {
+				update_if_changed("value", $actent['options']['value'], $pconfig['option_action_value']);
+				update_if_changed("key", $actent['options']['akey'], $pconfig['option_action_key']);
+				break;
+			}
+			case "hash":
+			case "log": {
+				update_if_changed("key", $actent['options']['akey'], $pconfig['option_action_key']);
+				break;
+			}
+		}
+
 		if (isset($id) && $a_action[$id]) {
-//    XXX - TODO
+//		XXX - TODO
 			/* modify all virtual servers with this name */
 //			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-//				if ($config['load_balancer']['virtual_server'][$i]['protocol'] == $a_protocol[$id]['name'])
+//				if ($config['load_balancer']['virtual_server'][$i]['protocol'] == $a_protocol[$id]['name']) {
 //					$config['load_balancer']['virtual_server'][$i]['protocol'] = $protent['name'];
+//				}
 //			}
 			$a_action[$id] = $actent;
 		} else {
@@ -185,7 +191,7 @@ $pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Relay Ac
 $shortcut_section = "relayd";
 
 include("head.inc");
-	$types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
+$types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -193,10 +199,10 @@ include("head.inc");
 <script type="text/javascript">
 
 function updateProtocol(m) {
-  // Default to HTTP
-  if (m == "") {
-    m = "http";
-  }
+	// Default to HTTP
+	if (m == "") {
+		m = "http";
+	}
 	switch (m) {
 		case "dns": {
 			jQuery('#type_row').hide();
@@ -228,18 +234,18 @@ function updateProtocol(m) {
    * based on what's been either preconfigured or "defaults"
    * This really did have to be done in PHP.
    */
-  if (isset($pconfig['type'])) {
-    $dtype = $pconfig['type'];
-    $ddir = $pconfig['direction'];
-  } else {
-    $dtype = "cookie";
-    $ddir = "request";
-  }
+	if (isset($pconfig['type'])) {
+		$dtype = $pconfig['type'];
+		$ddir = $pconfig['direction'];
+	} else {
+		$dtype = "cookie";
+		$ddir = "request";
+	}
 	foreach ($actions['direction'][$ddir] as $type => $tv) {
-		foreach ($actions['direction'][$ddir][$type] as $action => $av ) {
-			if($dtype == $type) {
+		foreach ($actions['direction'][$ddir][$type] as $action => $av) {
+			if ($dtype == $type) {
 				echo "jQuery('#{$ddir}_{$type}_{$action}').show();";
- 			}
+			}
 		}
 	}
 ?>
@@ -250,38 +256,38 @@ function updateProtocol(m) {
 }
 
 function updateDirection(d) {
-  // Default to request
-  if (d == "") {
-    d = "request";
-  }
+	// Default to request
+	if (d == "") {
+		d = "request";
+	}
 
-  switch (d) {
-    case "request": {
-      jQuery('#type_response').prop('disabled',true);
-      jQuery('#type_response').hide();
-      jQuery('#type_request').prop('disabled',false);
-      jQuery('#type_request').show();
-      break;
-    }
-    case "response": {
-      jQuery('#type_request').prop('disabled',true);
-      jQuery('#type_request').hide();
-      jQuery('#type_response').prop('disabled',false);
-      jQuery('#type_response').show();
-      break;
-    }
-  }
+	switch (d) {
+		case "request": {
+			jQuery('#type_response').prop('disabled',true);
+			jQuery('#type_response').hide();
+			jQuery('#type_request').prop('disabled',false);
+			jQuery('#type_request').show();
+			break;
+		}
+		case "response": {
+			jQuery('#type_request').prop('disabled',true);
+			jQuery('#type_request').hide();
+			jQuery('#type_response').prop('disabled',false);
+			jQuery('#type_response').show();
+			break;
+		}
+	}
 }
 
 
-function updateType(t){
-  // Default to action_row
-  // XXX - does this actually make any sense?
-  if (t == "") {
-    t = "action_row";
-  }
+function updateType(t) {
+	// Default to action_row
+	// XXX - does this actually make any sense?
+	if (t == "") {
+		t = "action_row";
+	}
 
-	switch(t) {
+	switch (t) {
 <?php
 	/* OK, so this is sick using php to generate javascript, but it needed to be done */
 	foreach ($types as $key => $val) {
@@ -301,89 +307,89 @@ function updateType(t){
 
 
 function updateAction(a) {
-  // Default to change
-  if (a == "") {
-    a = "change";
-  }
-  switch(a) {
-    case "append": {
-      jQuery('#input_action_value').show();
-      jQuery('#option_action_value').prop('disabled',false);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("&nbsp;to&nbsp;");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "change": {
-      jQuery('#input_action_value').show();
-      jQuery('#option_action_value').prop('disabled',false);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("&nbsp;of&nbsp;");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "expect": {
-      jQuery('#input_action_value').show();
-      jQuery('#option_action_value').prop('disabled',false);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "filter": {
-      jQuery('#input_action_value').show();
-      jQuery('#option_action_value').prop('disabled',false);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "hash": {
-      jQuery('#input_action_value').hide();
-      jQuery('#option_action_value').prop('disabled',true);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "log": {
-      jQuery('#input_action_value').hide();
-      jQuery('#option_action_value').prop('disabled',true);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').hide();
-      jQuery('#option_action_id').prop('disabled',true);
-      jQuery('#action_action_value').html("");
-      jQuery('#action_action_id').html("");
-      break;
-    }
-    case "mark": {
-      jQuery('#input_action_value').show();
-      jQuery('#option_action_value').prop('disabled',false);
-      jQuery('#input_action_key').show();
-      jQuery('#option_action_key').prop('disabled',false);
-      jQuery('#input_action_id').show();
-      jQuery('#option_action_id').prop('disabled',false);
-      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
-      jQuery('#action_action_id').html("&nbsp;with&nbsp;");
-      break;
-    }
-  }
+	// Default to change
+	if (a == "") {
+		a = "change";
+	}
+	switch (a) {
+		case "append": {
+			jQuery('#input_action_value').show();
+			jQuery('#option_action_value').prop('disabled',false);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("&nbsp;to&nbsp;");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "change": {
+			jQuery('#input_action_value').show();
+			jQuery('#option_action_value').prop('disabled',false);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("&nbsp;of&nbsp;");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "expect": {
+			jQuery('#input_action_value').show();
+			jQuery('#option_action_value').prop('disabled',false);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "filter": {
+			jQuery('#input_action_value').show();
+			jQuery('#option_action_value').prop('disabled',false);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "hash": {
+			jQuery('#input_action_value').hide();
+			jQuery('#option_action_value').prop('disabled',true);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "log": {
+			jQuery('#input_action_value').hide();
+			jQuery('#option_action_value').prop('disabled',true);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').hide();
+			jQuery('#option_action_id').prop('disabled',true);
+			jQuery('#action_action_value').html("");
+			jQuery('#action_action_id').html("");
+			break;
+		}
+		case "mark": {
+			jQuery('#input_action_value').show();
+			jQuery('#option_action_value').prop('disabled',false);
+			jQuery('#input_action_key').show();
+			jQuery('#option_action_key').prop('disabled',false);
+			jQuery('#input_action_id').show();
+			jQuery('#option_action_id').prop('disabled',false);
+			jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+			jQuery('#action_action_id').html("&nbsp;with&nbsp;");
+			break;
+		}
+	}
 }
 
 
@@ -393,17 +399,17 @@ function num_options() {
 
 
 jQuery(document).ready(function() {
-  updateProtocol('<?=htmlspecialchars($pconfig['protocol'])?>');  
-  updateDirection('<?=htmlspecialchars($pconfig['direction'])?>');  
-  updateType('<?=htmlspecialchars($pconfig['type'])?>');  
-  updateAction('<?=htmlspecialchars($pconfig['action'])?>');  
+	updateProtocol('<?=htmlspecialchars($pconfig['protocol'])?>');
+	updateDirection('<?=htmlspecialchars($pconfig['direction'])?>');
+	updateType('<?=htmlspecialchars($pconfig['type'])?>');
+	updateAction('<?=htmlspecialchars($pconfig['action'])?>');
 });
 
 </script>
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="load_balancer_relay_action_edit.php" method="post" name="iform" id="iform">
+<form action="load_balancer_relay_action_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Relay Action entry"); ?></td>
@@ -411,13 +417,13 @@ jQuery(document).ready(function() {
 		<tr align="left" id="name">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+				<input name="name" type="text" <?if (isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
+				<input name="descr" type="text" <?if (isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 <!-- Protocol -->
@@ -427,7 +433,7 @@ jQuery(document).ready(function() {
 				<select id="protocol" name="protocol">
 <?
 	foreach ($actions['protocol'] as $key => $val) {
-		if(isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
+		if (isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
 			$selected = " selected";
 		} else {
 			$selected = "";
@@ -446,7 +452,7 @@ jQuery(document).ready(function() {
 				<select id="direction" name="direction" style="disabled">
 <?
 	foreach ($actions['direction'] as $key => $val) {
-		if(isset($pconfig['direction']) && $pconfig['direction'] == $key) {
+		if (isset($pconfig['direction']) && $pconfig['direction'] == $key) {
 			$selected = " selected";
 		} else {
 			$selected = "";
@@ -455,46 +461,45 @@ jQuery(document).ready(function() {
 	}
 ?>
 				</select>
-
 			</td>
 		</tr>
 
 <!-- Type -->
-    <tr align="left" id="type_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
+		<tr align="left" id="type_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 <?
 	foreach ($actions['direction'] as $dir => $v) {
-		echo"		<select id=\"type_{$dir}\" name=\"type_{$dir}\" style=\"display:none; disabled;\">";
+		echo "<select id=\"type_{$dir}\" name=\"type_{$dir}\" style=\"display:none; disabled;\">";
 		foreach ($actions['direction'][$dir] as $key => $val) {
-			if(isset($pconfig['type']) && $pconfig['type'] == $key) {
+			if (isset($pconfig['type']) && $pconfig['type'] == $key) {
 				$selected = " selected";
 			} else {
 				$selected = "";
 			}
 			echo "<option value=\"{$key}\" onclick=\"updateDirection('$key');\"{$selected}>{$key}</option>\n";
 		}
+		echo "</select>";
 	}
-?>
-				</select>
+?>	
 			</td>
 		</tr>
 
 <!-- Action -->
-    <tr align="left" id="action_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
+		<tr align="left" id="action_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="action" name="action" style=\"display: none;\">
 <?
 	foreach ($actions['direction'] as $dir => $dv) {
 		foreach ($actions['direction'][$dir] as $type => $tv) {
-			foreach ($actions['direction'][$dir][$type] as $action => $av ) {
-				if(isset($pconfig['action']) && $pconfig['action'] == $action) {
+			foreach ($actions['direction'][$dir][$type] as $action => $av) {
+				if (isset($pconfig['action']) && $pconfig['action'] == $action) {
 					$selected = " selected";
-				} else if ($action == "change" ){
-  					$selected = " selected";
-  				} else {
-  					$selected = "";
+				} else if ($action == "change") {
+					$selected = " selected";
+				} else {
+					$selected = "";
 				}
 				echo "<option id=\"{$dir}_{$type}_{$action}\" value=\"{$dir}_{$type}_{$action}\" onClick=\"updateAction('$action');\" style=\"display: none;\"{$selected}>{$action}</option>\n";
 			}
@@ -502,14 +507,16 @@ jQuery(document).ready(function() {
 	}
 ?>
 				</select>
-<br />
-<table><tr>
-<td><div id="input_action_value"><?=gettext("Value"); ?>&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if(isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
-<td><div id="action_action_value"></div></td>
-<td><div id="input_action_key"><?=gettext("Key"); ?>&nbsp;<input id="option_action_key" name="option_action_key" type="text" <?if(isset($pconfig['options']['akey'])) echo "value=\"{$pconfig['options']['akey']}\"";?>size="20"></div></td>
-<td><div id="action_action_id"></div></td>
-<td><div id="input_action_id"><?=gettext("ID"); ?>&nbsp;<input id="option_action_id" name="option_action_id" type="text" <?if(isset($pconfig['options']['id'])) echo "value=\"{$pconfig['options']['id']}\"";?>size="20"></div></td>
-</tr></table>
+				<br />
+				<table>
+					<tr>
+						<td><div id="input_action_value"><?=gettext("Value"); ?>&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if (isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
+						<td><div id="action_action_value"></div></td>
+						<td><div id="input_action_key"><?=gettext("Key"); ?>&nbsp;<input id="option_action_key" name="option_action_key" type="text" <?if (isset($pconfig['options']['akey'])) echo "value=\"{$pconfig['options']['akey']}\"";?>size="20"></div></td>
+						<td><div id="action_action_id"></div></td>
+						<td><div id="input_action_id"><?=gettext("ID"); ?>&nbsp;<input id="option_action_id" name="option_action_id" type="text" <?if (isset($pconfig['options']['id'])) echo "value=\"{$pconfig['options']['id']}\"";?>size="20"></div></td>
+					</tr>
+				</table>
 			</td>
 		</tr>
 		<tr align="left" id="tcp_options_row"<?= $pconfig['protocol'] == "tcp" ? "" : " style=\"display:none;\""?>>
@@ -520,7 +527,7 @@ jQuery(document).ready(function() {
 <!-- XXX TODO >
 <?
 	foreach ($types as $key => $val) {
-		if(isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
+		if (isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
 			$selected = " selected";
 		} else {
 			$selected = "";
@@ -528,8 +535,8 @@ jQuery(document).ready(function() {
 		echo "<option value=\"{$key}\" onclick=\"updateType('{$key}');\"{$selected}>{$val}</option>\n";
 	}
 ?>
-				</select>
 < XXX TODO -->
+				</select>
 			</td>
 		</tr>
 		<tr align="left" id="ssl_options_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
@@ -540,7 +547,7 @@ jQuery(document).ready(function() {
 				<select id="options" name="options">
 <?
 	foreach ($types as $key => $val) {
-		if(isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
+		if (isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
 			$selected = " selected";
 		} else {
 			$selected = "";
@@ -563,7 +570,7 @@ jQuery(document).ready(function() {
 			</td>
 		</tr>
 	</table>
-	</form>
+</form>
 <br />
 <?php include("fend.inc"); ?>
 </body>

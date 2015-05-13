@@ -42,8 +42,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gifs']['gif']))
+if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
+}
 
 $a_gifs = &$config['gifs']['gif'] ;
 
@@ -52,20 +53,21 @@ function gif_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) 
+		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-	if (!isset($_GET['id']))
-                $input_errors[] = gettext("Wrong parameters supplied");
-        else if (empty($a_gifs[$_GET['id']]))
-                $input_errors[] = gettext("Wrong index supplied");
+	if (!isset($_GET['id'])) {
+		$input_errors[] = gettext("Wrong parameters supplied");
+	} else if (empty($a_gifs[$_GET['id']])) {
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (gif_inuse($_GET['id'])) {
+	} else if (gif_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gifs[$_GET['id']]['gifif'] . " destroy");
@@ -88,7 +90,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces gif">
-  <tr><td>
+	<tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
@@ -103,49 +105,56 @@ include("head.inc");
 	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-                <tr>
-                  <td width="20%" class="listhdrr"><?=gettext("Interface"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Tunnel to..."); ?></td>
-                  <td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
-                  <td width="10%" class="list"></td>
-				</tr>
-			  <?php $i = 0; foreach ($a_gifs as $gif): ?>
-                <tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
-                  <td class="listlr">
-					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
-                  </td>
-                  <td class="listr">
-					<?=htmlspecialchars($gif['remote-addr']);?>
-                  </td>
-                  <td class="listbg">
-                    <?=htmlspecialchars($gif['descr']);?>&nbsp;
-                  </td>
-                  <td valign="middle" class="list nowrap"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-                     &nbsp;<a href="interfaces_gif.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gif tunnel?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
-				</tr>
-			  <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_gif_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-				</tr>
-				<tr>
-				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br />
-				  </strong></span>
-				  <?=gettext("GIF tunnels are configured here."); ?>
-				  <br /><br />
-				  <?php echo gettext("If you are using a GIF tunnel to connect to a Hurricane Electric (he.net) Tunnel Broker on a WAN with a dynamic IP, you may want to add a"); ?> <a href="services_dyndns.php"><?php echo gettext("HE.net Tunnelbroker type DynDNS Entry"); ?></a> <?php echo gettext("to keep your tunnel functional when your IP changes."); ?></p>
-				  </td>
-				<td class="list">&nbsp;</td>
-				</tr>
-              </table>
-	      </div>
-	</td>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+					<tr>
+						<td width="20%" class="listhdrr"><?=gettext("Interface"); ?></td>
+						<td width="20%" class="listhdrr"><?=gettext("Tunnel to..."); ?></td>
+						<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
+						<td width="10%" class="list"></td>
+					</tr>
+			<?php
+				$i = 0;
+				foreach ($a_gifs as $gif):
+			?>
+					<tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
+						<td class="listlr">
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
+						</td>
+						<td class="listr">
+							<?=htmlspecialchars($gif['remote-addr']);?>
+						</td>
+						<td class="listbg">
+							<?=htmlspecialchars($gif['descr']);?>&nbsp;
+						</td>
+						<td valign="middle" class="list nowrap"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+							&nbsp;<a href="interfaces_gif.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gif tunnel?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
+						</td>
+					</tr>
+			<?php
+					$i++;
+				endforeach;
+			?>
+					<tr>
+						<td class="list" colspan="3">&nbsp;</td>
+						<td class="list"> <a href="interfaces_gif_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					</tr>
+					<tr>
+						<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
+							<?=gettext("Note:"); ?><br />
+							</strong></span>
+							<?=gettext("GIF tunnels are configured here."); ?>
+							<br /><br />
+							<?php echo gettext("If you are using a GIF tunnel to connect to a Hurricane Electric (he.net) Tunnel Broker on a WAN with a dynamic IP, you may want to add a"); ?> <a href="services_dyndns.php"><?php echo gettext("HE.net Tunnelbroker type DynDNS Entry"); ?></a> <?php echo gettext("to keep your tunnel functional when your IP changes."); ?></p>
+						</td>
+						<td class="list">&nbsp;</td>
+					</tr>
+				</table>
+			</div>
+		</td>
 	</tr>
 </table>
 <?php include("fend.inc"); ?>

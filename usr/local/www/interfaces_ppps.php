@@ -47,12 +47,14 @@ require_once("functions.inc");
 function ppp_inuse($num) {
 	global $config, $g;
 	$iflist = get_configured_interface_list(false, true);
-	if (!is_array($config['ppps']['ppp']))
+	if (!is_array($config['ppps']['ppp'])) {
 		return false;
+	}
 
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $config['ppps']['ppp'][$num]['if'])
+		if ($config['interfaces'][$if]['if'] == $config['ppps']['ppp'][$num]['if']) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -72,8 +74,9 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if (!is_array($config['ppps']['ppp']))
+if (!is_array($config['ppps']['ppp'])) {
 	$config['ppps']['ppp'] = array();
+}
 $a_ppps = $config['ppps']['ppp'];
 
 $pgtitle = gettext("Interfaces: PPPs");
@@ -86,7 +89,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces ppps">
-  <tr><td>
+	<tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
@@ -101,46 +104,54 @@ include("head.inc");
 	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-                <tr>
-                	<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Interface(s)/Port(s)");?></td>
-                  <td width="40%" class="listhdr"><?=gettext("Description");?></td>
-                  <td width="10%" class="list"></td>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+				<tr>
+					<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
+					<td width="20%" class="listhdrr"><?=gettext("Interface(s)/Port(s)");?></td>
+					<td width="40%" class="listhdr"><?=gettext("Description");?></td>
+					<td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
-                <tr  ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
-                	<td class="listr">
-					<?=htmlspecialchars($ppp['if']);?>
-                  </td>
-                  <td class="listr">
-					<?php
-						$portlist = explode(",", $ppp['ports']);
-						foreach ($portlist as $portid => $port) {
-							if ($port != get_real_interface($port) && $ppp['type'] != "ppp")
-								$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
-						}
-						echo htmlspecialchars(implode(",", $portlist));
-					?>
-                  </td>
-                  <td class="listbg">
-                    <?=htmlspecialchars($ppp['descr']);?>&nbsp;
-                  </td>
-                  <td valign="middle" class="list nowrap"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-                     &nbsp;<a href="interfaces_ppps.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>
+<?php
+	$i = 0;
+	foreach ($a_ppps as $id => $ppp):
+?>
+				<tr  ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
+					<td class="listr">
+						<?=htmlspecialchars($ppp['if']);?>
+					</td>
+					<td class="listr">
+<?php
+		$portlist = explode(",", $ppp['ports']);
+		foreach ($portlist as $portid => $port) {
+			if ($port != get_real_interface($port) && $ppp['type'] != "ppp") {
+				$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
+			}
+		}
+		echo htmlspecialchars(implode(",", $portlist));
+?>
+					</td>
+					<td class="listbg">
+						<?=htmlspecialchars($ppp['descr']);?>&nbsp;
+					</td>
+					<td valign="middle" class="list nowrap"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+						&nbsp;<a href="interfaces_ppps.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a>
+					</td>
 				</tr>
-			  <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_ppps_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+<?php
+		$i++;
+	endforeach;
+?>
+				<tr>
+					<td class="list" colspan="3">&nbsp;</td>
+					<td class="list"> <a href="interfaces_ppps_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
-              </table>
-	      </div>
-	</td>
+			</table>
+			</div>
+		</td>
 	</tr>
 </table>
 <?php include("fend.inc"); ?>

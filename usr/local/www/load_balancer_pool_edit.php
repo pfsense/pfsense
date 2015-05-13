@@ -266,10 +266,10 @@ function clearcombo(){
 							echo "<option value=\"{$monitor['name']}\"{$selected}>{$monitor['name']}</option>";
 						}
 					?>
+				</select>
 				<?php else: ?>
 					<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a monitor IP address on the monitors tab if you wish to use this feature."); ?>
 				<?php endif; ?>
-				</select>
 			</td>
 		</tr>
 		<tr align="left">

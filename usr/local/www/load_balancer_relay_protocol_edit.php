@@ -49,10 +49,12 @@ if (!is_array($config['load_balancer']['lbprotocol'])) {
 }
 $a_protocol = &$config['load_balancer']['lbprotocol'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_protocol[$id]) {
 	$pconfig = $a_protocol[$id];
@@ -68,14 +70,11 @@ if (isset($id) && $a_protocol[$id]) {
 $changedesc = gettext("Load Balancer: Relay Protocol:") . " ";
 $changecount = 0;
 
-
-
 if ($_POST) {
 	$changecount++;
 
 	unset($input_errors);
 	$pconfig = $_POST;
-
 
 	/* input validation */
 	$reqdfields = explode(" ", "name type descr");
@@ -84,14 +83,17 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our monitor names are unique */
-	for ($i=0; isset($config['load_balancer']['lbprotocol'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['lbprotocol'][$i]['name']) && ($i != $id))
+	for ($i=0; isset($config['load_balancer']['lbprotocol'][$i]); $i++) {
+		if (($_POST['name'] == $config['load_balancer']['lbprotocol'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This protocol name has already been used.  Protocol names must be unique.");
+		}
+	}
 
-	if (strpos($_POST['name'], " ") !== false)
+	if (strpos($_POST['name'], " ") !== false) {
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+	}
 
-	switch($_POST['type']) {
+	switch ($_POST['type']) {
 		case 'tcp':
 		case 'http':
 		case 'https':
@@ -102,11 +104,13 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$protent = array();
-		if(isset($id) && $a_protocol[$id])
+		if (isset($id) && $a_protocol[$id]) {
 			$protent = $a_protocol[$id];
-		if($protent['name'] != "")
+		}
+		if ($protent['name'] != "") {
 			$changedesc .= " " . sprintf(gettext("modified '%s' load balancing protocol:"), $protent['name']);
-		
+		}
+
 		update_if_changed(gettext("name"), $protent['name'], $pconfig['name']);
 		update_if_changed(gettext("type"), $protent['type'], $pconfig['type']);
 		update_if_changed(gettext("description"), $protent['descr'], $pconfig['descr']);
@@ -117,15 +121,16 @@ if ($_POST) {
 			/* modify all virtual servers with this name */
 /*
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-				if ($config['load_balancer']['virtual_server'][$i]['protocol'] == $a_protocol[$id]['name'])
+				if ($config['load_balancer']['virtual_server'][$i]['protocol'] == $a_protocol[$id]['name']) {
 					$config['load_balancer']['virtual_server'][$i]['protocol'] = $protent['name'];
+				}
 			}
-*/	
+*/
 			$a_protocol[$id] = $protent;
 		} else {
 			$a_protocol[] = $protent;
-    }	
-    
+		}
+
 		if ($changecount > 0) {
 			/* Mark config dirty */
 			mark_subsystem_dirty('loadbalancer');
@@ -146,8 +151,8 @@ $types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gett
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript">
-function updateType(t){
-	switch(t) {
+function updateType(t) {
+	switch (t) {
 <?php
 	/* OK, so this is sick using php to generate javascript, but it needed to be done */
 	foreach ($types as $key => $val) {
@@ -170,24 +175,24 @@ function num_options() {
 }
 
 /*
-jQuery(document).ready(function(){
-  $$('.action').each(function(action) {
-    new Draggable(action, {revert: true, ghosting: true});
-  });
-  Droppables.add('actions', {
-    accept: 'action', onDrop: function(action) {
-      var new_action = new Element('li');
-      new Draggable(new_action, {revert: true});
-      $('action_list').appendChild(new_action);
-    }
-  });
+jQuery(document).ready(function() {
+	$$('.action').each(function(action) {
+		new Draggable(action, {revert: true, ghosting: true});
+	});
+	Droppables.add('actions', {
+		accept: 'action', onDrop: function(action) {
+			var new_action = new Element('li');
+			new Draggable(new_action, {revert: true});
+			$('action_list').appendChild(new_action);
+		}
+	});
 });
 */
 </script>
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="load_balancer_relay_protocol_edit.php" method="post" name="iform" id="iform">
+<form action="load_balancer_relay_protocol_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Relay Protocol entry"); ?></td>
@@ -195,7 +200,7 @@ jQuery(document).ready(function(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+				<input name="name" type="text" <?if (isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
@@ -204,7 +209,7 @@ jQuery(document).ready(function(){
 				<select id="type" name="type">
 <?
 	foreach ($types as $key => $val) {
-		if(isset($pconfig['type']) && $pconfig['type'] == $key) {
+		if (isset($pconfig['type']) && $pconfig['type'] == $key) {
 			$selected = " selected";
 		} else {
 			$selected = "";
@@ -218,7 +223,7 @@ jQuery(document).ready(function(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
+				<input name="descr" type="text" <?if (isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 		<tr>
@@ -240,12 +245,12 @@ jQuery(document).ready(function(){
 							<select id="available_action" name="available_action[]" multiple="true" size="5">
 <?php
 if (is_array($config['load_balancer']['lbaction'])) {
-	foreach($config['load_balancer']['lbaction'] as $actent) {
-		if($actent != '') echo "    <option value=\"{$actent['name']}\">{$actent['name']}</option>\n";
+	foreach ($config['load_balancer']['lbaction'] as $actent) {
+		if ($actent != '') echo "    <option value=\"{$actent['name']}\">{$actent['name']}</option>\n";
 	}
 }
-echo "</select>";
 ?>
+							</select>
 							<br />
 						</td>
 						<td valign="middle">
@@ -262,12 +267,12 @@ echo "</select>";
 							<select id="lbaction" name="lbaction[]" multiple="true" size="5">
 <?php
 if (is_array($pconfig['lbaction'])) {
-	foreach($pconfig['lbaction'] as $actent) {
+	foreach ($pconfig['lbaction'] as $actent) {
 		echo "    <option value=\"{$actent}\">{$actent}</option>\n";
 	}
 }
-echo "</select>";
 ?>
+							</select>
 							<br />
 						</td>
 					</tr>
@@ -286,7 +291,7 @@ echo "</select>";
 			</td>
 		</tr>
 	</table>
-	</form>
+</form>
 <br />
 <?php include("fend.inc"); ?>
 </body>

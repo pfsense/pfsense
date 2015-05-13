@@ -86,7 +86,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 	$poodex[$config['load_balancer']['lbpool'][$i]['name']] = $i;
 }
 for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-	if($a_vs[$i]) {
+	if ($a_vs[$i]) {
 		$a_vs[$i]['poolname'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['poolname']]}\">" . htmlspecialchars($a_vs[$i]['poolname']) . "</a>";
 		if ($a_vs[$i]['sitedown'] != '') {
 			$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">" . htmlspecialchars($a_vs[$i]['sitedown']) . "</a>";
@@ -111,40 +111,40 @@ include("head.inc");
 <?php print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer virtual server">
-  <tr><td class="tabnavtbl">
-  <?php
-        /* active tabs */
-        $tab_array = array();
-        $tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
-        $tab_array[] = array(gettext("Virtual Servers"), true, "load_balancer_virtual_server.php");
-        $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
-        $tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
-        display_top_tabs($tab_array);
-  ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
+	<tr><td class="tabnavtbl">
 <?php
-			$t = new MainTable();
-			$t->edit_uri('load_balancer_virtual_server_edit.php');
-			$t->my_uri('load_balancer_virtual_server.php');
-			$t->add_column(gettext('Name'),'name',10);
-			$t->add_column(gettext('Protocol'),'relay_protocol',10);
-			$t->add_column(gettext('IP Address'),'ipaddr',15);
-			$t->add_column(gettext('Port'),'port',10);
-			$t->add_column(gettext('Pool'),'poolname',15);
-			$t->add_column(gettext('Fall Back Pool'),'sitedown',15);
-			$t->add_column(gettext('Description'),'descr',30);
-			$t->add_button('edit');
-			$t->add_button('dup');
-			$t->add_button('del');
-			$t->add_content_array($a_vs);
-			$t->display();
+		/* active tabs */
+		$tab_array = array();
+		$tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
+		$tab_array[] = array(gettext("Virtual Servers"), true, "load_balancer_virtual_server.php");
+		$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+		$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
+		display_top_tabs($tab_array);
 ?>
-	   </div>
-    </td>
-  </tr>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+<?php
+				$t = new MainTable();
+				$t->edit_uri('load_balancer_virtual_server_edit.php');
+				$t->my_uri('load_balancer_virtual_server.php');
+				$t->add_column(gettext('Name'),'name',10);
+				$t->add_column(gettext('Protocol'),'relay_protocol',10);
+				$t->add_column(gettext('IP Address'),'ipaddr',15);
+				$t->add_column(gettext('Port'),'port',10);
+				$t->add_column(gettext('Pool'),'poolname',15);
+				$t->add_column(gettext('Fall Back Pool'),'sitedown',15);
+				$t->add_column(gettext('Description'),'descr',30);
+				$t->add_button('edit');
+				$t->add_button('dup');
+				$t->add_button('del');
+				$t->add_content_array($a_vs);
+				$t->display();
+?>
+			</div>
+		</td>
+	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

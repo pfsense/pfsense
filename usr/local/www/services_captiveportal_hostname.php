@@ -67,6 +67,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 */
 if (!is_array($config['captiveportal']))
 	$config['captiveportal'] = array();
+
 $a_cp =& $config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))

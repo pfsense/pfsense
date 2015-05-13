@@ -1042,8 +1042,7 @@ function setup_serial_port($when="save", $path="") {
 				if (!empty($bcs) &&
 				    (stripos($bcs, "console") === false) &&
 				    (stripos($bcs, "boot_multicons") === false) &&
-				    (stripos($bcs, "boot_serial") === false) &&
-				    (stripos($bcs, "hw.usb.no_pf") === false)) {
+				    (stripos($bcs, "boot_serial") === false)) {
 					$new_boot_config[] = $bcs;
 				}
 			}
@@ -1065,7 +1064,6 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}

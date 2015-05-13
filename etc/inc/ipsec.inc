@@ -719,7 +719,7 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			break;
 		case 'keyid tag':
 			$thisid_type = 'keyid';
-			$thisid_data = "{$thisid_data}";
+			$thisid_data = "{$id_data}";
 			break;
 		case 'user_fqdn':
 			$thisid_type = 'userfqdn';

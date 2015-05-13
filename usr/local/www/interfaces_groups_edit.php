@@ -47,15 +47,18 @@ require_once("functions.inc");
 $pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
 $shortcut_section = "interfaces";
 
-if (!is_array($config['ifgroups']['ifgroupentry']))
+if (!is_array($config['ifgroups']['ifgroupentry'])) {
 	$config['ifgroups']['ifgroupentry'] = array();
+}
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
@@ -72,24 +75,29 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!isset($id)) {
-		foreach ($a_ifgroups as $groupentry)
-			if ($groupentry['ifname'] == $_POST['ifname'])
+		foreach ($a_ifgroups as $groupentry) {
+			if ($groupentry['ifname'] == $_POST['ifname']) {
 				$input_errors[] = gettext("Group name already exists!");
+			}
+		}
 	}
-	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
+	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match)) {
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
+	}
 
 	foreach ($iflist as $gif => $gdescr) {
-		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname'])
+		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+		}
 	}
 	$members = "";
 	$isfirst = 0;
 	/* item is a normal ifgroupentry type */
-	for($x=0; $x<9999; $x++) {
-		if($_POST["members{$x}"] <> "") {
-			if ($isfirst > 0)
+	for ($x=0; $x<9999; $x++) {
+		if ($_POST["members{$x}"] <> "") {
+			if ($isfirst > 0) {
 				$members .= " ";
+			}
 			$members .= $_POST["members{$x}"];
 			$isfirst++;
 		}
@@ -112,26 +120,30 @@ if ($_POST) {
 								$rule_changed = true;
 							}
 						}
-						if ($rule_changed)
+						if ($rule_changed) {
 							$config['filter']['rule'][$ridx]['interface'] = implode(",", $rule_ifs);
+						}
 					} else {
-						if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
+						if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
 							$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+						}
 					}
 				}
 			}
 			if (!empty($config['nat']) && is_array($config['nat']['rule'])) {
 				foreach ($config['nat']['rule'] as $ridx => $rule) {
-					if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
+					if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
 						$config['nat']['rule'][$ridx]['interface'] = $_POST['ifname'];
+					}
 				}
 			}
 			$omembers = explode(" ", $a_ifgroups[$id]['members']);
 			if (count($omembers) > 0) {
 				foreach ($omembers as $ifs) {
 					$realif = get_real_interface($ifs);
-					if ($realif)
+					if ($realif) {
 						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
@@ -143,8 +155,9 @@ if ($_POST) {
 			if (count($delmembers) > 0) {
 				foreach ($delmembers as $ifs) {
 					$realif = get_real_interface($ifs);
-					if ($realif)
+					if ($realif) {
 						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
@@ -182,10 +195,10 @@ var newrow  = new Array(9999);
 var rowsize = new Array(9999);
 
 for (i = 0; i < 9999; i++) {
-        rowname[i] = '';
-        rowtype[i] = 'select';
-        newrow[i] = '';
-        rowsize[i] = '30';
+	rowname[i] = '';
+	rowtype[i] = 'select';
+	newrow[i] = '';
+	rowsize[i] = '30';
 }
 
 var field_counter_js = 0;
@@ -194,42 +207,44 @@ var is_streaming_progress_bar = 0;
 var temp_streaming_text = "";
 
 var addRowTo = (function() {
-    return (function (tableId) {
-        var d, tbody, tr, td, bgc, i, ii, j;
-        d = document;
-        tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
-        tr = d.createElement("tr");
-        for (i = 0; i < field_counter_js; i++) {
-                td = d.createElement("td");
+	return (function (tableId) {
+		var d, tbody, tr, td, bgc, i, ii, j;
+		d = document;
+		tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
+		tr = d.createElement("tr");
+		for (i = 0; i < field_counter_js; i++) {
+				td = d.createElement("td");
 		<?php
-                        $innerHTML="\"<input type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"' /><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
+			$innerHTML="\"<input type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"' /><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
 
-                        foreach ($iflist as $ifnam => $ifdescr)
-                                $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}<\/option>";
+			foreach ($iflist as $ifnam => $ifdescr) {
+				$innerHTML .= "<option value='{$ifnam}'>{$ifdescr}<\/option>";
+			}
 			$innerHTML .= "<\/select>\";";
-                ?>
+		?>
 			td.innerHTML=<?=$innerHTML;?>
-                tr.appendChild(td);
-        }
-        td = d.createElement("td");
-        td.rowSpan = "1";
+				tr.appendChild(td);
+		}
+		td = d.createElement("td");
+		td.rowSpan = "1";
 
-        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /><\/a>';
-        tr.appendChild(td);
-        tbody.appendChild(tr);
-        totalrows++;
-    });
+		td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /><\/a>';
+		tr.appendChild(td);
+		tbody.appendChild(tr);
+		totalrows++;
+	});
 })();
 
 function removeRow(el) {
-    var cel;
-    while (el && el.nodeName.toLowerCase() != "tr")
-            el = el.parentNode;
+	var cel;
+	while (el && el.nodeName.toLowerCase() != "tr") {
+		el = el.parentNode;
+	}
 
-    if (el && el.parentNode) {
-        cel = el.getElementsByTagName("td").item(0);
-        el.parentNode.removeChild(el);
-    }
+	if (el && el.parentNode) {
+		cel = el.getElementsByTagName("td").item(0);
+		el.parentNode.removeChild(el);
+	}
 }
 
 	rowname[0] = "members";
@@ -248,97 +263,99 @@ function removeRow(el) {
 
 <form action="interfaces_groups_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces groups edit">
-  <tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface Groups Edit");?></td>
-  </tr>
-  <tr>
-    <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
-    <td class="vtable">
-	<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
-	<br />
-	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
-    </td>
-  </tr>
-  <tr>
-    <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-    <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-      <br />
-      <span class="vexpl">
-        <?=gettext("You may enter a description here for your reference (not parsed).");?>
-      </span>
-    </td>
-  </tr>
-  <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
-    <td width="78%" class="vtable">
-      <table id="maintable" summary="main table">
-        <tbody>
-          <tr>
-            <td><div id="onecolumn"><?=gettext("Interface");?></div></td>
-          </tr>
-
-	<?php
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface Groups Edit");?></td>
+	</tr>
+	<tr>
+		<td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
+		<td class="vtable">
+			<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
+			<br />
+			<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
+		<td width="78%" class="vtable">
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("You may enter a description here for your reference (not parsed).");?>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
+		<td width="78%" class="vtable">
+			<table id="maintable" summary="main table">
+			<tbody>
+				<tr>
+					<td>
+						<div id="onecolumn"><?=gettext("Interface");?></div>
+					</td>
+				</tr>
+<?php
 	$counter = 0;
 	$members = $pconfig['members'];
 	if ($members <> "") {
 		$item = explode(" ", $members);
-		foreach($item as $ww) {
+		foreach ($item as $ww) {
 			$members = $item[$counter];
 			$tracker = $counter;
-	?>
-        <tr>
-	<td class="vtable">
-	        <select name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>">
-			<?php
-				$found = false;
-				foreach ($iflist as $ifnam => $ifdescr) {
-					echo "<option value=\"{$ifnam}\"";
-					if ($ifnam == $members) {
-						$found = true;
-						echo " selected=\"selected\"";
-					}
-					echo ">{$ifdescr}</option>";
-				}
-
-				if ($found === false)
-					foreach ($iflist_disabled as $ifnam => $ifdescr)
-						if ($ifnam == $members)
-							echo "<option value=\"{$ifnam}\" selected=\"selected\">{$ifdescr}</option>";
-			?>
-                        </select>
-	</td>
-        <td>
-	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>
-	      </td>
-          </tr>
+?>
+				<tr>
+					<td class="vtable">
+						<select name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>">
 <?php
-		$counter++;
+			$found = false;
+			foreach ($iflist as $ifnam => $ifdescr) {
+				echo "<option value=\"{$ifnam}\"";
+				if ($ifnam == $members) {
+					$found = true;
+					echo " selected=\"selected\"";
+				}
+				echo ">{$ifdescr}</option>";
+			}
 
+			if ($found === false) {
+				foreach ($iflist_disabled as $ifnam => $ifdescr)
+					if ($ifnam == $members) {
+						echo "<option value=\"{$ifnam}\" selected=\"selected\">{$ifdescr}</option>";
+					}
+			}
+?>
+						</select>
+					</td>
+					<td>
+						<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>
+					</td>
+				</tr>
+<?php
+			$counter++;
 		} // end foreach
 	} // end if
 ?>
-        </tbody>
-		  </table>
+			</tbody>
+			</table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
-      </a>
-		<br /><br />
-		<strong><?PHP echo gettext("NOTE:");?></strong>
-		<?PHP echo gettext("Rules for WAN type interfaces in groups do not contain the reply-to mechanism upon which Multi-WAN typically relies.");?>
-		<a href="https://doc.pfsense.org/index.php/Interface_Groups"><?PHP echo gettext("More Information");?></a>
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+			</a>
+			<br /><br />
+			<strong><?php echo gettext("NOTE:");?></strong>
+			<?php echo gettext("Rules for WAN type interfaces in groups do not contain the reply-to mechanism upon which Multi-WAN typically relies.");?>
+			<a href="https://doc.pfsense.org/index.php/Interface_Groups"><?PHP echo gettext("More Information");?></a>
 		</td>
-  </tr>
-  <tr>
-    <td width="22%" valign="top">&nbsp;</td>
-    <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-      <a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
-      <?php if (isset($id) && $a_ifgroups[$id]): ?>
-      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-      <?php endif; ?>
-    </td>
-  </tr>
+	</tr>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+			<a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
+		<?php if (isset($id) && $a_ifgroups[$id]): ?>
+			<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+		<?php endif; ?>
+		</td>
+	</tr>
 </table>
 </form>
 

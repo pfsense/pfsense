@@ -30,7 +30,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ipfw
-	pfSense_MODULE:	captiveportal
+	pfSense_MODULE: captiveportal
 */
 
 ##|+PRIV
@@ -40,6 +40,8 @@
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 
+$directionicons = array('to' => '&#x2192;', 'from' => '&#x2190;', 'both' => '&#x21c4;');
+
 require("guiconfig.inc");
 require("functions.inc");
 require_once("filter.inc");
@@ -48,15 +50,16 @@ require("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
-        $cpzone = $_POST['zone'];
+	$cpzone = $_POST['zone'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-        header("Location: services_captiveportal_zones.php");
-        exit;
+		header("Location: services_captiveportal_zones.php");
+		exit;
 }
 
 if (!is_array($config['captiveportal']))
-        $config['captiveportal'] = array();
+	$config['captiveportal'] = array();
+
 $a_cp =& $config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
@@ -67,23 +70,24 @@ $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
+	
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
-		
+
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
-			
+
 			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ipent['ip']);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
-			
+
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 				pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 			}
 		}
-		
+
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
@@ -91,95 +95,76 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	}
 }
 
-
 include("head.inc");
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+$tab_array = array();
+$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), true, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
+display_top_tabs($tab_array, true);
+
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_ip.php" method="post">
-<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal ip addresses">
-  <tr><td class="tabnavtbl">
+	<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone)?>" />
+	<div class="table-responsive">
+		<table class="table table-hover table-striped table-condensed">
+			<thead>
+				<tr>
+				  <th><?=gettext("IP Addresses"); ?></th>
+				  <th><?=gettext("Description"); ?></th>
+				  <th><!-- Buttons --></th>
+				</tr>
+			</thead>
+
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed IP addresses"), true, "services_captiveportal_ip.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
-	display_top_tabs($tab_array, true);
+if (is_array($a_cp[$cpzone]['allowedip'])): ?>
+			<tbody>
+<?php
+	$i = 0;
+	foreach ($a_cp[$cpzone]['allowedip'] as $ip): ?>
+				<tr>
+					<td>
+						<?=$directionicons[$ip['dir']]?>&nbsp;<?=$ip['ip']?>
+						<?=($ip['sn'] != "32" && is_numeric($ip['sn'])) ? '/' . $ip['sn'] : ''?>
+					</td>
+					<td >
+						<?=htmlspecialchars($ip['descr'])?>
+					</td>
+					<td>
+						<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
+						<a href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+					</td>
+				</tr>
+<?php
+	$i++;
+	endforeach; ?>
+			<tbody>
+		</table>
+		<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>','</u>') . ', '?>
+		<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>','</u>') . ', '?>
+		<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
+<?php
+else :
 ?>
-  </td></tr>
-  <tr>
-  <td class="tabcont">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main">
-	<tr>
-	  <td width="40%" class="listhdrr"><?=gettext("IP address"); ?></td>
-	  <td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
-	  <td width="10%" class="list">
-		<table border="0" cellspacing="0" cellpadding="1" summary="add">
-		   <tr>
-			<td width="17" height="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
-		   </tr>
+			</tbody>
 		</table>
-	  </td>
-	</tr>
-<?php	if (is_array($a_cp[$cpzone]['allowedip'])):
-		$i = 0; foreach ($a_cp[$cpzone]['allowedip'] as $ip): ?>
-	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>'">
-	  <td class="listlr">
-		<?php
-		if($ip['dir'] == "to") {
-			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"in\" /> ";
-		}
-		if($ip['dir'] == "both") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"pass\" />   ";
-		}
-		echo strtolower($ip['ip']);
-		if($ip['sn'] != "32" && is_numeric($ip['sn'])) {
-			$sn = $ip['sn'];
-			echo "/$sn";	
-		}
-		if($ip['dir'] == "from") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"any\" /> any";
-		}
-		
-		?>	
-	  </td>
-	  <td class="listbg">
-		<?=htmlspecialchars($ip['descr']);?>&nbsp;
-	  </td>
-	  <td valign="middle" class="list nowrap"><a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0" alt="edit" /></a>
-		 &nbsp;<a href="services_captiveportal_ip.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>
-	</tr>
-  <?php $i++; endforeach; endif; ?>
-	<tr>
-	  <td class="list" colspan="2">&nbsp;</td>
-	  <td class="list">
-		<table border="0" cellspacing="0" cellpadding="1" summary="add">
-		   <tr>
-			<td width="17" height="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
-		   </tr>
-		</table>
-	  </td>
-	</tr>
-	<tr>
-	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
-	  <?=gettext("Note:"); ?><br />
-	  </strong></span>
-	  <?=gettext("Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example."); ?></p>
-	</td>
-	<td class="list">&nbsp;</td>
-	</tr>
-  </table>
-  </td>
-  </tr>
-  </table>
+<?php
+endif;
+?>
+		<nav class="action-buttons">
+			<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+		</nav>
+	</div>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .
+					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'));
+
+include("foot.inc");

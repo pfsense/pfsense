@@ -1230,19 +1230,21 @@ else {
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
-	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
-		if($data)
+	if ((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
+		if ($data) {
 			$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
 			flush();
 			usleep(500);
+		}
 	}
 } else {
-	if($data)
+	if ($data) {
 		$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 		$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
 		flush();
 		usleep(500);
+	}
 }
 if(($graphcmdreturn <> 0) || (! $data)) {
 	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));

@@ -176,6 +176,14 @@ if ($_POST) {
 	}
 }
 
+// Get the MAC address
+//ToDo: REMOTE_ADDR seems to be no longer used. Need to determine which address to use
+$ip = getenv('REMOTE_ADDR');
+//$mymac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+// Just get the first MAC for now
+$mymac = `/usr/sbin/arp -an | cut -d" " -f4 |head -n1`;
+$mymac = str_replace("\n","",$mymac);
+
 include("head.inc");
 
 if ($input_errors)
@@ -193,22 +201,6 @@ $section->addInput(new Form_Select(
 	strtolower($pconfig['action']),
 	array('pass' => 'Pass', 'block' => 'Block')
 ))->setHelp('Choose what to do with packets coming from this MAC address.');
-
-// Get the MAC address
-//ToDo: REMOTE_ADDR seems to be no longer used. Need to determine which address to use
-$ip = getenv('REMOTE_ADDR');
-//$mymac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
-// Just get the first MAC for now
-$mymac = `/usr/sbin/arp -an | cut -d" " -f4 |head -n1`;
-$mymac = str_replace("\n","",$mymac);
-
-// and save it in a hidden text field
-$section->addInput(new Form_Input(
-	'mymac',
-	null,
-	'hidden',
-	$mymac
-));
 
 $macaddress = new Form_Input(
 	'mac',
@@ -282,7 +274,7 @@ events.push(function(){
 
 	// On click, copy the hidden 'mymac' text to the 'mac' input
 	$("#btnmymac").click(function() {
-		$('#mac').val($('#mymac').val());
+		$('#mac').val('<?=$mymac?>');
 	});
 });
 //]]>

@@ -1935,18 +1935,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("MAC address"); ?></td>
 							<td class="vtable">
 								<input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>" />
-								<?php
-									$ip = getenv('REMOTE_ADDR');
-									$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
-									$mac = str_replace("\n","",$mac);
-									if ($mac):
-								?>
-									<a onclick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#"><?=gettext("Insert my local MAC address"); ?></a>
-								<?php endif; ?>
 								<br />
 								<?=gettext("This field can be used to modify (\"spoof\") the MAC " .
 								"address of this interface"); ?><br />
-								<?=gettext("(may be required with some cable connections)"); ?><br />
 								<?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx " .
 								"or leave blank"); ?>
 							</td>

@@ -101,7 +101,6 @@ include("head.inc");
 			else
 				echo gettext("Pending");
 		?>
-				<?php $counter++; ?>
 		</td>
 		<td class="listr" align="center">
 		<?php	if ($gateways_status[$gname])
@@ -109,7 +108,6 @@ include("head.inc");
 			else
 				echo gettext("Pending");
 		?>
-				<?php $counter++; ?>
 		</td>
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">

@@ -1605,6 +1605,11 @@ function services_dhcrelay_configure() {
 	 * on the interface in which the destination server sits.
 	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
+	if (!is_array($srvips)) {
+		log_error("No destination ip has been configured!");
+		return;
+	}
+
 	foreach ($srvips as $srcidx => $srvip) {
 		unset($destif);
 		foreach ($iflist as $ifname) {

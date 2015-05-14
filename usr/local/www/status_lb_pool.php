@@ -53,10 +53,6 @@ $a_pool = &$config['load_balancer']['lbpool'];
 
 $lb_logfile = "{$g['varlog_path']}/relayd.log";
 
-$nentries = $config['syslog']['nentries'];
-if (!$nentries)
-	$nentries = 50;
-
 $now = time();
 $year = date("Y");
 

@@ -64,12 +64,12 @@ $shortcut_section = "captiveportal";
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
-
+/*
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
-
+*/
 if (!is_array($config['captiveportal']))
 	$config['captiveportal'] = array();
 
@@ -177,11 +177,8 @@ if ($_POST) {
 }
 
 // Get the MAC address
-//ToDo: REMOTE_ADDR seems to be no longer used. Need to determine which address to use
-$ip = getenv('REMOTE_ADDR');
-//$mymac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
-// Just get the first MAC for now
-$mymac = `/usr/sbin/arp -an | cut -d" " -f4 |head -n1`;
+$ip = $_SERVER['REMOTE_ADDR'];
+$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
 $mymac = str_replace("\n","",$mymac);
 
 include("head.inc");

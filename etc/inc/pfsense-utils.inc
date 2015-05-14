@@ -2921,7 +2921,7 @@ $g_languages = array (
 	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
 	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
 	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
-	"pt_BR" => array("codeset" => "ISO-8859-1", "desc" => gettext("Portuguese (Brazil)")),
+	"pt_BR" => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Brazil)")),
 	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
 	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
 	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),

@@ -462,11 +462,11 @@ if ($_POST) {
 			//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $_POST['name'], $origname);
 			update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $_POST['name'], $origname);
 			// NAT Outbound Rules
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('dstport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('target'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $_POST['name'], $origname);
 			// Alias in an alias
 			update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $_POST['name'], $origname);
 		}

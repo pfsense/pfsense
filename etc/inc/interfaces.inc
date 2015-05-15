@@ -1902,6 +1902,7 @@ function interfaces_sync_setup() {
 			$syncpeer = "-syncpeer";
 
 		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up", false);
+		mwexec("/sbin/ifconfig pfsync0 -defer", false);
 
 		sleep(1);
 

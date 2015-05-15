@@ -167,7 +167,7 @@ if ($curcat == "custom") {
 }
 
 if (is_numeric($_GET['end'])) {
-		$end = $_GET['end'];
+	$end = $_GET['end'];
 } else if ($_GET['end']) {
 	$end = strtotime($_GET['end']);
 	if ($end === FALSE || $end === -1) {
@@ -175,7 +175,7 @@ if (is_numeric($_GET['end'])) {
 		$end = $now;
 	}
 } else {
-		$end = $now;
+	$end = $now;
 }
 
 /* this should never happen */

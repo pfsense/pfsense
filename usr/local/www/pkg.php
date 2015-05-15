@@ -473,7 +473,7 @@ if ($pkg['tabs'] <> "") {
 						if($startingat > -1) {
 							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat={$startingat}&amp;display_maximum_rows={$display_maximum_rows}'>";
 						} else {
-							if($startingnat > 1) 
+							if($startingat > 1) 
 								$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=0&amp;display_maximum_rows={$display_maximum_rows}'>";
 						}
 						$final_footer .=  "<font size='2'><< Previous page</font></a>";

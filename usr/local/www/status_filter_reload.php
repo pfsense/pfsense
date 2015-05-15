@@ -27,7 +27,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_MODULE:	filter
 */
 
@@ -45,19 +45,20 @@ require_once("functions.inc");
 $pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
 $shortcut_section = "firewall";
 
-if(file_exists("{$g['varrun_path']}/filter_reload_status"))
+if (file_exists("{$g['varrun_path']}/filter_reload_status")) {
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");
+}
 
-if($_GET['getstatus']) {
+if ($_GET['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
-if($_POST['reloadfilter']) {
+if ($_POST['reloadfilter']) {
 	send_event("filter reload");
 	header("Location: status_filter_reload.php");
 	exit;
 }
-if($_POST['syncfilter']) {
+if ($_POST['syncfilter']) {
 	send_event("filter sync");
 	header("Location: status_filter_reload.php");
 	exit;
@@ -71,10 +72,10 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <br />
 <form action="status_filter_reload.php" method="post" name="filter">
-<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
+	<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
 <?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter" />
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter" />
 <?php endif; ?>
 </form>
 <br /><br /><br />
@@ -88,8 +89,6 @@ include("head.inc");
 <br/>
 
 <div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
-
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -108,9 +107,9 @@ function update_data(obj) {
 	} else {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> Obtaining filter status...');
 	}
-	if(result_text == "Initializing") {
+	if (result_text == "Initializing") {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> Initializing...');
-	} else if(result_text == "Done") {
+	} else if (result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
 		jQuery('#reloadinfo').css("visibility","hidden");
@@ -129,43 +128,46 @@ function update_data(obj) {
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.
  */
 if (typeof getURL == 'undefined') {
-  getURL = function(url, callback) {
-    if (!url)
-      throw 'No URL for getURL';
+	getURL = function(url, callback) {
+		if (!url) {
+			throw 'No URL for getURL';
+		}
 
-    try {
-      if (typeof callback.operationComplete == 'function')
-        callback = callback.operationComplete;
-    } catch (e) {}
-    if (typeof callback != 'function')
-      throw 'No callback function for getURL';
+		try {
+			if (typeof callback.operationComplete == 'function') {
+				callback = callback.operationComplete;
+			}
+		} catch (e) {}
+		if (typeof callback != 'function') {
+			throw 'No callback function for getURL';
+		}
 
-    var http_request = null;
-    if (typeof XMLHttpRequest != 'undefined') {
-      http_request = new XMLHttpRequest();
-    }
-    else if (typeof ActiveXObject != 'undefined') {
-      try {
-        http_request = new ActiveXObject('Msxml2.XMLHTTP');
-      } catch (e) {
-        try {
-          http_request = new ActiveXObject('Microsoft.XMLHTTP');
-        } catch (e) {}
-      }
-    }
-    if (!http_request)
-      throw 'Both getURL and XMLHttpRequest are undefined';
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+			http_request = new XMLHttpRequest();
+		} else if (typeof ActiveXObject != 'undefined') {
+			try {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				try {
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
+			}
+		}
+		if (!http_request) {
+			throw 'Both getURL and XMLHttpRequest are undefined';
+		}
 
-    http_request.onreadystatechange = function() {
-      if (http_request.readyState == 4) {
-        callback( { success : true,
-                    content : http_request.responseText,
-                    contentType : http_request.getResponseHeader("Content-Type") } );
-      }
-    }
-    http_request.open('GET', url, true);
-    http_request.send(null);
-  }
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
+					content : http_request.responseText,
+					contentType : http_request.getResponseHeader("Content-Type") } );
+			}
+		}
+		http_request.open('GET', url, true);
+		http_request.send(null);
+	}
 }
 window.setTimeout('update_status_thread()', 2500);
 //]]>

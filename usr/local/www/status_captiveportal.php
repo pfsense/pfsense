@@ -1,23 +1,23 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	status_captiveportal.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -29,7 +29,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_MODULE:	captiveportal
 */
 
@@ -47,26 +47,30 @@ require("shaper.inc");
 require("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 $pgtitle = array(gettext("Status: Captive portal"));
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal']))
-        $config['captiveportal'] = array();
+if (!is_array($config['captiveportal'])) {
+	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
-if (count($a_cp) == 1)
+if (count($a_cp) == 1) {
  $cpzone = current(array_keys($a_cp));
+}
 
 /* If the zone does not exist, do not display the invalid zone */
 if (!array_key_exists($cpzone, $a_cp)) {
 	$cpzone = "";
 }
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+}
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
 	captiveportal_disconnect_client($_GET['id']);
@@ -93,16 +97,17 @@ if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
 	if ($_GET['order']) {
-		if ($_GET['order'] == "ip")
+		if ($_GET['order'] == "ip") {
 			$order = 2;
-		else if ($_GET['order'] == "mac")
+		} else if ($_GET['order'] == "mac") {
 			$order = 3;
-		else if ($_GET['order'] == "user")
+		} else if ($_GET['order'] == "user") {
 			$order = 4;
-		else if ($_GET['order'] == "lastact")
+		} else if ($_GET['order'] == "lastact") {
 			$order = 5;
-		else
+		} else {
 			$order = 0;
+		}
 		usort($cpdb, "clientcmp");
 	}
 }
@@ -114,107 +119,139 @@ $mac_man = load_mac_manufacturer_table();
 
 <?php if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])): ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
-<tr><td class="tabnavtbl">
-<?php 
-	$tab_array = array();
-        $tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
-        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone=" . htmlspecialchars($cpzone));
-        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone=" . htmlspecialchars($cpzone));
-        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone=" . htmlspecialchars($cpzone));
-	$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone=" . htmlspecialchars($cpzone));
-        display_top_tabs($tab_array);
-?> 
-</td></tr>
-<tr>
-<td class="tabcont">
+	<tr><td class="tabnavtbl">
+<?php
+		$tab_array = array();
+		$tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
+		$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone=" . htmlspecialchars($cpzone));
+		$tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone=" . htmlspecialchars($cpzone));
+		$tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone=" . htmlspecialchars($cpzone));
+		$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone=" . htmlspecialchars($cpzone));
+		display_top_tabs($tab_array);
+?>
+	</td></tr>
+	<tr>
+		<td class="tabcont">
 <?php endif; ?>
 
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-  <tr>
-	<td width="20%" class="vncell" valign="top"> 
-               <br /><?=gettext("Captive Portal Zone"); ?><br/><br />
-	</td>
-	<td class="vncell" width="30%" align="center">
-	<?php if (count($a_cp) >  1) { ?>
-	<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
-		<select name="zone" class="formselect" onchange="document.form1.submit()">
-		<option value="">none</option>
-		<?php foreach ($a_cp as $cpkey => $cp) {
-		       echo "<option value=\"" . htmlspecialchars($cpkey) . "\" ";
-		       if ($cpzone == $cpkey)
-			       echo "selected=\"selected\"";
-		       echo ">" . htmlspecialchars($cp['zone']) . "</option>\n";
-		       }
-               ?>
-               </select>
-		<br />
-	</form>
-	<?php } else echo htmlspecialchars($a_cp[$cpzone]['zone']); ?>
-	</td>
-	<td colspan="3" width="50%"></td>
-  </tr>
-  <tr><td colspan="5"><br /></td></tr>
-<?php if (!empty($cpzone)): ?>
-  <tr>
-	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captive Portal status");?></td>
-  </tr>
-  <tr>
-    <td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>
-    <td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("MAC address");?></a></td>
-    <td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Username");?></a></td>
-	<?php if ($_GET['showact']): ?>
-    <td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
-    <td class="listhdr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Last activity");?></a></td>
-	<?php else: ?>
-    <td class="listhdr" colspan="2"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
-	<?php endif; ?>
-    <td class="list sort_ignore"></td>
-  </tr>
-<?php foreach ($cpdb as $cpent): ?>
-  <tr>
-    <td class="listlr"><?=$cpent[2];?></td>
-	<td class="listr">
-		<?php
-		$mac=trim($cpent[3]);
-		if (!empty($mac)) {
-			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+				<tr>
+					<td width="20%" class="vncell" valign="top">
+						<br /><?=gettext("Captive Portal Zone"); ?><br/><br />
+					</td>
+					<td class="vncell" width="30%" align="center">
+<?php
+	if (count($a_cp) >  1) {
+?>
+						<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
+							<select name="zone" class="formselect" onchange="document.form1.submit()">
+								<option value="">none</option>
+<?php
+		foreach ($a_cp as $cpkey => $cp) {
+			echo "<option value=\"" . htmlspecialchars($cpkey) . "\" ";
+			if ($cpzone == $cpkey) {
+				echo "selected=\"selected\"";
+			}
+			echo ">" . htmlspecialchars($cp['zone']) . "</option>\n";
 		}
-		?>&nbsp;
-	</td>
-    <td class="listr"><?=htmlspecialchars($cpent[4]);?>&nbsp;</td>
-	<?php if ($_GET['showact']):
-	$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-    <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
-	<?php else: ?>
-    <td class="listr" colspan="2"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-	<?php endif; ?>
-    <td valign="middle" class="list nowrap">
-      <a href="?zone=<?=htmlspecialchars($cpzone);?>&amp;order=<?=$_GET['order'];?>&amp;showact=<?=htmlspecialchars($_GET['showact']);?>&amp;act=del&amp;id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a>
-    </td>
-  </tr>
-<?php endforeach; endif; ?>
-</table>
+?>
+							</select>
+							<br />
+						</form>
+<?php
+	} else {
+		echo htmlspecialchars($a_cp[$cpzone]['zone']);
+	}
+?>
+					</td>
+					<td colspan="3" width="50%"></td>
+				</tr>
+				<tr>
+					<td colspan="5"><br /></td>
+				</tr>
+<?php
+	if (!empty($cpzone)):
+?>
+				<tr>
+					<td colspan="5" valign="top" class="listtopic"><?=gettext("Captive Portal status");?></td>
+				</tr>
+				<tr>
+					<td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>
+					<td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("MAC address");?></a></td>
+					<td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Username");?></a></td>
+<?php
+		if ($_GET['showact']):
+?>
+					<td class="listhdrr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
+					<td class="listhdr"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Last activity");?></a></td>
+<?php
+		else:
+?>
+					<td class="listhdr" colspan="2"><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
+<?php
+		endif;
+?>
+					<td class="list sort_ignore"></td>
+				</tr>
+<?php
+		foreach ($cpdb as $cpent):
+?>
+				<tr>
+					<td class="listlr"><?=$cpent[2];?></td>
+					<td class="listr">
+<?php
+			$mac=trim($cpent[3]);
+			if (!empty($mac)) {
+				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				print htmlentities($mac);
+				if (isset($mac_man[$mac_hi])) {
+					print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
+				}
+			}
+?>
+						&nbsp;
+					</td>
+					<td class="listr"><?=htmlspecialchars($cpent[4]);?>&nbsp;</td>
+<?php
+			if ($_GET['showact']):
+				$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+?>
+					<td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
+					<td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
+<?php
+			else:
+?>
+					<td class="listr" colspan="2"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
+<?php
+			endif;
+?>
+					<td valign="middle" class="list nowrap">
+						<a href="?zone=<?=htmlspecialchars($cpzone);?>&amp;order=<?=$_GET['order'];?>&amp;showact=<?=htmlspecialchars($_GET['showact']);?>&amp;act=del&amp;id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a>
+					</td>
+				</tr>
+<?php
+		endforeach;
+	endif;
+?>
+			</table>
 
 <?php if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])): ?>
-</td>
-</tr>
+		</td>
+	</tr>
 </table>
 <?php endif; ?>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
+	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if (!empty($cpzone)): ?>
 <?php if ($_GET['showact']): ?>
-<input type="hidden" name="showact" value="0" />
-<input type="submit" class="formbtn" value="<?=gettext("Don't show last activity");?>" />
+	<input type="hidden" name="showact" value="0" />
+	<input type="submit" class="formbtn" value="<?=gettext("Don't show last activity");?>" />
 <?php else: ?>
-<input type="hidden" name="showact" value="1" />
-<input type="submit" class="formbtn" value="<?=gettext("Show last activity");?>" />
+	<input type="hidden" name="showact" value="1" />
+	<input type="submit" class="formbtn" value="<?=gettext("Show last activity");?>" />
 <?php endif; ?>
-<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone);?>" />
+	<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php endif; ?>
 </form>
 <?php include("fend.inc"); ?>

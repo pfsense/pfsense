@@ -66,21 +66,21 @@ if ($_GET['graph']) {
 $now = time();
 
 if (is_numeric($_GET['start'])) {
-        $start = $_GET['start'];
+	$start = $_GET['start'];
 } else {
-        $start = $now - (8 * 3600);
+	$start = $now - (8 * 3600);
 }
 
 if (is_numeric($_GET['end'])) {
-        $end = $_GET['end'];
+	$end = $_GET['end'];
 } else {
-        $end = $now;
+	$end = $now;
 }
 
 /* this should never happen */
-if($end < $start) {
+if ($end < $start) {
 	log_error("start $start is smaller than end $end");
-        $end = $now;
+	$end = $now;
 }
 
 $seconds = $end - $start;
@@ -110,19 +110,19 @@ $defOptions = array(
 
 /* always set the average to the highest value as a fallback */
 $average = 1440 * 60;
-foreach($archives as $rra => $value) {
-        $archivestart = $now - ($rra * 60 * $value);
-        if($archivestart <= $start) {
-                $average = $rra * 60;
-                break;
-        }
+foreach ($archives as $rra => $value) {
+	$archivestart = $now - ($rra * 60 * $value);
+	if ($archivestart <= $start) {
+		$average = $rra * 60;
+		break;
+	}
 }
 
-foreach($scales as $scalelength => $value) {
-        if($scalelength >= $seconds) {
-                $scale = $value;
-                break;
-        }
+foreach ($scales as $scalelength => $value) {
+	if ($scalelength >= $seconds) {
+		$scale = $value;
+		break;
+	}
 }
 
 // log_error("start $start, end $end, archivestart $archivestart, average $average, scale $scale, seconds $seconds");
@@ -131,13 +131,12 @@ foreach($scales as $scalelength => $value) {
 $curif = explode("-", $curdatabase);
 $curif = "$curif[0]";
 $friendly = convert_friendly_interface_to_friendly_descr(strtolower($curif));
-if($friendly == "") {
+if ($friendly == "") {
 	$friendly = $curif;
 }
 $search = array("-", ".rrd", $curif);
 $replace = array(" :: ", "", $friendly);
 $prettydb = ucwords(str_replace($search, $replace, $curdatabase));
-
 
 $rrddbpath = "/var/db/rrd/";
 $rrdtmppath = "/tmp/";
@@ -169,25 +168,26 @@ read_altq_config();
 if ($altq_list_queues[$curif]) {
 	$altq =& $altq_list_queues[$curif];
 	switch ($altq->GetBwscale()) {
-        case "Gb":
-                $factor = 1024 * 1024 * 1024;
-        break;
-        case "Mb":
-                $factor = 1024 * 1024;
-        break;
-        case "Kb":
-                $factor = 1024;
-        break;
-        case "b":
-        default:
-                $factor = 1;
-        break;
-        }
+		case "Gb":
+			$factor = 1024 * 1024 * 1024;
+			break;
+		case "Mb":
+			$factor = 1024 * 1024;
+			break;
+		case "Kb":
+			$factor = 1024;
+			break;
+		case "b":
+		default:
+			$factor = 1;
+			break;
+	}
 	$upstream = (($altq->GetBandwidth()*$factor)/8);
-	if ($upstream != 0)
+	if ($upstream != 0) {
 		$downstream = $upstream; /* XXX: Ugly hack */
-	else
+	} else {
 		$downstream = $upstream = 12500000;
+	}
 	$upif = $curif;
 	$downif = "lan"; /* XXX should this be set to something else?! */
 } else {
@@ -262,71 +262,74 @@ $colorcaptiveportalusers = array('990000');
 
 /* select theme colors if the inclusion file exists */
 $rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
-if(file_exists($rrdcolors)) {
+if (file_exists($rrdcolors)) {
 	include($rrdcolors);
 } else {
 	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"),$g['theme']));
 }
 
 switch ($curstyle) {
-case "absolute":
-	$multiplier = 1;
-	$AREA = "LINE1";
-	break;
-default:
-	$multiplier = -1;
-	$AREA = "AREA";
-	break;
+	case "absolute":
+		$multiplier = 1;
+		$AREA = "LINE1";
+		break;
+	default:
+		$multiplier = -1;
+		$AREA = "AREA";
+		break;
 }
 
 function timeDiff($time, $opt = array()) {
-    // The default values
-    $defOptions = array(
-        'to' => 0,
-        'parts' => 1,
-        'precision' => 'second',
-        'distance' => TRUE,
-        'separator' => ', '
-    );
-    $opt = array_merge($defOptions, $opt);
-    // Default to current time if no to point is given
-    (!$opt['to']) && ($opt['to'] = time());
-    // Init an empty string
-    $str = '';
-    // To or From computation
-    $diff = ($opt['to'] > $time) ? $opt['to'] - $time : $time - $opt['to'];
-    // An array of label => periods of seconds;
-    $periods = array(
-        'decade' => 315569260,
-        'year' => 31539600,
-        'month' => 2629744,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'minute' => 60,
-        'second' => 1
-    );
+	// The default values
+	$defOptions = array(
+		'to' => 0,
+		'parts' => 1,
+		'precision' => 'second',
+		'distance' => TRUE,
+		'separator' => ', '
+	);
+	$opt = array_merge($defOptions, $opt);
+	// Default to current time if no to point is given
+	(!$opt['to']) && ($opt['to'] = time());
+	// Init an empty string
+	$str = '';
+	// To or From computation
+	$diff = ($opt['to'] > $time) ? $opt['to'] - $time : $time - $opt['to'];
+	// An array of label => periods of seconds;
+	$periods = array(
+		'decade' => 315569260,
+		'year' => 31539600,
+		'month' => 2629744,
+		'week' => 604800,
+		'day' => 86400,
+		'hour' => 3600,
+		'minute' => 60,
+		'second' => 1
+	);
 	// 31539600, 31556926, 31622400
-    // Round to precision
-    if ($opt['precision'] != 'second')
-        $diff = round(($diff / $periods[$opt['precision']])) * $periods[$opt['precision']];
-    // Report the value is 'less than 1 ' precision period away
-    (0 == $diff) && ($str = 'less than 1 ' . $opt['precision']);
-    // Loop over each period
-    foreach ($periods as $label => $value) {
-        // Stitch together the time difference string
-        (($x = round($diff / $value)) && $opt['parts']--) && $str .= ($str ? $opt['separator'] : '') . ($x .' '. $label. ($x > 1 ? 's' : ''));
-        // Stop processing if no more parts are going to be reported.
-        if ($opt['parts'] == 0 || $label == $opt['precision']) break;
-        // Get ready for the next pass
-        $diff -= $x * $value;
-    }
-    $opt['distance'] && $str .= ($str && $opt['to'] >= $time) ? ' ago' : ' away';
-    return $str;
+	// Round to precision
+	if ($opt['precision'] != 'second') {
+		$diff = round(($diff / $periods[$opt['precision']])) * $periods[$opt['precision']];
+	}
+	// Report the value is 'less than 1 ' precision period away
+	(0 == $diff) && ($str = 'less than 1 ' . $opt['precision']);
+	// Loop over each period
+	foreach ($periods as $label => $value) {
+		// Stitch together the time difference string
+		(($x = round($diff / $value)) && $opt['parts']--) && $str .= ($str ? $opt['separator'] : '') . ($x .' '. $label. ($x > 1 ? 's' : ''));
+		// Stop processing if no more parts are going to be reported.
+		if ($opt['parts'] == 0 || $label == $opt['precision']) {
+			break;
+		}
+		// Get ready for the next pass
+		$diff -= $x * $value;
+	}
+	$opt['distance'] && $str .= ($str && $opt['to'] >= $time) ? ' ago' : ' away';
+	return $str;
 }
 
 
-if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for traffic stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step --vertical-label \"bits/sec\" ";
@@ -477,8 +480,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"$curif-bytes_out6_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif(strstr($curdatabase, "-throughput.rrd")) {
+} elseif (strstr($curdatabase, "-throughput.rrd")) {
 	/* define graphcmd for throughput stats */
 	/* this gathers all interface statistics, the database does not actually exist */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
@@ -504,7 +506,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphtputbyib = "";
 	$graphtputbyob = "";
 	$graphtputbytb = "";
-	foreach($iflist as $ifname) {
+	foreach ($iflist as $ifname) {
 		/* collect all interface stats */
 		$graphcmd .= "DEF:\"{$ifname}-in_bytes_pass={$rrddbpath}{$ifname}-traffic.rrd:inpass:AVERAGE:step=$step\" ";
 		$graphcmd .= "DEF:\"{$ifname}-out_bytes_pass={$rrddbpath}{$ifname}-traffic.rrd:outpass:AVERAGE:step=$step\" ";
@@ -605,8 +607,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "GPRINT:\"tput-bytes_out_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -731,8 +732,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-pps_out6_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -764,8 +764,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for vpn users stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -783,8 +782,7 @@ elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-users:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for states stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start -$seconds -e -$average --step $step ";
@@ -837,8 +835,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for processor stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -889,8 +886,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd .= "GPRINT:\"processes:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for memory usage stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -941,8 +937,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for mbuf usage stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -985,8 +980,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"max:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queue stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -1004,18 +998,21 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	}
 	foreach ($a_queues as $name => $q) {
 		$color = "$colorqueuesup[$t]";
-		if($t > 0) { $stack = ":STACK"; }
+		if ($t > 0) {
+			$stack = ":STACK";
+		}
 		$graphcmd .= "DEF:\"$name=$rrddbpath$curdatabase:$name:AVERAGE:step=$step\" ";
 		$graphcmd .= "CDEF:\"$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out=$name-bytes_out,8,*\" ";
 		$graphcmd .= "$AREA:\"$name-bits_out#${color}:$name$stack\" ";
 		$t++;
-		if($t > 7) { $t = 0; }
+		if ($t > 7) {
+			$t = 0;
+		}
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -1027,26 +1024,29 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 		$a_queues =& $altq->get_queue_list();
 		$t = 0;
 	} else {
-        	$a_queues = array();
+			$a_queues = array();
 		$i = 0;
 		$t = 0;
 	}
 	foreach ($a_queues as $name => $q) {
 		$color = "$colorqueuesdropup[$t]";
-		if($t > 0) { $stack = ":STACK"; }
+		if ($t > 0) {
+			$stack = ":STACK";
+		}
 		$graphcmd .= "DEF:\"$name=$rrddbpath$curdatabase:$name:AVERAGE:step=$step\" ";
 		$graphcmd .= "CDEF:\"$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out=$name-bytes_out,8,*\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out_neg=$name-bits_out,$multiplier,*\" ";
 		$graphcmd .= "$AREA:\"$name-bits_out_neg#${color}:$name$stack\" ";
 		$t++;
-		if($t > 7) { $t = 0; }
+		if ($t > 7) {
+			$t = 0;
+		}
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
-	/* make a link quality graphcmd, we only have WAN for now, others too follow */
+} elseif ((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* make a link quality graphcmd */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
 		--start $start --end $end --step $step  \\
 		--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" \\
@@ -1067,7 +1067,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		AREA:delay#$colorqualityrtt[0]:\"> 420      ms\" \\
 		GPRINT:delay:MIN:\"\t\tMin\\:  %7.2lf ms\" \\
 		GPRINT:loss:MIN:\"\tMin\\: %3.1lf %%\\n\" \\
-    		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
+		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
 		GPRINT:delay:AVERAGE:\"\t\tAvg\\:  %7.2lf ms\" \\
 		GPRINT:loss:AVERAGE:\"\tAvg\\: %3.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
@@ -1080,8 +1080,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
 		LINE1:delay#$colorqualityrtt[5]:\"Delay average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\"";
-}
-elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
 		--start $start --end $end --step $step \\
@@ -1119,8 +1118,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
 		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"signal\" ";
@@ -1137,8 +1135,7 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-rssi:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -1156,8 +1153,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-totalusers_d:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -1178,8 +1174,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+} elseif ((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for ntpd (was: mbuf) usage stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
@@ -1222,15 +1217,14 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
-}
-else {
+} else {
 	$data = false;
 	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
 }
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
-	if ((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
+	if ((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15) {
 		if ($data) {
 			$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
@@ -1246,16 +1240,16 @@ if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 		usleep(500);
 	}
 }
-if(($graphcmdreturn <> 0) || (! $data)) {
+if (($graphcmdreturn <> 0) || (! $data)) {
 	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
-	if(strstr($curdatabase, "queues")) {
+	if (strstr($curdatabase, "queues")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
 		unlink_if_exists($rrddbpath . $curif . $queues);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();
 	}
-	if(strstr($curdatabase, "queuesdrop")) {
+	if (strstr($curdatabase, "queuesdrop")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
 		unlink_if_exists($rrddbpath . $curdatabase);
 		flush();
@@ -1271,7 +1265,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	readfile($file);
 } else {
 	$file = "$rrdtmppath$curdatabase-$curgraph.png";
-	if(file_exists("$file")) {
+	if (file_exists("$file")) {
 		header("Content-type: image/png");
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

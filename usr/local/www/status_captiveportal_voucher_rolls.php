@@ -46,16 +46,18 @@ require("captiveportal.inc");
 require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Voucher Rolls"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
@@ -99,12 +101,13 @@ include("head.inc");
 				</tr>
 				<?php
 					$voucherlck = lock("vouche{$cpzone}r");
-					$i = 0; foreach($a_roll as $rollent):
-					$used = voucher_used_count($rollent['number']);
-					$active = count(voucher_read_active_db($rollent['number']),$rollent['minutes']);
-					$ready = $rollent['count'] - $used;
-					/* used also count active vouchers, remove them */
-					$used = $used - $active;
+					$i = 0;
+					foreach($a_roll as $rollent):
+						$used = voucher_used_count($rollent['number']);
+						$active = count(voucher_read_active_db($rollent['number']),$rollent['minutes']);
+						$ready = $rollent['count'] - $used;
+						/* used also count active vouchers, remove them */
+						$used = $used - $active;
 				?>
 				<tr>
 					<td class="listlr">
@@ -129,7 +132,11 @@ include("head.inc");
 						<?=htmlspecialchars($ready); ?>&nbsp;
 					</td>
 				</tr>
-				<?php $i++; endforeach; unlock($voucherlck); ?>
+				<?php
+						$i++;
+					endforeach;
+					unlock($voucherlck);
+				?>
 			</table>
 		</td>
 	</tr>

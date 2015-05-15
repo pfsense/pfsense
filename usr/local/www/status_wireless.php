@@ -44,15 +44,16 @@ $shortcut_section = "wireless";
 include("head.inc");
 
 $if = $_POST['if'];
-if($_GET['if'] <> "")
+if ($_GET['if'] <> "") {
 	$if = $_GET['if'];
+}
 
 $ciflist = get_configured_interface_with_descr();
-if(empty($if)) {
+if (empty($if)) {
 	/* Find the first interface
 	   that is wireless */
-	foreach($ciflist as $interface => $ifdescr) {
-		if(is_interface_wireless(get_real_interface($interface))) {
+	foreach ($ciflist as $interface => $ifdescr) {
+		if (is_interface_wireless(get_real_interface($interface))) {
 			$if = $interface;
 			break;
 		}
@@ -68,51 +69,53 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td>
+	<tr><td>
 <?php
-$tab_array = array();
-foreach($ciflist as $interface => $ifdescr) {
-	if (is_interface_wireless(get_real_interface($interface))) {
-		$enabled = false;
-		if($if == $interface)
-			$enabled = true;
-		$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
+	$tab_array = array();
+	foreach ($ciflist as $interface => $ifdescr) {
+		if (is_interface_wireless(get_real_interface($interface))) {
+			$enabled = false;
+			if ($if == $interface) {
+				$enabled = true;
+			}
+			$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
+		}
 	}
-}
-$rwlif = get_real_interface($if);
-if($_POST['rescanwifi'] <> "") {
-	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
-	$savemsg = gettext("Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.");
-}
-if ($savemsg) print_info_box($savemsg);
-display_top_tabs($tab_array);
+	$rwlif = get_real_interface($if);
+	if ($_POST['rescanwifi'] <> "") {
+		mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
+		$savemsg = gettext("Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.");
+	}
+	if ($savemsg) print_info_box($savemsg);
+	display_top_tabs($tab_array);
 ?>
-</td></tr>
-<tr><td>
-<div id="mainarea" class="tabcont">
-<input type="hidden" name="if" id="if" value="<?php echo htmlspecialchars($if); ?>">
-<b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br /><br />
-<b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
-<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
-	<thead>
-		<tr bgcolor='#990000'>
-			<td><b><font color='#ffffff'>SSID</font></b></td>
-			<td><b><font color='#ffffff'>BSSID</font></b></td>
-			<td><b><font color='#ffffff'>CHAN</font></b></td>
-			<td><b><font color='#ffffff'>RATE</font></b></td>
-			<td><b><font color='#ffffff'>RSSI</font></b></td>
-			<td><b><font color='#ffffff'>INT</font></b></td>
-			<td><b><font color='#ffffff'>CAPS</font></b></td>
-		</tr>
-	</thead>
-	<tbody>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea" class="tabcont">
+				<input type="hidden" name="if" id="if" value="<?php echo htmlspecialchars($if); ?>">
+				<b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br /><br />
+				<b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
+				<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
+					<thead>
+						<tr bgcolor='#990000'>
+							<td><b><font color='#ffffff'>SSID</font></b></td>
+							<td><b><font color='#ffffff'>BSSID</font></b></td>
+							<td><b><font color='#ffffff'>CHAN</font></b></td>
+							<td><b><font color='#ffffff'>RATE</font></b></td>
+							<td><b><font color='#ffffff'>RSSI</font></b></td>
+							<td><b><font color='#ffffff'>INT</font></b></td>
+							<td><b><font color='#ffffff'>CAPS</font></b></td>
+						</tr>
+					</thead>
+					<tbody>
 <?php
 	exec("/sbin/ifconfig {$rwlif} list scan 2>&1", $states, $ret);
 	/* Skip Header */
 	array_shift($states);
 
 	$counter=0;
-	foreach($states as $state) {
+	foreach ($states as $state) {
 		/* Split by Mac address for the SSID Field */
 		$split = preg_split("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state);
 		preg_match("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state, $bssid);
@@ -137,25 +140,25 @@ display_top_tabs($tab_array);
 		print "</tr>\n";
 	}
 ?>
-	</tbody>
-</table>
-<b><?php echo gettext("Associated or ad-hoc peers"); ?></b><br />
-<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
-	<thead>
-		<tr bgcolor='#990000'>
-			<td><b><font color='#ffffff'>ADDR</font></b></td>
-			<td><b><font color='#ffffff'>AID</font></b></td>
-			<td><b><font color='#ffffff'>CHAN</font></b></td>
-			<td><b><font color='#ffffff'>RATE</font></b></td>
-			<td><b><font color='#ffffff'>RSSI</font></b></td>
-			<td><b><font color='#ffffff'>IDLE</font></b></td>
-			<td><b><font color='#ffffff'>TXSEQ</font></b></td>
-			<td><b><font color='#ffffff'>RXSEQ</font></b></td>
-			<td><b><font color='#ffffff'>CAPS</font></b></td>
-			<td><b><font color='#ffffff'>ERP</font></b></td>
-		</tr>
-	</thead>
-	<tbody>
+					</tbody>
+				</table>
+				<b><?php echo gettext("Associated or ad-hoc peers"); ?></b><br />
+				<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
+					<thead>
+						<tr bgcolor='#990000'>
+							<td><b><font color='#ffffff'>ADDR</font></b></td>
+							<td><b><font color='#ffffff'>AID</font></b></td>
+							<td><b><font color='#ffffff'>CHAN</font></b></td>
+							<td><b><font color='#ffffff'>RATE</font></b></td>
+							<td><b><font color='#ffffff'>RSSI</font></b></td>
+							<td><b><font color='#ffffff'>IDLE</font></b></td>
+							<td><b><font color='#ffffff'>TXSEQ</font></b></td>
+							<td><b><font color='#ffffff'>RXSEQ</font></b></td>
+							<td><b><font color='#ffffff'>CAPS</font></b></td>
+							<td><b><font color='#ffffff'>ERP</font></b></td>
+						</tr>
+					</thead>
+					<tbody>
 
 <?php
 	$states = array();
@@ -163,7 +166,7 @@ display_top_tabs($tab_array);
 	array_shift($states);
 
 	$counter=0;
-	foreach($states as $state) {
+	foreach ($states as $state) {
 		$split = preg_split("/[ ]+/i", $state);
 		/* Split the rest by using spaces for this line using the 2nd part */
 		print "<tr>";
@@ -183,13 +186,14 @@ display_top_tabs($tab_array);
 /* XXX: what stats to we get for adhoc mode? */
 
 ?>
-	</tbody>
-</table>
-</div><br />
-	<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br />
-	<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
-		S = Short preamble, s = Short slot time
-</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<br />
+			<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br />
+			<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot time
+		</td>
+	</tr>
 </table>
 
 <?php include("fend.inc"); ?>

@@ -64,8 +64,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
-	!$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+    !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	echo gettext("UPnP is currently disabled.");
 	include("fend.inc");
 	exit;
@@ -73,23 +73,23 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
 ?>
 <div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-   <tr>
-     <td class="tabcont" >
-      <form action="status_upnp.php" method="post">
-      <input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /> <?=gettext("all currently connected sessions");?>.
-    </form>
-    </td>
-   </tr>
-   <tr>
-    <td class="tabcont" >
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
-    	<tr>
-          <td width="10%" class="listhdrr"><?=gettext("Port");?></td>
-          <td width="10%" class="listhdrr"><?=gettext("Protocol");?></td>
-          <td width="20%" class="listhdrr"><?=gettext("Internal IP");?></td>
-          <td width="10%" class="listhdrr"><?=gettext("Int. Port");?></td>
-          <td width="50%" class="listhdr"><?=gettext("Description");?></td>
-		</tr>
+	<tr>
+		<td class="tabcont" >
+			<form action="status_upnp.php" method="post">
+				<input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /> <?=gettext("all currently connected sessions");?>.
+			</form>
+		</td>
+	</tr>
+	<tr>
+		<td class="tabcont" >
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+				<tr>
+					<td width="10%" class="listhdrr"><?=gettext("Port");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Protocol");?></td>
+					<td width="20%" class="listhdrr"><?=gettext("Internal IP");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Int. Port");?></td>
+					<td width="50%" class="listhdr"><?=gettext("Description");?></td>
+					</tr>
 <?php
 	foreach ($rdr_entries as $rdr_entry) {
 		if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) keep state label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches)) {
@@ -99,30 +99,30 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
 			$rdr_ip = $matches[5];
 			$rdr_iport = $matches[6];
 ?>
-        <tr>
-          <td class="listlr">
-		<?php print $rdr_port;?>
-          </td>
-          <td class="listr">
-		<?php print $rdr_proto;?>
-          </td>
-          <td class="listr">
-		<?php print $rdr_ip;?>
-          </td>
-          <td class="listr">
-		<?php print $rdr_iport;?>
-          </td>
-          <td class="listr">
-		<?php print $rdr_label;?>
-          </td>
-        </tr>
+				<tr>
+					<td class="listlr">
+						<?php print $rdr_port;?>
+					</td>
+					<td class="listr">
+						<?php print $rdr_proto;?>
+					</td>
+					<td class="listr">
+						<?php print $rdr_ip;?>
+					</td>
+					<td class="listr">
+						<?php print $rdr_iport;?>
+					</td>
+					<td class="listr">
+						<?php print $rdr_label;?>
+					</td>
+				</tr>
 <?php
 		}
 	}
 ?>
-      </table>
-     </td>
-    </tr>
+			</table>
+		</td>
+	</tr>
 </table>
 </div>
 <?php include("fend.inc"); ?>

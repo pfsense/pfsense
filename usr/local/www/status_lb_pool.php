@@ -74,7 +74,7 @@ if ($_POST) {
 		$newservers = array();
 		foreach ($_POST as $name => $value) {
 			/* Look through the POST vars to find the pool data */
-			if (strpos($name, '|') !== false){
+			if (strpos($name, '|') !== false) {
 				list($poolname, $ip) = explode("|", $name);
 				$ip = str_replace('_', '.', $ip);
 				$newservers[$poolname][] = $ip;
@@ -112,32 +112,34 @@ if ($_POST) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status load balancer pools">
 	<tr><td class="tabnavtbl">
 	<?php
-	/* active tabs */
-	$tab_array = array();
-	$tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
-	$tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
-	display_top_tabs($tab_array);
+		/* active tabs */
+		$tab_array = array();
+		$tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
+		$tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
+		display_top_tabs($tab_array);
 	?>
 	</td></tr>
 	<tr>
-	<td>
-	<div id="mainarea">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" id="sortabletable" summary="main area">
-		<tr>
-		<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
-		<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
-		<td width="20%" class="listhdrr"><?=gettext("Servers");?></td>
-		<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
-		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
-		</tr>
-		<?php foreach ($a_pool as & $pool): ?>
-		<tr>
-		<td class="listlr">
-			<?=$pool['name'];?>
-		</td>
-		<td class="listr" align="center" >
-		<?php
-		switch($pool['mode']) {
+		<td>
+			<div id="mainarea">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" id="sortabletable" summary="main area">
+				<tr>
+					<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
+					<td width="20%" class="listhdrr"><?=gettext("Servers");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
+					<td width="30%" class="listhdr"><?=gettext("Description");?></td>
+				</tr>
+<?php
+	foreach ($a_pool as & $pool):
+?>
+				<tr>
+					<td class="listlr">
+						<?=$pool['name'];?>
+					</td>
+					<td class="listr" align="center" >
+<?php
+		switch ($pool['mode']) {
 			case "loadbalance":
 				echo "Load balancing";
 				break;
@@ -147,11 +149,11 @@ if ($_POST) {
 			default:
 				echo "(default)";
 		}
-		?>
-		</td>
-		<td class="listr" align="center">
-		<table border="0" cellpadding="2" cellspacing="0" summary="status">
-		<?php
+?>
+					</td>
+					<td class="listr" align="center">
+						<table border="0" cellpadding="2" cellspacing="0" summary="status">
+<?php
 		$pool_hosts=array();
 		foreach ((array) $pool['servers'] as $server) {
 			$svr['ip']['addr']=$server;
@@ -168,7 +170,7 @@ if ($_POST) {
 		asort($pool_hosts);
 
 		foreach ((array) $pool_hosts as $server) {
-			if($server['ip']['addr']!="") {
+			if ($server['ip']['addr']!="") {
 				switch ($server['ip']['state']) {
 					case 'up':
 						$bgcolor = "#90EE90";  // lightgreen
@@ -193,31 +195,35 @@ if ($_POST) {
 				}
 				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
 #				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']} ";
-				if($server['ip']['avail'])
-				  echo " ({$server['ip']['avail']}) ";
+				if ($server['ip']['avail']) {
+					echo " ({$server['ip']['avail']}) ";
+				}
 				echo "&nbsp;</td></tr>";
 			}
 		}
-		?>
-		</table>
+?>
+						</table>
+					</td>
+					<td class="listr" >
+						<?php echo $pool['monitor']; ?>
+					</td>
+					<td class="listbg" >
+						<?=$pool['descr'];?>
+					</td>
+				</tr>
+<?php
+	endforeach;
+?>
+				<tr>
+					<td colspan="5">
+						<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>" />
+						<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>" />
+					</td>
+				</tr>
+			</table>
+			</div>
 		</td>
-		<td class="listr" >
-			<?php echo $pool['monitor']; ?>
-		</td>
-		<td class="listbg" >
-			<?=$pool['descr'];?>
-		</td>
-		</tr>
-		<?php endforeach; ?>
-		<tr>
-			<td colspan="5">
-			<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>" />
-			<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>" />
-			</td>
-		</tr>
-		</table>
-	</div>
-</td></tr>
+	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

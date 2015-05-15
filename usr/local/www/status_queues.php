@@ -42,9 +42,9 @@
 ##|*MATCH=status_queues.php*
 ##|-PRIV
 
-header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
-header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
-header("Cache-Control: no-cache, no-store, must-revalidate" ); // HTTP/1.1
+header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
+header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 
 require("guiconfig.inc");
@@ -64,48 +64,55 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 	sleep(1);
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
- if (!$fd) {
-	$error = "Something wrong happened during comunication with stat gathering";
+if (!$fd) {
+	$error = "Something wrong happened during communication with stat gathering";
 } else {
 	$stats = "";
-	while(!feof($fd))
+	while(!feof($fd)) {
 		$stats .= fread($fd, 4096);
+	}
 	fclose($fd);
 	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
 	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
-	if ($altqstats == -1)
+	if ($altqstats == -1) {
 		$error = "No queue statistics could be read.";
+	}
 }
 if ($_REQUEST['getactivity']) {
 	$statistics = array();
 	$bigger_stat = 0;
 	$stat_type = $_REQUEST['stats'];
 	/* build the queue stats. */
-	foreach($altqstats['queue'] as $q) {
+	foreach ($altqstats['queue'] as $q) {
 		statsQueues($q);
 	}
 	/* calculate the bigger amount of packets or bandwidth being moved through all queues. */
 	if ($stat_type == "0")
 	{
-		foreach($statistics as $q) {
-			if ($bigger_stat < $q->pps)
+		foreach ($statistics as $q) {
+			if ($bigger_stat < $q->pps) {
 				$bigger_stat = $q->pps;
+			}
 		}
 	}
 	else
 	{
-		foreach($statistics as $q) {
-			if ($bigger_stat < $q->bandwidth)
+		foreach ($statistics as $q) {
+			if ($bigger_stat < $q->bandwidth) {
 				$bigger_stat = $q->bandwidth;
+			}
 		}
 	}
 	$finscript = "";
-	foreach($statistics as $q) {
-		if ($stat_type == "0")
+	foreach ($statistics as $q) {
+		if ($stat_type == "0") {
 			$packet_s = round(150 * (1 - $q->pps / $bigger_stat), 0);
-		else
+		} else {
 			$packet_s = round(150 * (1 - $q->bandwidth / $bigger_stat), 0);
-		if ($packet_s < 0) {$packet_s = 0;}
+		}
+		if ($packet_s < 0) {
+			$packet_s = 0;
+		}
 		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
 		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (150 - $packet_s) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps,1) . "');";
@@ -127,11 +134,12 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php
-if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
+if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	echo gettext("Traffic shaping is not configured.");
 	include("fend.inc");
 	echo "</body></html>";
-	exit;}
+	exit;
+}
 ?>
 <?php if (!$error): ?>
 <form action="status_queues.php" method="post">
@@ -151,7 +159,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	function activitycallback(transport) {
 		setTimeout('getqueueactivity()', 5100);
 	}
-	jQuery(document).ready(function(){
+	jQuery(document).ready(function() {
 		setTimeout('getqueueactivity()', 150);
 	});
 //]]>
@@ -177,9 +185,10 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 		<td class="listhdr" width="1%"><?=gettext("Drops"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Length"); ?></td>
 	</tr>
-	<?php
+<?php
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
-	processQueues($altqstats, 0, "")?>
+	processQueues($altqstats, 0, "")
+?>
 <?php endif; ?>
 </table>
 <p>
@@ -190,11 +199,12 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <script type="text/javascript">
 //<![CDATA[
 	function StatsShowHide(classname) {
-    var firstrow = jQuery("." + classname).first();
-    if (firstrow.is(':visible')) {
-        jQuery("." + classname).hide();}
-    else {
-        jQuery("." + classname).show();}
+		var firstrow = jQuery("." + classname).first();
+		if (firstrow.is(':visible')) {
+			jQuery("." + classname).hide();
+		} else {
+			jQuery("." + classname).show();
+		}
 	}
 //]]>
 </script>
@@ -203,11 +213,13 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 </body>
 </html>
 <?php
-function processQueues($altqstats, $level, $parent_name){
+function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
 	$gray_value = 190 + $level * 10;
-	if ($gray_value > 250) $gray_value = 255;
+	if ($gray_value > 250) {
+		$gray_value = 255;
+	}
 	$row_background = str_repeat(dechex($gray_value), 3);
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
@@ -223,43 +235,45 @@ function processQueues($altqstats, $level, $parent_name){
 			echo "<tr><td colspan=\"8\" style=\"padding: 2px;\"><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
 			$prev_if = $q['interface'];
 		}
-		?>
+?>
 		<tr class="<?php echo $parent_name?>">
 			<td bgcolor="#<?php echo $row_background?>" style="padding-left: <?php echo $level * 20?>px;">
 				<font color="#000000">
 					<?
-					if (strstr($q['name'], "root_"))
+					if (strstr($q['name'], "root_")) {
 						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
-					else
+					} else {
 						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
+					}
 					?>
 				</font>
 			</td>
-			<?php
-			$cpuUsage = 0;
-			echo "<td class=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='middle' alt='' /> ";
-			if (is_array($q['queue'])) {
-				echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
-			}
-			echo " </td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";
-			?>
+<?php
+		$cpuUsage = 0;
+		echo "<td class=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
+		echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
+		echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
+		echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
+		echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='middle' alt='' /> ";
+		if (is_array($q['queue'])) {
+			echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
+		}
+		echo " </td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
+		echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";
+?>
 		</tr>
-		<?php
-		if (is_array($q['queue']))
+<?php
+		if (is_array($q['queue'])) {
 			processQueues($q, $level + 1, $parent_name);
+		}
 	};
 }
-function statsQueues($xml){
+function statsQueues($xml) {
 	global $statistics;
 
 	$current = new QueueStats();
@@ -272,7 +286,7 @@ function statsQueues($xml){
 	$current->suspends = intval($xml['suspends']);
 	$current->drops = intval($xml['droppedpkts']);
 	if (is_array($xml['queue'])) {
-		foreach($xml['queue'] as $q) {
+		foreach ($xml['queue'] as $q) {
 			$child = statsQueues($q);
 			$current->pps += $child->pps;
 			$current->bandwidth += $child->bandwidth;

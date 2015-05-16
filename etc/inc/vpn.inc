@@ -4,7 +4,7 @@
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2008 Ermal Lu�i
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)

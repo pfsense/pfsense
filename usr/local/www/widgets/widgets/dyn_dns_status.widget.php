@@ -1,7 +1,7 @@
 <?php
 /*
 	Original status page code from: services_dyndns.php
-	Copyright (C) 2008 Ermal Luci
+	Copyright (C) 2008 Ermal Luçi
 	Edits to convert it to a widget: dyn_dns_status.widget.php
 	Copyright (C) 2013 Stanley P. Miller \ stan-qaz
 	All rights reserved.

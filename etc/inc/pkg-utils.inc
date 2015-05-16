@@ -7,7 +7,7 @@
 	HISTORY
 		$Id$
 
-	Copyright (C) 2010 Ermal Luci
+	Copyright (C) 2010 Ermal Luçi
 	Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
 	All rights reserved.
 	Redistribution and use in source and binary forms, with or without

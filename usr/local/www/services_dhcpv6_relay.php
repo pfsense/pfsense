@@ -138,11 +138,11 @@ function enable_change(enable_over) {
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 		<tr>
-<?php 
+<?php
 	if ($dhcpd_enabled) {
 		echo "<td>DHCPv6 Server is currently enabled.  Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.";
 			echo "</td></tr></table></div></td></tr></table></form>";
-			include("fend.inc"); 
+			include("fend.inc");
 			echo "</body></html>";
 			exit;
 		}

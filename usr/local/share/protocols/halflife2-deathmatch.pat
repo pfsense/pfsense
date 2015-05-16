@@ -3,7 +3,7 @@
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Half-Life
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
-# 
+#
 # By Clayton Macleod <cherrytwist TA gmail.com>
 
 halflife2-deathmatch

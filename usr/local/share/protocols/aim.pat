@@ -7,7 +7,7 @@
 # Usually runs on port 5190
 #
 # This may also match ICQ traffic.
-# 
+#
 # This pattern has been tested and is believed to work well.
 
 aim
@@ -17,8 +17,8 @@ aim
 # The next three bits match various parts of the TOC signon process.
 # The third one is the magic number "*", then 0x01 for "signon", then up to four
 # bytes ("up to" because l7-filter strips out nulls) which contain a sequence
-# number (2 bytes) the data length (2 more) and 3 nulls (which don't count), 
-# then 0x01 for the version number (not sure if there ever has been another 
+# number (2 bytes) the data length (2 more) and 3 nulls (which don't count),
+# then 0x01 for the version number (not sure if there ever has been another
 # version)
 # The fourth one is a command string, followed by some stuff, then the
 # beginning of the "roasted" password

@@ -334,7 +334,7 @@ if ($_POST) {
 
 	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
 		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
-                
+
         if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
             if ($config['system']['crypto_hardware'] == "glxsb") {
                 if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128")

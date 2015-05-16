@@ -65,7 +65,7 @@ setup_zfs_filesystem()
       if [ "${PARTGEOM}" = "MBR" ]
       then
         # Lets stamp the proper ZFS boot loader
-        echo_log "Setting up ZFS boot loader support" 
+        echo_log "Setting up ZFS boot loader support"
         rc_halt "zpool set bootfs=${ZPOOLNAME} ${ZPOOLNAME}"
         rc_halt "zpool export ${ZPOOLNAME}"
         rc_halt "dd if=/boot/zfsboot of=/dev/${ROOTSLICE} count=1"
@@ -73,7 +73,7 @@ setup_zfs_filesystem()
         rc_halt "zpool import ${ZPOOLNAME}"
       fi
     fi
-  done 
+  done
 
 };
 
@@ -92,8 +92,8 @@ setup_filesystems()
     if [ ! -e "/dev/${PART}" ]
     then
       exit_err "ERROR: The partition ${PART} does not exist. Failure in bsdlabel?"
-    fi 
-     
+    fi
+
     PARTFS="`cat ${PARTDIR}/${PART} | cut -d ':' -f 1`"
     PARTMNT="`cat ${PARTDIR}/${PART} | cut -d ':' -f 2`"
     PARTENC="`cat ${PARTDIR}/${PART} | cut -d ':' -f 3`"
@@ -194,13 +194,13 @@ setup_filesystems()
         ;;
 
       ZFS)
-        echo_log "NEWFS: /dev/${PART} - ${PARTFS}" 
+        echo_log "NEWFS: /dev/${PART} - ${PARTFS}"
         setup_zfs_filesystem "${PART}" "${PARTFS}" "${PARTMNT}" "${EXT}" "${PARTGEOM}" "${PARTXTRAOPTS}"
         ;;
 
       SWAP)
         rc_halt "sync"
-        rc_halt "glabel label ${PARTLABEL} /dev/${PART}${EXT}" 
+        rc_halt "glabel label ${PARTLABEL} /dev/${PART}${EXT}"
         rc_halt "sync"
         sleep 2
         ;;
@@ -208,7 +208,7 @@ setup_filesystems()
       IMAGE)
         write_image "${PARTIMAGE}" "${PART}"
         sleep 2
-        ;; 
+        ;;
 
       *) exit_err "ERROR: Got unknown file-system type $PARTFS" ;;
     esac

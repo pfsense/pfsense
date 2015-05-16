@@ -621,7 +621,7 @@ display_top_tabs($tab_array);
 					<option value="63" <?php if($pconfig['prefixrange_length'] == 63) echo "selected=\"selected\""; ?>>63</option>
 					<option value="64" <?php if($pconfig['prefixrange_length'] == 64) echo "selected=\"selected\""; ?>>64</option>
 				</select> <br />
-				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
+				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for
 					assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size."); ?>
 			</td>
 			</tr>
@@ -686,9 +686,9 @@ display_top_tabs($tab_array);
 					<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCPv6 leases are displayed in UTC time.  By checking this 
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCPv6 leases are displayed in UTC time.  By checking this
 						box DHCPv6 lease time will be displayed in local time and set to time zone selected.  This will be used for all DHCPv6 interfaces lease time."); ?>
-					
+
 					</td>
 					</tr>
 				</table>

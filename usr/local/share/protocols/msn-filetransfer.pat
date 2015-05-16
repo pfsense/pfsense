@@ -7,7 +7,7 @@
 # http://www.hypothetic.org/docs/msn/client/file_transfer.php
 
 # NOTE!  This pattern does not catch the modern type of MSN filetransfers
-# because they use the same TCP connection as the chat itself.  See 
+# because they use the same TCP connection as the chat itself.  See
 # ../example_traffic/msn_chat_and_file_transfer.txt for a demonstration.
 
 # This pattern has been tested and seems to work well.  It, does,
@@ -21,7 +21,7 @@
 # (especially Trillian) send other protocol versions besides MSNFTP
 # which should be matched by the [ -~]*.
 
-# Second part matches newer MSNSLP: 
+# Second part matches newer MSNSLP:
 # http://msnpiki.msnfanatic.com/index.php/MSNC:MSNSLP
 # This part is untested.
 

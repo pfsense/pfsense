@@ -6,14 +6,14 @@
 #
 # This pattern is written without knowledge of the principles of H.323.
 # It has only been tested with gnomemeeting and may not work for other
-# clients. 
+# clients.
 #
 # Also, it has been reported that:
-# "the pattern ... match[es] only first H.323 stream (conntrack for H.323 was 
+# "the pattern ... match[es] only first H.323 stream (conntrack for H.323 was
 # enabled).  Also the major chunk of traffic was of RTP which went untracked."
 #
 # Also, it may very well match other things that use TPKT and
-# Q.931. 
+# Q.931.
 
 # Note that to take full advantage of this pattern, you will need to
 # have connection tracking of H.323 support in your kernel.  This
@@ -28,7 +28,7 @@ h323
 # \x08  = Q.931
 # . = length of call reference
 # The next byte was: \x18 = message sent from originating side.
-# But based on experimentation, it seems that just . is better. 
+# But based on experimentation, it seems that just . is better.
 # .?.?.?.?.?.?.?.?.?.?.?.?.?.?.? = call reference (0-15 bytes (0 for nulls))
 # \x05 = setup message
 #

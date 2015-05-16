@@ -14,7 +14,7 @@ enableNTP=yes
 # Keyboard Layout Options
 localizeKeyModel=pc104
 localizeKeyLayout=us
- 
+
 # Disk Setup for ad0
 disk0=ad0
 partition=ALL

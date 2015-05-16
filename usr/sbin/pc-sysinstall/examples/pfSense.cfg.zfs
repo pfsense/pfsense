@@ -11,7 +11,7 @@ timeZone=Kentucky/Louisville
 # Keyboard Layout Options
 localizeKeyModel=pc104
 localizeKeyLayout=us
- 
+
 # Disk Setup for ad0
 disk0=da0
 partition=ALL
@@ -23,7 +23,7 @@ commitDiskPart
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
 # UFS.eli, UFS+S.eli, UFS+J.eli, ZFS.eli, SWAP.eli
 disk0-part=SWAP 500 none
-disk1-part=ZFS+S 0 / 
+disk1-part=ZFS+S 0 /
 
 commitDiskLabel
 

@@ -6,7 +6,7 @@
 #
 # http://ftp.svbug.com/ftp/pub/manuals/pdf/smm.22.timed.pdf
 # http://docs.freebsd.org/44doc/smm/12.timed/paper.pdf
-# 
+#
 # This pattern is barely tested.
 
 tsp

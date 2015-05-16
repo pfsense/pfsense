@@ -43,17 +43,17 @@ require_once("notices.inc");
 
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
-if($config['notifications']['growl']['password']) 
+if($config['notifications']['growl']['password'])
 	$pconfig['password'] = $config['notifications']['growl']['password'];
-if($config['notifications']['growl']['ipaddress']) 
+if($config['notifications']['growl']['ipaddress'])
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
 
-if($config['notifications']['growl']['notification_name']) 
+if($config['notifications']['growl']['notification_name'])
 	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
 else
   $pconfig['notification_name'] = "{$g['product_name']} growl alert";
-  
-if($config['notifications']['growl']['name']) 
+
+if($config['notifications']['growl']['name'])
 	$pconfig['name'] = $config['notifications']['growl']['name'];
 else
   $pconfig['name'] = 'PHP-Growl';
@@ -96,7 +96,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		system_setup_sysctl();		
+		system_setup_sysctl();
 		$savemsg = get_std_save_message($retval);
 	}
 
@@ -149,7 +149,7 @@ if ($_POST) {
 	}
 	if ($_POST['test_growl'] == gettext("Test Growl")) {
 		// Send test message via growl
-		if($config['notifications']['growl']['ipaddress'] && 
+		if($config['notifications']['growl']['ipaddress'] &&
 			$config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
@@ -249,7 +249,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<!-- SMTP -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>
@@ -338,7 +338,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<!-- System Sounds -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("System Sounds"); ?></td>
@@ -354,7 +354,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<tr>
 							<td valign="top" class="">
 								&nbsp;

@@ -1,21 +1,21 @@
-<?php 
+<?php
 /*
 	vpn_openvpn_csc.php
 
 	Copyright (C) 2008 Shrew Soft Inc.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved. 
+	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -232,7 +232,7 @@ if ($_POST) {
 			if ($pconfig['dns_server_enable'])
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
-	
+
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc_cn = $a_csc[$id]['common_name'];
 			$a_csc[$id] = $csc;
@@ -243,7 +243,7 @@ if ($_POST) {
 			openvpn_cleanup_csc($old_csc_cn);
 		openvpn_resync_csc($csc);
 		write_config();
-		
+
 		header("Location: vpn_openvpn_csc.php");
 		exit;
 	}
@@ -312,7 +312,7 @@ function netbios_change() {
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn openvpn csc">
  	<tr>
 		<td class="tabnavtbl">
-			<?php 
+			<?php
 				$tab_array = array();
 				$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
@@ -322,7 +322,7 @@ function netbios_change() {
 				display_top_tabs($tab_array);
 			?>
 		</td>
-	</tr>    
+	</tr>
 	<tr>
 		<td class="tabcont">
 
@@ -332,7 +332,7 @@ function netbios_change() {
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="general information">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("General information"); ?></td>
-					</tr>	
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
@@ -353,17 +353,17 @@ function netbios_change() {
 							<?=gettext("Set this option to disable this client-specific override without removing it from the list"); ?>.
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Common name"); ?></td>
-						<td width="78%" class="vtable"> 
+						<td width="78%" class="vtable">
 							<input name="common_name" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['common_name']);?>" />
 							<br />
 							<?=gettext("Enter the client's X.509 common name here"); ?>.
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-						<td width="78%" class="vtable"> 
+						<td width="78%" class="vtable">
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>" />
 							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
@@ -729,8 +729,8 @@ function netbios_change() {
 					</tr>
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
+						<td width="78%">
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input name="act" type="hidden" value="<?=$act;?>" />
 							<?php if (isset($id) && $a_csc[$id]): ?>
 							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />

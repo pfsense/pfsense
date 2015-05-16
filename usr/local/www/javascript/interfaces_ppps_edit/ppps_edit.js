@@ -66,10 +66,10 @@ function show_hide_linkfields(options){
 		subnet = "#subnet" + count;
 		gateway = "#gateway" + count;
 		gatewaylabel = "#gatewaylabel" + count;
-		
+
 		jQuery(ipfields + ',' + gwfields + ',' + link).hide();
 		jQuery(subnet).prop('disabled',true);
-		
+
 		jQuery(bw).attr("name","bandwidth[]");
 		jQuery(mtu).attr("name","mtu[]");
 		jQuery(mru).attr("name","mru[]");
@@ -77,7 +77,7 @@ function show_hide_linkfields(options){
 		jQuery(localip).attr("name","localip[]");
 		jQuery(subnet).attr("name","subnet[]");
 		jQuery(gateway).attr("name","gateway[]");
-		
+
 		while(i < options.length){
 			if (options[i].selected ){
 				jQuery(lnklabel).html("Link Parameters (" + options[i].value + ")");
@@ -149,11 +149,11 @@ function updateType(t){
 }
 
 function show_reset_settings(reset_type) {
-	if (reset_type == 'preset') { 
+	if (reset_type == 'preset') {
 		jQuery('#pppoepresetwrap').show(0);
 		jQuery('#pppoecustomwrap').hide(0);
-	} 
-	else if (reset_type == 'custom') { 
+	}
+	else if (reset_type == 'custom') {
 		jQuery('#pppoecustomwrap').show(0);
 		jQuery('#pppoepresetwrap').hide(0);
 	} else {

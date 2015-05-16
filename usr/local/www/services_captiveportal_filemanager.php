@@ -59,7 +59,7 @@ require("captiveportal.inc");
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
-                        
+
 if (empty($cpzone)) {
         header("Location: services_captiveportal_zones.php");
         exit;

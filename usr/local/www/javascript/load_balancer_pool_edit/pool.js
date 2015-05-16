@@ -71,7 +71,7 @@ function addOption(theSel, theText, theValue)
 }
 
 function deleteOption(theSel, theIndex)
-{ 
+{
 	var selLength = theSel.length;
 	if(selLength>0)
 	{

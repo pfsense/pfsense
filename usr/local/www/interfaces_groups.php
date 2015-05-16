@@ -101,7 +101,7 @@ include("head.inc");
 					<td width="25%" class="listhdr"><?=gettext("Description");?></td>
 					<td width="5%" class="list"></td>
 				</tr>
-<?php 
+<?php
 	if (count ($a_ifgroups)):
 		$i = 0;
 		foreach ($a_ifgroups as $ifgroupentry):

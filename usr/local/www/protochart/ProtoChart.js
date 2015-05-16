@@ -1,12 +1,12 @@
 /**
- * Class: ProtoChart 
+ * Class: ProtoChart
  * Version: v0.5 beta
- * 
+ *
  * ProtoChart is a charting lib on top of Prototype.
  * This library is heavily motivated by excellent work done by:
  * * Flot <http://code.google.com/p/flot/>
  * * Flotr <http://solutoire.com/flotr/>
- * 
+ *
  * Complete examples can be found at: <http://www.deensoft.com/lab/protochart>
  */
 
@@ -24,7 +24,7 @@ if(!Proto) var Proto = {};
 
 Proto.Chart = Class.create({
 	/**
-	 * Function: 
+	 * Function:
 	 * {Object} elem
 	 * {Object} data
 	 * {Object} options
@@ -35,12 +35,12 @@ Proto.Chart = Class.create({
 		this.graphData = [];
 		/**
 		 * Property: options
-		 * 
+		 *
 		 * Description: Various options can be set. More details in description.
-		 * 
+		 *
 		 * colors:
 		 * {Array}		- pass in a array which contains strings of colors you want to use. Default has 6 color set.
-		 * 
+		 *
 		 * legend:
 		 * {BOOL} 		- show				- if you want to show the legend. Default is false
 		 * {integer} 	- noColumns			- Number of columns for the legend. Default is 1
@@ -51,7 +51,7 @@ Proto.Chart = Class.create({
 		 * {integer}	- margin			- default valud of 5
 		 * {string} 	- backgroundColor	- default to null (which means auto-detect)
 		 * {float} 		- backgroundOpacity - leave it 0 to avoid background
-		 * 
+		 *
 		 * xaxis (yaxis) options:
 		 * {string} 	- mode 		- default is null but you can pass a string "time" to indicate time series
 		 * {integer}	- min
@@ -64,14 +64,14 @@ Proto.Chart = Class.create({
 		 * {integer} 	- minTickSize
 		 * {array}		- monthNames
 		 * {string}		- timeformat
-		 * 
+		 *
 		 * Points / Lines / Bars options:
 		 * {bool}		- show, default is false
 		 * {integer}	- radius: default is 3
 		 * {integer}	- lineWidth : default is 2
 		 * {bool}		- fill : default is true
 		 * {string}		- fillColor: default is #ffffff
-		 * 
+		 *
 		 * Grid options:
 		 * {string}		- color
 		 * {string}		- backgroundColor 	- defualt is *null*
@@ -83,7 +83,7 @@ Proto.Chart = Class.create({
 		 * {string}		- coloredAreasColor	- default *#f4f4f4*
 		 * {bool}		- drawXAxis			- default *true*
 		 * {bool}		- drawYAxis			- default *true*
-		 * 
+		 *
 		 * selection options:
 		 * {string}		- mode : either "x", "y" or "xy"
 		 * {string}		- color : string
@@ -95,14 +95,14 @@ Proto.Chart = Class.create({
                 noColumns: 1,
                 labelFormatter: null,
                 labelBoxBorderColor: "#ccc",
-                container: null, 
+                container: null,
                 position: "ne",
                 margin: 5,
                 backgroundColor: null,
                 backgroundOpacity: 0.85
             },
             xaxis: {
-				mode: null, 
+				mode: null,
                 min: null,
                 max: null,
                 autoscaleMargin: null,
@@ -124,7 +124,7 @@ Proto.Chart = Class.create({
 				tickSize: null,
 				minTickSize: null,
 				monthNames: null,
-				timeformat: null,				
+				timeformat: null,
                 autoscaleMargin: 0.02
             },
 
@@ -193,18 +193,18 @@ Proto.Chart = Class.create({
             },
 			allowDataClick: true,
 			makeRandomColor: false,
-            shadowSize: 4			
+            shadowSize: 4
 		});
-		
+
 		/*
 		 * Local variables.
 		 */
-		this.canvas = null; 
+		this.canvas = null;
 		this.overlay = null;
 		this.eventHolder = null;
 		this.context = null;
 		this.overlayContext = null;
-		
+
 		this.domObj = $(elem);
 
 		this.xaxis = {};
@@ -220,21 +220,21 @@ Proto.Chart = Class.create({
 		this.hozScale = 0;
 		this.vertScale = 0;
 		this.workarounds = {};
-		
+
 		this.domObj = $(elem);
-		
+
 		this.barDataRange = [];
-		
+
         this.lastMousePos = { pageX: null, pageY: null };
         this.selection = { first: { x: -1, y: -1}, second: { x: -1, y: -1} };
         this.prevSelection = null;
         this.selectionInterval = null;
-        this.ignoreClick = false;	
+        this.ignoreClick = false;
 		this.prevHit = null;
-			
+
 		if(this.options.makeRandomColor)
 			this.options.color = this.makeRandomColor(this.options.colors);
-		
+
 		this.setData(data);
 		this.constructCanvas();
 		this.setupGrid();
@@ -246,24 +246,24 @@ Proto.Chart = Class.create({
 	merge: function(src, dest)
 	{
 		var result = dest || {};
-		for(var i in src){		  
-			result[i] = (typeof(src[i]) == 'object' && !(src[i].constructor == Array || src[i].constructor == RegExp)) ? this.merge(src[i], dest[i]) : result[i] = src[i];		
+		for(var i in src){
+			result[i] = (typeof(src[i]) == 'object' && !(src[i].constructor == Array || src[i].constructor == RegExp)) ? this.merge(src[i], dest[i]) : result[i] = src[i];
 		}
-		return result;	
+		return result;
 	},
 	/**
 	 * Function: setData
 	 * {Object} data
-	 * 
+	 *
 	 * Description:
 	 * Sets datasoruces properly then sets the Bar Width accordingly, then copies the default data options and then processes the graph data
-	 * 
+	 *
 	 * Returns: none
-	 * 
-	 */	
-	setData: function(data) 
+	 *
+	 */
+	setData: function(data)
 	{
-        this.graphData = this.parseData(data);		
+        this.graphData = this.parseData(data);
 		this.setBarWidth();
         this.copyGraphDataOptions();
         this.processGraphData();
@@ -271,16 +271,16 @@ Proto.Chart = Class.create({
 	/**
 	 * Function: parseData
 	 * {Object} data
-	 * 
-	 * Return: 
+	 *
+	 * Return:
 	 * {Object} result
-	 * 
+	 *
 	 * Description:
 	 * Takes the provided data object and converts it into generic data that we can understand. User can pass in data in 3 different ways:
 	 * - [d1, d2]
 	 * - [{data: d1, label: "data1"}, {data: d2, label: "data2"}]
 	 * - [d1, {data: d1, label: "data1"}]
-	 * 
+	 *
 	 * This function parses these senarios and makes it readable
 	 */
 	parseData: function(data)
@@ -304,8 +304,8 @@ Proto.Chart = Class.create({
 	/**
 	 * function: makeRandomColor
 	 * {Object} colorSet
-	 * 
-	 * Return: 
+	 *
+	 * Return:
 	 * {Array} result - array containing random colors
 	 */
 	makeRandomColor: function(colorSet)
@@ -314,29 +314,29 @@ Proto.Chart = Class.create({
 		var randArr = [];
 		var newArr = [];
 		randArr.push(randNum);
-		
+
 		while(randArr.length < colorSet.length)
 		{
 			var tempNum = Math.floor(Math.random() * colorSet.length);
-	
+
 			while(checkExisted(tempNum, randArr))
 				tempNum = Math.floor(Math.random() * colorSet.length);
-				
+
 			randArr.push(tempNum);
 		}
-		
+
 		randArr.each(function(ra){
 			newArr.push(colorSet[ra]);
-			
+
 		}.bind(this));
-		return newArr;		
+		return newArr;
 	},
 	/**
 	 * function: checkExisted
 	 * {Object} needle
 	 * {Object} haystack
-	 * 
-	 * return: 
+	 *
+	 * return:
 	 * {bool} existed - true if it finds needle in the haystack
 	 */
 	checkExisted: function(needle, haystack)
@@ -352,26 +352,26 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: setBarWidth
-	 * 
+	 *
 	 * Description: sets the bar width for Bar Graph, you should enable *autoScale* property for bar graph
 	 */
 	setBarWidth: function()
 	{
 		if(this.options.bars.show && this.options.bars.autoScale)
 		{
-			this.options.bars.barWidth = 1 / this.graphData.length / 1.2;	
+			this.options.bars.barWidth = 1 / this.graphData.length / 1.2;
 		}
 	},
 	/**
 	 * Function: copyGraphDataOptions
-	 * 
+	 *
 	 * Description: Private function that goes through each graph data (series) and assigned the graph
 	 * properties to it.
 	 */
 	copyGraphDataOptions: function()
 	{
 		var i, neededColors = this.graphData.length, usedColors = [], assignedColors = [];
-		
+
 		this.graphData.each(function(gd){
 			var sc = gd.color;
 			if(sc) {
@@ -384,8 +384,8 @@ Proto.Chart = Class.create({
 				}
 			}
 		}.bind(this));
-		
-		
+
+
 		assignedColors.each(function(ac){
 			neededColors = Math.max(neededColors, ac + 1);
 		});
@@ -407,7 +407,7 @@ Proto.Chart = Class.create({
             c.scale(factor, factor, factor);
 
             colors.push(c);
-            
+
             ++i;
             if (i >= this.options.colors.length) {
                 i = 0;
@@ -416,7 +416,7 @@ Proto.Chart = Class.create({
         }
 
         var colorIndex = 0, s;
-		
+
 		this.graphData.each(function(gd){
 			if(gd.color == null)
 			{
@@ -426,40 +426,40 @@ Proto.Chart = Class.create({
 			else if(Object.isNumber(gd.color)) {
 				gd.color = colors[gd.color].toString();
 			}
-			
-            gd.lines = Object.extend(Object.clone(this.options.lines), gd.lines); 
-            gd.points = Object.extend(Object.clone(this.options.points), gd.points); 
-            gd.bars = Object.extend(Object.clone(this.options.bars), gd.bars); 
+
+            gd.lines = Object.extend(Object.clone(this.options.lines), gd.lines);
+            gd.points = Object.extend(Object.clone(this.options.points), gd.points);
+            gd.bars = Object.extend(Object.clone(this.options.bars), gd.bars);
             gd.mouse = Object.extend(Object.clone(this.options.mouse), gd.mouse);
             if (gd.shadowSize == null) {
                 gd.shadowSize = this.options.shadowSize;
 			}
 		}.bind(this));
-			
+
 	},
 	/**
 	 * Function: processGraphData
-	 * 
-	 * Description: processes graph data, setup xaxis and yaxis min and max points. 
+	 *
+	 * Description: processes graph data, setup xaxis and yaxis min and max points.
 	 */
 	processGraphData: function() {
-		
+
 		this.xaxis.datamin = this.yaxis.datamin = Number.MAX_VALUE;
 		this.xaxis.datamax = this.yaxis.datamax = Number.MIN_VALUE;
-			
+
 		this.graphData.each(function(gd) {
 			var data = gd.data;
 			data.each(function(d){
 				if(d == null) {
 					return;
 				}
-				
+
 				var x = d[0], y = d[1];
 				if(!x || !y || isNaN(x = +x) || isNaN(y = +y)) {
 					d = null;
 					return;
 				}
-				
+
 				if (x < this.xaxis.datamin)
 					this.xaxis.datamin = x;
 				if (x > this.xaxis.datamax)
@@ -471,7 +471,7 @@ Proto.Chart = Class.create({
 			}.bind(this));
 		}.bind(this));
 
-		
+
 		if (this.xaxis.datamin == Number.MAX_VALUE)
 			this.xaxis.datamin = 0;
 		if (this.yaxis.datamin == Number.MAX_VALUE)
@@ -483,7 +483,7 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * Function: constructCanvas
-	 * 
+	 *
 	 * Description: constructs the main canvas for drawing. It replicates the HTML elem (usually DIV) passed
 	 * in via constructor. If there is no height/width assigned to the HTML elem then we take a default size
 	 * of 400px (width) and 300px (height)
@@ -495,7 +495,7 @@ Proto.Chart = Class.create({
 		this.domObj.update(""); // clear target
 		this.domObj.setStyle({
 			"position": "relative"
-		}); 
+		});
 
 		if (this.canvasWidth <= 0) {
 			this.canvasWdith = 400;
@@ -503,20 +503,20 @@ Proto.Chart = Class.create({
 		if(this.canvasHeight <= 0) {
 			this.canvasHeight = 300;
 		}
-		
+
 		this.canvas = (Prototype.Browser.IE) ? document.createElement("canvas") : new Element("CANVAS", {'width': this.canvasWidth, 'height': this.canvasHeight});
 		Element.extend(this.canvas);
 		this.canvas.style.width = this.canvasWidth + "px";
 		this.canvas.style.height = this.canvasHeight + "px";
-		
+
 		this.domObj.appendChild(this.canvas);
-		
+
 		if (Prototype.Browser.IE) // excanvas hack
 		{
 			this.canvas = $(window.G_vmlCanvasManager.initElement(this.canvas));
 		}
 		this.canvas = $(this.canvas);
-		
+
 		this.context = this.canvas.getContext("2d");
 
 		this.overlay = (Prototype.Browser.IE) ? document.createElement("canvas") :  new Element("CANVAS", {'width': this.canvasWidth, 'height': this.canvasHeight});
@@ -526,18 +526,18 @@ Proto.Chart = Class.create({
 		this.overlay.style.position = "absolute";
 		this.overlay.style.left = "0px";
 		this.overlay.style.right = "0px";
-		
+
 		this.overlay.setStyle({
 			'position': 'absolute',
 			'left': '0px',
 			'right': '0px'
 		});
 		this.domObj.appendChild(this.overlay);
-		
+
 		if (Prototype.Browser.IE) {
 			this.overlay = $(window.G_vmlCanvasManager.initElement(this.overlay));
 		}
-		
+
 		this.overlay = $(this.overlay);
 		this.overlayContext = this.overlay.getContext("2d");
 
@@ -556,19 +556,19 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: setupGrid
-	 * 
+	 *
 	 * Description: a container function that does a few interesting things.
-	 * 
+	 *
 	 * 1. calls <extendXRangeIfNeededByBar> function which makes sure that our axis are expanded if needed
-	 * 
+	 *
 	 * 2. calls <setRange> function providing xaxis options which fixes the ranges according to data points
-	 * 
+	 *
 	 * 3. calls <prepareTickGeneration> function for xaxis which generates ticks according to options provided by user
-	 * 
+	 *
 	 * 4. calls <setTicks> function for xaxis that sets the ticks
-	 * 
-	 * similar sequence is called for y-axis. 
-	 * 
+	 *
+	 * similar sequence is called for y-axis.
+	 *
 	 * At the end if this is a pie chart than we insert Labels (around the pie chart) via <insertLabels> and we also call <insertLegend>
 	 */
 	setupGrid: function()
@@ -583,14 +583,14 @@ Proto.Chart = Class.create({
 		this.setRange(this.xaxis, this.options.xaxis);
 		this.prepareTickGeneration(this.xaxis, this.options.xaxis);
 		this.setTicks(this.xaxis, this.options.xaxis);
-		
-		
+
+
 		//y-axis
 		this.setRange(this.yaxis, this.options.yaxis);
 		this.prepareTickGeneration(this.yaxis, this.options.yaxis);
 		this.setTicks(this.yaxis, this.options.yaxis);
 		this.setSpacing();
-		
+
 		if(!this.options.pies.show)
 		{
 			this.insertLabels();
@@ -599,7 +599,7 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: setRange
-	 * 
+	 *
 	 * parameters:
 	 * {Object} axis
 	 * {Object} axisOptions
@@ -642,7 +642,7 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: prepareTickGeneration
-	 * 
+	 *
 	 * Parameters:
 	 * {Object} axis
 	 * {Object} axisOptions
@@ -656,7 +656,7 @@ Proto.Chart = Class.create({
 			noTicks = this.canvasWidth / 100;
 		else
 			noTicks = this.canvasHeight / 60;
-		
+
 		var delta = (axis.max - axis.min) / noTicks;
 		var size, generator, unit, formatter, i, magn, norm;
 
@@ -666,14 +666,14 @@ Proto.Chart = Class.create({
 					n = "" + n;
 					return n.length == 1 ? "0" + n : n;
 				};
-				
+
 				var r = [];
 				var escape = false;
 				if (monthNames == null)
 					monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 				for (var i = 0; i < fmt.length; ++i) {
 					var c = fmt.charAt(i);
-					
+
 					if (escape) {
 						switch (c) {
 						case 'h': c = "" + d.getHours(); break;
@@ -697,8 +697,8 @@ Proto.Chart = Class.create({
 				}
 				return r.join("");
 			}
-			
-				
+
+
 			// map of app. size of time units in milliseconds
 			var timeUnitSize = {
 				"second": 1000,
@@ -714,9 +714,9 @@ Proto.Chart = Class.create({
 			// an integer algorithm
 			var spec = [
 				[1, "second"], [2, "second"], [5, "second"], [10, "second"],
-				[30, "second"], 
+				[30, "second"],
 				[1, "minute"], [2, "minute"], [5, "minute"], [10, "minute"],
-				[30, "minute"], 
+				[30, "minute"],
 				[1, "hour"], [2, "hour"], [4, "hour"],
 				[8, "hour"], [12, "hour"],
 				[1, "day"], [2, "day"], [3, "day"],
@@ -732,16 +732,16 @@ Proto.Chart = Class.create({
 				else
 					minSize = axisOptions.minTickSize[0] * timeUnitSize[axisOptions.minTickSize[1]];
 			}
-			
+
 			for (i = 0; i < spec.length - 1; ++i) {
 				if (delta < (spec[i][0] * timeUnitSize[spec[i][1]] + spec[i + 1][0] * timeUnitSize[spec[i + 1][1]]) / 2 && spec[i][0] * timeUnitSize[spec[i][1]] >= minSize) {
 					break;
 				}
 			}
-			
+
 			size = spec[i][0];
 			unit = spec[i][1];
-			
+
 			// special-case the possibility of several years
 			if (unit == "year") {
 				magn = Math.pow(10, Math.floor(Math.log(delta / timeUnitSize.year) / Math.LN10));
@@ -762,18 +762,18 @@ Proto.Chart = Class.create({
 				size = axisOptions.tickSize[0];
 				unit = axisOptions.tickSize[1];
 			}
-			
-			var floorInBase = this.floorInBase; //gives us a reference to a global function.. 
-			
+
+			var floorInBase = this.floorInBase; //gives us a reference to a global function..
+
 			generator = function(axis) {
 				var ticks = [],
 					tickSize = axis.tickSize[0], unit = axis.tickSize[1],
 					d = new Date(axis.min);
-				
+
 				var step = tickSize * timeUnitSize[unit];
-				
-				
-				
+
+
+
 				if (unit == "second")
 					d.setSeconds(floorInBase(d.getSeconds(), tickSize));
 				if (unit == "minute")
@@ -784,7 +784,7 @@ Proto.Chart = Class.create({
 					d.setMonth(floorInBase(d.getMonth(), tickSize));
 				if (unit == "year")
 					d.setFullYear(floorInBase(d.getFullYear(), tickSize));
-				
+
 				// reset smaller components
 				d.setMilliseconds(0);
 				if (step >= timeUnitSize.minute)
@@ -832,10 +832,10 @@ Proto.Chart = Class.create({
 				// first check global format
 				if (axisOptions.timeformat != null)
 					return formatDate(d, axisOptions.timeformat, axisOptions.monthNames);
-				
+
 				var t = axis.tickSize[0] * timeUnitSize[axis.tickSize[1]];
 				var span = axis.max - axis.min;
-				
+
 				if (t < timeUnitSize.minute)
 					fmt = "%h:%M:%S";
 				else if (t < timeUnitSize.day) {
@@ -854,7 +854,7 @@ Proto.Chart = Class.create({
 				}
 				else
 					fmt = "%y";
-				
+
 				return formatDate(d, fmt, axisOptions.monthNames);
 			};
 		}
@@ -864,10 +864,10 @@ Proto.Chart = Class.create({
 			var dec = -Math.floor(Math.log(delta) / Math.LN10);
 			if (maxDec != null && dec > maxDec)
 				dec = maxDec;
-			
+
 			magn = Math.pow(10, -dec);
 			norm = delta / magn; // norm is between 1.0 and 10.0
-			
+
 			if (norm < 1.5)
 				size = 1;
 			else if (norm < 3) {
@@ -884,17 +884,17 @@ Proto.Chart = Class.create({
 				size = 10;
 
 			size *= magn;
-			
+
 			if (axisOptions.minTickSize != null && size < axisOptions.minTickSize)
 				size = axisOptions.minTickSize;
 
 			if (axisOptions.tickSize != null)
 				size = axisOptions.tickSize;
-			
+
 			axis.tickDecimals = Math.max(0, (maxDec != null) ? maxDec : dec);
-			
+
 			var floorInBase = this.floorInBase;
-			
+
 			generator = function (axis) {
 				var ticks = [];
 				var start = floorInBase(axis.min, axis.tickSize);
@@ -938,19 +938,19 @@ Proto.Chart = Class.create({
 				}
 			}.bind(this));
 			this.xaxis.nax = newmax;
-			
+
 		}
 	},
 	/**
 	 * function: setTicks
-	 * 
+	 *
 	 * parameters:
 	 * {Object} axis
 	 * {Object} axisOptions
 	 */
 	setTicks: function(axis, axisOptions) {
 		axis.ticks = [];
-		
+
 		if (axisOptions.ticks == null)
 			axis.ticks = axis.tickGenerator(axis);
 		else if (typeof axisOptions.ticks == "number") {
@@ -963,7 +963,7 @@ Proto.Chart = Class.create({
 			if (Object.isFunction(ticks))
 				// generate the ticks
 				ticks = ticks({ min: axis.min, max: axis.max });
-			
+
 			// clean up the user-supplied ticks, copy them over
 			//var i, v;
 			ticks.each(function(t, i){
@@ -993,7 +993,7 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * Function: setSpacing
-	 * 
+	 *
 	 * Parameters: none
 	 */
 	setSpacing: function() {
@@ -1024,7 +1024,7 @@ Proto.Chart = Class.create({
 		}
 
 		this.chartOffset.left = this.chartOffset.right = this.chartOffset.top = this.chartOffset.bottom = maxOutset;
-		
+
 		this.chartOffset.left += this.yLabelMaxWidth + this.options.grid.labelMargin;
 		this.chartWidth = this.canvasWidth - this.chartOffset.left - this.chartOffset.right;
 
@@ -1042,7 +1042,7 @@ Proto.Chart = Class.create({
 		if (labels.length > 0) {
 			var dummyDiv = new Element('div', {'style': 'position:absolute;top:-10000px;font-size:smaller'});
 			dummyDiv.update(labels.join(""));
-			this.domObj.appendChild(dummyDiv);	
+			this.domObj.appendChild(dummyDiv);
 			xLabelMaxHeight = dummyDiv.getHeight();
 			dummyDiv.remove();
 		}
@@ -1078,10 +1078,10 @@ Proto.Chart = Class.create({
 	},
     /**
      * function: translateHoz
-     * 
+     *
      * Paramters:
      * {Object} x
-     * 
+     *
      * Description: Given a value this function translate it to relative x coord on canvas
      */
 	translateHoz: function(x) {
@@ -1089,25 +1089,25 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: translateVert
-	 * 
+	 *
 	 * parameters:
 	 * {Object} y
-	 * 
+	 *
 	 * Description: Given a value this function translate it to relative y coord on canvas
 	 */
     translateVert: function(y) {
         return this.chartHeight - (y - this.yaxis.min) * this.vertScale;
-    },	
+    },
 	/**
 	 * function: drawGrid
-	 * 
+	 *
 	 * parameters: none
-	 * 
+	 *
 	 * description: draws the actual grid on the canvas
 	 */
 	drawGrid: function() {
 		var i;
-		
+
 		this.context.save();
 		this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		this.context.translate(this.chartOffset.left, this.chartOffset.top);
@@ -1124,7 +1124,7 @@ Proto.Chart = Class.create({
 			if (Object.isFunction(areas)) {
 				areas = areas({ xmin: this.xaxis.min, xmax: this.xaxis.max, ymin: this.yaxis.min, ymax: this.yaxis.max });
 			}
-			
+
 			areas.each(function(a){
 				// clip
 				if (a.x1 == null || a.x1 < this.xaxis.min)
@@ -1154,12 +1154,12 @@ Proto.Chart = Class.create({
 
 				this.context.fillStyle = a.color || this.options.grid.coloredAreasColor;
 				this.context.fillRect(Math.floor(this.translateHoz(a.x1)), Math.floor(this.translateVert(a.y2)),
-							 Math.floor(this.translateHoz(a.x2) - this.translateHoz(a.x1)), Math.floor(this.translateVert(a.y1) - this.translateVert(a.y2)));				
+							 Math.floor(this.translateHoz(a.x2) - this.translateHoz(a.x1)), Math.floor(this.translateVert(a.y1) - this.translateVert(a.y2)));
 			}.bind(this));
 
-			
+
 		}
-		
+
 		// draw the inner grid
 		this.context.lineWidth = 1;
 		this.context.strokeStyle = this.options.grid.tickColor;
@@ -1176,7 +1176,7 @@ Proto.Chart = Class.create({
 			}.bind(this));
 
 		}
-		
+
 		if (this.options.grid.drawYAxis) {
 			this.yaxis.ticks.each(function(aTick){
 				v = aTick.v;
@@ -1186,10 +1186,10 @@ Proto.Chart = Class.create({
 				this.context.moveTo(0, Math.floor(this.translateVert(v)) + this.context.lineWidth / 2);
 				this.context.lineTo(this.chartWidth, Math.floor(this.translateVert(v)) + this.context.lineWidth / 2);
 			}.bind(this));
-			
+
 		}
 		this.context.stroke();
-		
+
 		if (this.options.grid.borderWidth) {
 			// draw border
 			this.context.lineWidth = this.options.grid.borderWidth;
@@ -1201,25 +1201,25 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: insertLabels
-	 * 
+	 *
 	 * parameters: none
-	 * 
+	 *
 	 * description: inserts the label with proper spacing. Both on X and Y axis
 	 */
 	insertLabels: function() {
 		this.domObj.select(".tickLabels").invoke('remove');
-		
+
 		var i, tick;
 		var html = '<div class="tickLabels" style="font-size:smaller;color:' + this.options.grid.color + '">';
-		
+
 		// do the x-axis
 		this.xaxis.ticks.each(function(tick){
 			if (!tick.label || tick.v < this.xaxis.min || tick.v > this.xaxis.max)
 				return;
 			html += '<div style="position:absolute;top:' + (this.chartOffset.top + this.chartHeight + this.options.grid.labelMargin) + 'px;left:' + (this.chartOffset.left + this.translateHoz(tick.v) - this.xLabelBoxWidth/2) + 'px;width:' + this.xLabelBoxWidth + 'px;text-align:center" class="tickLabel">' + tick.label + "</div>";
-			
+
 		}.bind(this));
-		
+
 		// do the y-axis
 		this.yaxis.ticks.each(function(tick){
 			if (!tick.label || tick.v < this.yaxis.min || tick.v > this.yaxis.max)
@@ -1228,15 +1228,15 @@ Proto.Chart = Class.create({
 		}.bind(this));
 
 		html += '</div>';
-		
+
 		this.domObj.insert(html);
 	},
 	/**
 	 * function: drawGraph
-	 * 
+	 *
 	 * Paramters:
 	 * {Object} graphData
-	 * 
+	 *
 	 * Description: given a graphData (series) this function calls a proper lower level method to draw it.
 	 */
 	drawGraph: function(graphData) {
@@ -1249,17 +1249,17 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: plotLine
-	 * 
+	 *
 	 * parameters:
 	 * {Object} data
 	 * {Object} offset
-	 * 
-	 * description: 
+	 *
+	 * description:
 	 * Helper function that plots a line based on the data provided
 	 */
 	plotLine: function(data, offset) {
         var prev, cur = null, drawx = null, drawy = null;
-        
+
         this.context.beginPath();
         for (var i = 0; i < data.length; ++i) {
             prev = cur;
@@ -1267,7 +1267,7 @@ Proto.Chart = Class.create({
 
             if (prev == null || cur == null)
                 continue;
-            
+
             var x1 = prev[0], y1 = prev[1],
                 x2 = cur[0], y2 = cur[1];
 
@@ -1330,7 +1330,7 @@ Proto.Chart = Class.create({
 
             if (drawx != this.translateHoz(x1) || drawy != this.translateVert(y1) + offset)
                 this.context.moveTo(this.translateHoz(x1), this.translateVert(y1) + offset);
-            
+
             drawx = this.translateHoz(x2);
             drawy = this.translateVert(y2) + offset;
             this.context.lineTo(drawx, drawy);
@@ -1339,22 +1339,22 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: plotLineArea
-	 * 
+	 *
 	 * parameters:
 	 * {Object} data
-	 * 
+	 *
 	 * description:
 	 * Helper functoin that plots a colored line graph. This function
 	 * takes the data nad then fill in the area on the graph properly
 	 */
 	plotLineArea: function(data) {
         var prev, cur = null;
-        
+
         var bottom = Math.min(Math.max(0, this.yaxis.min), this.yaxis.max);
         var top, lastX = 0;
 
         var areaOpen = false;
-        
+
         for (var i = 0; i < data.length; ++i) {
             prev = cur;
             cur = data[i];
@@ -1369,12 +1369,12 @@ Proto.Chart = Class.create({
 
             if (prev == null || cur == null)
                 continue;
-                
+
             var x1 = prev[0], y1 = prev[1],
                 x2 = cur[0], y2 = cur[1];
 
             // clip x values
-            
+
             // clip with xmin
             if (x1 <= x2 && x1 < this.xaxis.min) {
                 if (x2 < this.xaxis.min)
@@ -1409,7 +1409,7 @@ Proto.Chart = Class.create({
                 this.context.moveTo(this.translateHoz(x1), this.translateVert(bottom));
                 areaOpen = true;
             }
-            
+
             // now first check the case where both is outside
             if (y1 >= this.yaxis.max && y2 >= this.yaxis.max) {
                 this.context.lineTo(this.translateHoz(x1), this.translateVert(this.yaxis.max));
@@ -1421,7 +1421,7 @@ Proto.Chart = Class.create({
                 this.context.lineTo(this.translateHoz(x2), this.translateVert(this.yaxis.min));
                 continue;
             }
-            
+
             var x1old = x1, x2old = x2;
 
             // clip with ymin
@@ -1452,11 +1452,11 @@ Proto.Chart = Class.create({
                     top = this.yaxis.min;
                 else
                     top = this.yaxis.max;
-                
+
                 this.context.lineTo(this.translateHoz(x1old), this.translateVert(top));
                 this.context.lineTo(this.translateHoz(x1), this.translateVert(top));
             }
-            
+
             // fill the triangles
             this.context.lineTo(this.translateHoz(x1), this.translateVert(y1));
             this.context.lineTo(this.translateHoz(x2), this.translateVert(y2));
@@ -1467,7 +1467,7 @@ Proto.Chart = Class.create({
                     top = this.yaxis.min;
                 else
                     top = this.yaxis.max;
-                
+
                 this.context.lineTo(this.translateHoz(x2old), this.translateVert(top));
                 this.context.lineTo(this.translateHoz(x2), this.translateVert(top));
             }
@@ -1479,17 +1479,17 @@ Proto.Chart = Class.create({
             this.context.lineTo(this.translateHoz(lastX), this.translateVert(bottom));
             this.context.fill();
         }
-    },		
+    },
 	/**
 	 * function: drawGraphLines
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
-	 * 
+	 *
 	 * description:
-	 * Main function that daws the line graph. This function is called 
-	 * if <options> lines property is set to show or no other type of 
-	 * graph is specified. This function depends on <plotLineArea> and 
+	 * Main function that daws the line graph. This function is called
+	 * if <options> lines property is set to show or no other type of
+	 * graph is specified. This function depends on <plotLineArea> and
 	 * <plotLine> functions.
 	 */
 	drawGraphLines: function(graphData) {
@@ -1523,26 +1523,26 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: plotPoints
-	 * 
+	 *
 	 * parameters:
 	 * {Object} data
 	 * {Object} radius
 	 * {Object} fill
-	 * 
+	 *
 	 * description:
-	 * Helper function that draws the point graph according to the data provided. Size of each 
-	 * point is provided by radius variable and fill specifies if points 
+	 * Helper function that draws the point graph according to the data provided. Size of each
+	 * point is provided by radius variable and fill specifies if points
 	 * are filled
 	 */
 	plotPoints: function(data, radius, fill) {
         for (var i = 0; i < data.length; ++i) {
             if (data[i] == null)
                 continue;
-            
+
             var x = data[i][0], y = data[i][1];
             if (x < this.xaxis.min || x > this.xaxis.max || y < this.yaxis.min || y > this.yaxis.max)
                 continue;
-            
+
             this.context.beginPath();
             this.context.arc(this.translateHoz(x), this.translateVert(y), radius, 0, 2 * Math.PI, true);
             if (fill)
@@ -1552,20 +1552,20 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: plotPointShadows
-	 * 
+	 *
 	 * parameters:
 	 * {Object} data
 	 * {Object} offset
 	 * {Object} radius
-	 * 
-	 * description: 
+	 *
+	 * description:
 	 * Helper function that draws the shadows for the points.
 	 */
     plotPointShadows: function(data, offset, radius) {
         for (var i = 0; i < data.length; ++i) {
             if (data[i] == null)
                 continue;
-            
+
             var x = data[i][0], y = data[i][1];
             if (x < this.xaxis.min || x > this.xaxis.max || y < this.yaxis.min || y > this.yaxis.max)
                 continue;
@@ -1576,12 +1576,12 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: drawGraphPoints
-	 * 
+	 *
 	 * paramters:
 	 * {Object} graphData
-	 * 
+	 *
 	 * description:
-	 * Draws the point graph onto the canvas. This function depends on helper 
+	 * Draws the point graph onto the canvas. This function depends on helper
 	 * functions <plotPointShadows> and <plotPoints>
 	 */
     drawGraphPoints: function(graphData) {
@@ -1609,12 +1609,12 @@ Proto.Chart = Class.create({
     },
 	/**
 	 * function: preparePieData
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
-	 * 
-	 * Description: 
-	 * Helper function that manipulates the given data stream so that it can 
+	 *
+	 * Description:
+	 * Helper function that manipulates the given data stream so that it can
 	 * be plotted as a Pie Chart
 	 */
 	preparePieData: function(graphData)
@@ -1630,14 +1630,14 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: drawPieShadow
-	 * 
+	 *
 	 * {Object} anchorX
 	 * {Object} anchorY
 	 * {Object} radius
-	 * 
+	 *
 	 * description:
-	 * Helper function that draws a shadow for the Pie Chart. This just draws 
-	 * a circle with offset that simulates shadow. We do not give each piece 
+	 * Helper function that draws a shadow for the Pie Chart. This just draws
+	 * a circle with offset that simulates shadow. We do not give each piece
 	 * of the pie an individual shadow.
 	 */
 	drawPieShadow: function(anchorX, anchorY, radius)
@@ -1646,19 +1646,19 @@ Proto.Chart = Class.create({
 		this.context.moveTo(anchorX, anchorY);
 		this.context.fillStyle = 'rgba(0,0,0,' + 0.1 + ')';
 		startAngle = 0;
-		endAngle = (Math.PI/180)*360;	
+		endAngle = (Math.PI/180)*360;
 		this.context.arc(anchorX + 2, anchorY +2, radius + (this.options.shadowSize/2), startAngle, endAngle, false);
 		this.context.fill();
 		this.context.closePath();
 	},
 	/**
 	 * function: drawPieGraph
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
-	 * 
-	 * description: 
-	 * Draws the actual pie chart. This function depends on helper function 
+	 *
+	 * description:
+	 * Draws the actual pie chart. This function depends on helper function
 	 * <drawPieShadow> to draw the actual shadow
 	 */
 	drawPieGraph: function(graphData)
@@ -1685,11 +1685,11 @@ Proto.Chart = Class.create({
 
 		// used to adjust labels so that everything adds up to 100%
 		totalPct = 0;
-		
+
 		//lets draw the shadow first.. we don't need an individual shadow to every pie rather we just
 		//draw a circle underneath to simulate the shadow...
-		this.drawPieShadow(centerX, centerY, radius, 0, 0); 
-		
+		this.drawPieShadow(centerX, centerY, radius, 0, 0);
+
 		//lets draw the actual pie chart now.
 		graphData.each(function(gd, j){
 			var pct = gd.data / sumData;
@@ -1704,11 +1704,11 @@ Proto.Chart = Class.create({
 			var verticalAlign = null;
 			var left = 0;
 			var top = 0;
-			
+
 			//draw pie:
-			//drawing pie	
+			//drawing pie
 			this.context.beginPath();
-			this.context.moveTo(anchorX, anchorY);				
+			this.context.moveTo(anchorX, anchorY);
 			this.context.arc(anchorX, anchorY, radius, startAngle, endAngle, false);
 			this.context.closePath();
 			this.context.fillStyle = this.parseColor(gd.color).scale(null, null, null, this.options.pies.fillOpacity).toString();
@@ -1716,7 +1716,7 @@ Proto.Chart = Class.create({
 			if(this.options.pies.fill)	{ this.context.fill(); }
 
 			// drawing labels
-			if (sliceMiddle <= 0.25 * (2 * Math.PI)) 
+			if (sliceMiddle <= 0.25 * (2 * Math.PI))
 			{
 				// text on top and align left
 				textAlign = "left";
@@ -1724,7 +1724,7 @@ Proto.Chart = Class.create({
 				left = labelX;
 				top = labelY + fontSize;
 			}
-			else if (sliceMiddle > 0.25 * (2 * Math.PI) && sliceMiddle <= 0.5 * (2 * Math.PI)) 
+			else if (sliceMiddle > 0.25 * (2 * Math.PI) && sliceMiddle <= 0.5 * (2 * Math.PI))
 			{
 				// text on bottom and align left
 				textAlign = "left";
@@ -1732,7 +1732,7 @@ Proto.Chart = Class.create({
 				left = labelX - labelWidth;
 				top = labelY;
 			}
-			else if (sliceMiddle > 0.5 * (2 * Math.PI) && sliceMiddle <= 0.75 * (2 * Math.PI)) 
+			else if (sliceMiddle > 0.5 * (2 * Math.PI) && sliceMiddle <= 0.75 * (2 * Math.PI))
 			{
 				// text on bottom and align right
 				textAlign = "right";
@@ -1740,7 +1740,7 @@ Proto.Chart = Class.create({
 				left = labelX - labelWidth;
 				top = labelY - fontSize;
 			}
-			else 
+			else
 			{
 				// text on top and align right
 				textAlign = "right";
@@ -1765,18 +1765,18 @@ Proto.Chart = Class.create({
 			//$(html).appendTo(target);
 			this.domObj.insert(html);
 
-			totalPct = totalPct + textVal;			
+			totalPct = totalPct + textVal;
 		}.bind(this));
-		
+
 	},
 	/**
 	 * function: drawBarGraph
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
 	 * {Object} barDataRange
-	 * 
-	 * description: 
+	 *
+	 * description:
 	 * Goes through each series in graphdata and passes it onto <drawBarGraphs> function
 	 */
 	drawBarGraph: function(graphData, barDataRange)
@@ -1787,20 +1787,20 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: drawGraphBar
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
-	 * 
+	 *
 	 * description:
 	 * This function is called when an individual series in GraphData is bar graph and plots it
 	 */
 	drawGraphBar: function(graphData)
 	{
-		this.drawGraphBars(graphData, 0, this.graphData.length, this.barDataRange);			
-	},	
+		this.drawGraphBars(graphData, 0, this.graphData.length, this.barDataRange);
+	},
 	/**
 	 * function: plotBars
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
 	 * {Object} data
@@ -1810,20 +1810,20 @@ Proto.Chart = Class.create({
 	 * {Object} counter
 	 * {Object} total
 	 * {Object} barDataRange
-	 * 
-	 * description: 
+	 *
+	 * description:
 	 * Helper function that draws the bar graph based on data.
 	 */
 	plotBars: function(graphData, data, barWidth, offset, fill,counter, total, barDataRange) {
 		var shift = 0;
-		
+
 		if(total % 2 == 0)
 		{
 			shift = (1 + ((counter  - total /2 ) - 1)) * barWidth;
 		}
 		else
 		{
-			var interval = 0.5;			
+			var interval = 0.5;
 			if(counter == (total/2 - interval )) {
 				shift = - barWidth * interval;
 			}
@@ -1835,7 +1835,7 @@ Proto.Chart = Class.create({
 		var rangeData = [];
 		data.each(function(d){
 			if(!d) return;
-			
+
 			var x = d[0], y = d[1];
 			var drawLeft = true, drawTop = true, drawRight = true;
 			var left = x + shift, right = x + barWidth + shift, bottom = 0, top = y;
@@ -1866,10 +1866,10 @@ Proto.Chart = Class.create({
 				top = this.yaxis.max;
 				drawTop = false;
 			}
-			
+
 			if(graphData.bars.showShadow && graphData.shadowSize > 0)
 				this.plotShadowOutline(graphData, this.context.strokeStyle, left, bottom, top, right, drawLeft, drawRight, drawTop);
-				
+
 			// fill the bar
 			if (fill) {
 				this.context.beginPath();
@@ -1900,12 +1900,12 @@ Proto.Chart = Class.create({
 				this.context.stroke();
 			}
 		}.bind(this));
-		
+
 		barDataRange.push(rangeData);
 	},
 	/**
 	 * function: plotShadowOutline
-	 * 
+	 *
 	 * parameters:
 	 * {Object} graphData
 	 * {Object} orgStrokeStyle
@@ -1916,14 +1916,14 @@ Proto.Chart = Class.create({
 	 * {Object} drawLeft
 	 * {Object} drawRight
 	 * {Object} drawTop
-	 * 
+	 *
 	 * description:
 	 * Helper function that draws a outline simulating shadow for bar chart
 	 */
 	plotShadowOutline: function(graphData, orgStrokeStyle, left, bottom, top, right, drawLeft, drawRight, drawTop)
 	{
 		var orgOpac = 0.3;
-		
+
 		for(var n = 1; n <= this.options.shadowSize/2; n++)
 		{
 			var opac = orgOpac * n;
@@ -1937,7 +1937,7 @@ Proto.Chart = Class.create({
 			else
 				this.context.moveTo(this.translateHoz(left) + n, this.translateVert(top) - n);
 
-			if(drawTop)	
+			if(drawTop)
 				this.context.lineTo(this.translateHoz(right) + n, this.translateVert(top) - n);
 			else
 				this.context.moveTo(this.translateHoz(right) + n, this.translateVert(top) - n);
@@ -1955,13 +1955,13 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: drawGraphBars
-	 * 
+	 *
 	 * parameters:
-	 * {Object} graphData 
+	 * {Object} graphData
 	 * {Object} counter
 	 * {Object} total
 	 * {Object} barDataRange
-	 * 
+	 *
 	 * description:
 	 * Draws the actual bar graphs. Calls <plotBars> to draw the individual bar
 	 */
@@ -1984,9 +1984,9 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * function: insertLegend
-	 * 
+	 *
 	 * description:
-	 * inserts legend onto the graph. *legend: {show: true}* must be set in <options> 
+	 * inserts legend onto the graph. *legend: {show: true}* must be set in <options>
 	 * for for this to work.
 	 */
 	insertLegend: function() {
@@ -1994,7 +1994,7 @@ Proto.Chart = Class.create({
 
 		if (!this.options.legend.show)
 			return;
-		
+
 		var fragments = [];
 		var rowStarted = false;
 		this.graphData.each(function(gd, index){
@@ -2012,16 +2012,16 @@ Proto.Chart = Class.create({
 			if(this.options.legend.labelFormatter != null) {
 				label = this.options.legend.labelFormatter(label);
 			}
-			
+
 			fragments.push(
 				'<td class="legendColorBox"><div style="border:1px solid ' + this.options.legend.labelBoxBorderColor + ';padding:1px"><div style="width:14px;height:10px;background-color:' + gd.color + ';overflow:hidden"></div></div></td>' +
 				'<td class="legendLabel">' + label + '</td>');
-			
+
 		}.bind(this));
 
 		if (rowStarted)
 			fragments.push('</tr>');
-		
+
 		if(fragments.length > 0){
 			var table = '<table style="font-size:smaller;color:' + this.options.grid.color + '">' + fragments.join("") + '</table>';
 			if($(this.options.legend.container) != null){
@@ -2029,13 +2029,13 @@ Proto.Chart = Class.create({
 			}else{
 				var pos = '';
 				var p = this.options.legend.position, m = this.options.legend.margin;
-				
+
 				if(p.charAt(0) == 'n') pos += 'top:' + (m + this.chartOffset.top) + 'px;';
-				else if(p.charAt(0) == 's') pos += 'bottom:' + (m + this.chartOffset.bottom) + 'px;';					
+				else if(p.charAt(0) == 's') pos += 'bottom:' + (m + this.chartOffset.bottom) + 'px;';
 				if(p.charAt(1) == 'e') pos += 'right:' + (m + this.chartOffset.right) + 'px;';
 				else if(p.charAt(1) == 'w') pos += 'left:' + (m + this.chartOffset.bottom) + 'px;';
 				var div = this.domObj.insert('<div class="ProtoChart-legend" style="border: 1px solid '+this.options.legend.borderColor+'; position:absolute;z-index:2;' + pos +'">' + table + '</div>').getElementsBySelector('div.ProtoChart-legend').first();
-				
+
 				if(this.options.legend.backgroundOpacity != 0.0){
 					var c = this.options.legend.backgroundColor;
 					if(c == null){
@@ -2044,21 +2044,21 @@ Proto.Chart = Class.create({
 					}
 					this.domObj.insert('<div class="ProtoChart-legend-bg" style="position:absolute;width:' + div.getWidth() + 'px;height:' + div.getHeight() + 'px;' + pos +'background-color:' + c + ';"> </div>').select('div.ProtoChart-legend-bg').first().setStyle({
 						'opacity': this.options.legend.backgroundOpacity
-					});						
+					});
 				}
 			}
 		}
 	},
 	/**
 	 * Function: onMouseMove
-	 * 
+	 *
 	 * parameters:
 	 * event: {Object} ev
-	 * 
+	 *
 	 * Description:
 	 * Called whenever the mouse is moved on the graph. This takes care of the mousetracking.
-	 * This event also fires <ProtoChart:mousemove> event, which gets current position of the 
-	 * mouse as a parameters. 
+	 * This event also fires <ProtoChart:mousemove> event, which gets current position of the
+	 * mouse as a parameters.
 	 */
 	onMouseMove: function(ev) {
 		var e = ev || window.event;
@@ -2071,13 +2071,13 @@ Proto.Chart = Class.create({
 			this.lastMousePos.pageX = e.pageX;
 			this.lastMousePos.pageY = e.pageY;
 		}
-		
+
 		var offset = this.overlay.cumulativeOffset();
 		var pos = {
 			x: this.xaxis.min + (e.pageX - offset.left - this.chartOffset.left) / this.hozScale,
 			y: this.yaxis.max - (e.pageY - offset.top - this.chartOffset.top) / this.vertScale
 		};
-		
+
 		if(this.options.mouse.track && this.selectionInterval == null) {
 			this.hit(ev, pos);
 		}
@@ -2085,17 +2085,17 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * Function: onMouseDown
-	 * 
+	 *
 	 * Parameters:
 	 * Event - {Object} e
-	 * 
+	 *
 	 * Description:
 	 * Called whenever the mouse is clicked.
 	 */
 	onMouseDown: function(e) {
 		if (e.which != 1)  // only accept left-click
 			return;
-		
+
 		document.body.focus();
 
 		if (document.onselectstart !== undefined && this.workarounds.onselectstart == null) {
@@ -2106,9 +2106,9 @@ Proto.Chart = Class.create({
 			this.workarounds.ondrag = document.ondrag;
 			document.ondrag = function () { return false; };
 		}
-		
+
 		this.setSelectionPos(this.selection.first, e);
-			
+
 		if (this.selectionInterval != null)
 			clearInterval(this.selectionInterval);
 		this.lastMousePos.pageX = null;
@@ -2120,7 +2120,7 @@ Proto.Chart = Class.create({
 	 * Function: onClick
 	 * parameters:
 	 * Event - {Object} e
-	 * Description: 
+	 * Description:
 	 * Handles the "click" event on the chart. This function fires <ProtoChart:plotclick> event. If
 	 * <options.allowDataClick> is enabled then it also fires <ProtoChart:dataclick> event which gives
 	 * you access to exact data point where user clicked.
@@ -2130,7 +2130,7 @@ Proto.Chart = Class.create({
 			this.ignoreClick = false;
 			return;
 		}
-		var offset = this.overlay.cumulativeOffset(); 
+		var offset = this.overlay.cumulativeOffset();
 		var pos ={
 			x: this.xaxis.min + (e.pageX - offset.left - this.chartOffset.left) / this.hozScale,
 			y: this.yaxis.max - (e.pageY - offset.top - this.chartOffset.top) / this.vertScale
@@ -2183,7 +2183,7 @@ Proto.Chart = Class.create({
 					dataVal.value = temp[xClick][1];
 					throw $break;
 				}
-				
+
 			}.bind(this));
 		}
 		else if(options.bars.show)
@@ -2205,7 +2205,7 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * Function: triggerSelectedEvent
-	 * 
+	 *
 	 * Description:
 	 * Internal function called when a selection on the graph is made. This function
 	 * fires <ProtoChart:selected> event which has a parameter representing the selection
@@ -2233,7 +2233,7 @@ Proto.Chart = Class.create({
 			y1 = this.selection.second.y;
 			y2 = this.selection.first.y;
 		}
-		
+
 		x1 = this.xaxis.min + x1 / this.hozScale;
 		x2 = this.xaxis.min + x2 / this.hozScale;
 
@@ -2250,7 +2250,7 @@ Proto.Chart = Class.create({
 			document.onselectstart = this.workarounds.onselectstart;
 		if (document.ondrag !== undefined)
 			document.ondrag = this.workarounds.ondrag;
-		
+
 		if (this.selectionInterval != null) {
 			clearInterval(this.selectionInterval);
 			this.selectionInterval = null;
@@ -2260,7 +2260,7 @@ Proto.Chart = Class.create({
 		this.clearSelection();
 		if (!this.selectionIsSane() || e.which != 1)
 			return false;
-		
+
 		this.drawSelection();
 		this.triggerSelectedEvent();
 		this.ignoreClick = true;
@@ -2294,7 +2294,7 @@ Proto.Chart = Class.create({
 	updateSelectionOnMouseMove: function() {
 		if (this.lastMousePos.pageX == null)
 			return;
-		
+
 		this.setSelectionPos(this.selection.second, this.lastMousePos);
 		this.clearSelection();
 		if (this.selectionIsSane())
@@ -2308,27 +2308,27 @@ Proto.Chart = Class.create({
 			y = Math.min(this.prevSelection.first.y, this.prevSelection.second.y),
 			w = Math.abs(this.prevSelection.second.x - this.prevSelection.first.x),
 			h = Math.abs(this.prevSelection.second.y - this.prevSelection.first.y);
-		
+
 		this.overlayContext.clearRect(x + this.chartOffset.left - this.overlayContext.lineWidth,
 					   		y + this.chartOffset.top - this.overlayContext.lineWidth,
 					   		w + this.overlayContext.lineWidth*2,
 					   		h + this.overlayContext.lineWidth*2);
-		
+
 		this.prevSelection = null;
 	},
 	/**
 	 * Function: setSelection
-	 * 
+	 *
 	 * Parameters:
 	 * Area - {Object} area represented as a range like: {x1: 3, y1: 3, x2: 4, y2: 8}
-	 * 
-	 * Description: 
-	 * Sets the current graph selection to the provided range. Calls <drawSelection> and 
+	 *
+	 * Description:
+	 * Sets the current graph selection to the provided range. Calls <drawSelection> and
 	 * <triggerSelectedEvent> functions internally.
 	 */
 	setSelection: function(area) {
 		this.clearSelection();
-		
+
 		if (this.options.selection.mode == "x") {
 			this.selection.first.y = 0;
 			this.selection.second.y = this.chartHeight;
@@ -2351,18 +2351,18 @@ Proto.Chart = Class.create({
 	},
 	/**
 	 * Function: drawSelection
-	 * Description: Internal function called to draw the selection made on the graph. 
+	 * Description: Internal function called to draw the selection made on the graph.
 	 */
 	drawSelection: function() {
 		if (this.prevSelection != null &&
 			this.selection.first.x == this.prevSelection.first.x &&
-			this.selection.first.y == this.prevSelection.first.y && 
+			this.selection.first.y == this.prevSelection.first.y &&
 			this.selection.second.x == this.prevSelection.second.x &&
 			this.selection.second.y == this.prevSelection.second.y)
 		{
-			return;	
+			return;
 		}
-		
+
 		this.overlayContext.strokeStyle = this.parseColor(this.options.selection.color).scale(null, null, null, 0.8).toString();
 		this.overlayContext.lineWidth = 1;
 		this.context.lineJoin = "round";
@@ -2377,7 +2377,7 @@ Proto.Chart = Class.create({
 			y = Math.min(this.selection.first.y, this.selection.second.y),
 			w = Math.abs(this.selection.second.x - this.selection.first.x),
 			h = Math.abs(this.selection.second.y - this.selection.first.y);
-		
+
 		this.overlayContext.fillRect(x + this.chartOffset.left, y + this.chartOffset.top, w, h);
 		this.overlayContext.strokeRect(x + this.chartOffset.left, y + this.chartOffset.top, w, h);
 	},
@@ -2405,23 +2405,23 @@ Proto.Chart = Class.create({
 			this.overlayContext.clearRect(
 				this.translateHoz(this.prevHit.x) + this.chartOffset.left - this.options.mouse.radius*2,
 				this.translateVert(this.prevHit.y) + this.chartOffset.top - this.options.mouse.radius*2,
-				this.options.mouse.radius*3 + this.options.points.lineWidth*3, 
+				this.options.mouse.radius*3 + this.options.points.lineWidth*3,
 				this.options.mouse.radius*3 + this.options.points.lineWidth*3
 			);
 			this.prevHit = null;
-		}		
-	},	
+		}
+	},
 	/**
 	 * Function: hit
-	 * 
-	 * Parameters: 
+	 *
+	 * Parameters:
 	 * 	event - {Object} event object
 	 * 	mouse - {Object} mouse object that is used to keep track of mouse movement
-	 * 
+	 *
 	 * Description:
 	 * 	If hit occurs this function will fire a ProtoChart:hit event.
 	 */
-	hit: function(event, mouse){	
+	hit: function(event, mouse){
 		/**
 		 * Nearest data element.
 		 */
@@ -2431,17 +2431,17 @@ Proto.Chart = Class.create({
 			y:null,
 			mouse:null
 		};
-		
-		
+
+
 		for(var i = 0, data, xsens, ysens; i < this.graphData.length; i++){
 			if(!this.graphData[i].mouse.track) continue;
-			data = this.graphData[i].data;				
+			data = this.graphData[i].data;
 			xsens = (this.hozScale*this.graphData[i].mouse.sensibility);
 			ysens = (this.vertScale*this.graphData[i].mouse.sensibility);
 			for(var j = 0, xabs, yabs; j < data.length; j++){
 				xabs = this.hozScale*Math.abs(data[j][0] - mouse.x);
 				yabs = this.vertScale*Math.abs(data[j][1] - mouse.y);
-				
+
 				if(xabs < xsens && yabs < ysens && (xabs+yabs) < n.dist){
 					n.dist = (xabs+yabs);
 					n.x = data[j][0];
@@ -2450,22 +2450,22 @@ Proto.Chart = Class.create({
 				}
 			}
 		}
-		
+
 		if(n.mouse && n.mouse.track && !this.prevHit || (this.prevHit && n.x != this.prevHit.x && n.y != this.prevHit.y)){
 			var el = this.domObj.select('.'+this.options.mouse.clsName).first();
 			if(!el){
-				var pos = '', p = this.options.mouse.position, m = this.options.mouse.margin;					
+				var pos = '', p = this.options.mouse.position, m = this.options.mouse.margin;
 				if(p.charAt(0) == 'n') pos += 'top:' + (m + this.chartOffset.top) + 'px;';
-				else if(p.charAt(0) == 's') pos += 'bottom:' + (m + this.chartOffset.bottom) + 'px;';					
+				else if(p.charAt(0) == 's') pos += 'bottom:' + (m + this.chartOffset.bottom) + 'px;';
 				if(p.charAt(1) == 'e') pos += 'right:' + (m + this.chartOffset.right) + 'px;';
 				else if(p.charAt(1) == 'w') pos += 'left:' + (m + this.chartOffset.bottom) + 'px;';
-				
+
 				this.domObj.insert('<div class="'+this.options.mouse.clsName+'" style="display:none;position:absolute;'+pos+'"></div>');
 				return;
 			}
 			if(n.x !== null && n.y !== null){
-				el.setStyle({display:'block'});					
-				
+				el.setStyle({display:'block'});
+
 				this.clearHit();
 				if(n.mouse.lineColor != null){
 					this.overlayContext.save();
@@ -2474,15 +2474,15 @@ Proto.Chart = Class.create({
 					this.overlayContext.strokeStyle = n.mouse.lineColor;
 					this.overlayContext.fillStyle = '#ffffff';
 					this.overlayContext.beginPath();
-					
-					
+
+
 					this.overlayContext.arc(this.translateHoz(n.x), this.translateVert(n.y), this.options.mouse.radius, 0, 2 * Math.PI, true);
 					this.overlayContext.fill();
 					this.overlayContext.stroke();
 					this.overlayContext.restore();
-				} 
+				}
 				this.prevHit = n;
-								
+
 				var decimals = n.mouse.trackDecimals;
 				if(decimals == null || decimals < 0) decimals = 0;
 				if(!this.options.mouse.fixedPosition)
@@ -2493,26 +2493,26 @@ Proto.Chart = Class.create({
 					});
 				}
 				el.innerHTML = n.mouse.trackFormatter({x: n.x.toFixed(decimals), y: n.y.toFixed(decimals)});
-				this.domObj.fire( 'ProtoChart:hit', [n] )					
+				this.domObj.fire( 'ProtoChart:hit', [n] )
 			}else if(this.options.prevHit){
 				el.setStyle({display:'none'});
 				this.clearHit();
 			}
 		}
-	},	
+	},
 	/**
 	 * Internal function
 	 */
 	floorInBase: function(n, base) {
         return base * Math.floor(n / base);
-    },	
+    },
 	/**
 	 * Function: extractColor
-	 * 
+	 *
 	 * Parameters:
 	 * 		element - HTML element or ID of an HTML element
-	 * 
-	 * Returns: 
+	 *
+	 * Returns:
 	 * 		color in string format
 	 */
 	extractColor: function(element)
@@ -2527,55 +2527,55 @@ Proto.Chart = Class.create({
 			}
 			element = element.up(0); //or else just get the parent ....
 		} while(element.nodeName.toLowerCase() != 'body');
-		
+
 		//safari fix
-		if(color == 'rgba(0, 0, 0, 0)') 
+		if(color == 'rgba(0, 0, 0, 0)')
 			return 'transparent';
 		return color;
 	},
 	/**
 	 * Function: parseColor
-	 * 
-	 * Parameters: 
+	 *
+	 * Parameters:
 	 * 		str - color string in different formats
-	 * 
+	 *
 	 * Returns:
 	 * 		a Proto.Color Object - use toString() function to retreive the color in rgba/rgb format
 	 */
 	parseColor: function(str)
 	{
 		var result;
-	
+
 		/**
 		 * rgb(num,num,num)
 		 */
 		if((result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(str)))
 			return new Proto.Color(parseInt(result[1]), parseInt(result[2]), parseInt(result[3]));
-	
+
 		/**
 		 * rgba(num,num,num,num)
 		 */
 		if((result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(str)))
 			return new Proto.Color(parseInt(result[1]), parseInt(result[2]), parseInt(result[3]), parseFloat(result[4]));
-			
+
 		/**
 		 * rgb(num%,num%,num%)
 		 */
 		if((result = /rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(str)))
 			return new Proto.Color(parseFloat(result[1])*2.55, parseFloat(result[2])*2.55, parseFloat(result[3])*2.55);
-	
+
 		/**
 		 * rgba(num%,num%,num%,num)
 		 */
 		if((result = /rgba\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(str)))
 			return new Proto.Color(parseFloat(result[1])*2.55, parseFloat(result[2])*2.55, parseFloat(result[3])*2.55, parseFloat(result[4]));
-			
+
 		/**
 		 * #a0b1c2
 		 */
 		if((result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(str)))
 			return new Proto.Color(parseInt(result[1],16), parseInt(result[2],16), parseInt(result[3],16));
-	
+
 		/**
 		 * #fff
 		 */
@@ -2591,17 +2591,17 @@ Proto.Chart = Class.create({
 		}
 
 		return new Proto.Color(100,100,100, 1);
-					
-	}		
+
+	}
 });
 
 if(!Proto) var Proto = {};
 
 /**
  * Class: Proto.Color
- * 
- * Helper class that manipulates colors using RGBA values. 
- * 
+ *
+ * Helper class that manipulates colors using RGBA values.
+ *
  */
 
 Proto.Color = Class.create({
@@ -2635,7 +2635,7 @@ Proto.Color = Class.create({
             if (arguments[x] != null)
                 this[this.rgba[x]] += arguments[x];
         }
-        return this.normalize();		
+        return this.normalize();
 	},
 	clone: function() {
         return new Proto.Color(this.r, this.b, this.g, this.a);

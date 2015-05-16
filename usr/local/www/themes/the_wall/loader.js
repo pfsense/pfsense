@@ -25,6 +25,6 @@ if (browser == 'IE' && version < 7) {
 	document.write('<script type="text/javascript" src="/themes/the_wall/javascript/ie7/ie7-standard-p.js"></script>');
 }
 
-document.write('<script type="text/javascript" src="/themes/the_wall/javascript/niftyjsCode.js"></script>'); 
+document.write('<script type="text/javascript" src="/themes/the_wall/javascript/niftyjsCode.js"></script>');
 
 //]]>

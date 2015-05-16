@@ -106,7 +106,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		system_setup_sysctl();		
+		system_setup_sysctl();
 		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('sysctl');
 	}
@@ -196,9 +196,9 @@ include("head.inc");
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
-								<?php 
-									if($tunable['value'] == "default") 
-										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; 
+								<?php
+									if($tunable['value'] == "default")
+										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
 								?>
 							</td>
 							<td class="list nowrap">

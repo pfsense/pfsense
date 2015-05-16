@@ -1,24 +1,24 @@
-<?php 
+<?php
 /*
 	services_captiveportal_ip_edit.php
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
-	Originally part of m0n0wall (http://m0n0.ch/wall)	
+	Originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -64,7 +64,7 @@ $shortcut_section = "captiveportal";
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
-                        
+
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
@@ -99,15 +99,15 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "ip sn");
 	$reqdfieldsn = array(gettext("Allowed IP address"), gettext("Subnet mask"));
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if ($_POST['ip'] && !is_ipaddr($_POST['ip']))
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);
-	
+
 	if ($_POST['sn'] && (!is_numeric($_POST['sn']) || ($_POST['sn'] < 1) || ($_POST['sn'] > 32)))
 		$input_errors[] = gettext("A valid subnet mask must be specified");
-	
+
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
 
@@ -117,11 +117,11 @@ if ($_POST) {
 	foreach ($a_allowedips as $ipent) {
 		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent))
 			continue;
-		
+
 		if ($ipent['ip'] == $_POST['ip']){
 			$input_errors[] = sprintf("[%s] %s.", $_POST['ip'], gettext("already allowed")) ;
 			break ;
-		}	
+		}
 	}
 
 	if (!$input_errors) {
@@ -169,7 +169,7 @@ if ($_POST) {
 			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
-		
+
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}
@@ -188,20 +188,20 @@ include("head.inc");
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
-			<td width="78%" class="vtable"> 
+			<td width="78%" class="vtable">
 				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>" />
 				/<select name='sn' class="formselect" id='sn'>
 				<?php for ($i = 32; $i >= 1; $i--): ?>
 					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected=\"selected\""; ?>><?=$i;?></option>
 				<?php endfor; ?>
 				</select>
-				<br /> 
+				<br />
 				<span class="vexpl"><?=gettext("IP address and subnet mask. Use /32 for a single IP");?>.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable"> 
+			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 				<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 			</td>
@@ -222,7 +222,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> 
+			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_allowedips[$id]): ?>

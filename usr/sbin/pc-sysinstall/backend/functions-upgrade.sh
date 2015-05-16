@@ -36,7 +36,7 @@ mount_target_slice()
   # Import any zpools
   zpool import -o altroot=${FSMNT} -a
   umount_all_dir "${FSMNT}"
-  
+
   # Set a variable of files we want to make backups of before doing upgrade
   BKFILES="/etc/rc.conf /boot/loader.conf"
 
@@ -59,7 +59,7 @@ mount_target_slice()
 
   # Mount all the fstab goodies on disk
   chroot ${FSMNT} /sbin/mount -a >>${LOGOUT} 2>>${LOGOUT}
-  chroot ${FSMNT} umount /proc >/dev/null 2>/dev/null 
+  chroot ${FSMNT} umount /proc >/dev/null 2>/dev/null
   chroot ${FSMNT} umount /compat/linux/proc  >/dev/null 2>/dev/null
 
   # Now before we start the upgrade, make sure we set our noschg flags
@@ -134,13 +134,13 @@ mount_upgrade()
       then
 
         # Start mounting this slice
-        mount_target_slice "${DISK}" 
+        mount_target_slice "${DISK}"
 
         # Increment our disk counter to look for next disk and unset
         unset DISK
 	    break
       else
-        exit_err "ERROR: commitDiskPart was called without procceding disk<num>= and partition= entries!!!" 
+        exit_err "ERROR: commitDiskPart was called without procceding disk<num>= and partition= entries!!!"
       fi
     fi
 
@@ -178,7 +178,7 @@ do
   fi
 
 done
-' >${FSMNT}/.fixUserProfile.sh  
+' >${FSMNT}/.fixUserProfile.sh
   chmod 755 ${FSMNT}/.fixUserProfile.sh
   chroot ${FSMNT} /.fixUserProfile.sh >/dev/null 2>/dev/null
   rm ${FSMNT}/.fixUserProfile.sh
@@ -242,6 +242,6 @@ unmount_upgrade()
 
   # Run our saved unmount script for these file-systems
   rc_nohalt "umount -f ${FSMNT}"
- 
-  umount ${CDMNT} 
+
+  umount ${CDMNT}
 };

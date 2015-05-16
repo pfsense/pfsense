@@ -1,21 +1,21 @@
-<?php 
+<?php
 /*
 	vpn_openvpn_server.php
 
 	Copyright (C) 2008 Shrew Soft Inc.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved. 
+	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -208,13 +208,13 @@ if($_GET['act']=="edit") {
 		$pconfig['autotls_enable'] = "yes";
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
-		
+
 		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
 		if (isset($a_server[$id]['verbosity_level']))
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
 		else
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
-		
+
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
 }
@@ -344,7 +344,7 @@ if ($_POST) {
 	} else {
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network'])
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
-		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) 
+		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end'])
 		|| (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end']))
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
 		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start'])))
@@ -355,7 +355,7 @@ if ($_POST) {
 			$input_errors[] = gettext("The Server Bridge DHCP range is invalid (start higher than end).");
 	}
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if (!$input_errors) {
 
 		$server = array();
@@ -442,7 +442,7 @@ if ($_POST) {
 		$server['netbios_enable'] = $pconfig['netbios_enable'];
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
-		 
+
 		$server['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
@@ -470,7 +470,7 @@ if ($_POST) {
 
 		openvpn_resync('server', $server);
 		write_config();
-		
+
 		header("Location: vpn_openvpn_server.php");
 		exit;
 	}
@@ -739,7 +739,7 @@ if ($savemsg)
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn openvpn server">
 	<tr>
 		<td class="tabnavtbl">
-			<?php 
+			<?php
 				$tab_array = array();
 				$tab_array[] = array(gettext("Server"), true, "vpn_openvpn_server.php");
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
@@ -749,7 +749,7 @@ if ($savemsg)
 				display_top_tabs($tab_array);
 			?>
 		</td>
-	</tr>    
+	</tr>
 	<tr>
 		<td class="tabcont">
 
@@ -893,9 +893,9 @@ if ($savemsg)
 							<input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>" />
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-						<td width="78%" class="vtable"> 
+						<td width="78%" class="vtable">
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>" />
 							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
@@ -1817,8 +1817,8 @@ if ($savemsg)
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="icons">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
+						<td width="78%">
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input name="act" type="hidden" value="<?=$act;?>" />
 							<?php if (isset($id) && $a_server[$id]): ?>
 							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />

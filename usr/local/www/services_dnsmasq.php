@@ -91,7 +91,7 @@ if ($_POST) {
 		if ($_POST['port'] == $config['unbound']['port'])
 			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
 	}
-	
+
 	if ($_POST['port'])
 		if(is_port($_POST['port']))
 			$config['dnsmasq']['port'] = $_POST['port'];
@@ -288,7 +288,7 @@ function show_advanced_dns() {
 				<option value="<?=$laddr;?>" <?=$selected;?>>
 					<?=htmlspecialchars($ldescr);?>
 				</option>
-			<?php endforeach; 
+			<?php endforeach;
 			   unset($interface_addresses);
 			?>
 			</select>

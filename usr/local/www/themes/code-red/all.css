@@ -30,19 +30,19 @@ html, body, td, th, input, select {
 
 .infoboxnptd {
 	width:8%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnptable {
  	height:32px;
 	width:100%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnptable2 {
  	height:32px;
 	width:100%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnp {
@@ -54,7 +54,7 @@ html, body, td, th, input, select {
 	vertical-align:middle;
 	width:28px;
 	height:32px;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .inputerrorsleft {
@@ -63,10 +63,10 @@ html, body, td, th, input, select {
 }
 
 .inputerrorsright {
-	background-color: #FFD9D1;	
+	background-color: #FFD9D1;
 	color: #000000;
 	font-size: 11px;
-	padding-left: 8px; 
+	padding-left: 8px;
 	padding-top: 6px;
 }
 
@@ -218,7 +218,7 @@ iframe {
 	position: relative;
 }
 #header-right .container .left {
-	position: relative; 
+	position: relative;
 	float: left;
 	font-size: 1.3em;
 	font-weight: bold;
@@ -278,7 +278,7 @@ span#marquee-container {
 	top: -100px;
 	left: -10000px;
 }
-div#marquee-text {	
+div#marquee-text {
 	font-size: 1.18em;
 	font-weight: normal;
 	font-family: Verdana;
@@ -384,7 +384,7 @@ table#marquee div#container div#scroller {
 /* initially hidden with absolute position */
 #navigation ul li ul {
 	display: none;
-	position: absolute; 
+	position: absolute;
     /*	top: 2em;
 	left: -2px; */
 	width: 120px;
@@ -409,7 +409,7 @@ table#marquee div#container div#scroller {
 }
 /* Show initial drop down upon mouse over, but do not show */
 /* nested side drop menus within listed elements */
-#navigation ul li:hover ul { 
+#navigation ul li:hover ul {
 	display: block;
 	cursor: pointer;
 }
@@ -730,7 +730,7 @@ ul#wzdnav a:active {
 .listrborder {
 	background-color: #FFFFFF;
 	border-right: 1px solid #999999;
-	border-left: 1px solid #999999;	
+	border-left: 1px solid #999999;
 	border-bottom: 1px solid #999999;
 	font-size: 11px;
 	padding-right: 6px;
@@ -1053,7 +1053,7 @@ div#log span.log-protocol {
 	text-align: left;
 	border-left: 1px solid #999;
 	border-bottom: 1px solid #999;
-	
+
 }
 
 div#log span.log-general {
@@ -1247,7 +1247,7 @@ div#log span.log-destination-mini-header {
 
 div#log span.log-protocol-mini,
 div#log span.log-protocol-mini-header {
-	width: 8%;	
+	width: 8%;
 	border-right: 1px solid #999;
 }
 
@@ -1263,12 +1263,12 @@ table.sortable thead {
 
 .thermalSensorRow		{ width: 100%; border: 0px solid #ddd; padding: 1px; border-radius: 3px; }
 .thermalSensorBarShell	{ position: relative; width: 100%; height: 5px; border: 1px solid lightgray; border-radius: 3px; }
-.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px; 
-						  background-color: LimeGreen; 
-						  border-top-width: 2px; border-top-color: Lime; 
-						  border-left-width: 0px;   
-						  border-right-width: 0px; 
-						  border-bottom-width: 2px; border-bottom-color: Green; 
+.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px;
+						  background-color: LimeGreen;
+						  border-top-width: 2px; border-top-color: Lime;
+						  border-left-width: 0px;
+						  border-right-width: 0px;
+						  border-bottom-width: 2px; border-bottom-color: Green;
 }
 .thermalSensorTextShell	{ height: 20px; width: 100%; top: 3px; }
 .thermalSensorText		{ float: left; height: 20px; top: 3px; }
@@ -1292,8 +1292,8 @@ table.sortable thead {
 .thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
 
 /* widget textarea styles - full width */
-.textarea_widget { 
-	width: 100%; 
+.textarea_widget {
+	width: 100%;
 	resize:vertical;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */

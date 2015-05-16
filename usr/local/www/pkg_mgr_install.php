@@ -279,7 +279,7 @@ if ($_GET) {
 				$status_a = gettext(sprintf("Installation of %s completed.", $pkgid));
 				update_status($status_a);
 				$status = get_after_install_info($pkgid);
-				if($status) 
+				if($status)
 					$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
 				else
 					$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");

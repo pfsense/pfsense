@@ -13,7 +13,7 @@ class Chosen
 
   constructor: (elmn) ->
     this.set_default_values()
-    
+
     @form_field = elmn
     @is_multiple = @form_field.multiple
 
@@ -24,7 +24,7 @@ class Chosen
 
 
   set_default_values: ->
-    
+
     @click_test_action = (evt) => this.test_active_click(evt)
     @active_field = false
     @mouse_on_container = false
@@ -42,26 +42,26 @@ class Chosen
 
   set_up_html: ->
     @container_id = @form_field.id + "_chzn"
-    
+
     @f_width = if @form_field.getStyle("width") then parseInt @form_field.getStyle("width"), 10 else @form_field.getWidth()
-    
+
     container_props =
       'id': @container_id
       'class': 'chzn-container'
       'style': 'width: ' + (@f_width) + 'px' #use parens around @f_width so coffeescript doesn't think + ' px' is a function parameter
-    
+
     @default_text = if @form_field.readAttribute 'title' then @form_field.readAttribute 'title' else @default_text_default
-    
+
     base_template = if @is_multiple then new Element('div', container_props).update( @multi_temp.evaluate({ "default": @default_text}) ) else new Element('div', container_props).update( @single_temp.evaluate({ "default":@default_text }) )
 
     @form_field.hide().insert({ after: base_template })
     @container = $(@container_id)
     @container.addClassName( "chzn-container-" + (if @is_multiple then "multi" else "single") )
     @dropdown = @container.down('div.chzn-drop')
-    
+
     dd_top = @container.getHeight()
     dd_width = (@f_width - get_side_border_padding(@dropdown))
-    
+
     @dropdown.setStyle({"width": dd_width  + "px", "top": dd_top + "px"})
 
     @search_field = @container.down('input')
@@ -69,7 +69,7 @@ class Chosen
     this.search_field_scale()
 
     @search_no_results = @container.down('li.no-results')
-    
+
     if @is_multiple
       @search_choices = @container.down('ul.chzn-choices')
       @search_container = @container.down('li.search-field')
@@ -78,7 +78,7 @@ class Chosen
       @selected_item = @container.down('.chzn-single')
       sf_width = dd_width - get_side_border_padding(@search_container) - get_side_border_padding(@search_field)
       @search_field.setStyle( {"width" : sf_width + "px"} )
-    
+
     this.results_build()
     this.set_tab_index()
 
@@ -87,11 +87,11 @@ class Chosen
     @container.observe "click", (evt) => this.container_click(evt)
     @container.observe "mouseenter", (evt) => this.mouse_enter(evt)
     @container.observe "mouseleave", (evt) => this.mouse_leave(evt)
-    
+
     @search_results.observe "click", (evt) => this.search_results_click(evt)
     @search_results.observe "mouseover", (evt) => this.search_results_mouseover(evt)
     @search_results.observe "mouseout", (evt) => this.search_results_mouseout(evt)
-    
+
     @form_field.observe "liszt:updated", (evt) => this.results_update_field(evt)
 
     @search_field.observe "blur", (evt) => this.input_blur(evt)
@@ -125,7 +125,7 @@ class Chosen
 
   input_focus: (evt) ->
     setTimeout this.container_click.bind(this), 50 unless @active_field
-  
+
   input_blur: (evt) ->
     if not @mouse_on_container
       @active_field = false
@@ -136,11 +136,11 @@ class Chosen
 
   close_field: ->
     document.stopObserving "click", @click_test_action
-    
+
     if not @is_multiple
       @selected_item.tabIndex = @search_field.tabIndex
       @search_field.tabIndex = -1
-    
+
     @active_field = false
     this.results_hide()
 
@@ -193,7 +193,7 @@ class Chosen
 
     this.show_search_field_default()
     this.search_field_scale()
-    
+
     @search_results.update content
     @parsing = false
 
@@ -204,15 +204,15 @@ class Chosen
       '<li id="' + group.dom_id + '" class="group-result">' + group.label.escapeHTML() + '</li>'
     else
       ""
-  
+
   result_add_option: (option) ->
     if not option.disabled
       option.dom_id = @form_field.id + "chzn_o_" + option.array_index
-      
+
       classes = if option.selected and @is_multiple then [] else ["active-result"]
       classes.push "result-selected" if option.selected
       classes.push "group-option" if option.group_array_index?
-      
+
       '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '">' + option.text.escapeHTML() + '</li>'
     else
       ""
@@ -239,7 +239,7 @@ class Chosen
         @search_results.scrollTop = if (high_bottom - maxHeight) > 0 then (high_bottom - maxHeight) else 0
       else if high_top < visible_top
         @search_results.scrollTop = high_top
-    
+
   result_clear_highlight: ->
     @result_highlight.removeClassName('highlighted') if @result_highlight
     @result_highlight = null
@@ -337,12 +337,12 @@ class Chosen
       this.result_clear_highlight()
 
       high.addClassName("result-selected")
-      
+
       if @is_multiple
         this.result_deactivate high
       else
         @result_single_selected = high
-        
+
       position = high.id.substr(high.id.lastIndexOf("_") + 1 )
       item = @results_data[position]
       item.selected = true
@@ -403,7 +403,7 @@ class Chosen
         else if not (@is_multiple and option.selected)
           found = false
           result_id = option.dom_id
-          
+
           if regex.test option.text
             found = true
             results += 1
@@ -453,10 +453,10 @@ class Chosen
       do_high = @search_results.down(".active-result")
       if(do_high)
         this.result_do_highlight do_high
-  
+
   no_results: (terms) ->
     @search_results.insert @no_results_temp.evaluate({"terms":terms.escapeHTML()})
-  
+
   no_results_clear: ->
     nr = null
     nr.remove() while nr = @search_results.down(".no-results")
@@ -525,7 +525,7 @@ class Chosen
     this.search_field_scale()
 
     this.clear_backstroke() if stroke != 8 and this.pending_backstroke
-    
+
     switch stroke
       when 8
         @backstroke_length = this.search_field.value.length
@@ -547,10 +547,10 @@ class Chosen
 
       style_block = "position:absolute; left: -1000px; top: -1000px; display:none;"
       styles = ['font-size','font-style', 'font-weight', 'font-family','line-height', 'text-transform', 'letter-spacing']
-      
+
       for style in styles
         style_block += style + ":" + @search_field.getStyle(style) + ";"
-      
+
       div = new Element('div', { 'style' : style_block }).update(@search_field.value)
       document.body.appendChild(div)
 
@@ -580,7 +580,7 @@ root.get_side_border_padding = get_side_border_padding
 root = exports ? this
 
 class SelectParser
-  
+
   constructor: ->
     @options_index = 0
     @parsed = []
@@ -625,5 +625,5 @@ SelectParser.select_to_array = (select) ->
   parser = new SelectParser()
   parser.add_node( child ) for child in select.childNodes
   parser.parsed
-  
+
 root.SelectParser = SelectParser

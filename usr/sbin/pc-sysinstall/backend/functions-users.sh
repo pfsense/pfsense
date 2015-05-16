@@ -130,7 +130,7 @@ setup_users()
         then
           ARGS="${ARGS} -c \"${USERCOMMENT}\""
         fi
-         
+
         if [ ! -z "${USERPASS}" ]
         then
           ARGS="${ARGS} -h 0"
@@ -146,7 +146,7 @@ setup_users()
         else
           ARGS="${ARGS} -s \"/nonexistant\""
         fi
-         
+
         if [ ! -z "${USERHOME}" ]
         then
           ARGS="${ARGS} -m -d \"${USERHOME}\""
@@ -162,7 +162,7 @@ setup_users()
         # Unset our vars before looking for any more users
         unset USERNAME USERCOMMENT USERPASS USERSHELL USERHOME USERGROUPS
       else
-        exit_err "ERROR: commitUser was called without any userName= entry!!!" 
+        exit_err "ERROR: commitUser was called without any userName= entry!!!"
       fi
     fi
 

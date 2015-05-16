@@ -60,7 +60,7 @@ function upload_crash_report($files) {
 	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
 	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
 	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 	$response = curl_exec($ch);
 	return $response;
 }

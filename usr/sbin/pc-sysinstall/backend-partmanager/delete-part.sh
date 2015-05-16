@@ -54,7 +54,7 @@ CHARS="`echo $PARTITION | wc -c`"
 PARTINDEX=""
 
 # Lets read through backwards until we get the part number
-while 
+while
 z=1
 do
   CHARS=`expr $CHARS - 1`
@@ -83,7 +83,7 @@ gpart delete -i ${PARTINDEX} ${DISK} >/dev/null 2>/dev/null
 # Check if this was the last partition and destroy the disk geom if so
 get_disk_partitions "${DISK}"
 if [ -z "${VAL}" ] ; then
-  gpart destroy ${DISK}  
+  gpart destroy ${DISK}
 fi
 
 exit "$?"

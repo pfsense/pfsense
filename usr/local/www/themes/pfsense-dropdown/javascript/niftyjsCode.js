@@ -78,7 +78,7 @@ if(!el.passed){
     }
 el.passed=true;
 }
-    
+
 function AddTop(el,bk,color,bc,cn){
 var i,lim=4,d=CreateEl("b");
 

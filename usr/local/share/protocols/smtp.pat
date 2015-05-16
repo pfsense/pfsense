@@ -5,12 +5,12 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # usually runs on port 25
-# 
+#
 # This pattern has been tested and is believed to work well.
 
 # As usual, no text is required after "220", but all known servers have some
 # there.  It (almost?) always has string "smtp" in it.  The RFC examples
-# does not, so we match those too, just in case anyone has copied them 
+# does not, so we match those too, just in case anyone has copied them
 # literally.
 #
 # Some examples:
@@ -29,7 +29,7 @@
 # 220 kona.carleton.edu -- Server ESMTP (PMDF V6.2#30648)
 # 220 letra.reed.edu ESMTP Sendmail 8.12.9/8.12.9; Mon, 15 Sep 2003 10:35:57 -0700 (PDT)
 # 220-swan.mail.pas.earthlink.net ESMTP Exim 3.33 #1 Mon, 15 Sep 2003 10:32:15 -0700
-# 
+#
 # RFC examples:
 # 220 xyz.com Simple Mail Transfer Service Ready (RFC example)
 # 220 dbc.mtview.ca.us SMTP service ready

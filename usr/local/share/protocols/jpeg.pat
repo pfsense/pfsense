@@ -1,4 +1,4 @@
-# JPEG - Joint Picture Expert Group image format.  
+# JPEG - Joint Picture Expert Group image format.
 # Pattern attributes: ok fast notsofast subset
 # Protocol groups: file
 

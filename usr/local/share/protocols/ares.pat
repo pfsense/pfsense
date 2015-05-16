@@ -25,9 +25,9 @@ ares
 # - \x03\x00 (the length appears to always be 3)
 # - \x5a - The login packet type.
 #   The source code suggests that for supernodes \x5d is used instead.
-# - Three more bytes.  I don't know the meaning of these, but for me they 
-#   are always \x06\x06\x05 (in Ares 1.8.8.2998).  From the comments in IPP2P, 
-#   it seems that they are not always exactly that, but seem to always end in 
+# - Three more bytes.  I don't know the meaning of these, but for me they
+#   are always \x06\x06\x05 (in Ares 1.8.8.2998).  From the comments in IPP2P,
+#   it seems that they are not always exactly that, but seem to always end in
 #   \x05.
 #
 # Search packets have the following format:
@@ -45,9 +45,9 @@ ares
 #   - "other"    = 08
 # - \x0f - I don't know what this means, but it is always this for me
 # - Two bytes of unknown meaning that change
-# - Some number search words: 
+# - Some number search words:
 #   - \x14 - I don't know what this means, but it is always this for me
-#   - One byte length of the first search word 
+#   - One byte length of the first search word
 #     Between 2 and \x14 in my tests with Ares 1.8.8.2998
 #     It ignores single letter words and truncates ones longer than \x14
 #   - Two bytes of unknown meaning that change

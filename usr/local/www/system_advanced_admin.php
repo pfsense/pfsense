@@ -414,9 +414,9 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Anti-lockout"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
-										if($config['interfaces']['lan']) 
+										if($config['interfaces']['lan'])
 											$lockout_interface = "LAN";
-										else 
+										else
 											$lockout_interface = "WAN";
 									?>
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked=\"checked\""; ?> />
@@ -450,7 +450,7 @@ function prot_change() {
 									<br />
 									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
 									<br />
-									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
+									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " .
 									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
 								</td>
 							</tr>
@@ -566,7 +566,7 @@ function prot_change() {
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>							
+							</tr>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>

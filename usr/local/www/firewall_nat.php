@@ -344,7 +344,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 						</table>
 					</td>
 				</tr>
-	<?php 
+	<?php
 		$i++;
 		$nnats++;
 	endforeach;

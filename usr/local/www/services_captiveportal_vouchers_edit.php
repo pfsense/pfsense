@@ -1,21 +1,21 @@
-<?php 
+<?php
 /*
 	services_captiveportal_vouchers_edit.php
 
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
-	All rights reserved. 
-	
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -27,7 +27,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_MODULE:	captiveportal
 */
 
@@ -87,7 +87,7 @@ $maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;    // Highest Roll
 $maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;   // Highest Ticket#
 
 if ($_POST) {
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -104,8 +104,8 @@ if ($_POST) {
 			break;
 		}
 	}
-	
-    if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber) 
+
+    if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber)
         $input_errors[] = sprintf(gettext("Roll number must be numeric and less than %s"), $maxnumber);
 
     if (!is_numeric($_POST['count']) || $_POST['count'] < 1 || $_POST['count'] > $maxcount)
@@ -172,42 +172,42 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal_vouchers_edit.php" method="post" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="content pane">
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Roll"); ?>#</td>
-	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>" /> 
+	  <td width="78%" class="vtable">
+		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>" />
         <br />
         <span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=htmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
 		</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Minutes per Ticket"); ?></td>
-	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>" /> 
+	  <td width="78%" class="vtable">
+		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>" />
         <br />
         <span class="vexpl"><?=gettext("Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication"); ?>.</span>
 	   </td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Count"); ?></td>
-	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>" /> 
+	  <td width="78%" class="vtable">
+		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>" />
         <br />
         <span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=htmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
 		</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
-	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" /> 
+	  <td width="78%" class="vtable">
+		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
         <br />
         <span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
 		</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%"> 
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
+	  <td width="78%">
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 		<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
 		<?php if (isset($id) && $a_roll[$id]): ?>
 		<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />

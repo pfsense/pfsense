@@ -206,7 +206,7 @@ function update_description() {
 										}
 									}
 									selectAll();
-								//]]>									
+								//]]>
 								</script>
 								<br />
 								</td>

@@ -6,7 +6,7 @@
 #
 # This pattern has been tested somewhat.
 
-# this is a difficult protocol to match because of the relative lack of 
+# this is a difficult protocol to match because of the relative lack of
 # distinguishing information.  Read on.
 pop3
 

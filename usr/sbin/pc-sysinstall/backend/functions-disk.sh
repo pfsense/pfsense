@@ -284,7 +284,7 @@ stop_all_gmirror()
 {
   DISK="${1}"
   GPROV="`gmirror list | grep ". Name: mirror/" | cut -d '/' -f 2`"
-  for gprov in $GPROV 
+  for gprov in $GPROV
   do
     gmirror list | grep "Name: ${DISK}" >/dev/null 2>/dev/null
     if [ "$?" = "0" ]
@@ -341,7 +341,7 @@ setup_disk_slice()
       get_value_from_string "${line}"
       strip_white_space "$VAL"
       DISK="$VAL"
-     
+
       # Before we go further, lets confirm this disk really exists
       if [ ! -e "/dev/${DISK}" ]
       then
@@ -368,7 +368,7 @@ setup_disk_slice()
       get_value_from_string "${line}"
       strip_white_space "$VAL"
       MIRRORDISK="$VAL"
-     
+
       # Before we go further, lets confirm this disk really exists
       if [ ! -e "/dev/${MIRRORDISK}" ]
       then
@@ -390,7 +390,7 @@ setup_disk_slice()
     echo $line | grep "^partition=" >/dev/null 2>/dev/null
     if [ "$?" = "0" ]
     then
-      # Found a partition= entry, lets read / set it 
+      # Found a partition= entry, lets read / set it
       get_value_from_string "${line}"
       strip_white_space "$VAL"
       PTYPE=`echo $VAL|tr A-Z a-z`
@@ -437,12 +437,12 @@ setup_disk_slice()
     # Check if we have a partscheme specified
     echo $line | grep "^partscheme=" >/dev/null 2>/dev/null
     if [ "$?" = "0" ] ; then
-      # Found a partscheme= entry, lets read / set it 
+      # Found a partscheme= entry, lets read / set it
       get_value_from_string "${line}"
       strip_white_space "$VAL"
       PSCHEME="$VAL"
       if [ "$PSCHEME" != "GPT" -a "$PSCHEME" != "MBR" ] ; then
-        exit_err "Unknown partition scheme: $PSCHEME" 
+        exit_err "Unknown partition scheme: $PSCHEME"
       fi
     fi
 
@@ -465,18 +465,18 @@ setup_disk_slice()
           all)
             if [ "$PSCHEME" = "MBR" -o -z "$PSCHEME" ] ; then
               PSCHEME="MBR"
-              tmpSLICE="${DISK}s1"  
+              tmpSLICE="${DISK}s1"
             else
-              tmpSLICE="${DISK}p1"  
+              tmpSLICE="${DISK}p1"
             fi
 
             run_gpart_full "${DISK}" "${BMANAGER}" "${PSCHEME}"
             ;;
 
           s1|s2|s3|s4)
-            tmpSLICE="${DISK}${PTYPE}" 
+            tmpSLICE="${DISK}${PTYPE}"
             # Get the number of the slice we are working on
-            s="`echo ${PTYPE} | awk '{print substr($0,length,1)}'`" 
+            s="`echo ${PTYPE} | awk '{print substr($0,length,1)}'`"
             run_gpart_slice "${DISK}" "${BMANAGER}" "${s}"
             ;;
 
@@ -489,23 +489,23 @@ setup_disk_slice()
             if [ -z "${IMAGE}" ]
             then
               exit_err "ERROR: partition type image specified with no image!"
-            fi 
+            fi
             ;;
 
           *) exit_err "ERROR: Unknown PTYPE: $PTYPE" ;;
         esac
-        
+
 
 		if [ -n "${IMAGE}" ]
-		then 
+		then
           local DEST
-          
+
 		  if [ -n "${tmpSLICE}" ]
           then
 			DEST="${tmpSLICE}"
-          else 
+          else
 			DEST="${DISK}"
-          fi 
+          fi
 
           write_image "${IMAGE}" "${DEST}"
           check_disk_layout "${DEST}"
@@ -532,7 +532,7 @@ setup_disk_slice()
         unset BMANAGER PTYPE DISK MIRRORDISK MIRRORBAL PSCHEME IMAGE
         disknum="`expr $disknum + 1`"
       else
-        exit_err "ERROR: commitDiskPart was called without procceding disk<num>= and partition= entries!!!" 
+        exit_err "ERROR: commitDiskPart was called without procceding disk<num>= and partition= entries!!!"
       fi
     fi
 
@@ -562,7 +562,7 @@ stop_gjournal()
 init_gpt_full_disk()
 {
   _intDISK=$1
- 
+
   # Set our sysctl so we can overwrite any geom using drives
   sysctl kern.geom.debugflags=16 >>${LOGOUT} 2>>${LOGOUT}
 
@@ -581,7 +581,7 @@ init_gpt_full_disk()
   echo_log "Running gpart on ${_intDISK}"
   rc_halt "gpart create -s GPT ${_intDISK}"
   rc_halt "gpart add -b 34 -s 128 -t freebsd-boot ${_intDISK}"
-  
+
   echo_log "Stamping boot sector on ${_intDISK}"
   rc_halt "gpart bootcode -b /boot/pmbr ${_intDISK}"
 
@@ -592,7 +592,7 @@ init_mbr_full_disk()
 {
   _intDISK=$1
   _intBOOT=$2
- 
+
   startblock="63"
 
   # Set our sysctl so we can overwrite any geom using drives
@@ -641,10 +641,10 @@ init_mbr_full_disk()
   echo_log "Running gpart add on ${_intDISK}"
   rc_halt "gpart add -b ${startblock} -s ${sizeblock} -t freebsd -i 1 ${_intDISK}"
   sleep 2
-  
+
   echo_log "Cleaning up ${_intDISK}s1"
   rc_halt "dd if=/dev/zero of=/dev/${_intDISK}s1 count=1024"
-  
+
   if [ "$_intBOOT" = "bsd" ] ; then
     echo_log "Stamping boot0 on ${_intDISK}"
     rc_halt "gpart bootcode -b /boot/boot0 ${_intDISK}"
@@ -692,7 +692,7 @@ run_gpart_slice()
 
   # Set the slice we will use later
   slice="${1}s${3}"
- 
+
   # Set our sysctl so we can overwrite any geom using drives
   sysctl kern.geom.debugflags=16 >>${LOGOUT} 2>>${LOGOUT}
 
@@ -754,7 +754,7 @@ run_gpart_free()
   sysctl kern.geom.debugflags=16 >>${LOGOUT} 2>>${LOGOUT}
 
   slice="${DISK}s${SLICENUM}"
-  slicenum="${SLICENUM}" 
+  slicenum="${SLICENUM}"
 
   # Working on the first slice, make sure we have MBR setup
   gpart show ${DISK} >/dev/null 2>/dev/null
@@ -802,7 +802,7 @@ run_gpart_free()
   echo_log "Running gpart on ${DISK}"
   rc_halt "gpart add -b ${startblock} -s ${sizeblock} -t freebsd -i ${slicenum} ${DISK}"
   sleep 2
-  
+
   echo_log "Cleaning up $slice"
   rc_halt "dd if=/dev/zero of=/dev/${slice} count=1024"
 

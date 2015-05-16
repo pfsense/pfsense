@@ -116,7 +116,7 @@ function vpn_ipsec_configure($restart = false)
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
-	
+
 	/* service may have been enabled, disabled, or otherwise changed in a way requiring rule updates */
 	filter_configure();
 

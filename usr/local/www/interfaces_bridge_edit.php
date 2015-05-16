@@ -466,7 +466,7 @@ function show_source_port_range() {
 						<td class="vtable" width="80%">
 							<table summary="path cost">
 							<?php
-								$i = 0; 
+								$i = 0;
 								foreach ($ifacelist as $ifn => $ifdescr) {
 									echo "<tr><td>{$ifdescr}</td><td><input size=\"8\" name=\"{$ifn}{$i}\" type=\"text\" class=\"formfld unknown\" id=\"{$ifn}{$i}\" value=\"{$ifpathcost[$ifn]}\" /></td></tr>";
 								}

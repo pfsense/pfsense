@@ -17,7 +17,7 @@ function autoInit_trees() {
 		}
 	}
 }
- 
+
 /*
  * Initialise a tree node, converting all its LIs appropriately
  */
@@ -25,7 +25,7 @@ function initTree(el) {
 	var i,j;
 	var spanA, spanB, spanC;
 	var startingPoint, stoppingPoint, childUL;
-	
+
 	// Find all LIs to process
 	for(i=0;i<el.childNodes.length;i++) {
 		if(el.childNodes[i].tagName && el.childNodes[i].tagName.toLowerCase() == 'li') {
@@ -42,8 +42,8 @@ function initTree(el) {
 			spanB.className = 'b';
 			spanB.onclick = treeToggle;
 			spanC.className = 'c';
-			
-			
+
+
 			// Find the UL within the LI, if it exists
 			stoppingPoint = li.childNodes.length;
 			startingPoint = 0;
@@ -57,19 +57,19 @@ function initTree(el) {
 				if(li.childNodes[j].tagName && li.childNodes[j].tagName.toLowerCase() == 'ul') {
 					childUL = li.childNodes[j];
 					stoppingPoint = j;
-					break;					
+					break;
 				}
 			}
-				
+
 			// Move all the nodes up until that point into spanC
 			for(j=startingPoint;j<stoppingPoint;j++) {
 				spanC.appendChild(li.childNodes[startingPoint]);
 			}
-			
+
 			// Insert the outermost extra span into the tree
 			if(li.childNodes.length > startingPoint) li.insertBefore(spanA, li.childNodes[startingPoint]);
 			else li.appendChild(spanA);
-			
+
 			// Process the children
 			if(childUL != null) {
 				if(initTree(childUL)) {
@@ -79,7 +79,7 @@ function initTree(el) {
 			}
 		}
 	}
-	
+
 	if(li) {
 		// li and spanA will still be set to the last item
 
@@ -89,9 +89,9 @@ function initTree(el) {
 	} else {
 		return false;
 	}
-		
+
 }
- 
+
 
 /*
  * +/- toggle the tree, where el is the <span class="b"> node
@@ -99,30 +99,30 @@ function initTree(el) {
  */
 function treeToggle(el, force) {
 	el = this;
-	
+
 	while(el != null && (!el.tagName || el.tagName.toLowerCase() != "li")) el = el.parentNode;
-	
+
 	// Get UL within the LI
 	var childSet = findChildWithTag(el, 'ul');
 	var topSpan = findChildWithTag(el, 'span');
 
 	if( force != null ){
-		
+
 		if( force == "open"){
 			treeOpen( topSpan, el );
 		}
 		else if( force == "close" ){
 			treeClose( topSpan, el );
 		}
-		
+
 	}
-	
+
 	else if( childSet != null) {
 		// Is open, close it
-		if(!el.className.match(/(^| )closed($| )/)) {		
+		if(!el.className.match(/(^| )closed($| )/)) {
 			treeClose( topSpan, el );
 		// Is closed, open it
-		} else {			
+		} else {
 			treeOpen( topSpan, el );
 		}
 	}
@@ -133,8 +133,8 @@ function treeOpen( a, b ){
 	removeClass(a,'spanClosed');
 	removeClass(b,'closed');
 }
-	
-	
+
+
 function treeClose( a, b ){
 	addClass(a,'spanClosed');
 	addClass(b,'closed');
@@ -168,11 +168,11 @@ function removeClass(el, cls) {
 	var newCls = ' ' + el.className + ' ';
 	newCls = newCls.replace(new RegExp(' (' + cls + ' +)+','g'), ' ');
 	el.className = newCls.replace(/(^ +)|( +$)/g, '');
-} 
+}
 
 /*
  * Handlers for automated loading
- */ 
+ */
  _LOADERS = Array();
 
 function callAllLoaders() {

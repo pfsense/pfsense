@@ -1,23 +1,23 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	system_gateway_groups_edit.php
 	part of pfSense (https://www.pfsense.org)
-	
+
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -83,9 +83,9 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "name");
 	$reqdfieldsn = explode(",", "Name");
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if (! isset($_POST['name'])) {
 		$input_errors[] = gettext("A valid gateway group name must be specified.");
 	}
@@ -138,12 +138,12 @@ if ($_POST) {
 			$a_gateway_groups[$id] = $gateway_group;
 		else
 			$a_gateway_groups[] = $gateway_group;
-		
+
 		mark_subsystem_dirty('staticroutes');
 		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
-		
+
 		write_config();
-		
+
 		header("Location: system_gateway_groups.php");
 		exit;
 	}
@@ -229,10 +229,10 @@ jQuery(function ($) {
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system groups edit">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway group entry"); ?></td>
-		</tr>	
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
@@ -335,13 +335,13 @@ jQuery(function ($) {
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>

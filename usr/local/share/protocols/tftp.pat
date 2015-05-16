@@ -5,14 +5,14 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # usually runs on port 69
-# 
-# This pattern is unconfirmed. 
+#
+# This pattern is unconfirmed.
 
 tftp
-# The first packet from the initiating host should either be a Read Request 
-# or a Write Request.  In the other direction, it should be data packet with 
+# The first packet from the initiating host should either be a Read Request
+# or a Write Request.  In the other direction, it should be data packet with
 # block number one or an ACK with block number zero.  We only attempt to match
-# the initiating host's packets, because the only identifying features of 
+# the initiating host's packets, because the only identifying features of
 # the responses to them are two byte sequences (which isn't specific enough).
 # (\x01|\x02) = Read Request or Write Request
 # [ -~]* = the file name

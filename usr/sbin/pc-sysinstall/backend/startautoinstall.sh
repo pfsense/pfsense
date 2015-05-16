@@ -103,7 +103,7 @@ fi
 # If we end up with a valid config, lets proccede
 if [ -e "${INSTALL_CFG}" ]
 then
-  
+
   if [ "${CONFIRM_INS}" != "no" -a "${CONFIRM_INS}" != "NO" ]
   then
     echo "Type in 'install' to begin automated installation. Warning: Data on target disks may be destroyed!"
@@ -120,12 +120,12 @@ then
     if [ ! -z "$SHUTDOWN_CMD" ]
     then
       ${SHUTDOWN_CMD}
-    else 
-      echo "SUCCESS: Installation finished! Press ENTER to reboot." 
+    else
+      echo "SUCCESS: Installation finished! Press ENTER to reboot."
       read tmp
       shutdown -r now
     fi
-  else 
+  else
     echo "ERROR: Installation failed, press ENTER to drop to shell."
     read tmp
     /bin/csh

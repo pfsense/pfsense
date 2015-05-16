@@ -129,7 +129,7 @@ setup_dedicated_boot_part()
   # Strip the '/' from BOOTMNT before making symlink
   BOOTMNTNS="`echo ${BOOTMNT} | sed 's|/||g'`"
   rc_halt "chroot ${FSMNT} ln -s ${BOOTMNTNS}/boot /boot"
-  
+
 };
 
 # Function which creates the /etc/fstab for the installed system
@@ -176,7 +176,7 @@ setup_fstab()
     then
       DEVICE="label/${PARTLABEL}"
     else
-      # Check if using encryption 
+      # Check if using encryption
       if [ "${PARTENC}" = "ON" ] ; then
         EXT=".eli"
       fi
@@ -237,7 +237,7 @@ setup_fstab()
   fi
 
   # If we have a dedicated /boot, run the post-install setup of it now
-  if [ ! -z "${BOOTMNT}" ] ; then 
+  if [ ! -z "${BOOTMNT}" ] ; then
     setup_dedicated_boot_part "${ROOTFS}" "${ROOTFSTYPE}" "${BOOTFS}" "${BOOTMNT}"
   fi
 
@@ -255,7 +255,7 @@ setup_gmirror()
     MIRRORBAL="`cat ${DISK} | cut -d ':' -f 2`"
 
     # Create this mirror device
-    gmirror label -vb $MIRRORBAL gm${NUM} /dev/${DISK} 
+    gmirror label -vb $MIRRORBAL gm${NUM} /dev/${DISK}
 
     sleep 3
 
@@ -267,7 +267,7 @@ setup_gmirror()
     NUM="`expr ${NUM} + 1`"
   done
 
-  
+
   cat ${FSMNT}/boot/loader.conf 2>/dev/null | grep 'geom_mirror_load="YES"' >/dev/null 2>/dev/null
   if [ "$?" != "0" ]
   then
@@ -290,9 +290,9 @@ setup_geli_loading()
      PART="`echo ${KEYFILE} | cut -d '.' -f 1`"
 
      # Add the entries to loader.conf to start this geli provider at boot
-     echo "geli_${PART}_keyfile0_load=\"YES\"" >> ${FSMNT}/boot/loader.conf 
-     echo "geli_${PART}_keyfile0_type=\"${PART}:geli_keyfile0\"" >> ${FSMNT}/boot/loader.conf 
-     echo "geli_${PART}_keyfile0_name=\"/boot/keys/${KEYFILE}\"" >> ${FSMNT}/boot/loader.conf 
+     echo "geli_${PART}_keyfile0_load=\"YES\"" >> ${FSMNT}/boot/loader.conf
+     echo "geli_${PART}_keyfile0_type=\"${PART}:geli_keyfile0\"" >> ${FSMNT}/boot/loader.conf
+     echo "geli_${PART}_keyfile0_name=\"/boot/keys/${KEYFILE}\"" >> ${FSMNT}/boot/loader.conf
 
      # If we have a passphrase, set it up now
      if [ -e "${PARTDIR}-enc/${PART}-encpass" ] ; then
@@ -321,9 +321,9 @@ gen_hostname()
 
   if [ "$INSTALLTYPE" = "FreeBSD" ]
   then
-    VAL="freebsd-${RAND}" 
+    VAL="freebsd-${RAND}"
   else
-    VAL="pcbsd-${RAND}" 
+    VAL="pcbsd-${RAND}"
   fi
 
   export VAL

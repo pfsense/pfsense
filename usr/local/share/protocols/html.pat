@@ -1,7 +1,7 @@
 # (X)HTML - (Extensible) Hypertext Markup Language - http://w3.org
 # Pattern attributes: good fast notsofast subset
 # Protocol groups: file
-# 
+#
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 # This pattern has been tested and is believe to work well.
 

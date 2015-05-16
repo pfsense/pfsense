@@ -54,7 +54,7 @@ if(isset($config['system']['authserver'][0]['host'])){
 <html>
   <HEAD>
     <STYLE type="text/css">
-		TABLE { 
+		TABLE {
 			border-width: 1px;
 			border-spacing: 0px;
 			border-style: solid solid solid solid;
@@ -62,7 +62,7 @@ if(isset($config['system']['authserver'][0]['host'])){
 			border-collapse: separate;
 			background-color: collapse;
  		}
-		TD { 
+		TD {
 			border-width: 1px 1px 1px 1px;
 			border-spacing: 0px;
 			border-style: solid solid solid solid;
@@ -71,10 +71,10 @@ if(isset($config['system']['authserver'][0]['host'])){
 			background-color: #dddddd;
 		}
     </STYLE>
-  </HEAD>	
+  </HEAD>
 	<body>
 		<form method="post" name="iform" id="iform">
-			
+
 <?php
 $theme = $config['theme'];
 
@@ -92,7 +92,7 @@ if (!$authcfg) {
 	if(ldap_test_connection($authcfg)) {
 		echo "<td><center><font color=green>OK</center></td></tr>";
 
-		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>"; 
+		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>";
 		if(ldap_test_bind($authcfg)) {
 			echo "<td><center><font color=green>OK</center></td></tr>";
 

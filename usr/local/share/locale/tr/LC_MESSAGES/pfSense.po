@@ -526,7 +526,7 @@ msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr "Yedek ön bellek dosyası %s bozuk. bağlantı bırıkılıyor."
 
 # bu çeviride türkçe karakter kullanmayınız (yaptı) kelimesi hariç herhangi bir yere türkçe karakter girince tüm pfSense nin sorun vermesine sebep oluyor (TechnicaL)
-# 
+#
 # - AydinY: "yaptı" kelimesi türkçe olduğu zaman da config.xml de işlemi geri alıyor.
 #: etc/inc/config.lib.inc:901
 #, php-format
@@ -4282,9 +4282,9 @@ msgid "Created:"
 msgstr "Created:"
 
 # eğer mümkünse gibi bişey ekelemek yanlış zaten burda dosyaya müdahele edilmesi istenmiyor ! çeviriyi direk kelime bazlı işlemeyelim !!!!!!!!!
-# 
+#
 # Bu tarz dosyalar da Türkçe karakter kullanmak da tehlikeli! A.Y.
-# 
+#
 # Cron oluştururken sorunlara neden oluyor. Lütfen çevirmeyin. A.Y.
 #: etc/inc/services.inc:2307
 msgid "If possible do not add items to this file manually."
@@ -21641,8 +21641,8 @@ msgstr "Üzerine yazılacak alan adı (Not: Geçerli bir TLD olması gerekmez.)"
 msgid "test"
 msgstr "test"
 
-# boş bırakınız cümle içinde gereksiz olabilir. 
-# 
+# boş bırakınız cümle içinde gereksiz olabilir.
+#
 # "Olabilir cümlesi emin olunmadığını gösteriyor, anlamlı kelimelerin mutlaka karşılığı yazılmalıdır." A.Y.
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:138
 #: usr/local/www/services_dnsmasq_edit.php:234

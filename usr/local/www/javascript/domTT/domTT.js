@@ -473,7 +473,7 @@ function domTT_create(in_options)
 	{
 		var left = document.defaultView.getComputedStyle(tipObj, '').getPropertyValue('border-left-width');
 		var right = document.defaultView.getComputedStyle(tipObj, '').getPropertyValue('border-right-width');
-		
+
 		left = left.substring(left.indexOf(':') + 2, left.indexOf(';'));
 		right = right.substring(right.indexOf(':') + 2, right.indexOf(';'));
 		var correction = 2 * ((left ? parseInt(left) : 0) + (right ? parseInt(right) : 0));
@@ -804,7 +804,7 @@ function domTT_close(in_handle)
 		while (!obj.id || !domTT_tooltips.get(obj.id))
 		{
 			obj = obj.parentNode;
-	
+
 			if (obj.nodeType != document.ELEMENT_NODE) { return; }
 		}
 
@@ -885,7 +885,7 @@ function domTT_deactivate(in_id)
 			if (domTT_detectCollisions) {
 				// unhide all of the selects that are owned by this object
 				// utilize original collision element cache
-				domLib_detectCollisions(tipObj, true, true); 
+				domLib_detectCollisions(tipObj, true, true);
 			}
 		}
 	}

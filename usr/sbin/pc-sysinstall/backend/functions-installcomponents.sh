@@ -66,7 +66,7 @@ copy_component()
         then
           exit_err "ERROR: Install medium was set to ftp, but no ftpPath was provided!"
         fi
-        FTPPATH="${VAL}" 
+        FTPPATH="${VAL}"
 
         fetch_file "${FTPPATH}/${COMPFILEDIR}/${SUBDIR}/${CFILE}" "${FSMNT}/${COMPTMPDIR}/${CFILE}" "0"
         RESULT="$?"
@@ -89,7 +89,7 @@ copy_component()
       else
         if [ -z "${CFILES}" ]
         then
-          CFILES="${CFILE}" 
+          CFILES="${CFILE}"
         else
           CFILES="${CFILES},${CFILE}"
         fi
@@ -98,7 +98,7 @@ copy_component()
 
 
   done < ${COMPDIR}/${COMPONENT}/distfiles
-      
+
   if [ "${FAILED}" = "0" ]
   then
     # Now install the component
@@ -112,7 +112,7 @@ run_component_install()
   COMPONENT="$1"
   CFILES="$1"
 
-  # Lets install this component now 
+  # Lets install this component now
   # Start by making a wrapper script which sets the variables
   # for the component to use
   echo "#!/bin/sh
@@ -125,7 +125,7 @@ sh ${COMPTMPDIR}/install.sh
 
 " >${FSMNT}/.componentwrapper.sh
   chmod 755 ${FSMNT}/.componentwrapper.sh
-   
+
   # Copy over the install script for this component
   cp ${COMPDIR}/${COMPONENT}/install.sh ${FSMNT}/${COMPTMPDIR}/
 

@@ -159,7 +159,7 @@ iframe {
 	position: relative;
 }
 #header-right .container .left {
-	position: relative; 
+	position: relative;
 	float: left;
 	font-size: 1.3em;
 	font-weight: bold;
@@ -219,7 +219,7 @@ span#marquee-container {
 	top: -100px;
 	left: -10000px;
 }
-div#marquee-text {	
+div#marquee-text {
 	font-size: 1.18em;
 	font-weight: normal;
 	font-family: Verdana;
@@ -327,7 +327,7 @@ table#marquee div#container div#scroller {
 /* initially hidden with absolute position */
 #navigation ul li ul {
 	display: none;
-	position: absolute; 
+	position: absolute;
 	top: 2em;
 	left: -2px;
 	width: 9em;
@@ -350,7 +350,7 @@ table#marquee div#container div#scroller {
 }
 /* Show initial drop down upon mouse over, but do not show */
 /* nested side drop menus within listed elements */
-#navigation ul li:hover ul { 
+#navigation ul li:hover ul {
 	display: block;
 	cursor: pointer;
 }

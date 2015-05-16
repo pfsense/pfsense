@@ -370,12 +370,12 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>			
+			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
-			<type>input</type>			
+			<type>input</type>
 			<bindstofield>wizardtemp->wan->pptpidletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
@@ -493,13 +493,13 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if($_POST['selectedtype'] == "Static") { 
-			
+			if($_POST['selectedtype'] == "Static") {
+
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
-				if(!$config['interfaces']['lan']) 
+				if(!$config['interfaces']['lan'])
 					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -598,7 +598,7 @@
 	<id>9</id>
 	<title>Reload in progress</title>
 	<description>
-		A reload is now in progress.  Please wait. &lt;p&gt; 
+		A reload is now in progress.  Please wait. &lt;p&gt;
 		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
@@ -650,7 +650,7 @@
 		if($g['product_name'] <> 'pfSense') {
 			header("Location: " . fixup_string("\$myurl"));
 			exit;
-		}	
+		}
 	]]>
 	</stepbeforeformdisplay>
 	<description>

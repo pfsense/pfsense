@@ -5,7 +5,7 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on TCP port 43
-# 
+#
 # This pattern has been tested and is believed to work well.
 
 whois

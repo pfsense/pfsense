@@ -162,7 +162,7 @@ function show_dsdiv() {
 function show_advanced_noxmlrpc() {
 	document.getElementById("showadvnoxmlrpcsyncbox").innerHTML='';
 	aodiv = document.getElementById('shownoxmlrpcadv');
-	aodiv.style.display = "block";	
+	aodiv.style.display = "block";
 }
 
 function show_advanced_vlanprio() {

@@ -74,7 +74,7 @@ mount_partition()
 
       # Disable atime for this zfs partition, speed increase
       rc_nohalt "zfs set atime=off ${ZPOOLNAME}${ZNAME}"
-    done 
+    done
 
   else
     # If we are not on ZFS, lets do the mount now
@@ -104,7 +104,7 @@ mount_all_filesystems()
     if [ ! -e "/dev/${PART}" ]
     then
       exit_err "ERROR: The partition ${PART} does not exist. Failure in bsdlabel?"
-    fi 
+    fi
 
     PARTFS="`cat ${PARTDIR}/${PART} | cut -d ':' -f 1`"
     PARTMNT="`cat ${PARTDIR}/${PART} | cut -d ':' -f 2`"
@@ -117,7 +117,7 @@ mount_all_filesystems()
       EXT=""
     fi
 
-    # Check for root partition for mounting, including ZFS "/,/usr" type 
+    # Check for root partition for mounting, including ZFS "/,/usr" type
     echo "$PARTMNT" | grep "/," >/dev/null
     if [ "$?" = "0" -o "$PARTMNT" = "/" ]
     then
@@ -140,8 +140,8 @@ mount_all_filesystems()
     if [ ! -e "/dev/${PART}" ]
     then
       exit_err "ERROR: The partition ${PART} does not exist. Failure in bsdlabel?"
-    fi 
-     
+    fi
+
     PARTFS="`cat ${PARTDIR}/${PART} | cut -d ':' -f 1`"
     PARTMNT="`cat ${PARTDIR}/${PART} | cut -d ':' -f 2`"
     PARTENC="`cat ${PARTDIR}/${PART} | cut -d ':' -f 3`"
@@ -180,8 +180,8 @@ mount_all_filesystems()
          IMAGE)
            if [ ! -d "${PARTMNT}" ]
            then
-             mkdir -p "${PARTMNT}" 
-           fi 
+             mkdir -p "${PARTMNT}"
+           fi
            mount_partition ${PART} ${PARTFS} ${PARTMNT}
            ;;
          *) exit_err "ERROR: Got unknown file-system type $PARTFS" ;;

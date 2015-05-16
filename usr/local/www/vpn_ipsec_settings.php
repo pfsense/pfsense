@@ -59,7 +59,7 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	
+
 	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
 		$input_errors[] = "A valid value must be specified for Daemon debug.";
 	}
@@ -113,9 +113,9 @@ if ($_POST) {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";	
+			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
 	}
-	
+
 	if (!$input_errors) {
 
 		if (is_array($config['ipsec'])) {
@@ -138,7 +138,7 @@ if ($_POST) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
 		}
-		
+
 		if($_POST['enableinterfacesuse'] == "yes") {
 			if (!isset($config['ipsec']['enableinterfacesuse']))
 				$needsrestart = true;

@@ -4,13 +4,13 @@
 # Wiki: http://www.protocolinfo.org/wiki/Yahoo_Messenger
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
-# Usually runs on port 5050 
+# Usually runs on port 5050
 #
-# This pattern has been tested and is believed to work well. 
+# This pattern has been tested and is believed to work well.
 
 yahoo
-# http://www.venkydude.com/articles/yahoo.htm says: 
-# All Yahoo commands start with YMSG.  
+# http://www.venkydude.com/articles/yahoo.htm says:
+# All Yahoo commands start with YMSG.
 # (Well... http://ethereal.com/faq.html#q5.32 suggests that YPNS and YHOO
 # are also possible, so let's allow those)
 # The next 7 bytes contain command (packet?) length and version information

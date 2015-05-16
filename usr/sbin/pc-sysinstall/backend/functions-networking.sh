@@ -49,7 +49,7 @@ check_is_wifi()
   if [ "$?" = "0" ]
   then
     return 0
-  else 
+  else
     return 1
   fi
 };
@@ -106,16 +106,16 @@ enable_plain_dhcp_all()
         echo "ifconfig_${NIC}=\"DHCP\"" >>${FSMNT}/etc/rc.conf
         CNIC="${NIC}"
       fi
- 
-    done < ${TMPDIR}/.niclist 
+
+    done < ${TMPDIR}/.niclist
   fi
 };
 
-# Function which enables fancy lagg dhcp on specified wifi 
+# Function which enables fancy lagg dhcp on specified wifi
 enable_lagg_dhcp()
 {
   WIFINIC="$1"
-  
+
   # Get the first wired nic
   get_first_wired_nic
   WIRENIC=$VAL
@@ -129,7 +129,7 @@ enable_lagg_dhcp()
     echo "ifconfig_${WIFINIC}=\"ether \${ifconfig_${WIFINIC}##*ether }\"" >> ${FSMNT}/etc/rc.conf
     LAGGPORT="laggport ${WIRENIC} ${LAGGPORT}"
   fi
-  
+
   echo "wlans_${WIFINIC}=\"wlan0\"" >> ${FSMNT}/etc/rc.conf
   echo "cloned_interfaces=\"lagg0\"" >> ${FSMNT}/etc/rc.conf
   echo "ifconfig_lagg0=\"laggproto failover ${LAGGPORT} DHCP\"" >> ${FSMNT}/etc/rc.conf
@@ -155,8 +155,8 @@ save_auto_dhcp()
         enable_lagg_dhcp "${NIC}"
         return
       fi
- 
-    done < ${TMPDIR}/.niclist 
+
+    done < ${TMPDIR}/.niclist
   fi
 
   # Got here, looks like no wifi, so lets simply enable plain-ole-dhcp
@@ -173,7 +173,7 @@ save_manual_nic()
 
   get_value_from_cfg netSaveIP
   NETIP="${VAL}"
- 
+
   if [ "$NETIP" = "DHCP" ]
   then
     echo_log "Setting $NIC to DHCP on the system."
@@ -213,7 +213,7 @@ save_manual_nic()
   then
     echo "nameserver ${NAMESERVER}" >${FSMNT}/etc/resolv.conf
   fi
- 
+
 };
 
 # Function which determines if a nic is active / up
@@ -249,7 +249,7 @@ enable_auto_dhcp()
    	    return 0
 	  fi
     fi
-  done < ${TMPDIR}/.niclist 
+  done < ${TMPDIR}/.niclist
 
 };
 
@@ -271,7 +271,7 @@ enable_manual_nic()
 
   get_value_from_cfg netIP
   NETIP="${VAL}"
-  
+
   if [ "$NETIP" = "DHCP" ]
   then
     echo_log "Enabling DHCP on $NIC"
@@ -307,8 +307,8 @@ enable_manual_nic()
   then
     echo "nameserver ${NAMESERVER}" >/etc/resolv.conf
   fi
-  
-  
+
+
 };
 
 

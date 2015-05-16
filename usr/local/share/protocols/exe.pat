@@ -1,4 +1,4 @@
-# Executable - Microsoft PE file format.  
+# Executable - Microsoft PE file format.
 # Pattern attributes: good notsofast notsofast subset
 # Protocol groups: file
 

@@ -11,7 +11,7 @@ dp.sh.Brushes.CSharp = function()
 	this.regexList = [
 		// There's a slight problem with matching single line comments and figuring out
 		// a difference between // and ///. Using lookahead and lookbehind solves the
-		// problem, unfortunately JavaScript doesn't support lookbehind. So I'm at a 
+		// problem, unfortunately JavaScript doesn't support lookbehind. So I'm at a
 		// loss how to translate that regular expression to JavaScript compatible one.
 //		{ regex: new RegExp('(?<!/)//(?!/).*$|(?<!/)////(?!/).*$|/\\*[^\\*]*(.)*?\\*/', 'gm'),	css: 'comment' },			// one line comments starting with anything BUT '///' and multiline comments
 //		{ regex: new RegExp('(?<!/)///(?!/).*$', 'gm'),											css: 'comments' },		// XML comments starting with ///

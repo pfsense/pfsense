@@ -86,7 +86,7 @@ $a_cert =& $config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca)
-	if ($ca['prv'])	
+	if ($ca['prv'])
 		$internal_ca_count++;
 
 $act = $_GET['act'];
@@ -311,7 +311,7 @@ if ($_POST) {
 				array_push($input_errors, gettext("Please select a valid Key Length."));
 			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs))
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-				
+
 			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens))
 				array_push($input_errors, gettext("Please select a valid Key Length."));
 			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs))
@@ -435,7 +435,7 @@ if ($_POST) {
 //		}
 		$mod_csr  =  csr_get_modulus($pconfig['csr'], false);
 		$mod_cert = cert_get_modulus($pconfig['cert'], false);
-		
+
 		if (strcmp($mod_csr,$mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match
 			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."),$subj_cert);
@@ -1090,7 +1090,7 @@ function internalca_change() {
 						$i = 0;
 						foreach($a_cert as $cert):
 							$name = htmlspecialchars($cert['descr']);
-							
+
 							if ($cert['crt']) {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);

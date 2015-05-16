@@ -6,12 +6,12 @@
 #
 # usually runs on port 80
 #
-# Original pattern contributed by Deepak Seshadri <dseshadri AT 
-# broadbandmaritime.com> who says "The difference between [Shoutcast and 
-# Icecast] is not clearly mentioned anywhere. According to this 
+# Original pattern contributed by Deepak Seshadri <dseshadri AT
+# broadbandmaritime.com> who says "The difference between [Shoutcast and
+# Icecast] is not clearly mentioned anywhere. According to this
 # document, my pattern would filter JUST shoutcast packets."
 #
-# Should now match both Shoutcast and Icecast.  Tested with Winamp (in 
+# Should now match both Shoutcast and Icecast.  Tested with Winamp (in
 # 2005) and Totem using streams at dir.xiph.org (in Nov 2007).
 #
 # http://sander.vanzoest.com/talks/2002/audio_and_apache/

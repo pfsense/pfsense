@@ -69,21 +69,21 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
-		
+
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
-			
+
 			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ipent['ip']);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
-			
+
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 				pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 			}
 		}
-		
+
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
@@ -141,13 +141,13 @@ include("head.inc");
 		echo strtolower($ip['ip']);
 		if($ip['sn'] != "32" && is_numeric($ip['sn'])) {
 			$sn = $ip['sn'];
-			echo "/$sn";	
+			echo "/$sn";
 		}
 		if($ip['dir'] == "from") {
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"any\" /> any";
 		}
-		
-		?>	
+
+		?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;

@@ -1,4 +1,4 @@
-/* 
+/*
 	new_tab_menu.css
 	part of pfSense
 	Copyright (C) 2010-2011 Robert Zelaya
@@ -23,7 +23,7 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-	
+
 
 	Replace your old tab menu with the following code. To add a second tab menu line just cut and paste again.
 	The following code is dependent on new_tab_menu.css and images/new_tab_menu.png.
@@ -45,7 +45,7 @@
 					?>
 				</td>
 			</tr>
-			
+
 */
 
 .newtabmenu ul, li{border:0; margin:0; padding:0; list-style:none;}
@@ -95,7 +95,7 @@
 .newtabmenu_active a:link, .newtabmenu_active a:visited, .newtabmenu_active a:visited, .newtabmenu_active a:hover{
 	color:#000000; /* active font */
 	background:url(images/new_tab_menu.png) right 0 no-repeat;
-} 
+}
 .newtabmenu_active a span, .newtabmenu_active a:hover span{
 	background:url(images/new_tab_menu.png) left 0 no-repeat;
 }

@@ -5,10 +5,10 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This should match both Gnutella and "Gnutella2" ("Mike's protocol")
-# 
+#
 # Various clients use this protocol including Mactella, Shareaza,
 # GTK-gnutella, Gnucleus, Gnotella, LimeWire, iMesh and BearShare.
-# 
+#
 # This is tested with gtk-gnutella and Shareaza.
 
 # http://www.gnutella2.com/tiki-index.php?page=UDP%20Transceiver
@@ -21,8 +21,8 @@ gnutella
 # The first part matches UDP messages - All start with "GND", then have
 # a flag byte which is either \x00, \x01 or \x02, then two sequence bytes
 # that can be anything, then a fragment number, which must start at 1.
-# The rest matches TCP first client message or first server message (in case 
-# we can't see client messages).  Some parts of this are empirical rather than 
+# The rest matches TCP first client message or first server message (in case
+# we can't see client messages).  Some parts of this are empirical rather than
 # document based.  Assumes version is between 0.0 and 2.9. (usually is
 # 0.4 or 0.6).  I'm guessing at many of the user-agents.
 # The last bit is emprical and probably only matches Limewire.

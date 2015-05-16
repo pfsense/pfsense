@@ -162,7 +162,7 @@ include("head.inc");
 			</form>
 		</td>
 	</tr>
-<?php 
+<?php
 		endif;
 		if ($ifinfo['l2tplink']):
 ?>

@@ -203,7 +203,7 @@ function step7_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
@@ -294,7 +294,7 @@ function step9_submitphpaction() {
 			$certnames[] = $cert['descr'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
-		}	
+		}
 	}
 
 	if (empty($_POST['descr']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
@@ -302,13 +302,13 @@ function step9_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
-		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";	
+		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";
 	} elseif (strlen($_POST['country']) != 2) {
 		$stepid--;
 		$savemsg = "Please enter only a two-letter ISO country code";

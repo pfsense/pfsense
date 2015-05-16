@@ -1,26 +1,26 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	services_snmp.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	part of pfSense
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -103,8 +103,8 @@ if ($_POST) {
 		$reqdfields = explode(" ", "pollport");
 		$reqdfieldsn = array(gettext("Polling Port"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-		
-	
+
+
 	}
 
 	if ($_POST['trapenable']) {
@@ -132,12 +132,12 @@ if ($_POST) {
 	}
 */
 
-	
+
 
 	if (!$input_errors) {
 		$config['snmpd']['enable'] = $_POST['enable'] ? true : false;
 		$config['snmpd']['pollport'] = $_POST['pollport'];
-		$config['snmpd']['syslocation'] = $_POST['syslocation'];	
+		$config['snmpd']['syslocation'] = $_POST['syslocation'];
 		$config['snmpd']['syscontact'] = $_POST['syscontact'];
 		$config['snmpd']['rocommunity'] = $_POST['rocommunity'];
 		/* disabled until some docs show up on what this does.
@@ -148,7 +148,7 @@ if ($_POST) {
 		$config['snmpd']['trapserver'] = $_POST['trapserver'];
 		$config['snmpd']['trapserverport'] = $_POST['trapserverport'];
 		$config['snmpd']['trapstring'] = $_POST['trapstring'];
-		
+
 		$config['snmpd']['modules']['mibii'] = $_POST['mibii'] ? true : false;
 		$config['snmpd']['modules']['netgraph'] = $_POST['netgraph'] ? true : false;
 		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
@@ -157,9 +157,9 @@ if ($_POST) {
 		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
 		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
 		$config['snmpd']['bindip'] = $_POST['bindip'];
-			
+
 		write_config();
-		
+
 		$retval = 0;
 		$retval = services_snmpd_configure();
 		$savemsg = get_std_save_message($retval);
@@ -256,7 +256,7 @@ function enable_change(whichone) {
             document.iform.syslocation.disabled = true;
             document.iform.syscontact.disabled = true;
             document.iform.rocommunity.disabled = true;
-	    /* 
+	    /*
             document.iform.rwenable.disabled = true;
 	    document.iform.rwcommunity.disabled = true;
 	    */
@@ -284,7 +284,7 @@ function enable_change(whichone) {
             <form action="services_snmp.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="snmp">
 
-                <tr> 
+                <tr>
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Daemon");?></strong></td>
@@ -300,30 +300,30 @@ function enable_change(whichone) {
 		  </td>
                 </tr>
 
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("System location");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="syslocation" type="text" class="formfld unknown" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>" />
                   </td>
                 </tr>
 
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("System contact");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="syscontact" type="text" class="formfld unknown" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>" />
                   </td>
                 </tr>
 
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Read Community String");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>" />
 		    <br /><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?><br />
 		  </td>
                 </tr>
 		<tr><td>&nbsp;</td></tr>
 
-                <tr> 
+                <tr>
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Traps");?></strong></td>
@@ -355,7 +355,7 @@ function enable_change(whichone) {
 
 		<tr><td>&nbsp;</td></tr>
 
-                <tr> 
+                <tr>
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="modules">
   			<tr><td class="optsect_s"><strong><?=gettext("Modules");?></strong></td>
@@ -410,9 +410,9 @@ function enable_change(whichone) {
 				</select>
 			</td>
 		</tr>
-		 <tr> 
+		 <tr>
 		   <td width="22%" valign="top">&nbsp;</td>
-		   <td width="78%"> 
+		   <td width="78%">
 		     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 		   </td>
 		 </tr>

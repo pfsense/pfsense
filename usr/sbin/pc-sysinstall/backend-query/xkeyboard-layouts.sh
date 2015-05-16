@@ -37,10 +37,10 @@ do
     if [ "$?" = "0" ]
     then
       exit 0
-    else 
+    else
       echo "$line"
-    fi 
-  fi 
+    fi
+  fi
 
   if [ "${FOUND}" = "0" ]
   then
@@ -48,7 +48,7 @@ do
     if [ "$?" = "0" ]
     then
       FOUND="1"
-    fi 
+    fi
   fi
 
 done < /usr/local/share/X11/xkb/rules/xorg.lst

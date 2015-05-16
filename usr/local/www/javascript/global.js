@@ -22,7 +22,7 @@ var AjaxQueue = {
 		if(this.currentRequest == null && this.urlQueue.length > 0) // Check if the currently processing request count is less than batch size
 		{
 			// Call jQuery.ajax on the first item in the queue and remove it from the queue
-			AjaxQueue.currentRequest = jQuery.ajax(AjaxQueue.urlQueue.shift(), AjaxQueue.optionsQueue.shift()); 
+			AjaxQueue.currentRequest = jQuery.ajax(AjaxQueue.urlQueue.shift(), AjaxQueue.optionsQueue.shift());
 			AjaxQueue.currentRequest.complete( function() {
 				//Call AjaxQueue._processNext on completion ( success / failure) of this AJAX request.
 				AjaxQueue.currentRequest = null;

@@ -34,7 +34,7 @@
 ID=`id -u`
 if [ "${ID}" -ne "0" ]
 then
-  echo "Error: must be root!" 
+  echo "Error: must be root!"
   exit 1
 fi
 

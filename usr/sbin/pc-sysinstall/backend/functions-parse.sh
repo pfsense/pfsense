@@ -87,10 +87,10 @@ if_check_value_exists()
     do
       VAL=`echo "$VAL"|tr A-Z a-z`
       if [ "$VAL" = "${i}" ]
-      then 
+      then
         VALID="0"
       fi
-    done 
+    done
     if [ "$VALID" = "1" ]
     then
       exit_err "Error: ${1} is set to unknown value $VAL"
@@ -112,10 +112,10 @@ check_value()
     for i in ${2}
     do
       if [ "$VAL" = "${i}" ]
-      then 
+      then
         VALID="0"
       fi
-    done 
+    done
     if [ "$VALID" = "1" ]
     then
       exit_err "Error: ${1} is set to unknown value $VAL"
@@ -204,7 +204,7 @@ check_for_mount()
       return 0
     fi
   done
-    
+
   return 1
 };
 
@@ -215,7 +215,7 @@ get_next_cfg_line()
   CURLINE="$2"
 
   FOUND="1"
-  
+
   while read line
   do
     if [ "$FOUND" = "0" ] ; then

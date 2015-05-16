@@ -110,7 +110,7 @@ if ($_POST) {
 
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
-		exit;		
+		exit;
 	}
 	//we received input errors, copy data to prevent retype
 	else
@@ -171,7 +171,7 @@ include("head.inc");
 				if ($ifnam == $pconfig['ifname'])
 					echo " selected=\"selected\"";
 				echo ">{$ifdescr}</option>";
-			}		
+			}
 		?>
 			</select>
     </td>

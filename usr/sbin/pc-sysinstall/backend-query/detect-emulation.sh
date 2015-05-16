@@ -35,7 +35,7 @@ VMware*)
   exit 0
   ;;
 *)
-  echo "emulation: NO" 
-  exit 1 
+  echo "emulation: NO"
+  exit 1
   ;;
 esac

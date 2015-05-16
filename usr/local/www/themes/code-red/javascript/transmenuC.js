@@ -1,19 +1,19 @@
 /* =================================================================================================
- * TransMenu 
+ * TransMenu
  * March, 2003
  * Customizable multi-level animated DHTML menus with transparency.
  * =================================================================================================
  * "Can I use this?"
- * 
- * Use of this library is governed by the Creative Commons Attribution 2.0 License. You can check it 
+ *
+ * Use of this library is governed by the Creative Commons Attribution 2.0 License. You can check it
  * out at: http://creativecommons.org/licenses/by/2.0/
  *
- * Basically: You may copy, distribute, and eat this code as you wish. But you must give me credit 
+ * Basically: You may copy, distribute, and eat this code as you wish. But you must give me credit
  * for writing it. You may not misrepresent yourself as the author of this code.
  * =================================================================================================
  * "It's kinda hard to read, though"
  *
- * The uncompressed, commented version of this script can be found at: 
+ * The uncompressed, commented version of this script can be found at:
  * http://youngpup.net/projects/transMenus
  * ============================================================================================== */
 TransMenu.spacerGif="themes/nervecenter/javascript/img/x.gif";TransMenu.dingbatOn="themes/nervecenter/javascript/img/submenu-on.gif";TransMenu.dingbatOff="themes/nervecenter/javascript/img/submenu-off.gif";TransMenu.dingbatSize=14;TransMenu.menuPadding=5;TransMenu.itemPadding=3;TransMenu.shadowSize=2;TransMenu.shadowOffset=3;TransMenu.shadowColor="#000000";TransMenu.shadowPng="themes/nervecenter/javascript/img/grey-40.png";TransMenu.backgroundColor="#990000";TransMenu.backgroundPng="themes/nervecenter/javascript/img/white-90.png";TransMenu.hideDelay=1000;TransMenu.slideTime=400;TransMenu.reference={topLeft:1,topRight:2,bottomLeft:3,bottomRight:4};TransMenu.direction={down:1,right:2};TransMenu.registry=[];TransMenu._maxZ=100;TransMenu.isSupported=function(){var ua=navigator.userAgent.toLowerCase();var pf=navigator.platform.toLowerCase();var an=navigator.appName;var r=false;if(ua.indexOf("gecko")>-1&&navigator.productSub>=20020605)r=true;else if(an=="Microsoft Internet Explorer"){if(document.getElementById){if(pf.indexOf("mac")==0){r=/msie (\d(.\d*)?)/.test(ua)&&Number(RegExp.$1)>=5.1;}

@@ -63,7 +63,7 @@ do
   # Make sure we don't find any cd devices
   echo "${DEV}" | grep -e "^acd[0-9]" -e "^cd[0-9]" -e "^scd[0-9]" >/dev/null 2>/dev/null
   if [ "$?" != "0" ] ; then
-    DEVS="${DEVS} `ls /dev/${i}*`" 
+    DEVS="${DEVS} `ls /dev/${i}*`"
   fi
 
 done
@@ -76,13 +76,13 @@ do
   fi
 
   if [ -e "${i}a.journal" ] ; then
-    _dsk="${i}a.journal" 
+    _dsk="${i}a.journal"
   elif [ -e "${i}a" ] ; then
-    _dsk="${i}a" 
+    _dsk="${i}a"
   elif [ -e "${i}p2" ] ; then
-    _dsk="${i}p2" 
+    _dsk="${i}p2"
   elif [ -e "${i}p2.journal" ] ; then
-    _dsk="${i}p2.journal" 
+    _dsk="${i}p2.journal"
   fi
 
   mount -o ro ${_dsk} ${FSMNT} >>${LOGOUT} 2>>${LOGOUT}

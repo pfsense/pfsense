@@ -1,4 +1,4 @@
-# GIF - Popular Image format.  
+# GIF - Popular Image format.
 # Pattern attributes: good notsofast notsofast subset
 # Protocol groups: file
 

@@ -131,7 +131,7 @@ function filter_rule_tracker($tracker) {
 
 function filter_negaterule_tracker() {
         global $tracker;
-                        
+
         ++$negate_tracker;
         return "tracker {$negate_tracker} ";
 }
@@ -2211,14 +2211,14 @@ function filter_nat_rules_generate() {
 			if (isset($rule['destination']['any'])) {
 				/* With reflection enabled, destination of 'any' has side effects
 				 * that most people would not expect, so change it on reflection rules. */
-				
+
 				if (!empty($FilterIflist[$natif]['ip'])) {
 					$dstaddr_reflect = $FilterIflist[$natif]['ip'];
 				} else {
 					// no IP, bail
 					continue;
 				}
-				
+
 				if (!empty($FilterIflist[$natif]['sn'])) {
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 				}
@@ -3106,7 +3106,7 @@ function filter_rules_generate() {
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
-	
+
 	if (!isset($config['system']['no_apipa_block'])) {
 		$ipfrules .= <<<EOD
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,

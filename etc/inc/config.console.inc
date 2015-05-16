@@ -102,7 +102,7 @@ EOD;
 
 	echo <<<EOD
 
-Do you want to set up VLANs first? 
+Do you want to set up VLANs first?
 
 If you are not going to use VLANs, or only for optional interfaces, you should
 say no here and use the webConfigurator to configure VLANs later, if required.
@@ -309,7 +309,7 @@ EOD;
 
 		echo <<<EOD
 
-Do you want to proceed [y|n]?
+Do you want to proceed [y|n]? 
 EOD;
 		$key = chop(fgets($fp));
 	}
@@ -495,7 +495,7 @@ function vlan_setup() {
 
 WARNING: all existing VLANs will be cleared if you proceed!
 
-Do you want to proceed [y|n]?
+Do you want to proceed [y|n]? 
 EOD;
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0) {

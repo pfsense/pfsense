@@ -14,7 +14,7 @@
 /*
    Quirksmode necessity
    --------------------
-   
+
    If your HTML document renders in quirksmode (i.e. has no doctype declaration)
    then uncomment the following CSS rule or the datePicker will be HUGE...
 

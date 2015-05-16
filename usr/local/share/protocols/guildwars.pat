@@ -4,10 +4,10 @@
 # Wiki: http://www.protocolinfo.org/wiki/Guild_Wars
 # Copyright (C) 2008 Matthew Strait; See ../LICENSE
 
-# Contributed on protocolinfo by Greatwolf with the comment, "Guild Wars 
-# uses encrypted data on tcp/6112 and may be impossible to match by 
-# content. An experimental filter has been written to match Guild Wars 
-# packets. More testing is still required to determine the effectiveness 
+# Contributed on protocolinfo by Greatwolf with the comment, "Guild Wars
+# uses encrypted data on tcp/6112 and may be impossible to match by
+# content. An experimental filter has been written to match Guild Wars
+# packets. More testing is still required to determine the effectiveness
 # of this pattern."
 
 guildwars

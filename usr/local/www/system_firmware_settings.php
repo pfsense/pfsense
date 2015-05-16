@@ -98,13 +98,13 @@ if(file_exists("{$g['tmp_path']}/manifest")) {
 //<![CDATA[
 
 
-function enable_altfirmwareurl(enable_over) {  	 
-	if (document.iform.alturlenable.checked || enable_over) { 	 
-		document.iform.firmwareurl.disabled = 0; 	 
-	} else { 	 
+function enable_altfirmwareurl(enable_over) {
+	if (document.iform.alturlenable.checked || enable_over) {
+		document.iform.firmwareurl.disabled = 0;
+	} else {
 		document.iform.firmwareurl.disabled = 1;
 		document.iform.firmwareurl.value = '';
-	} 	 
+	}
 }
 
 //]]>
@@ -142,7 +142,7 @@ function enable_altfirmwareurl(enable_over) {
 		<td class="vtable">
 			<select name='preseturls' id='preseturls' onchange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; jQuery('#preseturls').parent().effect('highlight');">
 					<option></option>
-				<?php 
+				<?php
 					foreach($preset_urls_split as $pus) {
 						$pus_text = explode("\t", $pus);
 						if (empty($pus_text[0]))

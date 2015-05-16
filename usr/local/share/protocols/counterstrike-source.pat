@@ -1,4 +1,4 @@
-# Counterstrike (using the new "Source" engine) - network game 
+# Counterstrike (using the new "Source" engine) - network game
 # Pattern attributes: good veryfast fast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Counter-Strike
@@ -13,7 +13,7 @@ counterstrike-source
 #
 # This was based off of the following captured data from ethereal:
 # --Source--
-# 0000   00 11 09 2a a8 79 00 13 10 2c 3f d7 08 00 45 20  ...*.y...,?...E 
+# 0000   00 11 09 2a a8 79 00 13 10 2c 3f d7 08 00 45 20  ...*.y...,?...E
 # 0010   00 72 b9 f6 00 00 6b 11 b6 78 18 0e 04 cc c0 a8  .r....k..x......
 # 0020   01 6a 69 87 04 65 00 5e 01 ac ff ff ff ff 49 07  .ji..e.^......I.
 # 0030   54 4a 27 73 20 50 6c 61 63 65 20 6f 66 20 50 61  TJ's Place of Pa
@@ -21,8 +21,8 @@ counterstrike-source
 # 0050   73 74 72 69 6b 65 00 43 6f 75 6e 74 65 72 2d 53  strike.Counter-S
 # 0060   74 72 69 6b 65 3a 20 53 6f 75 72 63 65 00 dc 00  trike: Source...
 # 0070   08 10 06 64 77 00 00 31 2e 30 2e 30 2e 31 38 00  ...dw..1.0.0.18.
-# 0080  
-# 
+# 0080
+#
 # --1.6--
 # 0000   00 11 09 2a a8 79 00 13 10 2c 3f d7 08 00 45 00  ...*.y...,?...E.
 # 0010   00 8e c4 1a 00 00 76 11 b3 85 08 09 02 fa c0 a8  ......v.........

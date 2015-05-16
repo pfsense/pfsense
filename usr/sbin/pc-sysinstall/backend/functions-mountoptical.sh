@@ -25,7 +25,7 @@
 #
 # $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-mountoptical.sh,v 1.3 2010/08/24 06:11:46 imp Exp $
 
-# Functions which perform mounting / unmounting and switching of 
+# Functions which perform mounting / unmounting and switching of
 # optical / usb media
 
 . ${BACKEND}/functions.sh
@@ -137,7 +137,7 @@ opt_mount()
     then
       break
     fi
-   
+
     # Failed to find a disk, take action now
     opt_fail
 

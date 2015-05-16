@@ -6,7 +6,7 @@
 #
 # usually runs on port 554
 #
-# To take full advantage of this pattern, please see the RTSP connection 
+# To take full advantage of this pattern, please see the RTSP connection
 # tracking patch to the Linux kernel referenced at the above site.
 #
 # This pattern has been tested and is believed to work well.

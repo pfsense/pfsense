@@ -142,8 +142,8 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
-	if(($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) 
+
+	if(($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6"))
 	{
 		switch ($pconfig['localid_type']) {
 			case "network":
@@ -174,7 +174,7 @@ if ($_POST) {
 					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
 						$input_errors[] = gettext("A valid NAT local network bit count must be specified.");
 					if ($pconfig['localid_type'] == "address")
-						$input_errors[] = gettext("You cannot configure a network type address for NAT while only an address type is selected for local source."); 
+						$input_errors[] = gettext("You cannot configure a network type address for NAT while only an address type is selected for local source.");
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
 						$input_errors[] = gettext("A valid NAT local network IP address must be specified.");
@@ -246,7 +246,7 @@ if ($_POST) {
 				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
 				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
-				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) { 
+				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) {
 					/* adding new p2 entry */
 					$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
 					break;
@@ -268,7 +268,7 @@ if ($_POST) {
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
 				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
 				list($entered_remote_network, $entered_remote_mask) = explode('/', $entered_remoteid_data);
-				if ($phase1['protocol'] == "inet6") { 
+				if ($phase1['protocol'] == "inet6") {
 					$if = get_failover_interface($phase1['interface'], "inet6");
 					$interfaceip = get_interface_ipv6($if);
 				} else {
@@ -286,8 +286,8 @@ if ($_POST) {
 						if(check_subnetsv6_overlap($interfaceip, 128, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 128, $entered_remote_network, $entered_remote_mask)) {
 							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
 							break;
-						}							
-					}				
+						}
+					}
 				}
 			}
 		}
@@ -315,7 +315,7 @@ if ($_POST) {
 				}
 			}
 		}
-		
+
 	}
 	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
@@ -662,7 +662,7 @@ function change_protocol() {
 					</tr>
 
 					<?php if (!isset($pconfig['mobile'])): ?>
-					
+
 					<tr id="opt_remoteid">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Network"); ?></td>
 						<td width="78%" class="vtable">
@@ -684,8 +684,8 @@ function change_protocol() {
 										<input name="remoteid_address" type="text" class="formfld unknown ipv4v6" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>" />
 										/
 										<select name="remoteid_netbits" class="formselect ipv4v6" id="remoteid_netbits">
-										<?php for ($i = 128; $i >= 0; $i--) { 
-											
+										<?php for ($i = 128; $i >= 0; $i--) {
+
 											echo "<option value=\"{$i}\"";
 											if (isset($pconfig['remoteid_netbits']) && $i == $pconfig['remoteid_netbits']) echo " selected=\"selected\"";
 											echo ">{$i}</option>\n";
@@ -696,9 +696,9 @@ function change_protocol() {
 							</table>
 						</td>
 					</tr>
-					
+
 					<?php endif; ?>
-					
+
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
@@ -772,12 +772,12 @@ function change_protocol() {
 										<?php endif; ?>
 									</td>
 								</tr>
-								
+
 								<?php endforeach; ?>
-								
+
 							</table>
 							<br />
-							<?=gettext("Hint: use 3DES for best compatibility or if you have a hardware " . 
+							<?=gettext("Hint: use 3DES for best compatibility or if you have a hardware " .
 							"crypto accelerator card. Blowfish is usually the fastest in " .
 							"software encryption"); ?>.
 						</td>

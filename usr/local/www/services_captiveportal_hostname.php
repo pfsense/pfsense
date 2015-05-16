@@ -71,7 +71,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
 	if ($a_allowedhostnames[$_GET['id']]) {
 		$ipent = $a_allowedhostnames[$_GET['id']];
-		
+
 		if (isset($a_cp[$cpzone]['enable'])) {
 			if(is_ipaddr($ipent['hostname']))
 				$ip = $ipent['hostname'];
@@ -89,7 +89,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ip, $sn);
 			}
 		}
-			
+
 		unset($a_allowedhostnames[$_GET['id']]);
 		write_config();
 		captiveportal_allowedhostname_configure();
@@ -149,8 +149,8 @@ include("head.inc");
 		if($ip['dir'] == "from") {
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"in\" /> any";
 		}
-		
-		?>	
+
+		?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;

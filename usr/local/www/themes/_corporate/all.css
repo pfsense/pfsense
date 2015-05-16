@@ -1163,7 +1163,7 @@ div#log span.log-destination-mini-header {
 
 div#log span.log-protocol-mini,
 div#log span.log-protocol-mini-header {
-	width: 8%;	
+	width: 8%;
 	border-right: 1px solid #999;
 }
 
@@ -1171,12 +1171,12 @@ div#log span.log-protocol-mini-header {
 
 .thermalSensorRow		{ width: 100%; border: 0px solid #ddd; padding: 1px; border-radius: 3px; }
 .thermalSensorBarShell	{ position: relative; width: 100%; height: 5px; border: 1px solid lightgray; border-radius: 3px; }
-.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px; 
-						  background-color: LimeGreen; 
-						  border-top-width: 2px; border-top-color: Lime; 
-						  border-left-width: 0px;   
-						  border-right-width: 0px; 
-						  border-bottom-width: 2px; border-bottom-color: Green; 
+.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px;
+						  background-color: LimeGreen;
+						  border-top-width: 2px; border-top-color: Lime;
+						  border-left-width: 0px;
+						  border-right-width: 0px;
+						  border-bottom-width: 2px; border-bottom-color: Green;
 }
 .thermalSensorTextShell	{ height: 20px; width: 100%; top: 3px; }
 .thermalSensorText		{ float: left; height: 20px; top: 3px; }
@@ -1200,8 +1200,8 @@ div#log span.log-protocol-mini-header {
 .thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
 
 /* widget textarea styles - full width */
-.textarea_widget { 
-	width: 100%; 
+.textarea_widget {
+	width: 100%;
 	resize:vertical;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */

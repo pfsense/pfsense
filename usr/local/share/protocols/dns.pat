@@ -11,7 +11,7 @@
 # System serves only the purpose of mapping Internet host names to data,
 # and mapping Internet addresses to host names.  This is not correct, the
 # DNS is a general (if somewhat limited) hierarchical database, and can
-# store almost any kind of data, for almost any purpose.", we will assume 
+# store almost any kind of data, for almost any purpose.", we will assume
 # just that, because that represents the vast majority of DNS traffic.
 
 # The packet starts with a 2 byte random ID number and 2 bytes of flags that
@@ -20,7 +20,7 @@
 # The first thing that is matchable is QDCOUNT, the number of queries.
 # Despite the fact that you can apparently ask for up to 65535
 # things at a time, usually you only ask for one and I doubt you ever ask for
-# zero.  Let's allow up to two, just in case (even though I can't find any 
+# zero.  Let's allow up to two, just in case (even though I can't find any
 # situation that generates more than one).
 
 # Next comes the ANCOUNT, NSCOUNT, and ARCOUNT fields, which could be null
@@ -29,7 +29,7 @@
 # The next matchable thing is the query address. The first byte indicates the
 # length of the first part of the address, which is limited to 63 (0x3F == '?').
 # The next byte has to be a letter (for domain names) or number (for reverse lookups).
-# Then there can be an combination of 
+# Then there can be an combination of
 # letters, digits, hyphens, and 0x01-0x3F length markers.
 # Then we check for the presence of a top-level-domain at some later point.
 # This is indicated by a 0x02-0x06 and at least two letters, followed by no

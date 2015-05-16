@@ -4,7 +4,7 @@
 # Wiki: http://www.protocolinfo.org/wiki/PPLive
 # Copyright (C) 2008 Matthew Strait; See ../LICENSE
 
-# By liangjun, who says that it works.  It may be easily improvable with 
+# By liangjun, who says that it works.  It may be easily improvable with
 # a bit more testing.
 
 pplive

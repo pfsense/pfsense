@@ -8,7 +8,7 @@
 #
 # These filters match SNMPv1 packets without fail, and are made
 # as specific as possible not to match any ASN.1 encoded protocols.
-# However these could still be matched by other protocols that 
+# However these could still be matched by other protocols that
 # use ASN.1 encoding
 
 # Contributed by Goli SriSairam <goli_sai AT yahoo.com>
@@ -20,9 +20,9 @@
 # http://lists.sourceforge.net/lists/listinfo/l7-filter-developers
 
 # SNMPv1 GET/GETNEXT/SET request and response
-# matches SNMP header 
+# matches SNMP header
 #         version             \x02\x01
-#         community           \x04.+ 
+#         community           \x04.+
 #         PDU type            [\xa0-\xa3] (GET/GETNEXT/SET/GETRESPONSE)
 #         RequestId           \x02[\x01-\x04].?.?.?.?
 #         errorStatus         \x02\x01.?

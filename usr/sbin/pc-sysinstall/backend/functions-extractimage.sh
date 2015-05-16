@@ -95,8 +95,8 @@ start_extract_uzip_tar()
   if [ "${INSTALLMEDIUM}" = "ftp" ]
   then
     echo_log "Cleaning up downloaded archive"
-    rm ${INSFILE} 
-    rm ${INSFILE}.count >/dev/null 2>/dev/null 
+    rm ${INSFILE}
+    rm ${INSFILE}.count >/dev/null 2>/dev/null
     rm ${INSFILE}.md5 >/dev/null 2>/dev/null
   fi
 
@@ -136,7 +136,7 @@ start_extract_split()
     fi
   done
   cd "${HERE}"
-  
+
   KERNELS=`ls -d ${INSDIR}/*|grep kernels`
   cd "${KERNELS}"
   if [ -f "install.sh" ]
@@ -179,11 +179,11 @@ fetch_install_file()
   get_value_from_cfg ftpPath
   if [ -z "$VAL" ]
   then
-    exit_err "ERROR: Install medium was set to ftp, but no ftpPath was provided!" 
+    exit_err "ERROR: Install medium was set to ftp, but no ftpPath was provided!"
   fi
 
   FTPPATH="${VAL}"
-  
+
   # Check if we have a /usr partition to save the download
   if [ -d "${FSMNT}/usr" ]
   then
@@ -212,14 +212,14 @@ fetch_split_files()
   get_ftpHost
   if [ -z "$VAL" ]
   then
-    exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!" 
+    exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!"
   fi
   FTPHOST="${VAL}"
 
   get_ftpDir
   if [ -z "$VAL" ]
   then
-    exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!" 
+    exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!"
   fi
   FTPDIR="${VAL}"
 
@@ -325,7 +325,7 @@ start_rsync_copy()
     fi
 
     COUNT="`expr ${COUNT} + 1`"
-  done 
+  done
 
 };
 
@@ -435,8 +435,8 @@ init_extraction()
           IFS=$oIFS
           return
           ;;
- dvd|usb) # Lets start by mounting the disk 
-          opt_mount 
+ dvd|usb) # Lets start by mounting the disk
+          opt_mount
           if [ ! -z "${INSDIR}" ]
           then
             INSDIR="${CDMNT}/${INSDIR}" ; export INSDIR
@@ -447,7 +447,7 @@ init_extraction()
           fi
           ;;
      ftp) fetch_install_file
-          start_extract_uzip_tar 
+          start_extract_uzip_tar
           ;;
      rsync) start_rsync_copy
           ;;

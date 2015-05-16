@@ -100,7 +100,7 @@ function NetUtils_loadMaskIPv6(obj, sel, min, max) {
 				max = max - i;
 				break;
 			}
-		} 
+		}
 	}
 
 	for (var i = max; i >= min; i -= 4) {

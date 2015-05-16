@@ -133,7 +133,7 @@ if ($_POST) {
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
 			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
 		}
-		
+
 		if (!$input_errors) {
 
 			if (isset($_POST['hideidentity'])) {
@@ -184,7 +184,7 @@ if ($_POST) {
 				unset($config['unbound']['use_caps']);
 			}
 			write_config("DNS Resolver configured.");
-	
+
 			mark_subsystem_dirty('unbound');
 		}
 	}
@@ -198,7 +198,7 @@ include_once("head.inc");
 ?>
 
 </head>
-	
+
 <body>
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">

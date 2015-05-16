@@ -201,7 +201,7 @@ if (isset($config['ipsec']['phase2'])) {
 				?>
 				</div>
 			</div>
-		<?php 
+		<?php
 		endforeach;
 		?>
 		</div>

@@ -49,7 +49,7 @@ function Fadomatic (element, rate, initialOpacity, minOpacity, maxOpacity) {
       this._maxOpacity = this._minOpacity;
     }
   }
-  
+
   if (typeof initialOpacity != 'undefined') {
     if (initialOpacity > this._maxOpacity) {
       this._opacity = this._maxOpacity;
@@ -81,7 +81,7 @@ function Fadomatic (element, rate, initialOpacity, minOpacity, maxOpacity) {
     }
 
     this._updateOpacity = this._updateOpacityMSIE;
-    
+
   } else {
 
     this._updateOpacity = this._updateVisibility;
@@ -157,7 +157,7 @@ Fadomatic.prototype._tickFade = function () {
 };
 
 Fadomatic.prototype._updateVisibility = function () {
-  
+
   if (this._opacity > 0) {
     this._element.style.visibility = 'visible';
   } else {
@@ -166,13 +166,13 @@ Fadomatic.prototype._updateVisibility = function () {
 };
 
 Fadomatic.prototype._updateOpacityW3c = function () {
-  
+
   this._element.style.opacity = this._opacity/100;
   this._updateVisibility();
 };
 
 Fadomatic.prototype._updateOpacityMSIE = function () {
-  
+
   this._element.filters.alpha.opacity = this._opacity;
   this._updateVisibility();
 };

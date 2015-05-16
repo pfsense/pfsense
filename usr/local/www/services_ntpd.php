@@ -264,7 +264,7 @@ include("head.inc");
 	$size = (count($interfaces) < 10) ? count($interfaces) : 10;
 ?>
 			<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
-<?php	
+<?php
 	foreach ($interfaces as $iface => $ifacename) {
 		if (!is_ipaddr(get_interface_ip($iface)) && !is_ipaddr($iface))
 			continue;
@@ -294,7 +294,7 @@ include("head.inc");
 							echo " style=\"display:none\"";
 						}
 						echo ">\n";
-						
+
 						echo "<input name=\"server{$i}\" class=\"formfld unknown\" id=\"server{$i}\" size=\"30\" value=\"{$timeservers[$i]}\" type=\"text\" />&emsp;";
 						echo "\n<input name=\"servprefer{$i}\" class=\"formcheckbox\" id=\"servprefer{$i}\" onclick=\"CheckOffOther('servprefer{$i}', 'servselect{$i}')\" type=\"checkbox\"";
 						if (isset($config['ntpd']['prefer']) && isset($timeservers[$i]) && substr_count($config['ntpd']['prefer'], $timeservers[$i])) echo " checked=\"checked\"";

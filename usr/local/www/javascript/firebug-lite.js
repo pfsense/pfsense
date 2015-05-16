@@ -1,7 +1,7 @@
 /**
  * firebug lite <http://www.getfirebug.com/lite.html>
  * v1.0
- * 04.11.2008, 8:25 PM ~ 
+ * 04.11.2008, 8:25 PM ~
  * v1.0a
  * 03.27.2008, 5:44 AM ~ 04.01.2008, 21:32 PM
  * Azer Koçulu <http://azer.kodfabrik.com>
@@ -13,12 +13,12 @@ var firebug = {
 		firebug.el = {}; // elements
 		firebug.el.content = {};
 		with(firebug){
-			
+
 			document.documentElement.childNodes[0].appendChild(
 				new pi.element("link").attribute.set("rel","stylesheet").attribute.set("href","http://firebuglite.appspot.com/firebug-lite.css").environment.getElement()
 			);
 
-			/* 
+			/*
 			 * main interface
 			 */
 			el.main = new pi.element("DIV").attribute.set("id","Firebug").environment.addStyle({ "width":pi.util.GetWindowSize().width+"px" }).insert(document.body);
@@ -28,7 +28,7 @@ var firebug = {
 			el.right = {};
 			el.right.container = new pi.element("DIV").attribute.addClass("Right").insert(el.main);
 			el.main.child.add(new pi.element("DIV").environment.addStyle({ "clear":"both" }));
-			
+
 			/*
 			 * buttons
 			 */
@@ -39,11 +39,11 @@ var firebug = {
 			el.button.maximize = new pi.element("A").attribute.addClass("Button Maximize").event.addListener("click",win.maximize).insert(el.button.container);
 			el.button.minimize = new pi.element("A").attribute.addClass("Button Minimize").event.addListener("click",win.minimize).insert(el.button.container);
 			el.button.close = new pi.element("A").attribute.addClass("Button Close").event.addListener("click",win.close).insert(el.button.container);
-			
+
 			if(pi.env.ie||pi.env.webkit){
 				el.button.container.environment.addStyle({ "paddingTop":"12px" });
 			}
-			
+
 			/*
 			 * navigation
 			 */
@@ -55,14 +55,14 @@ var firebug = {
 			el.nav.scripts = new pi.element("A").attribute.addClass("Tab").update("Script").event.addListener("click",d.navigate.curry(window,"scripts")).insert(el.nav.container);
 			el.nav.dom = new pi.element("A").attribute.addClass("Tab").update("DOM").event.addListener("click",d.navigate.curry(window,"dom")).insert(el.nav.container);
 			el.nav.xhr = new pi.element("A").attribute.addClass("Tab").update("XHR").event.addListener("click",d.navigate.curry(window,"xhr")).insert(el.nav.container);
-			
+
 			/*
 			 * inspector
 			 */
-			
+
 			el.borderInspector = new pi.element("DIV").attribute.set("id","FirebugBorderInspector").event.addListener("click",listen.inspector).insert(document.body);
 			el.bgInspector = new pi.element("DIV").attribute.set("id","FirebugBGInspector").insert(document.body);
-			
+
 			/*
 			 * console
 			 */
@@ -78,103 +78,103 @@ var firebug = {
 			el.left.console.input = new pi.element("INPUT").attribute.set("type","text").attribute.addClass("Input").event.addListener("keydown",listen.consoleTextbox).insert(
 				new pi.element("DIV").attribute.addClass("InputContainer").insert(el.left.console.container)
 			);
-			
+
 			el.right.console = {};
 			el.right.console.container = new pi.element("DIV").attribute.addClass("Console Container").insert(el.right.container);
 			el.right.console.mlButton = new pi.element("A").attribute.addClass("MLButton CloseML").event.addListener("click",d.console.toggleML).insert(el.right.console.container);
 			el.right.console.input = new pi.element("TEXTAREA").attribute.addClass("Input").insert(el.right.console.container);
 			el.right.console.run = new pi.element("A").attribute.addClass("Button").event.addListener("click",listen.runMultiline).update("Run").insert(el.right.console.container);
-			
+
 			el.right.console.clear = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.clean.curry(window,el.right.console.input)).update("Clear").insert(el.right.console.container);
-			
+
 			el.button.console = {};
 			el.button.console.container = new pi.element("DIV").attribute.addClass("ButtonSet").insert(el.button.container);
 			el.button.console.clear = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.clean.curry(window,el.left.console.monitor)).update("Clear").insert(el.button.console.container);
-			
+
 			/*
 			 * html
 			 */
-			
+
 			el.left.html = {};
 			el.left.html.container = new pi.element("DIV").attribute.addClass("HTML").insert(el.left.container);
-			
+
 			el.right.html = {};
 			el.right.html.container = new pi.element("DIV").attribute.addClass("HTML Container").insert(el.right.container);
-			
+
 			el.right.html.nav = {};
 			el.right.html.nav.container = new pi.element("DIV").attribute.addClass("Nav").insert(el.right.html.container);
 			el.right.html.nav.computedStyle = new pi.element("A").attribute.addClass("Tab Selected").event.addListener("click",d.html.navigate.curry(firebug,"computedStyle")).update("Computed Style").insert(el.right.html.nav.container);
 			if(!pi.env.ie6)
 				el.right.html.nav.dom = new pi.element("A").attribute.addClass("Tab").event.addListener("click",d.html.navigate.curry(firebug,"dom")).update("DOM").insert(el.right.html.nav.container);
-			
+
 			el.right.html.content = new pi.element("DIV").attribute.addClass("Content").insert(el.right.html.container);
-			
+
 			el.button.html = {};
 			el.button.html.container = new pi.element("DIV").attribute.addClass("ButtonSet HTML").insert(el.button.container);
-			
+
 			/*
 			 * css
 			 */
-			
+
 			el.left.css = {};
 			el.left.css.container = new pi.element("DIV").attribute.addClass("CSS").insert(el.left.container);
-			
+
 			el.right.css = {};
 			el.right.css.container = new pi.element("DIV").attribute.addClass("CSS Container").insert(el.right.container);
-			
+
 			el.right.css.nav = {};
 			el.right.css.nav.container = new pi.element("DIV").attribute.addClass("Nav").insert(el.right.css.container);
 			el.right.css.nav.runCSS = new pi.element("A").attribute.addClass("Tab Selected").update("Run CSS").insert(el.right.css.nav.container);
-	
+
 			el.right.css.mlButton = new pi.element("A").attribute.addClass("MLButton CloseML").event.addListener("click",d.console.toggleML).insert(el.right.css.container);
 			el.right.css.input = new pi.element("TEXTAREA").attribute.addClass("Input").insert(el.right.css.container);
 			el.right.css.run = new pi.element("A").attribute.addClass("Button").event.addListener("click",listen.runCSS).update("Run").insert(el.right.css.container);
 			el.right.css.clear = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.clean.curry(window,el.right.css.input)).update("Clear").insert(el.right.css.container);
-			
+
 			el.button.css = {};
 			el.button.css.container = new pi.element("DIV").attribute.addClass("ButtonSet CSS").insert(el.button.container);
 			el.button.css.selectbox = new pi.element("SELECT").event.addListener("change",listen.cssSelectbox).insert(el.button.css.container);
-		
+
 			/*
 			 * scripts
 			 */
-			
+
 			el.left.scripts = {};
 			el.left.scripts.container = new pi.element("DIV").attribute.addClass("Scripts").insert(el.left.container);
-			
+
 			el.right.scripts = {};
 			el.right.scripts.container = new pi.element("DIV").attribute.addClass("Scripts Container").insert(el.right.container);
-			
+
 			el.button.scripts = {};
 			el.button.scripts.container = new pi.element("DIV").attribute.addClass("ButtonSet Scripts").insert(el.button.container);
 			el.button.scripts.selectbox = new pi.element("SELECT").event.addListener("change",listen.scriptsSelectbox).insert(el.button.scripts.container);
 			el.button.scripts.lineNumbers = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.scripts.toggleLineNumbers).update("Show Line Numbers").insert(el.button.scripts.container);
-			
+
 			/*
 			 * dom
 			 */
-			
+
 			el.left.dom = {};
 			el.left.dom.container = new pi.element("DIV").attribute.addClass("DOM").insert(el.left.container);
-			
+
 			el.right.dom = {};
 			el.right.dom.container = new pi.element("DIV").attribute.addClass("DOM Container").insert(el.right.container);
-			
+
 			el.button.dom = {};
 			el.button.dom.container = new pi.element("DIV").attribute.addClass("ButtonSet DOM").insert(el.button.container);
 			el.button.dom.label = new pi.element("LABEL").update("Object Path:").insert(el.button.dom.container);
 			el.button.dom.textbox = new pi.element("INPUT").event.addListener("keydown",listen.domTextbox).update("window").insert(el.button.dom.container);
-			
+
 			/*
 			 * str
 			 */
-			
+
 			el.left.str = {};
 			el.left.str.container = new pi.element("DIV").attribute.addClass("STR").insert(el.left.container);
-			
+
 			el.right.str = {};
 			el.right.str.container = new pi.element("DIV").attribute.addClass("STR").insert(el.left.container);
-			
+
 			el.button.str = {};
 			el.button.str.container = new pi.element("DIV").attribute.addClass("ButtonSet XHR").insert(el.button.container);
 			el.button.str.watch = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.navigate.curry(window,"xhr")).update("Back").insert(el.button.str.container);
@@ -182,20 +182,20 @@ var firebug = {
 			/*
 			 * xhr
 			 */
-			
+
 			el.left.xhr = {};
 			el.left.xhr.container = new pi.element("DIV").attribute.addClass("XHR").insert(el.left.container);
-			
+
 			el.right.xhr = {};
 			el.right.xhr.container = new pi.element("DIV").attribute.addClass("XHR").insert(el.left.container);
-			
-			
+
+
 			el.button.xhr = {};
 			el.button.xhr.container = new pi.element("DIV").attribute.addClass("ButtonSet XHR").insert(el.button.container);
 			el.button.xhr.label = new pi.element("LABEL").update("XHR Path:").insert(el.button.xhr.container);
 			el.button.xhr.textbox = new pi.element("INPUT").event.addListener("keydown",listen.xhrTextbox).insert(el.button.xhr.container);
 			el.button.xhr.watch = new pi.element("A").attribute.addClass("Button").event.addListener("click",listen.addXhrObject).update("Watch").insert(el.button.xhr.container);
-			
+
 			// fix ie6 a:hover bug
 			if(pi.env.ie6)
 			{
@@ -213,14 +213,14 @@ var firebug = {
 					buttons[i].attribute.set("href","#");
 			}
 			//
-			
+
 			env.init = true;
-			
+
 			for(var i=0; i<env.ctmp.length; i++)
 			{
 				d.console.log.apply(window,env.ctmp[i]);
 			}
-		}	
+		}
 	},
 	win:{
 		close:function(){
@@ -286,15 +286,15 @@ var firebug = {
 						env.ctmp.push(arguments);
 						return;
 					}
-					
+
 					var value = "";
 					for(var i=0; i<arguments.length; i++){
 						value += (i>0?" ":"")+d.highlight(arguments[i],false,false,true);
 					}
-					
+
 					d.console.addLine().update(value);
 					d.console.scroll();
-					
+
 				}
 			},
 			print: function(_cmd,_text){
@@ -309,7 +309,7 @@ var firebug = {
 				with(firebug){
 					if(cmd.length==0)return;
 					el.left.console.input.environment.getElement().value = "";
-					try { 
+					try {
 						var result = eval.call(window,cmd);
 						d.console.print(cmd,result);
 					} catch(e){
@@ -326,7 +326,7 @@ var firebug = {
 						d.console.scroll();
 					}
 					d.console.scroll();
-				} 
+				}
 			},
 			scroll:function(){
 				with(firebug){
@@ -404,7 +404,7 @@ var firebug = {
 				with (firebug) {
 					var obj = _object || window, parentElement = _parent;
 					parentElement.update("");
-					
+
 					if(parentElement.opened&&parentElement!=el.left.dom.container){
 						parentElement.environment.getParent().pi.child.get()[0].pi.child.get()[0].pi.attribute.removeClass("Opened");
 						parentElement.opened = false;
@@ -414,30 +414,30 @@ var firebug = {
 					if(_inTree)
 						parentElement.environment.getParent().pi.child.get()[0].pi.child.get()[0].pi.attribute.addClass("Opened");
 					parentElement.opened = true;
-					
+
 					for (var key in obj) {
-						try { 
-	
+						try {
+
 							var value = obj[key], property = key, container = new pi.element("DIV").attribute.addClass("DOMRow").insert(parentElement),
 							left = new pi.element("DIV").attribute.addClass("DOMRowLeft").insert(container), right = new pi.element("DIV").attribute.addClass("DOMRowRight").insert(container);
-							
+
 							container.child.add(
 								new pi.element("DIV").environment.addStyle({ "clear":"both" })
 							);
-							
+
 							var link = new pi.element("A").attribute.addClass(
 								typeof value=="object"&&Boolean(value)?"Property Object":"Property"
 							).update(property).insert(left);
-							
+
 							right.update(
 								d.highlight(value,false,true)
 							);
-							
+
 							var subContainer = new pi.element("DIV").attribute.addClass("DOMRowSubContainer").insert(container);
-							
+
 							if(typeof value!="object"||Boolean(value)==false)
 								continue;
-							
+
 							link.event.addListener("click",d.dom.print.curry(window,value, subContainer, true));
 						}catch(e){
 						}
@@ -453,31 +453,31 @@ var firebug = {
 					isArray = pi.util.IsArray(_value);
 					isElement = _value!=undefined&&Boolean(_value.nodeName)&&Boolean(_value.nodeType);
 				}catch(e){};
-				
+
 				// number, string, boolean, null, function
 				if(_value==null||["boolean","function","number","string"].indexOf(typeof _value)>-1){
 					// NULL
 					if(_value==null){
 						return  "<span class='Null'>null</span>";
 					}
-					
+
 					// BOOLEAN & NUMBER
 					if (["boolean", "number"].indexOf(typeof _value) > -1) {
 						return "<span class='DarkBlue'>" + _value + "</span>";
 					}
-					
+
 					// FUNCTION
 					if(typeof _value=="function"){
 						return "<span class='"+(_inObject?"Italic Gray":"Green")+"'>function()</span>";
 					}
-					
+
 					// STRING
 					return "<span class='Red'>\""+( !_inObject&&!_inArray?_value : _value.substring(0,35) ).replace(/\n/g,"\\n").replace(/\s/g,"&nbsp;").replace(/>/g,"&#62;").replace(/</g,"&#60;")+"\"</span>";
 				}
-				// element 
+				// element
 				else if(isElement){
 					if(_value.nodeType==3)return d.highlight(_value.nodeValue);
-					
+
 					if(_inArray||_inObject){
 						var result = "<span class='Blue'>"+_value.nodeName.toLowerCase();
 						if(_value.getAttribute&&_value.getAttribute("id"))result += "<span class='DarkBlue'>#"+_value.getAttribute("id")+"</span>";
@@ -485,7 +485,7 @@ var firebug = {
 						if(elClass)result += "<span class='Red'>."+elClass.split(" ")[0]+"</span>";
 						return result+"</span>";
 					}
-					
+
 					var result = "<span class='Blue'>&#60;"+_value.nodeName.toLowerCase()+"";
 					if(_value.attributes)
 					for(var i=0; i<_value.attributes.length; i++){
@@ -502,7 +502,7 @@ var firebug = {
 					if(isArray||_value instanceof Array){
 						if(_inObject)return "<span class='Gray Italic'>["+_value.length+"]</span>";
 						result += "<span class='Strong'>[ ";
-		
+
 						for(var i=0; i<_value.length; i++){
 							if((_inObject||_inArray)&&pi.env.ie&&i>3)break;
 							result += (i > 0 ? ", " : "") + d.highlight(_value[i], false, true, true);
@@ -527,7 +527,7 @@ var firebug = {
 						return "<span class='Gray Italic'>"+_value+"</span>";
 					return _value;
 				}
-				
+
 			}
 		},
 		html:{
@@ -555,14 +555,14 @@ var firebug = {
 					var parentLayer = el.left.html.container.child.get()[1].childNodes[1].pi;
 					for(var t=0; map[t];){
 						if(t==map.length-1){
-							
+
 							var link = parentLayer.environment.getElement().previousSibling.pi;
 							link.attribute.addClass("Selected");
-							
+
 							if(d.html.current)d.html.current[1].attribute.removeClass("Selected");
-							
+
 							d.html.current = [_element,link];
-							
+
 							return t;
 						}
 						parentLayer = d.html.openHtmlTree(map[t],parentLayer,map[t+1]);
@@ -576,25 +576,25 @@ var firebug = {
 					el.right.html.nav[_index].attribute.addClass("Selected");
 					d.html.nIndex = _index;
 					d.html.openProperties();
-					
+
 				}
 			},
 			openHtmlTree:function(_element,_parent,_returnParentElementByElement,_event){
 				with(firebug){
-					var element = _element || document.documentElement, 
-						parent = _parent || el.left.html.container, 
-						returnParentEl = _returnParentElementByElement || null, 
-						returnParentVal = null;	
-				
+					var element = _element || document.documentElement,
+						parent = _parent || el.left.html.container,
+						returnParentEl = _returnParentElementByElement || null,
+						returnParentVal = null;
+
 					if(parent!=el.left.html.container){
 						var nodeLink = parent.environment.getParent().pi.child.get()[0].pi;
 						if(d.html.current)d.html.current[1].attribute.removeClass("Selected");
 						nodeLink.attribute.addClass("Selected");
-						
+
 						d.html.current = [_element,nodeLink];
 						d.html.openProperties();
 					}
-					
+
 					if(element.childNodes&&(element.childNodes.length==0||(element.childNodes.length==1&&element.childNodes[0].nodeType==3)))return;
 					parent.clean();
 
@@ -606,12 +606,12 @@ var firebug = {
 					if (parent != el.left.html.container) {
 						parent.environment.getParent().pi.child.get()[0].pi.attribute.addClass("Open");
 						parent.opened = true;
-						
+
 					}
-					
+
 					for(var i=0; i<element.childNodes.length; i++){
 						var item = element.childNodes[i];
-						
+
 						if(item.nodeType==3)continue;
 						var container = new pi.element().attribute.addClass("Block").insert(parent);
 						var link = new pi.element("A").attribute.addClass("Link").update(d.highlight(item)).insert(container);
@@ -619,15 +619,15 @@ var firebug = {
 						link.event.addListener("click",d.html.openHtmlTree.curry(window,item,subContainer,false));
 						link.event.addListener("mouseover",d.html.highlight.curry(window,item, false));
 						link.event.addListener("mouseout",d.html.highlight.curry(window,item,true));
-						
+
 						returnParentVal = returnParentEl==item?subContainer:returnParentVal;
-						
+
 						if(d.html.current==null&&item==document.body){
 							link.attribute.addClass("Selected");
 							d.html.current = [item,link];
 							d.html.openHtmlTree(item,subContainer);
 						}
-						
+
 						if(item.childNodes&&item.childNodes.length==1&&item.childNodes[0].nodeType==3){
 							link.child.get()[0].appendChild(document.createTextNode(item.childNodes[0].nodeValue.substring(0,100)));
 							link.child.get()[0].appendChild(document.createTextNode("</"));
@@ -637,14 +637,14 @@ var firebug = {
 						}
 						else if(item.childNodes&&item.childNodes.length==0)continue;
 						link.attribute.addClass("ParentLink");
-						
+
 					}
 					return returnParentVal;
 				}
 			},
 			openProperties:function(){
 				with(firebug){
-			
+
 					var index = d.html.nIndex;
 					var node = d.html.current[0];
 					d.clean(el.right.html.content);
@@ -678,9 +678,9 @@ var firebug = {
 					parent = parent.offsetParent;
 					if(parent==document.body)break;
 				};
-				
+
 				with(firebug){
-					el[_bgInspector?"bgInspector":"borderInspector"].environment.addStyle({ 
+					el[_bgInspector?"bgInspector":"borderInspector"].environment.addStyle({
 						"width":_element.offsetWidth+"px", "height":_element.offsetHeight+"px",
 						"top":top-(_bgInspector?0:2)+"px", "left":left-(_bgInspector?0:2)+"px",
 						"display":"block"
@@ -712,12 +712,12 @@ var firebug = {
 					d.scripts.index = _index;
 					el.left.scripts.container.update("");
 					var script = document.getElementsByTagName("script")[_index],uri = script.src||document.location.href,source;
-					
+
 					if(uri.indexOf("http:\/\/")>-1&&getDomain(uri)!=document.domain){
 						el.left.scripts.container.update("<em>Access to restricted URI denied</em>");
 						return;
 					}
-					
+
 					if(uri!=document.location.href){
 						source = env.cache[uri]||pi.xhr.get(uri).responseText;
 						env.cache[uri] = source;
@@ -726,8 +726,8 @@ var firebug = {
 					source = source.replace(/\n|\t|<|>/g,function(_ch){
 						return ({"<":"&#60;",">":"&#62;","\t":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;","\n":"<br />"})[_ch];
 					});
-				
-					if (!d.scripts.lineNumbers) 
+
+					if (!d.scripts.lineNumbers)
 						el.left.scripts.container.child.add(
 							new pi.element("DIV").attribute.addClass("CodeContainer").update(source)
 						);
@@ -746,8 +746,8 @@ var firebug = {
 					d.scripts.lineNumbers = !d.scripts.lineNumbers;
 					el.button.scripts.lineNumbers.attribute[(d.scripts.lineNumbers ? "add" : "remove") + "Class"]("Enabled");
 					d.scripts.open( d.scripts.index );
-					
-				}	
+
+				}
 			},
 			refresh:function(){
 				with(firebug){
@@ -822,7 +822,7 @@ var firebug = {
 							el.left.xhr.statusContent.child.add(new pi.element("span").update(item[1].status));
 						} catch(e){ el.left.xhr.statusContent.child.add(new pi.element("span").update("&nbsp;")); }
 						el.left.xhr.readystateContent.child.add(new pi.element("span").update(item[1].readyState));
-						
+
 						el.left.xhr.responseContent.child.add(new pi.element("span").child.add(
 							new pi.element("A").event.addListener("click",d.str.open.curry(window,response)).update("&nbsp;"+response.substring(0,50))
 						));
@@ -840,23 +840,23 @@ var firebug = {
 		},
 		navigate:function(_index){
 			with(firebug){
-				
+
 				var open = _index, close = env.dIndex;
 				env.dIndex = open;
-				
+
 				el.button[close].container.environment.addStyle({ "display":"none" });
 				el.left[close].container.environment.addStyle({ "display":"none" });
 				el.right[close].container.environment.addStyle({ "display":"none" });
-				
+
 				el.button[open].container.environment.addStyle({ "display":"inline" });
 				el.left[open].container.environment.addStyle({ "display":"block" });
 				el.right[open].container.environment.addStyle({ "display":"block" });
-				
+
 				if(el.nav[close])
 					el.nav[close].attribute.removeClass("Selected");
 				if(el.nav[open])
 					el.nav[open].attribute.addClass("Selected");
-				
+
 				switch(open){
 					case "console":
 						d.navigateRightColumn(_index);
@@ -883,7 +883,7 @@ var firebug = {
 						d.xhr.open();
 						break;
 				}
-				
+
 			}
 		},
 		refreshSize:function(){

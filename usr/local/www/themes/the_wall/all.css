@@ -25,7 +25,8 @@ html, body, td, th, input, select {
 	width:100%;
 	color:white;
 	background-color:#990000;	
-	padding-right: 10px;	
+	padding-right: 10px;
+	font-weight: bold;
 }
 
 .infoboxnptd {

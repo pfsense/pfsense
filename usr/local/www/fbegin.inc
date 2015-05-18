@@ -453,7 +453,7 @@ if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync'
 		$pgtitle = array(gettext("System"),gettext("Package Manager"));
 		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
 	}
-	print_info_box($info_text . "<img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
+	print_info_box($info_text . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
 }
 $pgtitle_output = true;
 ?>

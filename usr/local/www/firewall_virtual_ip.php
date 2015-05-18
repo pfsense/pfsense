@@ -255,7 +255,7 @@ include("head.inc");
 	} else if ($savemsg) {
 		print_info_box($savemsg);
 	} else if (is_subsystem_dirty('vip')) {
-		print_info_box_np(gettext("The VIP configuration has been changed.")."</p><p>".gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 	}
 ?>
 <br />

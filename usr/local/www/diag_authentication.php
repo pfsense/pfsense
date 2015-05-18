@@ -60,7 +60,7 @@ if ($_POST) {
 		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
-			$savemsg .= "</p><p>" . gettext("This user is a member of these groups") . ": </p><p>";
+			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
 			foreach ($groups as $group) {
 				$savemsg .= "{$group} ";
 			}

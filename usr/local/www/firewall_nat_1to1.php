@@ -171,7 +171,7 @@ if ($savemsg) {
 }
 if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext("The NAT configuration has been changed.") .
-		"</p><p>" .
+		"<br />" .
 		gettext("You must apply the changes in order for them to take effect."));
 }
 ?>

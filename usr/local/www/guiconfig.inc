@@ -357,7 +357,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
 							</td>
 							<td class="infoboxnptd2">
-								<b>{$msg}</b>
+								<p>{$msg}</p>
 							</td>
 							{$savebutton}
 						</tr>
@@ -423,7 +423,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
 							</td>
 							<td class="infoboxnptd2">
-								<b>{$msg}</b>
+								<p>{$msg}</p>
 							</td>
 							{$savebutton}
 							{$undobutton}

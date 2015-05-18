@@ -97,7 +97,7 @@ get_package_index()
     get_value_from_cfg ftpHost
     if [ -z "$VAL" ]
     then
-      exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!" 
+      exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!"
     fi
 
     FTPHOST="${VAL}"
@@ -105,7 +105,7 @@ get_package_index()
     get_value_from_cfg ftpDir
     if [ -z "$VAL" ]
     then
-      exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!" 
+      exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!"
     fi
 
     FTPDIR="${VAL}"
@@ -261,7 +261,7 @@ get_package_name()
 
   INDEX_FILE="${PKGDIR}/INDEX.deps"
   REGEX="^${PACKAGE}|"
-	
+
   LINE=`grep "${REGEX}" "${INDEX_FILE}" 2>/dev/null`
   NAME=`echo "${LINE}"|cut -f2 -d'|'`
 
@@ -283,7 +283,7 @@ get_package_short_name()
 
   INDEX_FILE="${PKGDIR}/INDEX.deps"
   REGEX="^.*|${PACKAGE}|"
-	
+
   LINE=`grep "${REGEX}" "${INDEX_FILE}" 2>/dev/null`
   NAME=`echo "${LINE}"|cut -f1 -d'|'`
 
@@ -327,14 +327,14 @@ fetch_package_by_ftp()
   get_value_from_cfg ftpHost
   if [ -z "$VAL" ]
   then
-    exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!" 
+    exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!"
   fi
   FTPHOST="${VAL}"
 
   get_value_from_cfg ftpDir
   if [ -z "$VAL" ]
   then
-    exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!" 
+    exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!"
   fi
   FTPDIR="${VAL}"
 

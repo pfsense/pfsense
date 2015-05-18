@@ -1514,7 +1514,7 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa']['wpa_strict_rekey'] = true;
 	} else if (isset($wancfg['wireless']['wpa']['wpa_strict_rekey'])) {
 		unset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
-	}	
+	}
 	if ($_POST['debug_mode'] == "yes") {
 		$wancfg['wireless']['wpa']['debug_mode'] = true;
 	} else if (isset($wancfg['wireless']['wpa']['debug_mode'])) {

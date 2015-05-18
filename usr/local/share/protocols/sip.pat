@@ -6,7 +6,7 @@
 #
 # This pattern has been tested with the Ubiquity SIP user agent and has been
 # confirmed by at least one other user.
-# 
+#
 # Thanks to Ankit Desai for this pattern.  Updated by tehseen sagar.
 #
 # SIP typically uses port 5060.

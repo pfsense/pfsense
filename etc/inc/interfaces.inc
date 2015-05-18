@@ -2518,7 +2518,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
-	
+
 	$wlan_setup_log = fopen("{$g['tmp_path']}/{$if}_setup.log","w");
 
 	/* set values for /path/program */
@@ -2641,7 +2641,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	if($wlcfg['txpower'] <> "" && is_numeric($wlcfg['txpower'])) {
 		$wlcmd[] = "txpower " . escapeshellarg($wlcfg['txpower']);
 	}*/
-	
+
 	/* handle wme option */
 	if (isset($wlcfg['wme']['enable'])) {
 		$wlcmd[] = "wme";
@@ -2926,9 +2926,9 @@ EOD;
 		}
 	}
 
-	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set 
+	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set
 	 * mode twice (for now at least). This can be removed entirely in the future if no problems are found
-	
+
 	 * The mode must be specified in a separate command before ifconfig
 	 * will allow the mode and channel at the same time in the next. */
 	//mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
@@ -2939,7 +2939,7 @@ EOD;
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " " . "$wlcmd_args \n");
 	fclose($wlan_setup_log);
-	
+
 	unset($wlcmd_args, $wlcmd);
 
 

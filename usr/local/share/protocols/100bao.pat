@@ -5,7 +5,7 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Pattern written by www.routerclub.com's wsgtrsys.
-# The author of this pattern says it works, but this is unconfirmed. 
+# The author of this pattern says it works, but this is unconfirmed.
 
 100bao
 ^\x01\x01\x05\x0a

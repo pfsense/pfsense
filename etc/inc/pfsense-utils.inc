@@ -2700,7 +2700,7 @@ function load_mac_manufacturer_table() {
  *   check_localip - if true then also check for matches with PPTP and LT2P addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified, 
+ *     If check_subnets is true and cidrprefix is specified,
  *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   returns true if the IP Address is configured and present on this device or overlaps a configured subnet.
@@ -2721,7 +2721,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  *   check_localip - if true then also check for matches with PPTP and LT2P addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified, 
+ *     If check_subnets is true and cidrprefix is specified,
  *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   Returns an array of the interfaces 'if' plus IP address or subnet 'ip_or_subnet' that match or overlap the IP address to check.

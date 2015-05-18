@@ -16,7 +16,7 @@
 	background-color: #fff;
 }
 
-.dp-highlighter td 
+.dp-highlighter td
 {
 	font-family: Courier New;
 	font-size: 11px;
@@ -51,11 +51,11 @@
 /* Gutter with line number */
 
 .dp-highlighter .gutter {
-	padding-right: 5px; 
-	padding-left: 10px; 
+	padding-right: 5px;
+	padding-left: 10px;
 	width: 5px;
-	background-color: #eee; 
-	border-right: 1px solid gray; 
+	background-color: #eee;
+	border-right: 1px solid gray;
 	color: gray;
 	text-align: right;
 	vertical-align: top;

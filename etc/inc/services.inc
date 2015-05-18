@@ -219,7 +219,7 @@ function services_radvd_configure($blacklist = array()) {
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous on;\n";
 							$radvdconf .= "\t\tAdvRouterAddr on;\n";
-							break;				
+							break;
 					}
 					$radvdconf .= "\t};\n";
 				}

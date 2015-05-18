@@ -4,7 +4,7 @@
         Released under a creative commons Attribution-ShareAlike 2.5 license (http://creativecommons.org/licenses/by-sa/2.5/)
 
         Please credit frequency-decoder in any derivative work - thanks.
-        
+
         You are free:
 
         * to copy, distribute, display, and perform the work
@@ -99,11 +99,11 @@ datePicker.getDaysPerMonth = function (nMonth, nYear) {
 function datePicker(options) {
 
         this.defaults = {};
-        
+
         for(opt in options) {
                 this[opt] = this.defaults[opt] = options[opt];
         };
-        
+
         this.date              = new Date();
         this.yearinc           = 1;
         this.timer             = null;
@@ -147,7 +147,7 @@ function datePicker(options) {
         };
         o.killEvent = function(e) {
                 if (e == null) e = document.parentWindow.event;
-                
+
                 if (e.stopPropagation) {
                         e.stopPropagation();
                         e.preventDefault();
@@ -263,7 +263,7 @@ function datePicker(options) {
                 onmousedown: function(e) {
                         if ( e == null ) e = document.parentWindow.event;
                         var el = e.target != null ? e.target : e.srcElement;
-                        
+
                         var found = false;
 
                         while(el.parentNode) {
@@ -311,9 +311,9 @@ function datePicker(options) {
                         if(o.timerSet) {
                                 o.stopTimer();
                         };
-                        
+
                         datePickerController.addEvent(document, "mouseup", o.events.clearTimer);
-                        
+
                         o.timerInc      = 1000;
                         o.dayInc        = arguments[1];
                         o.yearInc       = arguments[2];
@@ -387,20 +387,20 @@ function datePicker(options) {
         };
         o.resize = function() {
                 if(!o.created || !o.getElem()) return;
-                
+
                 o.div.style.visibility = "hidden";
                 o.div.style.display = "block";
-                
+
                 var osh = o.div.offsetHeight;
                 var osw = o.div.offsetWidth;
-                
+
                 o.div.style.visibility = "visible";
                 o.div.style.display = "none";
-                
+
                 var elem          = document.getElementById('fd-but-' + o.id);
                 var pos           = datePickerController.findPosition(elem);
                 var trueBody      = (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body;
-                
+
                 if ( parseInt(trueBody.clientWidth+trueBody.scrollLeft) < parseInt(osw+pos[0])) {
                         o.div.style.left = Math.abs(parseInt((trueBody.clientWidth+trueBody.scrollLeft) - osw)) + "px";
                 } else {
@@ -427,18 +427,18 @@ function datePicker(options) {
         };
         o.outOfRange = function(tmpDate) {
                 if(!o.low && !o.high) return false;
-                
+
                 var level = false;
                 if(!tmpDate) {
                         level = true;
                         tmpDate = o.date;
                 };
-                
+
                 var d           = (tmpDate.getDate() < 10) ? "0" + tmpDate.getDate() : tmpDate.getDate();
                 var m           = ((tmpDate.getMonth() + 1) < 10) ? "0" + (tmpDate.getMonth() + 1) : tmpDate.getMonth() + 1;
                 var y           = tmpDate.getFullYear();
                 var dt          = (y+' '+m+' '+d).replace(/ /g,'');
-                
+
                 if(o.low) {
                         if(parseInt(dt) < parseInt(o.low)) {
                                 if(!level) return true;
@@ -479,7 +479,7 @@ function datePicker(options) {
                                 o.iePopUp = document.getElementById("iePopUpHack");
                         };
                 /*@end@*/
-                
+
                 if(typeof(fdLocale) == "object" && o.locale) {
                         datePicker.titles  = fdLocale.titles;
                         datePicker.months  = fdLocale.months;
@@ -488,14 +488,14 @@ function datePicker(options) {
                         if(fdLocale.dayAbbr) datePicker.dayAbbr = fdLocale.dayAbbr;
                         if(fdLocale.firstDayOfWeek) o.firstDayOfWeek = o.defaults.firstDayOfWeek = fdLocale.firstDayOfWeek;
                 };
-                
+
                 o.div = document.createElement('div');
                 o.div.style.zIndex = 9999;
                 o.div.id = "fd-"+o.id;
                 var tableBody = document.createElement('tbody');
                 var tableHead = document.createElement('thead');
                 var nbsp = String.fromCharCode( 160 );
-                
+
                 o.table = document.createElement('table');
                 o.div.className = "datePicker";
 
@@ -511,7 +511,7 @@ function datePicker(options) {
                 tmpelem.onmousedown = function(e) { this.blur(); o.events.incDec(e,0,-1,0); };
                 tmpelem.onmouseup = o.events.clearTimer;
                 th.appendChild( tmpelem );
-                
+
                 // previous month
                 var tmpelem = document.createElement('button');
                 tmpelem.setAttribute("type", "button");
@@ -559,13 +559,13 @@ function datePicker(options) {
                 tmpelem.onmousedown = function(e) { this.blur(); o.events.incDec(e,0,1,0); };
                 tmpelem.onmouseup = o.events.clearTimer;
                 th.appendChild( tmpelem );
-                
+
                 tr.appendChild( th );
 
                 tableHead.appendChild(tr);
 
                 var row, col;
-                
+
                 for(var rows = 0; rows < 7; rows++) {
                         row = document.createElement('tr');
                         for(var cols = 0; cols < 7; cols++) {
@@ -584,7 +584,7 @@ function datePicker(options) {
                 };
                 o.table.appendChild( tableHead );
                 o.table.appendChild( tableBody );
-                
+
                 o.div.appendChild( o.table );
                 o.created = true;
 
@@ -592,10 +592,10 @@ function datePicker(options) {
         };
         o.setDateFromInput = function() {
                 o.dateSet = null;
-                
+
                 var elem = o.getElem();
                 if(!elem) return;
-                
+
                 var date = elem.value;
 
                 var d,m,y,dt,dates;
@@ -609,7 +609,7 @@ function datePicker(options) {
 
                         dates[m] = document.getElementById(o.id+'-mm').value;
                         if(dates[m] < 1 || dates[m] > 12) dates[m] = "";
-                        
+
                         dates[d] = document.getElementById(o.id+'-dd').value;
                         if(dates[d] < 1 || dates[d] > datePicker.daysPerMonth[dates[m]-1]) dates[d] = "";
 
@@ -621,9 +621,9 @@ function datePicker(options) {
                                         return;
                                 };
                         };
-                        
+
                         dates = date.split(o.divider);
-                
+
                         if(dates.length != 3) {
                                 o.date = new Date();
                                 return;
@@ -639,13 +639,13 @@ function datePicker(options) {
                 o.date.setMonth(dates[m]-1);
                 o.date.setFullYear(dates[y]);
                 o.date.setDate(dates[d]);
-                
+
                 o.dateSet = new Date(o.date);
         };
         o.returnFormattedDate = function() {
                 var elem = o.getElem();
                 if(!elem) return;
-                
+
                 var d           = (o.date.getDate() < 10) ? "0" + o.date.getDate() : o.date.getDate();
                 var m           = ((o.date.getMonth() + 1) < 10) ? "0" + (o.date.getMonth() + 1) : o.date.getMonth() + 1;
                 var yyyy        = o.date.getFullYear();
@@ -657,7 +657,7 @@ function datePicker(options) {
                                 document.getElementById(o.id+"-dd").value = d;
                                 document.getElementById(o.id+"-mm").value = m;
                                 elem.value = yyyy;
-                                
+
                                 document.getElementById(o.id+"-dd").focus();
                                 if(document.getElementById(o.id+"-dd").onchange) document.getElementById(o.id+"-dd").onchange();
                                 if(document.getElementById(o.id+"-mm").onchange) document.getElementById(o.id+"-mm").onchange();
@@ -669,10 +669,10 @@ function datePicker(options) {
                 };
         };
         // Credit where credit's due:
-        
+
         // Most of the logic for this method from the webfx date-picker
         // http://webfx.eae.net/
-        
+
         o.updateTable = function() {
 
                 if(document.getElementById("date-picker-hover")) {
@@ -704,14 +704,14 @@ function datePicker(options) {
                 o.titleBar.appendChild(document.createTextNode(titleText));
 
                 for ( i = 1; i < 32; i++ ) {
-                
+
                         tmpDate.setDate( i );
                         var weekDay = ( tmpDate.getDay() + 6 ) % 7;
                         var colIndex = ( (weekDay - o.firstDayOfWeek) + 7 ) % 7;
                         var cell     = { text:"", className:"", id:"" };
-                        
+
                         if ( tmpDate.getMonth() == o.date.getMonth() ) {
-                        
+
                                 cells[currentWeek][colIndex] = { text:"", className:"", id:"" };
 
                                 var isToday = tmpDate.getDate() == today.getDate() &&
@@ -780,9 +780,9 @@ function datePicker(options) {
                                 if ( typeof cells[y][x] != "undefined" ) {
                                         tmpCell.className = cells[y][x].className;
                                         tmpCell.id = cells[y][x].id;
-                                        
+
                                         tmpCell.appendChild(document.createTextNode(cells[y][x].text));
-                                        
+
                                         if(cells[y][x].className != "out-of-range") {
                                                 tmpCell.onmouseover = o.events.onmouseover;
                                                 tmpCell.onclick =  cells[y][x].className == "day-disabled" ? o.killEvent : o.events.onclick;
@@ -835,9 +835,9 @@ function datePicker(options) {
 
                 datePickerController.addEvent(document, "mousedown", o.events.onmousedown);
                 datePickerController.addEvent(document, "keypress", o.events.onkeydown);
-                
+
                 // Internet Explorer requires the keydown event in order to catch arrow keys
-                
+
                 /*@cc_on@*/
                 /*@if(@_win32)
                         datePickerController.removeEvent(document, "keypress", o.events.onkeydown);
@@ -857,7 +857,7 @@ function datePicker(options) {
                         datePickerController.removeEvent(document, "keypress", o.events.onkeydown);
                         datePickerController.removeEvent(document, "keydown", o.events.onkeydown);
                 } catch(e) {
-                
+
                 };
                 if(o.iePopUp) {
                         o.iePopUp.style.display = "none";
@@ -895,7 +895,7 @@ datePickerController = {
                 var curleft = 0;
                 var curtop  = 0;
                 var orig    = obj;
-                
+
                 if(obj.offsetParent) {
                         while(obj.offsetParent) {
                                 curleft += obj.offsetLeft;
@@ -936,7 +936,7 @@ datePickerController = {
 
                 var start;
                 var cnt = 0;
-                
+
                 while(cnt < 3) {
                         start = (cnt + (favourMDY ? 4 : 3)) % 3;
 
@@ -951,7 +951,7 @@ datePickerController = {
 
                                 return y+m+d;
                         };
-                        
+
                         cnt++;
                 };
 
@@ -961,7 +961,7 @@ datePickerController = {
                 if(!datePicker.isSupported) return;
 
                 datePickerController.cleanUp();
-                
+
                 var inputs = document.getElementsByTagName('input');
 
                 var regExp1 = /disable-days-([1-7]){1,6}/g;             // the days to disable
@@ -999,12 +999,12 @@ datePickerController = {
                                                 options.splitDate = 1;
                                         };
                                 };
-                                
+
                                 // Date format(variations of d-m-y)
                                 if(inp.className.search(regExp6) != -1) {
                                         options.format = inp.className.match(regExp6)[0].replace('format-','');
                                 };
-                                
+
                                 // What divider to use, a "/", "-", "." or " "
                                 if(inp.className.search(regExp7) != -1) {
                                         var divider = inp.className.match(regExp7)[0].replace('divider-','');
@@ -1040,7 +1040,7 @@ datePickerController = {
                                                 options.disableDays[tmp.charAt(j) - 1] = 1;
                                         };
                                 };
-                                
+
                                 // The lower limit
                                 if(inp.className.search(regExp4) != -1) {
                                         options.low = datePickerController.dateFormat(inp.className.match(regExp4)[0].replace(/range-low-/, ''), options.format.charAt(0) == "m");
@@ -1063,7 +1063,7 @@ datePickerController = {
                                                 datePickerController.datePickers[inp.id].defaults[opt] = options[opt];
                                         };
                                 };
-                                
+
                                 // Create the button (if needs be)
                                 if(!document.getElementById("fd-but-" + inp.id)) {
                                         var but = document.createElement('button');
@@ -1072,7 +1072,7 @@ datePickerController = {
 
                                         but.id = "fd-but-" + inp.id;
                                         but.appendChild(document.createTextNode(String.fromCharCode( 160 )));
-                                
+
                                         if(inp.nextSibling) {
                                                 inp.parentNode.insertBefore(but, inp.nextSibling);
                                         } else {
@@ -1082,7 +1082,7 @@ datePickerController = {
                                 } else {
                                         var but = document.getElementById("fd-but-" + inp.id);
                                 };
-                                
+
                                 // Add button events
                                 but.onclick = but.onpress = function() {
                                         var inpId = this.id.replace('fd-but-','');
@@ -1093,7 +1093,7 @@ datePickerController = {
                                         };
                                         return false;
                                 };
-                                
+
                                 // Create the datePicker (if needs be)
                                 if(!document.getElementById('fd-'+inp.id)) {
                                         datePickerController.datePickers[inp.id] = new datePicker(options);

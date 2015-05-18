@@ -71,20 +71,20 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
-$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout']; 
-$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout']; 
-$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout']; 
-$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout']; 
-$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout']; 
-$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout']; 
-$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout']; 
-$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout']; 
-$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout']; 
-$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout']; 
-$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout']; 
-$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout']; 
-$pconfig['othersingletimeout'] = $config['system']['othersingletimeout']; 
-$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout']; 
+$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout'];
+$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout'];
+$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout'];
+$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout'];
+$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout'];
+$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout'];
+$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
+$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
+$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
+$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout'];
+$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
+$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
+$pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
+$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
 
 if ($_POST) {
 
@@ -115,47 +115,47 @@ if ($_POST) {
 	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
 	}
-	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) { 
+	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) {
 		$input_errors[] = gettext("The TCP first timeout value must be an integer.");
 	}
-	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) { 
-		$input_errors[] = gettext("The TCP opening timeout value must be an integer."); 
+	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) {
+		$input_errors[] = gettext("The TCP opening timeout value must be an integer.");
 	}
-	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) { 
-		$input_errors[] = gettext("The TCP established timeout value must be an integer."); 
+	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) {
+		$input_errors[] = gettext("The TCP established timeout value must be an integer.");
 	}
-	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) { 
-		$input_errors[] = gettext("The TCP closing timeout value must be an integer."); 
+	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) {
+		$input_errors[] = gettext("The TCP closing timeout value must be an integer.");
 	}
-	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) { 
-		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer."); 
+	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) {
+		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer.");
 	}
-	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) { 
-		$input_errors[] = gettext("The TCP closed timeout value must be an integer."); 
+	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) {
+		$input_errors[] = gettext("The TCP closed timeout value must be an integer.");
 	}
-	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) { 
-		$input_errors[] = gettext("The UDP first timeout value must be an integer."); 
+	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) {
+		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
 	}
-	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) { 
-		$input_errors[] = gettext("The UDP single timeout value must be an integer."); 
+	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) {
+		$input_errors[] = gettext("The UDP single timeout value must be an integer.");
 	}
-	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) { 
-		$input_errors[] = gettext("The UDP multiple timeout value must be an integer."); 
+	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) {
+		$input_errors[] = gettext("The UDP multiple timeout value must be an integer.");
 	}
-	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) { 
-		$input_errors[] = gettext("The ICMP first timeout value must be an integer."); 
+	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) {
+		$input_errors[] = gettext("The ICMP first timeout value must be an integer.");
 	}
-	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) { 
-		$input_errors[] = gettext("The ICMP error timeout value must be an integer."); 
+	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) {
+		$input_errors[] = gettext("The ICMP error timeout value must be an integer.");
 	}
-	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) { 
-		$input_errors[] = gettext("The Other first timeout value must be an integer."); 
+	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) {
+		$input_errors[] = gettext("The Other first timeout value must be an integer.");
 	}
-	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) { 
-		$input_errors[] = gettext("The Other single timeout value must be an integer."); 
+	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) {
+		$input_errors[] = gettext("The Other single timeout value must be an integer.");
 	}
-	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) { 
-		$input_errors[] = gettext("The Other multiple timeout value must be an integer."); 
+	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
+		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
 	}
 
 	ob_flush();
@@ -694,7 +694,7 @@ function update_description(itemnum) {
 									<?=gettext("Enter value for TCP first timeout in seconds. Leave blank for default (recommended).");?>
 									<br/><br/>
 									<strong><?=gettext("TCP Opening: ");?></strong><input name="tcpopeningtimeout" id="tcpopeningtimeout" value="<?php echo $config['system']['tcpopeningtimeout']; ?>" /><br />
-									<?=gettext("Enter value for TCP opening timeout in seconds. Leave blank for default (recommended).");?>									
+									<?=gettext("Enter value for TCP opening timeout in seconds. Leave blank for default (recommended).");?>
 									<br/><br/>
 									<strong><?=gettext("TCP Established: ");?></strong><input name="tcpestablishedtimeout" id="tcpestablishedtimeout" value="<?php echo $config['system']['tcpestablishedtimeout']; ?>" /><br />
 									<?=gettext("Enter value for TCP established timeout in seconds. Leave blank for default (recommended).");?>
@@ -706,7 +706,7 @@ function update_description(itemnum) {
 									<?=gettext("Enter value for TCP FIN wait timeout in seconds. Leave blank for default (recommended).");?>
 									<br/><br/>
 									<strong><?=gettext("TCP Closed: ");?></strong><input name="tcpclosedtimeout" id="tcpclosedtimeout" value="<?php echo $config['system']['tcpclosedtimeout']; ?>" /><br />
-									<?=gettext("Enter value for TCP closed timeout in seconds. Leave blank for default (recommended).");?>							
+									<?=gettext("Enter value for TCP closed timeout in seconds. Leave blank for default (recommended).");?>
 								</td>
 							</tr>
 							<tr>

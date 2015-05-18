@@ -3,21 +3,21 @@
 	vpn_ipsec_keys.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	part of pfSense
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -85,7 +85,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="vpn_ipsec_keys.php" method="post">
-<?php 
+<?php
 if ($savemsg)
 	print_info_box($savemsg);
 if (is_subsystem_dirty('ipsec'))
@@ -104,11 +104,11 @@ if (is_subsystem_dirty('ipsec'))
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
-  <tr> 
+  <tr>
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-                <tr> 
+                <tr>
                   <td class="listhdrr"><?=gettext("Identifier"); ?></td>
                   <td class="listhdrr"><?=gettext("Type"); ?></td>
                   <td class="listhdr"><?=gettext("Pre-Shared Key"); ?></td>
@@ -155,7 +155,7 @@ if (is_subsystem_dirty('ipsec'))
 			  <?php $i++; endforeach; ?>
 
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
-                <tr> 
+                <tr>
                   <td class="listlr">
                     <?=htmlspecialchars($secretent['ident']);?>
                   </td>
@@ -174,7 +174,7 @@ if (is_subsystem_dirty('ipsec'))
                      &nbsp;<a href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add key">

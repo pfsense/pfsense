@@ -14,19 +14,19 @@ html, body, td, th, input, select {
 
 .infoboxnptd {
 	width:8%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnptable {
  	height:32px;
 	width:100%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnptable2 {
  	height:32px;
 	width:100%;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 .infoboxnp {
@@ -38,7 +38,7 @@ html, body, td, th, input, select {
 	vertical-align:middle;
 	width:28px;
 	height:32px;
-	background-color:#990000;	
+	background-color:#990000;
 }
 
 /* please adjust the bgcolor to be used together with niftycorners! */
@@ -192,7 +192,7 @@ iframe {
 	position: relative;
 }
 #header-right .container .left {
-	position: relative; 
+	position: relative;
 	float: left;
 	font-size: 1.3em;
 	font-weight: bold;
@@ -252,7 +252,7 @@ span#marquee-container {
 	top: -100px;
 	left: -10000px;
 }
-div#marquee-text {	
+div#marquee-text {
 	font-size: 1.18em;
 	font-weight: normal;
 	font-family: Verdana;
@@ -360,7 +360,7 @@ table#marquee div#container div#scroller {
 /* initially hidden with absolute position */
 #navigation ul li ul {
 	display: none;
-	position: absolute; 
+	position: absolute;
 	top: 2em;
 	left: -2px;
 	width: 9em;
@@ -383,7 +383,7 @@ table#marquee div#container div#scroller {
 }
 /* Show initial drop down upon mouse over, but do not show */
 /* nested side drop menus within listed elements */
-#navigation ul li:hover ul { 
+#navigation ul li:hover ul {
 	display: block;
 	cursor: pointer;
 }

@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/wol	
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/wol
 	pfSense_MODULE:	wol
 */
 
@@ -131,7 +131,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
                   <td width="78%" class="vtable">
 		     		<select name="interface" class="formselect">
-                      <?php 
+                      <?php
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
                       	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""; ?>>
@@ -202,7 +202,7 @@ include("head.inc");
                       </tr>
                     </table>
                   </td>
-                  			
+
 			</tr>
               </table>
 			<span class="vexpl">

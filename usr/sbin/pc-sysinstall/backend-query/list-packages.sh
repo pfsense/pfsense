@@ -62,7 +62,7 @@ then
 
 elif [ "${NARGS}" -eq "1" ]
 then
-	
+
   if [ "${PACKAGE_CATEGORY}" = "@INDEX@" ]
   then
     if [ -f "${PKGDIR}/INDEX" ]
@@ -72,7 +72,7 @@ then
     else
       exit 1
     fi
-		
+
   else
     show_packages_by_category "${PACKAGE_CATEGORY}"
   fi

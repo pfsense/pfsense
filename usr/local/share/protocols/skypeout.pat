@@ -15,7 +15,7 @@
 # Example sessions:
 #
 #SkypeOut <USA phone number>
-#c6 5c bf 41 8e 8d d6 d2 08 <-- this is sometimes as short as 1 byte and 
+#c6 5c bf 41 8e 8d d6 d2 08 <-- this is sometimes as short as 1 byte and
 #c6 5c bf 41 8e 8d d6 d2 08 <-- sometimes as long as 9 (or more?)
 #00 6b 2c f5 87 f1 06
 #00 6b 2c f5 87 f1 06
@@ -38,10 +38,10 @@
 
 skypeout
 
-# Scary.  Our regular expressions suck.  This is a prime candidate for 
-# some sort of a scheme to support two different regular expressions 
-# when there's a major difference between what the two libraries allow.  
-# For the Henry Spencer library, there's not much that can be done 
+# Scary.  Our regular expressions suck.  This is a prime candidate for
+# some sort of a scheme to support two different regular expressions
+# when there's a major difference between what the two libraries allow.
+# For the Henry Spencer library, there's not much that can be done
 # except requiring that we see the same byte twice.
 
 # This matches about %4 of random streams and 13% of printable random streams

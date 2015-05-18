@@ -44,7 +44,7 @@
 function is_dyndns_username($uname) {
         if (!is_string($uname))
                 return false;
-        
+
         if (preg_match("/[^a-z0-9\-\+.@_:]/i", $uname))
                 return false;
         else
@@ -88,9 +88,9 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	
+
 	if(($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "")
-		$_POST['username'] = "none"; 
+		$_POST['username'] = "none";
 
 	/* input validation */
 	$reqdfields = array();
@@ -124,9 +124,9 @@ if ($_POST) {
 
 		unset($host_to_check);
 	}
-	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
+	if (($_POST['mx'] && !is_domain($_POST['mx'])))
 		$input_errors[] = gettext("The MX contains invalid characters.");
-	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) 
+	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == "")))
  		$input_errors[] = gettext("The username contains invalid characters.");
 
 	if (!$input_errors) {
@@ -154,7 +154,7 @@ if ($_POST) {
 		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
-		
+
 		if($dyndns['username'] == "none")
 			$dyndns['username'] = "";
 
@@ -191,7 +191,7 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <script type="text/javascript">
 //<![CDATA[
-function _onTypeChange(type){ 
+function _onTypeChange(type){
 	switch(type) {
 		case "custom":
 		case "custom-v6":
@@ -261,11 +261,11 @@ function _onTypeChange(type){
                     </select></td>
 				</tr>
 				<tr>
-				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
+				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
 				<?php
-					$iflist = get_configured_interface_with_descr();					
+					$iflist = get_configured_interface_with_descr();
 				   	foreach ($iflist as $if => $ifdesc) {
 						echo "<option value=\"{$if}\"";
 						if ($pconfig['interface'] == $if)
@@ -284,13 +284,13 @@ function _onTypeChange(type){
 				?>
 					</select>
 					</td>
-				</tr>	
+				</tr>
 				<tr id="_requestiftr">
-					<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to send update from");?></td>  
+					<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to send update from");?></td>
 					<td width="78%" class="vtable">
 					<select name="requestif" class="formselect" id="requestif">
 				<?php
-					$iflist = get_configured_interface_with_descr();					
+					$iflist = get_configured_interface_with_descr();
 					foreach ($iflist as $if => $ifdesc) {
 						echo "<option value=\"{$if}\"";
 						if ($pconfig['requestif'] == $if)

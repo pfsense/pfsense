@@ -224,7 +224,7 @@ include("head.inc");
 						"new configuration."); ?>
 					</li>
 					<li>
-						<b><?=gettext("loadbalance"); ?></b><br /> 
+						<b><?=gettext("loadbalance"); ?></b><br />
 						<?=gettext("Balances outgoing traffic across the active ports based on " .
 						"hashed protocol header information and accepts incoming " .
 						"traffic from any active port.  This is a static setup and " .

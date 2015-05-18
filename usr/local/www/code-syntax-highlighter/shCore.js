@@ -1,17 +1,17 @@
 /**
  * Code Syntax Highlighter. Version 1.1.0
  * Copyright (C) 2004 Dream Projections Inc.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -70,9 +70,9 @@ dp.sh.Utils.ViewSource = function(sender)
 {
 	var code = sender.parentNode.originalCode;
 	var wnd = window.open('', '_blank', 'width=750, height=400, location=0, resizable=1, menubar=0, scrollbars=1');
-	
+
 	code = code.replace(/</g, '&lt;');
-	
+
 	wnd.document.write('<pre>' + code + '</pre>');
 	wnd.document.close();
 }
@@ -81,14 +81,14 @@ dp.sh.Utils.ViewSource = function(sender)
 dp.sh.Utils.ToClipboard = function(sender)
 {
 	var code = sender.parentNode.originalCode;
-	
+
 	// This works only for IE. There's a way to make it work with Mozilla as well,
 	// but it requires security settings changed on the client, which isn't by
 	// default, so 99% of users won't have it working anyways.
 	if(window.clipboardData)
 	{
 		window.clipboardData.setData('text', code);
-		
+
 		alert('The code is in your clipboard now.');
 	}
 }
@@ -100,23 +100,23 @@ dp.sh.Utils.PrintSource = function(sender)
 	var code	= td.processedCode;
 	var iframe	= document.createElement('iframe');
 	var doc		= null;
-	var wnd		= 
+	var wnd		=
 
 	// this hides the iframe
 	iframe.style.cssText = 'position:absolute; width:0px; height:0px; left:-5px; top:-5px;';
-	
+
 	td.appendChild(iframe);
-	
+
 	doc		= iframe.contentWindow.document;
 	code	= code.replace(/</g, '&lt;');
-	
+
 	doc.open();
 	doc.write('<pre>' + code + '</pre>');
 	doc.close();
-	
+
 	iframe.contentWindow.focus();
 	iframe.contentWindow.print();
-	
+
 	td.removeChild(iframe);
 }
 
@@ -124,12 +124,12 @@ dp.sh.Utils.About = function()
 {
 	var wnd	= window.open('', '_blank', 'dialog, width=320, height=150');
 	var doc	= wnd.document;
-	
+
 	var styles	= document.getElementsByTagName('style');
 	var links	= document.getElementsByTagName('link');
-	
+
 	doc.write(dp.sh.Config.About.replace('{V}', dp.sh.Config.Version));
-	
+
 	// copy over ALL the styles from the parent page
 	for(var i = 0; i < styles.length; i++)
 		doc.write('<style>' + styles[i].innerHTML + '</style>');
@@ -137,7 +137,7 @@ dp.sh.Utils.About = function()
 	for(var i = 0; i < links.length; i++)
 		if(links[i].rel.toLowerCase() == 'stylesheet')
 			doc.write('<link type="text/css" rel="stylesheet" href="' + links[i].href + '"></link>');
-	
+
 	doc.close();
 	wnd.focus();
 }
@@ -200,32 +200,32 @@ dp.sh.Highlighter.prototype.GetMatches = function(regex, css)
 dp.sh.Highlighter.prototype.AddBit = function(str, css)
 {
 	var span = document.createElement('span');
-	
+
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
 	str = str.replace(/</g, '&lt;');
 	str = str.replace(/\n/gm, '&nbsp;<br />');
 
-	// when adding a piece of code, check to see if it has line breaks in it 
+	// when adding a piece of code, check to see if it has line breaks in it
 	// and if it does, wrap individual line breaks with span tags
 	if(css != null)
 	{
 		var regex = new RegExp('<br />', 'gi');
-		
+
 		if(regex.test(str))
 		{
 			var lines = str.split('&nbsp;<br />');
-			
+
 			str = '';
-			
+
 			for(var i = 0; i < lines.length; i++)
 			{
 				span			= document.createElement('span');
 				span.className	= css;
 				span.innerHTML	= lines[i];
-				
+
 				this.div.appendChild(span);
-				
+
 				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
 				{
@@ -254,22 +254,22 @@ dp.sh.Highlighter.prototype.IsInside = function(match)
 	{
 		return;
 	}
-	
+
 	for(var i = 0; i < this.matches.length; i++)
 	{
 		var c = this.matches[i];
-		
+
 		if(c == null)
 		{
 			continue;
 		}
-		
+
 		if((match.index > c.index) && (match.index <= c.index + c.length))
 		{
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -289,18 +289,18 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 	var tab		= '\t';
 
 	// This function inserts specified amount of spaces in the string
-	// where a tab is while removing that given tab. 
+	// where a tab is while removing that given tab.
 	function InsertSpaces(line, pos, count)
 	{
 		var left	= line.substr(0, pos);
 		var right	= line.substr(pos + 1, line.length);	// pos + 1 will get rid of the tab
 		var spaces	= '';
-		
+
 		for(var i = 0; i < count; i++)
 		{
 			spaces += ' ';
 		}
-		
+
 		return left + spaces + right;
 	}
 
@@ -317,13 +317,13 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 		while((pos = line.indexOf(tab)) != -1)
 		{
 			// This is pretty much all there is to the 'smart tabs' logic.
-			// Based on the position within the line and size of a tab, 
+			// Based on the position within the line and size of a tab,
 			// calculate the amount of spaces we need to insert.
 			var spaces = tabSize - pos % tabSize;
-			
+
 			line = InsertSpaces(line, pos, spaces);
 		}
-		
+
 		return line;
 	}
 
@@ -333,7 +333,7 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 		var line = lines[i];
 		result += ProcessLine(line, tabSize) + '\n';
 	}
-	
+
 	return result;
 }
 
@@ -351,9 +351,9 @@ dp.sh.Highlighter.prototype.SwitchToTable = function()
 	{
 		return '<a href="#" onclick="dp.sh.Utils.' + util + '(this); return false;">' + text + '</a>';
 	}
-	
+
 	row = this.table.insertRow(-1);
-	
+
 	if(this.addGutter == true)
 	{
 		cell			= row.insertCell(-1);
@@ -363,25 +363,25 @@ dp.sh.Highlighter.prototype.SwitchToTable = function()
 	if(this.addControls == true)
 	{
 		cell			= row.insertCell(-1);
-		
+
 		cell.originalCode	= this.originalCode;
 		cell.processedCode	= this.code;
-		
+
 		cell.className		= 'tools';
 		cell.innerHTML		= UtilHref('ViewSource', 'view plain') + pipe + UtilHref('PrintSource', 'print');
-		
+
 		if(window.clipboardData)
 		{
 			cell.innerHTML += pipe + UtilHref('ToClipboard', 'copy to clipboard');
 		}
-		
+
 		cell.innerHTML += pipe + UtilHref('About', '?');
 	}
 
 	for(var i = 0; i < lines.length - 1; i++)
 	{
 		row = this.table.insertRow(-1);
-		
+
 		if(this.addGutter == true)
 		{
 			cell			= row.insertCell(-1);
@@ -393,7 +393,7 @@ dp.sh.Highlighter.prototype.SwitchToTable = function()
 		cell.className	= 'line';
 		cell.innerHTML	= lines[i];
 	}
-	
+
 	this.div.innerHTML	= '';
 }
 
@@ -415,11 +415,11 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 		{
 			str = str.substr(0, str.length - 1);
 		}
-		
+
 		return str;
 	}
-	
-	// This function returns a portions of the string 
+
+	// This function returns a portions of the string
 	// from pos1 to pos2 inclusive.
 	function Copy(string, pos1, pos2)
 	{
@@ -427,13 +427,13 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	}
 
 	var pos	= 0;
-	
+
 	this.originalCode	= code;
 	this.code			= Trim(code);
 	this.div			= document.createElement('div');
 	this.table			= document.createElement('table');
 	this.matches		= new Array();
-	
+
 	if(this.CssClass != null)
 	{
 		this.table.className = this.CssClass;
@@ -449,7 +449,7 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	this.table.cellSpacing	= 0;
 	this.table.cellPadding	= 0;
 
-	this.ProcessRegexList();	
+	this.ProcessRegexList();
 
 	// if no matches found, do nothing
 	if(this.matches.length == 0)
@@ -481,19 +481,19 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 		{
 			continue;
 		}
-		
+
 		this.AddBit(Copy(this.code, pos, match.index), null);
 		this.AddBit(match.value, match.css);
-		
+
 		pos = match.index + match.length;
 	}
-	
+
 	this.AddBit(this.code.substr(pos), null);
 
-	this.SwitchToTable();	
+	this.SwitchToTable();
 }
 
-dp.sh.Highlighter.prototype.GetKeywords = function(str) 
+dp.sh.Highlighter.prototype.GetKeywords = function(str)
 {
 	return '\\b' + str.replace(/ /g, '\\b|\\b') + '\\b';
 }
@@ -505,18 +505,18 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 	var highlighter		= null;
 	var registered		= new Object();
 	var propertyName	= 'value';
-	
+
 	function FindValue()
 	{
 		var a = arguments;
-		
+
 		for(var i = 0; i < a.length; i++)
 			if(a[i] != null && ((typeof(a[i]) == 'string' && a[i] != '') || (typeof(a[i]) == 'object' && a[i].value != '')))
 				return a[i];
-		
+
 		return null;
 	}
-	
+
 	if(elements == null)
 	{
 		return;
@@ -527,7 +527,7 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 	{
 		showGutter = true;
 	}
-	
+
 	// if showControls isn't set, default to TRUE
 	if(showControls == null)
 	{
@@ -538,12 +538,12 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 	for(var brush in dp.sh.Brushes)
 	{
 		var aliases = dp.sh.Brushes[brush].Aliases;
-		
+
 		if(aliases == null)
 		{
 			continue;
 		}
-		
+
 		for(var i = 0; i < aliases.length; i++)
 		{
 			registered[aliases[i]] = brush;
@@ -554,23 +554,23 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 	{
 		var element		= elements[i];
 		var language	= FindValue(element.attributes['class'], element.className, element.attributes['language'], element.language);
-		
+
 		if(language == null)
 			continue;
-		
+
 		if(language.value)
 			language = language.value;
 
 		language = (language + '').toLowerCase();
-		
+
 		if(registered[language] == null)
 		{
 			continue;
 		}
-		
+
 		// instantiate a brush
 		highlighter = new dp.sh.Brushes[registered[language]]();
-		
+
 		// hide the original element
 		element.style.display = 'none';
 
@@ -580,10 +580,10 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 
 		// place the result table inside a div
 		var div = document.createElement('div');
-		
+
 		div.className = 'dp-highlighter';
 		div.appendChild(highlighter.table);
 
-		element.parentNode.insertBefore(div, element);		
-	}	
+		element.parentNode.insertBefore(div, element);
+	}
 }

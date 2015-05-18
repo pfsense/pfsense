@@ -99,7 +99,7 @@ foreach($interfaces as $interface) {
 if ($_POST) {
 
 	$changecount++;
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -190,7 +190,7 @@ if ($_POST) {
 
 		/* pfSense themes */
 		if (! $g['disablethemeselection']) {
-			update_if_changed("System Theme", $config['theme'], $_POST['theme']);	
+			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
@@ -279,7 +279,7 @@ if ($_POST) {
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();
-		
+
 		$savemsg = get_std_save_message($retval);
 	}
 
@@ -514,7 +514,7 @@ include("head.inc");
 			<?php endif; ?>
 			<tr>
 				<td colspan="2" class="list" height="12">&nbsp;</td>
-			</tr>			
+			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">

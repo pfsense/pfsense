@@ -6,7 +6,7 @@
 #
 # Contributed by Laurens Blankers <laurens AT blankersfamily.com>, who says:
 #
-# This pattern has been tested with QuakeWorld (2.30), Quake 2 (3.20), 
+# This pattern has been tested with QuakeWorld (2.30), Quake 2 (3.20),
 # Quake 3 (1.32), and Half-life (1.1.1.0). But may also work on other
 # games based on the Quake engine.
 #

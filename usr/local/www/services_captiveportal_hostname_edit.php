@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 	services_captiveportal_hostname_edit.php
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
@@ -8,17 +8,17 @@
 	Originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -100,10 +100,10 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "hostname");
 	$reqdfieldsn = array(gettext("Allowed Hostname"));
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
-	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) 
+
+	if (($_POST['hostname'] && !is_hostname($_POST['hostname'])))
 		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
 
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
@@ -114,11 +114,11 @@ if ($_POST) {
 	foreach ($a_allowedhostnames as $ipent) {
 		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent))
 			continue;
-		
+
 		if ($ipent['hostname'] == $_POST['hostname']){
 			$input_errors[] = sprintf("[%s] %s.", $_POST['hostname'], gettext("already allowed")) ;
 			break ;
-		}	
+		}
 	}
 
 	if (!$input_errors) {
@@ -137,7 +137,7 @@ if ($_POST) {
 			$a_allowedhostnames[] = $ip;
 
 		allowedhostnames_sort();
-		
+
 		write_config();
 
 		$rules = captiveportal_allowedhostname_configure();
@@ -145,7 +145,7 @@ if ($_POST) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules");
 		unset($rules);
-		
+
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;
 	}
@@ -161,9 +161,9 @@ include("head.inc");
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal hostname edit">
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
-			<td width="78%" class="vtable"> 
+			<td width="78%" class="vtable">
 			<select name="dir" class="formfld">
-		<?php 
+		<?php
 			$dirs = array(gettext("Both"),gettext("From"),gettext("To")) ;
 			foreach ($dirs as $dir): ?>
 				<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected=\"selected\"";?> >
@@ -171,20 +171,20 @@ include("head.inc");
 				</option>
 		<?php endforeach; ?>
 			</select>
-			<br /> 
-			<span class="vexpl"><?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an Hostname through the captive portal (without authentication)"); ?>. 
+			<br />
+			<span class="vexpl"><?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an Hostname through the captive portal (without authentication)"); ?>.
 				<?=gettext("Use"); ?> <em><?=gettext("To"); ?></em> <?=gettext("to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname"); ?>.</span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
-			<td width="78%" class="vtable"> 
+			<td width="78%" class="vtable">
 				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
-			<br /> 
+			<br />
 			<span class="vexpl"><?=gettext("Hostname");?>.</span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable"> 
+			<td width="78%" class="vtable">
 			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 			<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
 			</tr>
@@ -202,7 +202,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> 
+			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_allowedhostnames[$id]): ?>

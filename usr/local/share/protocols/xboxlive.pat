@@ -4,7 +4,7 @@
 # Wiki: http://www.protocolinfo.org/wiki/XBox_Live
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
-# This may match all XBox traffic, or may only match Halo 2 traffic.  
+# This may match all XBox traffic, or may only match Halo 2 traffic.
 # We don't know yet.
 #
 # Thanks to Myles Uyema <mylesuyema AT gmail DOT com>, who says:

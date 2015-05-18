@@ -1,6 +1,6 @@
 # Dazhihui - stock analysis and trading; Chinese - http://www.gw.com.cn
 # Pattern attributes: fast fast ok
-# Protocol groups: 
+# Protocol groups:
 # Wiki: http://www.protocolinfo.org/wiki/Dazhihui
 # Copyright (C) 2009 Matthew Strait; See ../LICENSE
 

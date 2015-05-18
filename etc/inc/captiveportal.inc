@@ -1223,7 +1223,7 @@ function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
 	/* Reading only from one of the tables is enough of approximation. */
 	if (is_array($ipfwoutput)) {
 		/* Workaround for #46652 */
-		if ($ipfwoutput['packets'] > 0) { 
+		if ($ipfwoutput['packets'] > 0) {
 			return $ipfwoutput['timestamp'];
 		} else {
 			return 0;

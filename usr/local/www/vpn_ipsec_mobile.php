@@ -1,21 +1,21 @@
 <?php
 /*
 	vpn_ipsec_mobile.php
-	
+
 	Copyright (C) 2008 Shrew Soft Inc
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -127,7 +127,7 @@ if ($_POST['submit']) {
 
 	/* input consolidation */
 
-	
+
 
 	/* input validation */
 
@@ -187,7 +187,7 @@ if ($_POST['submit']) {
 
 	if (!$input_errors) {
 		$client = array();
-		
+
 		if ($pconfig['enable'])
 			$client['enable'] = true;
 
@@ -231,10 +231,10 @@ if ($_POST['submit']) {
 			$client['login_banner'] = $pconfig['login_banner'];
 
 		$a_client = $client;
-		
+
 		write_config();
 		mark_subsystem_dirty('ipsec');
-		
+
 		header("Location: vpn_ipsec_mobile.php");
 		exit;
 	}
@@ -353,7 +353,7 @@ function login_banner_change() {
 			?>
 		</td>
 	</tr>
-	<tr> 
+	<tr>
 		<td id="mainarea">
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
@@ -412,12 +412,12 @@ function login_banner_change() {
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
-					<tr> 
+					<tr>
 						<td colspan="2" valign="top" class="listtopic">
 							<?=gettext("Client Configuration (mode-cfg)"); ?>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual Address Pool"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable pool">
@@ -482,7 +482,7 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns default domain">
@@ -529,7 +529,7 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns servers">
@@ -571,7 +571,7 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable wins servers">
@@ -631,7 +631,7 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Login Banner"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable login banner">

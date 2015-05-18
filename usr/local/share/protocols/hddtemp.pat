@@ -3,7 +3,7 @@
 # Protocol groups: monitoring open_source
 # Wiki: http://www.protocolinfo.org/wiki/HDDtemp
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
-# 
+#
 # Usually runs on port 7634
 #
 # You're a silly person if you use this pattern.

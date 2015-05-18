@@ -45,6 +45,6 @@ then
   echo "ftp: Up"
   exit 0
 fi
-   
+
 echo "ftp: Down"
 exit 1

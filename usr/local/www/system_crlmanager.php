@@ -1,21 +1,21 @@
 <?php
 /*
 	system_crlmanager.php
-	
+
 	Copyright (C) 2010 Jim Pingle
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	notice, this list of conditions and the following disclaimer in the
 	documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -505,7 +505,7 @@ function method_change() {
 						<td class="listlr" colspan="3" align="center">
 							<b><?php echo gettext("Choose a Certificate to Revoke"); ?></b>: <select name='certref' id='certref' class="formselect">
 				<?php	$rowIndex = 0;
-						foreach($ca_certs as $cert): 
+						foreach($ca_certs as $cert):
 							$rowIndex++; ?>
 							<option value="<?=$cert['refid'];?>"><?=htmlspecialchars($cert['descr'])?></option>
 				<?php	endforeach;
@@ -515,7 +515,7 @@ function method_change() {
 							<b><?php echo gettext("Reason");?></b>:
 							<select name='crlreason' id='crlreason' class="formselect">
 				<?php	$rowIndex = 0;
-						foreach($openssl_crl_status as $code => $reason): 
+						foreach($openssl_crl_status as $code => $reason):
 							$rowIndex++; ?>
 							<option value="<?= $code ?>"><?= htmlspecialchars($reason) ?></option>
 				<?php	endforeach;
@@ -567,7 +567,7 @@ function method_change() {
 
 							if($ca['prv']) {
 								$cainternal = "YES";
-							} else 
+							} else
 								$cainternal = "NO";
 					?>
 					<tr>
@@ -595,7 +595,7 @@ function method_change() {
 						<?php endif; ?>
 						</td>
 					</tr>
-					
+
 						<?php
 						if (is_array($ca_crl_map[$ca['refid']])):
 							foreach($ca_crl_map[$ca['refid']] as $crl):

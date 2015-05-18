@@ -17,7 +17,7 @@ x11
 # ".?" is for the unused byte that comes next.  If it's a null, it won't appear.
 # \x0b = protocol-major-version 11.
 # For some reason, protocol-minor-version is 0, not 6, so can't match it.
-# This pattern is too general. 
+# This pattern is too general.
 ^[lb].?\x0b
 userspace pattern=^[lB].?\x0b
 userspace flags=REG_NOSUB

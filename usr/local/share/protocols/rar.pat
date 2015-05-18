@@ -1,4 +1,4 @@
-# RAR - The WinRAR archive format  
+# RAR - The WinRAR archive format
 # Pattern attributes: good notsofast notsofast subset
 # Protocol groups: file
 

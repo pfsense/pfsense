@@ -7,7 +7,7 @@
 # Usually runs on port 443
 #
 # This is a superset of validcertssl.  For it to match, it must be first.
-# 
+#
 # This pattern has been tested and is believed to work well.
 
 ssl

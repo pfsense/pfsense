@@ -1,10 +1,10 @@
-# Quicktime HTTP 
+# Quicktime HTTP
 # Pattern attributes: good notsofast notsofast subset
 # Protocol groups: streaming_video streaming_audio ietf_draft_standard
 # Wiki: http://protocolinfo.org/wiki/HTTP
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
-# This pattern has been tested and is believed to work well.  
+# This pattern has been tested and is believed to work well.
 # (Quick Time v6.5.1 downloading from www.apple.com/trailers)
 #
 # To get or provide more information about this protocol and/or pattern:

@@ -80,9 +80,9 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host'])))  
+	if (($_POST['host'] && !is_domain($_POST['host'])))
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
-	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) 
+	if (($_POST['ttl'] && !is_numericint($_POST['ttl'])))
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	if (($_POST['keyname'] && !is_domain($_POST['keyname'])))
 		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
@@ -144,7 +144,7 @@ include("head.inc");
 				  </td>
                 </tr>
 				<tr>
-				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
+				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
 				   <?php $iflist = get_configured_interface_with_descr();
@@ -153,7 +153,7 @@ include("head.inc");
 					<?php endforeach; ?>
 					</select>
 					</td>
-				</tr>	
+				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">

@@ -4,7 +4,7 @@
  * Feel free to use this on your websites, but please leave this message in the fies
  * http://www.silverstripe.com/blog
  */
- 
+
 ul.tree{
 	width: auto;
 	padding-left : 0px;
@@ -14,7 +14,7 @@ ul.tree{
 ul.tree img{
  	border : none;
 }
- 
+
 
 ul.tree, ul.tree ul {
 	padding-left: 0;
@@ -22,7 +22,7 @@ ul.tree, ul.tree ul {
 
 ul.tree ul {
 	margin-left: 16px;
-		
+
 }
 ul.tree li.closed ul {
 	display: none;
@@ -83,7 +83,7 @@ ul.tree span.a.spanClosed span.c {
 ul.tree a  {
 	white-space: nowrap;
 	overflow: hidden;
-	
+
 /*	padding: 10px 0px 10px 18px; */
 	padding: 3px 0px 3px 18px;
 	line-height: 16px;

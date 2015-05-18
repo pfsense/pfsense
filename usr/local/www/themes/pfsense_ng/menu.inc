@@ -38,7 +38,7 @@
 require("menu.inc");
 
 define("TMENU_STUB", "
-	// set up drop downs anywhere in the body of the page. I think the bottom of the page is better.. 
+	// set up drop downs anywhere in the body of the page. I think the bottom of the page is better..
 	// but you can experiment with effect on loadtime.
 	if (TransMenu.isSupported()) {
 
@@ -52,19 +52,19 @@ define("TMENU_STUB", "
 		// something like -5, 5
 		//
 		// The last parameter can be .topLeft, .bottomLeft, .topRight, or .bottomRight to inidicate the corner
-		// of the actuator from which to measure the offset positions above. Here we are saying we want the 
+		// of the actuator from which to measure the offset positions above. Here we are saying we want the
 		// menu to appear directly below the bottom left corner of the actuator
 		//==================================================================================================
 		var ms = new TransMenuSet(TransMenu.direction.down, 1, 0, TransMenu.reference.bottomLeft);
-                
+
 		//==================================================================================================
 		// create a dropdown menu
 		//==================================================================================================
 		// the first parameter should be the HTML element which will act actuator for the menu
 		//==================================================================================================
-                
+
                 @@MENU_DEFINITIONS@@
-                
+
 		//==================================================================================================
 		// write drop downs into page
 		//==================================================================================================
@@ -79,41 +79,41 @@ class NervecenterMenu extends Menu {
   private $menuJScript = "NOT-SET";
   private $menuJScriptEvents = "NOT-SET";
   private $menuID = "NOT-SET";
-  
+
   public function __construct($identification = "", $filename = "", Component $c = NULL) {
     parent::__construct($identification, $filename, $c);
-    
+
     $id = "mnua_" . str_replace(" ", "", strtolower($this->getID()));
     $this->menuID = $id;
-    
+
     if ($this->hasParent()) {
       $this->menuJScript = "\tvar {$id} = ms.addMenu(document.getElementById('{$id}'));\n";
     }
   } // end __construct
-    
+
   public function getMenuID() {
     return $this->menuID;
   }
-  
+
   public function setMenuID($myMenuID) {
     $this->menuID = $myMenuID;
   }
-  
+
   public function getMenuJScript() {
     $childJScript = "";
     foreach ($this->getChildren() as $component) {
       $childJScript .= $component->getMenuJScript();
     }
-    
+
     if (! $this->hasParent()) {
       $this->menuJScript = str_replace("@@MENU_DEFINITIONS@@", $childJScript, TMENU_STUB);
     } else {
       $this->menuJScript .= "\n$childJScript\n";
     }
-    
+
     return $this->menuJScript;
   }
-  
+
   public function getMenuJScriptEvents() {
     return $this->menuJScriptEvents;
   }
@@ -126,16 +126,16 @@ class NervecenterMenu extends Menu {
         </div>
 
 EOD;
-    } else {    
+    } else {
       $name = gettext($this->getID());
       $id = "mnua_" . str_replace(" ", "", strtolower($this->getID()));
-      
+
       $menuMarkup =<<<EOD
         <a id="{$id}" href="#">{$name}</a>
-        @@CHILD_ELEMENTS@@  
+        @@CHILD_ELEMENTS@@
 EOD;
     }
-    
+
     $childMarkup = "";
     foreach ($this->getChildren() as $component) {
       $childMarkup .= $component;
@@ -150,21 +150,21 @@ EOD;
 class NervecenterMenuItem extends MenuItem {
   private $menuJScript = "NOT-SET";
   private $menuJScriptEvents = "NOT-SET";
-  
+
   public function __construct($identification = "", $filename = "", $href = "", Component $c = NULL) {
     parent::__construct($identification, $filename, $href, $c);
-    
+
     $href = $this->getHref() <> "" ? $this->getHref() : "{$this->getFile()}";
     $name = gettext($this->getID());
     $file = $this->getFile();
-    
+
     $this->menuJScript = $this->check_access("{$file}", "\t{$this->getParent()->getMenuID()}.addItem('{$name}', '{$href}');\n");
   }
-  
-  public function getMenuJScript() {    
+
+  public function getMenuJScript() {
     return $this->menuJScript;
   }
-  
+
   public function getMenuJScriptEvents() {
     return $this->menuJScriptEvents;
   }

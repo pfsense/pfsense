@@ -93,7 +93,7 @@ function post_choices() {
 </script>
 
  <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
- <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
+ <form method="post" action="system_usermanager_settings_ldapacpicker.php">
 <?php if (empty($ous)): ?>
 	<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
 	<input type='button' value='<?=gettext("Close"); ?>' onClick="window.close();">
@@ -105,11 +105,11 @@ function post_choices() {
     	<td class="tabnavtbl">
 			<table width="100%">
 <?php
-	if(is_array($ous)) {	
+	if(is_array($ous)) {
 		foreach($ous as $ou) {
 			if(in_array($ou, $authcfg['ldap_authcn']))
 				$CHECKED=" CHECKED";
-			else 
+			else
 				$CHECKED="";
 			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
 		}
@@ -118,7 +118,7 @@ function post_choices() {
 			</table>
       	</td>
      </tr>
-	</table>	
+	</table>
 
 	<p/>
 

@@ -1,16 +1,16 @@
 (function(_scope){
-	
+
 	/*
 	 * pi.js
 	 * 1.0
 	 * Azer Koçulu <http://azer.kodfabrik.com>
 	 * http://pi-js.googlecode.com
 	 */
-	
+
 	_scope.pi = Object(3.14159265358979323846);
 	var pi  = _scope.pi;
 	pi.version = 1.0;
-	
+
 	pi.env = {
 		ie: /MSIE/i.test(navigator.userAgent),
 		ie6: /MSIE 6/i.test(navigator.userAgent),
@@ -20,7 +20,7 @@
 		opera: /Opera/i.test(navigator.userAgent),
 		webkit: /Webkit/i.test(navigator.userAgent)
 	};
-	
+
 	pi.util = {
 		IsArray:function(_object){
 			return _object && _object != window && ( _object instanceof Array || ( typeof _object.length == "number" && typeof _object.item =="function" ) );
@@ -67,7 +67,7 @@
 			removeClass:function(_element,_class){
 				if( pi.util.Element.hasClass(_element,_class) )
 					pi.util.Element.setClass(
-						_element, 
+						_element,
 						pi.util.Element.getClass(_element,_class).split(" ").removeValue(_class).join(" ")
 					);
 			},
@@ -84,7 +84,7 @@
 				var styleObject = _styleObject;
 				if(!pi.env.ie)
 					return styleObject["opacity"];
-					
+
 				var alpha = styleObject["filter"].match(/opacity\=(\d+)/i);
 				return alpha?alpha[1]/100:1;
 			},
@@ -173,7 +173,7 @@
 					else
 						value = _source[key].clone();
 				}
-				else 
+				else
 					if (pi.util.IsHash(_source[key])) {
 						if (pi.util.IsHash(_object[key])) {
 							value = pi.util.MergeObjects(_object[key], _source[key]);
@@ -186,7 +186,7 @@
 			return _object;
 		}
 	};
-	
+
 	pi.get = function(){
 		return document.getElementById(arguments[0]);
 	};
@@ -194,23 +194,23 @@
 		return document.getElementsByTagName(arguments[0]);
 	};
 	pi.get.byClass = function(){ return document.getElementsByClassName.apply(document,arguments); };
-	
+
 	pi.base = function(){
 		this.body = {};
 		this.constructor = null;
-		
+
 		this.build = function(_skipClonning){
 			var base = this, skipClonning = _skipClonning||false, _private = {},
 				fn = function(){
 					var _p = pi.util.CloneObject(_private);
 					if(!skipClonning){
 						for(var key in this){
-							
+
 							if(pi.util.IsArray( this[ key ] ) ){
 								this[key] = Array.prototype.clone.apply( this[key] );
 							} else
 								if( pi.util.IsHash(this[key]) ){
-									this[key] = pi.util.CloneObject( 
+									this[key] = pi.util.CloneObject(
 										this[ key ],
 										function(_key,_object){
 											this[ _key ]._parent_ = this;
@@ -232,35 +232,35 @@
 			fn.prototype = this.body;
 			return fn;
 		};
-		
+
 		this.createAccessors = function(_p, _branch){
 			var getter = function(_property){ return this[_property]; },
 				setter = function(_property,_value){ this[_property] = _value; return _branch._parent_||_branch; };
-	
+
 			for (var name in _p) {
 				var isPrivate = name.substring(0, 1) == "_", title = name.substring(1, 2).toUpperCase() + name.substring(2);
 				if (isPrivate) {
 					_branch["get" + title] = getter.curry(_p,name);
 					_branch["set" + title] = setter.curry(_p,name);
 				}
-				else 
+				else
 					if (pi.util.IsHash(_p[name])){
 						if(!_branch[name])
 							_branch[name] = {};
 						this.createAccessors(_p[name], _branch[name]);
-					}	
+					}
 			};
 		};
-		
+
 		this.movePrivateMembers = function(_object, _branch){
 			for (var name in _object) {
 				var isPrivate = name.substring(0, 1) == "_";
-				
+
 				if (isPrivate) {
 					_branch[name] = _object[name];
 					delete _object[name];
 				}
-				else 
+				else
 					if (pi.util.IsHash(_object[name])){
 						_branch[name] = {};
 						this.movePrivateMembers(_object[name], _branch[name]);
@@ -268,30 +268,30 @@
 			};
 		};
 	};
-	
+
 	Function.prototype.extend = function(_prototype,_skipClonning){
 		var object = new pi.base, superClass = this;
 		if(_prototype["$Constructor"]){
 			object.constructor = _prototype["$Constructor"];
 			delete _prototype["$Constructor"];
 		};
-	
+
 		object.body = superClass==pi.base?_prototype:pi.util.MergeObjects(_prototype,superClass.prototype,2);
 		object.constructor=object.constructor||function(){
 			if(superClass!=pi.base)
 				superClass.apply(this,arguments);
 		};
-		
+
 		return object.build(_skipClonning);
 	};
-	
+
 	Function.prototype.curry = function(_scope){
 		var fn = this, scope = _scope||window, args = Array.prototype.slice.call(arguments,1);
-		return function(){ 
-			return fn.apply(scope,args.concat( Array.prototype.slice.call(arguments,0) )); 
+		return function(){
+			return fn.apply(scope,args.concat( Array.prototype.slice.call(arguments,0) ));
 		};
 	};
-	
+
 	pi.element = pi.base.extend({
 		"$Constructor":function(_tag){
 			this.environment.setElement(document.createElement(_tag||"DIV"));
@@ -460,7 +460,7 @@
 			}
 		}
 	});
-	
+
 	pi.xhr = new pi.base;
 	pi.xhr.constructor = function(){
 		var api;
@@ -483,16 +483,16 @@
 			this.environment.getApi().abort();
 		},
 		"send":function(){
-			var url = this.environment.getUrl(), data = this.environment.getData(),dataUrl = ""; 
+			var url = this.environment.getUrl(), data = this.environment.getData(),dataUrl = "";
 
 			for (var key in data)
 				dataUrl += "{0}={1}&".format(key, data[key]);
-				
+
 			if (this.environment.getType()=="GET")
 				url += (url.search("\\?")==-1?"?":"&")+"{0}".format(dataUrl);
-			
+
 			this.environment.getApi().open(this.environment.getType(),url,this.environment.getAsync());
-			
+
 			for(var key in this.environment.getHeader())
 				this.environment.getApi().setRequestHeader(key,this.environment.getHeader()[key]);
 
@@ -535,11 +535,11 @@
 		}
 	};
 	pi.xhr = pi.xhr.build();
-	
+
 	/*
 	 * xml.xhr.get
 	 */
-	
+
 	pi.xhr.get = function(_url,_returnPiObject){
 		var request = new pi.xhr();
 		request.environment.setAsync(false);
@@ -547,20 +547,20 @@
 		request.send();
 		return _returnPiObject?request:request.environment.getApi();
 	};
-	
+
 	/*
 	 * pi.xpath
 	 */
-	
+
 	pi.xpath = function(_expression,_resultType,_contextNode,_namespaceResolver,_result){
-		var contextNode = _contextNode||document, 
+		var contextNode = _contextNode||document,
 		expression = _expression||"",
-		namespaceResolver = _namespaceResolver||null, 
+		namespaceResolver = _namespaceResolver||null,
 		result=_result||null,
 		resultType=_resultType||"ANY_TYPE";
 		return document.evaluate(expression, contextNode, namespaceResolver, XPathResult[resultType], result);
 	};
-	
+
 	Array.prototype.clone = function(){
 		var tmp = [];
 		Array.prototype.push.apply(tmp,this);
@@ -577,16 +577,16 @@
 		});
 		return count;
 	};
-	
+
 	Array.prototype.forEach = Array.prototype.forEach||function(_function){
 		for(var i=0; i<this.length; i++)
 			_function.apply(this,[this[i],i,this]);
 	};
-	
+
 	Array.prototype.getLastItem = function(){
 		return this[this.length-1];
 	};
-	
+
 	Array.prototype.indexOf = Array.prototype.indexOf||function(_value){
 		var index = -1;
 		for(var i=0; i<this.length; i++)
@@ -596,13 +596,13 @@
 			}
 		return index;
 	};
-	
+
 	Array.prototype.remove = function(_index){
 		var array = this.slice(0,_index);
 		Array.prototype.push.apply(array,this.slice(_index+1));
 		return array;
 	};
-	
+
 	Array.prototype.removeValue = function(_value){
 		return this.remove(this.indexOf(_value));
 	};
@@ -627,9 +627,9 @@
 	};
 	Number.prototype.range = function(_pattern){
 		for(
-			var value = String(this), isFloat = /\./i.test(value), 
-			i = isFloat.toggle(parseInt(value.split(".")[0]),0), 
-			end = parseInt(value.split(".")[isFloat.toggle(1,0)]), 
+			var value = String(this), isFloat = /\./i.test(value),
+			i = isFloat.toggle(parseInt(value.split(".")[0]),0),
+			end = parseInt(value.split(".")[isFloat.toggle(1,0)]),
 			array = []; i<end; i++
 		){
 			array.push(
@@ -649,7 +649,7 @@
 			return values[arguments[1]];
 		});
 	};
-	
+
 	String.prototype.leftpad = function(_len,_ch){
 		var str=this;
 		var ch = Boolean(_ch)==false?" ":_ch;
@@ -657,18 +657,18 @@
 			str=ch+str;
 		return str;
 	};
-	
+
 	String.prototype.toggle = function(_value,_other){
 		return this==_value?_value:_other;
 	};
-	
+
 	String.prototype.unicode = function(){
 		var str="", obj = this.split("");
 		for(var i=obj.length-1; i>=0; i--)
 			str="\\u{0}{1}".format(String(obj[i].charCodeAt(0).base(16)).leftpad(4,"0"),str);
 		return str;
 	};
-	
+
 	pi.util.AddEvent(
 		pi.env.ie?window:document,
 		pi.env.ie?"load":"DOMContentLoaded",
@@ -678,5 +678,5 @@
 			}
 		}
 	);
-	
+
 })(window);

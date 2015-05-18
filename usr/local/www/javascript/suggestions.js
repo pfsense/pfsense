@@ -9,7 +9,7 @@ function StateSuggestions(text) {
 }
 
 /**
- * Request suggestions for the given autosuggest control. 
+ * Request suggestions for the given autosuggest control.
  * @scope protected
  * @param oAutoSuggestControl The autosuggest control to provide suggestions for.
  */
@@ -17,14 +17,14 @@ StateSuggestions.prototype.requestSuggestions = function (oAutoSuggestControl /*
                                                           bTypeAhead /*:boolean*/) {
     var aSuggestions = [];
     var sTextboxValue = oAutoSuggestControl.textbox.value;
-    
+
     if (sTextboxValue.length > 0){
-    
+
         //search for matching states
-        for (var i=0; i < this.states.length; i++) { 
+        for (var i=0; i < this.states.length; i++) {
             if (this.states[i].toLowerCase().indexOf(sTextboxValue.toLowerCase()) == 0) {
                 aSuggestions.push(this.states[i]);
-            } 
+            }
         }
     }
 

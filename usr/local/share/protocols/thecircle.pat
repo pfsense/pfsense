@@ -5,7 +5,7 @@
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # This is tested with The Circle 0.41c on Linux.
-# It likely misses some stuff.  Notably, I wasn't able to test it on any 
+# It likely misses some stuff.  Notably, I wasn't able to test it on any
 # large downloads, because no one is sharing anything!
 
 thecircle

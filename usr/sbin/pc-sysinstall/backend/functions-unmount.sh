@@ -34,7 +34,7 @@ umount_all_dir()
   _umntdirs=`mount | sort -r | grep "on $_udir" | cut -d ' ' -f 3`
   for _ud in $_umntdirs
   do
-    umount -f ${_ud} 
+    umount -f ${_ud}
   done
 }
 
@@ -48,7 +48,7 @@ start_gmirror_sync()
     MIRRORDISK="`cat ${DISK} | cut -d ':' -f 1`"
     MIRRORBAL="`cat ${DISK} | cut -d ':' -f 2`"
     MIRRORNAME="`cat ${DISK} | cut -d ':' -f 3`"
-   
+
     # Start the mirroring service
     rc_halt "gmirror insert ${MIRRORNAME} /dev/${MIRRORDISK}"
 
@@ -70,7 +70,7 @@ unmount_all_filesystems()
   ##################################################################
   for PART in `ls ${PARTDIR}`
   do
-         
+
     PARTFS="`cat ${PARTDIR}/${PART} | cut -d ':' -f 1`"
     PARTMNT="`cat ${PARTDIR}/${PART} | cut -d ':' -f 2`"
     PARTENC="`cat ${PARTDIR}/${PART} | cut -d ':' -f 3`"
@@ -102,7 +102,7 @@ unmount_all_filesystems()
           UFS+SUJ) glabel label ${PARTLABEL} /dev/${PART}${EXT} ;;
           UFS+J) glabel label ${PARTLABEL} /dev/${PART}${EXT}.journal ;;
           *) ;;
-        esac 
+        esac
       fi
     fi
 
@@ -117,7 +117,7 @@ unmount_all_filesystems()
           UFS+SUJ) ROOTRELABEL="glabel label ${PARTLABEL} /dev/${PART}${EXT}" ;;
           UFS+J) ROOTRELABEL="glabel label ${PARTLABEL} /dev/${PART}${EXT}.journal" ;;
           *) ;;
-        esac 
+        esac
       fi
     fi
   done
@@ -166,7 +166,7 @@ unmount_all_filesystems_failure()
     then
     for PART in `ls ${PARTDIR}`
     do
-     
+
       PARTFS="`cat ${PARTDIR}/${PART} | cut -d ':' -f 1`"
       PARTMNT="`cat ${PARTDIR}/${PART} | cut -d ':' -f 2`"
       PARTENC="`cat ${PARTDIR}/${PART} | cut -d ':' -f 3`"
@@ -202,7 +202,7 @@ unmount_all_filesystems_failure()
     umount -f ${FSMNT} >>${LOGOUT} 2>>${LOGOUT}
     rc_nohalt "sh ${TMPDIR}/.upgrade-unmount"
   fi
-   
+
   # Unmount our CDMNT
   #rc_nohalt "umount ${CDMNT}"
 

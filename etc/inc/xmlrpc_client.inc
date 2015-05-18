@@ -948,13 +948,13 @@ class XML_RPC_Client extends XML_RPC_Base {
          * but keep it here for backwards compatibility.
          */
         if (!$fp && $this->proxy) {
-            $this->raiseError(sprintf(gettext('Connection to proxy server 
+            $this->raiseError(sprintf(gettext('Connection to proxy server
                               %1$s:%2$s failed. %3$s')
                               ,$this->proxy,$this->proxy_port,$this->errstr),
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
         } elseif (!$fp) {
-            $this->raiseError(sprintf(gettext('Connection to RPC server 
+            $this->raiseError(sprintf(gettext('Connection to RPC server
                               %1$s:%2$s failed. %3$s')
                               ,$server,$port,$this->errstr),
                               XML_RPC_ERROR_CONNECTION_FAILED);

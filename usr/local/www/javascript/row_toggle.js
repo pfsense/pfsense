@@ -36,9 +36,9 @@ function fr_insline(id, on, prefix) {
 		prevrow = document.getElementById(prefix + 'header');
 	}
 
-	var cells = row.getElementsByTagName("td"); 
+	var cells = row.getElementsByTagName("td");
 	var prevcells = prevrow.getElementsByTagName("td");
-	
+
 	for (i = 0; i <= prevcells.length - 1; i++) {
 		if (prevcells[i].id == prefix + 'd' + (id-1)) {
 			if (on) {

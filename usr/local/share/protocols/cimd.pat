@@ -4,9 +4,9 @@
 # Wiki: http://www.protocolinfo.org/wiki/CIMD
 # Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
-# I don't know whether CIMD is ever found by itself in a TCP connection. 
-# I have only seen it myself as part of the Chikka login process, in 
-# which the second and third packets (at least) are CIMD.  So I am not 
+# I don't know whether CIMD is ever found by itself in a TCP connection.
+# I have only seen it myself as part of the Chikka login process, in
+# which the second and third packets (at least) are CIMD.  So I am not
 # using a '^' at the beginning.
 #
 # This pretty well explains the pattern:

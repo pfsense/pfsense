@@ -11,7 +11,7 @@
 
 nntp
 # matches authorized login
-# OR 
+# OR
 # matches unauthorized login if the server says "news" after 200/201
 # (Half of the 2 servers I tested did :-), but they both required authorization
 # so it's quite possible that this pattern will miss some nntp traffic.)

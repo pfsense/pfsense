@@ -61,17 +61,17 @@ function resizeAddColumns()
 	if(noColsOnLoad > noCols) // if a column has previously been deleted
 	{
 		var maxCols = maxColsToDisplay(); // the maximum we can display
-		
+
 		if(noColsOnLoad < maxCols) // if the number of columns on load is less then the maximum number of columns we can display
 			maxCols = noColsOnLoad; // change the maximum number of columns as we do not want to display them all
 		if( (maxCols - noCols) > 0 ) // if we need to add more columns
 		{
 			replaceColumn();
-			
+
 			for(var i=noCols; i<maxCols; i++)
 			{
 				var addCols = i +1;
-				jQuery('#col' + (i).toString() ).after("<div id=\"col" + addCols + "\" style=\"float: left; padding-bottom: 40px\" class=\"ui-sortable\"> </div>"); 
+				jQuery('#col' + (i).toString() ).after("<div id=\"col" + addCols + "\" style=\"float: left; padding-bottom: 40px\" class=\"ui-sortable\"> </div>");
 				jQuery(existing[i]).appendTo('#col' + addCols ); // append onLoad contents
 			}
 			noCols = maxCols;
@@ -87,14 +87,14 @@ function resizeAddColumns()
 }
 
 
-// function to remove columns due to a window resize 
+// function to remove columns due to a window resize
 function resizeRmColumns()
 {
 	if( noCols > 1 ) // keep at least 1 column displayed at all times
 	{
 		var maxCols = maxColsToDisplay();
 		var noColsToDel = noCols - maxCols;
-		
+
 		if(noColsToDel>0) // if columns need deleteing
 		{
 			for(var i=(noCols-noColsToDel); i<noColsOnLoad; i++)
@@ -120,7 +120,7 @@ function replaceColumn()
 	var tmpReplace = noCols -1;
 	jQuery('#col' + noCols ).remove();
 
-	// prepend column1 as we can't add it AFTER a column as none will exist           
+	// prepend column1 as we can't add it AFTER a column as none will exist
 	if(tmpReplace==0)
 		jQuery("#niftyOutter").prepend("<div id=\"col1\" style=\"float: left; padding-bottom: 40px\" class=\"ui-sortable\"> </div>");
 	else
@@ -133,10 +133,10 @@ function replaceColumn()
 function maxColsToDisplay()
 {
 	var niftyWidth = jQuery('#niftyOutter.fakeClass').width();
-	return Math.round(niftyWidth / specifiedColWidth);	    
+	return Math.round(niftyWidth / specifiedColWidth);
 }
 
-// function to amend the widget width  
+// function to amend the widget width
 function correctWidgetDisplay(noCols)
 {
 	var percent = ( 100 / noCols ) - 0.1;
@@ -154,7 +154,7 @@ function printColumn(newNum)
 		noCols = newNum;
 		noColsOnLoad = noCols;
 	}
-	
+
 	document.write("</div><div id=\"col" + newNum + "\" style=\"float:left; padding-bottom:40px\" class=\"ui-sortable\">");
 	correctWidgetDisplay(noCols);
 	connectColumns();
@@ -199,7 +199,7 @@ function createColumn(colPos)
 
 // function which is called when the broswer window is resized
 jQuery( window ).resize(function()
-{  
+{
     // stop resize firing twice: http://stackoverflow.com/questions/4298612/jquery-how-to-call-resize-event-only-once-its-finished-resizing
     clearTimeout(id);
     id = setTimeout(finishedResizing, 500);
@@ -209,9 +209,9 @@ jQuery( window ).resize(function()
 function finishedResizing()
 {
 	var colWidth = jQuery("#col1").width();
-	if( colWidth < specifiedColWidth ) // Columns width is too small to display all the columns properly so we delete some columns and resize the remaining columns    
+	if( colWidth < specifiedColWidth ) // Columns width is too small to display all the columns properly so we delete some columns and resize the remaining columns
 		resizeRmColumns(); // Check if we can delete any columns
-	else if( colWidth > specifiedColWidth ) // Columns width COULD display more columns properly    
+	else if( colWidth > specifiedColWidth ) // Columns width COULD display more columns properly
 		resizeAddColumns(); // Check if we can add any columns
 }
 
@@ -222,16 +222,16 @@ jQuery(document).ready(function ()
 {
     var hwindow  = '';
     hwindow = (jQuery(window).height()-35);
-    // Force the size dropdown menu 
+    // Force the size dropdown menu
     jQuery('#navigation ul li ul').css('max-height', hwindow);
-    
+
     ///////////////////////////////////////////
-    // jQuery code for columns / widgets part 2    
+    // jQuery code for columns / widgets part 2
     ///////////////////////////////////////////
-    
+
     // insert add/delete column buttons
     jQuery('<br /><br /><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br /><br />').insertBefore('#niftyOutter.fakeClass');
-    
+
     if ( jQuery('#columnModifier').length > 0 ) // only perform resizing on the dashboard page
     {
         // correct the css for column 2
@@ -242,11 +242,11 @@ jQuery(document).ready(function ()
         {
 	    var contents = jQuery('#col' + i ).html();
 	    existing.push( contents );
-        }  
-    
+        }
+
         finishedResizing(); // on page load correct display of columns to fit
     }
-    
+
     // on click add a new column and change column widths
     jQuery('#addCol').click(function()
     {

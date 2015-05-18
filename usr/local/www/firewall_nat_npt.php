@@ -90,7 +90,7 @@ include("head.inc");
 <?php if (is_subsystem_dirty('natconf')): ?>
 <?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat npt"> 
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat npt">
 	<tr><td>
 <?php
 	$tab_array = array();
@@ -122,7 +122,7 @@ include("head.inc");
 <?php
 	$textse = "</span>";
 
-	$i = 0; 
+	$i = 0;
 	foreach ($a_npt as $natent):
 
 		if (isset($natent['disabled'])) {

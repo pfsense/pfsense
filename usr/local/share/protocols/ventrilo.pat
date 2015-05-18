@@ -9,7 +9,7 @@
 # both within a LAN and over the Internet.  In one test, I tried
 # monkeying around with the server settings to see if I could break the
 # pattern, and I couldn't.  However, you can't change the port number in
-# the public server. 
+# the public server.
 #
 # It has also been tested by one other person in an unknown configuration.
 

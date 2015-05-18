@@ -66,5 +66,5 @@ then
   fi
 
 else
-  echo "FAILED"  
+  echo "FAILED"
 fi

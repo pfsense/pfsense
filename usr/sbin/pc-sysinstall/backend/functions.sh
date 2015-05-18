@@ -48,7 +48,7 @@ display_command_help()
     echo "Error: No command specified to display help for"
     exit 1
   fi
-  
+
   if [ -e "${PROGDIR}/doc/help-${1}" ]
   then
     cat ${PROGDIR}/doc/help-${1}
@@ -157,7 +157,7 @@ rc_halt_echo()
   fi
 
   echo "Running: ${CMD}" >>${LOGOUT}
-  ${CMD} 2>&1 | tee -a ${LOGOUT} 
+  ${CMD} 2>&1 | tee -a ${LOGOUT}
   STATUS="$?"
   if [ "$STATUS" != "0" ]
   then
@@ -177,7 +177,7 @@ rc_nohalt_echo()
   fi
 
   echo "Running: ${CMD}" >>${LOGOUT}
-  ${CMD} 2>&1 | tee -a ${LOGOUT} 
+  ${CMD} 2>&1 | tee -a ${LOGOUT}
 
 };
 
@@ -191,7 +191,7 @@ echo_log()
     exit_err "Error: missing argument in echo_log()"
   fi
 
-  echo "${STR}" | tee -a ${LOGOUT} 
+  echo "${STR}" | tee -a ${LOGOUT}
 };
 
 # Make sure we have a numeric
@@ -231,7 +231,7 @@ fetch_file()
     then
       DSIZE=`du -k ${FETCHOUTFILE} | tr -d '\t' | cut -d '/' -f 1`
       if [ $(is_num "$DSIZE") ] ; then
-      if [ $SIZE -lt $DSIZE ] ; then DSIZE="$SIZE"; fi 
+      if [ $SIZE -lt $DSIZE ] ; then DSIZE="$SIZE"; fi
     	echo "SIZE: ${SIZE} DOWNLOADED: ${DSIZE}"
     	echo "SIZE: ${SIZE} DOWNLOADED: ${DSIZE}" >>${LOGOUT}
       fi
@@ -278,7 +278,7 @@ get_zpool_name()
     # Need to generate a zpool name for this device
     NUM=`ls ${TMPDIR}/.zpools/ | wc -l | sed 's| ||g'`
     NEWNAME="${BASENAME}${NUM}"
-    echo "$NEWNAME" >${TMPDIR}/.zpools/${DEVICE} 
+    echo "$NEWNAME" >${TMPDIR}/.zpools/${DEVICE}
     echo "${NEWNAME}"
     return
   fi
@@ -336,12 +336,12 @@ write_image()
   then
     exit_err "ERROR: Image file not specified!"
   fi
- 
+
   if [ -z "${DEVICE_FILE}" ]
   then
     exit_err "ERROR: Device file not specified!"
   fi
- 
+
   if [ ! -f "${IMAGE_FILE}" ]
   then
     exit_err "ERROR: '${IMAGE_FILE}' does not exist!"
@@ -349,7 +349,7 @@ write_image()
 
   DEVICE_FILE="${DEVICE_FILE#/dev/}"
   DEVICE_FILE="/dev/${DEVICE_FILE}"
- 
+
   if [ ! -c "${DEVICE_FILE}" ]
   then
     exit_err "ERROR: '${DEVICE_FILE}' is not a character device!"
@@ -398,7 +398,7 @@ write_image()
         IMAGE_FILE="${IMAGE_FILE%.zip}"
         ;;
 
-      *) 
+      *)
         exit_err "ERROR: ${COMPRESSION} compression is not supported"
         ;;
     esac
@@ -413,14 +413,14 @@ install_fresh()
 {
   # Lets start setting up the disk slices now
   setup_disk_slice
-  
+
   if [ -z "${ROOTIMAGE}" ]
   then
 
     # Disk setup complete, now lets parse WORKINGSLICES and setup the bsdlabels
     setup_disk_label
-  
-    # Now we've setup the bsdlabels, lets go ahead and run newfs / zfs 
+
+    # Now we've setup the bsdlabels, lets go ahead and run newfs / zfs
     # to setup the filesystems
     setup_filesystems
 
@@ -428,9 +428,9 @@ install_fresh()
     mount_all_filesystems
 
     # We are ready to begin extraction, lets start now
-    init_extraction 
+    init_extraction
 
-    # Check if we have any optional modules to load 
+    # Check if we have any optional modules to load
     install_components
 
     # Check if we have any packages to install
@@ -438,7 +438,7 @@ install_fresh()
 
     # Do any localization in configuration
     run_localize
-  
+
     # Save any networking config on the installed system
     save_networking_install
 
@@ -447,7 +447,7 @@ install_fresh()
 
     # Now run any commands specified
     run_commands
-  
+
     # Do any last cleanup / setup before unmounting
     run_final_cleanup
 
@@ -461,17 +461,17 @@ install_fresh()
 install_image()
 {
   # We are ready to begin extraction, lets start now
-  init_extraction 
+  init_extraction
 
   echo_log "Installation finished!"
 };
 
 install_upgrade()
 {
-  # We're going to do an upgrade, skip all the disk setup 
+  # We're going to do an upgrade, skip all the disk setup
   # and start by mounting the target drive/slices
   mount_upgrade
-  
+
   # Start the extraction process
   init_extraction
 
@@ -480,11 +480,11 @@ install_upgrade()
 
   # ow run any commands specified
   run_commands
-  
+
   # Merge any old configuration files
   merge_old_configs
 
-  # Check if we have any optional modules to load 
+  # Check if we have any optional modules to load
   install_components
 
   # Check if we have any packages to install

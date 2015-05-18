@@ -31,8 +31,8 @@
 check_for_enc_pass()
 {
   CURLINE="${1}"
- 
-  get_next_cfg_line "${CFGF}" "${CURLINE}" 
+
+  get_next_cfg_line "${CFGF}" "${CURLINE}"
   echo ${VAL} | grep "^encpass=" >/dev/null 2>/dev/null
   if [ "$?" = "0" ] ; then
     # Found a password, return it
@@ -104,10 +104,10 @@ setup_zfs_mirror_parts()
       init_gpt_full_disk "$_zvars" >/dev/null 2>/dev/null
       rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${_zvars}" >/dev/null 2>/dev/null
       rc_halt "gpart add -t freebsd-zfs ${_zvars}" >/dev/null 2>/dev/null
-      _nZFS="$_nZFS ${_zvars}p2"	
+      _nZFS="$_nZFS ${_zvars}p2"
     else
-      _nZFS="$_nZFS ${_zvars}"	
-    fi	
+      _nZFS="$_nZFS ${_zvars}"
+    fi
   done
   echo "mirror $2 `echo $_nZFS | tr -s ' '`"
 } ;
@@ -151,10 +151,10 @@ gen_glabel_name()
       exit_err "Cannot allocate additional glabel name for $NAME"
       break
     fi
-  done 
-   
+  done
 
-  VAL="${NAME}${NUM}" 
+
+  VAL="${NAME}${NUM}"
   export VAL
 };
 
@@ -172,7 +172,7 @@ setup_mbr_partitions()
   echo "# /dev/${WRKSLICE}" >>$BSDLABEL
   echo "8 partitions:" >>$BSDLABEL
   echo "#	size	offset	fstype	bsize	bps/cpg" >>$BSDLABEL
-   
+
   PARTLETTER="a"
 
   # Lets read in the config file now and populate this
@@ -188,9 +188,9 @@ setup_mbr_partitions()
       FOUNDPARTS="0"
 
       # We need to split up the string now, and pick out the variables
-      FS=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 1` 
-      SIZE=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2` 
-      MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 3` 
+      FS=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 1`
+      SIZE=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2`
+      MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 3`
 
       if echo $STRING | grep -E '^/.+' >/dev/null 2>&1
       then
@@ -206,7 +206,7 @@ setup_mbr_partitions()
         check_for_enc_pass "${line}"
         if [ "${VAL}" != "" ] ; then
           # We have a user supplied password, save it for later
-          ENCPASS="${VAL}" 
+          ENCPASS="${VAL}"
         fi
       else
         ENC="OFF"
@@ -218,7 +218,7 @@ setup_mbr_partitions()
       then
         USINGENCROOT="0" ; export USINGENCROOT
       fi
-          
+
       if [ -n "${IMAGE}" ]
       then
         FS="IMAGE"
@@ -306,7 +306,7 @@ setup_mbr_partitions()
       # Generate a unique label name for this mount
       gen_glabel_name "${MNT}" "${FS}"
       PLABEL="${VAL}"
-      
+
       # Get any extra options for this fs / line
       get_fs_line_xvars "${WRKSLICE}${PARTLETTER}" "${STRING}"
       XTRAOPTS="${VAR}"
@@ -328,7 +328,7 @@ setup_mbr_partitions()
       # This partition letter is used, get the next one
       case ${PARTLETTER} in
         a) PARTLETTER="b" ;;
-        b) # When we hit b, add the special c: setup for bsdlabel 
+        b) # When we hit b, add the special c: setup for bsdlabel
            echo "c:	*	*	unused" >>${BSDLABEL}
            PARTLETTER="d" ;;
         d) PARTLETTER="e" ;;
@@ -387,9 +387,9 @@ setup_gpt_partitions()
       STRING="$VAL"
 
       # We need to split up the string now, and pick out the variables
-      FS=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 1` 
-      SIZE=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2` 
-      MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 3` 
+      FS=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 1`
+      SIZE=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2`
+      MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 3`
 
       # Check if we have a .eli extension on this FS
       echo ${FS} | grep ".eli" >/dev/null 2>/dev/null
@@ -400,7 +400,7 @@ setup_gpt_partitions()
         check_for_enc_pass "${line}"
         if [ "${VAL}" != "" ] ; then
           # We have a user supplied password, save it for later
-          ENCPASS="${VAL}" 
+          ENCPASS="${VAL}"
         fi
       else
         ENC="OFF"
@@ -412,7 +412,7 @@ setup_gpt_partitions()
       then
         USINGENCROOT="0" ; export USINGENCROOT
       fi
-          
+
       # Now check that these values are sane
       case $FS in
         UFS|UFS+S|UFS+J|UFS+SUJ|ZFS|SWAP) ;;
@@ -489,12 +489,12 @@ setup_gpt_partitions()
       for TESTMNT in `echo ${MNT} | sed 's|,| |g'`
       do
         if [ "${TESTMNT}" = "/" -a -z "${BOOTTYPE}" ] ; then
-           BOOTTYPE="${PARTYPE}" 
-        fi 
+           BOOTTYPE="${PARTYPE}"
+        fi
         if [ "${TESTMNT}" = "/boot" ]  ; then
-           BOOTTYPE="${PARTYPE}" 
-        fi 
-      done 
+           BOOTTYPE="${PARTYPE}"
+        fi
+      done
 
       # Save this data to our partition config dir
       echo "${FS}:${MNT}:${ENC}:${PLABEL}:GPT:${XTRAOPTS}" >${PARTDIR}/${DISK}p${CURPART}
@@ -522,7 +522,7 @@ setup_gpt_partitions()
         case ${BOOTTYPE} in
           freebsd-ufs) rc_halt "gpart bootcode -p /boot/gptboot -i 1 ${DISK}" ;;
           freebsd-zfs) rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${DISK}" ;;
-        esac 
+        esac
       fi
 
 
@@ -545,10 +545,10 @@ populate_disk_label()
   fi
 
   # Set some vars from the given working slice
-  disk="`echo $1 | cut -d '-' -f 1`" 
-  slicenum="`echo $1 | cut -d '-' -f 2`" 
-  type="`echo $1 | cut -d '-' -f 3`" 
-  
+  disk="`echo $1 | cut -d '-' -f 1`"
+  slicenum="`echo $1 | cut -d '-' -f 2`"
+  type="`echo $1 | cut -d '-' -f 3`"
+
   # Set WRKSLICE based upon format we are using
   if [ "$type" = "mbr" ] ; then
     wrkslice="${disk}s${slicenum}"
@@ -588,9 +588,9 @@ setup_disk_label()
   # Check that the slices we have did indeed get setup and gpart worked
   for i in $WORKINGSLICES
   do
-    disk="`echo $i | cut -d '-' -f 1`" 
-    pnum="`echo $i | cut -d '-' -f 2`" 
-    type="`echo $i | cut -d '-' -f 3`" 
+    disk="`echo $i | cut -d '-' -f 1`"
+    pnum="`echo $i | cut -d '-' -f 2`"
+    type="`echo $i | cut -d '-' -f 3`"
     if [ "$type" = "mbr" -a ! -e "/dev/${disk}s${pnum}" ] ; then
       exit_err "ERROR: The partition ${i} doesn't exist! gpart failure!"
     fi
@@ -611,10 +611,10 @@ setup_disk_label()
   # Check if we are using a /boot partition
   USINGBOOTPART="1"
   export USINGBOOTPART
- 
+
   # Set encryption on root check
   USINGENCROOT="1" ; export USINGENCROOT
-  
+
   # Make the tmp directory where we'll store FS info & mount-points
   rm -rf ${PARTDIR} >/dev/null 2>/dev/null
   mkdir -p ${PARTDIR} >/dev/null 2>/dev/null
@@ -683,9 +683,9 @@ check_fstab_mbr()
       if [ "${PARTLETTER}" = "a" ]
       then
         USINGBOOTPART="0"
-      else 
+      else
         exit_err "/boot partition must be first partition"
-      fi 
+      fi
       export USINGBOOTPART
     fi
 
@@ -734,9 +734,9 @@ check_fstab_gpt()
       if [ "${PARTNUMBER}" = "2" ]
       then
         USINGBOOTPART="0"
-      else 
+      else
         exit_err "/boot partition must be first partition"
-      fi 
+      fi
       export USINGBOOTPART
     fi
 
@@ -785,7 +785,7 @@ check_disk_layout()
     TYPE="MBR"
     RES=0
   fi
-  
+
   for slice in ${SLICES}
   do
     F=1
@@ -793,7 +793,7 @@ check_disk_layout()
     if [ "$?" != "0" ]
     then
       continue
-    fi 
+    fi
 
     if [ "${TYPE}" = "MBR" ]
     then
@@ -804,12 +804,12 @@ check_disk_layout()
     then
 	  check_fstab_gpt "${slice}" "/mnt"
       F="$?"
-    fi 
+    fi
 
     if [ "${F}" = "0" ]
     then
       #umount /mnt
-      break 
+      break
     fi
 
     #umount /mnt

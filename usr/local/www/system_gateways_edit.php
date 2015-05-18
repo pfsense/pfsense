@@ -557,7 +557,7 @@ function calculated_change(calculated_obj, samples_obj) {
 	switch (samples_obj.name) {
 
 	case 'avg_delay_samples':
-		// How many replies should be used to compute average delay 
+		// How many replies should be used to compute average delay
 		// for controlling "delay" alarms.
 		// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
 		if (calculated_obj.checked && (document.iform.interval.value > 0))
@@ -812,7 +812,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Average Delay Replies Qty");?></td>
 								<td width="78%" class="vtable">
 									<input name="avg_delay_samples" type="text" class="formfld unknown" id="avg_delay_samples" size="2"
-										value="<?=htmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" /> 
+										value="<?=htmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" />
 									<input name="avg_delay_samples_calculated" type="checkbox" id="avg_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_delay_samples)" />
 										<?=gettext("Use calculated value."); ?>
 									<br /><span class="vexpl"><?=gettext(sprintf("How many replies should be used to compute average delay for controlling \"delay\" alarms?  Default is %d.", $apinger_default['avg_delay_samples']));?><br /><br /></span>

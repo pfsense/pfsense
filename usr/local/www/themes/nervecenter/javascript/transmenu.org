@@ -1,5 +1,5 @@
 /* =================================================================================================
- * TransMenu 
+ * TransMenu
  * March, 2003
  *
  * Customizable multi-level animated DHTML menus with transparency.
@@ -7,16 +7,16 @@
  * Copyright 2003-2004, Aaron Boodman (www.youngpup.net)
  * =================================================================================================
  * "Can I use this?"
- * 
- * Use of this library is governed by the Creative Commons Attribution 2.0 License. You can check it 
+ *
+ * Use of this library is governed by the Creative Commons Attribution 2.0 License. You can check it
  * out at: http://creativecommons.org/licenses/by/2.0/
  *
- * Basically: You may copy, distribute, and eat this code as you wish. But you must give me credit 
+ * Basically: You may copy, distribute, and eat this code as you wish. But you must give me credit
  * for writing it. You may not misrepresent yourself as the author of this code.
  * =================================================================================================
  * "It's kinda hard to read, though"
  *
- * The uncompressed, commented version of this script can be found at: 
+ * The uncompressed, commented version of this script can be found at:
  * http://youngpup.net/projects/transMenus
  * =================================================================================================
  * updates:
@@ -193,7 +193,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                         _this.isOpen = false;
                         animating = true;
 
-                        for (var i = 0, item = null; item = elmCache.item[i]; i++) 
+                        for (var i = 0, item = null; item = elmCache.item[i]; i++)
                                 dehighlight(item);
 
                         if (childMenuSet) childMenuSet.hide();
@@ -204,14 +204,14 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
         }
 
         function setContainerPos() {
-                var sub = oActuator.constructor == TransMenuItem; 
-                var act = sub ? oActuator.parentMenu.elmCache["item"][oActuator._index] : oActuator; 
+                var sub = oActuator.constructor == TransMenuItem;
+                var act = sub ? oActuator.parentMenu.elmCache["item"][oActuator._index] : oActuator;
                 var el = act;
-                
+
                 var x = 0;
                 var y = 0;
 
-                
+
                 var minX = 0;
                 var maxX = (window.innerWidth ? window.innerWidth : document.body.clientWidth) - parseInt(elmCache["clip"].style.width);
                 var minY = 0;
@@ -224,7 +224,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
 
                         if (el.scrollLeft) x -= el.scrollLeft;
                         if (el.scrollTop) y -= el.scrollTop;
-                        
+
                         el = el.offsetParent;
                 }
 
@@ -296,7 +296,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
 
                 contentHeight = oh + TransMenu.shadowSize;
                 contentWidth = ow + TransMenu.shadowSize;
-                
+
                 dim = iDirection == TransMenu.direction.down ? contentHeight : contentWidth;
 
                 // set initially closed
@@ -315,8 +315,8 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                         elmCache["shadowRight"].style.height = oh - (TransMenu.shadowOffset - TransMenu.shadowSize) + "px";
                         elmCache["shadowRight"].style.backgroundColor = TransMenu.shadowColor;
 
-                        // shadow bottom starts at offset height and is offsetWidth - shadowOffset 
-                        // pixels wide (we don't want the bottom and right shadows to overlap or we 
+                        // shadow bottom starts at offset height and is offsetWidth - shadowOffset
+                        // pixels wide (we don't want the bottom and right shadows to overlap or we
                         // get an extra bright bottom-right corner)
                         elmCache["shadowBottom"].style.top = oh + "px";
                         elmCache["shadowBottom"].style.width = ow - TransMenu.shadowOffset + "px";
@@ -335,8 +335,8 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                         elmCache["shadowRight"].firstChild.width = TransMenu.shadowSize;
                         elmCache["shadowRight"].firstChild.height = oh - (TransMenu.shadowOffset - TransMenu.shadowSize);
 
-                        // shadow bottom starts at offset height and is offsetWidth - shadowOffset 
-                        // pixels wide (we don't want the bottom and right shadows to overlap or we 
+                        // shadow bottom starts at offset height and is offsetWidth - shadowOffset
+                        // pixels wide (we don't want the bottom and right shadows to overlap or we
                         // get an extra bright bottom-right corner)
                         elmCache["shadowBottom"].firstChild.src = TransMenu.shadowPng;
                         elmCache["shadowBottom"].style.top = oh + "px";
@@ -344,7 +344,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                         elmCache["shadowBottom"].firstChild.width = ow - TransMenu.shadowOffset;
                 }
         }
-        
+
         function initCache() {
                 var menu = document.getElementById(id);
                 var all = menu.all ? menu.all : menu.getElementsByTagName("*"); // IE/win doesn't support * syntax, but does have the document.all thing
@@ -352,7 +352,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                 elmCache = {};
                 elmCache["clip"] = menu;
                 elmCache["item"] = [];
-                
+
                 for (var i = 0, elm = null; elm = all[i]; i++) {
                         switch (elm.className) {
                                 case "items":
@@ -394,13 +394,13 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
 
         function highlight(oRow) {
                 oRow.className = "item hover";
-                if (childMenus[oRow._index]) 
+                if (childMenus[oRow._index])
                         oRow.lastChild.firstChild.src = TransMenu.dingbatOn;
         }
 
         function dehighlight(oRow) {
                 oRow.className = "item";
-                if (childMenus[oRow._index]) 
+                if (childMenus[oRow._index])
                         oRow.lastChild.firstChild.src = TransMenu.dingbatOff;
         }
 
@@ -408,7 +408,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                 if (!animating) {
                         highlight(this);
 
-                        if (childMenus[this._index]) 
+                        if (childMenus[this._index])
                                 childMenuSet.showMenu(childMenus[this._index]);
                         else if (childMenuSet) childMenuSet.hide();
                 }
@@ -425,7 +425,7 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
 
         function item_click() {
                 if (!animating) {
-                        if (_this.items[this._index].url) 
+                        if (_this.items[this._index].url)
                                 location.href = _this.items[this._index].url;
                 }
         }
@@ -482,14 +482,14 @@ function TransMenu(oActuator, iDirection, iLeft, iTop, iReferencePoint, parentMe
                         aHtml[i] = item.toString(childMenus[i]);
                 }
 
-                return '<div id="' + id + '" class="' + sClassName + '">' + 
-                        '<div class="content"><table class="items" cellpadding="0" cellspacing="0" border="0">' + 
-                        '<tr><td colspan="2"><img src="' + TransMenu.spacerGif + '" width="1" height="' + TransMenu.menuPadding + '"></td></tr>' + 
-                        aHtml.join('') + 
-                        '<tr><td colspan="2"><img src="' + TransMenu.spacerGif + '" width="1" height="' + TransMenu.menuPadding + '"></td></tr></table>' + 
-                        '<div class="shadowBottom"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' + 
-                        '<div class="shadowRight"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' + 
-		        '<div class="background"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' + 
+                return '<div id="' + id + '" class="' + sClassName + '">' +
+                        '<div class="content"><table class="items" cellpadding="0" cellspacing="0" border="0">' +
+                        '<tr><td colspan="2"><img src="' + TransMenu.spacerGif + '" width="1" height="' + TransMenu.menuPadding + '"></td></tr>' +
+                        aHtml.join('') +
+                        '<tr><td colspan="2"><img src="' + TransMenu.spacerGif + '" width="1" height="' + TransMenu.menuPadding + '"></td></tr></table>' +
+                        '<div class="shadowBottom"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' +
+                        '<div class="shadowRight"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' +
+		        '<div class="background"><img src="' + TransMenu.spacerGif + '" width="1" height="1"></div>' +
 	                '</div></div>';
         }
 }
@@ -531,7 +531,7 @@ function TransMenuSet(iDirection, iLeft, iTop, iReferencePoint) {
         function showMenu(oMenu) {
                 if (oMenu != current) {
                         // close currently open menu
-                        if (current != null) hide(current);        
+                        if (current != null) hide(current);
 
                         // set current menu to this one
                         current = oMenu;
@@ -568,7 +568,7 @@ function TransMenuSet(iDirection, iLeft, iTop, iReferencePoint) {
                 }
         }
 
-        function hide(oMenu) {   
+        function hide(oMenu) {
                 if (!oMenu && current) oMenu = current;
 
                 if (oMenu && current == oMenu && oMenu.isOpen) {
@@ -606,8 +606,8 @@ function TransMenuItem(sText, sUrl, oParent) {
                 var sPaddingLeft = "padding:" + TransMenu.itemPadding + "px; padding-left:" + iEdgePadding + "px;"
                 var sPaddingRight = "padding:" + TransMenu.itemPadding + "px; padding-right:" + iEdgePadding + "px;"
 
-                return '<tr class="item"><td nowrap style="' + sPaddingLeft + '">' + 
-                        sText + '</td><td width="14" style="' + sPaddingRight + '">' + 
+                return '<tr class="item"><td nowrap style="' + sPaddingLeft + '">' +
+                        sText + '</td><td width="14" style="' + sPaddingRight + '">' +
                         '<img src="' + sDingbat + '" width="14" height="14"></td></tr>';
         }
 }
@@ -625,14 +625,14 @@ function TransMenuItem(sText, sUrl, oParent) {
 // prop : property you would like to change eg: "left"
 // to   : final value of prop
 // time : time the animation should take to run
-// zip	: optional. specify the zippiness of the acceleration. pick a 
-//		  number between -1 and 1 where -1 is full decelerated, 1 is 
+// zip	: optional. specify the zippiness of the acceleration. pick a
+//		  number between -1 and 1 where -1 is full decelerated, 1 is
 //		  full accelerated, and 0 is linear (no acceleration). default
 //		  is 0.
-// unit	: optional. specify the units for use with prop. default is 
+// unit	: optional. specify the units for use with prop. default is
 //		  "px".
 //=====================================================================
-// bezier functions lifted from the lib_animation.js file in the 
+// bezier functions lifted from the lib_animation.js file in the
 // 13th Parallel API. www.13thparallel.org
 //=====================================================================
 

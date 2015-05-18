@@ -12,10 +12,10 @@ dp.sh.Brushes.Xml.prototype.ProcessRegexList = function()
 	{
 		array[array.length] = value;
 	}
-	
+
 	/* If only there was a way to get index of a group within a match, the whole XML
 	   could be matched with the expression looking something like that:
-	
+
 	   (<!\[CDATA\[\s*.*\s*\]\]>)
 	   | (<!--\s*.*\s*?-->)
 	   | (<)*(\w+)*\s*(\w+)\s*=\s*(".*?"|'.*?'|\w+)(/*>)*
@@ -28,7 +28,7 @@ dp.sh.Brushes.Xml.prototype.ProcessRegexList = function()
 	// Match CDATA in the following format <![ ... [ ... ]]>
 	// <\!\[[\w\s]*?\[(.|\s)*?\]\]>
 	this.GetMatches(new RegExp('<\\!\\[[\\w\\s]*?\\[(.|\\s)*?\\]\\]>', 'gm'), 'cdata');
-	
+
 	// Match comments
 	// <!--\s*.*\s*?-->
 	this.GetMatches(new RegExp('<!--\\s*.*\\s*?-->', 'gm'), 'comments');
@@ -39,8 +39,8 @@ dp.sh.Brushes.Xml.prototype.ProcessRegexList = function()
 	while((match = regex.exec(this.code)) != null)
 	{
 		push(this.matches, new dp.sh.Match(match[1], match.index, 'attribute'));
-	
-		// if xml is invalid and attribute has no property value, ignore it	
+
+		// if xml is invalid and attribute has no property value, ignore it
 		if(match[2] != undefined)
 		{
 			push(this.matches, new dp.sh.Match(match[2], match.index + match[0].indexOf(match[2]), 'attribute-value'));

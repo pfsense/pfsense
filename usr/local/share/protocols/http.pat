@@ -20,7 +20,7 @@
 http
 # Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF (rfc 2616)
 # As specified in rfc 2616 a status code is preceeded and followed by a
-# space. 
+# space.
 http/(0\.9|1\.0|1\.1) [1-5][0-9][0-9] [\x09-\x0d -~]*(connection:|content-type:|content-length:|date:)|post [\x09-\x0d -~]* http/[01]\.[019]
 # A slightly faster version that might be good enough:
 #http/(0\.9|1\.0|1\.1) [1-5][0-9][0-9]|post [\x09-\x0d -~]* http/[01]\.[019]

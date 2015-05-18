@@ -91,7 +91,7 @@ function update_table_rows(data) {
 	if (isIE) {
 		showanim = 0;
 	}
-	
+
 	var startat = data.length - nentries;
 	if (startat < 0) {
 		startat = 0;

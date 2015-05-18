@@ -10,7 +10,7 @@
 
 gopher
 # This matches the server's response, but naturally only if it is a
-# directory listing, not if it is sending a file, because then the data 
+# directory listing, not if it is sending a file, because then the data
 # is totally arbitrary.
 
 # Matches the client saying "list what you have", then the server

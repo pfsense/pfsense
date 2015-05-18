@@ -56,7 +56,7 @@ localize_pcbsd()
   # Check if we have a localized splash screen and copy it
   if [ -e "${FSMNT}/usr/PCBSD/splash-screens/loading-screen-${SETLANG}.pcx" ]
   then
-    cp ${FSMNT}/usr/PCBSD/splash-screens/loading-screen-${SETLANG}.pcx ${FSMNT}/boot/loading-screen.pcx    
+    cp ${FSMNT}/usr/PCBSD/splash-screens/loading-screen-${SETLANG}.pcx ${FSMNT}/boot/loading-screen.pcx
   fi
 
 };
@@ -119,7 +119,7 @@ localize_x_keyboard()
     # Save it for KDM
     echo "setxkbmap ${SETXKBMAP}" >>${FSMNT}/usr/local/kde4/share/config/kdm/Xsetup
   fi
- 
+
 
    # Create the kxkbrc configuration using these options
   echo "[Layout]
@@ -183,7 +183,7 @@ localize_prune_langs()
   if [ -z "$KEEPLANG" ] ; then
     KEEPLANG="en"
   fi
-  export KEEPLANG 
+  export KEEPLANG
 
   echo_log "Pruning other l10n files, keeping ${KEEPLANG}"
 
@@ -207,7 +207,7 @@ localize_prune_langs()
 
 # Function which sets COUNTRY SETLANG and LOCALE based upon $1
 localize_get_codes()
-{ 
+{
   TARGETLANG="${1}"
   # Setup the presets for the specific lang
   case $TARGETLANG in

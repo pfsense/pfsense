@@ -840,7 +840,7 @@ include("fbegin.inc"); ?>
 					$bfound = 0;
 					foreach ($wkports as $wkport => $wkportdesc):
 					?>
-					<option value="<?=$wkport;?>" 
+					<option value="<?=$wkport;?>"
 						<?php if ($wkport == $pconfig['localbeginport']) {
 							echo "selected=\"selected\"";
 							$bfound = 1;

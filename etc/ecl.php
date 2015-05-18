@@ -1,5 +1,5 @@
 <?php
-/*  
+/*
 	external config loader
 	Copyright (C) 2010 Scott Ullrich
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
@@ -25,7 +25,7 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
- 
+
 	Currently supported file system types: MS-Dos, FreeBSD UFS
 
 */
@@ -53,7 +53,7 @@ function get_disk_slices($disk) {
 	$slices_array = array();
 	$slices = trim(exec("/bin/ls " . escapeshellarg("/dev/" . $disk . "s*") . " 2>/dev/null"));
 	$slices = str_replace("/dev/", "", $slices);
-	if($slices == "ls: No match.") 
+	if($slices == "ls: No match.")
 		return;
 	$slices_array = explode(" ", $slices);
 	return $slices_array;
@@ -76,10 +76,10 @@ function discover_config($mountpoint) {
 		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
 		if($debug) {
 			echo "\nChecking for $tocheck";
-			if(file_exists($tocheck)) 
+			if(file_exists($tocheck))
 				echo " -> found!";
 		}
-		if(file_exists($tocheck)) 
+		if(file_exists($tocheck))
 			return $tocheck;
 	}
 	return "";
@@ -87,7 +87,7 @@ function discover_config($mountpoint) {
 
 function test_config($file_location) {
 	global $g, $debug;
-	if(!$file_location) 
+	if(!$file_location)
 		return;
 	// config.xml was found.  ensure it is sound.
 	$root_obj = trim("<{$g['xml_rootobj']}>");
@@ -99,7 +99,7 @@ function test_config($file_location) {
 	if($xml_file_head == $root_obj) {
 		// Now parse config to make sure
 		$config_status = config_validate($file_location);
-		if($config_status) 	
+		if($config_status)
 			return true;
 	}
 	return false;
@@ -110,7 +110,7 @@ function find_config_xml() {
 	global $g, $debug;
 	$disks = get_disks();
 	// Safety check.
-	if(!is_array($disks)) 
+	if(!is_array($disks))
 		return;
 	$boot_disk = get_boot_disk();
 	$swap_disks = get_swap_disks();
@@ -122,7 +122,7 @@ function find_config_xml() {
 				if($slice == "")
 					continue;
 				if(stristr($slice, $boot_disk)) {
-					if($debug) 
+					if($debug)
 						echo "\nSkipping boot device slice $slice";
 					continue;
 				}
@@ -133,17 +133,17 @@ function find_config_xml() {
 				}
 				echo " $slice";
 				// First try msdos fs
-				if($debug) 
+				if($debug)
 					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 				$result = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				// Next try regular fs (ufs)
 				if(!$result) {
-					if($debug) 
+					if($debug)
 						echo "\n/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				}
 				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
-				if($debug) 
+				if($debug)
 					echo "\nmounted: $mounted ";
 				if(intval($mounted) > 0) {
 					// Item was mounted - look for config.xml file

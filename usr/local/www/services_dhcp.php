@@ -61,7 +61,7 @@ if($config['installedpackages']['olsrd']) {
 				break;
 			}
 	}
-}	
+}
 
 $iflist = get_configured_interface_with_descr();
 

@@ -14,7 +14,7 @@ commitDiskPart
 # Setup the disk label
 # All sizes are expressed in MB
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
-disk0-part=UFS 2000 / 
+disk0-part=UFS 2000 /
 disk0-part=SWAP 2000 none
 disk0-part=UFS 0 /usr
 # Size 0 means use the rest of the slice size

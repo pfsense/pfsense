@@ -12,7 +12,7 @@ lpd
 # Send queue state:    ^[\x03\x04][!-~]+[\x09-\x0d]+[a-z][\x09-\x0d -~]*\x0a$
 # Remove jobs:         ^\x05[!-~]+[\x09-\x0d]+([a-z][!-~]*[\x09-\x0d]+[1-9][0-9]?[0-9]?|root[\x09-\x0d]+[!-~]+).*\x0a$
 
-# This pattern looks like it might match random data once in a while, but 
+# This pattern looks like it might match random data once in a while, but
 # testing shows that this is not the case.
 
 ^(\x01[!-~]+|\x02[!-~]+\x0a.[\x01\x02\x03][\x01-\x0a -~]*|[\x03\x04][!-~]+[\x09-\x0d]+[a-z][\x09-\x0d -~]*|\x05[!-~]+[\x09-\x0d]+([a-z][!-~]*[\x09-\x0d]+[1-9][0-9]?[0-9]?|root[\x09-\x0d]+[!-~]+).*)\x0a$

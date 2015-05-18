@@ -63,7 +63,7 @@ if (!Array.prototype.some) {
 			was_ipv4 = is_ipv4;
 			is_ipv4  = /\./.test(input1.value) && !/\:/.test(input1.value);
 			// handle state transitions to gracefully change the
-			// value in the dropdown.	
+			// value in the dropdown.
 			var bits = parseInt($(input2).val(), 10);
 			if (was_ipv4 === false && is_ipv4 === true) {
 				restrict_bits_to_ipv4();

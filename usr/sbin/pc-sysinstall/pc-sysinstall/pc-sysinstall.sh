@@ -1,8 +1,8 @@
 #!/bin/sh
 #####################################################################
 #       Author: Kris Moore
-#      License: BSD 
-#  Description: pc-sysinstall provides a backend for performing 
+#      License: BSD
+#  Description: pc-sysinstall provides a backend for performing
 #  system installations, as well as calls which a front-end can use
 #  to retrive information about the system
 #####################################################################
@@ -57,11 +57,11 @@ export PKGDIR
 #####################################################################
 
 # Set our QUERYDIR
-QUERYDIR="${PROGDIR}/backend-query" 
+QUERYDIR="${PROGDIR}/backend-query"
 export QUERYDIR
 
 # Set our BACKEND
-BACKEND="${PROGDIR}/backend" 
+BACKEND="${PROGDIR}/backend"
 export BACKEND
 
 PARTMANAGERDIR="${PROGDIR}/backend-partmanager"
@@ -76,7 +76,7 @@ else
   exit 1
 fi
 
-# Now source our functions.sh 
+# Now source our functions.sh
 if [ -e "${PROGDIR}/backend/functions.sh" ]
 then
   . ${PROGDIR}/backend/functions.sh
@@ -139,7 +139,7 @@ case $1 in
   # The user is wanting to see what nics are available on the system
   detect-nics) ${QUERYDIR}/detect-nics.sh
   ;;
-  
+
   # The user is wanting to check if we are in emulation
   detect-emulation) ${QUERYDIR}/detect-emulation.sh
   ;;
@@ -151,7 +151,7 @@ case $1 in
   # The user is wanting to query which disks are available
   disk-list) ${QUERYDIR}/disk-list.sh $*
   ;;
-  
+
   # The user is wanting to query a disk's partitions
   disk-part) ${QUERYDIR}/disk-part.sh ${2}
   ;;
@@ -203,7 +203,7 @@ case $1 in
   # Function which allows setting up of SSH keys
   setup-ssh-keys) ${QUERYDIR}/setup-ssh-keys.sh "${2}" "${3}" "${4}"
   ;;
-  
+
   # Function which lists the real memory of the system in MB
   sys-mem) ${QUERYDIR}/sys-mem.sh
   ;;
@@ -211,7 +211,7 @@ case $1 in
   # Run script which determines if we are booted from install media, or on disk
   test-live) ${QUERYDIR}/test-live.sh
   ;;
-  
+
   # The user is wanting to test if the network is up and working
   test-netup) ${QUERYDIR}/test-netup.sh
   ;;
@@ -223,16 +223,16 @@ case $1 in
   # Requested a list of keyboard layouts that xorg supports
   xkeyboard-layouts) ${QUERYDIR}/xkeyboard-layouts.sh
   ;;
-  
+
   # Requested a list of keyboard models that xorg supports
   xkeyboard-models) ${QUERYDIR}/xkeyboard-models.sh
   ;;
-  
+
   # Requested a list of keyboard variants that xorg supports
   xkeyboard-variants) ${QUERYDIR}/xkeyboard-variants.sh
   ;;
-           
-  *) echo "Unknown Command: ${1}" 
+
+  *) echo "Unknown Command: ${1}"
      exit 1 ;;
 esac
 

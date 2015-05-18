@@ -77,7 +77,7 @@ if ($_POST) {
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
-				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
+				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -96,7 +96,7 @@ if ($_POST) {
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
-		if(isAjax() && is_array($input_errors)) {
+		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
@@ -117,7 +117,7 @@ if ($_POST) {
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
-	if(isAjax() && is_array($input_errors)) {
+	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
@@ -134,10 +134,11 @@ if ($_POST) {
 		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
 		$l2tpcfg['secret'] = $_POST['secret'];
 
-		if($_POST['wins'])
+		if ($_POST['wins']) {
 			$l2tpcfg['wins'] = $_POST['wins'];
-		else
+		} else {
 			unset($l2tpcfg['wins']);
+		}
 
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
 
@@ -145,29 +146,35 @@ if ($_POST) {
 		if ($_POST['l2tp_dns1'] == "") {
 			if (isset($l2tpcfg['dns1']))
 				unset($l2tpcfg['dns1']);
-			} else
+			} else {
 				$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
+			}
 
 			if ($_POST['l2tp_dns2'] == "") {
-				if (isset($l2tpcfg['dns2']))
+				if (isset($l2tpcfg['dns2'])) {
 					unset($l2tpcfg['dns2']);
-			} else
+				}
+			} else {
 				$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+			}
 
-		if($_POST['radiusenable'] == "yes")
+		if ($_POST['radiusenable'] == "yes") {
 			$l2tpcfg['radius']['enable'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['enable']);
+		}
 
-		if($_POST['radacct_enable'] == "yes")
+		if ($_POST['radacct_enable'] == "yes") {
 			$l2tpcfg['radius']['accounting'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['accounting']);
+		}
 
-		if($_POST['radiusissueips'] == "yes")
+		if ($_POST['radiusissueips'] == "yes") {
 			$l2tpcfg['radius']['radiusissueips'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['radiusissueips']);
+		}
 
 		write_config();
 
@@ -176,8 +183,9 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 
 		/* if ajax is calling, give them an update message */
-		if(isAjax())
+		if (isAjax()) {
 			print_info_box_np($savemsg);
+		}
 	}
 }
 
@@ -192,8 +200,9 @@ include("head.inc");
 function get_radio_value(obj)
 {
 	for (i = 0; i < obj.length; i++) {
-		if (obj[i].checked)
+		if (obj[i].checked) {
 			return obj[i].value;
+		}
 	}
 	return null;
 }
@@ -211,7 +220,7 @@ function enable_change(enable_over) {
 		document.iform.secret.disabled = 0;
 		document.iform.l2tp_dns1.disabled = 0;
 		document.iform.l2tp_dns2.disabled = 0;
-    /* fix colors */
+		/* fix colors */
 		document.iform.remoteip.style.backgroundColor = '#FFFFFF';
 		document.iform.localip.style.backgroundColor = '#FFFFFF';
 		document.iform.l2tp_subnet.style.backgroundColor = '#FFFFFF';
@@ -226,7 +235,7 @@ function enable_change(enable_over) {
 			document.iform.radiusserver.disabled = 0;
 			document.iform.radiussecret.disabled = 0;
 			document.iform.radiusissueips.disabled = 0;
-      /* fix colors */
+			/* fix colors */
 			document.iform.radacct_enable.style.backgroundColor = '#FFFFFF';
 			document.iform.radiusserver.style.backgroundColor = '#FFFFFF';
 			document.iform.radiussecret.style.backgroundColor = '#FFFFFF';
@@ -236,7 +245,7 @@ function enable_change(enable_over) {
 			document.iform.radiusserver.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
 			document.iform.radiusissueips.disabled = 1;
-      /* fix colors */
+			/* fix colors */
 			document.iform.radacct_enable.style.backgroundColor = '#D4D0C8';
 			document.iform.radiusserver.style.backgroundColor = '#D4D0C8';
 			document.iform.radiussecret.style.backgroundColor = '#D4D0C8';
@@ -257,7 +266,7 @@ function enable_change(enable_over) {
 		document.iform.radiussecret.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
 		document.iform.secret.disabled = 1;
-    /* fix colors */
+		/* fix colors */
 		document.iform.interface.style.backgroundColor = '#D4D0C8';
 		document.iform.n_l2tp_units.style.backgroundColor = '#D4D0C8';
 		document.iform.l2tp_subnet.style.backgroundColor = '#D4D0C8';
@@ -279,188 +288,196 @@ function enable_change(enable_over) {
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn l2tp">
-  <tr><td class="tabnavtbl">
+	<tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Configuration"), true, "vpn_l2tp.php");
 	$tab_array[1] = array(gettext("Users"), false, "vpn_l2tp_users.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-                <tr>
-                  <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="mode" type="radio" onclick="enable_change(false)" value="off"
-			<?php if (($pconfig['mode'] != "server") && ($pconfig['mode'] != "redir")) echo "checked=\"checked\"";?> />
-                    <?=gettext("Off"); ?></td>
-		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable">
-		    <input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked=\"checked\""; ?> />
-                    <?=gettext("Enable L2TP server"); ?></td>
-		</tr>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+					<tr>
+						<td width="22%" valign="top" class="vtable">&nbsp;</td>
+						<td width="78%" class="vtable">
+							<input name="mode" type="radio" onclick="enable_change(false)" value="off"
+							<?php if (($pconfig['mode'] != "server") && ($pconfig['mode'] != "redir")) echo "checked=\"checked\"";?> />
+							<?=gettext("Off"); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vtable">&nbsp;</td>
+						<td width="78%" class="vtable">
+							<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked=\"checked\""; ?> />
+							<?=gettext("Enable L2TP server"); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><b><?=gettext("Interface");?></b></td>
+						<td width="78%" valign="top" class="vtable">
+							<select name="interface" class="formselect" id="interface">
+							<?php
+								$interfaces = get_configured_interface_with_descr();
+								foreach ($interfaces as $iface => $ifacename):
+							?>
+								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
+									<?=htmlspecialchars($ifacename);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br />
 
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><b><?=gettext("Interface");?></b></td>
-                  <td width="78%" valign="top" class="vtable">
-
-			<select name="interface" class="formselect" id="interface">
-			  <?php
-				$interfaces = get_configured_interface_with_descr();
-				foreach ($interfaces as $iface => $ifacename):
-			  ?>
-			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-			  <?=htmlspecialchars($ifacename);?>
-			  </option>
-			  <?php endforeach; ?>
-			</select> <br />
-
-		  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Server Address");?></td>
-                  <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
-			<br />
-			<?=gettext("Enter the IP address the L2TP server should give to clients for use as their \"gateway\""); ?>.
-			<br />
-			<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
-			<br />
-			<br />
-			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Address Range");?></td>
-                  <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
-                    <br />
-                    <?=gettext("Specify the starting address for the client IP address subnet.");?><br />
-                    </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask"); ?></td>
-                  <td width="78%" class="vtable">
-                    <select id="l2tp_subnet" name="l2tp_subnet">
-                    <?php
-                     for($x=0; $x<33; $x++) {
-                        if($x == $pconfig['l2tp_subnet'])
-                                $SELECTED = " selected=\"selected\"";
-                        else
-                                $SELECTED = "";
-                        echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
-                     }
-                    ?>
-                    </select>
-                    <br /><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Number of L2TP users"); ?></td>
-                  <td width="78%" class="vtable">
-                    <select id="n_l2tp_units" name="n_l2tp_units">
-                    <?php
-                     for($x=0; $x<255; $x++) {
-                        if($x == $pconfig['n_l2tp_units'])
-                                $SELECTED = " selected=\"selected\"";
-                        else
-                                $SELECTED = "";
-                        echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
-                     }
-                    ?>
-                    </select>
-                    <br /><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
-                  </td>
-                </tr>
-		<tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
-                  <td width="78%" class="vtable">
-			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>" />
-                    <br />
-                    <?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
-                    </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Type");?></td>
-                  <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><select name="paporchap" id="paporchap">
-			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " selected=\"selected\""; ?>><?=gettext("CHAP"); ?></option>
-			<option value='pap'<?php if($pconfig['paporchap'] == "pap") echo " selected=\"selected\""; ?>><?=gettext("PAP"); ?></option>
-		    </select>
-                    <br />
-                    <?=gettext("Specifies which protocol to use for authentication.");?><br />
-                    </td>
-                </tr>
-		<tr>
-		  <td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
-		  <td width="78%" class="vtable">
-		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>" />
-		   	<br />
-				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>" />
-			<br />
-		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br />
-		  </td>
-		</tr>
-		<tr>
-		  <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
-		  <td width="78%" valign="top" class="vtable">
-		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>" />
-		  </td>
-		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
-                  <td width="78%" class="vtable">
-                      <input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked=\"checked\""; ?> />
-                      <strong> <?=gettext("Use a RADIUS server for authentication");?><br /></strong>
-                      <?=gettext("When set, all users will be authenticated using the RADIUS server specified below. The local user database will not be used.");?><br />
-                      <br />
-                      <input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked=\"checked\""; ?> />
-                      <strong><?=gettext("Enable RADIUS accounting");?></strong><br />
-                      <?=gettext("Sends accounting packets to the RADIUS server.");?></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Server");?></td>
-                  <td width="78%" class="vtable">
-                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
-                      <br />
-                      <?=gettext("Enter the IP address of the RADIUS server.");?></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Shared Secret");?></td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
-                      <br />
-                      <?=gettext("Enter the shared secret that will be used to authenticate to the RADIUS server.");?></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Issued IP's");?></td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
-                      <br />
-                      <?=gettext("Issue IP Addresses via RADIUS server.");?>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-			<span class="vexpl">
-				<strong class="red"><?=gettext("Note:");?></strong><br />
-				<?=gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!");?>
-			</span>
-                  </td>
-                </tr>
-              </table>
-	   </div>
-	 </td>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Address");?></td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
+							<br />
+							<?=gettext("Enter the IP address the L2TP server should give to clients for use as their \"gateway\""); ?>.
+							<br />
+							<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
+							<br />
+							<br />
+							<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Address Range");?></td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
+							<br />
+							<?=gettext("Specify the starting address for the client IP address subnet.");?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask"); ?></td>
+						<td width="78%" class="vtable">
+							<select id="l2tp_subnet" name="l2tp_subnet">
+							<?php
+								for ($x=0; $x<33; $x++) {
+									if ($x == $pconfig['l2tp_subnet']) {
+										$SELECTED = " selected=\"selected\"";
+									} else {
+										$SELECTED = "";
+									}
+									echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+								}
+							?>
+							</select>
+							<br /><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Number of L2TP users"); ?></td>
+						<td width="78%" class="vtable">
+							<select id="n_l2tp_units" name="n_l2tp_units">
+							<?php
+								for ($x=0; $x<255; $x++) {
+									if ($x == $pconfig['n_l2tp_units']) {
+										$SELECTED = " selected=\"selected\"";
+									} else {
+										$SELECTED = "";
+									}
+									echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+								}
+							?>
+							</select>
+							<br /><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
+						<td width="78%" class="vtable">
+							<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>" />
+							<br />
+							<?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Type");?></td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?>
+							<select name="paporchap" id="paporchap">
+								<option value='chap'<?php if ($pconfig['paporchap'] == "chap") echo " selected=\"selected\""; ?>><?=gettext("CHAP"); ?></option>
+								<option value='pap'<?php if ($pconfig['paporchap'] == "pap") echo " selected=\"selected\""; ?>><?=gettext("PAP"); ?></option>
+							</select>
+							<br />
+							<?=gettext("Specifies which protocol to use for authentication.");?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>" />
+							<br />
+							<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>" />
+							<br />
+							<?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
+						<td width="78%" valign="top" class="vtable">
+							<input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>" />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked=\"checked\""; ?> />
+							<strong> <?=gettext("Use a RADIUS server for authentication");?><br /></strong>
+							<?=gettext("When set, all users will be authenticated using the RADIUS server specified below. The local user database will not be used.");?><br />
+							<br />
+							<input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable RADIUS accounting");?></strong><br />
+							<?=gettext("Sends accounting packets to the RADIUS server.");?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Server");?></td>
+						<td width="78%" class="vtable">
+							<input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
+							<br />
+							<?=gettext("Enter the IP address of the RADIUS server.");?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Shared Secret");?></td>
+						<td width="78%" valign="top" class="vtable">
+							<input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
+							<br />
+							<?=gettext("Enter the shared secret that will be used to authenticate to the RADIUS server.");?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Issued IP's");?></td>
+						<td width="78%" valign="top" class="vtable">
+							<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if (isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
+							<br />
+							<?=gettext("Issue IP Addresses via RADIUS server.");?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="vexpl">
+								<strong class="red"><?=gettext("Note:");?></strong><br />
+								<?=gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!");?>
+							</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
 	</tr>
 </table>
 </form>

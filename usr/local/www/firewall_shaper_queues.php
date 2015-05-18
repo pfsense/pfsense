@@ -198,8 +198,8 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
+<?php if (is_subsystem_dirty('shaper')): ?>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed") . ".</p><p>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper queues">
 	<tr><td>

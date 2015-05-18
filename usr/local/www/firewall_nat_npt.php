@@ -88,7 +88,7 @@ include("head.inc");
 <form action="firewall_nat_npt.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?>
-<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
+<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".</p><p>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat npt"> 
 	<tr><td>

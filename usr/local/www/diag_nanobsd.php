@@ -92,7 +92,7 @@ if ($_POST['destslice']) {
 	</div>
 EOF;
 	if (nanobsd_clone_slice($_POST['destslice'])) {
-		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
+		$savemsg = gettext("The slice has been duplicated.") . "</p><p>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
 	} else {
 		$savemsg = gettext("There was an error while duplicating the slice.  Operation aborted.");
 	}

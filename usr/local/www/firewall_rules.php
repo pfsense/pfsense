@@ -152,7 +152,7 @@ if ($_POST) {
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/apply");
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.</p><p>You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 
@@ -266,9 +266,8 @@ include("head.inc");
 
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('filter')): ?><p>
-<?php	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true); ?>
-<br />
+<?php if (is_subsystem_dirty('filter')): ?>
+<?php	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "</p><p>" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true); ?>
 <?php endif; ?>
 <?php
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_table");

@@ -466,7 +466,7 @@ if ($pkg['tabs'] <> "") {
 <?php
 	$cols = 0;
 	$savevalue = gettext("Save");
-	if ($pkg['savetext'] <> "") { {
+	if ($pkg['savetext'] <> "") {
 		$savevalue = $pkg['savetext'];
 	}
 	/* If a package's XML has <advanced_options/> configured, then setup

@@ -387,6 +387,9 @@ if($_GET['act'] == "delopt") {
 
 // Add an option row
 if($_GET['act'] == "addopt") {
+	if(!is_array($pconfig['numberoptions']['item']))
+		$pconfig['numberoptions']['item'] = array();
+		
 	array_push($pconfig['numberoptions']['item'], array('number' => null, 'value' => null));
 }
 

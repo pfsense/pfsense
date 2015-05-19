@@ -198,16 +198,11 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable the SNMP Daemon and its controls',
 	$pconfig['enable']
-))->toggles('.toggle-snmp');
+));
 
 $form->add($section);
 
 $section = new Form_Section('SNMP Daemon settings');
-
-if($pconfig['enable'])
-	$section->addClass('toggle-snmp', 'in');
-else
-	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Input(
 	'pollport',
@@ -240,11 +235,6 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 $section = new Form_Section('SNMP Traps Enable');
-
-if($pconfig['enable'])
-	$section->addClass('toggle-snmp', 'in');
-else
-	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Checkbox(
 	'trapenable',
@@ -287,49 +277,44 @@ $form->add($section);
 
 $section = new Form_Section('SNMP Modules');
 
-if($pconfig['enable'])
-	$section->addClass('toggle-snmp', 'in');
-else
-	$section->addClass('toggle-snmp', 'collapse');
+$group = new Form_MultiCheckboxGroup('SNMP modules');
 
-$group = new Form_Group('SNMP modules');
-
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'mibii',
 	null,
 	'MibII',
 	$pconfig['mibii']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'netgraph',
 	null,
 	'Netgraph',
 	$pconfig['netgraph']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'pf',
 	null,
 	'PF',
 	$pconfig['pf']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'hostres',
 	null,
 	'Host Resources',
 	$pconfig['hostres']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'ucd',
 	null,
 	'UCD',
 	$pconfig['ucd']
 ));
 
-$group->add(new Form_Checkbox(
+$group->add(new Form_MultiCheckbox(
 	'regex',
 	null,
 	'Regex',
@@ -340,11 +325,6 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');
-
-if($pconfig['enable'])
-	$section->addClass('toggle-snmp', 'in');
-else
-	$section->addClass('toggle-snmp', 'collapse');
 
 $section->addInput(new Form_Select(
 	'bindip',

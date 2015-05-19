@@ -1,4 +1,4 @@
-<?php
+:<?php
 /* $Id$ */
 /*
 	interfaces_qinq.php
@@ -91,18 +91,20 @@ $pgtitle = array(gettext("Interfaces"),gettext("QinQ"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-if ($input_errors) print_input_errors($input_errors);
+if ($input_errors)
+	print_input_errors($input_errors);
+
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), true, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), true, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
@@ -122,13 +124,8 @@ print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging
 			</tr>
 		</thead>
 		<tbody>
-<?php
-
-$i = 0;
-
-foreach ($a_qinqs as $qinq) {
-?>
-			<tr ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i?>'">
+<?php foreach ($a_qinqs as $i => $qinq):?>
+			<tr>
 				<td>
 					<?=htmlspecialchars($qinq['if'])?>
 				</td>
@@ -136,20 +133,13 @@ foreach ($a_qinqs as $qinq) {
 					<?=htmlspecialchars($qinq['tag'])?>
 				</td>
 				<td>
-<?php
-	if (strlen($qinq['members']) > 20) {
-?>
-					<?=substr(htmlspecialchars($qinq['members']), 0, 20)?>...
-<?php
-	}
-	else {
-?>
+<?php if (strlen($qinq['members']) > 20):?>
+					<?=substr(htmlspecialchars($qinq['members']), 0, 20)?>&hellip;
+<?php else:?>
 					<?=htmlspecialchars($qinq['members'])?>
-<?php
-	}
-?>
+<?php endif; ?>
 				</td>
-				<td class="listbg">
+				<td>
 					<?=htmlspecialchars($qinq['descr'])?>&nbsp;
 				</td>
 				<td>
@@ -158,12 +148,16 @@ foreach ($a_qinqs as $qinq) {
 				</td>
 			</tr>
 <?php
-	$i++;
 }
 ?>
 		</tbody>
 	</table>
-	<a href="interfaces_qinq_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
 </div>
+
+<nav class="action-buttons">
+	<a href="interfaces_qinq_edit.php" class="btn btn-success">
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 include("foot.inc");

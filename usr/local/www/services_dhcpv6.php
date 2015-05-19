@@ -448,7 +448,7 @@ if (is_array($config['pppoes']['pppoe'])) {
 	}
 }
 
-if ($tabscounter == 0) {
+if (false && $tabscounter == 0) {
 	print_info_box(gettext("The DHCPv6 Server can only be enabled on interfaces configured with a static IPv6 address. This system has none."), 'danger');
 	include("foot.inc");
 	exit;
@@ -474,7 +474,7 @@ $section->addInput(new Form_Checkbox(
 	'DHCPv6 Server',
 	'Enable DHCPv6 server on interface ' . htmlspecialchars($iflist[$if]),
 	$pconfig['enable']
-));
+))->toggles('.form-group:not(:first-child)');
 
 if(is_ipaddrv6($ifcfgip)) {
 

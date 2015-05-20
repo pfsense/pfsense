@@ -469,9 +469,12 @@ if ($pkg['tabs'] <> "") {
 			}
 
 		$size = "";
+		$colspan="";
 		if (isset($pkga['dontdisplayname'])){
 			$input="";
-			if ($pkga['combinefields'] != "begin")
+			// We do not want a separate tr tag pair for each field in a set of combined fields.
+			// The case of putting the first tr tag at the beginning of a combine-fields set is already handled above.
+			if (!isset($pkga['combinefields']))
 				$input .= "<tr valign='top' id='tr_{$pkga['fieldname']}'>";
 			if(isset($pkga['usecolspan2']))
 				$colspan="colspan='2'";
@@ -489,7 +492,9 @@ if ($pkg['tabs'] <> "") {
 			if (isset($pkga['required']))
 				$req = 'req';
 			$input="";
-			if ($pkga['combinefields'] != "begin") {
+			// We do not want a separate tr tag pair for each field in a set of combined fields.
+			// The case of putting the first tr tag at the beginning of a combine-fields set is already handled above.
+			if (!isset($pkga['combinefields'])) {
 				$input .= "<tr>";
 			}
 			$input .= "<td valign='top' width=\"22%\" class=\"vncell{$req}\">";
@@ -903,13 +908,16 @@ if ($pkg['tabs'] <> "") {
 		#check typehint value
 	   	if($pkga['typehint'])
 	   		echo " " . $pkga['typehint'];
-		$input = "</td></tr>";
 	   	#check combinefields options
      	if (isset($pkga['combinefields'])){
+			// At the end of each combined-fields field we just want to end a td tag.
+			$input = "</td>";
+			// The tr tag and... ends are only used to end the whole set of combined fields.
 			if ($pkga['combinefields']=="end")
-           		$input.="</table></td></tr>";
+           		$input.="</tr></table></td></tr>";
       		}
      	else{
+			$input = "</td></tr>";
 			if($pkga['usecolspan2'])
 				$input.= "</tr><br />";
 	     	}

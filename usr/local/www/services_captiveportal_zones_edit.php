@@ -101,15 +101,12 @@ $section = new Form_Section('Edit Captive Portal Zones');
 
 $section->addInput(new Form_Input(
 	'zone',
-	'Zone name',
-	'text'
-))->setHelp('
-Zone name. Can only contain letters, digits, and underscores (_).');
+	'Zone name'
+))->setPattern('[0-9a-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Zone description',
-	'text'
+	'Zone description'
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 $form->add($section);

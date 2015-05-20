@@ -509,7 +509,7 @@ if ($pkg['tabs'] <> "") {
 		$size = "";
 		if (isset($pkga['dontdisplayname'])) {
 			$input="";
-			if (!isset($pkga['combinefields'])) {
+			if ($pkga['combinefields'] != "begin") {
 				$input .= "<tr valign='top' id='tr_{$pkga['fieldname']}'>";
 			}
 			if (isset($pkga['usecolspan2'])) {
@@ -528,7 +528,11 @@ if ($pkg['tabs'] <> "") {
 			if (isset($pkga['required'])) {
 				$req = 'req';
 			}
-			$input= "<tr><td valign='top' width=\"22%\" class=\"vncell{$req}\">";
+			$input="";
+			if ($pkga['combinefields'] != "begin") {
+				$input .= "<tr>";
+			}
+			$input .= "<td valign='top' width=\"22%\" class=\"vncell{$req}\">";
 			$input .= fixup_string($pkga['fielddescr']);
 			$input .= "</td>";
 			if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -539,7 +543,7 @@ if ($pkg['tabs'] <> "") {
 			}
 		}
 		if ($pkga['combinefields']=="begin") {
-			$input="<td class=\"vncell\"><table summary=\"advanced\">";
+			$input="<td class=\"vncell\"><table summary=\"advanced\"><tr>";
 			if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
 			} else {
@@ -997,14 +1001,13 @@ if ($pkg['tabs'] <> "") {
 		if ($pkga['typehint']) {
 			echo " " . $pkga['typehint'];
 		}
+		$input = "</td></tr>";
 		#check combinefields options
 		if (isset($pkga['combinefields'])) {
-			$input="</td>";
 			if ($pkga['combinefields']=="end") {
 				$input.="</table></td></tr>";
 			}
 		} else {
-			$input= "</td></tr>";
 			if ($pkga['usecolspan2']) {
 				$input.= "</tr><br />";
 			}

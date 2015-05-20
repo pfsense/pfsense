@@ -40,7 +40,7 @@
 ##|*MATCH=diag_ipsec_leases.php*
 ##|-PRIV
 
-define(DEBUG, true);  // Force dummy data for testing. Setting up a pFSense box to get real data is far too hard!
+define(DEBUG, true); // Force dummy data for testing. Setting up a pFSense box to get real data is far too hard!
 
 require("guiconfig.inc");
 require("ipsec.inc");
@@ -120,7 +120,7 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 				}
 				else {
 ?>
-					<td colspan="3" class="warning" align="center"><?=gettext('No leases from this pool yet.')?></td>
+					<td colspan="3" class="warning"><?=gettext('No leases from this pool yet.')?></td>
 				</tr>
 <?php
 				}

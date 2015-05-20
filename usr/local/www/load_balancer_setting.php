@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -51,31 +51,31 @@ require_once("util.inc");
 if (!is_array($config['load_balancer']['setting'])) {
 	$config['load_balancer']['setting'] = array();
 }
+
 $lbsetting = &$config['load_balancer']['setting'];
 
 if ($_POST) {
+	if ($_POST['apply']) {
+		$retval = 0;
+		$retval |= filter_configure();
+		$retval |= relayd_configure();
 
-        if ($_POST['apply']) {
-                $retval = 0;
-                $retval |= filter_configure();
-                $retval |= relayd_configure();
-  
-                $savemsg = get_std_save_message($retval);
-                clear_subsystem_dirty('loadbalancer');
-        } else {
+		$savemsg = get_std_save_message($retval);
+		clear_subsystem_dirty('loadbalancer');
+	} else {
 		unset($input_errors);
 		$pconfig = $_POST;
-	
+
 		/* input validation */
 		if ($_POST['timeout'] && !is_numeric($_POST['timeout'])) {
 			$input_errors[] = gettext("Timeout must be a numeric value");
 		}
 
-                if ($_POST['interval'] && !is_numeric($_POST['interval'])) {
+		if ($_POST['interval'] && !is_numeric($_POST['interval'])) {
 			$input_errors[] = gettext("Interval must be a numeric value");
-                }
+		}
 
-		if ($_POST['prefork']) { 
+		if ($_POST['prefork']) {
 			if (!is_numeric($_POST['prefork'])) {
 				$input_errors[] = gettext("Prefork must be a numeric value");
 			} else {
@@ -91,8 +91,8 @@ if ($_POST) {
 			$lbsetting['interval'] = $_POST['interval'];
 			$lbsetting['prefork'] = $_POST['prefork'];
 
-        		write_config();
-        		mark_subsystem_dirty('loadbalancer');
+			write_config();
+			mark_subsystem_dirty('loadbalancer');
 		}
 	}
 }
@@ -102,72 +102,52 @@ $shortcut_section = "relayd";
 
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="load_balancer_setting.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
-<?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer settings">
-   <tr>
-      <td class="tabnavtbl">
-       <?php
-        /* active tabs */
-        $tab_array = array();
-        $tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
-        $tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
-        $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
-        $tab_array[] = array(gettext("Settings"), true, "load_balancer_setting.php");
-        display_top_tabs($tab_array);
-       ?>
-      </td>
-   </tr>
-   <tr>
-      <td id="mainarea">
-         <div class="tabcont">
-            <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-              <tr>
-                 <td colspan="2" valign="top" class="listtopic"><?=gettext("Relayd global settings"); ?></td>
-              </tr>
-	      <tr>
-	         <td width="22%" valign="top" class="vncell"><?=gettext("timeout") ; ?></td>
-                 <td width="78%" class="vtable">
-                   <input name="timeout" id="timeout" value="<?php if ($lbsetting['timeout'] <> "") echo $lbsetting['timeout']; ?>" class="formfld unknown" />
-                   <br />
-                   <?=gettext("Set the global timeout in milliseconds for checks. Leave blank to use the default value of 1000 ms "); ?>
-                 </td>
-              </tr>
-	      <tr>
-	         <td width="22%" valign="top" class="vncell"><?=gettext("interval") ; ?></td>
-                 <td width="78%" class="vtable">
-                   <input name="interval" id="interval" value="<?php if ($lbsetting['interval'] <> "") echo $lbsetting['interval']; ?>" class="formfld unknown" />
-                   <br />
-                   <?=gettext("Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds"); ?>
-                </td>
-             </tr>
-              <tr>
-                 <td width="22%" valign="top" class="vncell"><?=gettext("prefork") ; ?></td>
-                 <td width="78%" class="vtable">
-                   <input name="prefork" id="prefork" value="<?php if ($lbsetting['prefork'] <> "") echo $lbsetting['prefork']; ?>" class="formfld unknown" />
-                   <br />
-                   <?=gettext("Number of processes used by relayd for dns protocol. Leave blank to use the default value of 5 processes"); ?>
-                </td>
-             </tr>
-             <tr>
-                 <td width="22%" valign="top">&nbsp;</td>
-                 <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-                 </td>
-            </tr>
-           </table>
-        </div>
-      </td>
-  </tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('loadbalancer'))
+	print_info_box_np(gettext("The load balancer configuration has been changed") . ' ' .
+					  gettext("You must apply the changes in order for them to take effect."), 'Apply', null, false, 'danger');
+
+/* active tabs */
+$tab_array = array();
+$tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
+$tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
+$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+$tab_array[] = array(gettext("Settings"), true, "load_balancer_setting.php");
+display_top_tabs($tab_array);
+
+require('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Relayd Global Settings');
+
+$section->addInput(new Form_Input(
+	'timeout',
+	'Timeout',
+	'text',
+	$pconfig['timeout']
+))->setHelp('Set the global timeout in milliseconds for checks. Leave blank to use the default value of 1000 ms');
+
+$section->addInput(new Form_Input(
+	'interval',
+	'Interval',
+	'text',
+	$pconfig['interval']
+))->setHelp('Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds');
+
+$section->addInput(new Form_Input(
+	'prefork',
+	'Prefork',
+	'text',
+	$pconfig['prefork']
+))->setHelp('Number of processes used by relayd for dns protocol. Leave blank to use the default value of 5 processes');
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

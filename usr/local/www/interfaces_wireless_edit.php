@@ -217,7 +217,7 @@ $section->addInput(new Form_Input(
 	'cloneif',
 	null,
 	'hidden',
-	htmlspecialchars($pconfig['cloneif'])
+	$pconfig['cloneif']
 ));
 
 if (isset($id) && $a_clones[$id]) {
@@ -225,7 +225,7 @@ if (isset($id) && $a_clones[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 

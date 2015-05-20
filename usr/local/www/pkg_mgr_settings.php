@@ -94,7 +94,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Alternate',
 	'Use a non-official server for packages',
 	$curcfg['enable']
-));
+))->toggles('.form-group:not(:first-child)');
 
 $section->addInput(new Form_Input(
 	'pkgrepourl',
@@ -106,31 +106,5 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 print($form);
-?>
-<script>
-//<![CDATA[
-events.push(function() {
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
 
-	function set_url_hide() {
-		if($('#alturlenable').is(':checked'))
-			disableInput('pkgrepourl', false);
-		else
-			disableInput('pkgrepourl', true);
-	}
-
-	// Set initial state
-	set_url_hide();
-
-	// When the checkbox is checked
-	$('#alturlenable').on('change', function() {
-		set_url_hide()
-	});
-});
-//]]>
-</script>
-
-<?php include("foot.inc");
+include("foot.inc");

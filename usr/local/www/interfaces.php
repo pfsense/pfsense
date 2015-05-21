@@ -3575,14 +3575,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
 								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>" />
-								<br /><?=gettext("Allowed values are 1-9999. Must be longer than Master Key Regeneration time."); ?>
+								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>" />
-								<br /><?=gettext("Allowed values are 1-9999. Must be shorter than Key Rotation time."); ?>
+								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be longer than Key Rotation time."); ?>
 							</td>
 						</tr>
 						<tr>

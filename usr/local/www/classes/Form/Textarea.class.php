@@ -45,9 +45,11 @@ class Form_Textarea extends Form_Input
 	protected function _getInput()
 	{
 		$element = parent::_getInput();
+		$value = htmlspecialchars($this->_value);
 
 		return <<<EOT
 	{$element}
+		{$value}
 	</textarea>
 EOT;
 	}

@@ -223,7 +223,7 @@ $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 if (!empty($serialports)) {
 	$splist = array();
 	
-	foreach ($serialports as $port) {
+	foreach ($serialports as $port) { 
 		$shortport = substr($port,5);
 		$splist[$shortport] = $shortport;
 	}
@@ -258,14 +258,14 @@ $section->addInput(new Form_Input(
 	'gpsfudge1',
 	'Fudge time 1',
 	'text',
-	$pconfig['gpsfudge1']
+	$pconfig['fudge1']
 ))->setHelp('Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0).');
 
 $section->addInput(new Form_Input(
 	'gpsfudge2',
 	'Fudge time 2',
 	'text',
-	$pconfig['gpsfudge2']
+	$pconfig['fudge2']
 ))->setHelp('Fudge time 2 is used to specify the GPS time offset (default: 0.0).');
 
 $section->addInput(new Form_Input(

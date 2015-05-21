@@ -219,29 +219,31 @@ $section->addInput(new Form_Select(
 			'The perdefined configurations assume your GPS has already been set to NMEA mode.');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-$serialports = array('/dev/port1', '/dev/port2', '/dev/port3', '/dev/port4');
-$splist = array();
 
-foreach ($serialports as $port) {
-	$shortport = substr($port,5);
-	$splist[$shortport] = $shortport;
+if (!empty($serialports)) {
+	$splist = array();
+	
+	foreach ($serialports as $port) {
+		$shortport = substr($port,5);
+		$splist[$shortport] = $shortport;
+	}
+	
+	$section->addInput(new Form_Select(
+		'gpsport',
+		'Serial port',
+		$pconfig['port'],
+			$splist
+	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
+	
+	$section->addInput(new Form_Select(
+		'gpsspeed',
+		null,
+		$pconfig['speed'],
+		[0 => '4800', 15 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
+	
+	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
+				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
 }
-
-$section->addInput(new Form_Select(
-	'gpsport',
-	'Serial port',
-	$pconfig['port'],
-		$splist
-))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
-
-$section->addInput(new Form_Select(
-	'gpsspeed',
-	null,
-	$pconfig['speed'],
-	[0 => '4800', 15 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
-
-))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
-			'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
 
 $nmealist = build_nmea_list();
 $section->addInput(new Form_Select(

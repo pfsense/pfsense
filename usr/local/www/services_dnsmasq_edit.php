@@ -264,21 +264,21 @@ if( $pconfig['aliases']['item']) {
 			'aliashost' . $counter,
 			null,
 			'text',
-			htmlspecialchars($item['host'])
+			$item['host']
 		))->setHelp($counter == $last ? 'Host name':null);
 
 		$group->add(new Form_Input(
 			'aliasdomain' . $counter,
 			null,
 			'text',
-			htmlspecialchars($item['domain'])
+			$item['domain']
 		))->setHelp($counter == $last ? 'Value':null);
 
 		$group->add(new Form_Input(
 			'aliasdescription' . $counter,
 			null,
 			'text',
-			htmlspecialchars($item['description'])
+			$item['description']
 		))->setHelp($counter == $last ? 'Description':null);
 
 		$btn = new Form_Button(

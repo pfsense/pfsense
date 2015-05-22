@@ -510,9 +510,12 @@ if ($pkg['tabs'] <> "") {
 		$colspan="";
 		if (isset($pkga['dontdisplayname'])) {
 			$input="";
-			// We do not want a separate tr tag pair for each field in a set of combined fields.
-			// The case of putting the first tr tag at the beginning of a combine-fields set is already handled above.
-			if (!isset($pkga['combinefields'])) {
+			// If this is in a set of combined fields and;
+			// - it is a "begin" (case already handled above) or
+			// - usecolspan2 is in effect (so we want to spread all the combined fields horizontally)
+			// then we do not want this "tr" to be inserted.
+			// Thus only insert the "tr" if the not (!) of the above condition.
+			if (!((isset($pkga['combinefields'])) && (($pkga['combinefields'] == "begin") || (isset($pkga['usecolspan2']))))) {
 				$input .= "<tr valign='top' id='tr_{$pkga['fieldname']}'>";
 			}
 			if (isset($pkga['usecolspan2'])) {
@@ -532,9 +535,12 @@ if ($pkg['tabs'] <> "") {
 				$req = 'req';
 			}
 			$input="";
-			// We do not want a separate tr tag pair for each field in a set of combined fields.
-			// The case of putting the first tr tag at the beginning of a combine-fields set is already handled above.
-			if (!isset($pkga['combinefields'])) {
+			// If this is in a set of combined fields and;
+			// - it is a "begin" (case already handled above) or
+			// - usecolspan2 is in effect (so we want to spread all the combined fields horizontally)
+			// then we do not want this "tr" to be inserted.
+			// Thus only insert the "tr" if the not (!) of the above condition.
+			if (!((isset($pkga['combinefields'])) && (($pkga['combinefields'] == "begin") || (isset($pkga['usecolspan2']))))) {
 				$input .= "<tr>";
 			}
 			$input .= "<td valign='top' width=\"22%\" class=\"vncell{$req}\">";
@@ -1008,11 +1014,16 @@ if ($pkg['tabs'] <> "") {
 		}
 		#check combinefields options
 		if (isset($pkga['combinefields'])) {
-			// At the end of each combined-fields field we just want to end a td tag.
+			// At the end of each combined-fields field we always want to end a td tag.
 			$input = "</td>";
-			// The tr tag and... ends are only used to end the whole set of combined fields.
-			if ($pkga['combinefields']=="end") {
-				$input.="</tr></table></td></tr>";
+			// The tr tag end is used to end the whole set of combined fields,
+			// but also if usecolspan2 is not in effect then we also put each combined field in its own tr.
+			if (($pkga['combinefields'] == "end") || (!isset($pkga['usecolspan2']))) {
+				$input.="</tr>";
+			}
+			// At the end of the combined fields we finish up the table that encloses the combined fields...
+			if ($pkga['combinefields'] == "end") {
+				$input.="</table></td></tr>";
 			}
 		} else {
 			$input = "</td></tr>";

@@ -230,7 +230,7 @@ $form = new Form;
 
 $section = new Form_Section('Dynamic DNS Client');
 
-// Confusingly the 'enable' checkbox is labelled 'Disable', but thats theway it works!
+// Confusingly the 'enable' checkbox is labelled 'Disable', but thats the way it works!
 // No action (hide or disable) is taken on selecting this.
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -267,18 +267,18 @@ $section->addInput(new Form_Input(
 	'Hostname',
 	'text',
 	$pconfig['host']
-))->setHelp(gettext('Enter the complete host/domain name.  example:	 myhost.dyndns.org') . '<br />' .
-			gettext('he.net tunnelbroker: Enter your tunnel ID') . '<br />' .
-			gettext('GleSYS: Enter your record ID') . '<br />' .
-			gettext('DNSimple: Enter only the domain name.'));
+))->setHelp(gettext('Enter the complete host/domain name.  example:	 myhost.dyndns.org' . '<br />' .
+        			'he.net tunnelbroker: Enter your tunnel ID' . '<br />' .
+        			'GleSYS: Enter your record ID' . '<br />' .
+        			'DNSimple: Enter only the domain name.'));
 
 $section->addInput(new Form_Input(
 	'mx',
 	'MX',
 	'text',
 	$pconfig['mx']
-))->setHelp(gettext('Note: With DynDNS service you can only use a hostname, not an IP address.') . '<br />' .
-			gettext('Set this option only if you need a special MX record. Not	all services support this.'));
+))->setHelp(gettext('Note: With DynDNS service you can only use a hostname, not an IP address.' . '<br />' .
+			        'Set this option only if you need a special MX record. Not	all services support this.'));
 
 $section->addInput(new Form_Checkbox(
 	'wildcard',
@@ -313,28 +313,28 @@ $section->addInput(new Form_Input(
 	'Username',
 	'text',
 	$pconfig['username']
-))->setHelp(gettext('Username is required for all types except Namecheap, FreeDNS and Custom Entries.') . '<br />' .
-			gettext('Route 53: Enter your Access Key ID.') . '<br />' .
-			gettext('GleSYS: Enter your API user.') . '<br />' .
-			gettext('For Custom Entries, Username and Password represent HTTP Authentication username and passwords.'));
+))->setHelp(gettext('Username is required for all types except Namecheap, FreeDNS and Custom Entries.' . '<br />' .
+        			'Route 53: Enter your Access Key ID.' . '<br />' .
+        			'GleSYS: Enter your API user.' . '<br />' .
+        			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.'));
 
 $section->addInput(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
 	$pconfig['passwordfld']
-))->setHelp(gettext('FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.') . '<br />' .
-			gettext('Route 53: Enter your Secret Access Key.') . '<br />' .
-			gettext('GleSYS: Enter your API key.') . '<br />' .
-			gettext('DNSimple: Enter your API token.'));
+))->setHelp(gettext('FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.' . '<br />' .
+        			'Route 53: Enter your Secret Access Key.' . '<br />' .
+        			'GleSYS: Enter your API key.' . '<br />' .
+        			'DNSimple: Enter your API token.'));
 
 $section->addInput(new Form_Input(
 	'zoneid',
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp(gettext('Enter Zone ID that you received when you created your domain in Route 53.') . '<br />' .
-			gettext('DNSimple: Enter the Record ID of record to update.'));
+))->setHelp(gettext('Enter Zone ID that you received when you created your domain in Route 53.' . '<br />' .
+        			'DNSimple: Enter the Record ID of record to update.'));
 
 $section->addInput(new Form_Input(
 	'updateurl',
@@ -348,16 +348,16 @@ $section->addInput(new Form_Textarea(
 	'Result Match',
 	$pconfig['resultmatch']
 ))->sethelp(gettext('This field should be identical to what your DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.') . '<br />' .
-			gettext('If you need the new IP to be included in the request, put %IP% in its place.') . '<br />' .
-			gettext('If you need to include multiple possible values, separate them with a |.  If your provider includes a |, escape it with \\|') . '<br />' .
-			gettext('Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.'));
+    			    'If you need the new IP to be included in the request, put %IP% in its place.') . '<br />' .
+    			    'If you need to include multiple possible values, separate them with a |.  If your provider includes a |, escape it with \\|') . '<br />' .
+        			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.'));
 
 $section->addInput(new Form_Input(
 	'ttl',
 	'TTL',
 	'text',
 	$pconfig['ttl']
-))->setHelp(gettext('Choose TTL for your dns record.'));
+))->setHelp('Choose TTL for your dns record.');
 
 $section->addInput(new Form_Input(
 	'description',

@@ -64,14 +64,18 @@ if (isset($_POST['resolve'])) {
 function getGETPOSTsettingvalue($settingname, $default)
 {
 	$settingvalue = $default;
+
 	if($_GET[$settingname])
 		$settingvalue = $_GET[$settingname];
+
 	if($_POST[$settingname])
 		$settingvalue = $_POST[$settingname];
+
 	return $settingvalue;
 }
 
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
+
 if($rulenum) {
 	list($rulenum, $tracker, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $tracker, $type);
@@ -80,6 +84,7 @@ if($rulenum) {
 }
 
 $filtersubmit = getGETPOSTsettingvalue('filtersubmit', null);
+
 if ($filtersubmit) {
 	$interfacefilter = getGETPOSTsettingvalue('interface', null);
 	$filtertext = getGETPOSTsettingvalue('filtertext', "");
@@ -87,6 +92,7 @@ if ($filtersubmit) {
 }
 
 $filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
+
 if ($filterlogentries_submit) {
 	$filterfieldsarray = array();
 
@@ -124,16 +130,13 @@ $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall"));
 $shortcut_section = "firewall";
 include("head.inc");
 
-?>
-
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
-<!--
+/*
 &#x1f539; = "Resolve" (Small blue diamond)
 &#x23ec; = "Easyrule add to block list" (Double down arrow)
 &#x23eb; = "Easyrule add to pass list" (Double up arrow)
 &#x25ba; = "out" (simple right arrow)
--->
-<?php
+*/
+
 function build_if_list() {
 	$iflist = get_configured_interface_with_descr(false, true);
 	//$iflist = get_interface_list();
@@ -219,7 +222,7 @@ if(!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'actpass',
 		'Pass',
 		'Pass',
-		in_arrayi('Pass',	$Include_Act)
+		in_arrayi('Pass', $Include_Act)
 	));
 
 	$group->add(new Form_Input(
@@ -337,9 +340,10 @@ if (!isset($config['syslog']['rawfilter'])) {
 	if ( (!$filtertext) && (!$filterfieldsarray) )
 		printf(gettext("Last %s firewall log entries."),count($filterlog));
 	else
-		echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
+		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
 
-		printf(gettext(" (Maximum %s)"),$nentries)?>
+		printf(gettext(" (Maximum %s)"),$nentries)
+?>
 	</div>
 	<div class="panel-body">
 	   <div class="table-responsive">
@@ -399,6 +403,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 
 		$int = strtolower($filterent['interface']);
 		$proto = strtolower($filterent['proto']);
+
 		if($filterent['version'] == '6') {
 			$ipproto = "inet6";
 			$filterent['srcip'] = "[{$filterent['srcip']}]";
@@ -449,14 +454,14 @@ else
 ?>
 			<tr>
 				<td colspan="2">
-					<?php printf(gettext("Last %s firewall log entries"),$nentries)?></td>
+					<?php printf(gettext("Last %s firewall log entries"),$nentries)?>
+				</td>
 			</tr>
 <?php
 	if($filtertext)
 		dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
 	else
 		dump_clog($filter_logfile, $nentries);
-
 }
 ?>
 		</table>

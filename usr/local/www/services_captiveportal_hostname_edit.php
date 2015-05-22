@@ -218,7 +218,7 @@ $section->addInput(new Form_Input(
 	'zone',
 	null,
 	'hidden',
-	htmlspecialchars($cpzone)
+	$cpzone
 ));
 
 if (isset($id) && $a_allowedhostnames[$id]) {
@@ -226,7 +226,7 @@ if (isset($id) && $a_allowedhostnames[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 

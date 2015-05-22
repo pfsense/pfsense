@@ -60,8 +60,8 @@ if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-		header("Location: services_captiveportal_zones.php");
-		exit;
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 if (!is_array($config['captiveportal']))
@@ -93,6 +93,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 				}
+
 				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ip, $sn);
 				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ip, $sn);
 			}

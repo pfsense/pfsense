@@ -63,7 +63,7 @@ $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
-		$cpzone = $_POST['zone'];
+	$cpzone = $_POST['zone'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -72,15 +72,18 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 
 if (!is_array($config['captiveportal']))
 		$config['captiveportal'] = array();
+
 $a_cp =& $config['captiveportal'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['captiveportal'][$cpzone]['allowedip']))
 	$config['captiveportal'][$cpzone]['allowedip'] = array();
+
 $a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 
 if (isset($id) && $a_allowedips[$id]) {
@@ -142,6 +145,7 @@ if ($_POST) {
 		} else {
 			$a_allowedips[] = $ip;
 		}
+
 		allowedips_sort();
 
 		write_config();
@@ -159,10 +163,12 @@ if ($_POST) {
 					$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
 				}
 			}
+
 			$rules .= captiveportal_allowedip_configure_entry($ip);
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 			}
+
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
@@ -203,10 +209,7 @@ if ($input_errors)
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('Edit Captive Portal IP rule');
 
@@ -257,7 +260,7 @@ $section->addInput(new Form_Input(
 	'zone',
 	null,
 	'hidden',
-	htmlspecialchars($cpzone)
+	$cpzone
 ));
 
 if (isset($id) && $a_allowedips[$id]) {
@@ -265,7 +268,7 @@ if (isset($id) && $a_allowedips[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 

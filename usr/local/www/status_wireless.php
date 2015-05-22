@@ -190,8 +190,8 @@ include("fbegin.inc");
 				</table>
 			</div>
 			<br />
-			<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br />
-			<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot time
+			<b>Flags:</b> A = Authorized, E = Extended Rate (802.11g), P = Power save mode, H = High Throughput (HT), Q = QoS (WME)<br />
+			<b>Capabilities:</b> WME = Wireless Multimedia Extensions (QoS), WPA = Wi-Fi Protected Access, RSN = 802.11i, HTCAP = 802.11n High Throughput, ATH = Atheros protocol extensions<br />
 		</td>
 	</tr>
 </table>

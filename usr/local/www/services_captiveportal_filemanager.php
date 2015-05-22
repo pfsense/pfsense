@@ -155,7 +155,7 @@ if ($_GET['act'] == 'add') {
 
 	$form = new Form(new Form_Button(
 		'Submit',
-		gettext("Upload")
+		'Upload'
 	));
 
 	$form->setMultipartEncoding();
@@ -176,7 +176,7 @@ if ($_GET['act'] == 'add') {
 		'zone',
 		null,
 		'hidden',
-		htmlspecialchars($cpzone)
+		$cpzone
 	));
 
 	$section->addInput(new Form_Input(

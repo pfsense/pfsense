@@ -62,6 +62,7 @@ $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit MAC
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
+
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 /*
@@ -120,6 +121,7 @@ if ($_POST) {
 			$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
 		}
 	}
+
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
 
@@ -238,7 +240,7 @@ $section->addInput(new Form_Input(
 	'zone',
 	null,
 	'hidden',
-	htmlspecialchars($cpzone)
+	$cpzone
 ));
 
 if (isset($id) && $a_passthrumacs[$id]) {
@@ -246,7 +248,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 
@@ -255,7 +257,7 @@ if (isset($pconfig['username']) && $pconfig['username']) {
 		'username',
 		null,
 		'hidden',
-		htmlspecialchars($pconfig['username'])
+		$pconfig['username']
 	));
 }
 

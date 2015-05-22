@@ -389,7 +389,7 @@ if($_GET['act'] == "delopt") {
 if($_GET['act'] == "addopt") {
 	if(!is_array($pconfig['numberoptions']['item']))
 		$pconfig['numberoptions']['item'] = array();
-		
+
 	array_push($pconfig['numberoptions']['item'], array('number' => null, 'value' => null));
 }
 
@@ -456,7 +456,6 @@ if (false && $tabscounter == 0) {
 	include("foot.inc");
 	exit;
 }
-display_top_tabs($tab_array);
 
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
@@ -467,7 +466,7 @@ require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
-	gettext("Save")
+	'Save'
 ));
 
 $section = new Form_Section('DHCPv6 Options');
@@ -475,7 +474,7 @@ $section = new Form_Section('DHCPv6 Options');
 $section->addInput(new Form_Checkbox(
 	'enable',
 	'DHCPv6 Server',
-	'Enable DHCPv6 server on interface ' . htmlspecialchars($iflist[$if]),
+	'Enable DHCPv6 server on interface ' . $iflist[$if],
 	$pconfig['enable']
 ))->toggles('.form-group:not(:first-child)');
 
@@ -577,7 +576,7 @@ for($i=1;$i<=4; $i++) {
 		'dns' . $i,
 		null,
 		'text',
-		htmlspecialchars($pconfig['dns' . $i])
+		$pconfig['dns' . $i]
 	))->setHelp('DNS ' . $i);
 }
 
@@ -588,21 +587,21 @@ $section->addInput(new Form_Input(
 	'domain',
 	'Domain Name',
 	'text',
-	htmlspecialchars($pconfig['domain'])
+	$pconfig['domain']
 ))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here. ');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
 	'Domain search list',
 	'text',
-	htmlspecialchars($pconfig['domainsearchlist'])
+	$pconfig['domainsearchlist']
 ))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator');
 
 $section->addInput(new Form_Input(
 	'deftime',
 	'Default lease time',
 	'text',
-	htmlspecialchars($pconfig['deftime'])
+	$pconfig['deftime']
 ))->setHelp('Seconds . Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
 			'The default is 7200 seconds.');
 
@@ -610,7 +609,7 @@ $section->addInput(new Form_Input(
 	'maxtime',
 	'Max lease time',
 	'text',
-	htmlspecialchars($pconfig['maxtime'])
+	$pconfig['maxtime']
 ))->setHelp('Maximum lease time for clients that ask for a specific expiration time.' . ' <br />' .
 			'The default is 86400 seconds.');
 
@@ -646,27 +645,27 @@ $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomain'])
+	$pconfig['ddnsdomain']
 ))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	htmlspecialchars($pconfig['ddnsdomainprimary'])
+	$pconfig['ddnsdomainprimary']
 ))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
 	'DDNS Domain Key name',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomainkeyname'])
+	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
 	'DDNS Domain Key secret',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomainkey'])
+	$pconfig['ddnsdomainkey']
 ))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
 $btnntp = new Form_Button(
@@ -687,7 +686,7 @@ $group->add(new Form_Input(
 	'ntp1',
 	'NTP Server 1',
 	'text',
-	htmlspecialchars($pconfig['ntp1']),
+	$pconfig['ntp1'],
 	['placeholder' => 'NTP 1']
 ));
 
@@ -695,7 +694,7 @@ $group->add(new Form_Input(
 	'ntp2',
 	'NTP Server 1',
 	'text',
-	htmlspecialchars($pconfig['ntp2']),
+	$pconfig['ntp2'],
 	['placeholder' => 'NTP 2']
 ));
 
@@ -719,7 +718,7 @@ $section->addInput(new Form_Input(
 	'ldap',
 	'LDAP URI',
 	'text',
-	htmlspecialchars($pconfig['ldap'])
+	$pconfig['ldap']
 ));
 
 $btnnetboot = new Form_Button(
@@ -745,7 +744,7 @@ $section->addInput(new Form_Input(
 	'bootfile_url',
 	'Bootfile URL',
 	'text',
-	htmlspecialchars($pconfig['bootfile_url'])
+	$pconfig['bootfile_url']
 ));
 
 $btnadnl = new Form_Button(
@@ -775,14 +774,14 @@ if($pconfig['numberoptions']) {
 			'number' . $counter,
 			null,
 			'text',
-			htmlspecialchars($item['number'])
+			$item['number']
 		))->setHelp($counter == $last ? 'Number':null);
 
 		$group->add(new Form_Input(
 			'value' . $counter,
 			null,
 			'text',
-			htmlspecialchars($item['value'])
+			$item['value']
 		))->setHelp($counter == $last ? 'Value':null);
 
 		$btn = new Form_Button(

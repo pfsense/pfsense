@@ -51,6 +51,7 @@ function bridge_inuse($num) {
 	global $config, $a_bridges;
 
 	$iflist = get_configured_interface_list(false, true);
+
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif'])
 			return true;
@@ -91,16 +92,16 @@ if ($input_errors)
 
 <?php
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[8] = array(gettext("Bridges"), true, "interfaces_bridge.php");
-$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), true, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 
@@ -122,8 +123,8 @@ $ifdescrs = get_configured_interface_with_descr();
 
 foreach ($a_bridges as $bridge) {
 ?>
-			<tr ondblclick="document.location='interfaces_bridge_edit.php?id=<?=$i?>'">
-				<td class="listlr">
+			<tr>
+				<td>
 					<?=htmlspecialchars(strtoupper($bridge['bridgeif']))?>
 				</td>
 				<td>

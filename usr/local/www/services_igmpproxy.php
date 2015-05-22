@@ -84,7 +84,7 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 if (is_subsystem_dirty('igmpproxy'))
-	print_info_box_np(gettext('The IGMP entry list has been changed.') . '<br />' . gettext('You must apply the changes in order for them to take effect.'));
+	print_info_box_np(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
 ?>
 
 <form action="services_igmpproxy.php" method="post">

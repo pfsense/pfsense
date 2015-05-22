@@ -49,6 +49,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit V
 $shortcut_section = "captiveportal-vouchers";
 
 $cpzone = $_GET['zone'];
+
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
@@ -186,35 +187,35 @@ $section->addInput(new Form_Input(
 	'number',
 	'Roll #',
 	'text',
-	htmlspecialchars($pconfig['number'])
-))->setHelp(gettext("Enter the Roll") . '# (0..' . htmlspecialchars($maxnumber) . ') ' .gettext("found on top of the generated/printed vouchers"));
+	$pconfig['number']
+))->setHelp("Enter the Roll" . '# (0..' . $maxnumber) . ' ' . "found on top of the generated/printed vouchers");
 
 $section->addInput(new Form_Input(
 	'minutes',
 	'Minutes per ticket',
 	'text',
-	htmlspecialchars($pconfig['minutes'])
+	$pconfig['minutes']
 ))->setHelp('Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication.');
 
 $section->addInput(new Form_Input(
 	'count',
 	'Count',
 	'text',
-	htmlspecialchars($pconfig['count'])
-))->setHelp(gettext("Enter the number of vouchers") . '(1..' . htmlspecialchars($maxcount) . ') ' . gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"));
+	$pconfig['count']
+))->setHelp("Enter the number of vouchers" . '(1..' . $maxcount . ') ' . "found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again");
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Comment',
 	'text',
-	htmlspecialchars($pconfig['descr'])
-))->setHelp(gettext('Can be used to further identify this roll. Ignored by the system.'));
+	$pconfig['descr']
+))->setHelp('Can be used to further identify this roll. Ignored by the system.');
 
 $section->addInput(new Form_Input(
 	'zone',
 	null,
 	'hidden',
-	htmlspecialchars($cpzone)
+	$cpzone
 ));
 
 if (isset($id) && $a_roll[$id]) {
@@ -222,7 +223,7 @@ if (isset($id) && $a_roll[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($pconfig['id'])
+		$pconfig['id']
 	));
 }
 

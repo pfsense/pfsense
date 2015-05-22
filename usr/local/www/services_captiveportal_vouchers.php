@@ -56,9 +56,9 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 		$cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
-		header("Location: services_captiveportal_zones.php");
-		exit;
+if (false && empty($cpzone)) {
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 if($_REQUEST['generatekey']) {
@@ -79,14 +79,14 @@ EOF;
 }
 
 if (!is_array($config['captiveportal']))
-		$config['captiveportal'] = array();
+	$config['captiveportal'] = array();
 
 $a_cp =& $config['captiveportal'];
 
 if (!is_array($config['voucher']))
 	$config['voucher'] = array();
 
-if (empty($a_cp[$cpzone])) {
+if (false && empty($a_cp[$cpzone])) {
 	log_error("Submission on captiveportal page with unknown zone parameter: " . htmlspecialchars($cpzone));
 	header("Location: services_captiveportal_zones.php");
 	exit;
@@ -113,6 +113,7 @@ if (!isset($config['voucher'][$cpzone]['exponent'])) {
 			continue;
 
 		$exponent = ($exponent * 2) + 1; // Make it odd number
+
 		if ($exponent <= 65537)
 			break;
 	}
@@ -152,6 +153,7 @@ if ($_GET['act'] == "del") {
 		unlock($voucherlck);
 		write_config();
 	}
+
 	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 	exit;
 }
@@ -248,13 +250,15 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		if (empty($config['voucher'][$cpzone]))
-						$newvoucher = array();
-				else
-						$newvoucher = $config['voucher'][$cpzone];
+			$newvoucher = array();
+		else
+			$newvoucher = $config['voucher'][$cpzone];
+
 		if ($_POST['enable'] == "yes")
 			$newvoucher['enable'] = true;
 		else
 			unset($newvoucher['enable']);
+
 		if (empty($_POST['vouchersyncusername'])) {
 			unset($newvoucher['vouchersyncdbip']);
 			unset($newvoucher['vouchersyncport']);
@@ -472,66 +476,66 @@ $section->addInput(new Form_TextArea(
 	'Sample Text',
 //		'Voucher Public Key',
 	$pconfig['publickey']
-))->setHelp(gettext('Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers.') . "<a href='#' onclick='generatenewkey();'>" . gettext('Generate new key') . "</a>");
+))->setHelp('Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers.' . "<a href='#' onclick='generatenewkey();'>" . 'Generate new key' . "</a>");
 
 $section->addInput(new Form_TextArea(
 	'privatekey',
 	'Voucher Private Key',
 	$pconfig['privatekey']
-))->setHelp(gettext('Paste an RSA private key (64 Bit or smaller) in PEM format here. This key is only used to generate encrypted vouchers and doesn\'t need to be available if the vouchers have been generated offline.'));
+))->setHelp('Paste an RSA private key (64 Bit or smaller) in PEM format here. This key is only used to generate encrypted vouchers and doesn\'t need to be available if the vouchers have been generated offline.');
 
 $section->addInput(new Form_Input(
 	'charset',
 	'Character set',
 	'text',
-	htmlspecialchars($pconfig['charset'])
-))->setHelp(gettext('Tickets are generated with the specified character set. It should contain printable characters (numbers, lower case and upper case letters) that are hard to confuse with others. Avoid e.g. 0/O and l/1.'));
+	$pconfig['charset']
+))->setHelp('Tickets are generated with the specified character set. It should contain printable characters (numbers, lower case and upper case letters) that are hard to confuse with others. Avoid e.g. 0/O and l/1.');
 
 $section->addInput(new Form_Input(
 	'rollbits',
 	'# of Roll bits',
 	'text',
-	htmlspecialchars($pconfig['rollbits'])
-))->setHelp(gettext('Reserves a range in each voucher to store the Roll # it belongs to. Allowed range: 1..31. Sum of Roll+Ticket+Checksum bits must be one Bit less than the RSA key size.'));
+	$pconfig['rollbits']
+))->setHelp('Reserves a range in each voucher to store the Roll # it belongs to. Allowed range: 1..31. Sum of Roll+Ticket+Checksum bits must be one Bit less than the RSA key size.');
 
 $section->addInput(new Form_Input(
 	'ticketbits',
 	'# of Ticket bits',
 	'text',
-	htmlspecialchars($pconfig['ticketbits'])
-))->setHelp(gettext('Reserves a range in each voucher to store the Ticket# it belongs to. Allowed range: 1..16. ' .
+	$pconfig['ticketbits']
+))->setHelp('Reserves a range in each voucher to store the Ticket# it belongs to. Allowed range: 1..16. ' .
 					'Using 16 bits allows a roll to have up to 65535 vouchers. ' .
-					'A bit array, stored in RAM and in the config, is used to mark if a voucher has been used. A bit array for 65535 vouchers requires 8 KB of storage. '));
+					'A bit array, stored in RAM and in the config, is used to mark if a voucher has been used. A bit array for 65535 vouchers requires 8 KB of storage. ');
 
 $section->addInput(new Form_Input(
 	'checksumbits',
 	'# of Checksum bits',
 	'text',
-	htmlspecialchars($pconfig['checksumbits'])
-))->setHelp(gettext('Reserves a range in each voucher to store a simple checksum over Roll # and Ticket#. Allowed range is 0..31.'));
+	$pconfig['checksumbits']
+))->setHelp('Reserves a range in each voucher to store a simple checksum over Roll # and Ticket#. Allowed range is 0..31.');
 
 $section->addInput(new Form_Input(
 	'magic',
 	'Magic number',
 	'text',
-	htmlspecialchars($pconfig['magic'])
-))->setHelp(gettext('Magic number stored in every voucher. Verified during voucher check. ' .
-					'Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked.'));
+	$pconfig['magic']
+))->setHelp('Magic number stored in every voucher. Verified during voucher check. ' .
+					'Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked.');
 
 $section->addInput(new Form_Input(
 	'msgnoaccess',
 	'Invalid voucher message',
 	'text',
-	htmlspecialchars($pconfig['msgnoaccess'])
-))->setHelp(gettext('Error message displayed for invalid vouchers on captive portal error page ($PORTAL_MESSAGE$).'));
+	$pconfig['msgnoaccess']
+))->setHelp('Error message displayed for invalid vouchers on captive portal error page ($PORTAL_MESSAGE$).');
 
 
 $section->addInput(new Form_Input(
 	'msgexpired',
 	'Expired voucher message',
 	'text',
-	htmlspecialchars($pconfig['msgexpired'])
-))->setHelp(gettext('Error message displayed for expired vouchers on captive portal error page ($PORTAL_MESSAGE$).'));
+	$pconfig['msgexpired']
+))->setHelp('Error message displayed for expired vouchers on captive portal error page ($PORTAL_MESSAGE$).');
 
 $form->add($section);
 
@@ -541,43 +545,43 @@ $section->addClass('rolledit');
 $section->addInput(new Form_IpAddress(
 	'vouchersyncdbip',
 	'Synchronize Voucher Database IP',
-	htmlspecialchars($pconfig['vouchersyncdbip'])
-))->setHelp(gettext('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.') . '<br />' .
-			gettext('NOTE: this should be setup on the slave nodes and not the primary node!'));
+	$pconfig['vouchersyncdbip']
+))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.' . '<br />' .
+			'NOTE: this should be setup on the slave nodes and not the primary node!');
 
 $section->addInput(new Form_Input(
 	'vouchersyncport',
 	'Vouchwe sync port',
 	'text',
-	htmlspecialchars($pconfig['vouchersyncport'])
-))->setHelp(gettext('The port of the master voucher node\'s webConfigurator. Example: 443 '));
+	$pconfig['vouchersyncport']
+))->setHelp('The port of the master voucher node\'s webConfigurator. Example: 443 ');
 
 $section->addInput(new Form_Input(
 	'vouchersyncusername',
 	'Voucher sync username',
 	'text',
-	htmlspecialchars($pconfig['vouchersyncusername'])
-))->setHelp(gettext('This is the username of the master voucher nodes webConfigurator.'));
+	$pconfig['vouchersyncusername']
+))->setHelp('This is the username of the master voucher nodes webConfigurator.');
 
 $section->addInput(new Form_Input(
 	'vouchersyncpass',
 	'Voucher sync password',
 	'password',
-	htmlspecialchars($pconfig['vouchersyncuserpass'])
-))->setHelp(gettext('This is the password of the master voucher nodes webConfigurator.'));
+	$pconfig['vouchersyncuserpass']
+))->setHelp('This is the password of the master voucher nodes webConfigurator.');
 
 $section->addInput(new Form_Input(
 	'zone',
 	null,
 	'hidden',
-	htmlspecialchars($cpzone)
+	$cpzone
 ));
 
 $section->addInput(new Form_Input(
 	'exponent',
 	null,
 	'hidden',
-	htmlspecialchars($pconfig['exponent'])
+	$pconfig['exponent']
 ));
 
 $form->add($section);

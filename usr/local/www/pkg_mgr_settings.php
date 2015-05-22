@@ -53,6 +53,7 @@ if ($_POST) {
 	} else {
 		unset($config['system']['altpkgrepo']['enable']);
 	}
+
 	write_config();
 }
 
@@ -79,14 +80,15 @@ $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.ph
 $tab_array[] = array(gettext("Package Settings"), true, "pkg_mgr_settings.php");
 display_top_tabs($tab_array);
 
-print_info_box(gettext("This page allows an alternate package repository to be configured, primarily for temporary use as a testing mechanism.") .
-			   gettext("The contents of unofficial packages servers cannot be verified and may contain malicious files.") .
-			   gettext("The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied.") .
-			   gettext("A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use."), 'default');
+print_info_box(gettext('This page allows an alternate package repository to be configured, primarily for temporary use as a testing mechanism.' .
+					   'The contents of unofficial packages servers cannot be verified and may contain malicious files.' .
+					   'The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied.' .
+					   'A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use.'), 'default');
 
 require('classes/Form.class.php');
 
 $form = new Form();
+
 $section = new Form_Section('Alternate package repository');
 
 $section->addInput(new Form_Checkbox(
@@ -101,8 +103,8 @@ $section->addInput(new Form_Input(
 	'Package Repository URL',
 	'text',
 	$curcfg['xmlrpcbaseurl'] ? $curcfg['xmlrpcbaseurl'] : $g['']
-))->setHelp(gettext(sprintf("This is where %s will check for packages when the",$g['product_name'])) . 
-            '<a href="pkg_mgr.php">' . ' ' . gettext("System: Packages") . ' </a>' . gettext("page is viewed."));
+))->setHelp(sprintf("This is where %s will check for packages when the",$g['product_name']) .
+			'<a href="pkg_mgr.php">' . ' ' . 'System: Packages' . ' </a>' . 'page is viewed.');
 
 $form->add($section);
 print($form);

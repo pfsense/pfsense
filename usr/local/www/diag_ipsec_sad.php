@@ -44,8 +44,6 @@
 ##|*MATCH=diag_ipsec_sad.php*
 ##|-PRIV
 
-define(DEBUG, true); // Enable the substitution of dummy data for testing
-
 require("guiconfig.inc");
 require("ipsec.inc");
 
@@ -53,12 +51,7 @@ $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-if(DEBUG) { // Dummy data for testing. Remove prior tp production!
-	$sad = array ( '0' => array ( 'dst' => '208.123.73.7', 'src' => '184.57.8.247', 'proto' => 'esp', 'spi' => 'cb32e40f', 'reqid' => '00000001', 'ealgo' => 'aes-gcm-16', 'data' => '6904 B' ),
-				   '1' => array ( 'dst' => '184.57.8.247', 'src' => '208.123.73.7', 'proto' => 'esp', 'spi' => 'cac33f03', 'reqid' => '00000001', 'ealgo' => 'aes-gcm-16', 'data' => '4095 B' ) );
-}
-else
-	$sad = ipsec_dump_sad();
+$sad = ipsec_dump_sad();
 
 /* delete any SA? */
 if ($_GET['act'] == "del") {

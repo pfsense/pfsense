@@ -46,6 +46,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/servi
 if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	   $config['dnsmasq']['domainoverrides'] = array();
 }
+
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if (is_numericint($_GET['id']))

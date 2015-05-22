@@ -191,10 +191,7 @@ if (is_subsystem_dirty('hosts'))
 
 require('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('General DNS Forwarder Options');
 
@@ -210,61 +207,58 @@ $section->addInput(new Form_Checkbox(
 	'DHCP Registration',
 	'Register DHCP leases in DNS forwarder',
 	$pconfig['regdhcp']
-))->setHelp(sprintf(gettext("If this option is set, then machines that specify".
+))->setHelp(sprintf("If this option is set, then machines that specify".
 			" their hostname when requesting a DHCP lease will be registered".
 			" in the DNS forwarder, so that their name can be resolved.".
 			" You should also set the domain in %sSystem:".
-			" General setup%s to the proper value."),'<a href="system.php">','</a>'));
+			" General setup%s to the proper value.",'<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
 	'Static DHCP',
 	'Register DHCP static mappings in DNS forwarder',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf(gettext("If this option is set, then DHCP static mappings will ".
+))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
 					"resolved. You should also set the domain in %s".
-					"System: General setup%s to the proper value."),'<a href="system.php">','</a>'));
+					"System: General setup%s to the proper value.",'<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'dhcpfirst',
 	'Prefer DHCP',
 	'Resolve DHCP mappings first',
 	$pconfig['dhcpfirst']
-))->setHelp(sprintf(gettext("If this option is set, then DHCP mappings will ".
+))->setHelp(sprintf("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR).")));
+					"affects the name given for a reverse lookup (PTR)."));
 
 $section->addInput(new Form_Checkbox(
 	'strict_order',
 	'DNS Query Forwarding',
 	'Query DNS servers sequentially',
 	$pconfig['strict_order']
-))->setHelp(sprintf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
-					"rather than all at once in parallel. ".
-					""), $g['product_name']));
+					"rather than all at once in parallel. ", $g['product_name']));
 
 $section->addInput(new Form_Checkbox(
 	'domain_needed',
 	null,
 	'Require domain',
 	$pconfig['domain_needed']
-))->setHelp(sprintf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.	 ".
-					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ".
-					""), $g['product_name']));
+					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']));
 
 $section->addInput(new Form_Checkbox(
 	'no_private_reverse',
 	null,
 	'Do not forward private reverse lookups',
 	$pconfig['no_private_reverse']
-))->setHelp(sprintf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"not forward reverse DNS lookups (PTR) for private addresses (RFC 1918) to upstream name servers.  ".
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
-					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ".
-					""), $g['product_name']));
+					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']));
 
 $section->addInput(new Form_Input(
 	'port',
@@ -289,9 +283,9 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Strict interface binding',
 	$pconfig['strictbind']
-))->setHelp(gettext('If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, ' .
+))->setHelp('If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, ' .
 					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
-					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.'));
+					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
 
 $btnadvdns = new Form_Button(
 	'btnadvdns',
@@ -314,7 +308,7 @@ $section->addInput(new Form_TextArea (
 $form->add($section);
 print($form);
 
-print_info_box(sprintf(gettext("If the DNS forwarder is enabled, the DHCP".
+print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" service (if enabled) will automatically serve the LAN IP".
 	" address as a DNS server to DHCP clients so they will use".
 	" the forwarder. The DNS forwarder will use the DNS servers".
@@ -324,7 +318,7 @@ print_info_box(sprintf(gettext("If the DNS forwarder is enabled, the DHCP".
 	" is checked. If you don't use that option (or if you use".
 	" a static IP address on WAN), you must manually specify at".
 	" least one DNS server on the %sSystem:".
-	"General setup%s page."),'<a href="system.php">','</a>','<a href="system.php">','</a>'));
+	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'));
 ?>
 
 <script>

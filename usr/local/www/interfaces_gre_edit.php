@@ -223,7 +223,7 @@ if (isset($id) && $a_gres[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 

@@ -60,6 +60,7 @@ if ($_POST) {
 			unset($config['system']['firmware']['alturl']);
 			unset($config['system']['firmware']);
 		}
+
 		if($_POST['allowinvalidsig'] == "yes")
 			$config['system']['firmware']['allowinvalidsig'] = true;
 		else
@@ -74,6 +75,7 @@ if ($_POST) {
 			$config['system']['gitsync']['synconupgrade'] = true;
 		else
 			unset($config['system']['gitsync']['synconupgrade']);
+
 		$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
 		$config['system']['gitsync']['branch'] = $_POST['branch'];
 
@@ -88,6 +90,7 @@ $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 $closehead = false;
 
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
+
 if(file_exists("{$g['tmp_path']}/manifest")) {
 	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
 }
@@ -98,12 +101,13 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
 $tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
 $tab_array[] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
+
 if($g['hidedownloadbackup'] == false)
 	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
 
@@ -252,4 +256,4 @@ update_firmwareurl();
 </script>
 <?php
 
-include("foot.inc"); ?>
+include("foot.inc");

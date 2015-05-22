@@ -62,7 +62,7 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
-		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores (_).");
+		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores ( _ ).");
 	}
 
 	foreach ($a_cp as $cpkey => $cpent) {
@@ -94,7 +94,7 @@ require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'submit',
-	gettext("Continue")
+	'Continue'
 ));
 
 $section = new Form_Section('Edit Captive Portal Zones');

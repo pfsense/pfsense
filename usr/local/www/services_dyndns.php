@@ -201,7 +201,7 @@ foreach ($a_dyndns as $dyndns):
 
 <?php
 
-print_info_box(gettext("IP addresses appearing in green are up to date with Dynamic DNS provider. ") .
-			   gettext("You can force an update for an IP address on the edit page for that service."));
+print_info_box(gettext("IP addresses appearing in green are up to date with Dynamic DNS provider. " .
+			           "You can force an update for an IP address on the edit page for that service."));
 
 include("foot.inc");

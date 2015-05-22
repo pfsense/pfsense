@@ -179,12 +179,15 @@ if ($_POST) {
 			}
 		}
 	}
+
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = gettext("A valid IP address must be specified.");
 	}
+
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
+
 	if($static_arp_enabled && !$_POST['ipaddr']) {
 		$input_errors[] = gettext("Static ARP is enabled.  You must specify an IP address.");
 	}
@@ -226,7 +229,7 @@ if ($_POST) {
 
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
 		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
-		
+
 	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2'])))
 		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
 
@@ -236,9 +239,9 @@ if ($_POST) {
 		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 	}
+
 	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4'])))
 		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
-
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
@@ -353,7 +356,7 @@ require('classes/Form.class.php');
 
 $form = new Form();
 
-$section = new Form_Section(sprintf(gettext("Static DHCP Mapping on %s"), $ifcfgdescr));
+$section = new Form_Section(sprintf("Static DHCP Mapping on %s", $ifcfgdescr));
 
 $macaddress = new Form_Input(
 	'mac',
@@ -380,13 +383,13 @@ $section->addInput(new Form_Input(
 	'cid',
 	'Client Identifier',
 	'text',
-	htmlspecialchars($pconfig['cid'])
+	$pconfig['cid']
 ));
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
-	htmlspecialchars($pconfig['ipaddr'])
+	$pconfig['ipaddr']
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
 			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
 
@@ -394,7 +397,7 @@ $section->addInput(new Form_Input(
 	'hostnme',
 	'Hostname',
 	'text',
-	htmlspecialchars($pconfig['hostname'])
+	$pconfig['hostname']
 ))->setHelp('Name of the host, without domain part.');
 
 if($netboot_enabled) {
@@ -402,14 +405,14 @@ if($netboot_enabled) {
 		'filename',
 		'Netboot filename',
 		'text',
-		htmlspecialchars($pconfig['filename'])
+		$pconfig['filename']
 	))->setHelp('Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.');
 
 	$section->addInput(new Form_Input(
 		'rootpath',
 		'Root Path',
 		'text',
-		htmlspecialchars($pconfig['rootpath'])
+		$pconfig['rootpath']
 	))->setHelp('Enter the root-path-string, overrides setting on main page.');
 }
 
@@ -417,7 +420,7 @@ $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
-	htmlspecialchars($pconfig['hostname'])
+	$pconfig['hostname']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 $section->addInput(new Form_Checkbox(
@@ -433,7 +436,7 @@ $group->add(new Form_Input(
 	'wins1',
 	null,
 	'text',
-	htmlspecialchars($pconfig['wins1']),
+	$pconfig['wins1'],
 	['placeholder' => 'WINS 1']
 ));
 
@@ -441,7 +444,7 @@ $group->add(new Form_Input(
 	'win2',
 	null,
 	'text',
-	htmlspecialchars($pconfig['win2']),
+	$pconfig['win2'],
 	['placeholder' => 'WINS 2']
 ));
 
@@ -452,7 +455,7 @@ $group->add(new Form_Input(
 	'dns1',
 	null,
 	'text',
-	htmlspecialchars($pconfig['dns1']),
+	$pconfig['dns1'],
 	['placeholder' => 'DNS1 1']
 ));
 
@@ -460,7 +463,7 @@ $group->add(new Form_Input(
 	'dns2',
 	null,
 	'text',
-	htmlspecialchars($pconfig['dns2']),
+	$pconfig['dns2'],
 	['placeholder' => 'DNS 2']
 ));
 
@@ -468,7 +471,7 @@ $group->add(new Form_Input(
 	'dns3',
 	null,
 	'text',
-	htmlspecialchars($pconfig['dns3']),
+	$pconfig['dns3'],
 	['placeholder' => 'DNS 3']
 ));
 
@@ -476,7 +479,7 @@ $group->add(new Form_Input(
 	'dns4',
 	null,
 	'text',
-	htmlspecialchars($pconfig['dns4']),
+	$pconfig['dns4'],
 	['placeholder' => 'DNS 4']
 ));
 
@@ -488,35 +491,35 @@ $section->addInput(new Form_Input(
 	'gateway',
 	'Gateway',
 	'text',
-	htmlspecialchars($pconfig['gateway'])
+	$pconfig['gateway']
 ))->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
-	htmlspecialchars($pconfig['domain'])
+	$pconfig['domain']
 ))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here. ');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
 	'Domain search list',
 	'text',
-	htmlspecialchars($pconfig['domainsearchlist'])
+	$pconfig['domainsearchlist']
 ))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator');
 
 $section->addInput(new Form_Input(
 	'deftime',
 	'Default lease time (Seconds)',
 	'text',
-	htmlspecialchars($pconfig['deftime'])
+	$pconfig['deftime']
 ))->setHelp('Used for clients that do not ask for a specific expiration time. The default is 7200 seconds.');
 
 $section->addInput(new Form_Input(
 	'maxtime',
 	'Maximum lease time (Seconds)',
 	'text',
-	htmlspecialchars($pconfig['maxtime'])
+	$pconfig['maxtime']
 ))->setHelp('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds.');
 
 $btndyndns = new Form_Button(
@@ -542,27 +545,27 @@ $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomain'])
+	$pconfig['ddnsdomain']
 ))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	htmlspecialchars($pconfig['ddnsdomainprimary'])
+	$pconfig['ddnsdomainprimary']
 ))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
 	'DDNS Domain Key name',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomainkeyname'])
+	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
 	'DDNS Domain Key secret',
 	'text',
-	htmlspecialchars($pconfig['ddnsdomainkey'])
+	$pconfig['ddnsdomainkey']
 ))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
 $btnntp = new Form_Button(
@@ -583,7 +586,7 @@ $group->add(new Form_Input(
 	'ntp1',
 	'NTP Server 1',
 	'text',
-	htmlspecialchars($pconfig['ntp1']),
+	$pconfig['ntp1'],
 	['placeholder' => 'NTP 1']
 ));
 
@@ -591,7 +594,7 @@ $group->add(new Form_Input(
 	'ntp2',
 	'NTP Server 1',
 	'text',
-	htmlspecialchars($pconfig['ntp2']),
+	$pconfig['ntp2'],
 	['placeholder' => 'NTP 2']
 ));
 
@@ -615,7 +618,7 @@ $section->addInput(new Form_Input(
 	'tftp',
 	'TFTP Server',
 	'text',
-	htmlspecialchars($pconfig['tftp'])
+	$pconfig['tftp']
 ))->setHelp('Leave blank to disable. Enter a full hostname or IP for the TFTP server.');
 
 $form->addGlobal(new Form_Button(

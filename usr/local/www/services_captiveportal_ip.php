@@ -53,8 +53,8 @@ if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-		header("Location: services_captiveportal_zones.php");
-		exit;
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 if (!is_array($config['captiveportal']))
@@ -70,7 +70,7 @@ $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
-	
+
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
 

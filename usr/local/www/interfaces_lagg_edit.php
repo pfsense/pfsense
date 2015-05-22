@@ -109,6 +109,7 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	foreach ($config['laggs']['lagg'] as $lagg) {
 		unset($portlist[$lagg['laggif']]);
 		$laggiflist = explode(",", $lagg['members']);
+		
 		foreach ($laggiflist as $tmpif)
 			$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 	}
@@ -120,6 +121,7 @@ foreach ($checklist as $tmpif)
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+	
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
@@ -127,6 +129,7 @@ if (isset($id) && $a_laggs[$id]) {
 	$pconfig['laggif'] = $a_laggs[$id]['laggif'];
 	$pconfig['members'] = $a_laggs[$id]['members'];
 	$laggiflist = explode(",", $a_laggs[$id]['members']);
+	
 	foreach ($laggiflist as $tmpif)
 		unset($realifchecklist[get_real_interface($tmpif)]);
 
@@ -135,7 +138,6 @@ if (isset($id) && $a_laggs[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -250,7 +252,7 @@ if (isset($id) && $a_laggs[$id]) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id)
+		$id
 	));
 }
 

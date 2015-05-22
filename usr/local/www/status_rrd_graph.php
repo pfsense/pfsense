@@ -67,6 +67,10 @@ if ($_GET['cat']) {
 	}
 }
 
+if ($_POST['cat']) {
+	$curcat = htmlspecialchars($_POST['cat']);
+}
+
 if ($_GET['zone'])
 	$curzone = $_GET['zone'];
 else
@@ -81,7 +85,6 @@ if ($_POST['period']) {
 		$curperiod = "absolute";
 	}
 }
-
 
 if ($_POST['style']) {
 	$curstyle = $_POST['style'];
@@ -160,30 +163,36 @@ if ($_POST['option']) {
 }
 
 $now = time();
+
 if($curcat == "custom") {
-	if (is_numeric($_GET['start'])) {
+	if (is_numeric($_POST['start'])) {
 		if($start < ($now - (3600 * 24 * 365 * 5))) {
 			$start = $now - (8 * 3600);
 		}
-		$start = $_GET['start'];
-	} else if ($_GET['start']) {
-		$start = strtotime($_GET['start']);
+
+		$start = $_POST['start'];
+	} else if ($_POST['start']) {
+		$start = strtotime($_POST['start']);
+
 		if ($start === FALSE || $start === -1) {
-			$input_errors[] = gettext("Invalid start date/time:") . " '{$_GET['start']}'";
-			$start = $now - (8 * 3600);
+			$input_errors[] = gettext("Invalid start date/time:") . " '{$_POST['start']}'";
+
+		$start = $now - (8 * 3600);
 		}
 	} else {
 		$start = $now - (8 * 3600);
 	}
 }
 
-if (is_numeric($_GET['end'])) {
-	$end = $_GET['end'];
-} else if ($_GET['end']) {
-	$end = strtotime($_GET['end']);
+if (is_numeric($_POST['end'])) {
+	$end = $_POST['end'];
+} else if ($_POST['end']) {
+	$end = strtotime($_POST['end']);
+
 	if ($end === FALSE || $end === -1) {
-		$input_errors[] = gettext("Invalid end date/time:") . " '{$_GET['end']}'";
-		$end = $now;
+		$input_errors[] = gettext("Invalid end date/time:") . " '{$_POST['end']}'";
+
+	$end = $now;
 	}
 } else {
 	$end = $now;
@@ -198,7 +207,7 @@ if($end < $start) {
 $seconds = $end - $start;
 
 $styles = array('inverse' => gettext('Inverse'),
-		'absolute' => gettext('Absolute'));
+				'absolute' => gettext('Absolute'));
 
 /* sort names reverse so WAN comes first */
 rsort($databases);
@@ -223,18 +232,23 @@ foreach($databases as $database) {
 	if(stristr($database, "-wireless")) {
 		$wireless = true;
 	}
+
 	if(stristr($database, "-queues")) {
 		$queues = true;
 	}
+
 	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
+
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
+
 	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
+
 	if(stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
 		$ntpd = true;
 	}
@@ -261,6 +275,7 @@ $closehead = false;
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
 	$cp_zones_tab_array = array();
+
 	foreach($config['captiveportal'] as $cpkey => $cp) {
 		if (!isset($cp['enable']))
 			continue;
@@ -277,33 +292,6 @@ if ($captiveportal && is_array($config['captiveportal'])) {
 		$cp_zones_tab_array[] = array($cp['zone'], $tabactive, "status_rrd_graph.php?cat=captiveportal&zone=$cpkey");
 	}
 }
-
-include("head.inc");
-
-	if ($curcat === "custom") { ?>
-	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui-1.11.1.css")) { ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui-1.11.1.css" />
-	<?php } else { ?>
-		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
-	<?php } ?>
-	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
-	<script type="text/javascript">
-	//<![CDATA[
-		jQuery(function ($) {
-			var options = {
-				dateFormat: 'mm/dd/yy',
-				timeFormat: 'hh:mm:ss',
-				showSecond: true
-			};
-			$("#startDateTime").datetimepicker(options);
-			$("#endDateTime").datetimepicker(options);
-		});
-	//]]>
-	</script>
-<?php } ?>
-
-<?php
 
 function get_dates($curperiod, $graph) {
 	global $graph_length;
@@ -495,6 +483,7 @@ function build_options() {
 
 	return($optionslist);
 }
+include("head.inc");
 
 display_top_tabs(make_tabs());
 
@@ -503,7 +492,11 @@ if ($input_errors && count($input_errors))
 
 require('classes/Form.class.php');
 
-$form = new Form(false);
+$form = new Form(new Form_Button(
+	'submit',
+	'Go!'
+	));
+
 $form->addClass('auto-submit');
 
 $section = new Form_Section('Graph settings');
@@ -532,54 +525,48 @@ $group->add(new Form_Select(
 ))->setHelp('Period');
 
 if($curcat == 'custom')
-	$group->setHelp('<strong>Note:</strong> Any changes to these option may not take affect until the next auto-refresh');
+	$group->setHelp('Any changes to these option may not take affect until the next auto-refresh.');
 
 $section->add($group);
 
-$form->add($section);
-print $form;
-
-$form = new Form(false);
-$section = new Form_Section('Date/Time range');
-$group = new Form_Group('');
-
 if($curcat == 'custom') {
-	$group->add(new Form_Input(
-		'host',
-		'Hostname',
-		'text',
-		$start_fmt,
-		['placeholder' => 'Hostname to ping']
-	))->setHelp('Start');
 
-	$group->add(new Form_Input(
-		'host',
-		'Hostname',
-		'text',
-		$start_fmt,
-		['placeholder' => 'Hostname to ping']
-	))->setHelp('End');
-
-	if($curcat != 'custom')
-		$group->setHelp('<strong>Note:</strong> Any changes to these option may not take affect until the next auto-refresh');
-
-	$section->add($group);
-
-	$form->add($section);
-	print $form;
+	$section->addInput(new Form_Input(
+		'cat',
+		null,
+		'hidden',
+		'custom'
+	 ));
 
 	$tz = date_default_timezone_get();
 	$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
 	$start_fmt = strftime("%m/%d/%Y %H:%M:%S", $start);
 	$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
-	?>
-	<?=gettext("Start:")?>
-	<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfld unknown" size="24" value="<?= htmlentities($start_fmt); ?>" />
-	<?=gettext("End:")?>
-	<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfld unknown" size="24" value="<?= htmlentities($end_fmt); ?>" />
-	<input type="submit" name="Submit" value="<?=gettext("Go"); ?>" />
 
-	<?php
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'start',
+		'Start',
+		'datetime',
+		$start_fmt
+	))->setHelp('Start');
+
+	$group->add(new Form_Input(
+		'end',
+		'End',
+		'datetime',
+		$end_fmt
+	))->setHelp('End');
+
+	if($curcat != 'custom')
+		$group->setHelp('Any changes to these option may not take affect until the next auto-refresh');
+
+	$section->add($group);
+
+	$form->add($section);
+	print($form);
+
 	$curdatabase = $curoption;
 	$graph = "custom-$curdatabase";
 	if(in_array($curdatabase, $custom_databases)) {
@@ -593,6 +580,9 @@ if($curcat == 'custom') {
 
 	}
 } else {
+	$form->add($section);
+	print($form);
+
 	foreach($graphs as $graph) {
 		/* check which databases are valid for our category */
 		foreach($ui_databases as $curdatabase) {
@@ -605,6 +595,7 @@ if($curcat == 'custom') {
 			$optionc = explode("-", $curdatabase);
 			$search = array("-", ".rrd", $optionc);
 			$replace = array(" :: ", "", $friendly);
+
 			switch($curoption) {
 				case "outbound":
 					/* make sure we do not show the placeholder databases in the outbound view */
@@ -631,6 +622,7 @@ if($curcat == 'custom') {
 							continue 2;
 						}
 					}
+
 					if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 						continue 2;
 					}
@@ -647,6 +639,7 @@ if($curcat == 'custom') {
 						continue 2;
 					}
 			}
+
 			if(in_array($curdatabase, $ui_databases)) {
 				$id = "{$graph}-{$curoption}-{$curdatabase}";
 				$id = preg_replace('/\./', '_', $id);
@@ -663,6 +656,7 @@ if($curcat == 'custom') {
 		}
 	}
 }
+
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -743,9 +737,9 @@ if($curcat == 'custom') {
 <script>
 events.push(function(){
 	$('.auto-submit').on('change', function(){
-	$(this).submit();
+		$(this).submit();
 	});
 });
 </script>
 
-<?php include("foot.inc"); ?>
+<?php include("foot.inc");

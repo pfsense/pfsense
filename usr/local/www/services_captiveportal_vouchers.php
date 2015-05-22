@@ -56,7 +56,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 		$cpzone = $_POST['zone'];
 
-if (false && empty($cpzone)) {
+if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
@@ -86,7 +86,7 @@ $a_cp =& $config['captiveportal'];
 if (!is_array($config['voucher']))
 	$config['voucher'] = array();
 
-if (false && empty($a_cp[$cpzone])) {
+if (empty($a_cp[$cpzone])) {
 	log_error("Submission on captiveportal page with unknown zone parameter: " . htmlspecialchars($cpzone));
 	header("Location: services_captiveportal_zones.php");
 	exit;

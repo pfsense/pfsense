@@ -87,16 +87,16 @@ include('head.inc');
 if ($input_errors) print_input_errors($input_errors);
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), true, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), true, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
@@ -130,7 +130,9 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 	}
 ?>
 	</table>
-	<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+	<nav class="action-buttons">
+		<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+	</nav>
 </div>
 <?php
 include("foot.inc");

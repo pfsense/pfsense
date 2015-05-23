@@ -45,11 +45,13 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
-if (!is_array($config['ipsec']['phase2']))
+if (!is_array($config['ipsec']['phase2'])) {
 	$config['ipsec']['phase2'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
@@ -64,8 +66,9 @@ if ($_POST) {
 		filter_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval >= 0) {
-			if (is_subsystem_dirty('ipsec'))
+			if (is_subsystem_dirty('ipsec')) {
 				clear_subsystem_dirty('ipsec');
+			}
 		}
 	} else if ($_POST['submit']) {
 		$pconfig = $_POST;
@@ -81,8 +84,9 @@ if ($_POST) {
 			foreach ($_POST['p1entry'] as $p1entrydel) {
 				unset($a_phase1[$p1entrydel]);
 			}
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	} else if (isset($_POST['delp2_x'])) {
 		/* delete selected p2 entries */
@@ -90,8 +94,9 @@ if ($_POST) {
 			foreach ($_POST['p2entry'] as $p2entrydel) {
 				unset($a_phase2[$p2entrydel]);
 			}
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	} else {
 		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
@@ -120,29 +125,35 @@ if ($_POST) {
 
 			/* copy all p1 entries < $movebtn and not selected */
 			for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['p1entry']))
+				if (!in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
 
 			/* copy all selected p1 entries */
 			for ($i = 0; $i < count($a_phase1); $i++) {
-				if ($i == $movebtn)
+				if ($i == $movebtn) {
 					continue;
-				if (in_array($i, $_POST['p1entry']))
+				}
+				if (in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
 
 			/* copy $movebtn p1 entry */
-			if ($movebtn < count($a_phase1))
+			if ($movebtn < count($a_phase1)) {
 				$a_phase1_new[] = $a_phase1[$movebtn];
+			}
 
 			/* copy all p1 entries > $movebtn and not selected */
 			for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
-				if (!in_array($i, $_POST['p1entry']))
+				if (!in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
-			if (count($a_phase1_new) > 0)
+			if (count($a_phase1_new) > 0) {
 				$a_phase1 = $a_phase1_new;
+			}
 
 		} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 			/* move selected p2 entries before this */
@@ -150,65 +161,74 @@ if ($_POST) {
 
 			/* copy all p2 entries < $movebtnp2 and not selected */
 			for ($i = 0; $i < $movebtnp2; $i++) {
-				if (!in_array($i, $_POST['p2entry']))
+				if (!in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
 
 			/* copy all selected p2 entries */
 			for ($i = 0; $i < count($a_phase2); $i++) {
-				if ($i == $movebtnp2)
+				if ($i == $movebtnp2) {
 					continue;
-				if (in_array($i, $_POST['p2entry']))
+				}
+				if (in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
 
 			/* copy $movebtnp2 p2 entry */
-			if ($movebtnp2 < count($a_phase2))
+			if ($movebtnp2 < count($a_phase2)) {
 				$a_phase2_new[] = $a_phase2[$movebtnp2];
+			}
 
 			/* copy all p2 entries > $movebtnp2 and not selected */
 			for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
-				if (!in_array($i, $_POST['p2entry']))
+				if (!in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
-			if (count($a_phase2_new) > 0)
+			if (count($a_phase2_new) > 0) {
 				$a_phase2 = $a_phase2_new;
+			}
 
 		} else if (isset($togglebtn)) {
-			if (isset($a_phase1[$togglebtn]['disabled']))
+			if (isset($a_phase1[$togglebtn]['disabled'])) {
 				unset($a_phase1[$togglebtn]['disabled']);
-			else
+			} else {
 				$a_phase1[$togglebtn]['disabled'] = true;
-
+			}
 		} else if (isset($togglebtnp2)) {
-			if (isset($a_phase2[$togglebtnp2]['disabled']))
+			if (isset($a_phase2[$togglebtnp2]['disabled'])) {
 				unset($a_phase2[$togglebtnp2]['disabled']);
-			else
+			} else {
 				$a_phase2[$togglebtnp2]['disabled'] = true;
-
+			}
 		} else if (isset($delbtn)) {
 			/* remove static route if interface is not WAN */
-			if ($a_phase1[$delbtn]['interface'] <> "wan")
+			if ($a_phase1[$delbtn]['interface'] <> "wan") {
 				mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
+			}
 
 			/* remove all phase2 entries that match the ikeid */
 			$ikeid = $a_phase1[$delbtn]['ikeid'];
-			foreach ($a_phase2 as $p2index => $ph2tmp)
+			foreach ($a_phase2 as $p2index => $ph2tmp) {
 				if ($ph2tmp['ikeid'] == $ikeid) {
 					unset($a_phase2[$p2index]);
 				}
-
+			}
 			unset($a_phase1[$delbtn]);
 
 		} else if (isset($delbtnp2)) {
 			unset($a_phase2[$delbtnp2]);
 
-		} else
+		} else {
 			$save = 0;
+		}
 
 		if ($save === 1) {
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 }
@@ -225,10 +245,12 @@ include("head.inc");
 <form action="vpn_ipsec.php" method="post">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg);
-	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
+	}
+	if ($pconfig['enable'] && is_subsystem_dirty('ipsec')) {
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec">
 	<tr>
@@ -303,10 +325,11 @@ include("head.inc");
 						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
 <?php
-							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 								echo "V1";
-							else
+							} else {
 								echo "V2";
+							}
 ?>
 							<?=$spane;?>
 						</td>
@@ -317,38 +340,43 @@ include("head.inc");
 								$iflabels = get_configured_interface_with_descr();
 
 								$carplist = get_configured_carp_interface_list();
-								foreach ($carplist as $cif => $carpip)
+								foreach ($carplist as $cif => $carpip) {
 									$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
+								}
 
 								$aliaslist = get_configured_ip_aliases_list();
-								foreach ($aliaslist as $aliasip => $aliasif)
+								foreach ($aliaslist as $aliasip => $aliasif) {
 									$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+								}
 
 								$grouplist = return_gateway_groups_array();
 								foreach ($grouplist as $name => $group) {
-									if($group[0]['vip'] <> "")
+									if ($group[0]['vip'] <> "") {
 										$vipif = $group[0]['vip'];
-									else
+									} else {
 										$vipif = $group[0]['int'];
+									}
 									$iflabels[$name] = "GW Group {$name}";
 								}
 								$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
-							}
-							else
+							} else {
 								$if = "WAN";
+							}
 
-							if (!isset($ph1ent['mobile']))
+							if (!isset($ph1ent['mobile'])) {
 								echo $if."<br />".$ph1ent['remote-gateway'];
-							else
+							} else {
 								echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
+							}
 ?>
 							<?=$spane;?>
 						</td>
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
 							<?php
-							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 								echo "{$ph1ent['mode']}";
+							}
 							?>
 							<?=$spane;?>
 						</td>
@@ -357,10 +385,11 @@ include("head.inc");
 							<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name'];?>
 <?php
 							if ($ph1ent['encryption-algorithm']['keylen']) {
-								if ($ph1ent['encryption-algorithm']['keylen']=="auto")
+								if ($ph1ent['encryption-algorithm']['keylen']=="auto") {
 									echo " (" . gettext("auto") . ")";
-								else
+								} else {
 									echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+								}
 							}
 ?>
 							<?=$spane;?>
@@ -417,18 +446,20 @@ include("head.inc");
 						<td class="listt">&nbsp;</td>
 						<td class="listrborder" colspan="6">
 <?php
-							if (isset($_POST["tdph2-{$i}-visible"]))
+							if (isset($_POST["tdph2-{$i}-visible"])) {
 								$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
-							else
+							} else {
 								$tdph2_visible = 0;
+							}
 ?>
 							<input type="hidden" name="tdph2-<?=$i;?>-visible" id="tdph2-<?=$i;?>-visible" value="<?=$tdph2_visible?>" />
 							<div id="shph2but-<?=$i?>" <?php echo ($tdph2_visible == '1' ? 'style="display:none"' : '');?>>
 <?php
 							$phase2count=0;
 							foreach ($a_phase2 as $ph2ent) {
-								if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+								if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 									continue;
+								}
 								$phase2count++;
 							}
 							$fr_prefix = "frp2{$i}";
@@ -438,7 +469,7 @@ include("head.inc");
 							</div>
 							<div id="tdph2-<?=$i?>" <?php echo ($tdph2_visible != '1' ? 'style="display:none"' : '');?>>
 							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="phase-2 entries">
-							<tr id="<?=$fr_header;?>">
+								<tr id="<?=$fr_header;?>">
 									<td>&nbsp;</td>
 									<td>&nbsp;</td>
 									<td class="listhdrr"><?=gettext("Mode"); ?></td>
@@ -452,8 +483,9 @@ include("head.inc");
 <?php
 								$j = 0;
 								foreach ($a_phase2 as $ph2index => $ph2ent):
-									if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+									if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 										continue;
+									}
 
 									$fr_c = $fr_prefix . "c" . $j;
 									$fr_d = $fr_prefix . "d" . $j;
@@ -468,7 +500,7 @@ include("head.inc");
 ?>
 								<tr valign="top" id="<?=$fr_prefix . $j;?>" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>'">
 									<td class="listt" align="center" valign="middle">
-									<input type="checkbox" id="<?=$fr_c;?>" name="p2entry[]" value="<?=$ph2index;?>" onclick="fr_bgcolor('<?=$j;?>', '<?=$fr_prefix;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
+										<input type="checkbox" id="<?=$fr_c;?>" name="p2entry[]" value="<?=$ph2index;?>" onclick="fr_bgcolor('<?=$j;?>', '<?=$fr_prefix;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 									</td>
 									<td class="listt" align="center" valign="middle">
 										<input name="togglep2_<?=$ph2index;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn?>.gif"
@@ -481,7 +513,7 @@ include("head.inc");
 										<?=$spane;?>
 									</td>
 <?php
-									if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")):
+									if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")):
 ?>
 										<td class="listr nowrap" id="<?=$fr_d;?>" onclick="fr_toggle('<?=$j;?>', '<?=$fr_prefix;?>')">
 											<?=$spans;?>
@@ -507,14 +539,16 @@ include("head.inc");
 										<?=$spans;?>
 <?php
 										foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
-											if ($k)
+											if ($k) {
 												echo ", ";
+											}
 											echo $p2_ealgos[$ph2ea['name']]['name'];
 											if ($ph2ea['keylen']) {
-												if ($ph2ea['keylen']=="auto")
+												if ($ph2ea['keylen']=="auto") {
 													echo " (" . gettext("auto") . ")";
-												else
+												} else {
 													echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";
+												}
 											}
 										}
 ?>
@@ -525,8 +559,9 @@ include("head.inc");
 <?php
 										if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
 											foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
-												if ($k)
+												if ($k) {
 													echo ", ";
+												}
 												echo $p2_halgos[$ph2ha];
 											}
 										}

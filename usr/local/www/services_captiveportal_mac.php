@@ -49,19 +49,21 @@ global $cpzone;
 global $cpzoneid;
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 if ($_POST) {
@@ -80,8 +82,9 @@ if ($_POST) {
 				@unlink("{$g['tmp_path']}/passthrumac_gui");
 			}
 			$savemsg = get_std_save_message($retval);
-			if ($retval == 0)
+			if ($retval == 0) {
 				clear_subsystem_dirty('passthrumac');
+			}
 		}
 	}
 
@@ -94,16 +97,18 @@ if ($_POST) {
 			echo gettext("Please set the zone on which the operation should be allowed");
 			exit;
 		}
-		if (!is_array($a_cp[$cpzone]['passthrumac']))
+		if (!is_array($a_cp[$cpzone]['passthrumac'])) {
 			$a_cp[$cpzone]['passthrumac'] = array();
+		}
 		$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 
 		if ($_POST['username']) {
 			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
-			if (!empty($mac))
+			if (!empty($mac)) {
 				$_POST['delmac'] = $mac['mac'];
-			else
+			} else {
 				echo gettext("No entry exists for this username:") . " " . $_POST['username'] . "\n";
+			}
 		}
 		if ($_POST['delmac']) {
 			$found = false;
@@ -123,8 +128,9 @@ if ($_POST) {
 				unset($a_passthrumacs[$idx]);
 				write_config();
 				echo gettext("The entry was successfully deleted") . "\n";
-			} else
+			} else {
 				echo gettext("No entry exists for this mac address:") . " " .  $_POST['delmac'] . "\n";
+			}
 		}
 		exit;
 	}
@@ -158,7 +164,8 @@ include("head.inc");
 <?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal mac">
-	<tr><td class="tabnavtbl">
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -169,7 +176,8 @@ include("head.inc");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
 ?>
-	</td></tr>
+		</td>
+	</tr>
 	<tr>
 		<td class="tabcont">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main">

@@ -42,10 +42,11 @@
 require("guiconfig.inc");
 
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
-if (empty($config['dhcrelay']['interface']))
+if (empty($config['dhcrelay']['interface'])) {
 	$pconfig['interface'] = array();
-else
+} else {
 	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
+}
 $pconfig['server'] = $config['dhcrelay']['server'];
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 
@@ -57,7 +58,7 @@ $iflist = get_configured_interface_with_descr();
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
-	foreach($config['dhcpd'] as $dhcpif => $dhcp) {
+	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;
@@ -80,8 +81,9 @@ if ($_POST) {
 		if ($_POST['server']) {
 			$checksrv = explode(",", $_POST['server']);
 			foreach ($checksrv as $srv) {
-				if (!is_ipaddr($srv))
+				if (!is_ipaddr($srv)) {
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
+				}
 			}
 		}
 	}
@@ -102,7 +104,7 @@ if ($_POST) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DHCP Relay"));
+$pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");
 
@@ -132,73 +134,76 @@ function enable_change(enable_over) {
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp relay">
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-		<tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+					<tr>
 <?php
 	if ($dhcpd_enabled) {
 		echo "<td>DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
-			echo "</td></tr></table></div></td></tr></table></form>";
-			include("fend.inc"); 
-			echo "</body></html>";
-			exit;
-		}
+		echo "</td></tr></table></div></td></tr></table></form>";
+		include("fend.inc");
+		echo "</body></html>";
+		exit;
+	}
 ?>
 
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP Relay configuration"); ?></td>
-		</tr>
-		<tr>
-                        <td width="22%" valign="top" class="vncellreq">Enable</td>
-                        <td width="78%" class="vtable">
-			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-                          <strong><?php printf(gettext("Enable DHCP relay on interface"));?></strong>
-			</td>
-		</tr>
-		<tr>
-                        <td width="22%" valign="top" class="vncellreq">Interface(s)</td>
-                        <td width="78%" class="vtable">
-				<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
-			<?php
-                                foreach ($iflist as $ifent => $ifdesc) {
-					if (!is_ipaddr(get_interface_ip($ifent)))
-						continue;
-					echo "<option value=\"{$ifent}\"";
-					if (in_array($ifent, $pconfig['interface']))
-						echo " selected=\"selected\"";
-					echo ">{$ifdesc}</option>\n";
-				}
-			?>
-                                </select>
-				<br />Interfaces without an IP address will not be shown.
-			</td>
-		</tr>
-		<tr>
-	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                      <td width="78%" class="vtable">
-<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""; ?> />
-                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
-                      <?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?></td>
-		</tr>
-		<tr>
-                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination server");?></td>
-                        <td width="78%" class="vtable">
-                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
-                          <br />
-			  <?=gettext("This is the IP address of the server to which DHCP requests are relayed. You can enter multiple server IP addresses, separated by commas.");?>
-                        </td>
-		</tr>
-		<tr>
-                        <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%">
-                          <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-                        </td>
-		</tr>
-	</table>
-	</div>
-    </td>
-  </tr>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP Relay configuration"); ?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Enable</td>
+						<td width="78%" class="vtable">
+							<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
+							<strong><?php printf(gettext("Enable DHCP relay on interface"));?></strong>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Interface(s)</td>
+						<td width="78%" class="vtable">
+							<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
+							<?php
+								foreach ($iflist as $ifent => $ifdesc) {
+									if (!is_ipaddr(get_interface_ip($ifent))) {
+										continue;
+									}
+									echo "<option value=\"{$ifent}\"";
+									if (in_array($ifent, $pconfig['interface'])) {
+										echo " selected=\"selected\"";
+									}
+									echo ">{$ifdesc}</option>\n";
+								}
+							?>
+							</select>
+							<br />Interfaces without an IP address will not be shown.
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vtable">&nbsp;</td>
+						<td width="78%" class="vtable">
+							<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
+							<?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination server");?></td>
+						<td width="78%" class="vtable">
+							<input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
+							<br />
+							<?=gettext("This is the IP address of the server to which DHCP requests are relayed. You can enter multiple server IP addresses, separated by commas.");?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
 </table>
 </form>
 <script type="text/javascript">

@@ -1,21 +1,21 @@
 <?php
 /*
 	vpn_ipsec_mobile.php
-	
+
 	Copyright (C) 2008 Shrew Soft Inc
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -41,13 +41,15 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
-if (!is_array($config['ipsec']['client']))
+if (!is_array($config['ipsec']['client'])) {
 	$config['ipsec']['client'] = array();
+}
 
 $a_client = &$config['ipsec']['client'];
 
@@ -73,37 +75,47 @@ if (count($a_client)) {
 	$pconfig['pfs_group'] = $a_client['pfs_group'];
 	$pconfig['login_banner'] = $a_client['login_banner'];
 
-	if (isset($pconfig['enable']))
+	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
+	}
 
-	if ($pconfig['pool_address']&&$pconfig['pool_netbits'])
+	if ($pconfig['pool_address']&&$pconfig['pool_netbits']) {
 		$pconfig['pool_enable'] = true;
-	else
+	} else {
 		$pconfig['pool_netbits'] = 24;
+	}
 
-	if (isset($pconfig['net_list']))
+	if (isset($pconfig['net_list'])) {
 		$pconfig['net_list_enable'] = true;
+	}
 
-	if (isset($pconfig['save_passwd']))
+	if (isset($pconfig['save_passwd'])) {
 		$pconfig['save_passwd_enable'] = true;
+	}
 
-	if ($pconfig['dns_domain'])
+	if ($pconfig['dns_domain']) {
 		$pconfig['dns_domain_enable'] = true;
+	}
 
-	if ($pconfig['dns_split'])
+	if ($pconfig['dns_split']) {
 		$pconfig['dns_split_enable'] = true;
+	}
 
-	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4'])
+	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4']) {
 		$pconfig['dns_server_enable'] = true;
+	}
 
-	if ($pconfig['wins_server1']||$pconfig['wins_server2'])
+	if ($pconfig['wins_server1']||$pconfig['wins_server2']) {
 		$pconfig['wins_server_enable'] = true;
+	}
 
-	if (isset($pconfig['pfs_group']))
+	if (isset($pconfig['pfs_group'])) {
 		$pconfig['pfs_group_enable'] = true;
+	}
 
-	if ($pconfig['login_banner'])
+	if ($pconfig['login_banner']) {
 		$pconfig['login_banner_enable'] = true;
+	}
 }
 
 if ($_POST['create']) {
@@ -115,9 +127,11 @@ if ($_POST['apply']) {
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
 	$retval = vpn_ipsec_configure(true);
 	$savemsg = get_std_save_message($retval);
-	if ($retval >= 0)
-		if (is_subsystem_dirty('ipsec'))
+	if ($retval >= 0) {
+		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
+		}
+	}
 }
 
 if ($_POST['submit']) {
@@ -127,28 +141,28 @@ if ($_POST['submit']) {
 
 	/* input consolidation */
 
-	
-
 	/* input validation */
 
 	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn =  array(gettext("User Authentication Source"),gettext("Group Authentication Source"));
+	$reqdfieldsn =  array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
 
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($pconfig['pool_enable'])
-		if (!is_ipaddr($pconfig['pool_address']))
+	if ($pconfig['pool_enable']) {
+		if (!is_ipaddr($pconfig['pool_address'])) {
 			$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
-
-	if ($pconfig['dns_domain_enable'])
-		if (!is_domain($pconfig['dns_domain']))
+		}
+	}
+	if ($pconfig['dns_domain_enable']) {
+		if (!is_domain($pconfig['dns_domain'])) {
 			$input_errors[] = gettext("A valid value for 'DNS Default Domain' must be specified.");
-
+		}
+	}
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
 			/* Replace multiple spaces by single */
 			$pconfig['dns_split'] = preg_replace('/\s+/', ' ', trim($pconfig['dns_split']));
-			$domain_array=explode(' ', $pconfig['dns_split']);
+			$domain_array = explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
 					$input_errors[] = gettext("A valid split DNS domain list must be specified.");
@@ -160,39 +174,51 @@ if ($_POST['submit']) {
 
 	if ($pconfig['dns_server_enable']) {
 		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
-			!$pconfig['dns_server3'] && !$pconfig['dns_server4'] )
+		    !$pconfig['dns_server3'] && !$pconfig['dns_server4'] ) {
 			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
-		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1']))
+		}
+		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #1' must be specified.");
-		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2']))
+		}
+		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #2' must be specified.");
-		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3']))
+		}
+		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #3' must be specified.");
-		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4']))
+		}
+		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #4' must be specified.");
+		}
 	}
 
 	if ($pconfig['wins_server_enable']) {
-		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2'])
+		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2']) {
 			$input_errors[] = gettext("At least one WINS server must be specified to enable the DNS Server option.");
-		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1']))
+		}
+		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1'])) {
 			$input_errors[] = gettext("A valid IP address for 'WINS Server #1' must be specified.");
-		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2']))
+		}
+		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2'])) {
 			$input_errors[] = gettext("A valid IP address for 'WINS Server #2' must be specified.");
+		}
 	}
 
-	if ($pconfig['login_banner_enable'])
-		if (!strlen($pconfig['login_banner']))
+	if ($pconfig['login_banner_enable']) {
+		if (!strlen($pconfig['login_banner'])) {
 			$input_errors[] = gettext("A valid value for 'Login Banner' must be specified.");
+		}
+	}
 
 	if (!$input_errors) {
 		$client = array();
-		
-		if ($pconfig['enable'])
-			$client['enable'] = true;
 
-		if (!empty($pconfig['user_source']))
+		if ($pconfig['enable']) {
+			$client['enable'] = true;
+		}
+
+		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
+		}
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
@@ -200,17 +226,21 @@ if ($_POST['submit']) {
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
 
-		if ($pconfig['net_list_enable'])
+		if ($pconfig['net_list_enable']) {
 			$client['net_list'] = true;
+		}
 
-		if ($pconfig['save_passwd_enable'])
+		if ($pconfig['save_passwd_enable']) {
 			$client['save_passwd'] = true;
+		}
 
-		if ($pconfig['dns_domain_enable'])
+		if ($pconfig['dns_domain_enable']) {
 			$client['dns_domain'] = $pconfig['dns_domain'];
+		}
 
-		if ($pconfig['dns_split_enable'])
+		if ($pconfig['dns_split_enable']) {
 			$client['dns_split'] = $pconfig['dns_split'];
+		}
 
 		if ($pconfig['dns_server_enable']) {
 			$client['dns_server1'] = $pconfig['dns_server1'];
@@ -224,23 +254,25 @@ if ($_POST['submit']) {
 			$client['wins_server2'] = $pconfig['wins_server2'];
 		}
 
-		if ($pconfig['pfs_group_enable'])
+		if ($pconfig['pfs_group_enable']) {
 			$client['pfs_group'] = $pconfig['pfs_group'];
+		}
 
-		if ($pconfig['login_banner_enable'])
+		if ($pconfig['login_banner_enable']) {
 			$client['login_banner'] = $pconfig['login_banner'];
+		}
 
 		$a_client = $client;
-		
+
 		write_config();
 		mark_subsystem_dirty('ipsec');
-		
+
 		header("Location: vpn_ipsec_mobile.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Mobile"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -265,18 +297,20 @@ function pool_change() {
 
 function dns_domain_change() {
 
-	if (document.iform.dns_domain_enable.checked)
+	if (document.iform.dns_domain_enable.checked) {
 		document.iform.dns_domain.disabled = 0;
-	else
+	} else {
 		document.iform.dns_domain.disabled = 1;
+	}
 }
 
 function dns_split_change() {
 
-	if (document.iform.dns_split_enable.checked)
+	if (document.iform.dns_split_enable.checked) {
 		document.iform.dns_split.disabled = 0;
-	else
+	} else {
 		document.iform.dns_split.disabled = 1;
+	}
 }
 
 function dns_server_change() {
@@ -307,18 +341,20 @@ function wins_server_change() {
 
 function pfs_group_change() {
 
-	if (document.iform.pfs_group_enable.checked)
+	if (document.iform.pfs_group_enable.checked) {
 		document.iform.pfs_group.disabled = 0;
-	else
+	} else {
 		document.iform.pfs_group.disabled = 1;
+	}
 }
 
 function login_banner_change() {
 
-	if (document.iform.login_banner_enable.checked)
+	if (document.iform.login_banner_enable.checked) {
 		document.iform.login_banner.disabled = 0;
-	else
+	} else {
 		document.iform.login_banner.disabled = 1;
+	}
 }
 
 //]]>
@@ -327,17 +363,23 @@ function login_banner_change() {
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
 
 <?php
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg);
-	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
+	}
+	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec')) {
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-	foreach ($a_phase1 as $ph1ent)
-		if (isset($ph1ent['mobile']))
+	}
+	foreach ($a_phase1 as $ph1ent) {
+		if (isset($ph1ent['mobile'])) {
 			$ph1found = true;
-	if ($pconfig['enable'] && !$ph1found)
+		}
+	}
+	if ($pconfig['enable'] && !$ph1found) {
 		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
-	if ($input_errors)
+	}
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec mobile">
@@ -353,7 +395,7 @@ function login_banner_change() {
 			?>
 		</td>
 	</tr>
-	<tr> 
+	<tr>
 		<td id="mainarea">
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
@@ -363,7 +405,7 @@ function login_banner_change() {
 							<table border="0" cellspacing="2" cellpadding="0" summary="ike extensions">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['enable'],$chk); ?>
+										<?php set_checked($pconfig['enable'], $chk); ?>
 										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
@@ -391,8 +433,9 @@ function login_banner_change() {
 								$auth_servers = auth_get_authserver_list();
 								foreach ($auth_servers as $auth_server) {
 									$selected = "";
-									if (in_array($auth_server['name'], $authmodes))
+									if (in_array($auth_server['name'], $authmodes)) {
 										$selected = "selected=\"selected\"";
+									}
 									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
 								}
 							?>
@@ -412,18 +455,18 @@ function login_banner_change() {
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
-					<tr> 
+					<tr>
 						<td colspan="2" valign="top" class="listtopic">
 							<?=gettext("Client Configuration (mode-cfg)"); ?>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual Address Pool"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable pool">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['pool_enable'],$chk); ?>
+										<?php set_checked($pconfig['pool_enable'], $chk); ?>
 										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onclick="pool_change()" />
 									</td>
 									<td>
@@ -455,7 +498,7 @@ function login_banner_change() {
 							<table border="0" cellspacing="2" cellpadding="0" summary="network list">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['net_list_enable'],$chk); ?>
+										<?php set_checked($pconfig['net_list_enable'], $chk); ?>
 										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
@@ -471,7 +514,7 @@ function login_banner_change() {
 							<table border="0" cellspacing="2" cellpadding="0" summary="password">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['save_passwd_enable'],$chk); ?>
+										<?php set_checked($pconfig['save_passwd_enable'], $chk); ?>
 										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
@@ -482,13 +525,13 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns default domain">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['dns_domain_enable'],$chk); ?>
+										<?php set_checked($pconfig['dns_domain_enable'], $chk); ?>
 										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onclick="dns_domain_change()" />
 									</td>
 									<td>
@@ -511,7 +554,7 @@ function login_banner_change() {
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable split dns">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['dns_split_enable'],$chk); ?>
+										<?php set_checked($pconfig['dns_split_enable'], $chk); ?>
 										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onclick="dns_split_change()" />
 									</td>
 									<td>
@@ -529,13 +572,13 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns servers">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['dns_server_enable'],$chk); ?>
+										<?php set_checked($pconfig['dns_server_enable'], $chk); ?>
 										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onclick="dns_server_change()" />
 									</td>
 									<td>
@@ -571,13 +614,13 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable wins servers">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['wins_server_enable'],$chk); ?>
+										<?php set_checked($pconfig['wins_server_enable'], $chk); ?>
 										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onclick="wins_server_change()" />
 									</td>
 									<td>
@@ -607,7 +650,7 @@ function login_banner_change() {
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable pfs group">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['pfs_group_enable'],$chk); ?>
+										<?php set_checked($pconfig['pfs_group_enable'], $chk); ?>
 										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onclick="pfs_group_change()" />
 									</td>
 									<td>
@@ -631,13 +674,13 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Login Banner"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0" summary="enable login banner">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['login_banner_enable'],$chk); ?>
+										<?php set_checked($pconfig['login_banner_enable'], $chk); ?>
 										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onclick="login_banner_change()" />
 									</td>
 									<td>
@@ -687,10 +730,11 @@ login_banner_change();
 /* local utility functions */
 
 function set_checked($var,& $chk) {
-	if($var)
+	if ($var) {
 		$chk = "checked=\"checked\"";
-	else
+	} else {
 		$chk = "";
+	}
 }
 
 ?>

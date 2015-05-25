@@ -42,8 +42,9 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 foreach ($ipsec_loglevels as $lkey => $ldescr) {
-	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
+	if (!empty($config['ipsec']["ipsec_{$lkey}"])) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
+	}
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
@@ -59,7 +60,7 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	
+
 	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
 		$input_errors[] = "A valid value must be specified for Daemon debug.";
 	}
@@ -112,79 +113,86 @@ if ($_POST) {
 		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] <> '') {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";	
+		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
+			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
+		}
 	}
-	
+
 	if (!$input_errors) {
 
 		if (is_array($config['ipsec'])) {
 			foreach ($ipsec_loglevels as $lkey => $ldescr) {
 				if (empty($_POST["ipsec_{$lkey}"])) {
-					if (isset($config['ipsec']["ipsec_{$lkey}"]))
+					if (isset($config['ipsec']["ipsec_{$lkey}"])) {
 						unset($config['ipsec']["ipsec_{$lkey}"]);
-				} else
+					}
+				} else {
 					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+				}
 			}
 		}
 
 		$needsrestart = false;
 
-		if($_POST['compression'] == "yes") {
-			if (!isset($config['ipsec']['compression']))
+		if ($_POST['compression'] == "yes") {
+			if (!isset($config['ipsec']['compression'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['compression'] = true;
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
 		}
-		
-		if($_POST['enableinterfacesuse'] == "yes") {
-			if (!isset($config['ipsec']['enableinterfacesuse']))
+
+		if ($_POST['enableinterfacesuse'] == "yes") {
+			if (!isset($config['ipsec']['enableinterfacesuse'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['enableinterfacesuse'] = true;
 		} elseif (isset($config['ipsec']['enableinterfacesuse'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['enableinterfacesuse']);
 		}
 
-		if($_POST['unityplugin'] == "yes") {
-			if (!isset($config['ipsec']['unityplugin']))
+		if ($_POST['unityplugin'] == "yes") {
+			if (!isset($config['ipsec']['unityplugin'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['unityplugin'] = true;
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
 		}
 
-		if($_POST['makebeforebreak'] == "yes") {
+		if ($_POST['makebeforebreak'] == "yes") {
 			$config['ipsec']['makebeforebreak'] = true;
 		} elseif (isset($config['ipsec']['makebeforebreak'])) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		if($_POST['noshuntlaninterfaces'] == "yes") {
+		if ($_POST['noshuntlaninterfaces'] == "yes") {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		} elseif (isset($config['ipsec']['noshuntlaninterfaces'])) {
 			unset($config['ipsec']['noshuntlaninterfaces']);
 		}
 
-		if($_POST['acceptunencryptedmainmode'] == "yes") {
-			if (!isset($config['ipsec']['acceptunencryptedmainmode']))
+		if ($_POST['acceptunencryptedmainmode'] == "yes") {
+			if (!isset($config['ipsec']['acceptunencryptedmainmode'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
 		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['acceptunencryptedmainmode']);
 		}
 
-		if(!empty($_POST['uniqueids'])) {
+		if (!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
 		} else {
 			unset($config['ipsec']['uniqueids']);
 		}
 
-		if($_POST['maxmss_enable'] == "yes") {
+		if ($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
 			$config['system']['maxmss'] = $_POST['maxmss'];
 		} else {
@@ -196,10 +204,11 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
-		else
+		} else {
 			$savemsg = gettext($retval);
+		}
 
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
@@ -209,7 +218,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Settings"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -222,10 +231,11 @@ include("head.inc");
 //<![CDATA[
 
 function maxmss_checked(obj) {
-	if (obj.checked)
+	if (obj.checked) {
 		jQuery('#maxmss').attr('disabled',false);
-	else
+	} else {
 		jQuery('#maxmss').attr('disabled','true');
+	}
 }
 
 //]]>
@@ -234,10 +244,12 @@ function maxmss_checked(obj) {
 <form action="vpn_ipsec_settings.php" method="post" name="iform" id="iform">
 
 <?php
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg);
-	if ($input_errors)
+	}
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec settings">
@@ -266,23 +278,26 @@ function maxmss_checked(obj) {
 							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
 							<br />
 							<table summary="ipsec debug">
-						<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
-								<td width="78%" valign="top" class="vncell">
-								<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
-									foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
-										echo "<option value=\"{$lidx}\" ";
-										 if ($pconfig["ipsec_{$lkey}"] == $lidx)
-											echo "selected=\"selected\"";
-										echo ">{$lvalue}</option>\n";
-									}
-								?>
-									</select>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-							<tr style="display:none;"><td></td></tr>
+							<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
+								<tr>
+									<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
+									<td width="78%" valign="top" class="vncell">
+										<?php
+										echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
+										foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
+											echo "<option value=\"{$lidx}\" ";
+											if ($pconfig["ipsec_{$lkey}"] == $lidx)
+												echo "selected=\"selected\"";
+											echo ">{$lvalue}</option>\n";
+										}
+										?>
+										</select>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+								<tr style="display:none;">
+									<td></td>
+								</tr>
 							</table>
 							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
 							"will be generated to aid in troubleshooting."); ?>
@@ -292,15 +307,17 @@ function maxmss_checked(obj) {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Unique IDs"); ?></td>
 						<td width="78%" class="vtable">
 							<strong><?=gettext("Configure Unique IDs as: "); ?></strong>
-							<?php	echo "<select name=\"uniqueids\" id=\"uniqueids\">\n";
+							<?php
+								echo "<select name=\"uniqueids\" id=\"uniqueids\">\n";
 								foreach ($ipsec_idhandling as $value => $lvalue) {
 									echo "<option value=\"{$value}\" ";
-									 if ($pconfig['uniqueids'] == $value)
+									if ($pconfig['uniqueids'] == $value) {
 										echo "selected=\"selected\"";
+									}
 									echo ">{$lvalue}</option>\n";
 								}
 							?>
-								</select>
+							</select>
 							<br />
 							<?=gettext("whether a particular participant ID should be kept unique, with any new IKE_SA using an ID " .
 								"deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new " .

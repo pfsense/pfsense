@@ -44,48 +44,57 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
-if (!is_array($config['ipsec']['phase2']))
+if (!is_array($config['ipsec']['phase2'])) {
 	$config['ipsec']['phase2'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (is_numericint($_GET['p1index']))
+if (is_numericint($_GET['p1index'])) {
 	$p1index = $_GET['p1index'];
-if (isset($_POST['p1index']) && is_numericint($_POST['p1index']))
+}
+if (isset($_POST['p1index']) && is_numericint($_POST['p1index'])) {
 	$p1index = $_POST['p1index'];
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	$p1index = $_GET['dup'];
+}
 
 if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
-	if (!isset($_GET['dup']) || !is_numericint($_GET['dup']))
+	if (!isset($_GET['dup']) || !is_numericint($_GET['dup'])) {
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+	}
 
 	$old_ph1ent = $a_phase1[$p1index];
 
 	$pconfig['disabled'] = isset($a_phase1[$p1index]['disabled']);
 
-	if ($a_phase1[$p1index]['interface'])
+	if ($a_phase1[$p1index]['interface']) {
 		$pconfig['interface'] = $a_phase1[$p1index]['interface'];
-	else
+	} else {
 		$pconfig['interface'] = "wan";
+	}
 
-	list($pconfig['remotenet'],$pconfig['remotebits']) = explode("/", $a_phase1[$p1index]['remote-subnet']);
+	list($pconfig['remotenet'], $pconfig['remotebits']) = explode("/", $a_phase1[$p1index]['remote-subnet']);
 
-	if (isset($a_phase1[$p1index]['mobile']))
+	if (isset($a_phase1[$p1index]['mobile'])) {
 		$pconfig['mobile'] = 'true';
-	else
+	} else {
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
+	}
 
-	if (empty($a_phase1[$p1index]['iketype']))
+	if (empty($a_phase1[$p1index]['iketype'])) {
 		$pconfig['iketype'] = "ikev1";
-	else
+	} else {
 		$pconfig['iketype'] = $a_phase1[$p1index]['iketype'];
+	}
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
 	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
@@ -99,7 +108,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
-		($pconfig['authentication_method'] == "xauth_psk_server")) {
+	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
@@ -108,14 +117,17 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
-        $pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
+	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
 
-	if (isset($a_phase1[$p1index]['reauth_enable']))
+	if (isset($a_phase1[$p1index]['reauth_enable'])) {
 		$pconfig['reauth_enable'] = true;
-	if (isset($a_phase1[$p1index]['rekey_enable']))
+	}
+	if (isset($a_phase1[$p1index]['rekey_enable'])) {
 		$pconfig['rekey_enable'] = true;
-	if (isset($a_phase1[$p1index]['responderonly']))
+	}
+	if (isset($a_phase1[$p1index]['responderonly'])) {
 		$pconfig['responderonly'] = true;
+	}
 
 	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {
 		$pconfig['dpd_enable'] = true;
@@ -125,31 +137,33 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
-	if($config['interfaces']['lan'])
+	if ($config['interfaces']['lan']) {
 		$pconfig['localnet'] = "lan";
+	}
 	$pconfig['mode'] = "main";
 	$pconfig['protocol'] = "inet";
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
-	$pconfig['ealgo'] = array( name => "aes" );
+	$pconfig['ealgo'] = array(name => "aes");
 	$pconfig['halgo'] = "sha1";
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = 'on';
-        $pconfig['mobike'] = 'off';
+	$pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
-	if($_GET['mobile']) {
-		$pconfig['mobile']=true;
-                $pconfig['mode'] = "aggressive";
+	if ($_GET['mobile']) {
+		$pconfig['mobile'] = true;
+		$pconfig['mode'] = "aggressive";
 	}
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($p1index);
+}
 
 if ($_POST) {
 	unset($input_errors);
@@ -158,8 +172,8 @@ if ($_POST) {
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
-	// Unset ca and cert if not required to avaoid storing in config
-	if ($method == "pre_shared_key" || $method == "xauth_psk_server"){
+	// Unset ca and cert if not required to avoid storing in config
+	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
 		unset($pconfig['caref']);
 		unset($pconfig['certref']);
 	}
@@ -168,22 +182,26 @@ if ($_POST) {
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
 		case 'eap-mschapv2':
-			if ($pconfig['iketype'] != 'ikev2')
+			if ($pconfig['iketype'] != 'ikev2') {
 				$input_errors[] = gettext("EAP-MSChapv2 can only be used with IKEv2 type VPNs.");
+			}
 			break;
 		case "eap-tls":
-			if ($pconfig['iketype'] != 'ikev2')
+			if ($pconfig['iketype'] != 'ikev2') {
 				$input_errors[] = gettext("EAP-TLS can only be used with IKEv2 type VPNs.");
+			}
 			break;
 		case "eap-radius":
-			if ($pconfig['iketype'] != 'ikev2')
+			if ($pconfig['iketype'] != 'ikev2') {
 				$input_errors[] = gettext("EAP-RADIUS can only be used with IKEv2 type VPNs.");
+			}
 			break;
 		case "pre_shared_key":
 			// If this is a mobile PSK tunnel the user PSKs go on
 			//    the PSK tab, not here, so skip the check.
-			if ($pconfig['mobile'])
+			if ($pconfig['mobile']) {
 				break;
+			}
 		case "xauth_psk_server":
 			$reqdfields = explode(" ", "pskey");
 			$reqdfieldsn = array(gettext("Pre-Shared Key"));
@@ -193,7 +211,7 @@ if ($_POST) {
 		case "xauth_rsa_server":
 		case "rsasig":
 			$reqdfields = explode(" ", "caref certref");
-			$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
+			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 			break;
 	}
 	if (!$pconfig['mobile']) {
@@ -208,19 +226,21 @@ if ($_POST) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
-	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
+	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime']))) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
-
-	if ($pconfig['remotegw']) {
-		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))
-			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
-		elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet"))
-			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or you need to change protocol to IPv6");
-		elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6"))
-			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or you need to change protocol to IPv4");
 	}
 
-	if (($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled']) )) {
+	if ($pconfig['remotegw']) {
+		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
+			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
+		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet")) {
+			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or you need to change protocol to IPv6");
+		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6")) {
+			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or you need to change protocol to IPv4");
+		}
+	}
+
+	if ($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled'])) {
 		$t = 0;
 		foreach ($a_phase1 as $ph1tmp) {
 			if ($p1index <> $t) {
@@ -235,7 +255,7 @@ if ($_POST) {
 
 	if (is_array($a_phase2) && (count($a_phase2))) {
 		foreach ($a_phase2 as $phase2) {
-			if($phase2['ikeid'] == $pconfig['ikeid']) {
+			if ($phase2['ikeid'] == $pconfig['ikeid']) {
 				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
 					$input_errors[] = gettext("There is a Phase 2 using IPv6, you cannot use IPv4.");
 					break;
@@ -250,125 +270,155 @@ if ($_POST) {
 
 	/* My identity */
 
-	if ($pconfig['myid_type'] == "myaddress")
+	if ($pconfig['myid_type'] == "myaddress") {
 		$pconfig['myid_data'] = "";
-
-	if ($pconfig['myid_type'] == "address" and $pconfig['myid_data'] == "")
-		$input_errors[] = gettext("Please enter an address for 'My Identifier'");
-
-	if ($pconfig['myid_type'] == "keyid tag" and $pconfig['myid_data'] == "")
-		$input_errors[] = gettext("Please enter a keyid tag for 'My Identifier'");
-
-	if ($pconfig['myid_type'] == "fqdn" and $pconfig['myid_data'] == "")
-		$input_errors[] = gettext("Please enter a fully qualified domain name for 'My Identifier'");
-
-	if ($pconfig['myid_type'] == "user_fqdn" and $pconfig['myid_data'] == "")
-		$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'My Identifier'");
-
-	if ($pconfig['myid_type'] == "dyn_dns" and $pconfig['myid_data'] == "")
-		$input_errors[] = gettext("Please enter a dynamic domain name for 'My Identifier'");
-
-	if ((($pconfig['myid_type'] == "address") && !is_ipaddr($pconfig['myid_data'])))
-		$input_errors[] = gettext("A valid IP address for 'My identifier' must be specified.");
-
-	if ((($pconfig['myid_type'] == "fqdn") && !is_domain($pconfig['myid_data'])))
-		$input_errors[] = gettext("A valid domain name for 'My identifier' must be specified.");
-
-	if ($pconfig['myid_type'] == "fqdn")
-		if (is_domain($pconfig['myid_data']) == false)
-			$input_errors[] = gettext("A valid FQDN for 'My identifier' must be specified.");
-
-	if ($pconfig['myid_type'] == "user_fqdn") {
-		$user_fqdn = explode("@",$pconfig['myid_data']);
-		if (is_domain($user_fqdn[1]) == false)
-			$input_errors[] = gettext("A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.");
 	}
 
-	if ($pconfig['myid_type'] == "dyn_dns")
-		if (is_domain($pconfig['myid_data']) == false)
+	if ($pconfig['myid_type'] == "address" and $pconfig['myid_data'] == "") {
+		$input_errors[] = gettext("Please enter an address for 'My Identifier'");
+	}
+
+	if ($pconfig['myid_type'] == "keyid tag" and $pconfig['myid_data'] == "") {
+		$input_errors[] = gettext("Please enter a keyid tag for 'My Identifier'");
+	}
+
+	if ($pconfig['myid_type'] == "fqdn" and $pconfig['myid_data'] == "") {
+		$input_errors[] = gettext("Please enter a fully qualified domain name for 'My Identifier'");
+	}
+
+	if ($pconfig['myid_type'] == "user_fqdn" and $pconfig['myid_data'] == "") {
+		$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'My Identifier'");
+	}
+
+	if ($pconfig['myid_type'] == "dyn_dns" and $pconfig['myid_data'] == "") {
+		$input_errors[] = gettext("Please enter a dynamic domain name for 'My Identifier'");
+	}
+
+	if (($pconfig['myid_type'] == "address") && !is_ipaddr($pconfig['myid_data'])) {
+		$input_errors[] = gettext("A valid IP address for 'My identifier' must be specified.");
+	}
+
+	if (($pconfig['myid_type'] == "fqdn") && !is_domain($pconfig['myid_data'])) {
+		$input_errors[] = gettext("A valid domain name for 'My identifier' must be specified.");
+	}
+
+	if ($pconfig['myid_type'] == "fqdn") {
+		if (is_domain($pconfig['myid_data']) == false) {
+			$input_errors[] = gettext("A valid FQDN for 'My identifier' must be specified.");
+		}
+	}
+
+	if ($pconfig['myid_type'] == "user_fqdn") {
+		$user_fqdn = explode("@", $pconfig['myid_data']);
+		if (is_domain($user_fqdn[1]) == false) {
+			$input_errors[] = gettext("A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.");
+		}
+	}
+
+	if ($pconfig['myid_type'] == "dyn_dns") {
+		if (is_domain($pconfig['myid_data']) == false) {
 			$input_errors[] = gettext("A valid Dynamic DNS address for 'My identifier' must be specified.");
+		}
+	}
 
 	/* Peer identity */
 
-	if ($pconfig['myid_type'] == "peeraddress")
+	if ($pconfig['myid_type'] == "peeraddress") {
 		$pconfig['peerid_data'] = "";
+	}
 
 	// Only enforce peer ID if we are not dealing with a pure-psk mobile config.
 	if (!(($pconfig['authentication_method'] == "pre_shared_key") && ($pconfig['mobile']))) {
-		if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "")
+		if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "") {
 			$input_errors[] = gettext("Please enter an address for 'Peer Identifier'");
+		}
 
-		if ($pconfig['peerid_type'] == "keyid tag" and $pconfig['peerid_data'] == "")
+		if ($pconfig['peerid_type'] == "keyid tag" and $pconfig['peerid_data'] == "") {
 			$input_errors[] = gettext("Please enter a keyid tag for 'Peer Identifier'");
+		}
 
-		if ($pconfig['peerid_type'] == "fqdn" and $pconfig['peerid_data'] == "")
+		if ($pconfig['peerid_type'] == "fqdn" and $pconfig['peerid_data'] == "") {
 			$input_errors[] = gettext("Please enter a fully qualified domain name for 'Peer Identifier'");
+		}
 
-		if ($pconfig['peerid_type'] == "user_fqdn" and $pconfig['peerid_data'] == "")
+		if ($pconfig['peerid_type'] == "user_fqdn" and $pconfig['peerid_data'] == "") {
 			$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'Peer Identifier'");
+		}
 
-		if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data'])))
+		if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data']))) {
 			$input_errors[] = gettext("A valid IP address for 'Peer identifier' must be specified.");
+		}
 
-		if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data'])))
+		if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data']))) {
 			$input_errors[] = gettext("A valid domain name for 'Peer identifier' must be specified.");
+		}
 
-		if ($pconfig['peerid_type'] == "fqdn")
-			if (is_domain($pconfig['peerid_data']) == false)
+		if ($pconfig['peerid_type'] == "fqdn") {
+			if (is_domain($pconfig['peerid_data']) == false) {
 				$input_errors[] = gettext("A valid FQDN for 'Peer identifier' must be specified.");
+			}
+		}
 
 		if ($pconfig['peerid_type'] == "user_fqdn") {
-			$user_fqdn = explode("@",$pconfig['peerid_data']);
-			if (is_domain($user_fqdn[1]) == false)
+			$user_fqdn = explode("@", $pconfig['peerid_data']);
+			if (is_domain($user_fqdn[1]) == false) {
 				$input_errors[] = gettext("A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.");
+			}
 		}
 	}
 
 	if ($pconfig['dpd_enable']) {
-		if (!is_numeric($pconfig['dpd_delay']))
+		if (!is_numeric($pconfig['dpd_delay'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD delay.");
+		}
 
-		if (!is_numeric($pconfig['dpd_maxfail']))
+		if (!is_numeric($pconfig['dpd_maxfail'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
+		}
 	}
 
-	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto") {
 		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
-                
-        if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
-            if ($config['system']['crypto_hardware'] == "glxsb") {
-                if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128")
-                    $input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-            }
-        }
+	}
+
+	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
+		if ($config['system']['crypto_hardware'] == "glxsb") {
+			if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128") {
+				$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
+			}
+		}
+	}
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];
-	if($pconfig['ealgo_keylen'])
+	if ($pconfig['ealgo_keylen']) {
 		$pconfig['ealgo']['keylen'] = $_POST['ealgo_keylen'];
+	}
 
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
-		if ($pconfig['iketype'] != 'ikev1')
+		if ($pconfig['iketype'] != 'ikev1') {
 			unset($ph1ent['mode']);
-		else
+		} else {
 			$ph1ent['mode'] = $pconfig['mode'];
+		}
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
 		/* the vpn_ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
-			if($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
+			if ($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
 				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']}");
 			}
 		}
 
-		if ($pconfig['mobile'])
+		if ($pconfig['mobile']) {
 			$ph1ent['mobile'] = true;
-		else
+		} else {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
+		}
 
 		$ph1ent['protocol'] = $pconfig['protocol'];
 
@@ -388,21 +438,24 @@ if ($_POST) {
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
-                $ph1ent['mobike'] = $pconfig['mobike'];
+		$ph1ent['mobike'] = $pconfig['mobike'];
 
-		if (isset($pconfig['reauth_enable']))
+		if (isset($pconfig['reauth_enable'])) {
 			$ph1ent['reauth_enable'] = true;
-		else
+		} else {
 			unset($ph1ent['reauth_enable']);
-		if (isset($pconfig['rekey_enable']))
+		}
+		if (isset($pconfig['rekey_enable'])) {
 			$ph1ent['rekey_enable'] = true;
-		else
+		} else {
 			unset($ph1ent['rekey_enable']);
+		}
 
-		if (isset($pconfig['responderonly']))
+		if (isset($pconfig['responderonly'])) {
 			$ph1ent['responderonly'] = true;
-		else
+		} else {
 			unset($ph1ent['responderonly']);
+		}
 
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
@@ -410,13 +463,15 @@ if ($_POST) {
 		}
 
 		/* generate unique phase1 ikeid */
-		if ($ph1ent['ikeid'] == 0)
+		if ($ph1ent['ikeid'] == 0) {
 			$ph1ent['ikeid'] = ipsec_ikeid_next();
+		}
 
-		if (isset($p1index) && $a_phase1[$p1index])
+		if (isset($p1index) && $a_phase1[$p1index]) {
 			$a_phase1[$p1index] = $ph1ent;
-		else
+		} else {
 			$a_phase1[] = $ph1ent;
+		}
 
 		write_config();
 		mark_subsystem_dirty('ipsec');
@@ -426,10 +481,11 @@ if ($_POST) {
 	}
 }
 
-if ($pconfig['mobile'])
-	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"), gettext("Mobile Client"));
-else
-	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"));
+if ($pconfig['mobile']) {
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 1"), gettext("Mobile Client"));
+} else {
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 1"));
+}
 $shortcut_section = "ipsec";
 
 
@@ -445,35 +501,37 @@ include("head.inc");
 function myidsel_change() {
 	index = document.iform.myid_type.selectedIndex;
 	value = document.iform.myid_type.options[index].value;
-	if (value == 'myaddress')
-			document.getElementById('myid_data').style.visibility = 'hidden';
-	else
-			document.getElementById('myid_data').style.visibility = 'visible';
+	if (value == 'myaddress') {
+		document.getElementById('myid_data').style.visibility = 'hidden';
+	} else {
+		document.getElementById('myid_data').style.visibility = 'visible';
+	}
 }
 
 function iketype_change() {
 	index = document.iform.iketype.selectedIndex;
 	value = document.iform.iketype.options[index].value;
 	if (value == 'ikev2') {
-			document.getElementById('negmode').style.display= 'none';
-                        document.getElementById('mobike').style.display= '';
-                        document.getElementById('natt').style.display= 'none';
-                        document.getElementById('disablereauth').style.display= '';
-        } else {
-			document.getElementById('negmode').style.display = '';
-                        document.getElementById('mobike').style.display = 'none';
-                        document.getElementById('natt').style.display= '';
-                        document.getElementById('disablereauth').style.display= 'none';
-        }
+		document.getElementById('negmode').style.display= 'none';
+		document.getElementById('mobike').style.display= '';
+		document.getElementById('natt').style.display= 'none';
+		document.getElementById('disablereauth').style.display= '';
+	} else {
+		document.getElementById('negmode').style.display = '';
+		document.getElementById('mobike').style.display = 'none';
+		document.getElementById('natt').style.display= '';
+		document.getElementById('disablereauth').style.display= 'none';
+	}
 }
 
 function peeridsel_change() {
 	index = document.iform.peerid_type.selectedIndex;
 	value = document.iform.peerid_type.options[index].value;
-	if (value == 'peeraddress')
-			document.getElementById('peerid_data').style.visibility = 'hidden';
-	else
-			document.getElementById('peerid_data').style.visibility = 'visible';
+	if (value == 'peeraddress') {
+		document.getElementById('peerid_data').style.visibility = 'hidden';
+	} else {
+		document.getElementById('peerid_data').style.visibility = 'visible';
+	}
 }
 
 function methodsel_change() {
@@ -481,51 +539,51 @@ function methodsel_change() {
 	value = document.iform.authentication_method.options[index].value;
 
 	switch (value) {
-	case 'eap-mschapv2':
-	case 'eap-tls':
-	case 'eap-radius':
-		document.getElementById('opt_psk').style.display = 'none';
-		document.getElementById('opt_peerid').style.display = '';
-		document.getElementById('opt_cert').style.display = '';
-		document.getElementById('opt_ca').style.display = '';
-		document.getElementById('opt_cert').disabled = false;
-		document.getElementById('opt_ca').disabled = false;
-		break;
-	case 'hybrid_rsa_server':
-		document.getElementById('opt_psk').style.display = 'none';
-		document.getElementById('opt_peerid').style.display = '';
-		document.getElementById('opt_cert').style.display = '';
-		document.getElementById('opt_ca').style.display = '';
-		document.getElementById('opt_cert').disabled = false;
-		document.getElementById('opt_ca').disabled = false;
-		break;
-	case 'xauth_rsa_server':
-	case 'rsasig':
-		document.getElementById('opt_psk').style.display = 'none';
-		document.getElementById('opt_peerid').style.display = '';
-		document.getElementById('opt_cert').style.display = '';
-		document.getElementById('opt_ca').style.display = '';
-		document.getElementById('opt_cert').disabled = false;
-		document.getElementById('opt_ca').disabled = false;
-		break;
+		case 'eap-mschapv2':
+		case 'eap-tls':
+		case 'eap-radius':
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = '';
+			document.getElementById('opt_cert').style.display = '';
+			document.getElementById('opt_ca').style.display = '';
+			document.getElementById('opt_cert').disabled = false;
+			document.getElementById('opt_ca').disabled = false;
+			break;
+		case 'hybrid_rsa_server':
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = '';
+			document.getElementById('opt_cert').style.display = '';
+			document.getElementById('opt_ca').style.display = '';
+			document.getElementById('opt_cert').disabled = false;
+			document.getElementById('opt_ca').disabled = false;
+			break;
+		case 'xauth_rsa_server':
+		case 'rsasig':
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = '';
+			document.getElementById('opt_cert').style.display = '';
+			document.getElementById('opt_ca').style.display = '';
+			document.getElementById('opt_cert').disabled = false;
+			document.getElementById('opt_ca').disabled = false;
+			break;
 <?php if ($pconfig['mobile']) { ?>
-	case 'pre_shared_key':
-		document.getElementById('opt_psk').style.display = 'none';
-		document.getElementById('opt_peerid').style.display = 'none';
-		document.getElementById('opt_cert').style.display = 'none';
-		document.getElementById('opt_ca').style.display = 'none';
-		document.getElementById('opt_cert').disabled = true;
-		document.getElementById('opt_ca').disabled = true;
-		break;
+		case 'pre_shared_key':
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = 'none';
+			document.getElementById('opt_cert').style.display = 'none';
+			document.getElementById('opt_ca').style.display = 'none';
+			document.getElementById('opt_cert').disabled = true;
+			document.getElementById('opt_ca').disabled = true;
+			break;
 <?php } ?>
-	default: /* psk modes*/
-		document.getElementById('opt_psk').style.display = '';
-		document.getElementById('opt_peerid').style.display = '';
-		document.getElementById('opt_cert').style.display = 'none';
-		document.getElementById('opt_ca').style.display = 'none';
-		document.getElementById('opt_cert').disabled = true;
-		document.getElementById('opt_ca').disabled = true;
-		break;
+		default: /* psk modes*/
+			document.getElementById('opt_psk').style.display = '';
+			document.getElementById('opt_peerid').style.display = '';
+			document.getElementById('opt_cert').style.display = 'none';
+			document.getElementById('opt_ca').style.display = 'none';
+			document.getElementById('opt_cert').disabled = true;
+			document.getElementById('opt_ca').disabled = true;
+			break;
 	}
 }
 
@@ -539,14 +597,15 @@ foreach ($p1_ealgos as $algo => $algodata) {
 		echo "		case {$i}:\n";
 		echo "			document.iform.ealgo_keylen.style.visibility = 'visible';\n";
 		echo "			document.iform.ealgo_keylen.options.length = 0;\n";
-	//      echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( 'auto', 'auto' );\n";
+		// echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( 'auto', 'auto' );\n";
 
 		$key_hi = $algodata['keysel']['hi'];
 		$key_lo = $algodata['keysel']['lo'];
 		$key_step = $algodata['keysel']['step'];
 
-		for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step)
+		for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
 			echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( '{$keylen} bits', '{$keylen}' );\n";
+		}
 		echo "			break;\n";
 	} else {
 		echo "		case {$i}:\n";
@@ -559,21 +618,25 @@ foreach ($p1_ealgos as $algo => $algodata) {
 ?>
 	}
 
-	if( bits )
+	if (bits) {
 		document.iform.ealgo_keylen.value = bits;
+	}
 }
 
 function dpdchkbox_change() {
-	if( document.iform.dpd_enable.checked )
+	if (document.iform.dpd_enable.checked) {
 		document.getElementById('opt_dpd').style.display = '';
-	else
+	} else {
 		document.getElementById('opt_dpd').style.display = 'none';
+	}
 
-	if (!document.iform.dpd_delay.value)
+	if (!document.iform.dpd_delay.value) {
 		document.iform.dpd_delay.value = "10";
+	}
 
-	if (!document.iform.dpd_maxfail.value)
+	if (!document.iform.dpd_maxfail.value) {
 		document.iform.dpd_maxfail.value = "5";
+	}
 }
 
 //]]>
@@ -582,8 +645,9 @@ function dpdchkbox_change() {
 <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
 
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec phase-1">
@@ -612,8 +676,7 @@ function dpdchkbox_change() {
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Disable this phase1 entry"); ?></strong><br />
 							<span class="vexpl">
-								<?=gettext("Set this option to disable this phase1 without " .
-								"removing it from the list"); ?>.
+								<?=gettext("Set this option to disable this phase1 without removing it from the list"); ?>.
 							</span>
 						</td>
 					</tr>
@@ -629,7 +692,9 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2"); ?>.</span>
+							</select>
+							<br />
+							<span class="vexpl"><?=gettext("Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
@@ -644,7 +709,9 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
+							</select>
+							<br />
+							<span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
@@ -655,19 +722,22 @@ function dpdchkbox_change() {
 								$interfaces = get_configured_interface_with_descr();
 
 								$carplist = get_configured_carp_interface_list();
-								foreach ($carplist as $cif => $carpip)
+								foreach ($carplist as $cif => $carpip) {
 									$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+								}
 
 								$aliaslist = get_configured_ip_aliases_list();
-								foreach ($aliaslist as $aliasip => $aliasif)
+								foreach ($aliaslist as $aliasip => $aliasif) {
 									$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+								}
 
 								$grouplist = return_gateway_groups_array();
 								foreach ($grouplist as $name => $group) {
-									if($group[0]['vip'] <> "")
+									if ($group[0]['vip'] <> "") {
 										$vipif = $group[0]['vip'];
-									else
+									} else {
 										$vipif = $group[0]['int'];
+									}
 									$interfaces[$name] = "GW Group {$name}";
 								}
 
@@ -703,8 +773,7 @@ function dpdchkbox_change() {
 							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 							<br />
 							<span class="vexpl">
-								<?=gettext("You may enter a description here " .
-								"for your reference (not parsed)"); ?>.
+								<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 							</span>
 						</td>
 					</tr>
@@ -722,8 +791,9 @@ function dpdchkbox_change() {
 							<select name="authentication_method" class="formselect" onchange="methodsel_change()">
 							<?php
 								foreach ($p1_authentication_methods as $method_type => $method_params):
-									if (!$pconfig['mobile'] && $method_params['mobile'])
+									if (!$pconfig['mobile'] && $method_params['mobile']) {
 										continue;
+									}
 							?>
 								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($method_params['name']);?>
@@ -770,8 +840,9 @@ function dpdchkbox_change() {
 							<select name="peerid_type" class="formselect" onchange="peeridsel_change()">
 							<?php
 								foreach ($peer_identifier_list as $id_type => $id_params):
-									if ($pconfig['mobile'] && !$id_params['mobile'])
+									if ($pconfig['mobile'] && !$id_params['mobile']) {
 										continue;
+									}
 							?>
 							<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected=\"selected\""; ?>>
 								<?=htmlspecialchars($id_params['desc']);?>
@@ -802,8 +873,9 @@ function dpdchkbox_change() {
 							<?php
 								foreach ($config['cert'] as $cert):
 									$selected = "";
-									if ($pconfig['certref'] == $cert['refid'])
+									if ($pconfig['certref'] == $cert['refid']) {
 										$selected = "selected=\"selected\"";
+									}
 							?>
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 							<?php endforeach; ?>
@@ -821,8 +893,9 @@ function dpdchkbox_change() {
 							<?php
 								foreach ($config['ca'] as $ca):
 									$selected = "";
-									if ($pconfig['caref'] == $ca['refid'])
+									if ($pconfig['caref'] == $ca['refid']) {
 										$selected = "selected=\"selected\"";
+									}
 							?>
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
@@ -845,8 +918,9 @@ function dpdchkbox_change() {
 							<?php
 								foreach ($p1_ealgos as $algo => $algodata):
 									$selected = "";
-									if ($algo == $pconfig['ealgo']['name'])
+									if ($algo == $pconfig['ealgo']['name']) {
 										$selected = " selected=\"selected\"";
+									}
 							?>
 								<option value="<?=$algo;?>"<?=$selected?>>
 									<?=htmlspecialchars($algodata['name']);?>
@@ -936,10 +1010,10 @@ function dpdchkbox_change() {
 								"which can help with clients that are behind restrictive firewalls"); ?>.
 							</span>
 						</td>
-                                        </tr>
-                                        <tr id='mobike'>
-                                                <td width="22%" valign="top" class="vncell"><?=gettext("MOBIKE"); ?></td>
-                                                <td width="78%" class="vtable">
+					</tr>
+					<tr id='mobike'>
+						<td width="22%" valign="top" class="vncell"><?=gettext("MOBIKE"); ?></td>
+						<td width="78%" class="vtable">
 							<select name="mobike" class="formselect">
 								<option value="on" <?php if ($pconfig['mobike'] == 'on') echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
 								<option value="off" <?php if ($pconfig['mobike'] != 'on') echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
@@ -997,9 +1071,11 @@ function dpdchkbox_change() {
 <?php
 	/* determine if we should init the key length */
 	$keyset = '';
-	if (isset($pconfig['ealgo']['keylen']))
-		if (is_numeric($pconfig['ealgo']['keylen']))
+	if (isset($pconfig['ealgo']['keylen'])) {
+		if (is_numeric($pconfig['ealgo']['keylen'])) {
 			$keyset = $pconfig['ealgo']['keylen'];
+		}
+	}
 ?>
 myidsel_change();
 peeridsel_change();

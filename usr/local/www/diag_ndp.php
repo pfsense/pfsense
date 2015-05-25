@@ -14,11 +14,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -60,8 +60,8 @@ foreach ($ifdescrs as $key =>$interface) {
 	$hwif[$config['interfaces'][$key]['if']] = $interface;
 }
 
-/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address 
-[3] => Netif [4] => Expire [5] => S 
+/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address
+[3] => Netif [4] => Expire [5] => S
 [6] => Flags ) */
 $data = array();
 array_shift($rawdata);
@@ -77,13 +77,14 @@ foreach ($rawdata as $line) {
 
 /* FIXME: Not ipv6 compatible dns resolving. PHP needs fixing */
 function _getHostName($mac,$ip)
-{       
-	if(is_ipaddr($ip)) {
+{
+	if (is_ipaddr($ip)) {
 		list($ip, $scope) = explode("%", $ip);
-		if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
+		if (gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip) {
 			return gethostbyaddr($ip);
-		else
+		} else {
 			return "";
+		}
 	}
 }
 
@@ -92,12 +93,13 @@ function _getHostName($mac,$ip)
 // resolvable addresses will appear last in the list.
 foreach ($data as &$entry) {
 	$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
-	if(trim($dns))
+	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
-	else
+	} else {
 		$entry['dnsresolve'] = "Z_ ";
+	}
 }
-                
+
 // Sort the data alpha first
 $data = msort($data, "dnsresolve");
 
@@ -121,7 +123,9 @@ include("head.inc");
 <?php
 
 // Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+for ($i = 0; $i < ob_get_level(); $i++) {
+	ob_end_flush();
+}
 ob_implicit_flush(1);
 
 ?>
@@ -144,7 +148,9 @@ ob_implicit_flush(1);
 							$mac=trim($entry['mac']);
 							$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 							print $mac;
-							if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+							if (isset($mac_man[$mac_hi])) {
+								print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
+							}
 							?>
 						</td>
 						<td class="listr">
@@ -153,11 +159,12 @@ ob_implicit_flush(1);
 							?>
 						</td>
 						<td class="listr">
-							<?php 
-							if(isset($hwif[$entry['interface']]))
+							<?php
+							if (isset($hwif[$entry['interface']])) {
 								echo $hwif[$entry['interface']];
-							else
+							} else {
 								echo $entry['interface'];
+							}
 							?>
 						</td>
 					</tr>

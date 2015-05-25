@@ -11,11 +11,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -69,10 +69,12 @@ if ($_POST || $_REQUEST['host']) {
 	}
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
-	if (($ipproto == "ipv4") && is_ipaddrv6($host))
+	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
-	if (($ipproto == "ipv6") && is_ipaddrv4($host))
+	}
+	if (($ipproto == "ipv6") && is_ipaddrv4($host)) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
+	}
 
 	if (!$input_errors) {
 		$sourceip = $_REQUEST['sourceip'];
@@ -80,8 +82,9 @@ if ($_POST || $_REQUEST['host']) {
 		$ttl = $_REQUEST['ttl'];
 		$resolve = $_REQUEST['resolve'];
 	}
-} else
+} else {
 	$resolve = true;
+}
 
 if (!isset($do_traceroute)) {
 	$do_traceroute = false;
@@ -99,7 +102,8 @@ if (!isset($do_traceroute)) {
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
 	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+		<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+	</td>
 </tr>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
@@ -118,8 +122,9 @@ if (!isset($do_traceroute)) {
 		<?php   $sourceips = get_possible_traffic_source_addresses(true);
 			foreach ($sourceips as $sipvalue => $sipname):
 				$selected = "";
-				if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip))
+				if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
 					$selected = "selected=\"selected\"";
+				}
 		?>
 			<option value="<?=$sipvalue;?>" <?=$selected;?>>
 				<?=htmlspecialchars($sipname);?>
@@ -147,7 +152,7 @@ if (!isset($do_traceroute)) {
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
 	<td width="78%" class="vtable">
-		<input name="useicmp" type="checkbox"<?php if($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
+		<input name="useicmp" type="checkbox"<?php if ($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
 	</td>
 </tr>
 <tr>
@@ -176,7 +181,7 @@ if ($do_traceroute) {
 ?>
 	<script type="text/javascript">
 	//<![CDATA[
-	window.onload=function(){
+	window.onload=function() {
 		document.getElementById("tracerouteCaptured").wrap='off';
 	}
 	//]]>
@@ -194,8 +199,9 @@ if ($do_traceroute) {
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 	}
 
-	if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
+	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
 		$srcip = "-s " . escapeshellarg($ifaddr);
+	}
 
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 

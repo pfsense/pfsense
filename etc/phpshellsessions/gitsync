@@ -12,7 +12,7 @@ require_once("rrd.inc");
 require_once("pfsense-utils.inc");
 
 $GIT_PKG = "git"; // Either "git" or the full package URL
-$GIT_BIN= "/usr/pbi/bin/git";
+$GIT_BIN= "/usr/local/bin/git";
 $GIT_REPO = "git://github.com/pfsense/pfsense.git";
 $DEFAULT_BRANCH = "master";
 $CODIR =  "/root/pfsense";
@@ -76,36 +76,12 @@ unlink_if_exists("/tmp/config.cache");
 conf_mount_rw();
 
 if (!file_exists($GIT_BIN)) {
-	echo "Cannot find git, fetching...\n";
-	require_once("config.inc");
-	require_once("util.inc");
 	require_once("pkg-utils.inc");
 
-	echo "Trying to fetch package info...";
-	$pkg_info = get_pkg_info();
-	if ($pkg_info) {
-		echo " Done.\n";
-	} else {
-		$xmlrpc_base_url = get_active_xml_rpc_base_url();
-		echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+	echo "Cannot find git, installing...\n";
+	if (!pkg_call('install -y -q git-lite')) {
+		echo "\nERROR: Unable to install git pkg.\n";
 		return;
-	}
-	if (empty($pkg_info["git"])) {
-		echo "Can't locate git package in pfSense repo. Using FreeBSD pkg repo..";
-
-		if (($g['platform'] == "nanobsd")) {
-			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
-			$pkgstagingdir = "/root/tmp";
-			if (!is_dir($pkgstagingdir)) {
-				mkdir($pkgstagingdir);
-			}
-			$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
-		}
-		system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r {$GIT_PKG}");
-
-	} else {
-		install_package("git", $pkg_info["git"], true);
-		echo "Done.\n";
 	}
 }
 

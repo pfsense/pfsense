@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/local/sbin/clog
 	pfSense_MODULE:	vpn
 */
@@ -47,23 +47,24 @@ require("guiconfig.inc");
 require_once("vpn.inc");
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if (htmlspecialchars($_POST['vpntype']))
+if (htmlspecialchars($_POST['vpntype'])) {
 	$vpntype = htmlspecialchars($_POST['vpntype']);
-elseif (htmlspecialchars($_GET['vpntype']))
+} elseif (htmlspecialchars($_GET['vpntype'])) {
 	$vpntype = htmlspecialchars($_GET['vpntype']);
-else
+} else {
 	$vpntype = "pptp";
-
-if (htmlspecialchars($_POST['mode']))
+}
+if (htmlspecialchars($_POST['mode'])) {
 	$mode = htmlspecialchars($_POST['mode']);
-elseif (htmlspecialchars($_GET['mode']))
+} elseif (htmlspecialchars($_GET['mode'])) {
 	$mode = htmlspecialchars($_GET['mode']);
-else
+} else {
 	$mode = "login";
-
+}
 switch ($vpntype) {
 	case 'pptp':
 		$logname = "pptps";
@@ -77,10 +78,11 @@ switch ($vpntype) {
 }
 
 if ($_POST['clear']) {
-	if ($mode != "raw")
+	if ($mode != "raw") {
 		clear_log_file("/var/log/vpn.log");
-	else
+	} else {
 		clear_log_file("/var/log/{$logname}.log");
+	}
 }
 
 function dump_clog_vpn($logfile, $tail) {
@@ -89,25 +91,28 @@ function dump_clog_vpn($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	$logarr = "";
-	
-	if(isset($config['system']['usefifolog'])) 
+
+	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	else 
+	} else {
 		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
+	}
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
 		$iftype = substr($llent[1], 0, 4);
-		if ($iftype != $vpntype)
+		if ($iftype != $vpntype) {
 			continue;
+		}
 		echo "<tr>\n";
 		echo "<td class=\"listlr nowrap\">" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
-		if ($llent[0] == "login")
+		if ($llent[0] == "login") {
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\" alt=\"in\" /></td>\n";
-		else
+		} else {
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\" alt=\"out\" /></td>\n";
+		}
 
 		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
 		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
@@ -163,7 +168,7 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
+	<td class="tabcont">
 	<form action="diag_logs_vpn.php" method="post">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 		<tr>
@@ -178,9 +183,9 @@ include("head.inc");
 			<td class="listhdrr"><?=gettext("IP address");?></td>
 		</tr>
 			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
-		<?php else: 
+		<?php else:
 			dump_clog("/var/log/{$logname}.log", $nentries);
-		      endif; ?>
+			  endif; ?>
 	</table>
 	<br />
 	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>" />

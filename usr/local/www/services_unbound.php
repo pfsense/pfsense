@@ -465,6 +465,7 @@ function show_advanced_dns() {
 					<td><a href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			</table>
+		</td>
 	</tr>
 	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
 	<?php foreach ($hostent['aliases']['item'] as $alias): ?>

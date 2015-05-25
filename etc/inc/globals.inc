@@ -88,7 +88,8 @@ $g = array(
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
-	"help_base_url" => "/help.php"
+	"help_base_url" => "/help.php",
+	"pkg_prefix" => "pfSense-pkg-"
 );
 
 /* IP TOS flags */
@@ -161,7 +162,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.udp.checksum" => 1,
 	"net.bpf.zerocopy_enable" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
-	"vfs.forcesync" => "1",
+	"vfs.forcesync" => "0",
 	"net.inet6.ip6.rfc6204w3" => 1,
 	"net.enc.out.ipsec_bpf_mask" => "0x0001",
 	"net.enc.out.ipsec_filter_mask" => "0x0001",

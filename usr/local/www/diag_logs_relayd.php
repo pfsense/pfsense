@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	routing
 */
 
@@ -47,11 +47,13 @@ require("guiconfig.inc");
 $relayd_logfile = "{$g['varlog_path']}/relayd.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($relayd_logfile);
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Load Balancer"));
 $shortcut_section = "relayd";
@@ -62,7 +64,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -78,22 +81,30 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Last %s Load Balancer log entries"),$nentries);?></td>
-		  </tr>
-		  <?php dump_clog($relayd_logfile, $nentries); ?>
-		<tr><td><br /><form action="diag_logs_relayd.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" /></form></td></tr>
-		</table>
-	</div>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
+					<tr>
+						<td colspan="2" class="listtopic">
+							<?php printf(gettext("Last %s Load Balancer log entries"),$nentries);?>
+						</td>
+					</tr>
+					<?php dump_clog($relayd_logfile, $nentries); ?>
+					<tr>
+						<td>
+							<br />
+							<form action="diag_logs_relayd.php" method="post">
+								<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+							</form>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

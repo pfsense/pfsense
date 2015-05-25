@@ -62,8 +62,8 @@ function addipinfo(&$iparr, $ip, $proto, $srcport, $dstport) {
 }
 
 $row = 0;
-if(count($states) > 0) {
-	foreach($states as $line) {
+if (count($states) > 0) {
+	foreach ($states as $line) {
 		$line_split = preg_split("/\s+/", $line);
 		$iface = array_shift($line_split);
 		$proto = array_shift($line_split);
@@ -71,7 +71,7 @@ if(count($states) > 0) {
 		$info  = implode(" ", $line_split);
 
 		/* Handle NAT cases
-			Replaces an external IP + NAT by the internal IP */
+		   Replaces an external IP + NAT by the internal IP */
 		if (strpos($info, ') ->') !== FALSE) {
 			/* Outbound NAT */
 			$info = preg_replace('/(\S+) \((\S+)\)/U', "$2", $info);
@@ -129,16 +129,18 @@ function sort_by_ip($a, $b) {
 }
 
 function build_port_info($portarr, $proto) {
-	if (!$portarr)
+	if (!$portarr) {
 		return '';
+	}
 	$ports = array();
 	asort($portarr);
 	foreach (array_reverse($portarr, TRUE) as $port => $count) {
 		$str = "";
 		$service = getservbyport($port, strtolower($proto));
 		$port = "{$proto}/{$port}";
-		if ($service)
+		if ($service) {
 			$port = "{$port} ({$service})";
+		}
 		$ports[] = "{$port}: {$count}";
 	}
 	return implode($ports, ', ');
@@ -156,9 +158,11 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		<td class="listhdrr"><?=gettext("Src Ports");?></td>
 		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
 	</tr>
-<?php   if ($sort)
+<?php
+	if ($sort) {
 		uksort($iparr, "sort_by_ip");
-	foreach($iparr as $ip => $ipinfo) { ?>
+	}
+	foreach ($iparr as $ip => $ipinfo) { ?>
 	<tr>
 		<td class="vncell"><?php echo $ip; ?></td>
 		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
@@ -167,7 +171,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		<td class="vncell">&nbsp;</td>
 		<td class="vncell">&nbsp;</td>
 	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+	<?php foreach ($ipinfo['protos'] as $proto => $protoinfo) { ?>
 	<tr>
 		<td class="list">&nbsp;</td>
 		<td class="list">&nbsp;</td>

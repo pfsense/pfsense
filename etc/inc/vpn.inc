@@ -4,7 +4,7 @@
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2008 Ermal Lu�i
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -90,6 +90,24 @@ function vpn_ipsec_convert_to_modp($index)
 			break;
 		case '18':
 			$convertion = "modp8192";
+			break;
+		case '19':
+			$convertion = "ecp256";
+			break;
+		case '20':
+			$convertion = "ecp384";
+			break;
+		case '21':
+			$convertion = "ecp521";
+			break;
+		case '28':
+			$convertion = "ecp256bp";
+			break;
+		case '29':
+			$convertion = "ecp384bp";
+			break;
+		case '30':
+			$convertion = "ecp512bp";
 			break;
 	}
 
@@ -353,6 +371,11 @@ function vpn_ipsec_configure($restart = false)
 		conf_mount_ro();
 	}
 
+	$makebeforebreak = '';
+	if (isset($config['ipsec']['makebeforebreak'])) {
+		$makebeforebreak = 'make_before_break = yes';
+	}
+
 	if (isset($config['ipsec']['enableinterfacesuse'])) {
 		if (!empty($ifacesuse)) {
 			$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
@@ -383,6 +406,7 @@ install_routes = no
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
 {$ifacesuse}
+{$makebeforebreak}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.
@@ -1159,9 +1183,9 @@ EOD;
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
 						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
-						if (!empty($reqids[$idx])) {
-							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
-						}
+						//if (!empty($reqids[$idx])) {
+						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
+						//}
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
@@ -1171,9 +1195,9 @@ EOD;
 				}
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
-				if (!empty($reqids[$idx])) {
-					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
-				}
+				//if (!empty($reqids[$idx])) {
+				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
+				//}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
@@ -1188,7 +1212,7 @@ EOD;
 					foreach ($leftsubnet_spec as $leftsubnet) {
 						$tempsubnets[$leftsubnet] = $leftsubnet;
 					}
-					$ipsecfin .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}
@@ -1211,11 +1235,10 @@ EOD;
 	if ($restart === true) {
 		mwexec("/usr/local/sbin/ipsec restart", false);
 	} else {
-		if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
-			/* Read secrets */
-			mwexec("/usr/local/sbin/ipsec rereadall", false);
+		if (isvalidpid("{$g['varrun_path']}/starter.charon.pid")) {
 			/* Update configuration changes */
-			mwexec("/usr/local/sbin/ipsec update", false);
+			/* Read secrets */
+			sigkillbypid("{$g['varrun_path']}/starter.charon.pid", 'USR1');
 		} else {
 			mwexec("/usr/local/sbin/ipsec start", false);
 		}

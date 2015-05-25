@@ -44,15 +44,18 @@ require_once("functions.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gre.php');
 
-if (!is_array($config['gres']['gre']))
+if (!is_array($config['gres']['gre'])) {
 	$config['gres']['gre'] = array();
+}
 
 $a_gres = &$config['gres']['gre'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_gres[$id]) {
 	$pconfig['if'] = $a_gres[$id]['if'];
@@ -78,14 +81,16 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
-			(!is_ipaddr($_POST['remote-addr']))) {
+	if ((!is_ipaddr($_POST['tunnel-local-addr'])) ||
+	    (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
+	    (!is_ipaddr($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
 
 	foreach ($a_gres as $gre) {
-		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre))
+		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre)) {
 			continue;
+		}
 
 		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
 			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."),$gre['remote-network']);
@@ -106,20 +111,22 @@ if ($_POST) {
 		$gre['link0'] = isset($_POST['link0']);
 		$gre['greif'] = $_POST['greif'];
 
-                $gre['greif'] = interface_gre_configure($gre);
-                if ($gre['greif'] == "" || !stristr($gre['greif'], "gre"))
-                        $input_errors[] = gettext("Error occurred creating interface, please retry.");
-                else {
-                        if (isset($id) && $a_gres[$id])
-                                $a_gres[$id] = $gre;
-                        else
-                                $a_gres[] = $gre;
+		$gre['greif'] = interface_gre_configure($gre);
+		if ($gre['greif'] == "" || !stristr($gre['greif'], "gre")) {
+			$input_errors[] = gettext("Error occurred creating interface, please retry.");
+		} else {
+			if (isset($id) && $a_gres[$id]) {
+				$a_gres[$id] = $gre;
+			} else {
+				$a_gres[] = $gre;
+			}
 
-                        write_config();
+			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($gre['greif']);
-                        if ($confif <> "")
-                                interface_configure($confif);
+			if ($confif <> "") {
+				interface_configure($confif);
+			}
 
 			header("Location: interfaces_gre.php");
 			exit;
@@ -137,104 +144,113 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="interfaces_gre_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces gre edit">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("GRE configuration");?></td>
-				</tr>
-				<tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
-                  <td width="78%" class="vtable">
-                    <select name="if" class="formselect">
-                      <?php
-						$portlist = get_possible_listen_ips();
-					  	foreach ($portlist as $ifn => $ifinfo) {
-							echo "<option value=\"{$ifn}\"";
-							if ($ifn == $pconfig['if'])
-								echo " selected=\"selected\"";
-							echo ">" . htmlspecialchars($ifinfo) . "</option>\n";
-						}
-		      		?>
-                    </select>
-			<br />
-			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span></td>
-                </tr>
-				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel endpoint IP address");?></td>
-                  <td class="vtable">
-                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
-                    <br />
-                    <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
-			    </tr>
-				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("Local tunnel IP address ");?></td>
-                  <td class="vtable">
-                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
-                    <br />
-                    <span class="vexpl"><?=gettext("Local IP address assigned inside this tunnel");?></span></td>
-			    </tr>
-				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel IP address ");?></td>
-                  <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
-                    <select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
-                                        <?php
-                                        for ($i = 128; $i > 0; $i--) {
-						echo "<option value=\"{$i}\"";
-						if ($i == $pconfig['tunnel-remote-net'])
+<form action="interfaces_gre_edit.php" method="post" name="iform" id="iform">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces gre edit">
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("GRE configuration");?></td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
+			<td width="78%" class="vtable">
+				<select name="if" class="formselect">
+				<?php
+					$portlist = get_possible_listen_ips();
+					foreach ($portlist as $ifn => $ifinfo) {
+						echo "<option value=\"{$ifn}\"";
+						if ($ifn == $pconfig['if']) {
 							echo " selected=\"selected\"";
+						}
+						echo ">" . htmlspecialchars($ifinfo) . "</option>\n";
+					}
+				?>
+				</select>
+				<br />
+				<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncellreq"><?=gettext("Remote tunnel endpoint IP address");?></td>
+			<td class="vtable">
+				<input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
+				<br />
+				<span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncellreq"><?=gettext("Local tunnel IP address ");?></td>
+			<td class="vtable">
+				<input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
+				<br />
+				<span class="vexpl"><?=gettext("Local IP address assigned inside this tunnel");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncellreq"><?=gettext("Remote tunnel IP address ");?></td>
+			<td class="vtable">
+				<input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
+				<select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
+				<?php
+					for ($i = 128; $i > 0; $i--) {
+						echo "<option value=\"{$i}\"";
+						if ($i == $pconfig['tunnel-remote-net']) {
+							echo " selected=\"selected\"";
+						}
 						echo ">" . $i . "</option>";
-                                        }
-                                        ?>
-                    </select>
-                    <br />
-                    <span class="vexpl"><?=gettext("IP address inside this tunnel on the remote end. The subnet part is used for the determining the network that is tunneled.");?></span></td>
-			    </tr>
-				<tr>
-                  <td valign="top" class="vncell"><?=gettext("Mobile encapsulation");?></td>
-                  <td class="vtable">
-                    <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
-                    <br />
-                    <span class="vexpl"><?=gettext("Check this box to use mobile encapsulation (IP protocol 55, RFC 2004). When unchecked, uses GRE encapsulation (IP protocol 47, RFCs 1701, 1702).");?></span></td>
-			    </tr>
-				<tr>
-                  <td valign="top" class="vncell"><?=gettext("Route search type");?></td>
-                  <td class="vtable">
-                    <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked=\"checked\"";?> />
-                    <br />
-                    <span class="vexpl">
-     <?=gettext("For correct operation, the GRE device needs a route to the destination".
-    " that is less specific than the one over the tunnel.  (Basically, there".
-    " needs to be a route to the decapsulating host that does not run over the".
-    " tunnel, as this would be a loop.");?>
-					 </span></td>
-			    </tr>
-				<tr>
-                  <td valign="top" class="vncell"><?=gettext("WCCP version");?></td>
-                  <td class="vtable">
-                    <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked=\"checked\"";?> />
-                    <br />
-                    <span class="vexpl"><?=gettext("Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.");?></span></td>
-			    </tr>
-				<tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
-                    " for your reference (not parsed).");?></span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-		    <input type="hidden" name="greif" value="<?=htmlspecialchars($pconfig['greif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-                    <?php if (isset($id) && $a_gres[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-                    <?php endif; ?>
-                  </td>
-                </tr>
-              </table>
+					}
+				?>
+				</select>
+				<br />
+				<span class="vexpl"><?=gettext("IP address inside this tunnel on the remote end. The subnet part is used for the determining the network that is tunneled.");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncell"><?=gettext("Mobile encapsulation");?></td>
+			<td class="vtable">
+				<input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
+				<br />
+				<span class="vexpl"><?=gettext("Check this box to use mobile encapsulation (IP protocol 55, RFC 2004). When unchecked, uses GRE encapsulation (IP protocol 47, RFCs 1701, 1702).");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncell"><?=gettext("Route search type");?></td>
+			<td class="vtable">
+				<input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked=\"checked\"";?> />
+				<br />
+				<span class="vexpl">
+					<?=gettext("For correct operation, the GRE device needs a route to the destination".
+					" that is less specific than the one over the tunnel.  (Basically, there".
+					" needs to be a route to the decapsulating host that does not run over the".
+					" tunnel, as this would be a loop.");?>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncell"><?=gettext("WCCP version");?></td>
+			<td class="vtable">
+				<input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked=\"checked\"";?> />
+				<br />
+				<span class="vexpl"><?=gettext("Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input type="hidden" name="greif" value="<?=htmlspecialchars($pconfig['greif']); ?>" />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+			<?php if (isset($id) && $a_gres[$id]): ?>
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+			<?php endif; ?>
+			</td>
+		</tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

@@ -27,7 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
 	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/bin/dd	/sbin/tunefs
 	pfSense_MODULE:	nanobsd
@@ -66,11 +66,11 @@ nanobsd_detect_slice_info();
 
 $NANOBSD_SIZE = nanobsd_get_size();
 
-if($_POST['bootslice']) {
-	$statusmsg = gettext("Setting slice information, please wait..."); 
+if ($_POST['bootslice']) {
+	$statusmsg = gettext("Setting slice information, please wait...");
 	echo <<<EOF
-	 	<div id="loading">
-			<img src="/themes/{$g['theme']}/images/misc/loader.gif"> 
+		<div id="loading">
+			<img src="/themes/{$g['theme']}/images/misc/loader.gif">
 			$statusmsg
 			<p/>&nbsp;
 		</div>
@@ -82,16 +82,16 @@ EOF;
 
 }
 
-if($_POST['destslice']) {
+if ($_POST['destslice']) {
 	$statusmsg = gettext("Duplicating slice.  Please wait, this will take a moment...");
-echo <<<EOF
- 	<div id="loading">
+	echo <<<EOF
+	<div id="loading">
 		<img src="/themes/{$g['theme']}/images/misc/loader.gif">
 		$statusmsg
 		<p/>&nbsp;
 	</div>
 EOF;
-	if(nanobsd_clone_slice($_POST['destslice'])) {
+	if (nanobsd_clone_slice($_POST['destslice'])) {
 		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
 	} else {
 		$savemsg = gettext("There was an error while duplicating the slice.  Operation aborted.");
@@ -110,17 +110,19 @@ if ($_POST['changero']) {
 
 if ($_POST['setrw']) {
 	conf_mount_rw();
-	if (isset($_POST['nanobsd_force_rw']))
+	if (isset($_POST['nanobsd_force_rw'])) {
 		$config['system']['nanobsd_force_rw'] = true;
-	else
+	} else {
 		unset($config['system']['nanobsd_force_rw']);
+	}
 
 	write_config("Changed Permanent Read/Write Setting");
 	conf_mount_ro();
 }
 
-if ($savemsg)
-	print_info_box($savemsg)
+if ($savemsg) {
+	print_info_box($savemsg);
+}
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -144,7 +146,7 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Bootup information");?></td>
 					</tr>
-					<tr>						
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("NanoBSD Image size");?></td>
 						<td width="78%" class="vtable">
 							<?php echo $NANOBSD_SIZE; ?>
@@ -163,7 +165,7 @@ if ($savemsg)
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
-					</tr>					
+					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Media Read/Write Status");?></td>
 					</tr>
@@ -180,12 +182,14 @@ if ($savemsg)
 									$refdisplay = " (reference count " . $refcount . ")";
 								}
 								echo gettext("Read/Write") . $refdisplay;
-								if (!isset($config['system']['nanobsd_force_rw']))
+								if (!isset($config['system']['nanobsd_force_rw'])) {
 									echo "<br /><input type='submit' name='changero' value='" . gettext("Switch to Read-Only") . "'>";
+								}
 							} else {
 								echo gettext("Read-Only");
-								if (!isset($config['system']['nanobsd_force_rw']))
+								if (!isset($config['system']['nanobsd_force_rw'])) {
 									echo "<br /><input type='submit' name='changero' value='" . gettext("Switch to Read/Write") . "'>";
+								}
 							} ?>
 							</form>
 							<br /><?php echo gettext("NOTE: This setting is only temporary, and can be switched dynamically in the background."); ?>
@@ -234,10 +238,10 @@ if ($savemsg)
 							<?=gettext("These options have been relocated to");?> <a href="system_advanced_misc.php"><?=gettext("System > Advanced, Miscellaneous tab")?></a>.
 						</td>
 					</tr>
-<?php if(file_exists("/conf/upgrade_log.txt")): ?>
+<?php if (file_exists("/conf/upgrade_log.txt")): ?>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
-					</tr>					
+					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("View upgrade log");?></td>
 					</tr>
@@ -265,7 +269,7 @@ if ($savemsg)
 <?php endif; ?>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
-					</tr>					
+					</tr>
 				</table>
 			</div>
 		</td>
@@ -280,6 +284,6 @@ if ($savemsg)
 // Clear the loading indicator
 echo "<script type=\"text/javascript\">";
 echo "jQuery('#loading').html('');";
-echo "</script>";	
+echo "</script>";
 
 ?>

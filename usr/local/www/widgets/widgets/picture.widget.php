@@ -33,11 +33,12 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if($_GET['getpic']=="true") {
+if ($_GET['getpic']=="true") {
 	$pic_type_s = explode(".", $config['widgets']['picturewidget_filename']);
 	$pic_type = $pic_type_s[1];
-	if($config['widgets']['picturewidget'])
+	if ($config['widgets']['picturewidget']) {
 		$data = base64_decode($config['widgets']['picturewidget']);
+	}
 	header("Content-Disposition: inline; filename=\"{$config['widgets']['picturewidget_filename']}\"");
 	header("Content-Type: image/{$pic_type}");
 	header("Content-Length: " . strlen($data));
@@ -45,16 +46,16 @@ if($_GET['getpic']=="true") {
 	exit;
 }
 
-if($_POST) {
+if ($_POST) {
 	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 		/* read the file contents */
 		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
-		while ( ($buf=fread( $fd_pic, 8192 )) != '' ) {
+		while (($buf=fread($fd_pic, 8192)) != '') {
 		    // Here, $buf is guaranteed to contain data
 		    $data .= $buf;
 		}
 		fclose($fd_pic);
-		if(!$data) {
+		if (!$data) {
 			log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
 			die("Could not read temporary file");
 		} else {

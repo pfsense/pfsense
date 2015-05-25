@@ -32,10 +32,11 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
-if (is_array($config['wol']['wolentry']))
+if (is_array($config['wol']['wolentry'])) {
 	$wolcomputers = $config['wol']['wolentry'];
-else
+} else {
 	$wolcomputers = array();
+}
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="wol status">
@@ -50,12 +51,12 @@ else
 <?php
 
 if (count($wolcomputers) > 0) {
-	foreach($wolcomputers as $wolent) {
+	foreach ($wolcomputers as $wolent) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-		if($is_active == 1) {
+		if ($is_active == 1) {
 			echo '<td class="listr" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\" alt=\"pass\" /> " . gettext("Online") . "</td>\n";
 		} else {
@@ -63,7 +64,7 @@ if (count($wolcomputers) > 0) {
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\" alt=\"block\" />&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";
 		}
 		echo '<td valign="middle" class="list nowrap">';
-		/*if($is_active) { */
+		/*if ($is_active) { */
 			/* Will always show wake-up button even if pfsense thinks it is awake */
 		/* } else { */
 			echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";

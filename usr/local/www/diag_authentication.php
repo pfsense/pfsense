@@ -10,11 +10,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -48,19 +48,22 @@ if ($_POST) {
 	unset($input_errors);
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
-	if (!$authcfg)
+	if (!$authcfg) {
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
+	}
 
-	if (empty($_POST['username']) || empty($_POST['passwordfld']))
+	if (empty($_POST['username']) || empty($_POST['passwordfld'])) {
 		$input_errors[] = gettext("A username and password must be specified.");
+	}
 
 	if (!$input_errors) {
 		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
 			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
-			foreach ($groups as $group)
+			foreach ($groups as $group) {
 				$savemsg .= "{$group} ";
+			}
 		} else {
 			$input_errors[] = gettext("Authentication failed.");
 		}
@@ -95,11 +98,12 @@ include("head.inc");
 				$auth_servers = auth_get_authserver_list();
 				foreach ($auth_servers as $auth_server):
 					$selected = "";
-					if ($auth_server['name'] == $pconfig['authmode'])
+					if ($auth_server['name'] == $pconfig['authmode']) {
 						$selected = "selected=\"selected\"";
+					}
 			?>
 			<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-			<?php   endforeach; ?>
+			<?php endforeach; ?>
 			</select>
 		</td>
 	</tr>

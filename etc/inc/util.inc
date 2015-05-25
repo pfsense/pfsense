@@ -1726,23 +1726,6 @@ function safe_mkdir($path, $mode=0755) {
 }
 
 /*
- * make_dirs($path, $mode = 0755)
- * create directory tree recursively (mkdir -p)
- */
-function make_dirs($path, $mode = 0755) {
-	$base = '';
-	foreach (explode('/', $path) as $dir) {
-		$base .= "/$dir";
-		if (!is_dir($base)) {
-			if (!@mkdir($base, $mode)) {
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-/*
  * get_sysctl($names)
  * Get values of sysctl OID's listed in $names (accepts an array or a single
  * name) and return an array of key/value pairs set for those that exist

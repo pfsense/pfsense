@@ -64,13 +64,15 @@ $counter = 1;
 				<div id="gateway<?php echo $counter; ?>" style="display:inline"><b>
 					<?php
 						$if_gw = '';
-						if (is_ipaddr($gateway['gateway']))
+						if (is_ipaddr($gateway['gateway'])) {
 							$if_gw = htmlspecialchars($gateway['gateway']);
-						else {
-							if($gateway['ipprotocol'] == "inet")
+						} else {
+							if ($gateway['ipprotocol'] == "inet") {
 								$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
-							if($gateway['ipprotocol'] == "inet6")
+							}
+							if ($gateway['ipprotocol'] == "inet6") {
 								$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+							}
 						}
 						echo ($if_gw == '' ? '~' : $if_gw);
 						unset ($if_gw);
@@ -82,19 +84,21 @@ $counter = 1;
 	<tr>
 			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
-				if ($gateways_status[$gname])
+				if ($gateways_status[$gname]) {
 					echo htmlspecialchars($gateways_status[$gname]['delay']);
-				else
+				} else {
 					echo gettext("Pending");
+				}
 			?>
 			<?php $counter++; ?>
 			</td>
 			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
-				if ($gateways_status[$gname])
+				if ($gateways_status[$gname]) {
 					echo htmlspecialchars($gateways_status[$gname]['loss']);
-				else
+				} else {
 					echo gettext("Pending");
+				}
 			?>
 			<?php $counter++; ?>
 			</td>

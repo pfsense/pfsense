@@ -75,8 +75,9 @@ $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 
-if (!$pconfig['nentries'])
+if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = 50;
+}
 
 function is_valid_syslog_server($target) {
 	return (is_ipaddr($target)
@@ -150,11 +151,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
 		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
-		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0)
+		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
-		else
+		} else {
 			unset($config['syslog']['filterdescriptions']);
-		if($config['syslog']['enable'] == false) {
+		}
+		if ($config['syslog']['enable'] == false) {
 			unset($config['syslog']['remoteserver']);
 			unset($config['syslog']['remoteserver2']);
 			unset($config['syslog']['remoteserver3']);
@@ -164,11 +166,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		$retval = 0;
 		$retval = system_syslogd_start();
-		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
-			|| ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass']))
-			|| ($oldnologbogons !== isset($config['syslog']['nologbogons']))
-			|| ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets'])))
+		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
+		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+		    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 			$retval |= filter_configure();
+		}
 
 		$savemsg = get_std_save_message($retval);
 
@@ -342,9 +345,9 @@ function check_everything() {
 			<td valign="top" class="vtable">Filter descriptions</td>
 			<td class="vtable">
 				<select name="filterdescriptions" id="filterdescriptions" >
-				  <option value="0"<?=!isset($pconfig['filterdescriptions'])?" selected=\"selected\"":""?>>Dont load descriptions</option>
-				  <option value="1"<?=($pconfig['filterdescriptions'])==="1"?" selected=\"selected\"":""?>>Display as column</option>
-				  <option value="2"<?=($pconfig['filterdescriptions'])==="2"?" selected=\"selected\"":""?>>Display as second row</option>
+					<option value="0"<?=!isset($pconfig['filterdescriptions'])?" selected=\"selected\"":""?>>Dont load descriptions</option>
+					<option value="1"<?=($pconfig['filterdescriptions'])==="1"?" selected=\"selected\"":""?>>Display as column</option>
+					<option value="2"<?=($pconfig['filterdescriptions'])==="2"?" selected=\"selected\"":""?>>Display as second row</option>
 				</select>
 				<strong><?=gettext("Show the applied rule description below or in the firewall log rows.");?></strong>
 				<br />
@@ -382,8 +385,9 @@ function check_everything() {
 				<?php $sourceips = get_possible_traffic_source_addresses(false);
 					foreach ($sourceips as $sipvalue => $sipname):
 						$selected = "";
-						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $pconfig['sourceip']))
+						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $pconfig['sourceip'])) {
 							$selected = 'selected="selected"';
+						}
 				?>
 					<option value="<?=$sipvalue;?>" <?=$selected;?>>
 						<?=htmlspecialchars($sipname);?>

@@ -44,7 +44,7 @@ require_once("guiconfig.inc");
 require_once("interfaces.inc");
 
 /* handle AJAX operations */
-if(isset($_POST['action']) && $_POST['action'] == "remove") {
+if (isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
 		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
@@ -104,7 +104,7 @@ include("head.inc");
 
 	function removeComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>');
 			return;
 		}
@@ -122,8 +122,9 @@ include("head.inc");
 		<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-			if (isset($config['system']['lb_use_sticky']))
+			if (isset($config['system']['lb_use_sticky'])) {
 				$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+			}
 			$tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 			display_top_tabs($tab_array);
 		?>
@@ -180,8 +181,9 @@ $row = 0;
 $grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
-	if($row >= 10000)
+	if ($row >= 10000) {
 		break;
+	}
 
 	$line_split = preg_split("/\s+/", $line);
 
@@ -202,16 +204,16 @@ while ($line = chop(fgets($fd))) {
 
 ?>
 	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
-			<td class="listlr"><?= $iface ?></td>
-			<td class="listr"><?= $proto ?></td>
-			<td class="listr"><?= $info ?></td>
-			<td class="listr"><?= $state ?></td>
-			<td class="list">
-			<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
-				onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
-				name="i:<?= $srcip ?>:<?= $dstip ?>"
-				title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
-			</td>
+		<td class="listlr"><?= $iface ?></td>
+		<td class="listr"><?= $proto ?></td>
+		<td class="listr"><?= $info ?></td>
+		<td class="listr"><?= $state ?></td>
+		<td class="list">
+		<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
+			onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
+			name="i:<?= $srcip ?>:<?= $dstip ?>"
+			title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
+		</td>
 	</tr>
 <?php
 	$row++;
@@ -224,7 +226,8 @@ if ($row == 0): ?>
 		<?= gettext("No states were found.") ?>
 		</td>
 	</tr>
-<?php endif;
+<?php
+endif;
 pclose($fd);
 ?>
 			</tbody>

@@ -14,11 +14,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -83,7 +83,7 @@ if ($_POST || $_REQUEST['host']) {
 		$do_testport = true;
 		$timeout = NC_TIMEOUT;
 	}
-	
+
 	/* Save these request vars even if there were input errors. Then the fields are refilled for the user to correct. */
 	$host = $_REQUEST['host'];
 	$sourceip = $_REQUEST['sourceip'];
@@ -111,8 +111,9 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 			<td width="78%" class="vtable">
-			<?=$mandfldhtml;?>
-			<input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+				<?=$mandfldhtml;?>
+				<input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Port"); ?></td>
@@ -142,13 +143,14 @@ include("head.inc"); ?>
 				<?php   $sourceips = get_possible_traffic_source_addresses(true);
 					foreach ($sourceips as $sipvalue => $sipname):
 						$selected = "";
-						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip))
+						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
 							$selected = "selected=\"selected\"";
+						}
 				?>
 					<option value="<?=$sipvalue;?>" <?=$selected;?>>
 						<?=htmlspecialchars($sipname);?>
 					</option>
-					<?php endforeach; ?>
+				<?php endforeach; ?>
 				</select>
 			</td>
 		</tr>
@@ -184,7 +186,7 @@ include("head.inc"); ?>
 		?>
 			<script type="text/javascript">
 			//<![CDATA[
-			window.onload=function(){
+			window.onload=function() {
 				document.getElementById("testportCaptured").wrap='off';
 			}
 			//]]>
@@ -194,22 +196,25 @@ include("head.inc"); ?>
 			$result = "";
 			$nc_base_cmd = "/usr/bin/nc";
 			$nc_args = "-w " . escapeshellarg($timeout);
-			if (!$showtext)
+			if (!$showtext) {
 				$nc_args .= " -z ";
-			if (!empty($srcport))
+			}
+			if (!empty($srcport)) {
 				$nc_args .= " -p " . escapeshellarg($srcport) . " ";
+			}
 
 			/* Attempt to determine the interface address, if possible. Else try both. */
 			if (is_ipaddrv4($host)) {
 				$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
 				$nc_args .= " -4";
 			} elseif (is_ipaddrv6($host)) {
-				if ($sourceip == "any")
+				if ($sourceip == "any") {
 					$ifaddr = "";
-				else if (is_linklocal($sourceip))
+				} else if (is_linklocal($sourceip)) {
 					$ifaddr = $sourceip;
-				else
+				} else {
 					$ifaddr = get_interface_ipv6($sourceip);
+				}
 				$nc_args .= " -6";
 			} else {
 				switch ($ipprotocol) {
@@ -249,18 +254,20 @@ include("head.inc"); ?>
 			if (!empty($ifaddr)) {
 				$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
 				$scope = get_ll_scope($ifaddr);
-				if (!empty($scope) && !strstr($host, "%"))
+				if (!empty($scope) && !strstr($host, "%")) {
 					$host .= "%{$scope}";
+				}
 			}
 
 			$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
 			exec($nc_cmd, $result, $retval);
 			//echo "NC CMD: {$nc_cmd}\n\n";
 			if (empty($result)) {
-				if ($showtext)
+				if ($showtext) {
 					echo gettext("No output received, or connection failed. Try with \"Show Remote Text\" unchecked first.");
-				else
+				} else {
 					echo gettext("Connection failed (Refused/Timeout)");
+				}
 			} else {
 				if (is_array($result)) {
 					foreach ($result as $resline) {

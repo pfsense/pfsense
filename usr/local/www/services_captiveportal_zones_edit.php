@@ -1,7 +1,7 @@
 <?php
 /*
 	services_captiveportal_zones_edit.php
-	Copyright (C) 2011 Ermal Luci
+	Copyright (C) 2011 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -43,11 +43,12 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Zones"));
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
 if ($_POST) {

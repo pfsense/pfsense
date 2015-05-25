@@ -2,7 +2,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008-2009 Ermal Lu?i
+	Copyright (C) 2008-2009 Ermal Luçi
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -2078,6 +2078,7 @@ function interfaces_sync_setup() {
 		}
 
 		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up", false);
+		mwexec("/sbin/ifconfig pfsync0 -defer", false);
 
 		sleep(1);
 
@@ -5425,11 +5426,10 @@ function get_interfaces_with_gateway() {
 	foreach ($config['interfaces'] as $ifdescr => $ifname) {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
-			case "ppp";
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
-			case "ppp";
+			case "ppp":
 				$ints[$ifdescr] = $ifdescr;
 				break;
 			default:
@@ -5454,7 +5454,7 @@ function interface_has_gateway($friendly) {
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
-			case "ppp";
+			case "ppp":
 				return true;
 			break;
 			default:

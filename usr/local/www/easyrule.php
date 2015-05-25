@@ -61,8 +61,9 @@ if ($_GET && isset($_GET['action'])) {
 	}
 }
 
-if(stristr($retval, "error") == true)
-    $message = $retval;
+if (stristr($retval, "error") == true) {
+	$message = $retval;
+}
 
 include("head.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

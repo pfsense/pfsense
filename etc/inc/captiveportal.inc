@@ -3,7 +3,7 @@
 	captiveportal.inc
 	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
+	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1222,7 +1222,12 @@ function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
 	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $table, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
 	if (is_array($ipfwoutput)) {
-		return $ipfwoutput['timestamp'];
+		/* Workaround for #46652 */
+		if ($ipfwoutput['packets'] > 0) { 
+			return $ipfwoutput['timestamp'];
+		} else {
+			return 0;
+		}
 	}
 
 	return 0;

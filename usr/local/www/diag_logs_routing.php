@@ -54,7 +54,7 @@ if ($_POST['clear']) {
 	clear_log_file($routing_logfile);
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Routing"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Routing"));
 $shortcut_section = "routing";
 include("head.inc");
 
@@ -101,7 +101,7 @@ include("head.inc");
 				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 					<tr>
 						<td colspan="2" class="listtopic">
-							<?php printf(gettext("Routing daemon log entries"),$nentries);?>
+							<?php printf(gettext("Routing daemon log entries"), $nentries);?>
 						</td>
 					</tr>
 					<?php dump_clog($routing_logfile, $nentries); ?>

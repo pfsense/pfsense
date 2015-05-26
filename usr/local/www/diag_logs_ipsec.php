@@ -60,7 +60,7 @@ if ($_POST['clear']) {
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("IPsec VPN"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("IPsec VPN"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
@@ -92,7 +92,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"),$nentries);?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"), $nentries);?></td>
 				</tr>
 				<?php
 				foreach ($ipsec_logarr as $logent) {
@@ -109,7 +109,7 @@ include("head.inc");
 					<td>
 						<br />
 						<form action="diag_logs_ipsec.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+							<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

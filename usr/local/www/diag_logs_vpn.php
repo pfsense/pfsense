@@ -126,7 +126,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs vpn">
-  <tr><td class="tabnavtbl">
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -142,8 +143,10 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr><td class="tabnavtbl">
+		</td>
+	</tr>
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("PPTP Logins"),
@@ -166,34 +169,42 @@ include("head.inc");
 				"/diag_logs_vpn.php?vpntype=l2tp&amp;mode=raw");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-	<td class="tabcont">
-	<form action="diag_logs_vpn.php" method="post">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-		<tr>
-		<td colspan="4" class="listtopic">
-			<?php printf(gettext('Last %1$s %2$s VPN log entries'),$nentries,$vpns[$vpntype]);?></td>
-		</tr>
-		<?php if ($mode != "raw"): ?>
-		<tr>
-			<td class="listhdrr"><?=gettext("Time");?></td>
-			<td class="listhdrr"><?=gettext("Action");?></td>
-			<td class="listhdrr"><?=gettext("User");?></td>
-			<td class="listhdrr"><?=gettext("IP address");?></td>
-		</tr>
-			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
-		<?php else:
-			dump_clog("/var/log/{$logname}.log", $nentries);
-			  endif; ?>
-	</table>
-	<br />
-	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>" />
-	<input type="hidden" name="mode" id="mode" value="<?=$mode;?>" />
-	<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
-	</form>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td class="tabcont">
+			<form action="diag_logs_vpn.php" method="post">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+					<tr>
+						<td colspan="4" class="listtopic">
+							<?php printf(gettext('Last %1$s %2$s VPN log entries'), $nentries, $vpns[$vpntype]);?>
+						</td>
+					</tr>
+			<?php
+				if ($mode != "raw"):
+			?>
+					<tr>
+						<td class="listhdrr"><?=gettext("Time");?></td>
+						<td class="listhdrr"><?=gettext("Action");?></td>
+						<td class="listhdrr"><?=gettext("User");?></td>
+						<td class="listhdrr"><?=gettext("IP address");?></td>
+					</tr>
+			<?php
+					dump_clog_vpn("/var/log/vpn.log", $nentries);
+			?>
+			<?php
+				else:
+					dump_clog("/var/log/{$logname}.log", $nentries);
+				endif;
+			?>
+				</table>
+				<br />
+				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>" />
+				<input type="hidden" name="mode" id="mode" value="<?=$mode;?>" />
+				<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
+			</form>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

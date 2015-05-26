@@ -43,7 +43,7 @@
 ##|*MATCH=diag_logs_openvpn.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("OpenVPN"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("OpenVPN"));
 $shortcut_section = "openvpn";
 
 require("guiconfig.inc");
@@ -90,7 +90,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s OpenVPN log entries"),$nentries)?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s OpenVPN log entries"), $nentries)?></td>
 				</tr>
 				<?php dump_clog($openvpn_logfile, $nentries); ?>
 				<tr>

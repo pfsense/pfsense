@@ -189,7 +189,8 @@ include("head.inc"); ?>
 
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter summary">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -205,8 +206,10 @@ include("head.inc"); ?>
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr><td class="tabnavtbl">
+		</td>
+	</tr>
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
@@ -214,13 +217,14 @@ include("head.inc"); ?>
 	$tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
 	display_top_tabs($tab_array);
 ?>
-	</td>
-  </tr>
-  <tr>
-	<td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
-		<tr><td align="center">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
+				<tr>
+					<td align="center">
 
 <?php printf (gettext('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines)?><br />
 <?=gettext("NOTE: IE8 users must enable compatibility view.")?>
@@ -233,10 +237,12 @@ foreach (array_keys($fields) as $field) {
 	echo "<br /><br />";
 }
 ?>
-		</td></tr></table>
-		</div>
-	</td>
-  </tr>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

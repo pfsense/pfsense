@@ -85,7 +85,7 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("Package logs"));
+$pgtitle = array(gettext("Status"), gettext("Package logs"));
 include("head.inc");
 
 ?>
@@ -109,9 +109,9 @@ include("head.inc");
 			}
 			if ($apkg == $package['name']) {
 				$curtab = $logtab;
-				$tab_array[] = array(sprintf(gettext("%s"),$logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
 			} else {
-				$tab_array[] = array(sprintf(gettext("%s"),$logtab), false, "diag_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "diag_pkglogs.php?pkg=".$package['name']);
 			}
 		}
 	}
@@ -125,7 +125,7 @@ include("head.inc");
 				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td colspan="2" class="listtopic">
-							<?php printf(gettext('Last %1$s %2$s log entries'),$nentries,$curtab); ?>
+							<?php printf(gettext('Last %1$s %2$s log entries'), $nentries, $curtab); ?>
 						</td>
 					</tr>
 					<?php

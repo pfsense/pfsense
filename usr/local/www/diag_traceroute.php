@@ -44,7 +44,7 @@
 require("guiconfig.inc");
 
 $allowautocomplete = true;
-$pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Traceroute"));
 include("head.inc");
 
 ?>
@@ -61,7 +61,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
-	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
+	$reqdfieldsn = array(gettext("Host"), gettext("ttl"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
@@ -96,121 +96,121 @@ if (!isset($do_traceroute)) {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="diag_traceroute.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="diag traceroute">
-<tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Traceroute");?></td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
-	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="ipproto" class="formselect">
-			<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
-			<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="sourceip" class="formselect">
-			<option value="">Any</option>
-		<?php   $sourceips = get_possible_traffic_source_addresses(true);
-			foreach ($sourceips as $sipvalue => $sipname):
-				$selected = "";
-				if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
-					$selected = "selected=\"selected\"";
-				}
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Traceroute");?></td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
+		<td width="78%" class="vtable">
+			<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
+		<td width="78%" class="vtable">
+			<select name="ipproto" class="formselect">
+				<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
+				<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
+		<td width="78%" class="vtable">
+			<select name="sourceip" class="formselect">
+				<option value="">Any</option>
+			<?php   $sourceips = get_possible_traffic_source_addresses(true);
+				foreach ($sourceips as $sipvalue => $sipname):
+					$selected = "";
+					if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
+						$selected = "selected=\"selected\"";
+					}
+			?>
+				<option value="<?=$sipvalue;?>" <?=$selected;?>>
+					<?=htmlspecialchars($sipname);?>
+				</option>
+				<?php endforeach; ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Maximum number of hops");?></td>
+		<td width="78%" class="vtable">
+			<select name="ttl" class="formfld" id="ttl">
+				<?php for ($i = 1; $i <= MAX_TTL; $i++): ?>
+					<option value="<?=$i;?>" <?php if ($i == $ttl) echo "selected=\"selected\""; ?>><?=$i;?></option>
+				<?php endfor; ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Reverse Address Lookup");?></td>
+		<td width="78%" class="vtable">
+			<input name="resolve" type="checkbox"<?php echo (!isset($resolve) ? "" : " checked=\"checked\""); ?> />
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
+		<td width="78%" class="vtable">
+			<input name="useicmp" type="checkbox"<?php if ($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Traceroute");?>" />
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" colspan="2">
+		<span class="vexpl">
+			<span class="red"><b><?=gettext("Note: ");?></b></span>
+			<?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?>
+			<br /><br />
+			<?=gettext("Using a source interface/IP address that does not match selected type (IPv4, IPv6) will result in an error or empty output.");?>
+		</span>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" colspan="2">
+		<?php
+		if ($do_traceroute) {
+			echo "<font face=\"terminal\" size=\"2\">\n";
+			echo "<strong>" . gettext("Traceroute output:") . "</strong><br />\n";
+			ob_end_flush();
 		?>
-			<option value="<?=$sipvalue;?>" <?=$selected;?>>
-				<?=htmlspecialchars($sipname);?>
-			</option>
-			<?php endforeach; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Maximum number of hops");?></td>
-	<td width="78%" class="vtable">
-		<select name="ttl" class="formfld" id="ttl">
-			<?php for ($i = 1; $i <= MAX_TTL; $i++): ?>
-				<option value="<?=$i;?>" <?php if ($i == $ttl) echo "selected=\"selected\""; ?>><?=$i;?></option>
-			<?php endfor; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Reverse Address Lookup");?></td>
-	<td width="78%" class="vtable">
-		<input name="resolve" type="checkbox"<?php echo (!isset($resolve) ? "" : " checked=\"checked\""); ?> />
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
-	<td width="78%" class="vtable">
-		<input name="useicmp" type="checkbox"<?php if ($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top">&nbsp;</td>
-	<td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Traceroute");?>" />
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-	<span class="vexpl">
-		<span class="red"><b><?=gettext("Note: ");?></b></span>
-		<?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?>
-		<br /><br />
-		<?=gettext("Using a source interface/IP address that does not match selected type (IPv4, IPv6) will result in an error or empty output.");?>
-	</span>
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-<?php
-if ($do_traceroute) {
-	echo "<font face=\"terminal\" size=\"2\">\n";
-	echo "<strong>" . gettext("Traceroute output:") . "</strong><br />\n";
-	ob_end_flush();
-?>
-	<script type="text/javascript">
-	//<![CDATA[
-	window.onload=function() {
-		document.getElementById("tracerouteCaptured").wrap='off';
-	}
-	//]]>
-	</script>
-<?php
-	echo "<textarea id=\"tracerouteCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
-	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
-	$n = isset($resolve) ? "" : "-n";
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function() {
+				document.getElementById("tracerouteCaptured").wrap='off';
+			}
+			//]]>
+			</script>
+		<?php
+			echo "<textarea id=\"tracerouteCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
+			$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
+			$n = isset($resolve) ? "" : "-n";
 
-	$command = "/usr/sbin/traceroute";
-	if ($ipproto == "ipv6") {
-		$command .= "6";
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-	} else {
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-	}
+			$command = "/usr/sbin/traceroute";
+			if ($ipproto == "ipv6") {
+				$command .= "6";
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+			} else {
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+			}
 
-	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-		$srcip = "-s " . escapeshellarg($ifaddr);
-	}
+			if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+				$srcip = "-s " . escapeshellarg($ifaddr);
+			}
 
-	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+			$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 
-	//echo "Traceroute command: {$cmd}\n";
-	system($cmd);
-	echo "</textarea>&nbsp;</font>";
-} ?>
-	</td>
-</tr>
+			//echo "Traceroute command: {$cmd}\n";
+			system($cmd);
+			echo "</textarea>&nbsp;</font>";
+		} ?>
+		</td>
+	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

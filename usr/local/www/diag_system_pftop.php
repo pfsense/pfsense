@@ -125,7 +125,7 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 		print_input_errors($input_errors);
 	}
 ?>
-		<div id="mainarea" style="padding-bottom: 0px;">
+	<div id="mainarea" style="padding-bottom: 0px;">
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="diag system pftop">
 			<tr>
 				<td class="list">
@@ -200,7 +200,7 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 //<![CDATA[
 jQuery("#viewtype").change(function() {
 	var selected = jQuery("#viewtype option:selected");
-	switch(selected.val()) {
+	switch (selected.val()) {
 		case "queue":
 		case "label":
 		case "rules":

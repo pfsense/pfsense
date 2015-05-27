@@ -167,7 +167,7 @@ function add_base_packages_menu_items() {
 }
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z_0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
 
 function check_and_returnif_section_exists($section) {
@@ -603,7 +603,7 @@ $id = rand() . '.' . time();
 $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
 include("head.inc");
 
 ?>

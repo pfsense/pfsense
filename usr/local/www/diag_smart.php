@@ -69,8 +69,7 @@ pre {
 include("fbegin.inc");
 
 // Highlights the words "PASSED", "FAILED", and "WARNING".
-function add_colors($string)
-{
+function add_colors($string) {
 	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
@@ -84,8 +83,7 @@ function add_colors($string)
 }
 
 // Edits smartd.conf file, adds or removes email for failed disk reporting
-function update_email($email)
-{
+function update_email($email) {
 	// Did they pass an email?
 	if (!empty($email)) {
 		// Put it in the smartd.conf file
@@ -96,8 +94,7 @@ function update_email($email)
 	}
 }
 
-function smartmonctl($action)
-{
+function smartmonctl($action) {
 	global $start_script;
 	shell_exec($start_script . escapeshellarg($action));
 }

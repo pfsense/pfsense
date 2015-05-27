@@ -42,15 +42,33 @@ if [ -e /root/force_fsck ]; then
 fi
 
 if [ ! "${PLATFORM}" = "cdrom" ]; then
-	/sbin/fsck -y -C -F
-	# Mount memory file system if it exists
-	echo "Mounting filesystems..."
+	/sbin/fsck -p -F
+	FSCK_ACTION_NEEDED=0
+	case $? in
+	0)
+		echo "Filesystems are clean, continuing..."
+		echo "Mounting filesystems..."
+		;;
+	8)
+		echo "Preen mode recommended running a check that will be performed now."
+		FSCK_ACTION_NEEDED=1
+		;;
+	*)
+		echo "Stopping boot is recommended due to  filesystem manual action needed, nevertheless it will be tried to repair the filesystem."
+		FSCK_ACTION_NEEDED=1
+		;;
+	esac
+
+	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
+		echo "WARNING: Trying to recover filesystem from inconsistency..."
+		/sbin/fsck -yF
+	fi
 
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
 	attempts=0
 	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-		/sbin/fsck -yF /
+		/sbin/fsck -yF
 		/sbin/mount -a 2>/dev/null
 		mount_rc=$?
 		attempts=$((attempts+1))

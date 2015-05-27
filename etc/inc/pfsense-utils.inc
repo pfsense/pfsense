@@ -451,27 +451,6 @@ function remove_text_from_file($file, $text) {
 }
 
 /*
- * add_text_to_file($file, $text): adds $text to $file.
- * replaces the text if it already exists.
- */
-function add_text_to_file($file, $text, $replace = false) {
-	if (file_exists($file) and is_writable($file)) {
-		$filecontents = file($file);
-		$filecontents = array_map('rtrim', $filecontents);
-		array_push($filecontents, $text);
-		if ($replace) {
-			$filecontents = array_unique($filecontents);
-		}
-
-		$file_text = implode("\n", $filecontents);
-
-		@file_put_contents($file, $file_text);
-		return true;
-	}
-	return false;
-}
-
-/*
  *   after_sync_bump_adv_skew(): create skew values by 1S
  */
 function after_sync_bump_adv_skew() {
@@ -1063,8 +1042,7 @@ function setup_serial_port($when="save", $path="") {
 				if (!empty($bcs) &&
 				    (stripos($bcs, "console") === false) &&
 				    (stripos($bcs, "boot_multicons") === false) &&
-				    (stripos($bcs, "boot_serial") === false) &&
-				    (stripos($bcs, "hw.usb.no_pf") === false)) {
+				    (stripos($bcs, "boot_serial") === false)) {
 					$new_boot_config[] = $bcs;
 				}
 			}
@@ -1086,7 +1064,6 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
@@ -2944,7 +2921,7 @@ $g_languages = array (
 	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
 	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
 	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
-	"pt_BR" => array("codeset" => "ISO-8859-1", "desc" => gettext("Portuguese (Brazil)")),
+	"pt_BR" => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Brazil)")),
 	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
 	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
 	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),
@@ -3188,7 +3165,7 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 						continue;
 					}
 					$plugin_function = $pkgname . '_'. $plugin_type;
-					$results[$pkgname] = @eval($plugin_function($plugin_params));
+					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 				}
 			}
 		}

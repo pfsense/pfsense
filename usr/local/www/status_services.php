@@ -26,7 +26,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/killall	/bin/ps
 	pfSense_MODULE:	services
 */
@@ -43,8 +43,9 @@ require_once("service-utils.inc");
 require_once("shortcuts.inc");
 
 $service_name = '';
-if (isset($_GET['service']))
+if (isset($_GET['service'])) {
 	$service_name = htmlspecialchars($_GET['service']);
+}
 
 if (!empty($service_name)) {
 	switch ($_GET['mode']) {
@@ -62,8 +63,9 @@ if (!empty($service_name)) {
 }
 
 /* batch mode, allow other scripts to call this script */
-if($_GET['batch'])
+if ($_GET['batch']) {
 	exit;
+}
 
 $pgtitle = array(gettext("Status"),gettext("Services"));
 include("head.inc");
@@ -93,19 +95,22 @@ $services = get_services();
 
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
-	foreach($services as $service) {
-		if (empty($service['name']))
+	foreach ($services as $service) {
+		if (empty($service['name'])) {
 			continue;
-		if (empty($service['description']))
+		}
+		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
+		}
 		echo "<tr><td class=\"listlr\" width=\"20%\">" . $service['name'] . "</td>\n";
 		echo "<td class=\"listr\" width=\"55%\">" . $service['description'] . "</td>\n";
 		// if service is running then listr else listbg
 		$bgclass = null;
-		if (get_service_status($service))
+		if (get_service_status($service)) {
 			$bgclass = "listr";
-		else
+		} else {
 			$bgclass = "listbg";
+		}
 		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, true, true) . "</td>\n";
 		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service);
 		$scut = get_shortcut_by_service_name($service['name']);
@@ -121,7 +126,7 @@ if (count($services) > 0) {
 }
 
 ?>
-</tbody>
+	</tbody>
 </table>
 </div>
 </form>

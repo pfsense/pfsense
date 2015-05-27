@@ -59,11 +59,8 @@
 			<fielddescr>External Interface (generally WAN)</fielddescr>
 			<fieldname>ext_iface</fieldname>
 			<default_value>wan</default_value>
-			<size>3</size>
-			<type>select_source</type>
-			<source><![CDATA[get_pkg_interfaces_select_source(false)]]></source>
-			<source_name>name</source_name>
-			<source_value>value</source_value>
+			<type>interfaces_selection</type>
+			<hideinterfaceregex>loopback</hideinterfaceregex>
 			<description>Select only your primary WAN interface (interface with your default route). Only one interface is allowed here, not multiple.</description>
 			<required/>
 		</field>
@@ -71,14 +68,10 @@
 			<fielddescr>Interfaces (generally LAN)</fielddescr>
 			<fieldname>iface_array</fieldname>
 			<default_value>lan</default_value>
-			<multiple>true</multiple>
-			<size>3</size>
-			<type>select_source</type>
-			<source><![CDATA[get_pkg_interfaces_select_source(true)]]></source>
-			<source_name>name</source_name>
-			<source_value>value</source_value>
+			<type>interfaces_selection</type>
 			<description>You can use the CTRL or COMMAND key to select multiple interfaces.</description>
 			<required/>
+			<multiple/>
 		</field>
 		<field>
 			<fielddescr>Maximum Download Speed (Kbits/second)</fielddescr>

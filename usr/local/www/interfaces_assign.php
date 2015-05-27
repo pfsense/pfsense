@@ -57,36 +57,43 @@ function interface_assign_description($portinfo, $portname) {
 	global $ovpn_descrs;
 	if ($portinfo['isvlan']) {
 		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['iswlclone']) {
 		$descr = $portinfo['cloneif'];
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['isppp']) {
 		$descr = $portinfo['descr'];
 	} elseif ($portinfo['isbridge']) {
 		$descr = strtoupper($portinfo['bridgeif']);
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['isgre']) {
 		$descr = "GRE {$portinfo['remote-addr']}";
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['isgif']) {
 		$descr = "GIF {$portinfo['remote-addr']}";
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['islagg']) {
 		$descr = strtoupper($portinfo['laggif']);
-		if ($portinfo['descr'])
+		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
+		}
 	} elseif ($portinfo['isqinq']) {
 		$descr =  $portinfo['descr'];
 	} elseif (substr($portname, 0, 4) == 'ovpn') {
 		$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
-	} else
+	} else {
 		$descr = $portname . " (" . $portinfo['mac'] . ")";
+	}
 
 	return htmlspecialchars($descr);
 }
@@ -146,9 +153,11 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 		$portlist[$lagg['laggif']]['islagg'] = true;
 		/* LAGG members cannot be assigned */
 		$lagifs = explode(',', $lagg['members']);
-		foreach ($lagifs as $lagif)
-			if (isset($portlist[$lagif]))
+		foreach ($lagifs as $lagif) {
+			if (isset($portlist[$lagif])) {
 				unset($portlist[$lagif]);
+			}
+		}
 	}
 }
 
@@ -173,23 +182,28 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
 		$ports_base = basename($ppp['ports']);
-		if (isset($ppp['descr']))
+		if (isset($ppp['descr'])) {
 			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['descr']}";
-		else if (isset($ppp['username']))
+		} else if (isset($ppp['username'])) {
 			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['username']}";
-		else
+		} else {
 			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base})";
+		}
 	}
 }
 
 $ovpn_descrs = array();
 if (is_array($config['openvpn'])) {
-	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as $s)
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $s) {
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
-	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as $c)
+		}
+	}
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $c) {
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
+		}
+	}
 }
 
 if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
@@ -204,13 +218,14 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 
 	if ($portused === false) {
 		/* find next free optional interface number */
-		if(!$config['interfaces']['lan']) {
+		if (!$config['interfaces']['lan']) {
 			$newifname = gettext("lan");
 			$descr = gettext("LAN");
 		} else {
 			for ($i = 1; $i <= count($config['interfaces']); $i++) {
-				if (!$config['interfaces']["opt{$i}"])
+				if (!$config['interfaces']["opt{$i}"]) {
 					break;
+				}
 			}
 			$newifname = 'opt' . $i;
 			$descr = "OPT" . $i;
@@ -244,10 +259,11 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 		$retval = filter_configure();
 		$savemsg = get_std_save_message($retval);
 
-		if (stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
-		else
+		} else {
 			$savemsg = $retval;
+		}
 	}
 
 } else if (isset($_POST['Submit'])) {
@@ -258,14 +274,16 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 
 	/* Build a list of the port names so we can see how the interfaces map */
 	$portifmap = array();
-	foreach ($portlist as $portname => $portinfo)
+	foreach ($portlist as $portname => $portinfo) {
 		$portifmap[$portname] = array();
+	}
 
 	/* Go through the list of ports selected by the user,
 	build a list of port-to-interface mappings in portifmap */
 	foreach ($_POST as $ifname => $ifport) {
-		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt'))
+		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
 			$portifmap[$ifport][] = strtoupper($ifname);
+		}
 	}
 
 	/* Deliver error message for any port with more than one assignment */
@@ -275,14 +293,16 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 				' was assigned to %2$s' .
 				' interfaces:'), $portname, count($ifnames));
 
-			foreach ($portifmap[$portname] as $ifn)
+			foreach ($portifmap[$portname] as $ifn) {
 				$errstr .= " " . convert_friendly_interface_to_friendly_descr(strtolower($ifn)) . " (" . $ifn . ")";
+			}
 
 			$input_errors[] = $errstr;
 		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $bridge) {
-				if ($bridge['bridgeif'] != $portname)
+				if ($bridge['bridgeif'] != $portname) {
 					continue;
+				}
 
 				$members = explode(",", strtoupper($bridge['members']));
 				foreach ($members as $member) {
@@ -297,8 +317,9 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (does_interface_exist($vlan['if']) == false)
+			if (does_interface_exist($vlan['if']) == false) {
 				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['tag']} cannot be created please fix the issue before continuing.";
+			}
 		}
 	}
 
@@ -316,8 +337,9 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 						$reloadif = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					if (isset($portlist[$ifport]['isppp']))
+					if (isset($portlist[$ifport]['isppp'])) {
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
+					}
 
 					if (substr($ifport, 0, 3) == 'gre' || substr($ifport, 0, 3) == 'gif') {
 						unset($config['interfaces'][$ifname]['ipaddr']);
@@ -328,19 +350,22 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
-						if (!is_array($config['interfaces'][$ifname]['wireless']))
+						if (!is_array($config['interfaces'][$ifname]['wireless'])) {
 							$config['interfaces'][$ifname]['wireless'] = array();
+						}
 					} else {
 						unset($config['interfaces'][$ifname]['wireless']);
 					}
 
 					/* make sure there is a descr for all interfaces */
-					if (!isset($config['interfaces'][$ifname]['descr']))
+					if (!isset($config['interfaces'][$ifname]['descr'])) {
 						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
+					}
 
 					if ($reloadif == true) {
-						if (preg_match($g['wireless_regex'], $ifport))
+						if (preg_match($g['wireless_regex'], $ifport)) {
 							interface_sync_wireless_clones($config['interfaces'][$ifname], false);
+						}
 						/* Reload all for the interface. */
 						interface_configure($ifname, true);
 					}
@@ -356,22 +381,23 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 	unset($delbtn);
 	foreach ($_POST as $pn => $pd) {
-		if (preg_match("/del_(.+)_x/", $pn, $matches))
+		if (preg_match("/del_(.+)_x/", $pn, $matches)) {
 			$delbtn = $matches[1];
+		}
 	}
 
 	if (isset($delbtn)) {
 		$id = $delbtn;
 
-		if (link_interface_to_group($id))
+		if (link_interface_to_group($id)) {
 			$input_errors[] = gettext("The interface is part of a group. Please remove it from the group to continue");
-		else if (link_interface_to_bridge($id))
+		} else if (link_interface_to_bridge($id)) {
 			$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
-		else if (link_interface_to_gre($id))
+		} else if (link_interface_to_gre($id)) {
 			$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
-		else if (link_interface_to_gif($id))
+		} else if (link_interface_to_gif($id)) {
 			$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
-		else {
+		} else {
 			unset($config['interfaces'][$id]['enable']);
 			$realid = get_real_interface($id);
 			interface_bring_down($id);   /* down the interface */
@@ -385,14 +411,16 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 
 			if (count($config['filter']['rule']) > 0) {
 				foreach ($config['filter']['rule'] as $x => $rule) {
-					if($rule['interface'] == $id)
+					if ($rule['interface'] == $id) {
 						unset($config['filter']['rule'][$x]);
+					}
 				}
 			}
 			if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
 				foreach ($config['nat']['rule'] as $x => $rule) {
-					if($rule['interface'] == $id)
+					if ($rule['interface'] == $id) {
 						unset($config['nat']['rule'][$x]['interface']);
+					}
 				}
 			}
 
@@ -402,7 +430,7 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 			 * then ensure that we are not running DHCP on the wan which
 			 * will make a lot of ISP's unhappy.
 			 */
-			if($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
+			if ($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
 				unset($config['dhcpd']['wan']);
 			}
 
@@ -423,21 +451,24 @@ foreach ($portlist as $portname => $portinfo) {
 			break;
 		}
 	}
-	if ($portused === false)
+	if ($portused === false) {
 		$unused_portlist[$portname] = $portinfo;
+	}
 }
 
 include("head.inc");
 
-if(file_exists("/var/run/interface_mismatch_reboot_needed"))
+if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
-		if($rebootingnow)
+		if ($rebootingnow) {
 			$savemsg = gettext("The system is now rebooting.  Please wait.");
-		else
+		} else {
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+		}
 	} else {
 		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
 	}
+}
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -450,12 +481,14 @@ if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
 	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 	echo "<br /></p>\n";
-} elseif($savemsg)
+} elseif ($savemsg) {
 	print_info_box($savemsg);
+}
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces assign">
@@ -485,10 +518,11 @@ if ($input_errors)
 				</tr>
 <?php
 			foreach ($config['interfaces'] as $ifname => $iface):
-				if ($iface['descr'])
+				if ($iface['descr']) {
 					$ifdescr = $iface['descr'];
-				else
+				} else {
 					$ifdescr = strtoupper($ifname);
+				}
 ?>
 				<tr>
 					<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>

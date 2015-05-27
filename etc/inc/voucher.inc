@@ -1,7 +1,7 @@
 <?php
 /*
 	voucher.inc
-	Copyright (C) 2010-2012 Ermal Luci <eri@pfsense.org>
+	Copyright (C) 2010-2012 Ermal Luçi <eri@pfsense.org>
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
 	All rights reserved.

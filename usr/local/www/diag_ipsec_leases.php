@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_ipsec_leases.php
-	Copyright (C) 2014 Ermal LUÇi
+	Copyright (C) 2014 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -43,7 +43,7 @@
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("Leases"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Leases"));
 $shortcut_section = "ipsec";
 include("head.inc");
 

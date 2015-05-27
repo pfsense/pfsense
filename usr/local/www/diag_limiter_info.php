@@ -99,19 +99,19 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag limiter info">
   <tr>
 	<td>
-	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
-		<tr>
-			<td align="center">
-				<table summary="results">
-					<tr><td>
-						<div id="limiteractivitydiv">
-							<?=gettext("Gathering Limiter information, please wait...");?>
-						</div>
-					</td></tr>
-				</table>
-			</td>
-		</tr>
-	</table>
+		<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
+			<tr>
+				<td align="center">
+					<table summary="results">
+						<tr><td>
+							<div id="limiteractivitydiv">
+								<?=gettext("Gathering Limiter information, please wait...");?>
+							</div>
+						</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 	</td>
   </tr>
 </table>

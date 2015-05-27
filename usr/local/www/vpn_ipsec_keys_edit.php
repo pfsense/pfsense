@@ -3,21 +3,21 @@
 	vpn_ipsec_keys_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	part of pfSense
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -48,10 +48,12 @@ if (!is_array($config['ipsec']['mobilekey'])) {
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
@@ -64,25 +66,28 @@ if ($_POST) {
 	foreach ($config['system']['user'] as $uid => $user) {
 		$userids[$user['name']] = $uid;
 	}
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
 	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = array(gettext("Identifier"),gettext("Pre-Shared Key"));
-	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
-	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident']))
-		$input_errors[] = gettext("The identifier contains invalid characters.");
+	$reqdfieldsn = array(gettext("Identifier"), gettext("Pre-Shared Key"));
 
-	if (array_key_exists($_POST['ident'], $userids))
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident'])) {
+		$input_errors[] = gettext("The identifier contains invalid characters.");
+	}
+
+	if (array_key_exists($_POST['ident'], $userids)) {
 		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
+	}
 	unset($userids);
-	
-	if (isset($_POST['psk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['psk']))
+
+	if (isset($_POST['psk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['psk'])) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
+	}
 
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
@@ -95,15 +100,16 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-	
-		if (isset($id) && $a_secret[$id])
+
+		if (isset($id) && $a_secret[$id]) {
 			$secretent = $a_secret[$id];
-	
+		}
+
 		$secretent['ident'] = $_POST['ident'];
 		$secretent['type'] = $_POST['type'];
 		$secretent['pre-shared-key'] = $_POST['psk'];
 		$text = "";
-		
+
 		if (isset($id) && $a_secret[$id]) {
 			$a_secret[$id] = $secretent;
 			$text = gettext("Edited");
@@ -111,10 +117,10 @@ if ($_POST) {
 			$a_secret[] = $secretent;
 			$text = gettext("Added");
 		}
-		
+
 		write_config("{$text} IPsec Pre-Shared Keys");
 		mark_subsystem_dirty('ipsec');
-		
+
 		header("Location: vpn_ipsec_keys.php");
 		exit;
 	}
@@ -130,62 +136,63 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn ipsec keys edit">
+<form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn ipsec keys edit">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Edit pre-shared secret</td>
 		</tr>
-                <tr> 
-                  <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
-                  <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>" />
-                    <br />
-<?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
-                  </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Secret type"); ?></td>
-                  <td width="78%" class="vtable"> 
-			<select name="type" class="formselect">
-			<?php
-				foreach ($ipsec_preshared_key_type as $value => $descr) {
-					echo "<option value='{$value}' ";
-					if ($pconfig['type'] == $value)
-						echo "selected=\"selected\"";
-					echo ">{$descr}</option>";
-				}
-			?>
-			</select>
-		  </td>
-		</tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>" />
-                  </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
-                    <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-                    <?php endif; ?>
-                  </td>
-                </tr>
 		<tr>
-			<td colspan="4">
-			<p>
-				<span class="vexpl">
-				<span class="red">
-					<strong><?=gettext("Note"); ?>:<br /></strong>
-				</span>
-				<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
-				</span>
-			</p>
+			<td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
+			<td class="vtable">
+				<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>" />
+				<br />
+				<?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.
 			</td>
 		</tr>
-              </table>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Secret type"); ?></td>
+			<td width="78%" class="vtable">
+				<select name="type" class="formselect">
+					<?php
+						foreach ($ipsec_preshared_key_type as $value => $descr) {
+							echo "<option value='{$value}' ";
+							if ($pconfig['type'] == $value) {
+								echo "selected=\"selected\"";
+							}
+							echo ">{$descr}</option>";
+						}
+					?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
+			<td width="78%" class="vtable">
+				<?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>" />
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<?php if (isset($id) && $a_secret[$id]): ?>
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<?php endif; ?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<p>
+					<span class="vexpl">
+						<span class="red">
+							<strong><?=gettext("Note"); ?>:<br /></strong>
+						</span>
+						<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
+					</span>
+				</p>
+			</td>
+		</tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

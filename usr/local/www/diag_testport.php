@@ -57,7 +57,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host port");
-	$reqdfieldsn = array(gettext("Host"),gettext("Port"));
+	$reqdfieldsn = array(gettext("Host"), gettext("Port"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!is_ipaddr($_REQUEST['host']) && !is_hostname($_REQUEST['host'])) {
@@ -179,108 +179,108 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 		<tr>
-		<td valign="top" colspan="2">
-		<?php if ($do_testport) {
-			echo "<font face=\"terminal\" size=\"2\">";
-			echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
-		?>
-			<script type="text/javascript">
-			//<![CDATA[
-			window.onload=function() {
-				document.getElementById("testportCaptured").wrap='off';
-			}
-			//]]>
-			</script>
-		<?php
-			echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
-			$result = "";
-			$nc_base_cmd = "/usr/bin/nc";
-			$nc_args = "-w " . escapeshellarg($timeout);
-			if (!$showtext) {
-				$nc_args .= " -z ";
-			}
-			if (!empty($srcport)) {
-				$nc_args .= " -p " . escapeshellarg($srcport) . " ";
-			}
+			<td valign="top" colspan="2">
+			<?php if ($do_testport) {
+				echo "<font face=\"terminal\" size=\"2\">";
+				echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
+			?>
+				<script type="text/javascript">
+				//<![CDATA[
+				window.onload=function() {
+					document.getElementById("testportCaptured").wrap='off';
+				}
+				//]]>
+				</script>
+			<?php
+				echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
+				$result = "";
+				$nc_base_cmd = "/usr/bin/nc";
+				$nc_args = "-w " . escapeshellarg($timeout);
+				if (!$showtext) {
+					$nc_args .= " -z ";
+				}
+				if (!empty($srcport)) {
+					$nc_args .= " -p " . escapeshellarg($srcport) . " ";
+				}
 
-			/* Attempt to determine the interface address, if possible. Else try both. */
-			if (is_ipaddrv4($host)) {
-				$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
-				$nc_args .= " -4";
-			} elseif (is_ipaddrv6($host)) {
-				if ($sourceip == "any") {
-					$ifaddr = "";
-				} else if (is_linklocal($sourceip)) {
-					$ifaddr = $sourceip;
+				/* Attempt to determine the interface address, if possible. Else try both. */
+				if (is_ipaddrv4($host)) {
+					$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
+					$nc_args .= " -4";
+				} elseif (is_ipaddrv6($host)) {
+					if ($sourceip == "any") {
+						$ifaddr = "";
+					} else if (is_linklocal($sourceip)) {
+						$ifaddr = $sourceip;
+					} else {
+						$ifaddr = get_interface_ipv6($sourceip);
+					}
+					$nc_args .= " -6";
 				} else {
-					$ifaddr = get_interface_ipv6($sourceip);
-				}
-				$nc_args .= " -6";
-			} else {
-				switch ($ipprotocol) {
-					case "ipv4":
-						$ifaddr = get_interface_ip($sourceip);
-						$nc_ipproto = " -4";
-						break;
-					case "ipv6":
-						$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
-						$nc_ipproto = " -6";
-						break;
-					case "any":
-						$ifaddr = get_interface_ip($sourceip);
-						$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
-						if (empty($ifaddr)) {
-							$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
-							$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
-						}
-						break;
-				}
-				/* Netcat doesn't like it if we try to connect using a certain type of IP without specifying the family. */
-				if (!empty($ifaddr)) {
-					$nc_args .= $nc_ipproto;
-				} elseif ($sourceip == "any") {
 					switch ($ipprotocol) {
 						case "ipv4":
+							$ifaddr = get_interface_ip($sourceip);
 							$nc_ipproto = " -4";
 							break;
 						case "ipv6":
+							$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
 							$nc_ipproto = " -6";
 							break;
+						case "any":
+							$ifaddr = get_interface_ip($sourceip);
+							$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
+							if (empty($ifaddr)) {
+								$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
+								$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
+							}
+							break;
 					}
-					$nc_args .= $nc_ipproto;
+					/* Netcat doesn't like it if we try to connect using a certain type of IP without specifying the family. */
+					if (!empty($ifaddr)) {
+						$nc_args .= $nc_ipproto;
+					} elseif ($sourceip == "any") {
+						switch ($ipprotocol) {
+							case "ipv4":
+								$nc_ipproto = " -4";
+								break;
+							case "ipv6":
+								$nc_ipproto = " -6";
+								break;
+						}
+						$nc_args .= $nc_ipproto;
+					}
 				}
-			}
-			/* Only add on the interface IP if we managed to find one. */
-			if (!empty($ifaddr)) {
-				$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
-				$scope = get_ll_scope($ifaddr);
-				if (!empty($scope) && !strstr($host, "%")) {
-					$host .= "%{$scope}";
+				/* Only add on the interface IP if we managed to find one. */
+				if (!empty($ifaddr)) {
+					$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
+					$scope = get_ll_scope($ifaddr);
+					if (!empty($scope) && !strstr($host, "%")) {
+						$host .= "%{$scope}";
+					}
 				}
-			}
 
-			$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
-			exec($nc_cmd, $result, $retval);
-			//echo "NC CMD: {$nc_cmd}\n\n";
-			if (empty($result)) {
-				if ($showtext) {
-					echo gettext("No output received, or connection failed. Try with \"Show Remote Text\" unchecked first.");
-				} else {
-					echo gettext("Connection failed (Refused/Timeout)");
-				}
-			} else {
-				if (is_array($result)) {
-					foreach ($result as $resline) {
-						echo htmlspecialchars($resline) . "\n";
+				$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
+				exec($nc_cmd, $result, $retval);
+				//echo "NC CMD: {$nc_cmd}\n\n";
+				if (empty($result)) {
+					if ($showtext) {
+						echo gettext("No output received, or connection failed. Try with \"Show Remote Text\" unchecked first.");
+					} else {
+						echo gettext("Connection failed (Refused/Timeout)");
 					}
 				} else {
-					echo htmlspecialchars($result);
+					if (is_array($result)) {
+						foreach ($result as $resline) {
+							echo htmlspecialchars($resline) . "\n";
+						}
+					} else {
+						echo htmlspecialchars($result);
+					}
 				}
+				echo '</textarea>&nbsp;</font>' ;
 			}
-			echo '</textarea>&nbsp;</font>' ;
-		}
-		?>
-		</td>
+			?>
+			</td>
 		</tr>
 	</table>
 </form>

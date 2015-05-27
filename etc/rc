@@ -37,66 +37,42 @@ if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
 fi
 
 if [ -e /root/force_fsck ]; then
-	echo "Forcing filesystem check..."
-	/sbin/fsck -y -t ufs /
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/fsck -y -t ufs /cf
-	fi
+	echo "Forcing filesystem(s) check..."
+	/sbin/fsck -y -F -t ufs
 fi
 
-if [ "${PLATFORM}" = "nanobsd" ]; then
-	kldstat -qm zfs
-	if [ $? -eq 0 ]; then
-		kldunload zfs
+if [ ! "${PLATFORM}" = "cdrom" ]; then
+	/sbin/fsck -p -F
+	FSCK_ACTION_NEEDED=0
+	case $? in
+	0)
+		echo "Filesystems are clean, continuing..."
+		echo "Mounting filesystems..."
+		;;
+	8)
+		echo "Preen mode recommended running a check that will be performed now."
+		FSCK_ACTION_NEEDED=1
+		;;
+	*)
+		echo "Stopping boot is recommended due to  filesystem manual action needed, nevertheless it will be tried to repair the filesystem."
+		FSCK_ACTION_NEEDED=1
+		;;
+	esac
+
+	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
+		echo "WARNING: Trying to recover filesystem from inconsistency..."
+		/sbin/fsck -yF
 	fi
-fi
 
-# Mount memory file system if it exists
-echo "Mounting filesystems..."
-
-# Handle ZFS read-only case
-if [ "$PLATFORM" = "pfSense" ]; then
-	kldstat -qm zfs
-	if [ $? -eq 0 ]; then
-		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-		if [ $ZFSFSAVAILABLE -eq 0 ]; then
-			kldunload zfs
-		elif [ -f /usr/bin/grep ]; then
-			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-			if [ "$ZFSROOT" != "" ]; then
-				/sbin/zfs set readonly=off $ZFSROOT
-			fi
-		fi
-	fi
-fi
-
-if [ "${PLATFORM}" = "cdrom" ]; then
-	/etc/rc.cdrom
-else
-	# Mount /. If it fails run a fsck.
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		export PKG_TMPDIR=/root/
-		/sbin/mount -uw / 2>/dev/null
-		mount_rc=$?
-		attempts=0
-		while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-			/sbin/fsck -y /
-			/sbin/fsck -y /cf
-			/sbin/mount -uw / 2>/dev/null
-			mount_rc=$?
-			attempts=$((attempts+1))
-		done
-	else
+	/sbin/mount -a 2>/dev/null
+	mount_rc=$?
+	attempts=0
+	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
+		/sbin/fsck -yF
 		/sbin/mount -a 2>/dev/null
 		mount_rc=$?
-		attempts=0
-		while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-			/sbin/fsck -y /
-			/sbin/mount -a 2>/dev/null
-			mount_rc=$?
-			attempts=$((attempts+1))
-		done
-	fi
+		attempts=$((attempts+1))
+	done
 
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
@@ -105,24 +81,6 @@ else
 		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
 			/bin/rm -rf /conf
 			/bin/ln -s /cf/conf /conf
-		fi
-	fi
-
-	if [ ! "$PLATFORM" = "jail" ]; then
-		# Check to see if a compact flash mountpoint exists
-		# If it fails to mount then run a fsck -y
-		if grep -q cf /etc/fstab; then
-			/sbin/mount -w /cf 2>/dev/null
-			/sbin/mount -uw /cf 2>/dev/null
-			mount_rc=$?
-			attempts=0
-			while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-				/sbin/umount /cf
-				/sbin/fsck -y /cf
-				/sbin/mount -w /cf 2>/dev/null
-				mount_rc=$?
-				attempts=$((attempts+1))
-			done
 		fi
 	fi
 
@@ -135,6 +93,29 @@ fi
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		/sbin/kldunload zfs
+	fi
+elif [ "$PLATFORM" = "pfSense" ]; then
+	# Handle ZFS read-only case
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+		if [ $ZFSFSAVAILABLE -eq 0 ]; then
+			/sbin/kldunload zfs
+		elif [ -f /usr/bin/grep ]; then
+			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+			if [ "$ZFSROOT" != "" ]; then
+				/sbin/zfs set readonly=off $ZFSROOT
+			fi
+		fi
+	fi
+elif [ "${PLATFORM}" = "cdrom" ]; then
+	/etc/rc.cdrom
+fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then

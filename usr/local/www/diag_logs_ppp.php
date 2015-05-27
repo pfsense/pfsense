@@ -57,7 +57,7 @@ if ($_POST['clear']) {
 	clear_log_file($ppp_logfile);
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("PPP"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("PPP"));
 include("head.inc");
 
 ?>
@@ -88,7 +88,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s PPP log entries"),$nentries);?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s PPP log entries"), $nentries);?></td>
 				</tr>
 				<?php dump_clog($ppp_logfile, $nentries); ?>
 				<tr>

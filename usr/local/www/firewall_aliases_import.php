@@ -52,39 +52,46 @@ $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
 // Add all Load balance names to reserved_keywords
-if (is_array($config['load_balancer']['lbpool']))
-	foreach ($config['load_balancer']['lbpool'] as $lbpool)
+if (is_array($config['load_balancer']['lbpool'])) {
+	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
 		$reserved_keywords[] = $lbpool['name'];
+	}
+}
 
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 
-if (!is_array($config['aliases']['alias']))
+if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
+}
 $a_aliases = &$config['aliases']['alias'];
 
-if($_POST['aliasimport'] <> "") {
+if ($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (is_validaliasname($_POST['name']) == false)
+	if (is_validaliasname($_POST['name']) == false) {
 		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
+	}
 
 	/* check for name duplicates */
-	if (is_alias($_POST['name']))
+	if (is_alias($_POST['name'])) {
 		$input_errors[] = gettext("An alias with this name already exists.");
+	}
 
 
 	/* Check for reserved keyword names */
-	foreach($reserved_keywords as $rk)
-		if ($rk == $_POST['name'])
+	foreach ($reserved_keywords as $rk) {
+		if ($rk == $_POST['name']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+		}
+	}
 
 	/* check for name interface description conflicts */
-	foreach($config['interfaces'] as $interface) {
-		if($interface['descr'] == $_POST['name']) {
+	foreach ($config['interfaces'] as $interface) {
+		if ($interface['descr'] == $_POST['name']) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
 		}
@@ -117,15 +124,13 @@ if($_POST['aliasimport'] <> "") {
 						$imported_ips[] = $impip;
 						$imported_descs[] = $impdesc;
 					}
-				}
-				else {
+				} else {
 					if (!$desc_fmt_err_found) {
 						$input_errors[] = gettext("Descriptions may not start or end with vertical bar (|) or contain double vertical bar ||.");
 						$desc_fmt_err_found = true;
 					}
 				}
-			}
-			else {
+			} else {
 				if (!$desc_len_err_found) {
 					/* Note: The 200 character limit is just a practical check to avoid accidents */
 					/* if the user pastes a large number of IP addresses without line breaks.     */
@@ -150,8 +155,9 @@ if($_POST['aliasimport'] <> "") {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('aliases');
+		}
 		pfSenseHeader("firewall_aliases.php");
 
 		exit;

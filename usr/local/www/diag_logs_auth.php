@@ -56,7 +56,7 @@ if ($_POST['clear']) {
 	clear_log_file($portal_logfile);
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Portal Auth"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Portal Auth"));
 $shortcut_section = "captiveportal";
 include("head.inc");
 
@@ -65,7 +65,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs captive portal">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -81,22 +82,30 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-	<td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Last %s Portal Auth log entries"),$nentries);?></td>
-		  </tr>
-		  <?php dump_clog($portal_logfile, $nentries, true); ?>
-		<tr><td><br /><form action="diag_logs_auth.php" method="post">
-			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log"); ?>"/></form></td></tr>
-		</table>
-	</div>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
+				<tr>
+					<td colspan="2" class="listtopic">
+						<?php printf(gettext("Last %s Portal Auth log entries"), $nentries);?>
+					</td>
+				</tr>
+				<?php dump_clog($portal_logfile, $nentries, true); ?>
+				<tr>
+					<td>
+						<br />
+						<form action="diag_logs_auth.php" method="post">
+							<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log"); ?>"/>
+						</form>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

@@ -97,11 +97,13 @@ jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
 				<tr>
 					<td align="center">
 						<table summary="results">
-							<tr><td>
-								<div id="pfactivitydiv">
-									<?=gettext("Gathering PF information, please wait...");?>
-								</div>
-							</td></tr>
+							<tr>
+								<td>
+									<div id="pfactivitydiv">
+										<?=gettext("Gathering PF information, please wait...");?>
+									</div>
+								</td>
+							</tr>
 						</table>
 					</td>
 				</tr>

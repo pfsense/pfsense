@@ -46,7 +46,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if($_GET['reset'] <> "") {
+if ($_GET['reset'] <> "") {
 	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }
@@ -58,10 +58,11 @@ if ($_POST['apply']) {
 	/* Setup pf rules since the user may have changed the optimization value */
 	$retval = filter_configure();
 	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") <> true)
+	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
-	else
+	} else {
 		$savemsg = $retval;
+	}
 
 	/* reset rrd queues */
 	unlink_if_exists("/var/db/rrd/*queuedrops.rrd");

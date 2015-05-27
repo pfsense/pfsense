@@ -4,7 +4,7 @@
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2008 Ermal Lu�i
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -98,7 +98,16 @@ function vpn_ipsec_convert_to_modp($index)
 			$convertion = "ecp384";
 			break;
 		case '21':
-			$convertion = "ecp512";
+			$convertion = "ecp521";
+			break;
+		case '28':
+			$convertion = "ecp256bp";
+			break;
+		case '29':
+			$convertion = "ecp384bp";
+			break;
+		case '30':
+			$convertion = "ecp512bp";
 			break;
 	}
 

@@ -109,7 +109,7 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Configuration History"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Configuration History"));
 include("head.inc");
 
 ?>
@@ -123,7 +123,9 @@ include("head.inc");
 	?>
 	<?php if ($diff) { ?>
 	<table align="center" width="100%" border="0" cellspacing="0" style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;" summary="diag confbak">
-		<tr><td><?=gettext("Configuration diff from");?> <?php echo date(gettext("n/j/y H:i:s"), $oldtime); ?> <?=gettext("to");?> <?php echo date(gettext("n/j/y H:i:s"), $newtime); ?></td></tr>
+		<tr>
+			<td><?=gettext("Configuration diff from");?> <?php echo date(gettext("n/j/y H:i:s"), $oldtime); ?> <?=gettext("to");?> <?php echo date(gettext("n/j/y H:i:s"), $newtime); ?></td>
+		</tr>
 		<?php foreach ($diff as $line) {
 			switch (substr($line, 0, 1)) {
 				case "+":
@@ -194,17 +196,17 @@ include("head.inc");
 							<td width="10%">&nbsp;</td>
 							<td width="15%" valign="top"><?=gettext("Backup Count");?></td>
 							<td width="10%">
-							<input name="backupcount" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($config['system']['backupcount']);?>"/>
+								<input name="backupcount" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($config['system']['backupcount']);?>"/>
 							</td>
 							<td width="60%">
-							<?= gettext("Enter the number of older configurations to keep in the local backup cache. By default this is 30 for a full install or 5 on NanoBSD."); ?>
+								<?= gettext("Enter the number of older configurations to keep in the local backup cache. By default this is 30 for a full install or 5 on NanoBSD."); ?>
 							</td>
 							<td width= "5%"><input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /></td>
 						</tr>
 						<tr>
 							<td class="vncell">&nbsp;</td>
 							<td colspan="4" class="vncell">
-							<?= gettext("NOTE: Be aware of how much space is consumed by backups before adjusting this value. Current space used by backups: "); ?> <?= exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'") ?>
+								<?= gettext("NOTE: Be aware of how much space is consumed by backups before adjusting this value. Current space used by backups: "); ?> <?= exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'") ?>
 							</td>
 						</tr>
 					</table>
@@ -214,8 +216,8 @@ include("head.inc");
 						<?php if (is_array($confvers)): ?>
 						<tr>
 							<td colspan="7" class="list">
-							<?= gettext("To view the differences between an older configuration and a newer configuration, select the older configuration using the left column of radio options and select the newer configuration in the right column, then press the Diff button."); ?>
-							<br /><br />
+								<?= gettext("To view the differences between an older configuration and a newer configuration, select the older configuration using the left column of radio options and select the newer configuration in the right column, then press the Diff button."); ?>
+								<br /><br />
 							</td>
 						</tr>
 						<tr>
@@ -263,14 +265,14 @@ include("head.inc");
 							<td class="listr"> <?= format_bytes($version['filesize']) ?></td>
 							<td class="listr"> <?= htmlspecialchars($version['description']) ?></td>
 							<td valign="middle" class="list nowrap">
-							<a href="diag_confbak.php?newver=<?=$version['time'];?>">
-							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>" />
+								<a href="diag_confbak.php?newver=<?=$version['time'];?>">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>" />
 								</a>
-							<a href="diag_confbak.php?rmver=<?=$version['time'];?>">
-							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("Remove this backup");?>" title="<?=gettext("Remove this backup");?>" />
+								<a href="diag_confbak.php?rmver=<?=$version['time'];?>">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("Remove this backup");?>" title="<?=gettext("Remove this backup");?>" />
 								</a>
 								<a href="diag_confbak.php?getcfg=<?=$version['time'];?>">
-								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="<?=gettext("Download this backup");?>" title="<?=gettext("Download this backup");?>" />
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="<?=gettext("Download this backup");?>" title="<?=gettext("Download this backup");?>" />
 								</a>
 							</td>
 						</tr>

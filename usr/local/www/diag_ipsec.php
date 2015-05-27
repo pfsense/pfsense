@@ -46,7 +46,7 @@
 
 global $g;
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"));
 $shortcut_section = "ipsec";
 
 require("guiconfig.inc");
@@ -529,8 +529,8 @@ $status = ipsec_smp_dump_status();
 			<tr style="display:none;"><td></td></tr>
 		</tbody>
 		</table>
-	</div>
-	</td>
+		</div>
+		</td>
 	</tr>
 </table>
 

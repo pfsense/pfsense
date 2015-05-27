@@ -76,8 +76,7 @@ foreach ($rawdata as $line) {
 }
 
 /* FIXME: Not ipv6 compatible dns resolving. PHP needs fixing */
-function _getHostName($mac,$ip)
-{
+function _getHostName($mac, $ip) {
 	if (is_ipaddr($ip)) {
 		list($ip, $scope) = explode("%", $ip);
 		if (gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip) {
@@ -106,7 +105,7 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-$pgtitle = array(gettext("Diagnostics"),gettext("NDP Table"));
+$pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
 
 ?>

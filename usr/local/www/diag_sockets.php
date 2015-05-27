@@ -42,7 +42,7 @@
 
 include('guiconfig.inc');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Sockets"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 
 include('head.inc');
 

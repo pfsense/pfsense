@@ -142,7 +142,7 @@ while ($i < $leases_count) {
 				$f = $f+3;
 				break;
 			case "binding":
-				switch($data[$f+2]) {
+				switch ($data[$f+2]) {
 					case "active":
 						$leases[$l]['act'] = "active";
 						break;
@@ -180,7 +180,7 @@ while ($i < $leases_count) {
 				break;
 			case "client-hostname":
 				if ($data[$f+1] <> "") {
-					$leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
+					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($leases[$l]['ip']);
 					if ($hostname <> "") {
@@ -201,11 +201,11 @@ while ($i < $leases_count) {
 
 /* remove duplicate items by mac address */
 if (count($leases) > 0) {
-	$leases = remove_duplicate($leases,"ip");
+	$leases = remove_duplicate($leases, "ip");
 }
 
 if (count($pools) > 0) {
-	$pools = remove_duplicate($pools,"name");
+	$pools = remove_duplicate($pools, "name");
 	asort($pools);
 }
 
@@ -218,7 +218,7 @@ foreach ($leases as $value) {
 	$dhcpip[$value['ip']] = $value['hostname'];
 }
 
-exec("/usr/sbin/arp -an",$rawdata);
+exec("/usr/sbin/arp -an", $rawdata);
 
 $i = 0;
 
@@ -234,18 +234,18 @@ foreach ($ifdescrs as $key => $interface) {
 
 $data = array();
 foreach ($rawdata as $line) {
-	$elements = explode(' ',$line);
+	$elements = explode(' ', $line);
 
 	if ($elements[3] != "(incomplete)") {
 		$arpent = array();
-		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[1]));
+		$arpent['ip'] = trim(str_replace(array('(', ')'), '', $elements[1]));
 		$arpent['mac'] = trim($elements[3]);
 		$arpent['interface'] = trim($elements[5]);
 		$data[] = $arpent;
 	}
 }
 
-function _getHostName($mac,$ip) {
+function _getHostName($mac, $ip) {
 	global $dhcpmac, $dhcpip;
 
 	if ($dhcpmac[$mac]) {
@@ -254,7 +254,7 @@ function _getHostName($mac,$ip) {
 		return $dhcpip[$ip];
 	} else {
 		exec("host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/',$output[0],$matches)) {
+		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
 			if ($matches[1] <> $ip) {
 				return $matches[1];
 			}
@@ -263,7 +263,7 @@ function _getHostName($mac,$ip) {
 	return "";
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
+$pgtitle = array(gettext("Diagnostics"), gettext("ARP Table"));
 include("head.inc");
 
 ?>

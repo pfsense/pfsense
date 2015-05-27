@@ -707,15 +707,17 @@ EOPP;
 		}
 		$all_mac_strings[] = $dhcpifconf['mac_allow'];
 		$all_mac_strings[] = $dhcpifconf['mac_deny'];
-		$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
-		foreach ($all_mac_list as $mac) {
-			if (empty($mac)) {
-				continue;
+		if (!empty($all_mac_strings)) {
+			$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
+			foreach ($all_mac_list as $mac) {
+				if (empty($mac)) {
+					continue;
+				}
+				$dhcpdconf .= 'class "' . str_replace(':', '', $mac) . '" {' . "\n";
+				// Skip the first octet of the MAC address - for media type, typically Ethernet ("01") and match the rest.
+				$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
+				$dhcpdconf .= '}' . "\n";
 			}
-			$dhcpdconf .= 'class "' . str_replace(':', '', $mac) . '" {' . "\n";
-			// Skip the first octet of the MAC address - for media type, typically Ethernet ("01") and match the rest.
-			$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
-			$dhcpdconf .= '}' . "\n";
 		}
 
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";

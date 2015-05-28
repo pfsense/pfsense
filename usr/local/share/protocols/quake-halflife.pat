@@ -16,12 +16,17 @@
 # Fortress Classic, Deathmatch Classic, Ricochet, Half-Life [1] Deathmatch,
 # and I imagine all the other 3rd party mods that also use this engine
 # will match that pattern.
+#
+# Gavin Pryke <gavinlee303 at googlemail.com> says:
+# Added "getstatus". Quake3 games were not being matched here until it was
+# added.
 
 quake-halflife
 # All quake (like) protocols start with 4x 0xFF.  Then the client either
-# issues getinfo or getchallenge.
-^\xff\xff\xff\xffget(info|challenge)
+# issues getinfo, getchallenge or getstatus.
+^\xff\xff\xff\xffget(info|challenge|status)
 
 # A previous quake pattern allowed the connection to start with only 2 bytes
 # of 0xFF.  This doesn't seem to ever happen, but we should keep an eye out
 # for it.
+

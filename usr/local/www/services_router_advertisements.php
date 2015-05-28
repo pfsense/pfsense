@@ -114,7 +114,8 @@ $advertise_modes = array("disabled" => "Disabled",
 	"router" => "Router Only",
 	"unmanaged" => "Unmanaged",
 	"managed" => "Managed",
-	"assist" => "Assisted");
+	"assist" => "Assisted",
+	"stateless_dhcp" => "Stateless DHCP");
 $priority_modes = array("low" => "Low",
 	"medium" => "Normal",
 	"high" => "High");

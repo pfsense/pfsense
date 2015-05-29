@@ -528,6 +528,12 @@ function write_config($desc="Unknown", $backup = true) {
 		}
 	}
 
+	// Revert Dashboard theme
+	if (isset($g['theme_revert'])) {
+		$config['theme'] = $g['theme_revert'];
+		unset($g['theme_revert']);
+	}
+
 	if (!isset($argc)) {
 		session_commit();
 	}

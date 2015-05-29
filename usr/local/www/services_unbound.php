@@ -110,8 +110,9 @@ if ($_POST) {
 		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			if ($_POST['port'] == $config['dnsmasq']['port'])
+			if ($_POST['port'] == $config['dnsmasq']['port']) {
 				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
+			}
 		}
 
 		if (empty($_POST['active_interface'])) {
@@ -202,7 +203,7 @@ if ($_GET['act'] == "del") {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"));
 $shortcut_section = "resolver";
 include_once("head.inc");
 
@@ -254,10 +255,13 @@ function show_advanced_dns() {
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($pconfig['enable'])) echo "checked=\"checked\"";?> onclick="enable_change(false)" />
-									<strong><?=gettext("Enable DNS Resolver");?><br />
-									</strong></p>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($pconfig['enable'])) echo "checked=\"checked\"";?> onclick="enable_change(false)" />
+										<strong>
+											<?=gettext("Enable DNS Resolver");?><br />
+										</strong>
+									</p>
 								</td>
 							</tr>
 							<tr>
@@ -283,8 +287,9 @@ function show_advanced_dns() {
 										<?php
 											foreach ($interface_addresses as $laddr => $ldescr):
 												$selected = "";
-												if (in_array($laddr, $pconfig['active_interface']))
+												if (in_array($laddr, $pconfig['active_interface'])) {
 													$selected = 'selected="selected"';
+												}
 										?>
 										<option value="<?=$laddr;?>" <?=$selected;?>>
 											<?=htmlspecialchars($ldescr);?>
@@ -304,14 +309,16 @@ function show_advanced_dns() {
 										<?php
 											foreach ($interface_addresses as $laddr => $ldescr):
 												$selected = "";
-												if (in_array($laddr, $pconfig['outgoing_interface']))
-												$selected = 'selected="selected"';
+												if (in_array($laddr, $pconfig['outgoing_interface'])) {
+													$selected = 'selected="selected"';
+												}
 										?>
 										<option value="<?=$laddr;?>" <?=$selected;?>>
 											<?=htmlspecialchars($ldescr);?>
 										</option>
-										<?php endforeach;
-							   unset($interface_addresses);
+										<?php
+											endforeach;
+											unset($interface_addresses);
 										?>
 									</select>
 									<br /><br />
@@ -319,48 +326,64 @@ function show_advanced_dns() {
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php echo (isset($pconfig['dnssec']) ? "checked=\"checked\"" : "");?> />
-									<strong><?=gettext("Enable DNSSEC Support");?><br />
-									</strong></p>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php echo (isset($pconfig['dnssec']) ? "checked=\"checked\"" : "");?> />
+										<strong>
+											<?=gettext("Enable DNSSEC Support");?><br />
+										</strong>
+									</p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php echo (isset($pconfig['forwarding']) ? "checked=\"checked\"" : "");?> />
-									<strong><?=gettext("Enable Forwarding Mode");?></strong><br /></p>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php echo (isset($pconfig['forwarding']) ? "checked=\"checked\"" : "");?> />
+										<strong><?=gettext("Enable Forwarding Mode");?></strong><br />
+									</p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if (isset($pconfig['regdhcp'])) echo "checked=\"checked\"";?> />
-									<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br />
-									</strong><?php printf(gettext("If this option is set, then machines that specify".
-									" their hostname when requesting a DHCP lease will be registered".
-									" in the DNS Resolver, so that their name can be resolved.".
-									" You should also set the domain in %sSystem:".
-									" General setup%s to the proper value."),'<a href="system.php">','</a>')?></p>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if (isset($pconfig['regdhcp'])) echo "checked=\"checked\"";?> />
+										<strong>
+											<?=gettext("Register DHCP leases in the DNS Resolver");?><br />
+										</strong>
+										<?php printf(gettext("If this option is set, then machines that specify".
+											" their hostname when requesting a DHCP lease will be registered".
+											" in the DNS Resolver, so that their name can be resolved.".
+											" You should also set the domain in %sSystem:".
+											" General setup%s to the proper value."), '<a href="system.php">', '</a>')?>
+									</p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if (isset($pconfig['regdhcpstatic'])) echo "checked=\"checked\"";?> />
-									<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br />
-									</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
+								<td width="78%" class="vtable">
+									<p>
+										<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if (isset($pconfig['regdhcpstatic'])) echo "checked=\"checked\"";?> />
+										<strong>
+											<?=gettext("Register DHCP static mappings in the DNS Resolver");?><br />
+										</strong>
+										<?php printf(gettext("If this option is set, then DHCP static mappings will ".
 											"be registered in the DNS Resolver, so that their name can be ".
 											"resolved. You should also set the domain in %s".
-											"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
+											"System: General setup%s to the proper value."), '<a href="system.php">', '</a>');?>
+									</p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("TXT Comment Support");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="txtsupport" type="checkbox" id="txtsupport" value="yes" <?php echo (isset($pconfig['txtsupport']) ? "checked=\"checked\"" : "");?> />
-									<strong><?=gettext("If this option is set, then any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.");?><br />
-									</strong></p>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="txtsupport" type="checkbox" id="txtsupport" value="yes" <?php echo (isset($pconfig['txtsupport']) ? "checked=\"checked\"" : "");?> />
+										<strong>
+											<?=gettext("If this option is set, then any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.");?><br />
+										</strong>
+									</p>
 								</td>
 							</tr>
 							<tr>
@@ -390,28 +413,37 @@ function show_advanced_dns() {
 </table>
 
 
-<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
-</strong></span><?php printf(gettext("If the DNS Resolver is enabled, the DHCP".
-" service (if enabled) will automatically serve the LAN IP".
-" address as a DNS server to DHCP clients so they will use".
-" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
-" entered in %sSystem: General setup%s".
-" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-" is checked."),'<a href="system.php">','</a>');?><br />
-</span></p>
+<p>
+	<span class="vexpl">
+		<span class="red">
+			<strong>
+				<?=gettext("Note:");?><br />
+			</strong>
+		</span>
+		<?php printf(gettext("If the DNS Resolver is enabled, the DHCP".
+			" service (if enabled) will automatically serve the LAN IP".
+			" address as a DNS server to DHCP clients so they will use".
+			" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
+			" entered in %sSystem: General setup%s".
+			" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+			" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
+			" is checked."), '<a href="system.php">', '</a>');?>
+		<br />
+	</span>
+</p>
 
 &nbsp;<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" summary="host overrides">
-<tr>
-	<td colspan="5" valign="top" class="listtopic"><?=gettext("Host Overrides");?></td>
-</tr>
-<tr>
-	<td><br />
-	<?=gettext("Entries in this section override individual results from the forwarders.");?>
-	<?=gettext("Use these for changing DNS results or for adding custom DNS records.");?>
-	</td>
-</tr>
+	<tr>
+		<td colspan="5" valign="top" class="listtopic"><?=gettext("Host Overrides");?></td>
+	</tr>
+	<tr>
+		<td>
+			<br />
+			<?=gettext("Entries in this section override individual results from the forwarders.");?>
+			<?=gettext("Use these for changing DNS results or for adding custom DNS records.");?>
+		</td>
+	</tr>
 </table>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" summary="results">
 	<thead>
@@ -444,7 +476,10 @@ function show_advanced_dns() {
 	</tr>
 	</tfoot>
 	<tbody>
-	<?php $i = 0; foreach ($a_hosts as $hostent): ?>
+<?php
+	$i = 0;
+	foreach ($a_hosts as $hostent):
+?>
 	<tr>
 		<td class="listlr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=strtolower($hostent['host']);?>&nbsp;
@@ -467,8 +502,10 @@ function show_advanced_dns() {
 			</table>
 		</td>
 	</tr>
-	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
-	<?php foreach ($hostent['aliases']['item'] as $alias): ?>
+<?php
+		if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])):
+			foreach ($hostent['aliases']['item'] as $alias):
+?>
 	<tr>
 		<td class="listlr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=strtolower($alias['host']);?>&nbsp;
@@ -486,9 +523,12 @@ function show_advanced_dns() {
 			<a href="services_unbound_host_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
 		</td>
 	</tr>
-	<?php endforeach; ?>
-	<?php endif; ?>
-	<?php $i++; endforeach; ?>
+<?php
+			endforeach;
+		endif;
+		$i++;
+	endforeach;
+?>
 	<tr style="display:none"><td></td></tr>
 	</tbody>
 </table>
@@ -498,9 +538,13 @@ function show_advanced_dns() {
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Domain Overrides");?></td>
 </tr>
 <tr>
-	<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
-	" authoritative DNS server to be queried for that domain.");?>
-	<?=gettext("If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, using the same domain name.");?></p></td>
+	<td>
+		<p>
+			<?=gettext("Entries in this area override an entire domain by specifying an".
+				" authoritative DNS server to be queried for that domain.");?>
+			<?=gettext("If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, using the same domain name.");?>
+		</p>
+	</td>
 </tr>
 </table>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" summary="results">
@@ -523,17 +567,20 @@ function show_advanced_dns() {
 	<tr>
 		<td class="list" colspan="3"></td>
 		<td class="list">
-		<table border="0" cellspacing="0" cellpadding="1" summary="add">
-			<tr>
-				<td width="17" height="17"></td>
-				<td><a href="services_unbound_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-			</tr>
-		</table>
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
+				<tr>
+					<td width="17" height="17"></td>
+					<td><a href="services_unbound_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+				</tr>
+			</table>
 		</td>
 	</tr>
 	</tfoot>
 	<tbody>
-	<?php $i = 0; foreach ($a_domainOverrides as $doment): ?>
+<?php
+	$i = 0;
+	foreach ($a_domainOverrides as $doment):
+?>
 	<tr>
 		<td class="listlr">
 			<?=strtolower($doment['domain']);?>&nbsp;
@@ -547,17 +594,24 @@ function show_advanced_dns() {
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
-					<td valign="middle"><a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>">
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" />
-					</a></td>
-					<td valign="middle"><a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')">
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-					</a></td>
+					<td valign="middle">
+						<a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" />
+						</a>
+					</td>
+					<td valign="middle">
+						<a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
+						</a>
+					</td>
 				</tr>
 			</table>
 		</td>
 	</tr>
-	<?php $i++; endforeach; ?>
+<?php
+		$i++;
+	endforeach;
+?>
 	<tr style="display:none"><td></td></tr>
 	</tbody>
 </table>

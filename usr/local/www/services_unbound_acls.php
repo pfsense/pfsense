@@ -85,12 +85,13 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
+		}
 	} else {
 
 		// input validation - only allow 50 entries in a single ACL
-		for($x=0; $x<50; $x++) {
+		for ($x=0; $x<50; $x++) {
 			if (isset($pconfig["acl_network{$x}"])) {
 				$networkacl[$x] = array();
 				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
@@ -143,7 +144,6 @@ if ($_POST) {
 				pfSenseHeader("/services_unbound_acls.php");
 				exit;
 			}
-
 		}
 	}
 }
@@ -201,13 +201,15 @@ include("head.inc");
 		<tr>
 			<td id="mainarea">
 				<div class="tabcont">
-					<?php if($act=="new" || $act=="edit"): ?>
-						<input name="aclid" type="hidden" value="<?=$id;?>" />
-						<input name="act" type="hidden" value="<?=$act;?>" />
+<?php
+	if ($act == "new" || $act == "edit"):
+?>
+					<input name="aclid" type="hidden" value="<?=$id;?>" />
+					<input name="act" type="hidden" value="<?=$act;?>" />
 
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=ucwords(sprintf(gettext("%s Access List"),$act));?></td>
+							<td colspan="2" valign="top" class="listtopic"><?=ucwords(sprintf(gettext("%s Access List"), $act));?></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Access List name");?></td>
@@ -221,11 +223,16 @@ include("head.inc");
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
 							<td width="78%" class="vtable">
 								<select name="aclaction" class="formselect">
-									<?php $types = explode(",", "Allow,Deny,Refuse,Allow Snoop"); foreach ($types as $type): ?>
+									<?php
+										$types = explode(",", "Allow,Deny,Refuse,Allow Snoop");
+										foreach ($types as $type):
+									?>
 									<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['aclaction'])) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($type);?>
 									</option>
-									<?php endforeach; ?>
+									<?php
+										endforeach;
+									?>
 								</select>
 								<br />
 								<span class="vexpl">
@@ -247,16 +254,14 @@ include("head.inc");
 										<td><div id="twocolumn"><?=gettext("CIDR");?></div></td>
 										<td><div id="threecolumn"><?=gettext("Description");?></div></td>
 									</tr>
-									<?php $counter = 0; ?>
 									<?php
-										if($networkacl)
-											foreach($networkacl as $item):
-									?>
-											<?php
+										$counter = 0;
+										if ($networkacl) {
+											foreach ($networkacl as $item):
 												$network = $item['acl_network'];
 												$cidr = $item['mask'];
 												$description = $item['description'];
-											?>
+									?>
 									<tr>
 										<td>
 											<input name="acl_network<?=$counter;?>" type="text" class="formfld unknown ipv4v6" id="acl_network<?=$counter;?>" size="30" value="<?=htmlspecialchars($network);?>" />
@@ -279,8 +284,11 @@ include("head.inc");
 											<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
 										</td>
 									</tr>
-									<?php $counter++; ?>
-									<?php endforeach; ?>
+									<?php
+												$counter++;
+											endforeach;
+										}
+									?>
 								</tbody>
 							</table>
 							<a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
@@ -318,10 +326,10 @@ include("head.inc");
 							</td>
 						</tr>
 					</table>
-
-				<?php else: ?>
-
-				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="results">
+<?php
+	else:
+?>
+					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="results">
 					<thead>
 						<tr>
 							<td width="25%" class="listhdrr"><?=gettext("Access List Name"); ?></td>
@@ -337,9 +345,11 @@ include("head.inc");
 								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 									<tr>
 										<td width="17">&nbsp;</td>
-										<td valign="middle"><a href="services_unbound_acls.php?act=new">
-											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
-										</a></td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=new">
+												<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
+											</a>
+										</td>
 									</tr>
 								</table>
 							</td>
@@ -355,7 +365,7 @@ include("head.inc");
 					<tbody>
 					<?php
 						$i = 0;
-						foreach($a_acls as $acl):
+						foreach ($a_acls as $acl):
 					?>
 						<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
@@ -370,25 +380,31 @@ include("head.inc");
 							<td valign="middle" class="list nowrap">
 								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 									<tr>
-										<td valign="middle"><a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
-											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
-										</a></td>
-										<td valign="middle"><a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
-											<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
-										</a></td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
+												<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
+											</a>
+										</td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
+												<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
+											</a>
+										</td>
 									</tr>
 								</table>
 							</td>
 						</tr>
 					<?php
-						$i++;
+							$i++;
 						endforeach;
 					?>
-					<tr style="display:none"><td></td></tr>
+						<tr style="display:none"><td></td></tr>
 					</tbody>
-				</table>
-			<?php endif; ?>
-			</div>
+					</table>
+<?php
+	endif;
+?>
+				</div>
 			</td>
 		</tr>
 	</tbody>

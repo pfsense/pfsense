@@ -543,7 +543,7 @@ function select_clicked() {
 									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
                                                         <?php	endforeach; ?>
 								</select>
-								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br />
+								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is chosen.");?> <br />
 								<?=gettext("It must match with the CA in the AD otherwise problems will arise.");?></span>
                                                         <?php else: ?>
                                                                 <b>No Certificate Authorities defined.</b> <br />Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.

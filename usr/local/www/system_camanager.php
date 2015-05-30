@@ -46,34 +46,40 @@ $ca_methods = array(
 	"internal" => gettext("Create an internal Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array( "512", "1024", "2048", "4096");
+$ca_keylens = array("512", "1024", "2048", "4096");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
-if (!is_array($config['crl']))
+if (!is_array($config['crl'])) {
 	$config['crl'] = array();
+}
 
 $a_crl =& $config['crl'];
 
 $act = $_GET['act'];
-if ($_POST['act'])
+if ($_POST['act']) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 
@@ -83,14 +89,18 @@ if ($act == "del") {
 	}
 
 	$index = count($a_cert) - 1;
-	for (;$index >=0; $index--)
-		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid'])
+	for (;$index >= 0; $index--) {
+		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
 			unset($a_cert[$index]);
+		}
+	}
 
 	$index = count($a_crl) - 1;
-	for (;$index >=0; $index--)
-		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid'])
+	for (;$index >= 0; $index--) {
+		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
 			unset($a_crl[$index]);
+		}
+	}
 
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
@@ -109,8 +119,9 @@ if ($act == "edit") {
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
 	$pconfig['serial'] = $a_ca[$id]['serial'];
-	if (!empty($a_ca[$id]['prv']))
+	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+	}
 }
 
 if ($act == "new") {
@@ -167,62 +178,69 @@ if ($_POST) {
 	if ($pconfig['method'] == "existing") {
 		$reqdfields = explode(" ", "descr cert");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate data"));
-		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
+			gettext("Descriptive name"),
+			gettext("Certificate data"));
+		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 			$input_errors[] = gettext("This certificate does not appear to be valid.");
-		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED"))
+		}
+		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
+		}
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-				"descr keylen lifetime dn_country dn_state dn_city ".
-				"dn_organization dn_email dn_commonname");
+			"descr keylen lifetime dn_country dn_state dn_city ".
+			"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Key length"),
-				gettext("Lifetime"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
-				gettext("Distinguished name Common Name"));
+			gettext("Descriptive name"),
+			gettext("Key length"),
+			gettext("Lifetime"),
+			gettext("Distinguished name Country Code"),
+			gettext("Distinguished name State or Province"),
+			gettext("Distinguished name City"),
+			gettext("Distinguished name Organization"),
+			gettext("Distinguished name Email Address"),
+			gettext("Distinguished name Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
-				"descr caref keylen lifetime dn_country dn_state dn_city ".
-				"dn_organization dn_email dn_commonname");
+			"descr caref keylen lifetime dn_country dn_state dn_city ".
+			"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Signing Certificate Authority"),
-				gettext("Key length"),
-				gettext("Lifetime"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
-				gettext("Distinguished name Common Name"));
+			gettext("Descriptive name"),
+			gettext("Signing Certificate Authority"),
+			gettext("Key length"),
+			gettext("Lifetime"),
+			gettext("Distinguished name Country Code"),
+			gettext("Distinguished name State or Province"),
+			gettext("Distinguished name City"),
+			gettext("Distinguished name Organization"),
+			gettext("Distinguished name Email Address"),
+			gettext("Distinguished name Common Name"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	if ($pconfig['method'] != "existing") {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		for ($i = 0; $i < count($reqdfields); $i++) {
-			if ($reqdfields[$i] == 'dn_email'){
-				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"]))
+			if ($reqdfields[$i] == 'dn_email') {
+				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
 					array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
-			}else if ($reqdfields[$i] == 'dn_commonname'){
-				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"]))
+				}
+			} else if ($reqdfields[$i] == 'dn_commonname') {
+				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"])) {
 					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-			}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+				}
+			} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"])) {
 				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+			}
 		}
-		if (!in_array($_POST["keylen"], $ca_keylens))
+		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
-		if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+		}
+		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+		}
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -235,13 +253,15 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$ca = array();
-		if (!isset($pconfig['refid']) || empty($pconfig['refid']))
+		if (!isset($pconfig['refid']) || empty($pconfig['refid'])) {
 			$ca['refid'] = uniqid();
-		else
+		} else {
 			$ca['refid'] = $pconfig['refid'];
+		}
 
-		if (isset($id) && $a_ca[$id])
+		if (isset($id) && $a_ca[$id]) {
 			$ca = $a_ca[$id];
+		}
 
 		$ca['descr'] = $pconfig['descr'];
 
@@ -250,14 +270,14 @@ if ($_POST) {
 			$ca['refid']  = $pconfig['refid'];
 			$ca['serial'] = $pconfig['serial'];
 			$ca['crt']    = base64_encode($pconfig['cert']);
-			if (!empty($pconfig['key']))
+			if (!empty($pconfig['key'])) {
 				$ca['prv']    = base64_encode($pconfig['key']);
+			}
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
-			if ($pconfig['method'] == "existing")
+			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
-
-			else if ($pconfig['method'] == "internal") {
+			} else if ($pconfig['method'] == "internal") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
 					'stateOrProvinceName' => $pconfig['dn_state'],
@@ -265,8 +285,8 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])){
-					while($ssl_err = openssl_error_string()){
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
@@ -280,8 +300,8 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])){
-					while($ssl_err = openssl_error_string()){
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
@@ -290,13 +310,15 @@ if ($_POST) {
 			error_reporting($old_err_level);
 		}
 
-		if (isset($id) && $a_ca[$id])
+		if (isset($id) && $a_ca[$id]) {
 			$a_ca[$id] = $ca;
-		else
+		} else {
 			$a_ca[] = $ca;
+		}
 
-		if (!$input_errors)
+		if (!$input_errors) {
 			write_config();
+		}
 
 //		pfSenseHeader("system_camanager.php");
 	}
@@ -336,18 +358,22 @@ function method_change() {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 
 	// Load valid country codes
 	$dn_cc = array();
-	if (file_exists("/etc/ca_countries")){
+	if (file_exists("/etc/ca_countries")) {
 		$dn_cc_file=file("/etc/ca_countries");
-		foreach($dn_cc_file as $line)
-			if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
+		foreach ($dn_cc_file as $line) {
+			if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
 				array_push($dn_cc, $matches[1]);
+			}
+		}
 	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="CA manager">
@@ -387,13 +413,16 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<select name='method' id='method' class="formselect" onchange='method_change()'>
 								<?php
-									foreach($ca_methods as $method => $desc):
-									$selected = "";
-									if ($pconfig['method'] == $method)
-										$selected = " selected=\"selected\"";
+									foreach ($ca_methods as $method => $desc):
+										$selected = "";
+										if ($pconfig['method'] == $method) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 							</td>
 						</tr>
@@ -446,18 +475,22 @@ function method_change() {
 						<tr id='intermediate'>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Certificate Authority");?></td>
 							<td width="78%" class="vtable">
-                                                                <select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
-                                                                <?php
-                                                                        foreach( $a_ca as $ca):
-                                                                        if (!$ca['prv'])
-                                                                                continue;
-                                                                        $selected = "";
-                                                                        if ($pconfig['caref'] == $ca['refid'])
-                                                                                $selected = " selected=\"selected\"";
-                                                                ?>
-                                                                        <option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
-                                                                <?php endforeach; ?>
-                                                                </select>
+								<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
+								<?php
+									foreach ($a_ca as $ca):
+										if (!$ca['prv']) {
+											continue;
+										}
+										$selected = "";
+										if ($pconfig['caref'] == $ca['refid']) {
+											$selected = " selected=\"selected\"";
+										}
+								?>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
+								<?php
+									endforeach;
+								?>
+								</select>
 							</td>
 						</tr>
 						<tr>
@@ -465,13 +498,16 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<select name='keylen' id='keylen' class="formselect">
 								<?php
-									foreach( $ca_keylens as $len):
-									$selected = "";
-									if ($pconfig['keylen'] == $len)
-										$selected = " selected=\"selected\"";
+									foreach ($ca_keylens as $len):
+										$selected = "";
+										if ($pconfig['keylen'] == $len) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<?=gettext("bits");?>
 							</td>
@@ -481,13 +517,16 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<select name='digest_alg' id='digest_alg' class="formselect">
 								<?php
-									foreach( $openssl_digest_algs as $digest_alg):
-									$selected = "";
-									if ($pconfig['digest_alg'] == $digest_alg)
-										$selected = " selected=\"selected\"";
+									foreach ($openssl_digest_algs as $digest_alg):
+										$selected = "";
+										if ($pconfig['digest_alg'] == $digest_alg) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
@@ -508,12 +547,13 @@ function method_change() {
 										<td align="left">
 											<select name='dn_country' class="formselect">
 											<?php
-											foreach( $dn_cc as $cc){
+											foreach ($dn_cc as $cc) {
 												$selected = "";
-												if ($pconfig['dn_country'] == $cc)
+												if ($pconfig['dn_country'] == $cc) {
 													$selected = " selected=\"selected\"";
-												print "<option value=\"$cc\"$selected>$cc</option>";
 												}
+												print "<option value=\"$cc\"$selected>$cc</option>";
+											}
 											?>
 											</select>
 										</td>
@@ -599,26 +639,28 @@ function method_change() {
 					</tr>
 					<?php
 						$i = 0;
-						foreach($a_ca as $ca):
+						foreach ($a_ca as $ca):
 							$name = htmlspecialchars($ca['descr']);
 							$subj = cert_get_subject($ca['crt']);
 							$issuer = cert_get_issuer($ca['crt']);
 							list($startdate, $enddate) = cert_get_dates($ca['crt']);
-							if($subj == $issuer)
+							if ($subj == $issuer) {
 							  $issuer_name = "<em>" . gettext("self-signed") . "</em>";
-							else
+							} else {
 							  $issuer_name = "<em>" . gettext("external") . "</em>";
+							}
 							$subj = htmlspecialchars($subj);
 							$issuer = htmlspecialchars($issuer);
 							$certcount = 0;
 
 							$issuer_ca = lookup_ca($ca['caref']);
-							if ($issuer_ca)
+							if ($issuer_ca) {
 								$issuer_name = $issuer_ca['descr'];
+							}
 
 							// TODO : Need gray certificate icon
 
-							if($ca['prv']) {
+							if ($ca['prv']) {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 								$internal = "YES";
 
@@ -626,12 +668,16 @@ function method_change() {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 								$internal = "NO";
 							}
-							foreach ($a_cert as $cert)
-								if ($cert['caref'] == $ca['refid'])
+							foreach ($a_cert as $cert) {
+								if ($cert['caref'] == $ca['refid']) {
 									$certcount++;
-  						foreach ($a_ca as $cert)
-  							if ($cert['caref'] == $ca['refid'])
-  								$certcount++;
+								}
+							}
+							foreach ($a_ca as $cert) {
+								if ($cert['caref'] == $ca['refid']) {
+									$certcount++;
+								}
+							}
 					?>
 					<tr>
 						<td class="listlr">

@@ -106,7 +106,6 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 ?>
 <div class="table-responsive">
 	<table class="table">
-		<caption><?php ?></caption>
 		<tr>
 			<th><?=gettext('Interface');?></th>
 			<th><?=gettext('VLAN tag');?></th>

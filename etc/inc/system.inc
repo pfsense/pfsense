@@ -1586,7 +1586,7 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	/* Configure the serial port for raw IO and set the speed */
-	`stty -f {$serialport}.init raw speed {$gpsbaud}`
+	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
 
 	/* Send the following to the GPS port to initialize the GPS */
 	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
@@ -1597,7 +1597,7 @@ function system_ntp_setup_gps($serialport) {
 
 	/* XXX: Why not file_put_contents to the device */
 	@file_put_contents('/tmp/gps.init', $gps_init);
-	`cat /tmp/gps.init > $serialport`;
+	mwexec("cat /tmp/gps.init > {$serialport}");
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
 	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {

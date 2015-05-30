@@ -53,22 +53,24 @@
 require("certs.inc");
 require("guiconfig.inc");
 
-
 // start admin user code
-$pgtitle = array(gettext("System"),gettext("User Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"));
 
-if (isset($_POST['userid']) && is_numericint($_POST['userid']))
+if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
+}
 
-if (!isset($config['system']['user']) || !is_array($config['system']['user']))
+if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 	$config['system']['user'] = array();
+}
 
 $a_user = &$config['system']['user'];
 
-if (isset($_SERVER['HTTP_REFERER']))
+if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
-else
+} else {
 	$referer = '/system_usermanager.php';
+}
 
 if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
@@ -96,10 +98,8 @@ if ($_POST['act'] == "deluser") {
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();
-	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br />";
-}
-else if ($_POST['act'] == "delpriv") {
+	$savemsg = gettext("User") . " {$userdeleted} " . gettext("successfully deleted") . "<br />";
+} else if ($_POST['act'] == "delpriv") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -111,10 +111,8 @@ else if ($_POST['act'] == "delpriv") {
 	local_user_set($a_user[$id]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Privilege")." {$privdeleted} ".
-				gettext("successfully deleted")."<br />";
-}
-else if ($_POST['act'] == "expcert") {
+	$savemsg = gettext("Privilege") . " {$privdeleted} " . gettext("successfully deleted"). "<br />";
+} else if ($_POST['act'] == "expcert") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -132,8 +130,7 @@ else if ($_POST['act'] == "expcert") {
 	header("Content-Length: $exp_size");
 	echo $exp_data;
 	exit;
-}
-else if ($_POST['act'] == "expckey") {
+} else if ($_POST['act'] == "expckey") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -151,8 +148,7 @@ else if ($_POST['act'] == "expckey") {
 	header("Content-Length: $exp_size");
 	echo $exp_data;
 	exit;
-}
-else if ($_POST['act'] == "delcert") {
+} else if ($_POST['act'] == "delcert") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -164,10 +160,8 @@ else if ($_POST['act'] == "delcert") {
 	unset($a_user[$id]['cert'][$_POST['certid']]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Certificate")." {$certdeleted} ".
-				gettext("association removed.")."<br />";
-}
-else if ($_POST['act'] == "new") {
+	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+} else if ($_POST['act'] == "new") {
 	/*
 	 * set this value cause the text field is read only
 	 * and the user should not be able to mess with this
@@ -177,12 +171,12 @@ else if ($_POST['act'] == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
-if(isset($_POST['dellall_x'])) {
+if (isset($_POST['dellall_x'])) {
 
 	$del_users = $_POST['delete_check'];
 
-	if(!empty($del_users)) {
-		foreach($del_users as $userid) {
+	if (!empty($del_users)) {
+		foreach ($del_users as $userid) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
 				conf_mount_rw();
 				local_user_del($a_user[$userid]);
@@ -223,22 +217,27 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
+	}
 
-	if (strlen($_POST['usernamefld']) > 16)
+	if (strlen($_POST['usernamefld']) > 16) {
 		$input_errors[] = gettext("The username is longer than 16 characters.");
+	}
 
-	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
+	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
 		$input_errors[] = gettext("The passwords do not match.");
+	}
 
-	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk']))
+	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk'])) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
+	}
 
-	if (isset($id) && $a_user[$id])
+	if (isset($id) && $a_user[$id]) {
 		$oldusername = $a_user[$id]['name'];
-	else
+	} else {
 		$oldusername = "";
+	}
 	/* make sure this user name is unique */
 	if (!$input_errors) {
 		foreach ($a_user as $userent) {
@@ -268,20 +267,21 @@ if ($_POST['save']) {
 	 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
 	 * Otherwise such an entry would lead to an invalid expiration data.
 	 */
-	if ($_POST['expires']){
+	if ($_POST['expires']) {
 		try {
 			$expdate = new DateTime($_POST['expires']);
 			//convert from any DateTime compatible date to MM/DD/YYYY
 			$_POST['expires'] = $expdate->format("m/d/Y");
-		} catch ( Exception $ex ) {
+		} catch (Exception $ex) {
 			$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
 		}
 	}
 
 	if (!empty($_POST['name'])) {
 		$ca = lookup_ca($_POST['caref']);
-		if (!$ca)
+		if (!$ca) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+		}
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -293,8 +293,9 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		conf_mount_rw();
 		$userent = array();
-		if (isset($id) && $a_user[$id])
+		if (isset($id) && $a_user[$id]) {
 			$userent = $a_user[$id];
+		}
 
 		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
@@ -305,8 +306,9 @@ if ($_POST['save']) {
 		}
 
 		/* the user password was modified */
-		if ($_POST['passwordfld1'])
+		if ($_POST['passwordfld1']) {
 			local_user_set_password($userent, $_POST['passwordfld1']);
+		}
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['descr'] = $_POST['descr'];
@@ -314,14 +316,15 @@ if ($_POST['save']) {
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
-		if($_POST['disabled'])
+		if ($_POST['disabled']) {
 			$userent['disabled'] = true;
-		else
+		} else {
 			unset($userent['disabled']);
+		}
 
-		if (isset($id) && $a_user[$id])
+		if (isset($id) && $a_user[$id]) {
 			$a_user[$id] = $userent;
-		else {
+		} else {
 			if (!empty($_POST['name'])) {
 				$cert = array();
 				$cert['refid'] = uniqid();
@@ -342,8 +345,9 @@ if ($_POST['save']) {
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
 					(int)$_POST['lifetime'], $dn);
 
-				if (!is_array($config['cert']))
+				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
+				}
 				$config['cert'][] = $cert;
 				$userent['cert'][] = $cert['refid'];
 			}
@@ -351,8 +355,9 @@ if ($_POST['save']) {
 			/* Add the user to All Users group. */
 			foreach ($config['system']['group'] as $gidx => $group) {
 				if ($group['name'] == "all") {
-					if (!is_array($config['system']['group'][$gidx]['member']))
+					if (!is_array($config['system']['group'][$gidx]['member'])) {
 						$config['system']['group'][$gidx]['member'] = array();
+					}
 					$config['system']['group'][$gidx]['member'][] = $userent['uid'];
 					break;
 				}
@@ -362,11 +367,12 @@ if ($_POST['save']) {
 		}
 
 		local_user_set($userent);
-		local_user_set_groups($userent,$_POST['groups']);
+		local_user_set_groups($userent, $_POST['groups']);
 		write_config();
 
-		if(is_dir("/etc/inc/privhooks"))
+		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
+		}
 
 		conf_mount_ro();
 
@@ -400,31 +406,37 @@ include("head.inc");
 function setall_selected(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
+	for (index = 0; index<count; index++) {
 		selbox.options[index].selected = true;
+	}
 }
 
 function delete_empty(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
-		if (selbox.options[index].value == '')
+	for (index = 0; index<count; index++) {
+		if (selbox.options[index].value == '') {
 			selbox.remove(index);
+		}
+	}
 }
 
 function clear_selected(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
+	for (index = 0; index<count; index++) {
 		selbox.options[index].selected = false;
+	}
 }
 
 function remove_selected(id) {
 	selbox = document.getElementById(id);
 	index = selbox.options.length - 1;
-	for (; index >= 0; index--)
-		if (selbox.options[index].selected)
+	for (; index >= 0; index--) {
+		if (selbox.options[index].selected) {
 			selbox.remove(index);
+		}
+	}
 }
 
 function copy_selected(srcid, dstid) {
@@ -481,10 +493,12 @@ function sshkeyClicked(obj) {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager">
 	<tr>
@@ -513,8 +527,9 @@ function sshkeyClicked(obj) {
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 						$ro = "";
-						if ($pconfig['utype'] == "system")
+						if ($pconfig['utype'] == "system") {
 							$ro = "readonly=\"readonly\"";
+						}
 ?>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
@@ -526,7 +541,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
 							<td width="78%" class="vtable">
-								<input name="disabled" type="checkbox" id="disabled" <?php if($pconfig['disabled']) echo "checked=\"checked\""; ?> />
+								<input name="disabled" type="checkbox" id="disabled" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
 							</td>
 						</tr>
 						<tr>
@@ -560,7 +575,8 @@ function sshkeyClicked(obj) {
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>" />
 								<br />
-								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
+								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span>
+							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
@@ -574,10 +590,12 @@ function sshkeyClicked(obj) {
 <?php
 												$rowIndex = 0;
 												foreach ($config['system']['group'] as $group):
-													if ($group['gid'] == 1998) /* all users group */
+													if ($group['gid'] == 1998) { /* all users group */
 														continue;
-													if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
+													}
+													if (is_array($pconfig['groups']) && in_array($group['name'], $pconfig['groups'])) {
 														continue;
+													}
 													$rowIndex++;
 ?>
 												<option value="<?=$group['name'];?>" <?=$selected;?>>
@@ -585,19 +603,20 @@ function sshkeyClicked(obj) {
 												</option>
 <?php
 												endforeach;
-												if ($rowIndex == 0)
+												if ($rowIndex == 0) {
 													echo "<option></option>";
+												}
 ?>
 											</select>
 											<br />
 										</td>
 										<td>
 											<br />
-											<a href="javascript:move_selected('notgroups','groups')">
+											<a href="javascript:move_selected('notgroups', 'groups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Groups"); ?>" alt="<?=gettext("Add Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 											<br /><br />
-											<a href="javascript:move_selected('groups','notgroups')">
+											<a href="javascript:move_selected('groups', 'notgroups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Groups"); ?>" alt="<?=gettext("Remove Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 										</td>
@@ -609,10 +628,12 @@ function sshkeyClicked(obj) {
 												$rowIndex = 0;
 												if (is_array($pconfig['groups'])):
 													foreach ($config['system']['group'] as $group):
-														if ($group['gid'] == 1998) /* all users group */
+														if ($group['gid'] == 1998) { /* all users group */
 															continue;
-														if (!in_array($group['name'],$pconfig['groups']))
+														}
+														if (!in_array($group['name'], $pconfig['groups'])) {
 															continue;
+														}
 														$rowIndex++;
 ?>
 												<option value="<?=$group['name'];?>">
@@ -621,8 +642,9 @@ function sshkeyClicked(obj) {
 <?php
 													endforeach;
 												endif;
-												if ($rowIndex == 0)
+												if ($rowIndex == 0) {
 													echo "<option></option>";
+												}
 ?>
 											</select>
 											<br />
@@ -647,12 +669,13 @@ function sshkeyClicked(obj) {
 									</tr>
 <?php
 							$privdesc = get_user_privdesc($a_user[$id]);
-							if(is_array($privdesc)):
+							if (is_array($privdesc)):
 								$i = 0;
 								foreach ($privdesc as $priv):
 									$group = false;
-									if ($priv['group'])
+									if ($priv['group']) {
 										$group = $priv['group'];
+									}
 ?>
 									<tr>
 										<td class="listlr"><?=$group;?></td>
@@ -680,8 +703,9 @@ function sshkeyClicked(obj) {
 									</tr>
 <?php
 										/* can only delete user priv indexes */
-										if (!$group)
+										if (!$group) {
 											$i++;
+										}
 								endforeach;
 							endif;
 ?>
@@ -707,7 +731,7 @@ function sshkeyClicked(obj) {
 									</tr>
 <?php
 							$a_cert = $a_user[$id]['cert'];
-							if(is_array($a_cert)):
+							if (is_array($a_cert)):
 								$i = 0;
 								foreach ($a_cert as $certref):
 									$cert = lookup_cert($certref);
@@ -770,9 +794,10 @@ function sshkeyClicked(obj) {
 					else:
 						if (is_array($config['ca']) && count($config['ca']) > 0):
 							$i = 0;
-							foreach( $config['ca'] as $ca) {
-								if (!$ca['prv'])
+							foreach ($config['ca'] as $ca) {
+								if (!$ca['prv']) {
 									continue;
+								}
 								$i++;
 							}
 ?>
@@ -780,7 +805,7 @@ function sshkeyClicked(obj) {
 						<tr id="usercertchck">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
 							<td width="78%" class="vtable">
-							<input type="checkbox" onclick="javascript:usercertClicked(this)" /> <?=gettext("Click to create a user certificate."); ?>
+								<input type="checkbox" onclick="javascript:usercertClicked(this)" /> <?=gettext("Click to create a user certificate."); ?>
 							</td>
 						</tr>
 
@@ -803,16 +828,18 @@ function sshkeyClicked(obj) {
 											<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
 <?php
 											$rowIndex = 0;
-											foreach( $config['ca'] as $ca):
-												if (!$ca['prv'])
+											foreach ($config['ca'] as $ca):
+												if (!$ca['prv']) {
 													continue;
+												}
 												$rowIndex++;
 ?>
 												<option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
 <?php
 											endforeach;
-											if ($rowIndex == 0)
+											if ($rowIndex == 0) {
 												echo "<option></option>";
+											}
 ?>
 											</select>
 										</td>
@@ -822,14 +849,15 @@ function sshkeyClicked(obj) {
 										<td width="78%" class="vtable">
 											<select name='keylen' class="formselect">
 <?php
-											$cert_keylens = array( "2048", "512", "1024", "4096");
-											foreach( $cert_keylens as $len):
+											$cert_keylens = array("2048", "512", "1024", "4096");
+											foreach ($cert_keylens as $len):
 ?>
 												<option value="<?=$len;?>"><?=$len;?></option>
 <?php
 											endforeach;
-											if (!count($cert_keylens))
+											if (!count($cert_keylens)) {
 												echo "<option></option>";
+											}
 ?>
 											</select>
 											bits
@@ -849,18 +877,18 @@ function sshkeyClicked(obj) {
 						endif;
 					endif;
 ?>
-						<tr id="sshkeychck" <?php if(!empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
+						<tr id="sshkeychck" <?php if (!empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<input type="checkbox" onclick="javascript:sshkeyClicked(this)" /> <?=gettext("Click to paste an authorized key."); ?>
 							</td>
 						</tr>
-						<tr id="sshkey" <?php if(empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
+						<tr id="sshkey" <?php if (empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<script type="text/javascript">
 								//<![CDATA[
-								window.onload=function(){
+								window.onload=function() {
 									document.getElementById("authorizedkeys").wrap='off';
 								}
 								//]]>
@@ -936,13 +964,13 @@ function sshkeyClicked(obj) {
 						<tbody>
 <?php
 						$i = 0;
-						foreach($a_user as $userent):
+						foreach ($a_user as $userent):
 ?>
 								<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 									document.getElementById('userid').value='<?=$i;?>';
 									document.iform2.submit();" id="fr<?=$i?>">
 								<td class="list" id="frd<?=$i?>">
-								<?php if($userent['scope'] != "system") : ?>
+								<?php if ($userent['scope'] != "system") : ?>
 									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
 								<?php endif; ?>
 								</td>
@@ -951,10 +979,11 @@ function sshkeyClicked(obj) {
 										<tr>
 											<td align="left" valign="middle">
 <?php
-												if($userent['scope'] != "user")
+												if ($userent['scope'] != "user") {
 													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
-												else
+												} else {
 													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
+												}
 ?>
 												<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
 											</td>
@@ -965,9 +994,9 @@ function sshkeyClicked(obj) {
 									</table>
 								</td>
 								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
-								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?php if (isset($userent['disabled'])) echo "*"; ?></td>
 								<td class="listbg" onclick="fr_toggle('<?=$i;?>')">
-									<?=implode(",",local_user_get_groups($userent));?>
+									<?=implode(",", local_user_get_groups($userent));?>
 									&nbsp;
 								</td>
 								<td valign="middle" class="list nowrap">
@@ -977,7 +1006,7 @@ function sshkeyClicked(obj) {
 											document.getElementById('act').value='<?php echo "edit";?>';"
 										title="<?=gettext("edit user");?>" />
 <?php
-								if($userent['scope'] != "system"):
+								if ($userent['scope'] != "system"):
 ?>
 									&nbsp;
 									<input type="image" name="deluser[]" width="17" height="17" border="0"

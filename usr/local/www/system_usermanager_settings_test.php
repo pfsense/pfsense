@@ -43,7 +43,7 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-if(isset($config['system']['authserver'][0]['host'])){
+if (isset($config['system']['authserver'][0]['host'])) {
 	$auth_server = $config['system']['authserver'][0]['host'];
 	$authserver = $_GET['authserver'];
 	$authcfg = auth_get_authserver($authserver);
@@ -52,17 +52,17 @@ if(isset($config['system']['authserver'][0]['host'])){
 ?>
 
 <html>
-  <HEAD>
-    <STYLE type="text/css">
-		TABLE { 
+<HEAD>
+	<STYLE type="text/css">
+		TABLE {
 			border-width: 1px;
 			border-spacing: 0px;
 			border-style: solid solid solid solid;
 			border-color: gray gray gray gray;
 			border-collapse: separate;
 			background-color: collapse;
- 		}
-		TD { 
+		}
+		TD {
 			border-width: 1px 1px 1px 1px;
 			border-spacing: 0px;
 			border-style: solid solid solid solid;
@@ -70,18 +70,18 @@ if(isset($config['system']['authserver'][0]['host'])){
 			border-collapse: collapse;
 			background-color: #dddddd;
 		}
-    </STYLE>
-  </HEAD>	
-	<body>
-		<form method="post" name="iform" id="iform">
-			
+	</STYLE>
+</HEAD>
+<body>
+	<form method="post" name="iform" id="iform">
+
 <?php
 $theme = $config['theme'];
 
 if (!$authcfg) {
 	printf(gettext("Could not find settings for %s%s"), htmlspecialchars($authserver), "<p/>");
 } else {
-	if($theme != "" && file_exists("/usr/local/www/themes/{$theme}/images/logo.gif")){
+	if ($theme != "" && file_exists("/usr/local/www/themes/{$theme}/images/logo.gif")) {
 		echo "<p><img src='/themes/{$theme}/images/logo.gif' style='float: left'><br/><br/><br/></p>";
 	}
 	echo "<b>" . sprintf(gettext("Testing %s LDAP settings... One moment please..."), $g['product_name']) . "</b>";
@@ -89,28 +89,29 @@ if (!$authcfg) {
 	echo "<table width='100%'>";
 
 	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>$auth_server</b></center></td>";
-	if(ldap_test_connection($authcfg)) {
+	if (ldap_test_connection($authcfg)) {
 		echo "<td><center><font color=green>OK</center></td></tr>";
 
-		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>"; 
-		if(ldap_test_bind($authcfg)) {
+		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>";
+		if (ldap_test_bind($authcfg)) {
 			echo "<td><center><font color=green>OK</center></td></tr>";
 
 			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>$auth_server</b></center></td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
-			if(count($ous)>1) {
+			if (count($ous)>1) {
 				echo "<td><center><font color=green>OK</center></td></tr>";
 				echo "</table>";
-				if(is_array($ous)) {
+				if (is_array($ous)) {
 					echo "<br/>";
 					echo "<b>" . gettext("Organization units found") . "</b>";
 					echo "<table width='100%'>";
-					foreach($ous as $ou) {
+					foreach ($ous as $ou) {
 						echo "<tr><td onmouseover=\"this.style.backgroundColor='#ffffff';\" onmouseout=\"this.style.backgroundColor='#dddddd';\">" . $ou . "</td></tr>";
 					}
 				}
-			} else
+			} else {
 				echo "<td><font color=red>" . gettext("failed") . "</td></tr>";
+			}
 
 			echo "</table><p/>";
 

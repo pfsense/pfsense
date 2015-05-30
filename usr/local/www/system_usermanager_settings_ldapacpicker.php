@@ -37,7 +37,7 @@ require_once("auth.inc");
 
 $ous = array();
 
-if($_GET) {
+if ($_GET) {
 	$authcfg = array();
 	$authcfg['ldap_port'] = $_GET['port'];
 	$authcfg['ldap_basedn'] = $_GET['basedn'];
@@ -55,25 +55,25 @@ if($_GET) {
 ?>
 <html>
 	<head>
-            <STYLE type="text/css">
-                        TABLE {
-                                border-width: 1px 1px 1px 1px;
-                                border-spacing: 0px;
-                                border-style: solid solid solid solid;
-                                border-color: gray gray gray gray;
-                                border-collapse: separate;
-                                background-color: collapse;
-                        }
-                        TD {
-                                border-width: 0px 0px 0px 0px;
-                                border-spacing: 0px;
-                                border-style: solid solid solid solid;
-                                border-color: gray gray gray gray;
-                                border-collapse: collapse;
-                                background-color: white;
-                        }
-            </STYLE>
-        </head>
+		<STYLE type="text/css">
+			TABLE {
+				border-width: 1px 1px 1px 1px;
+				border-spacing: 0px;
+				border-style: solid solid solid solid;
+				border-color: gray gray gray gray;
+				border-collapse: separate;
+				background-color: collapse;
+			}
+			TD {
+				border-width: 0px 0px 0px 0px;
+				border-spacing: 0px;
+				border-style: solid solid solid solid;
+				border-color: gray gray gray gray;
+				border-collapse: collapse;
+				background-color: white;
+			}
+		</STYLE>
+	</head>
 <script type="text/javascript">
 function post_choices() {
 
@@ -82,8 +82,9 @@ function post_choices() {
 		opener.document.forms[0].ldapauthcontainers.value="";
 	for (i = 0; i < ous; i++) {
 		if (document.forms[0].ou[i].checked) {
-			if (opener.document.forms[0].ldapauthcontainers.value != "")
+			if (opener.document.forms[0].ldapauthcontainers.value != "") {
 				opener.document.forms[0].ldapauthcontainers.value+=";";
+			}
 			opener.document.forms[0].ldapauthcontainers.value+=document.forms[0].ou[i].value;
 		}
 	}
@@ -92,8 +93,8 @@ function post_choices() {
 }
 </script>
 
- <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
- <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
+<form method="post" action="system_usermanager_settings_ldapacpicker.php">
 <?php if (empty($ous)): ?>
 	<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
 	<input type='button' value='<?=gettext("Close"); ?>' onClick="window.close();">
@@ -101,29 +102,30 @@ function post_choices() {
 	<b><?=gettext("Please select which containers to Authenticate against:");?></b>
 	<p/>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  	 <tr>
-    	<td class="tabnavtbl">
-			<table width="100%">
+		<tr>
+			<td class="tabnavtbl">
+				<table width="100%">
 <?php
-	if(is_array($ous)) {	
-		foreach($ous as $ou) {
-			if(in_array($ou, $authcfg['ldap_authcn']))
+	if (is_array($ous)) {
+		foreach ($ous as $ou) {
+			if (in_array($ou, $authcfg['ldap_authcn'])) {
 				$CHECKED=" CHECKED";
-			else 
+			} else {
 				$CHECKED="";
+			}
 			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
 		}
 	}
 ?>
-			</table>
-      	</td>
-     </tr>
-	</table>	
+				</table>
+			</td>
+		</tr>
+	</table>
 
 	<p/>
 
 	<input type='button' value='<?=gettext("Save");?>' onClick="post_choices();">
 <?php endif; ?>
- </form>
- </body>
+</form>
+</body>
 </html>

@@ -44,22 +44,25 @@ function cpusercmp($a, $b) {
 }
 
 function admin_groups_sort() {
-        global $config;
+	global $config;
 
-        if (!is_array($config['system']['group']))
-                return;
+	if (!is_array($config['system']['group'])) {
+		return;
+	}
 
-        usort($config['system']['group'], "cpusercmp");
+	usort($config['system']['group'], "cpusercmp");
 }
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"),gettext("Group manager"),gettext("Add privileges"));
+$pgtitle = array(gettext("System"), gettext("Group manager"), gettext("Add privileges"));
 
-if (is_numericint($_GET['groupid']))
+if (is_numericint($_GET['groupid'])) {
 	$groupid = $_GET['groupid'];
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid']))
+}
+if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$groupid = $_POST['groupid'];
+}
 
 $a_group = & $config['system']['group'][$groupid];
 
@@ -68,8 +71,9 @@ if (!is_array($a_group)) {
 	exit;
 }
 
-if (!is_array($a_group['priv']))
+if (!is_array($a_group['priv'])) {
 	$a_group['priv'] = array();
+}
 
 if ($_POST) {
 
@@ -83,26 +87,29 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
-	if(isAjax() && is_array($input_errors)) {
+	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
 
 	if (!$input_errors) {
 
-		if (!is_array($pconfig['sysprivs']))
+		if (!is_array($pconfig['sysprivs'])) {
 			$pconfig['sysprivs'] = array();
+		}
 
-		if (!count($a_group['priv']))
+		if (!count($a_group['priv'])) {
 			$a_group['priv'] = $pconfig['sysprivs'];
-		else
+		} else {
 			$a_group['priv'] = array_merge($a_group['priv'], $pconfig['sysprivs']);
+		}
 
 		if (is_array($a_group['member'])) {
 			foreach ($a_group['member'] as $uid) {
 				$user = getUserEntryByUID($uid);
-				if ($user)
+				if ($user) {
 					local_user_set($user);
+				}
 			}
 		}
 
@@ -117,8 +124,9 @@ if ($_POST) {
 }
 
 /* if ajax is calling, give them an update message */
-if(isAjax())
+if (isAjax()) {
 	print_info_box_np($savemsg);
+}
 
 include("head.inc");
 ?>
@@ -134,9 +142,10 @@ if (is_array($priv_list)) {
 	$id = 0;
 
 	$jdescs = "var descs = new Array();\n";
-	foreach($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_group['priv']))
+	foreach ($priv_list as $pname => $pdata) {
+		if (in_array($pname, $a_group['priv'])) {
 			continue;
+		}
 		$desc = addslashes($pdata['descr']);
 		$jdescs .= "descs[{$id}] = '{$desc}';\n";
 		$id++;
@@ -155,10 +164,12 @@ function update_description() {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="group manager add privileges">
 	<tr>
@@ -182,35 +193,38 @@ function update_description() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
 							<td width="78%" class="vtable">
 								<table>
-									<tr><td>
-								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple="multiple" size="35">
-									<?php
-										foreach($priv_list as $pname => $pdata):
-											if (in_array($pname, $a_group['priv']))
-												continue;
-									?>
-									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
-									<?php endforeach; ?>
-								</select>
-								<br />
-								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
-								</td><td>
-								<a href='#'onClick="selectAll();">Select all</a>
-								<script type="text/javascript">
-								//<![CDATA[
-									function selectAll() {
-										var options = jQuery('select#sysprivs option');
-										var len = options.length;
-										for (var i = 0; i < len; i++) {
-										    options[i].selected = true;
-										}
-									}
-									selectAll();
-								//]]>									
-								</script>
-								<br />
-								</td>
-								</tr>
+									<tr>
+										<td>
+											<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple="multiple" size="35">
+												<?php
+													foreach ($priv_list as $pname => $pdata):
+														if (in_array($pname, $a_group['priv'])) {
+															continue;
+														}
+												?>
+												<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
+												<?php endforeach; ?>
+											</select>
+											<br />
+											<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+										</td>
+										<td>
+											<a href='#'onClick="selectAll();">Select all</a>
+											<script type="text/javascript">
+											//<![CDATA[
+												function selectAll() {
+													var options = jQuery('select#sysprivs option');
+													var len = options.length;
+													for (var i = 0; i < len; i++) {
+														options[i].selected = true;
+													}
+												}
+												selectAll();
+											//]]>
+											</script>
+											<br />
+										</td>
+									</tr>
 								</table>
 							</td>
 						</tr>

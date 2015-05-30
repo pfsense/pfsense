@@ -115,11 +115,13 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('restore')): ?><p>
-<form action="reboot.php" method="post">
-<input name="Submit" type="hidden" value="Yes" />
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
-</form>
+<?php if (is_subsystem_dirty('restore')): ?>
+<p>
+	<form action="reboot.php" method="post">
+		<input name="Submit" type="hidden" value="Yes" />
+		<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
+	</form>
+</p>
 <?php endif; ?>
 <form action="system_firmware_restorefullbackup.php" method="post">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="restore full backup">

@@ -718,11 +718,21 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$prefix}\n";
 		}
 
-		if ($settings['auth_user'] && $settings['auth_pass']) {
+		if ($settings['auth_user'] || $settings['auth_pass']) {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
-			$userpass = "{$settings['auth_user']}\n";
-			$userpass .= "{$settings['auth_pass']}\n";
+			if ($settings['auth_user']) {
+				$userpass = "{$settings['auth_user']}\n";
+			} else {
+				$userpass = "";
+			}
+			if ($settings['auth_pass']) {
+				$userpass .= "{$settings['auth_pass']}\n";
+			}
+			// If only auth_pass is given, then it acts like a user name and we put a blank line where pass would normally go.
+			if (!($settings['auth_user'] && $settings['auth_pass'])) {
+				$userpass .= "\n";
+			}
 			file_put_contents($up_file, $userpass);
 		}
 

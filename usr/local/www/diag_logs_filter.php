@@ -369,9 +369,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 	if ($config['syslog']['filterdescriptions'])
 		buffer_rules_load();
 
-	$rowIndex = 0;
-	foreach ($filterlog as $rowindex => $filterent) {
-		$rowIndex++;
+	foreach ($filterlog as $filterent) {
 ?>
 			<tr>
 				<td>

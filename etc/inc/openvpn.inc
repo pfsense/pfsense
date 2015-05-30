@@ -789,11 +789,15 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 		}
 
-		if ($settings['auth_user'] && $settings['auth_pass']) {
+		if ($settings['auth_user'] || $settings['auth_pass']) {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
-			$userpass = "{$settings['auth_user']}\n";
-			$userpass .= "{$settings['auth_pass']}\n";
+			if ($settings['auth_user'])
+				$userpass = "{$settings['auth_user']}\n";
+			if ($settings['auth_pass'])
+				$userpass .= "{$settings['auth_pass']}\n";
+			if (!($settings['auth_user'] && $settings['auth_pass']))
+				$userpass .= "\n";
 			file_put_contents($up_file, $userpass);
 		}
 

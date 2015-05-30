@@ -299,7 +299,7 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
-		$input_errors[] = gettext("If no Client Certificate is selected, a username and password must be entered.");
+		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
 	}
 
 	if (!$input_errors) {
@@ -729,7 +729,7 @@ if ($savemsg) {
 					<tr id='userpass'>
 						<td width="22%" valign="top" class="vncell"><?=gettext("User name/pass"); ?></td>
 						<td width="78%" class="vtable">
-							<?=gettext("Leave empty when no user name and password are needed."); ?>
+							<?=gettext("Leave empty when no user name and/or password are needed."); ?>
 							<br/>
 							<table border="0" cellpadding="2" cellspacing="0" summary="user name password">
 								<tr>
@@ -846,7 +846,7 @@ if ($savemsg) {
 							?>
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
-								<option value="" <?PHP if (empty($pconfig['certref'])) echo "selected=\"selected\""; ?>>None (Username and Password required)</option>
+								<option value="" <?PHP if (empty($pconfig['certref'])) echo "selected=\"selected\""; ?>>None (Username and/or Password required)</option>
 							</select>
 						<?php if (!count($a_cert)): ?>
 							<b>No Certificates defined.</b> <br />Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a> if one is required for this connection.

@@ -72,11 +72,13 @@ $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 $a_cert =& $config['cert'];
 
 $certs_available = false;
-if (is_array($a_cert) && count($a_cert))
+if (is_array($a_cert) && count($a_cert)) {
 	$certs_available = true;
+}
 
-if (!$pconfig['webguiproto'] || !$certs_available)
+if (!$pconfig['webguiproto'] || !$certs_available) {
 	$pconfig['webguiproto'] = "http";
+}
 
 if ($_POST) {
 
@@ -84,43 +86,56 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['webguiport'])
-		if(!is_port($_POST['webguiport']))
+	if ($_POST['webguiport']) {
+		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
+		}
+	}
 
-	if ($_POST['max_procs'])
-		if(!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500))
+	if ($_POST['max_procs']) {
+		if (!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500)) {
 			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
+		}
+	}
 
 	if ($_POST['althostnames']) {
 		$althosts = explode(" ", $_POST['althostnames']);
-		foreach ($althosts as $ah)
-			if (!is_hostname($ah))
-				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."),htmlspecialchars($ah));
+		foreach ($althosts as $ah) {
+			if (!is_hostname($ah)) {
+				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."), htmlspecialchars($ah));
+			}
+		}
 	}
 
-	if ($_POST['sshport'])
-		if(!is_port($_POST['sshport']))
+	if ($_POST['sshport']) {
+		if (!is_port($_POST['sshport'])) {
 			$input_errors[] = gettext("You must specify a valid port number");
+		}
+	}
 
-	if($_POST['sshdkeyonly'] == "yes")
+	if ($_POST['sshdkeyonly'] == "yes") {
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
-	else if (isset($config['system']['ssh']['sshdkeyonly']))
+	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 		unset($config['system']['ssh']['sshdkeyonly']);
+	}
 
 	ob_flush();
 	flush();
 
 	if (!$input_errors) {
 
-		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto']))
+		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport']))
+		}
+		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref']))
+		}
+		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs']))
+		}
+		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
 			$restart_webgui = true;
+		}
 
 		if ($_POST['disablehttpredirect'] == "yes") {
 			$config['system']['webgui']['disablehttpredirect'] = true;
@@ -135,85 +150,99 @@ if ($_POST) {
 			unset($config['system']['webgui']['quietlogin']);
 		}
 
-		if($_POST['disableconsolemenu'] == "yes")
+		if ($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
-		else
+		} else {
 			unset($config['system']['disableconsolemenu']);
+		}
 
-		if ($_POST['noantilockout'] == "yes")
+		if ($_POST['noantilockout'] == "yes") {
 			$config['system']['webgui']['noantilockout'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['noantilockout']);
+		}
 
-		if ($_POST['enableserial'] == "yes" || $g['enableserial_force'])
+		if ($_POST['enableserial'] == "yes" || $g['enableserial_force']) {
 			$config['system']['enableserial'] = true;
-		else
+		} else {
 			unset($config['system']['enableserial']);
+		}
 
-		if (is_numericint($_POST['serialspeed']))
+		if (is_numericint($_POST['serialspeed'])) {
 			$config['system']['serialspeed'] = $_POST['serialspeed'];
-		else
+		} else {
 			unset($config['system']['serialspeed']);
+		}
 
-		if ($_POST['primaryconsole'])
+		if ($_POST['primaryconsole']) {
 			$config['system']['primaryconsole'] = $_POST['primaryconsole'];
-		else
+		} else {
 			unset($config['system']['primaryconsole']);
+		}
 
-		if ($_POST['nodnsrebindcheck'] == "yes")
+		if ($_POST['nodnsrebindcheck'] == "yes") {
 			$config['system']['webgui']['nodnsrebindcheck'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['nodnsrebindcheck']);
+		}
 
-		if ($_POST['nohttpreferercheck'] == "yes")
+		if ($_POST['nohttpreferercheck'] == "yes") {
 			$config['system']['webgui']['nohttpreferercheck'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['nohttpreferercheck']);
+		}
 
-		if ($_POST['pagenamefirst'] == "yes")
+		if ($_POST['pagenamefirst'] == "yes") {
 			$config['system']['webgui']['pagenamefirst'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['pagenamefirst']);
+		}
 
-		if ($_POST['loginautocomplete'] == "yes")
+		if ($_POST['loginautocomplete'] == "yes") {
 			$config['system']['webgui']['loginautocomplete'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['loginautocomplete']);
+		}
 
-		if ($_POST['althostnames'])
+		if ($_POST['althostnames']) {
 			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
-		else
+		} else {
 			unset($config['system']['webgui']['althostnames']);
+		}
 
 		$sshd_enabled = $config['system']['enablesshd'];
-		if($_POST['enablesshd'])
+		if ($_POST['enablesshd']) {
 			$config['system']['enablesshd'] = "enabled";
-		else
+		} else {
 			unset($config['system']['enablesshd']);
+		}
 
 		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
-		if ($_POST['sshdkeyonly'])
+		if ($_POST['sshdkeyonly']) {
 			$config['system']['sshdkeyonly'] = true;
-		else
+		} else {
 			unset($config['system']['sshdkeyonly']);
+		}
 
 		$sshd_port = $config['system']['ssh']['port'];
-		if ($_POST['sshport'])
+		if ($_POST['sshport']) {
 			$config['system']['ssh']['port'] = $_POST['sshport'];
-		else if (isset($config['system']['ssh']['port']))
+		} else if (isset($config['system']['ssh']['port'])) {
 			unset($config['system']['ssh']['port']);
+		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-			($sshd_port != $config['system']['ssh']['port']))
+		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
+		}
 
 		if ($restart_webgui) {
 			global $_SERVER;
 			$http_host_port = explode("]", $_SERVER['HTTP_HOST']);
 			/* IPv6 address check */
-			if(strstr($_SERVER['HTTP_HOST'], "]")) {
-				if(count($http_host_port) > 1) {
+			if (strstr($_SERVER['HTTP_HOST'], "]")) {
+				if (count($http_host_port) > 1) {
 					array_pop($http_host_port);
 					$host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
 					$host = "[{$host}]";
@@ -226,32 +255,35 @@ if ($_POST) {
 			}
 			$prot = $config['system']['webgui']['protocol'];
 			$port = $config['system']['webgui']['port'];
-			if ($port)
+			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
-			else
+			} else {
 				$url = "{$prot}://{$host}/system_advanced_admin.php";
+			}
 		}
 
 		write_config();
 
 		$retval = filter_configure();
-	    $savemsg = get_std_save_message($retval);
+		$savemsg = get_std_save_message($retval);
 
-		if ($restart_webgui)
-			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."),$url);
+		if ($restart_webgui) {
+			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
+		}
 
 		conf_mount_rw();
 		setup_serial_port();
 		// Restart DNS in case dns rebinding toggled
-		if (isset($config['dnsmasq']['enable']))
+		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();
-		elseif (isset($config['unbound']['enable']))
+		} elseif (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
+		}
 		conf_mount_ro();
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
 include("head.inc");
 
 ?>
@@ -263,19 +295,22 @@ include("head.inc");
 
 function prot_change() {
 
-	if (document.iform.https_proto.checked)
+	if (document.iform.https_proto.checked) {
 		document.getElementById("ssl_opts").style.display="";
-	else
+	} else {
 		document.getElementById("ssl_opts").style.display="none";
+	}
 }
 
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
 	<form action="system_advanced_admin.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced admin">
@@ -312,12 +347,15 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Protocol"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
-										if ($pconfig['webguiproto'] == "http")
+										if ($pconfig['webguiproto'] == "http") {
 											$http_chk = "checked=\"checked\"";
-										if ($pconfig['webguiproto'] == "https")
+										}
+										if ($pconfig['webguiproto'] == "https") {
 											$https_chk = "checked=\"checked\"";
-										if (!$certs_available)
+										}
+										if (!$certs_available) {
 											$https_disabled = "disabled=\"disabled\"";
+										}
 									?>
 									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onclick="prot_change()" />
 									<?=gettext("HTTP"); ?>
@@ -337,16 +375,18 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<select name="ssl-certref" id="ssl-certref" class="formselect">
 										<?php
-											foreach($a_cert as $cert):
+											foreach ($a_cert as $cert):
 												$selected = "";
-												if ($pconfig['ssl-certref'] == $cert['refid'])
+												if ($pconfig['ssl-certref'] == $cert['refid']) {
 													$selected = "selected=\"selected\"";
+												}
 										?>
 										<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 										<?php
-										endforeach;
-										if (!count($a_cert))
-											echo "<option></option>";
+											endforeach;
+											if (!count($a_cert)) {
+												echo "<option></option>";
+											}
 										?>
 									</select>
 								</td>
@@ -414,10 +454,11 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Anti-lockout"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
-										if($config['interfaces']['lan']) 
+										if ($config['interfaces']['lan']) {
 											$lockout_interface = "LAN";
-										else 
+										} else {
 											$lockout_interface = "WAN";
+										}
 									?>
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
@@ -450,7 +491,7 @@ function prot_change() {
 									<br />
 									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
 									<br />
-									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
+									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " .
 									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
 								</td>
 							</tr>
@@ -566,7 +607,7 @@ function prot_change() {
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>							
+							</tr>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
@@ -588,8 +629,9 @@ function prot_change() {
 
 <?php include("fend.inc"); ?>
 <?php
-	if ($restart_webgui)
+	if ($restart_webgui) {
 		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
+	}
 ?>
 </body>
 </html>

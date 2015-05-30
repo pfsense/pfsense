@@ -47,22 +47,27 @@ require("guiconfig.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
 
-if (!is_array($config['sysctl']))
+if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();
-if (!is_array($config['sysctl']['item']))
+}
+if (!is_array($config['sysctl']['item'])) {
 	$config['sysctl']['item'] = array();
+}
 
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 
-if (isset($_GET['id']))
+if (isset($_GET['id'])) {
 	$id = htmlspecialchars_decode($_GET['id']);
-if (isset($_POST['id']))
+}
+if (isset($_POST['id'])) {
 	$id = htmlspecialchars_decode($_POST['id']);
+}
 
 $act = $_GET['act'];
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
 if ($act == "edit") {
 	if (isset($a_tunable[$id])) {
@@ -79,7 +84,7 @@ if ($act == "edit") {
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
-		if(isAjax() && is_array($input_errors)) {
+		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
@@ -106,7 +111,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		system_setup_sysctl();		
+		system_setup_sysctl();
 		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('sysctl');
 	}
@@ -118,10 +123,11 @@ if ($_POST) {
 		$tunableent['value'] = $_POST['value'];
 		$tunableent['descr'] = $_POST['descr'];
 
-		if (isset($id) && isset($a_tunable[$id]))
+		if (isset($id) && isset($a_tunable[$id])) {
 			$a_tunable[$id] = $tunableent;
-		else
+		} else {
 			$a_tunable[] = $tunableent;
+		}
 
 		mark_subsystem_dirty('sysctl');
 
@@ -129,10 +135,10 @@ if ($_POST) {
 
 		pfSenseHeader("system_advanced_sysctl.php");
 		exit;
-    }
+	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: System Tunables"));
+$pgtitle = array(gettext("System"), gettext("Advanced: System Tunables"));
 include("head.inc");
 
 ?>
@@ -141,12 +147,15 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 	<form action="system_advanced_sysctl.php" method="post">
 		<?php
-			if ($input_errors)
+			if ($input_errors) {
 				print_input_errors($input_errors);
-			if ($savemsg)
+			}
+			if ($savemsg) {
 				print_info_box($savemsg);
-			if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
+			}
+			if (is_subsystem_dirty('sysctl') && ($act != "edit")) {
 				print_info_box_np(gettext("The firewall tunables have changed.  You must apply the configuration to take affect."));
+			}
 		?>
 	</form>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced tunables">
@@ -164,7 +173,7 @@ include("head.inc");
 				?>
 			</td>
 		</tr>
-		<?php if ($act != "edit" ): ?>
+		<?php if ($act != "edit"): ?>
 		<tr>
 			<td id="mainarea">
 				<div class="tabcont">
@@ -184,8 +193,9 @@ include("head.inc");
 						</tr>
 						<?php foreach ($tunables as $i => $tunable):
 
-								if (!isset($tunable['modified']))
+								if (!isset($tunable['modified'])) {
 									$i = $tunable['tunable'];
+								}
 						?>
 						<tr>
 							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
@@ -196,9 +206,10 @@ include("head.inc");
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
-								<?php 
-									if($tunable['value'] == "default") 
-										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; 
+								<?php
+									if ($tunable['value'] == "default") {
+										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
+									}
 								?>
 							</td>
 							<td class="list nowrap">
@@ -222,7 +233,7 @@ include("head.inc");
 						</tr>
 						<?php endforeach; unset($tunables); ?>
 						<tr>
-						<td class="list" colspan="3">
+							<td class="list" colspan="3">
 							</td>
 							<td class="list">
 								<table border="0" cellspacing="0" cellpadding="1" summary="edit">

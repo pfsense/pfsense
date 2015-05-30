@@ -48,9 +48,7 @@ class Form_Textarea extends Form_Input
 		$value = htmlspecialchars($this->_value);
 
 		return <<<EOT
-	{$element}
-		{$value}
-	</textarea>
+	{$element}{$value}</textarea>
 EOT;
 	}
 }

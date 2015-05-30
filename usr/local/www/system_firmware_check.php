@@ -65,8 +65,9 @@ include("head.inc");
 			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
 			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
 			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-			if($g['hidedownloadbackup'] == false)
+			if ($g['hidedownloadbackup'] == false) {
 				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+			}
 			display_top_tabs($tab_array);
 		?>
 		</td>
@@ -83,9 +84,11 @@ include("head.inc");
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
 									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
-										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-										<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
-										</td></tr>
+										<tr>
+											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
+												<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
+											</td>
+										</tr>
 									</table>
 								</td>
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5"></td>
@@ -95,7 +98,7 @@ include("head.inc");
 						<!-- command output box -->
 						<script type="text/javascript">
 						//<![CDATA[
-						window.onload=function(){
+						window.onload=function() {
 							document.getElementById("output").wrap='hard';
 						}
 						//]]>
@@ -119,32 +122,36 @@ include("head.inc");
 <?php
 
 /* Define necessary variables. */
-if(isset($curcfg['alturl']['enable']))
+if (isset($curcfg['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else
+} else {
 	$updater_url = $g['update_url'];
+}
 $needs_system_upgrade = false;
 $static_text .= gettext("Downloading new version information...");
 
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt"))
+	if (file_exists("/etc/nano_use_vga.txt")) {
 		$nanosize = "-nanobsd-vga-";
-	else
+	} else {
 		$nanosize = "-nanobsd-";
+	}
 
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 }
 
-if(download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true)
+if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
 	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
+}
 $static_text .= gettext("done") . "\\n";
 if (!$remote_version) {
 	$static_text .= gettext("Unable to check for updates.") . "\\n";
-	if(isset($curcfg['alturl']['enable']))
+	if (isset($curcfg['alturl']['enable'])) {
 		$static_text .= gettext("Could not contact custom update server.") . "\\n";
-	else
+	} else {
 		$static_text .= sprintf(gettext('Could not contact %1$s update server %2$s%3$s'), $g['product_name'], $updater_url, "\\n");
+	}
 } else {
 	$static_text .= gettext("Obtaining current version information...");
 	update_output_window($static_text);

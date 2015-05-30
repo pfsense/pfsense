@@ -116,7 +116,7 @@ $i = 0;
 
 foreach ($a_clones as $clone) {
 ?>
-			<tr ondblclick="document.location='interfaces_wireless_edit.php?id=<?=$i?>'">
+			<tr>
 				<td>
 					<?=htmlspecialchars($clone['cloneif'])?>
 				</td>

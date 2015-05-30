@@ -33,7 +33,7 @@
 */
 
 /*
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -48,16 +48,22 @@ require_once("filter.inc");
 
 if ($_POST) {
 	$savemsg = "";
+
 	if ($_POST['statetable']) {
 		filter_flush_state_table();
+
 		if ($savemsg)
 			$savemsg .= " ";
+
 		$savemsg .= gettext("The state table has been flushed successfully.");
 	}
+
 	if ($_POST['sourcetracking']) {
 		mwexec("/sbin/pfctl -F Sources");
+
 		if ($savemsg)
 			$savemsg .= " <br />";
+
 		$savemsg .= gettext("The source tracking table has been flushed successfully.");
 	}
 }
@@ -65,73 +71,67 @@ if ($_POST) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'alert-success');
+
+$statetabelhelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
+					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
+					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.' .
+					'<br /><br />' .
+					'The firewall will normally leave the state tables intact when changing rules.' .
+					'<br /><br />' .
+					'<strong>NOTE:</strong> If you reset the firewall state table, the browser session may appear to be hung after clicking &quot;Reset&quot;. ' .
+					'Simply refresh the page to continue.';
+
+$sourcetablehelp =	'Resetting the source tracking table will remove all source/destination associations. ' .
+					'This means that the \"sticky\" source/destination association ' .
+					'will be cleared for all clients.' .
+					' <br /><br />' .
+					'This does not clear active connection states, only source tracking.';
+
+$tab_array = array();
+$tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
+
+if (isset($config['system']['lb_use_sticky']))
+	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+
+$tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
+display_top_tabs($tab_array);
+
+require('classes/Form.class.php');
+
+$resetbtn = new Form_Button(
+	'Submit',
+	'Reset'
+);
+
+$resetbtn->removeClass('btn-primary')->addClass('btn-danger');
+
+$form = new Form($resetbtn);
+
+$section = new Form_Section('Select states to reset');
+
+$section->addInput(new Form_Checkbox(
+	'statetable',
+	'State Table',
+	'Reset the firewall state table',
+	true
+))->setHelp($statetabelhelp);
+
+if(isset($config['system']['lb_use_sticky'])) {
+	$section->addInput(new Form_Checkbox(
+		'sourcetracking',
+		'Source Tracking',
+		'Reset firewall source tracking',
+		true
+	))->setHelp($sourcetablehelp);
+}
+
+$form->add($section);
+print $form;
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-        <form action="diag_resetstate.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="reset states">
-	<tr><td>
-	<?php
-		$tab_array = array();
-		$tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
-		if (isset($config['system']['lb_use_sticky']))
-			$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
-		$tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
-		display_top_tabs($tab_array);
-	?>
-	</td></tr>
-	<tr><td class="tabcont">
-	    
-              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-                <tr>
-                  <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable"> <p>
-                      <input name="statetable" type="checkbox" id="statetable" value="yes" checked="checked" />
-                      <strong><?= gettext("Firewall state table"); ?></strong><br />
-                      <span class="vexpl"><br />
-                      <?=gettext("Resetting the state tables will remove all entries from " .
-                      "the corresponding tables. This means that all open connections " .
-                      "will be broken and will have to be re-established. This " . 
-                      "may be necessary after making substantial changes to the " .
-                      "firewall and/or NAT rules, especially if there are IP protocol " .
-                      "mappings (e.g. for PPTP or IPv6) with open connections."); ?><br />
-                      <br />
-                      </span><span class="vexpl"><?=gettext("The firewall will normally leave " .
-                      "the state tables intact when changing rules."); ?><br />
-                      <br />
-                      <?=gettext("NOTE: If you reset the firewall state table, the browser " .
-                      "session may appear to be hung after clicking &quot;Reset&quot;. " .
-                      "Simply refresh the page to continue."); ?></span></p>
-                    </td>
-				</tr>
-		<?php if (isset($config['system']['lb_use_sticky'])): ?>
-		<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
-			<td width="78%" class="vtable"><p>
-			<input name="sourcetracking" type="checkbox" id="sourcetracking" value="yes" checked="checked" />
-			<strong><?= gettext("Firewall Source Tracking"); ?></strong><br />
-			<span class="vexpl"><br />
-			<?=gettext("Resetting the source tracking table will remove all source/destination associations. " .
-			"This means that the \"sticky\" source/destination association " .
-			"will be cleared for all clients."); ?><br />
-			<br />
-			</span><span class="vexpl"><?=gettext("This does not clear active connection states, only source tracking."); ?><br />
-			</p>
-			</td>
-		</tr>
-		<?php endif; ?>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Reset"); ?>" />
-                  </td>
-                </tr>
-              </table>
-	 </td></tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php include("foot.inc"); ?>

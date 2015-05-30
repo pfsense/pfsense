@@ -56,25 +56,18 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 		$cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
-	exit;
-}
-
 if($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
 	exec("/usr/bin/openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
 	$privatekey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.private"));
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");
-	$alertmessage = gettext("You will need to recreate any existing Voucher Rolls due to the public and private key changes. Click cancel if you do not wish to recreate the vouchers.");
-	echo <<<EOF
-		jQuery('#publickey').val('{$publickey}');
-		jQuery('#privatekey').val('{$privatekey}');
-		alert('{$alertmessage}');
-		jQuery('#publickey').effect('highlight');
-		jQuery('#privatekey').effect('highlight');
-EOF;
+	print json_encode(['public' => $publickey, 'private' => $privatekey]);
+	exit;
+}
+
+if (empty($cpzone)) {
+	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
@@ -283,7 +276,7 @@ if ($_POST) {
 			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
 			$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
 			if($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
-			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
+				$newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
 
@@ -296,7 +289,7 @@ if ($_POST) {
 				else
 					$url = "http://{$newvoucher['vouchersyncdbip']}";
 
-				$execcmd  = <<<EOF
+				$execcmd = <<<EOF
 				\$toreturn = array();
 				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
 				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
@@ -442,7 +435,7 @@ endforeach;
 <?php
 if ($pconfig['enable']) : ?>
 	<nav class="action-buttons">
-		<a href=\"services_captiveportal_vouchers_edit.php?zone={$cpzone}\" class="btn btn-success">Add Voucher</a>
+		<a href="services_captiveportal_vouchers_edit.php?zone=<?$cpzone?>" class="btn btn-success"><?=gettext("Add Voucher")?></a>
 	</nav>
 <?php
 endif;
@@ -473,10 +466,9 @@ $section->addClass('rolledit');
 
 $section->addInput(new Form_TextArea(
 	'publickey',
-	'Sample Text',
-//		'Voucher Public Key',
+	'Voucher Public Key',
 	$pconfig['publickey']
-))->setHelp('Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers.' . "<a href='#' onclick='generatenewkey();'>" . 'Generate new key' . "</a>");
+))->setHelp('Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers.');
 
 $section->addInput(new Form_TextArea(
 	'privatekey',
@@ -551,7 +543,7 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Input(
 	'vouchersyncport',
-	'Vouchwe sync port',
+	'Voucher sync port',
 	'text',
 	$pconfig['vouchersyncport']
 ))->setHelp('The port of the master voucher node\'s webConfigurator. Example: 443 ');
@@ -590,12 +582,11 @@ print($form);
 <div class="rolledit">
 <?php
 	print_info_box(gettext('Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings. ' .
-						   'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'));
+							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'));
 ?>
 </div>
 
 <script>
-//<![CDATA[
 events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section or group
@@ -622,7 +613,21 @@ events.push(function(){
 
 	// Set initial state
 	setShowHide($('#enable').is(":checked"));
+
+	var generateButton = $('<a class="btn btn-xs btn-default">Generate new keys</a>');
+	generateButton.on('click', function(){
+		$.ajax({
+			type: 'get',
+			url: 'services_captiveportal_vouchers.php?generatekey=true',
+			dataType: 'json',
+			success: function(data){
+				$('#publickey').val(data.public.replace(/\\n/g, '\n'));
+				$('#privatekey').val(data.private.replace(/\\n/g, '\n'));
+			}
+		});
+	});
+	generateButton.appendTo($('#publickey + .help-block')[0]);
 });
-//]]>
+
 </script>
 <?php include("foot.inc");

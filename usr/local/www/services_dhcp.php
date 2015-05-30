@@ -1237,7 +1237,6 @@ include("head.inc");
 		</tr>
 			<?php if(is_array($a_maps)): ?>
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
-			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
 		<tr>
 		<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
 			<?php if (isset($mapent['arp_table_static_entry'])): ?>
@@ -1265,7 +1264,6 @@ include("head.inc");
 			</table>
 		</td>
 		</tr>
-		<?php endif; ?>
 		<?php $i++; endforeach; ?>
 		<?php endif; ?>
 		<tr>

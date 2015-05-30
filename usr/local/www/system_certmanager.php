@@ -47,51 +47,62 @@ $cert_methods = array(
 	"external" => gettext("Create a Certificate Signing Request"),
 );
 
-$cert_keylens = array( "512", "1024", "2048", "4096");
-$cert_types = array(	"ca" => "Certificate Authority",
-			"server" => "Server Certificate",
-			"user" => "User Certificate");
+$cert_keylens = array("512", "1024", "2048", "4096");
+$cert_types = array(
+	"ca" => "Certificate Authority",
+	"server" => "Server Certificate",
+	"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
-if (is_numericint($_GET['userid']))
+if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
-if (isset($_POST['userid']) && is_numericint($_POST['userid']))
+}
+if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
+}
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	if (!is_array($config['system']['user']))
+	if (!is_array($config['system']['user'])) {
 		$config['system']['user'] = array();
+	}
 	$a_user =& $config['system']['user'];
 }
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
 $internal_ca_count = 0;
-foreach ($a_ca as $ca)
-	if ($ca['prv'])	
+foreach ($a_ca as $ca) {
+	if ($ca['prv']) {
 		$internal_ca_count++;
+	}
+}
 
 $act = $_GET['act'];
-if ($_POST['act'])
+if ($_POST['act']) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 
@@ -165,8 +176,9 @@ if ($act == "p12") {
 	$args['friendly_name'] = $a_cert[$id]['descr'];
 
 	$ca = lookup_ca($a_cert[$id]['caref']);
-	if ($ca)
+	if ($ca) {
 		$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
+	}
 
 	$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
 	$res_key = openssl_pkey_get_private(array(0 => base64_decode($a_cert[$id]['prv']) , 1 => ""));
@@ -201,46 +213,47 @@ if ($_POST) {
 		/* input validation */
 		if ($pconfig['method'] == "import") {
 			$reqdfields = explode(" ",
-					"descr cert key");
+				"descr cert key");
 			$reqdfieldsn = array(
-					gettext("Descriptive name"),
-					gettext("Certificate data"),
-					gettext("Key data"));
-			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
+				gettext("Descriptive name"),
+				gettext("Certificate data"),
+				gettext("Key data"));
+			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
+			}
 		}
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-					"descr caref keylen type lifetime dn_country dn_state dn_city ".
-					"dn_organization dn_email dn_commonname");
+				"descr caref keylen type lifetime dn_country dn_state dn_city ".
+				"dn_organization dn_email dn_commonname");
 			$reqdfieldsn = array(
-					gettext("Descriptive name"),
-					gettext("Certificate authority"),
-					gettext("Key length"),
-					gettext("Certificate Type"),
-					gettext("Lifetime"),
-					gettext("Distinguished name Country Code"),
-					gettext("Distinguished name State or Province"),
-					gettext("Distinguished name City"),
-					gettext("Distinguished name Organization"),
-					gettext("Distinguished name Email Address"),
-					gettext("Distinguished name Common Name"));
+				gettext("Descriptive name"),
+				gettext("Certificate authority"),
+				gettext("Key length"),
+				gettext("Certificate Type"),
+				gettext("Lifetime"),
+				gettext("Distinguished name Country Code"),
+				gettext("Distinguished name State or Province"),
+				gettext("Distinguished name City"),
+				gettext("Distinguished name Organization"),
+				gettext("Distinguished name Email Address"),
+				gettext("Distinguished name Common Name"));
 		}
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-					"descr csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
-					"csr_dn_organization csr_dn_email csr_dn_commonname");
+				"descr csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
+				"csr_dn_organization csr_dn_email csr_dn_commonname");
 			$reqdfieldsn = array(
-					gettext("Descriptive name"),
-					gettext("Key length"),
-					gettext("Distinguished name Country Code"),
-					gettext("Distinguished name State or Province"),
-					gettext("Distinguished name City"),
-					gettext("Distinguished name Organization"),
-					gettext("Distinguished name Email Address"),
-					gettext("Distinguished name Common Name"));
+				gettext("Descriptive name"),
+				gettext("Key length"),
+				gettext("Distinguished name Country Code"),
+				gettext("Distinguished name State or Province"),
+				gettext("Distinguished name City"),
+				gettext("Distinguished name Organization"),
+				gettext("Distinguished name Email Address"),
+				gettext("Distinguished name Common Name"));
 		}
 
 		if ($pconfig['method'] == "existing") {
@@ -272,23 +285,28 @@ if ($_POST) {
 			foreach ($altnames as $idx => $altname) {
 				switch ($altname['type']) {
 					case "DNS":
-						if (!is_hostname($altname['value']))
+						if (!is_hostname($altname['value'])) {
 							array_push($input_errors, "DNS subjectAltName values must be valid hostnames or FQDNs");
+						}
 						break;
 					case "IP":
-						if (!is_ipaddr($altname['value']))
+						if (!is_ipaddr($altname['value'])) {
 							array_push($input_errors, "IP subjectAltName values must be valid IP Addresses");
+						}
 						break;
 					case "email":
-						if (empty($altname['value']))
+						if (empty($altname['value'])) {
 							array_push($input_errors, "You must provide an e-mail address for this type of subjectAltName");
-						if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value']))
+						}
+						if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value'])) {
 							array_push($input_errors, "The e-mail provided in a subjectAltName contains invalid characters.");
+						}
 						break;
 					case "URI":
 						/* Close enough? */
-						if (!is_URL($altname['value']))
+						if (!is_URL($altname['value'])) {
 							$input_errors[] = "URI subjectAltName types must be a valid URI";
+						}
 						break;
 					default:
 						$input_errors[] = "Unrecognized subjectAltName type.";
@@ -297,25 +315,32 @@ if ($_POST) {
 
 			/* Make sure we do not have invalid characters in the fields for the certificate */
 			for ($i = 0; $i < count($reqdfields); $i++) {
-				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
-					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
+				if (preg_match('/email/', $reqdfields[$i])) { /* dn_email or csr_dn_name */
+					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
 						array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
-				}else if (preg_match('/commonname/', $reqdfields[$i])){ /* dn_commonname or csr_dn_commonname */
-					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
+					}
+				} else if (preg_match('/commonname/', $reqdfields[$i])) { /* dn_commonname or csr_dn_commonname */
+					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
 						array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]]))
+					}
+				} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]])) {
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+				}
 			}
 
-			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens))
+			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 				array_push($input_errors, gettext("Please select a valid Key Length."));
-			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs))
+			}
+			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-				
-			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens))
+			}
+
+			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 				array_push($input_errors, gettext("Please select a valid Key Length."));
-			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs))
+			}
+			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+			}
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -329,20 +354,23 @@ if ($_POST) {
 
 			if ($pconfig['method'] == "existing") {
 				$cert = lookup_cert($pconfig['certref']);
-				if ($cert && $a_user)
+				if ($cert && $a_user) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
+				}
 			} else {
 				$cert = array();
 				$cert['refid'] = uniqid();
-				if (isset($id) && $a_cert[$id])
+				if (isset($id) && $a_cert[$id]) {
 					$cert = $a_cert[$id];
+				}
 
 				$cert['descr'] = $pconfig['descr'];
 
 				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 
-				if ($pconfig['method'] == "import")
+				if ($pconfig['method'] == "import") {
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
+				}
 
 				if ($pconfig['method'] == "internal") {
 					$dn = array(
@@ -360,8 +388,8 @@ if ($_POST) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])){
-						while($ssl_err = openssl_error_string()){
+						$pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+						while ($ssl_err = openssl_error_string()) {
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
 						}
@@ -383,8 +411,8 @@ if ($_POST) {
 						}
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
-					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])){
-						while($ssl_err = openssl_error_string()){
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])) {
+						while ($ssl_err = openssl_error_string()) {
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
 						}
@@ -392,16 +420,19 @@ if ($_POST) {
 				}
 				error_reporting($old_err_level);
 
-				if (isset($id) && $a_cert[$id])
+				if (isset($id) && $a_cert[$id]) {
 					$a_cert[$id] = $cert;
-				else
+				} else {
 					$a_cert[] = $cert;
-				if (isset($a_user) && isset($userid))
+				}
+				if (isset($a_user) && isset($userid)) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
+				}
 			}
 
-			if (!$input_errors)
+			if (!$input_errors) {
 				write_config();
+			}
 
 			if ($userid) {
 				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
@@ -417,8 +448,8 @@ if ($_POST) {
 		/* input validation */
 		$reqdfields = explode(" ", "descr cert");
 		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Final Certificate data"));
+		gettext("Descriptive name"),
+		gettext("Final Certificate data"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -427,18 +458,18 @@ if ($_POST) {
 //		$subj_csr = csr_get_subject($pconfig['csr'], false);
 //		$subj_cert = cert_get_subject($pconfig['cert'], false);
 //
-//		if ( !isset($_POST['ignoresubjectmismatch']) && !($_POST['ignoresubjectmismatch'] == "yes") ) {
-//			if (strcmp($subj_csr,$subj_cert)) {
-//				$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
+//		if (!isset($_POST['ignoresubjectmismatch']) && !($_POST['ignoresubjectmismatch'] == "yes")) {
+//			if (strcmp($subj_csr, $subj_cert)) {
+//				$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."), $subj_cert);
 //				$subject_mismatch = true;
 //			}
 //		}
 		$mod_csr  =  csr_get_modulus($pconfig['csr'], false);
 		$mod_cert = cert_get_modulus($pconfig['cert'], false);
-		
-		if (strcmp($mod_csr,$mod_cert)) {
+
+		if (strcmp($mod_csr, $mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match
-			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."),$subj_cert);
+			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."), $subj_cert);
 			$subject_mismatch = true;
 		}
 
@@ -477,10 +508,11 @@ include("head.inc");
 function method_change() {
 
 <?php
-	if ($internal_ca_count)
+	if ($internal_ca_count) {
 		$submit_style = "";
-	else
+	} else {
 		$submit_style = "none";
+	}
 ?>
 
 	method = document.iform.method.selectedIndex;
@@ -530,8 +562,9 @@ function internalca_change() {
 	switch (caref) {
 <?php
 		foreach ($a_ca as $ca):
-			if (!$ca['prv'])
+			if (!$ca['prv']) {
 				continue;
+			}
 			$subject = cert_get_subject_array($ca['crt']);
 ?>
 		case "<?=$ca['refid'];?>":
@@ -541,7 +574,9 @@ function internalca_change() {
 			document.iform.dn_organization.value = "<?=$subject[3]['v'];?>";
 			document.iform.dn_email.value = "<?=$subject[4]['v'];?>";
 			break;
-<?php	endforeach; ?>
+<?php
+		endforeach;
+?>
 	}
 }
 <?php endif; ?>
@@ -562,19 +597,23 @@ function internalca_change() {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 
-        // Load valid country codes
-        $dn_cc = array();
-        if (file_exists("/etc/ca_countries")){
-                $dn_cc_file=file("/etc/ca_countries");
-                foreach($dn_cc_file as $line)
-                        if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
-                                array_push($dn_cc, $matches[1]);
-        }
+	// Load valid country codes
+	$dn_cc = array();
+	if (file_exists("/etc/ca_countries")) {
+		$dn_cc_file=file("/etc/ca_countries");
+		foreach ($dn_cc_file as $line) {
+			if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
+				array_push($dn_cc, $matches[1]);
+			}
+		}
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="cert manager">
 	<tr>
@@ -602,21 +641,25 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='method' id='method' class="formselect" onchange='method_change()'>
 								<?php
-									foreach($cert_methods as $method => $desc):
-									$selected = "";
-									if ($pconfig['method'] == $method)
-										$selected = " selected=\"selected\"";
+									foreach ($cert_methods as $method => $desc):
+										$selected = "";
+										if ($pconfig['method'] == $method) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 							</td>
 						</tr>
 						<?php endif; ?>
 						<tr id="descriptivename">
 							<?php
-							if ($a_user && empty($pconfig['descr']))
+							if ($a_user && empty($pconfig['descr'])) {
 								$pconfig['descr'] = $a_user[$userid]['name'];
+							}
 							?>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
@@ -676,15 +719,19 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
 								<?php
-									foreach( $a_ca as $ca):
-									if (!$ca['prv'])
-										continue;
-									$selected = "";
-									if ($pconfig['caref'] == $ca['refid'])
-										$selected = " selected=\"selected\"";
+									foreach ($a_ca as $ca):
+										if (!$ca['prv']) {
+											continue;
+										}
+										$selected = "";
+										if ($pconfig['caref'] == $ca['refid']) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 							</td>
 						</tr>
@@ -693,13 +740,16 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='keylen' class="formselect">
 								<?php
-									foreach( $cert_keylens as $len):
-									$selected = "";
-									if ($pconfig['keylen'] == $len)
-										$selected = " selected=\"selected\"";
+									foreach ($cert_keylens as $len):
+										$selected = "";
+										if ($pconfig['keylen'] == $len) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<?=gettext("bits");?>
 							</td>
@@ -709,13 +759,16 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='digest_alg' id='digest_alg' class="formselect">
 								<?php
-									foreach( $openssl_digest_algs as $digest_alg):
-									$selected = "";
-									if ($pconfig['digest_alg'] == $digest_alg)
-										$selected = " selected=\"selected\"";
+									foreach ($openssl_digest_algs as $digest_alg):
+										$selected = "";
+										if ($pconfig['digest_alg'] == $digest_alg) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
@@ -725,13 +778,16 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='type' class="formselect">
 								<?php
-									foreach( $cert_types as $ct => $ctdesc ):
-									$selected = "";
-									if ($pconfig['type'] == $ct)
-										$selected = " selected=\"selected\"";
+									foreach ($cert_types as $ct => $ctdesc):
+										$selected = "";
+										if ($pconfig['type'] == $ct) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$ct;?>"<?=$selected;?>><?=$ctdesc;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<br />
 								<?=gettext("Type of certificate to generate. Used for placing restrictions on the usage of the generated certificate.");?>
@@ -786,8 +842,9 @@ function internalca_change() {
 										<td align="right"><?=gettext("Common Name");?> : &nbsp;</td>
 										<td align="left">
 											<?php
-											if ($a_user && empty($pconfig['dn_commonname']))
+											if ($a_user && empty($pconfig['dn_commonname'])) {
 												$pconfig['dn_commonname'] = $a_user[$userid]['name'];
+											}
 											?>
 											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
 											&nbsp;
@@ -801,36 +858,36 @@ function internalca_change() {
 										<td align="left">
 											<table id="altNametable">
 											<thead>
-											<tr>
-												<th><div id="onecolumn"><?=gettext("Type");?></div></th>
-												<th><div id="twocolumn"><?=gettext("Value");?></div></th>
-											</tr>
+												<tr>
+													<th><div id="onecolumn"><?=gettext("Type");?></div></th>
+													<th><div id="twocolumn"><?=gettext("Value");?></div></th>
+												</tr>
 											</thead>
 											<tbody>
 											<?php
 												$counter = 0;
-												if($pconfig['altnames']['item']):
-												foreach($pconfig['altnames']['item'] as $item):
-													$type = $item['type'];
-													$value = $item['value'];
+												if ($pconfig['altnames']['item']):
+													foreach ($pconfig['altnames']['item'] as $item):
+														$type = $item['type'];
+														$value = $item['value'];
 											?>
-											<tr>
-												<td>
-												<input autocomplete="off" name="altname_type<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_type<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($type);?>" />
-												</td>
-												<td>
-												<input autocomplete="off" name="altname_value<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_value<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($value);?>" />
-												</td>
-												<td>
-												<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-												</td>
-											</tr>
+												<tr>
+													<td>
+														<input autocomplete="off" name="altname_type<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_type<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($type);?>" />
+													</td>
+													<td>
+														<input autocomplete="off" name="altname_value<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_value<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($value);?>" />
+													</td>
+													<td>
+														<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+													</td>
+												</tr>
 											<?php
-													$counter++;
-												endforeach;
+														$counter++;
+													endforeach;
 												endif;
 											?>
-											<tr><td>&nbsp;</td></tr>
+												<tr><td>&nbsp;</td></tr>
 											</tbody>
 											</table>
 											<a onclick="javascript:addRowTo('altNametable', 'formfldalias'); return false;" href="#">
@@ -867,15 +924,19 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='csr_keylen' class="formselect">
 								<?php
-									if (!isset($pconfig['csr_keylen']) && isset($pconfig['csr_keylen']))
+									if (!isset($pconfig['csr_keylen']) && isset($pconfig['csr_keylen'])) {
 										$pconfig['csr_keylen'] = $pconfig['csr_keylen'];
-									foreach( $cert_keylens as $len):
-									$selected = "";
-									if ($pconfig['csr_keylen'] == $len)
-										$selected = " selected=\"selected\"";
+									}
+									foreach ($cert_keylens as $len):
+										$selected = "";
+										if ($pconfig['csr_keylen'] == $len) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								bits
 							</td>
@@ -885,13 +946,16 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='csr_digest_alg' id='csr_digest_alg' class="formselect">
 								<?php
-									foreach( $openssl_digest_algs as $csr_digest_alg):
-									$selected = "";
-									if ($pconfig['csr_digest_alg'] == $csr_digest_alg)
-										$selected = " selected=\"selected\"";
+									foreach ($openssl_digest_algs as $csr_digest_alg):
+										$selected = "";
+										if ($pconfig['csr_digest_alg'] == $csr_digest_alg) {
+											$selected = " selected=\"selected\"";
+										}
 								?>
 									<option value="<?=$csr_digest_alg;?>"<?=$selected;?>><?=strtoupper($csr_digest_alg);?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
@@ -905,12 +969,13 @@ function internalca_change() {
 										<td align="left">
 											<select name='csr_dn_country' class="formselect">
 											<?php
-											foreach( $dn_cc as $cc){
+											foreach ($dn_cc as $cc) {
 												$selected = "";
-												if ($pconfig['csr_dn_country'] == $cc)
+												if ($pconfig['csr_dn_country'] == $cc) {
 													$selected = " selected=\"selected\"";
-												print "<option value=\"$cc\"$selected>$cc</option>";
 												}
+												print "<option value=\"$cc\"$selected>$cc</option>";
+											}
 											?>
 											</select>
 										</td>
@@ -990,20 +1055,27 @@ function internalca_change() {
 										$caname = "";
 										$inuse = "";
 										$revoked = "";
-										if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
+										if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
 											continue;
+										}
 										$ca = lookup_ca($cert['caref']);
-										if ($ca)
+										if ($ca) {
 											$caname = " (CA: {$ca['descr']})";
-										if ($pconfig['certref'] == $cert['refid'])
+										}
+										if ($pconfig['certref'] == $cert['refid']) {
 											$selected = " selected=\"selected\"";
-										if (cert_in_use($cert['refid']))
+										}
+										if (cert_in_use($cert['refid'])) {
 											$inuse = " *In Use";
-											if (is_cert_revoked($cert))
+										}
+										if (is_cert_revoked($cert)) {
 											$revoked = " *Revoked";
+										}
 								?>
 									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
-								<?php endforeach; ?>
+								<?php
+									endforeach;
+								?>
 								</select>
 							</td>
 						</tr>
@@ -1058,7 +1130,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<?php /* if ( isset($subject_mismatch) && $subject_mismatch === true): ?>
+								<?php /* if (isset($subject_mismatch) && $subject_mismatch === true): ?>
 								<input id="ignoresubjectmismatch" name="ignoresubjectmismatch" type="checkbox" class="formbtn" value="yes" />
 								<label for="ignoresubjectmismatch"><strong><?=gettext("Ignore certificate subject mismatch"); ?></strong></label><br />
 								<?php echo gettext("Warning: Using this option may create an " .
@@ -1092,19 +1164,20 @@ function internalca_change() {
 						$pluginparams['event'] = 'used_certificates';
 						$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 						$i = 0;
-						foreach($a_cert as $cert):
+						foreach ($a_cert as $cert):
 							$name = htmlspecialchars($cert['descr']);
-							
+
 							if ($cert['crt']) {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
 								$purpose = cert_get_purpose($cert['crt']);
 								list($startdate, $enddate) = cert_get_dates($cert['crt']);
-								if($subj==$issuer)
+								if ($subj == $issuer) {
 								  $caname = "<em>" . gettext("self-signed") . "</em>";
-								else
-							    $caname = "<em>" . gettext("external"). "</em>";
-							  $subj = htmlspecialchars($subj);
+								} else {
+									$caname = "<em>" . gettext("external"). "</em>";
+								}
+								$subj = htmlspecialchars($subj);
 							}
 
 							if ($cert['csr']) {
@@ -1113,13 +1186,15 @@ function internalca_change() {
 							}
 
 							$ca = lookup_ca($cert['caref']);
-							if ($ca)
+							if ($ca) {
 								$caname = $ca['descr'];
+							}
 
-							if($cert['prv'])
+							if ($cert['prv']) {
 								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
-							else
+							} else {
 								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
+							}
 					?>
 					<tr>
 						<td class="listlr">
@@ -1134,13 +1209,17 @@ function internalca_change() {
 								</tr>
 								<tr><td>&nbsp;</td></tr>
 								<?php if ($cert['type']): ?>
-								<tr><td colspan="2"><em><?php echo $cert_types[$cert['type']]; ?></em></td></tr>
+								<tr>
+									<td colspan="2"><em><?php echo $cert_types[$cert['type']]; ?></em></td>
+								</tr>
 								<?php endif; ?>
 								<?php if (is_array($purpose)): ?>
-								<tr><td colspan="2">
-									CA: <?php echo $purpose['ca']; ?>,
-									Server: <?php echo $purpose['server']; ?>
-								</td></tr>
+								<tr>
+									<td colspan="2">
+										CA: <?php echo $purpose['ca']; ?>,
+										Server: <?php echo $purpose['server']; ?>
+									</td>
+								</tr>
 								<?php endif; ?>
 							</table>
 						</td>
@@ -1183,18 +1262,20 @@ function internalca_change() {
 							<?php endif; ?>
 							<?
 								$refid = $cert['refid'];
-								if (is_array($certificates_used_by_packages))
-								foreach($certificates_used_by_packages as $name => $package){
-									if(isset($package['certificatelist'][$refid])){
-										$hint = "" ;
-										if (is_array($package['certificatelist'][$refid]))
-										foreach($package['certificatelist'][$refid] as $cert_used){
-											$hint = $hint . $cert_used['usedby']."\n";
+								if (is_array($certificates_used_by_packages)) {
+									foreach ($certificates_used_by_packages as $name => $package) {
+										if (isset($package['certificatelist'][$refid])) {
+											$hint = "" ;
+											if (is_array($package['certificatelist'][$refid])) {
+												foreach ($package['certificatelist'][$refid] as $cert_used) {
+													$hint = $hint . $cert_used['usedby']."\n";
+												}
+											}
+											$count = count($package['certificatelist'][$refid]);
+											echo "<div title='".htmlspecialchars($hint)."'>";
+											echo htmlspecialchars($package['pkgname'])." ($count)<br />";
+											echo "</div>";
 										}
-										$count = count($package['certificatelist'][$refid]);
-										echo "<div title='".htmlspecialchars($hint)."'>";
-										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
-										echo "</div>";
 									}
 								}
 							?>

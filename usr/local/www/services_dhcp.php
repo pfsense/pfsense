@@ -1379,7 +1379,6 @@ include("head.inc");
 		if (is_array($a_maps)):
 			$i = 0;
 			foreach ($a_maps as $mapent):
-				if ($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""):
 ?>
 				<tr>
 					<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
@@ -1409,7 +1408,6 @@ include("head.inc");
 					</td>
 				</tr>
 <?php
-				endif;
 				$i++;
 			endforeach;
 		endif;

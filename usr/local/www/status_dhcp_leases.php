@@ -357,7 +357,7 @@ if (count($pools) > 0) {
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 foreach ($leases as $data) {
-	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
+	if (($data['act'] == "active") || ($data['act'] == "static" && !empty($data['ip'])) || ($_GET['all'] == 1)) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
 			$fspane = "&nbsp;</span>";

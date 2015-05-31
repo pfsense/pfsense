@@ -131,7 +131,7 @@ function filter_rule_tracker($tracker) {
 
 function filter_negaterule_tracker() {
         global $tracker;
-                        
+
         ++$negate_tracker;
         return "tracker {$negate_tracker} ";
 }
@@ -669,8 +669,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	return $finallist;
 }
 
-function filter_expand_alias($alias_name)
-{
+function filter_expand_alias($alias_name) {
 	global $config;
 
 	if (isset($config['aliases']['alias'])) {
@@ -1599,7 +1598,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	/* PPTP subnet */
-	if (($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
+	if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
 		if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units'])) {
 			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
 				long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
@@ -1961,7 +1960,7 @@ function filter_nat_rules_generate() {
 					if ($remote_subnet == "0.0.0.0/0") {
 						$remote_subnet = "any";
 					}
-					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) ) {
+					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet)) {
 						$nattype = "nat";
 					} else {
 						list($natnet, $natmask) = explode('/', $natlocal_subnet);
@@ -2095,7 +2094,7 @@ function filter_nat_rules_generate() {
 		@unlink("/var/etc/inetd.conf");
 	}
 	// Open inetd.conf write handle
-	$inetd_fd = fopen("/var/etc/inetd.conf","w");
+	$inetd_fd = fopen("/var/etc/inetd.conf", "w");
 	/* add tftp protocol helper */
 	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
 
@@ -2211,14 +2210,14 @@ function filter_nat_rules_generate() {
 			if (isset($rule['destination']['any'])) {
 				/* With reflection enabled, destination of 'any' has side effects
 				 * that most people would not expect, so change it on reflection rules. */
-				
+
 				if (!empty($FilterIflist[$natif]['ip'])) {
 					$dstaddr_reflect = $FilterIflist[$natif]['ip'];
 				} else {
 					// no IP, bail
 					continue;
 				}
-				
+
 				if (!empty($FilterIflist[$natif]['sn'])) {
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 				}
@@ -2358,7 +2357,7 @@ function filter_generate_port(& $rule, $target = "source", $isnat = false) {
 	$src = "";
 
 	$rule['protocol'] = strtolower($rule['protocol']);
-	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+	if (in_array($rule['protocol'], array("tcp", "udp", "tcp/udp"))) {
 		if ($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
@@ -2599,8 +2598,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
-	if (empty($src))
+	if (empty($src)) {
 		return '';
+	}
 
 	$src .= filter_generate_port($rule, $target, $isnat);
 
@@ -2639,8 +2639,9 @@ function filter_generate_user_rule($rule) {
 			} else {
 				$aline['interface'] = "";
 			}
-		} else
+		} else {
 			$aline['interface'] = "";
+		}
 	} else if (!array_key_exists($rule['interface'], $FilterIflist)) {
 			foreach ($FilterIflist as $oc) {
 				$items .= $oc['descr'] . " ";
@@ -2932,7 +2933,7 @@ function filter_generate_user_rule($rule) {
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
 			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
-			    ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+			    ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
 			     ((isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
 			      (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
@@ -2956,7 +2957,7 @@ function filter_generate_user_rule($rule) {
 				if (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") {
 					$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
 				    (isset($rule['max-src-conn'])) and
 				    ($rule['max-src-conn'] <> "")) {
 					$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
@@ -2964,12 +2965,12 @@ function filter_generate_user_rule($rule) {
 				if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") {
 					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
 				    (isset($rule['statetimeout'])) and
 				    ($rule['statetimeout'] <> "")) {
 					$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
 				    (isset($rule['max-src-conn-rate'])) and
 				    ($rule['max-src-conn-rate'] <> "") and
 				    (isset($rule['max-src-conn-rates'])) and
@@ -2989,7 +2990,7 @@ function filter_generate_user_rule($rule) {
 	if ($rule['defaultqueue'] <> "") {
 		$aline['queue'] = " queue (".$rule['defaultqueue'];
 		if ($rule['ackqueue'] <> "") {
-			$aline['queue'] .= ",".$rule['ackqueue'];
+			$aline['queue'] .= "," . $rule['ackqueue'];
 		}
 		$aline['queue'] .= ") ";
 	}
@@ -2997,9 +2998,9 @@ function filter_generate_user_rule($rule) {
 		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
 			if ($dummynet_name_list[$rule['dnpipe']][0] == "?") {
 				$aline['dnpipe'] = " dnqueue( ";
-				$aline['dnpipe'] .= substr($dummynet_name_list[$rule['dnpipe']],1);
+				$aline['dnpipe'] .= substr($dummynet_name_list[$rule['dnpipe']], 1);
 				if ($rule['pdnpipe'] <> "") {
-					$aline['dnpipe'] .= ",".substr($dummynet_name_list[$rule['pdnpipe']], 1);
+					$aline['dnpipe'] .= "," . substr($dummynet_name_list[$rule['pdnpipe']], 1);
 				}
 			} else {
 				$aline['dnpipe'] = " dnpipe ( " . $dummynet_name_list[$rule['dnpipe']];
@@ -3106,7 +3107,7 @@ function filter_rules_generate() {
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
-	
+
 	if (!isset($config['system']['no_apipa_block'])) {
 		$ipfrules .= <<<EOD
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,
@@ -3790,7 +3791,7 @@ function tdr_install_cron($should_install) {
 function filter_tdr_install_cron($should_install) {
 	global $config, $g;
 
-	if (platform_booting()==true) {
+	if (platform_booting() == true) {
 		return;
 	}
 
@@ -4132,7 +4133,7 @@ pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
-			if ($ph1ent['nat_traversal'] != "off" ) {
+			if ($ph1ent['nat_traversal'] != "off") {
 				$ipfrules .= <<<EOD
 pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"

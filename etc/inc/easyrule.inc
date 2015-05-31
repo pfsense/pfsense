@@ -56,7 +56,7 @@ function easyrule_find_rule_interface($int) {
 	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])){
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
 		$iflist["enc0"] = "IPSEC";
 	}
 
@@ -407,7 +407,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 		$a_address = explode(" ", $config['aliases']['alias'][$id]['address']);
 		$a_detail = explode("||", $config['aliases']['alias'][$id]['detail']);
 
-		if(($key = array_search($unblock, $a_address)) !== false) {
+		if (($key = array_search($unblock, $a_address)) !== false) {
 			unset($a_address[$key]);
 			unset($a_detail[$key]);
 			// Write back the result to the config array

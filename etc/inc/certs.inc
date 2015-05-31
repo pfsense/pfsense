@@ -178,7 +178,7 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $oca) {
 			$issuer = cert_get_issuer($oca['crt']);
-			if ($ca['refid']<>$oca['refid'] && $issuer==$subject) {
+			if ($ca['refid'] <> $oca['refid'] && $issuer == $subject) {
 				$oca['caref'] = $ca['refid'];
 			}
 		}
@@ -186,7 +186,7 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
 			$issuer = cert_get_issuer($cert['crt']);
-			if ($issuer==$subject) {
+			if ($issuer == $subject) {
 				$cert['caref'] = $ca['refid'];
 			}
 		}
@@ -554,8 +554,8 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
 	}
 
 	$modulus = "";
-	if ( in_array($type, array("crt", "prv", "csr")) ) {
-		$type = str_replace( array("crt","prv","csr"), array("x509","rsa","req"), $type);
+	if (in_array($type, array("crt", "prv", "csr"))) {
+		$type = str_replace(array("crt", "prv", "csr"), array("x509", "rsa", "req"), $type);
 		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
 	}
 	return $modulus;

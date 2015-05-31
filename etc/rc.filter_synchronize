@@ -50,15 +50,17 @@ require_once("interfaces.inc");
 function backup_vip_config_section() {
 	global $config;
 
-	if (!is_array($config['virtualip']['vip']))
+	if (!is_array($config['virtualip']['vip'])) {
 		return;
+	}
 	$temp = array();
 	$temp['vip'] = array();
 	foreach ($config['virtualip']['vip'] as $section) {
 		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') &&
 		    (strpos($section['interface'], '_vip') === FALSE) &&
-		    (strpos($section['interface'], 'lo0') === FALSE))
+		    (strpos($section['interface'], 'lo0') === FALSE)) {
 			continue;
+		}
 		if ($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
@@ -81,7 +83,7 @@ function backup_vip_config_section() {
 
 function remove_special_characters($string) {
 	$match_array = "";
-	preg_match_all("/[a-zA-Z0-9\_\-]+/",$string,$match_array);
+	preg_match_all("/[a-zA-Z0-9\_\-]+/", $string, $match_array);
 	$string = "";
 	foreach ($match_array[0] as $ma) {
 		if ($string <> "") {
@@ -95,8 +97,9 @@ function remove_special_characters($string) {
 function carp_check_version($url, $username, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
 	global $config, $g;
 
-	if (file_exists("{$g['varrun_path']}/booting") || platform_booting())
+	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
 		return;
+	}
 
 	$params = array(
 		XML_RPC_encode($password)
@@ -147,8 +150,9 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 function carp_sync_xml($url, $username, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
-	if (file_exists("{$g['varrun_path']}/booting") || platform_booting())
+	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
 		return;
+	}
 
 	update_filter_reload_status("Syncing CARP data to {$url}");
 
@@ -285,8 +289,9 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	}
 }
 
-if (platform_booting())
+if (platform_booting()) {
 	return;
+}
 
 if (is_array($config['hasync'])) {
 	update_filter_reload_status("Building high availability sync information");
@@ -448,12 +453,14 @@ if (is_array($config['hasync'])) {
 		$username = $hasync['username'];
 	}
 
-	if (!carp_check_version($synchronizetoip, $username, $hasync['password'], $port))
+	if (!carp_check_version($synchronizetoip, $username, $hasync['password'], $port)) {
 		return;
+	}
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	if (carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port) == -1)
+	if (carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port) == -1) {
 		return;
+	}
 	$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 	$params = array(
 	  XML_RPC_encode($hasync['password'])

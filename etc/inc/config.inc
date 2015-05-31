@@ -59,9 +59,9 @@ if (!$ARCH) {
 
 // Set memory limit to 256M on amd64.
 if ($ARCH == "amd64") {
-	ini_set("memory_limit","256M");
+	ini_set("memory_limit", "256M");
 } else {
-	ini_set("memory_limit","128M");
+	ini_set("memory_limit", "128M");
 }
 
 /* include globals from notices.inc /utility/XML parser files */
@@ -98,7 +98,7 @@ if (platform_booting(true)) {
 			echo ".";
 			/* user has just upgraded from m0n0wall, replace root xml tags */
 			log_error(gettext("Upgrading m0n0wall configuration to pfSense... "));
-			$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
+			$config_contents = str_replace("m0n0wall", "pfsense", $config_contents);
 			if (!config_validate("{$g['conf_path']}/config.xml")) {
 				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
 			}
@@ -109,7 +109,7 @@ if (platform_booting(true)) {
 		unset($config_contents);
 	}
 	/* if our config file exists bail out, we're already set. */
-	else if (!file_exists($g['cf_conf_path'] . "/config.xml")  ) {
+	else if (!file_exists($g['cf_conf_path'] . "/config.xml")) {
 		echo ".";
 		/* find the device where config.xml resides and write out an fstab */
 		unset($cfgdevice);

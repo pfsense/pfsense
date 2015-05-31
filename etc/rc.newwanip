@@ -82,7 +82,7 @@ if (empty($argument)) {
 	$curwanip = get_interface_ip();
 } else {
 	$curwanip = find_interface_ip($interface_real, true);
-	if($curwanip == "") {
+	if ($curwanip == "") {
 		$curwanip = get_interface_ip($interface);
 	}
 }
@@ -189,7 +189,7 @@ if (!empty($gif)) {
 	}
 }
 if (!empty($gre)) {
-	foreach($gre as $gretun) {
+	foreach ($gre as $gretun) {
 		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
 		if (!empty($confif)) {
 			interface_configure($confif);

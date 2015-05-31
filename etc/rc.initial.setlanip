@@ -113,8 +113,8 @@ function prompt_for_enable_dhcp_server($version = 4) {
 function get_interface_config_description($iface) {
 	global $config;
 	$c = $config['interfaces'][$iface];
-	if (!$c) { 
-		return null; 
+	if (!$c) {
+		return null;
 	}
 	$if = $c['if'];
 	$result = $if;
@@ -158,10 +158,12 @@ if ($count > 1) {
 	$intnum = $count;
 }
 
-if ($intnum < 1)
+if ($intnum < 1) {
 	return;
-if ($intnum > $count)
+}
+if ($intnum > $count) {
 	return;
+}
 
 $index = 1;
 foreach ($ifdescrs as $ifname => $ifdesc) {
@@ -422,10 +424,12 @@ function console_configure_dhcpd($version = 4) {
 	return 1;
 }
 
-if (console_configure_dhcpd(4) == 0)
+if (console_configure_dhcpd(4) == 0) {
 	return 0;
-if (console_configure_dhcpd(6) == 0)
+}
+if (console_configure_dhcpd(6) == 0) {
 	return 0;
+}
 
 //*****************************************************************************
 

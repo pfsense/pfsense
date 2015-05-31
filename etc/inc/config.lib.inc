@@ -114,8 +114,9 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting(true))
+	if (platform_booting(true)) {
 		echo ".";
+	}
 
 	// Check for encrypted config.xml
 	encrypted_configxml();
@@ -216,7 +217,7 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
-		copy("$file","/cf/conf/config.xml");
+		copy("$file", "/cf/conf/config.xml");
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -407,9 +408,9 @@ function convert_config() {
 	/* fix every minute crontab bogons entry */
 	if (is_array($config['cron'])) {
 		$cron_item_count = count($config['cron']['item']);
-		for($x=0; $x<$cron_item_count; $x++) {
+		for ($x = 0; $x < $cron_item_count; $x++) {
 			if (stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-				if ($config['cron']['item'][$x]['hour'] == "*" ) {
+				if ($config['cron']['item'][$x]['hour'] == "*") {
 					$config['cron']['item'][$x]['hour'] = "3";
 					write_config(gettext("Updated bogon update frequency to 3am"));
 					log_error(gettext("Updated bogon update frequency to 3am"));

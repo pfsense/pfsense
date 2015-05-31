@@ -117,7 +117,7 @@ if (isset($_GET['interface'])) {
 	$realiface = $argv[2];
 }
 
-switch($action) {
+switch ($action) {
 	case "start":
 	case "stop":
 		break;

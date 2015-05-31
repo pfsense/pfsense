@@ -597,8 +597,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	}
 
 	/* Process/add dynamic v4 gateways. */
-	foreach ($iflist as $ifname => $friendly ) {
-		if (! interface_has_gateway($ifname)) {
+	foreach ($iflist as $ifname => $friendly) {
+		if (!interface_has_gateway($ifname)) {
 			continue;
 		}
 
@@ -688,13 +688,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	unset($gateway);
 
 	/* Process/add dynamic v6 gateways. */
-	foreach ($iflist as $ifname => $friendly ) {
+	foreach ($iflist as $ifname => $friendly) {
 		/* If the user has disabled IPv6, they probably don't want any IPv6 gateways. */
 		if (!isset($config['system']['ipv6allow'])) {
 			break;
 		}
 
-		if (! interface_has_gatewayv6($ifname)) {
+		if (!interface_has_gatewayv6($ifname)) {
 			continue;
 		}
 

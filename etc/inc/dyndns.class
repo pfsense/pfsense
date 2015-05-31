@@ -555,7 +555,7 @@
 						log_error("HE.net ({$this->_dnsHost}): DNS update() starting.");
 					}
 					$server = "https://dyn.dns.he.net/nic/update?";
-					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost . '&password=' . $this->_dnsPass . '&myip=' . $this->_dnsIP);
 					break;
@@ -653,7 +653,7 @@
 					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
 						if ($this->_curlIpresolveV4) {
-							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 						}
 						if ($this->_curlSslVerifypeer) {
 							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
@@ -672,7 +672,7 @@
 				case 'cloudflare':
 					$needsIP = TRUE;
 					$dnsServer ='www.cloudflare.com';
-					$dnsHost = str_replace(' ','', $this->_dnsHost);
+					$dnsHost = str_replace(' ', '', $this->_dnsHost);
 					$URL = "https://{$dnsServer}/api.html?a=DIUP&email={$this->_dnsUser}&tkn={$this->_dnsPass}&ip={$this->_dnsIP}&hosts={$dnsHost}";
 					curl_setopt($ch, CURLOPT_URL, $URL);
 					break;
@@ -742,7 +742,7 @@
 					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
 					curl_setopt($ch, CURLOPT_HEADER, 1);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json','Content-Type: application/json','X-DNSimple-Token: ' . $token));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
 					break;
@@ -798,7 +798,7 @@
 			switch ($this->_dnsService) {
 				case 'glesys':
 					if (preg_match('/Record updated/i', $data)) {
-						$status = "GleSYS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "GleSYS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else {
 						$status = "GleSYS ({$this->_dnsHost}): (Unknown Response)";
@@ -818,7 +818,7 @@
 					} else if (preg_match('/abuse/i', $data)) {
 						$status = "DNS-O-Matic ({$this->_dnsHost}): The hostname is blocked for update abuse.";
 					} else if (preg_match('/good/i', $data)) {
-						$status = "DNS-O-Matic ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "DNS-O-Matic ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/dnserr/i', $data)) {
 						$status = "DNS-O-Matic ({$this->_dnsHost}): DNS error encountered. Stop updating for 30 minutes.";
@@ -837,7 +837,7 @@
 						$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/badauth/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
@@ -855,7 +855,7 @@
 						$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
@@ -903,7 +903,7 @@
 					break;
 				case 'noip':
 				case 'noip-free':
-					list($ip,$code) = explode(":",$data);
+					list($ip, $code) = explode(":", $data);
 					switch ($code) {
 						case 0:
 							$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP address is current, no update performed.";
@@ -1080,7 +1080,7 @@
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Hostname you are trying to update does not exist.";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/yours/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) hostname specified exists, but not under the username specified.";
@@ -1190,7 +1190,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
@@ -1227,7 +1227,7 @@
 					break;
 				case 'cloudflare':
 					// receive multiple results
-					$data = explode("\n",$data);
+					$data = explode("\n", $data);
 					$lines = count($data)-1;
 
 					// loop over the lines
@@ -1244,10 +1244,10 @@
 						} else if (preg_match('/DUPHST/i', $resp)) {
 							$status = "DynDNS: Duplicate values exist for a record. Only single values for records are supported currently.";
 						} else if (preg_match('/NOUPDATE/i', $resp)) {
-							$status = "DynDNS: No changes made to the hostname (".strtok($resp,' ')."). Continual updates with no changes lead to blocked clients.";
+							$status = "DynDNS: No changes made to the hostname (" . strtok($resp, ' ') . "). Continual updates with no changes lead to blocked clients.";
 							$successful_update = true; //success if it is the same so that it saves
 						} else if (preg_match('/OK/i', $resp)) {
-							$status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully!";
+							$status = "DynDNS: (Success) (" . strtok($resp, ' ') . ") IP Address for Changed Successfully!";
 							$successful_update = true;
 						} else {
 							$status = "DynDNS: (Unknown Response)";
@@ -1264,7 +1264,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/badauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
@@ -1324,7 +1324,7 @@
 						$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
 						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else if (preg_match('/badauth/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
@@ -1345,7 +1345,7 @@
 				case 'dnsmadeeasy':
 					switch ($data) {
 						case 'success':
-							$status = "phpDynDNS({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+							$status = "phpDynDNS({$this->_dnsHost}): (Success) IP Address Changed Successfully! (" . $this->_dnsIP . ")";
 							$successful_update = true;
 							break;
 						case 'error-auth':
@@ -1478,7 +1478,7 @@
 			if ($this->_useIPv6 == true) {
 				if (file_exists($this->_cacheFile_v6)) {
 					$contents = file_get_contents($this->_cacheFile_v6);
-					list($cacheIP,$cacheTime) = explode('|', $contents);
+					list($cacheIP, $cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP.'/'.$cacheTime);
 					$initial = false;
 					$log_error .= "Cached IPv6: {$cacheIP} ";
@@ -1494,7 +1494,7 @@
 			} else {
 				if (file_exists($this->_cacheFile)) {
 					$contents = file_get_contents($this->_cacheFile);
-					list($cacheIP,$cacheTime) = explode(':', $contents);
+					list($cacheIP, $cacheTime) = explode(':', $contents);
 					$this->_debug($cacheIP.'/'.$cacheTime);
 					$initial = false;
 					$log_error .= "Cached IP: {$cacheIP} ";
@@ -1537,8 +1537,9 @@
 			 *   new cache value and return true
 			 */
 			if ($needs_updating == true) {
-				if ($this->_dnsVerboseLog)
+				if ($this->_dnsVerboseLog) {
 					log_error("DynDns ({$this->_dnsHost}): {$update_reason}");
+				}
 				return true;
 			}
 

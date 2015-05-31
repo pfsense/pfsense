@@ -116,7 +116,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
+	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew , $numrranew));
 
 	/* add data sources not found in the old array from the new array */
 	$i = 0;

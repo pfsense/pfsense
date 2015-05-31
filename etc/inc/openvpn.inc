@@ -1354,7 +1354,7 @@ function openvpn_get_client_status($client, $socket) {
 			}
 
 			/* Get the client state */
-			if (strstr($line,"CONNECTED")) {
+			if (strstr($line, "CONNECTED")) {
 				$client['status']="up";
 				$list = explode(",", $line);
 
@@ -1362,17 +1362,17 @@ function openvpn_get_client_status($client, $socket) {
 				$client['virtual_addr']  = $list[3];
 				$client['remote_host'] = $list[4];
 			}
-			if (strstr($line,"CONNECTING")) {
+			if (strstr($line, "CONNECTING")) {
 				$client['status']="connecting";
 			}
-			if (strstr($line,"ASSIGN_IP")) {
+			if (strstr($line, "ASSIGN_IP")) {
 				$client['status']="waiting";
 				$list = explode(",", $line);
 
 				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
 				$client['virtual_addr']  = $list[3];
 			}
-			if (strstr($line,"RECONNECTING")) {
+			if (strstr($line, "RECONNECTING")) {
 				$client['status']="reconnecting";
 				$list = explode(",", $line);
 
@@ -1398,12 +1398,12 @@ function openvpn_get_client_status($client, $socket) {
 					break;
 				}
 
-				if (strstr($line,"TCP/UDP read bytes")) {
+				if (strstr($line, "TCP/UDP read bytes")) {
 					$list = explode(",", $line);
 					$client['bytes_recv'] = $list[1];
 				}
 
-				if (strstr($line,"TCP/UDP write bytes")) {
+				if (strstr($line, "TCP/UDP write bytes")) {
 					$list = explode(",", $line);
 					$client['bytes_sent'] = $list[1];
 				}

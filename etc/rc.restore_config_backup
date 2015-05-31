@@ -9,7 +9,7 @@ unset($confvers['versions']);
 $fp = fopen('php://stdin', 'r');
 
 function print_backup_info($backup_info, $number) {
-	if($backup_info['time'] != 0) {
+	if ($backup_info['time'] != 0) {
 		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
 	} else {
 		$date = gettext("Unknown");
@@ -101,8 +101,9 @@ while (true) {
 	$command = strtolower(chop(fgets($fp)));
 
 	// Make sure we can detect a foreign language "quit" command.
-	if (strtolower($command) == gettext("quit"))
+	if (strtolower($command) == gettext("quit")) {
 		$command = "quit";
+	}
 
 	switch ($command) {
 		case "q":

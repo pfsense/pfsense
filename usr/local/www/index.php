@@ -336,6 +336,22 @@ foreach ($widgets as $widgetname => $widgetconfig)
 </div>
 
 <script>
+function updateWidgets()
+{
+	var sequence = '';
+
+	$('.container .col-md-6').each(function(idx, col){
+		$('.panel', col).each(function(idx, widget){
+			var isOpen = $('.panel-body', widget).hasClass('in');
+
+			sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +',';
+		});
+	});
+
+	$('#widgetSequence').removeClass('hidden');
+	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
+}
+
 events.push(function() {
 	// Hide configuration button for panels without configuration
 	$('.container .panel-heading a.config').each(function (idx, el){
@@ -345,19 +361,31 @@ events.push(function() {
 	});
 
 	// Initial state & toggle icons of collapsed panel
-	$('.container .panel-heading a[data-toggle="collapse"] i').each(function (idx, el){
+	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
 		var body = $(el).parents('.panel').children('.panel-body'), isOpen = body.hasClass('in');
 		$(el).toggleClass('icon-plus-sign', !isOpen);
 		$(el).toggleClass('icon-minus-sign', isOpen);
 
-		body.on('show.bs.collapse', function(){ $(el).toggleClass('icon-minus-sign', true); $(el).toggleClass('icon-plus-sign', false); });
-		body.on('hide.bs.collapse', function(){ $(el).toggleClass('icon-minus-sign', false); $(el).toggleClass('icon-plus-sign', true); });
+		body.on('shown.bs.collapse', function(){
+			$(el).toggleClass('icon-minus-sign', true);
+			$(el).toggleClass('icon-plus-sign', false);
+
+			updateWidgets();
+		});
+
+		body.on('hidden.bs.collapse', function(){
+			$(el).toggleClass('icon-minus-sign', false);
+			$(el).toggleClass('icon-plus-sign', true);
+
+			updateWidgets();
+		});
 	});
 
 	// Make panels destroyable
-	$('.container .panel-heading a[data-toggle="close"] i').each(function (idx, el){
+	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el){
 		$(el).on('click', function(e){
-			$(el).parents('.panel').collapse('hide');
+			$(el).parents('.panel').remove();
+			updateWidgets();
 		})
 	});
 
@@ -366,20 +394,7 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-6',
-		update: function(event, ui) {
-			var isOpen, sequence = '';
-
-			$('.container .col-md-6').each(function(idx, col){
-				$('.panel', col).each(function(idx, widget){
-					isOpen = $('.panel-body', widget).hasClass('in');
-
-					sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +',';
-				});
-			});
-
-			$('#widgetSequence').removeClass('hidden');
-			$('input[name=sequence]', $('#widgetSequence'))[0].value = sequence;
-		}
+		update: updateWidgets
 	});
 });
 </script>
@@ -388,4 +403,4 @@ events.push(function() {
 foreach (glob('widgets/javascript/*.js') as $file)
 	echo '<script src="'.$file.'"></script>';
 
-include("foot.inc")?>
+include("foot.inc");

@@ -53,9 +53,9 @@ if(is_array($config['installedpackages']['package'])) {
 ?>
 
 <?php if (empty($config['installedpackages']['package'])): ?>
-	<div class="panel panel-warning">
-		<div class="panel-heading"><h3 class="panel-title">There are no packages installed</h3></div>
-		<div class="panel-body">You can install packages <a href="pkg_mgr.php">here</a>.</div>
+	<div class="alert alert-warning" role="alert">
+		<strong>No packages installed.</strong>
+		You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
 	</div>
 <?php else: ?>
 	<table class="table table-striped table-hover">

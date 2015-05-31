@@ -224,7 +224,7 @@ function services_radvd_configure($blacklist = array()) {
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous on;\n";
 							$radvdconf .= "\t\tAdvRouterAddr on;\n";
-							break;				
+							break;
 					}
 					$radvdconf .= "\t};\n";
 				}
@@ -395,7 +395,7 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
 	/* configure DHCPD chroot once */
-	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
+	$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
@@ -1069,8 +1069,7 @@ EOD;
 	return 0;
 }
 
-function dhcpdkey($dhcpifconf)
-{
+function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
 	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "") {
 		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
@@ -1082,8 +1081,7 @@ function dhcpdkey($dhcpifconf)
 	return $dhcpdconf;
 }
 
-function dhcpdzones($ddns_zones, $dhcpifconf)
-{
+function dhcpdzones($ddns_zones, $dhcpifconf) {
 	$dhcpdconf = "";
 
 	if (is_array($ddns_zones)) {
@@ -1734,8 +1732,9 @@ function services_dhcrelay6_configure() {
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
 		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif))
+		    link_interface_to_bridge($dhcrelayif)) {
 			continue;
+		}
 
 		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif))) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
@@ -1949,7 +1948,7 @@ function services_dnsmasq_configure() {
 		}
 
 		/* generate hosts file */
-		if (system_hosts_generate()!=0) {
+		if (system_hosts_generate() != 0) {
 			$return = 1;
 		}
 
@@ -2105,7 +2104,7 @@ function services_dnsmasq_configure() {
 	}
 
 	if (!platform_booting()) {
-		if (services_dhcpd_configure()!=0) {
+		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
 	}
@@ -2135,7 +2134,7 @@ function services_unbound_configure() {
 		}
 
 		/* generate hosts file */
-		if (system_hosts_generate()!=0) {
+		if (system_hosts_generate() != 0) {
 			$return = 1;
 		}
 
@@ -2149,7 +2148,7 @@ function services_unbound_configure() {
 	}
 
 	if (!platform_booting()) {
-		if (services_dhcpd_configure()!=0) {
+		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
 	}
@@ -2180,7 +2179,7 @@ function services_snmpd_configure() {
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
-			printf(gettext("Error: cannot open snmpd.conf in services_snmpd_configure().%s"),"\n");
+			printf(gettext("Error: cannot open snmpd.conf in services_snmpd_configure().%s"), "\n");
 			return 1;
 		}
 

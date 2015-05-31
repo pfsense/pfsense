@@ -4483,7 +4483,7 @@ function read_layer7_config() {
 			continue; /* XXX: grrrrrr at php */
 		}
 		$root =& new layer7();
-		$root->ReadConfig($conf['name'],$conf);
+		$root->ReadConfig($conf['name'], $conf);
 		$layer7_rules_list[$root->GetRName()] = &$root;
 	}
 }
@@ -4524,8 +4524,8 @@ function generate_layer7_files() {
 
 			$rules = $l7rules->build_l7_rules();
 
-			$fp = fopen($path,'w');
-			fwrite($fp,$rules);
+			$fp = fopen($path, 'w');
+			fwrite($fp, $rules);
 			fclose($fp);
 		}
 	}

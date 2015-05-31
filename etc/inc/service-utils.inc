@@ -471,7 +471,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
 		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext) {
@@ -480,7 +480,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
 		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext) {
@@ -505,7 +505,7 @@ function get_service_control_links($service, $addname = false) {
 			default:
 				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"),$stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
@@ -516,7 +516,7 @@ function get_service_control_links($service, $addname = false) {
 			default:
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
 		$output .= "</a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
@@ -533,7 +533,7 @@ function get_service_control_links($service, $addname = false) {
 				}
 		}
 		if ($service_enabled) {
-			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
+			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
 		}
 	}
 	return $output;
@@ -603,7 +603,7 @@ function service_control_start($name, $extras) {
 			start_service($name);
 			break;
 	}
-	return sprintf(gettext("%s has been started."),htmlspecialchars($name));
+	return sprintf(gettext("%s has been started."), htmlspecialchars($name));
 }
 function service_control_stop($name, $extras) {
 	global $g;
@@ -743,7 +743,7 @@ function service_control_restart($name, $extras) {
 			restart_service($name);
 			break;
 	}
-	return sprintf(gettext("%s has been restarted."),htmlspecialchars($name));
+	return sprintf(gettext("%s has been restarted."), htmlspecialchars($name));
 }
 
 ?>

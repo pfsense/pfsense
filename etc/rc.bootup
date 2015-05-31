@@ -48,7 +48,7 @@ function rescue_detect_keypress() {
 	echo "Timeout before auto boot continues (seconds): {$timeout}";
 	$key = null;
 	exec("/bin/stty erase " . chr(8));
-	while (!in_array($key, array("c", "C", "r","R", "i", "I", "~", "!"))) {
+	while (!in_array($key, array("c", "C", "r", "R", "i", "I", "~", "!"))) {
 		echo chr(8) . "{$timeout}";
 		`/bin/stty -icanon min 0 time 25`;
 		$key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);

@@ -434,7 +434,7 @@ function ip_range_size_v4($startip, $endip) {
 function find_smallest_cidr_v4($number) {
 	$smallest = 1;
 	for ($b=32; $b > 0; $b--) {
-		$smallest = ($number <= pow(2,$b)) ? $b : $smallest;
+		$smallest = ($number <= pow(2, $b)) ? $b : $smallest;
 	}
 	return (32-$smallest);
 }
@@ -813,7 +813,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 }
 
 /* return true if $addr is in $subnet, false if not */
-function ip_in_subnet($addr,$subnet) {
+function ip_in_subnet($addr, $subnet) {
 	if (is_ipaddrv6($addr) && is_subnetv6($subnet)) {
 		return (Net_IPv6::isInNetmask($addr, $subnet));
 	} else if (is_ipaddrv4($addr) && is_subnetv4($subnet)) {
@@ -1077,7 +1077,7 @@ function get_configured_ip_aliases_list($returnfullentry = false) {
 	if (is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
-			if ($vip['mode']=="ipalias") {
+			if ($vip['mode'] == "ipalias") {
 				if ($returnfullentry) {
 					$alias_list[$vip['subnet']] = $vip;
 				} else {
@@ -1269,7 +1269,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	$upints = array();
 	/* get a list of virtual interface types */
 	if (!$vfaces) {
-		$vfaces = array (
+		$vfaces = array(
 				'bridge',
 				'ppp',
 				'pppoe',
@@ -1704,7 +1704,7 @@ function run_plugins($directory) {
 		foreach ($files as $file) {
 			if (stristr($file, ".sh") == true) {
 				mwexec($directory . $file . " start");
-			} else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
+			} else if (!is_dir($directory . "/" . $file) && stristr($file, ".inc")) {
 				require_once($directory . "/" . $file);
 			}
 		}
@@ -1839,7 +1839,7 @@ function get_memory() {
 	$physmem = get_single_sysctl("hw.physmem");
 	$realmem = get_single_sysctl("hw.realmem");
 	/* convert from bytes to megabytes */
-	return array(($physmem/1048576),($realmem/1048576));
+	return array(($physmem/1048576), ($realmem/1048576));
 }
 
 function mute_kernel_msgs() {
@@ -1958,7 +1958,7 @@ function isAjax() {
 function timeout($timer = 9) {
 	while (!isset($key)) {
 		if ($timer >= 9) {
-			echo chr(8) . chr(8) . ($timer==9 ? chr(32) : null)  . "{$timer}";
+			echo chr(8) . chr(8) . ($timer == 9 ? chr(32) : null)  . "{$timer}";
 		} else {
 			echo chr(8). "{$timer}";
 		}
@@ -2000,7 +2000,7 @@ function msort($array, $id="id", $sort_ascending=true) {
 			$index++;
 		}
 		$temp_array[] = $array[$lowest_id];
-		$array = array_merge(array_slice($array, 0,$lowest_id), array_slice($array, $lowest_id+1));
+		$array = array_merge(array_slice($array, 0, $lowest_id), array_slice($array, $lowest_id + 1));
 	}
 	if ($sort_ascending) {
 		return $temp_array;

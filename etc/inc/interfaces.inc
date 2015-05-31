@@ -49,7 +49,7 @@ require_once("gwlb.inc");
 function interfaces_bring_up($interface) {
 	if (!$interface) {
 		log_error(gettext("interfaces_bring_up() was called but no variable defined."));
-		log_error( "Backtrace: " . debug_backtrace() );
+		log_error("Backtrace: " . debug_backtrace());
 		return;
 	}
 	pfSense_interface_flags($interface, IFF_UP);
@@ -156,7 +156,7 @@ function interface_netgraph_needed($interface = "wan") {
 		$realif = get_real_interface($interface);
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				$ports = explode(',',$ppp['ports']);
+				$ports = explode(',', $ppp['ports']);
 				foreach ($ports as $pid => $port) {
 					$port = get_real_interface($port);
 					if ($realif == $port) {
@@ -360,7 +360,7 @@ function interfaces_qinq_configure() {
 		}
 	}
 	if (platform_booting()) {
-		echo gettext( "done.") . "\n";
+		echo gettext("done.") . "\n";
 	}
 }
 
@@ -1054,7 +1054,7 @@ function interfaces_configure() {
 			}
 			interface_configure($if, $reload);
 			if (platform_booting()) {
-				echo gettext( "done.") . "\n";
+				echo gettext("done.") . "\n";
 			}
 		}
 	}
@@ -1327,8 +1327,9 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				} else {
 					/* get_interface_ipv6() returns empty value if interface is being disabled */
 					$ip6 = get_interface_ipv6($interface);
-					if (is_ipaddrv6($ip6))
+					if (is_ipaddrv6($ip6)) {
 						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+					}
 				}
 				interface_ipalias_cleanup($interface, "inet6");
 				if ($destroy == true) {
@@ -1608,7 +1609,7 @@ function interface_ppps_configure($interface) {
 	}
 	*/
 
-	$ports = explode(',',$ppp['ports']);
+	$ports = explode(',', $ppp['ports']);
 	if ($type != "modem") {
 		foreach ($ports as $pid => $port) {
 			$ports[$pid] = get_real_interface($port);
@@ -1617,9 +1618,9 @@ function interface_ppps_configure($interface) {
 			}
 		}
 	}
-	$localips = explode(',',$ppp['localip']);
-	$gateways = explode(',',$ppp['gateway']);
-	$subnets = explode(',',$ppp['subnet']);
+	$localips = explode(',', $ppp['localip']);
+	$gateways = explode(',', $ppp['gateway']);
+	$subnets = explode(',', $ppp['subnet']);
 
 	/* We bring up the parent interface first because if DHCP is configured on the parent we need
 	 * to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
@@ -1712,16 +1713,16 @@ function interface_ppps_configure($interface) {
 		$passwd = base64_decode($ppp['password']);
 	}
 
-	$bandwidths = explode(',',$ppp['bandwidth']);
+	$bandwidths = explode(',', $ppp['bandwidth']);
 	$defaultmtu = "1492";
 	if (!empty($ifcfg['mtu'])) {
 		$defaultmtu = intval($ifcfg['mtu']);
 	}
-	$mtus = explode(',',$ppp['mtu']);
-	$mrus = explode(',',$ppp['mru']);
+	$mtus = explode(',', $ppp['mtu']);
+	$mrus = explode(',', $ppp['mru']);
 
 	if (isset($ppp['mrru'])) {
-		$mrrus = explode(',',$ppp['mrru']);
+		$mrrus = explode(',', $ppp['mrru']);
 	}
 
 	// Construct the mpd.conf file
@@ -2368,7 +2369,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 	} else {
 		$wlcfg_mode = $wlcfg['mode'];
 	}
-	switch($wlcfg_mode) {
+	switch ($wlcfg_mode) {
 		case "hostap":
 			$mode = "wlanmode hostap";
 			break;
@@ -2383,11 +2384,11 @@ function interface_wireless_clone($realif, $wlcfg) {
 	if (does_interface_exist($realif)) {
 		exec("/sbin/ifconfig " . escapeshellarg($realif), $output, $ret);
 		$ifconfig_str = implode($output);
-		if (($wlcfg_mode == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
+		if (($wlcfg_mode == "hostap") && (!preg_match("/hostap/si", $ifconfig_str))) {
 			log_error(sprintf(gettext("Interface %s changed to hostap mode"), $realif));
 			$needs_clone = true;
 		}
-		if (($wlcfg_mode == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
+		if (($wlcfg_mode == "adhoc") && (!preg_match("/adhoc/si", $ifconfig_str))) {
 			log_error(sprintf(gettext("Interface %s changed to adhoc mode"), $realif));
 			$needs_clone = true;
 		}
@@ -2515,11 +2516,11 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	// Reject inadvertent changes to shared settings in case the interface hasn't been configured.
 	interface_sync_wireless_clones($wl, false);
 
-	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh","w");
+	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh", "w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
-	
-	$wlan_setup_log = fopen("{$g['tmp_path']}/{$if}_setup.log","w");
+
+	$wlan_setup_log = fopen("{$g['tmp_path']}/{$if}_setup.log", "w");
 
 	/* set values for /path/program */
 	$hostapd = "/usr/sbin/hostapd";
@@ -2638,10 +2639,10 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	/* handle txpower setting */
 	// or don't. this has issues at the moment.
 	/*
-	if($wlcfg['txpower'] <> "" && is_numeric($wlcfg['txpower'])) {
+	if ($wlcfg['txpower'] <> "" && is_numeric($wlcfg['txpower'])) {
 		$wlcmd[] = "txpower " . escapeshellarg($wlcfg['txpower']);
 	}*/
-	
+
 	/* handle wme option */
 	if (isset($wlcfg['wme']['enable'])) {
 		$wlcmd[] = "wme";
@@ -2652,7 +2653,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	/* set up wep if enabled */
 	$wepset = "";
 	if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-		switch($wlcfg['wpa']['auth_algs']) {
+		switch ($wlcfg['wpa']['auth_algs']) {
 			case "1":
 				$wepset .= "authmode open wepmode on ";
 				break;
@@ -2926,9 +2927,9 @@ EOD;
 		}
 	}
 
-	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set 
+	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set
 	 * mode twice (for now at least). This can be removed entirely in the future if no problems are found
-	
+
 	 * The mode must be specified in a separate command before ifconfig
 	 * will allow the mode and channel at the same time in the next. */
 	//mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
@@ -2939,7 +2940,7 @@ EOD;
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " " . "$wlcmd_args \n");
 	fclose($wlan_setup_log);
-	
+
 	unset($wlcmd_args, $wlcmd);
 
 
@@ -3399,7 +3400,7 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 		return;
 	}
 
-	switch($trackcfg['ipaddrv6']) {
+	switch ($trackcfg['ipaddrv6']) {
 		case "6to4":
 			if ($g['debug']) {
 				log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
@@ -3976,7 +3977,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 		if (($wancfg['adv_dhcp6_id_assoc_statement_prefix'] != '') &&
 		    (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime']) ||
-		    ($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] == 'infinity')) ) {
+		    ($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] == 'infinity'))) {
 			$id_assoc_statement_prefix .= "\n\tprefix";
 			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix']}";
 			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime']}";
@@ -4000,7 +4001,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 		}
 
 		if (($wancfg['adv_dhcp6_id_assoc_statement_prefix'] != '') ||
-		    (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) ) {
+		    (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']))) {
 			$id_assoc_statement_prefix .= "\n";
 		}
 
@@ -4641,7 +4642,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 					case 'ppp':
 					case 'l2tp':
 					case 'pptp':
-						if ( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+						if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
 							$wanif = interface_get_wireless_clone($cfg['if']);
 						} else {
 							$wanif = $cfg['if'];
@@ -4678,7 +4679,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 				// Wireless cloned NIC support (FreeBSD 8+)
 				// interface name format: $parentnic_wlanparentnic#
 				// example: ath0_wlan0
-				if ( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+				if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
 					$wanif = interface_get_wireless_clone($cfg['if']);
 				} else {
 					$wanif = $cfg['if'];
@@ -5764,7 +5765,7 @@ function interfaces_staticarp_configure($if) {
 
 	/* Enable staticarp, if enabled */
 	if (isset($config['dhcpd'][$if]['staticarp'])) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp " );
+		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp ");
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
 		if (is_array($config['dhcpd'][$if]['staticmap'])) {
 			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
@@ -5772,7 +5773,7 @@ function interfaces_staticarp_configure($if) {
 			}
 		}
 	} else {
-		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
+		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp ");
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
 		if (is_array($config['dhcpd'][$if]) && is_array($config['dhcpd'][$if]['staticmap'])) {
 			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {

@@ -368,7 +368,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		"From: {$from}",
 		"To: {$to}",
 		"Subject: {$subject}",
-		"Date: ".date("r")
+		"Date: " . date("r")
 	);
 
 	if ($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
@@ -390,7 +390,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  ******/
 function notify_via_growl($message, $force=false) {
 	require_once("growl.class");
-	global $config,$g;
+	global $config, $g;
 
 	if (isset($config['notifications']['growl']['disable']) && !$force) {
 		return;

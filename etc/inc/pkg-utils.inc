@@ -391,7 +391,7 @@ function install_package_xml($package_name) {
 	update_output_window($static_output);
 	if ($pkgid == -1) {
 		$config['installedpackages']['package'][] = $pkg_info;
-		$changedesc = sprintf(gettext("Installed %s package."),$pkg_info['name']);
+		$changedesc = sprintf(gettext("Installed %s package."), $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
 	} else {
 		$config['installedpackages']['package'][$pkgid] = $pkg_info;
@@ -565,7 +565,7 @@ function delete_package($package_name) {
 		return;
 	}
 
-	$static_output .= sprintf(gettext("Starting package deletion for %s..."),$package_name);
+	$static_output .= sprintf(gettext("Starting package deletion for %s..."), $package_name);
 	update_output_window($static_output);
 
 	pkg_delete($package_name);
@@ -593,8 +593,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		conf_mount_ro();
 		return;
 	}
-	pkg_debug(sprintf(gettext("Removing %s package... "),$package_name));
-	$static_output .= sprintf(gettext("Removing %s components..."),$package_name) . "\n";
+	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
+	$static_output .= sprintf(gettext("Removing %s components..."), $package_name) . "\n";
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];

@@ -42,8 +42,7 @@
 
 require_once("ipsec.inc");
 
-function vpn_ipsec_configure_loglevels($forconfig = false)
-{
+function vpn_ipsec_configure_loglevels($forconfig = false) {
 	global $config, $ipsec_loglevels;
 
 	$cfgtext = array();
@@ -62,8 +61,7 @@ function vpn_ipsec_configure_loglevels($forconfig = false)
 }
 
 /* include all configuration functions */
-function vpn_ipsec_convert_to_modp($index)
-{
+function vpn_ipsec_convert_to_modp($index) {
 
 	$convertion = "";
 	switch ($index) {
@@ -114,8 +112,7 @@ function vpn_ipsec_convert_to_modp($index)
 	return $convertion;
 }
 
-function vpn_ipsec_configure($restart = false)
-{
+function vpn_ipsec_configure($restart = false) {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos, $ipsec_idhandling;
 
 	if ($g['platform'] == 'jail') {
@@ -125,7 +122,7 @@ function vpn_ipsec_configure($restart = false)
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
-	
+
 	/* service may have been enabled, disabled, or otherwise changed in a way requiring rule updates */
 	filter_configure();
 
@@ -240,7 +237,7 @@ function vpn_ipsec_configure($restart = false)
 				continue;
 			}
 
-			if (!in_array($ep,$ipmap)) {
+			if (!in_array($ep, $ipmap)) {
 				$ipmap[] = $ep;
 			}
 
@@ -675,8 +672,9 @@ EOD;
 
 	$uniqueids = 'yes';
 	if (!empty($config['ipsec']['uniqueids'])) {
-		if (array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling))
+		if (array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling)) {
 			$uniqueids = $config['ipsec']['uniqueids'];
+		}
 	}
 	$natfilterrules = false;
 	/* begin ipsec.conf */
@@ -898,8 +896,9 @@ EOD;
 					if (isset($ph1ent['mobile'])) {
 						$authentication = "eap_identity=%identity\n\t";
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-radius";
-						if (!empty($ph1ent['certref']))
+						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						}
 					} else {
 						$authentication = "leftauth=eap-radius\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
@@ -991,7 +990,7 @@ EOD;
 
 					/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 					if (($localid_type == "none" || $localid_type == "mobile") &&
-					    isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid)==1)) {
+					    isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid) == 1)) {
 						$left_spec = '%any';
 					} else {
 						if ($localid_type != "address") {

@@ -240,7 +240,7 @@ function restore_config_section_zeromq($raw_params) {
 	}
 	$config = array_merge($config, $params[3]);
 	$mergedkeys = implode(",", array_keys($params[3]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."), $mergedkeys));
 	return ZEROMQ_FASLE;
 }
 
@@ -252,7 +252,7 @@ function merge_installedpackages_section_zeromq($raw_params) {
 	}
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[3]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."), $mergedkeys));
 	return ZEROMQ_FASLE;
 }
 

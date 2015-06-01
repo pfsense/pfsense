@@ -251,9 +251,9 @@ endif;
 	   </nav>
 <?php
 // The notes displayed on the page are large, the page content comparitively small. A "Note" button
-// is provided so that you only see hte notes if you ask for them
+// is provided so that you only see the notes if you ask for them
 ?>
-<div class="notes panel panel-default">
+<div class="help-block panel panel-default">
 	<div class="panel-heading">Notes</div>
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
@@ -261,10 +261,10 @@ endif;
 	"You may reference them directly from your portal page HTML code using relative paths. " .
 	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
 	"file manager. Then you can include it in your portal page like this:")?><br /><br />
-	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt><br /><br />
+	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br /><br />
 	<?=gettext("In addition, you can also upload .php files for execution.	You can pass the filename " .
 	"to your custom page from the initial page by using text similar to:")?><br /><br />
-	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</tt><br /><br />
+	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br /><br />
 	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
 	</div>
 </div>
@@ -283,7 +283,7 @@ events.push(function(){
 			$('.' + s_class).show();
 	}
 
-	hideClass('notes', hidenotes);
+	hideClass('help-block', hidenotes);
 
 	$(function () {
 		$('#btnnotes').on('click', function () {

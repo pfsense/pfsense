@@ -172,59 +172,55 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 ?>
-
-<form action="services_captiveportal_mac.php" method="post">
-	<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone)?>" />
-	<div class="table-responsive">
-		<table class="table table-hover table-striped table-condensed">
-			<thead>
-				<tr>
-					<th><?=gettext('Action')?></th>
-					<th><?=gettext("MAC address")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><!-- Buttons --></th>
-				</tr>
-			</thead>
+<div class="table-responsive">
+	<table class="table table-hover table-striped table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext('Action')?></th>
+				<th><?=gettext("MAC address")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><!-- Buttons --></th>
+			</tr>
+		</thead>
 
 <?php
 if (is_array($a_cp[$cpzone]['passthrumac'])): ?>
-			<tbody>
+		<tbody>
 <?php
-	$i = 0;
-	foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
-				<tr>
-					<td>
-						<?=$actsmbl[$mac['action']]?>
-					</td>
-					<td>
-						<?=$mac['mac']?>
-					</td>
-					<td >
-						<?=htmlspecialchars($mac['descr'])?>
-					</td>
-					<td>
-						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
-						<a href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
-					</td>
-				</tr>
+$i = 0;
+foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
+			<tr>
+				<td>
+					<?=$actsmbl[$mac['action']]?>
+				</td>
+				<td>
+					<?=$mac['mac']?>
+				</td>
+				<td >
+					<?=htmlspecialchars($mac['descr'])?>
+				</td>
+				<td>
+					<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
+					<a href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+				</td>
+			</tr>
 <?php
-	$i++;
-	endforeach; ?>
-			<tbody>
-		</table>
+$i++;
+endforeach; ?>
+		<tbody>
+	</table>
 <?php
 else :
 ?>
-			</tbody>
-		</table>
+		</tbody>
+	</table>
 <?php
 endif;
 ?>
-		<nav class="action-buttons">
-			<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
-		</nav>
-	</div>
-</form>
+	<nav class="action-buttons">
+		<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+	</nav>
+</div>
 
 <?php
 print_info_box(gettext('Adding MAC addresses as "pass" MACs allows them access through the captive portal automatically without being taken to the portal page.'));

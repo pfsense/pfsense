@@ -4833,6 +4833,10 @@ function get_interface_ip($interface = "wan") {
 		else
 			return null;
 	}
+	
+	if (strstr($realif, "_vip")) {
+		return get_configured_carp_interface_list($realif);
+	}
 
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))

@@ -27,8 +27,26 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-$nut_config = $config['installedpackages']['nut']['config'][0];
+if (isset($config['installedpackages']['nut']['config'][0])) {
+	$nut_config = $config['installedpackages']['nut']['config'][0];
+} else {
+	// Draw dummy table with "Not installed" error message and return early
 ?>
+	<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
+		<tr>
+			<td class="widgetsubheader" align="center"><b>Monitoring</b></td>
+			<td class="widgetsubheader" align="center"><b>Model</b></td>
+			<td class="widgetsubheader" align="center"><b>Status</b></td>
+		</tr>
+		<tr>
+			<td class="listlr" align="center" id="monitoring"></td>
+			<td class="listr" align="center" id="model">No NUT installed!</td>
+			<td class="listr" align="center" id="status">ERROR</td>
+		</tr>
+	</table>
+<?php
+	return;
+} ?>
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
 	<tr>
 		<td class="widgetsubheader" align="center"><b>Monitoring</b></td>
@@ -69,14 +87,12 @@ $nut_config = $config['installedpackages']['nut']['config'][0];
 						}
 					}
 				}
-			} elseif (isset($nut_config)) {
+			} else {
 				if ($nut_config['monitor'] == "snmp") {
 					$condition = "NUT enabled but service not running!\nSNMP UPS may be unreachable.";
 				} else {
 					$condition = "NUT enabled but service not running!";
 				}
-			} else {
-				$condition = "No NUT installed!";
 			}
 			if (isset($condition)) {
 				echo $condition;

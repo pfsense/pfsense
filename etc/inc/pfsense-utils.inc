@@ -1038,7 +1038,7 @@ function setup_serial_port($when="save", $path="") {
 			// Loop through and only add lines that are not empty, and which
 			//  do not contain a console directive.
 			foreach ($boot_config_split as $bcs) {
-				if (!empty($bcs) &&
+				if (!empty($bcs)) &&
 				(stripos($bcs, "console") === false) &&
 				(stripos($bcs, "boot_multicons") === false) &&
 				(stripos($bcs, "boot_serial") === false)) &&

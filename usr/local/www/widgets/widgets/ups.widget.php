@@ -34,14 +34,14 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 ?>
 	<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
 		<tr>
-			<td class="widgetsubheader" align="center"><b>Monitoring</b></td>
-			<td class="widgetsubheader" align="center"><b>Model</b></td>
-			<td class="widgetsubheader" align="center"><b>Status</b></td>
+			<td class="widgetsubheader" align="center"><b><?php echo gettext("Monitoring"); ?></b></td>
+			<td class="widgetsubheader" align="center"><b><?php echo gettext("Model"); ?></b></td>
+			<td class="widgetsubheader" align="center"><b><?php echo gettext("Status"); ?></b></td>
 		</tr>
 		<tr>
 			<td class="listlr" align="center" id="monitoring"></td>
-			<td class="listr" align="center" id="model">No NUT installed!</td>
-			<td class="listr" align="center" id="status">ERROR</td>
+			<td class="listr" align="center" id="model"><?php echo gettext("No NUT installed!"); ?></td>
+			<td class="listr" align="center" id="status"><?php echo gettext("ERROR"); ?></td>
 		</tr>
 	</table>
 <?php
@@ -49,21 +49,21 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 } ?>
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
 	<tr>
-		<td class="widgetsubheader" align="center"><b>Monitoring</b></td>
-		<td class="widgetsubheader" align="center"><b>Model</b></td>
-		<td class="widgetsubheader" align="center"><b>Status</b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("Monitoring"); ?></b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("Model"); ?></b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("Status"); ?></b></td>
 	</tr>
 	<tr>
 		<td class="listlr" align="center" id="monitoring">
 		<?php
 			if ($nut_config['monitor'] == "local") {
-				echo "Local UPS";
+				echo gettext("Local UPS");
 				$cmd = "upsc {$nut_config['name']}@localhost";
 			} elseif ($nut_config['monitor'] == "remote") {
-				echo "Remote UPS";
+				echo gettext("Remote UPS");
 				$cmd = "upsc {$nut_config['remotename']}@{$nut_config['remoteaddr']}";
 			} elseif ($nut_config['monitor'] == "snmp") {
-				echo "SNMP UPS";
+				echo gettext("SNMP UPS");
 				$cmd = "upsc {$nut_config['snmpname']}@localhost";
 			}
 		?>
@@ -78,7 +78,7 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 					pclose($handle);
 					$lines = explode("\n", $read);
 					if (count($lines) == 1) {
-						$condition = "ERROR:Data stale!";
+						$condition = gettext("ERROR:Data stale!");
 					} else {
 						$ups = array();
 						foreach ($lines as $line) {
@@ -89,20 +89,20 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 				}
 			} else {
 				if ($nut_config['monitor'] == "snmp") {
-					$condition = "NUT enabled but service not running!\nSNMP UPS may be unreachable.";
+					$condition = gettext("NUT enabled but service not running!\nSNMP UPS may be unreachable.");
 				} else {
-					$condition = "NUT enabled but service not running!";
+					$condition = gettext("NUT enabled but service not running!");
 				}
 			}
 			if (isset($condition)) {
 				echo $condition;
 		?>
-				</td><td class="listr" align="center" id="status">ERROR</td></tr></table>
+				</td><td class="listr" align="center" id="status"><?php echo gettext("ERROR"); ?></td></tr></table>
 				<!-- Close table if error and return. Table row - | "monitor type" | "error description" | "ERROR" | -->
 		<?php
 				return;
 			} else {
-				echo ($ups['ups.model'] != "") ? $ups['ups.model'] : "n/a";
+				echo ($ups['ups.model'] != "") ? $ups['ups.model'] : gettext("n/a");
 			}
 		?>
 		</td>
@@ -115,37 +115,37 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 				}
 				switch ($condition) {
 					case "WAIT":
-						$disp_status .= "Waiting";
+						$disp_status .= gettext("Waiting");
 						break;
 					case "OFF":
-						$disp_status .= "Off Line";
+						$disp_status .= gettext("Off Line");
 						break;
 					case "OL":
-						$disp_status .= "On Line";
+						$disp_status .= gettext("On Line");
 						break;
 					case "OB":
-						$disp_status .= "On Battery";
+						$disp_status .= gettext("On Battery");
 						break;
 					case "TRIM":
-						$disp_status .= "SmartTrim";
+						$disp_status .= gettext("SmartTrim");
 						break;
 					case "BOOST":
-						$disp_status .= "SmartBoost";
+						$disp_status .= gettext("SmartBoost");
 						break;
 					case "OVER":
-						$disp_status .= "Overload";
+						$disp_status .= gettext("Overload");
 						break;
 					case "LB":
-						$disp_status .= "Battery Low";
+						$disp_status .= gettext("Battery Low");
 						break;
 					case "RB":
-						$disp_status .= "Replace Battery";
+						$disp_status .= gettext("Replace Battery");
 						break;
 					case "CAL":
-						$disp_status .= "Calibration";
+						$disp_status .= gettext("Calibration");
 						break;
 					case "CHRG":
-						$disp_status .= "Charging";
+						$disp_status .= gettext("Charging");
 						break;
 					default:
 						$disp_status .= $condition;
@@ -165,8 +165,8 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 		</td>
 	</tr>
 	<tr>
-		<td class="widgetsubheader" align="center">Battery Charge</td>
-		<td class="widgetsubheader" align="center">Time Remain</td>
+		<td class="widgetsubheader" align="center"><?php echo gettext("Battery Charge"); ?></td>
+		<td class="widgetsubheader" align="center"><?php echo gettext("Time Remain"); ?></td>
 		<td class="widgetsubheader" align="center"><?php echo $cell23[0]; ?></td>
 	</tr>
 	<tr>
@@ -191,9 +191,9 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 		<td class="listr" align="center" id="bvoltage"><?php echo $cell23[1]; ?></td>
 	</tr>
 	<tr>
-		<td class="widgetsubheader" align="center">Load</td>
-		<td class="widgetsubheader" align="center">Input Voltage</td>
-		<td class="widgetsubheader" align="center">Output Voltage</td>
+		<td class="widgetsubheader" align="center"><?php echo gettext("Load"); ?></td>
+		<td class="widgetsubheader" align="center"><?php echo gettext("Input Voltage"); ?></td>
+		<td class="widgetsubheader" align="center"><?php echo gettext("Output Voltage"); ?></td>
 	</tr>
 	<tr>
 		<td class="listlr" align="center" id="Load">

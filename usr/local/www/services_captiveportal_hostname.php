@@ -121,58 +121,54 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 ?>
-<form action="services_captiveportal_hostname.php" method="post">
-	<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone)?>" />
-	<div class="table-responsive">
-		<table class="table table-hover table-striped table-condensed">
-			<thead>
-				<tr>
-				  <th><?=gettext("Hostname"); ?></th>
-				  <th><?=gettext("Description"); ?></th>
-				  <th><!-- Buttons --></th>
-				</tr>
-			</thead>
+<div class="table-responsive">
+	<table class="table table-hover table-striped table-condensed">
+		<thead>
+			<tr>
+			  <th><?=gettext("Hostname"); ?></th>
+			  <th><?=gettext("Description"); ?></th>
+			  <th><!-- Buttons --></th>
+			</tr>
+		</thead>
 
 <?php
 if (is_array($a_cp[$cpzone]['allowedhostname'])): ?>
-			<tbody>
+		<tbody>
 <?php
-	$i = 0;
-	foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
-				<tr>
-					<td>
-						<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower($ip['hostname'])?>
-					</td>
-					<td >
-						<?=htmlspecialchars($ip['descr'])?>
-					</td>
-					<td>
-						<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
-						<a href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
-					</td>
-				</tr>
+$i = 0;
+foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
+			<tr>
+				<td>
+					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower($ip['hostname'])?>
+				</td>
+				<td >
+					<?=htmlspecialchars($ip['descr'])?>
+				</td>
+				<td>
+					<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
+					<a href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+				</td>
+			</tr>
 <?php
-	$i++;
-	endforeach; ?>
-			<tbody>
-		</table>
-		<?=$directionicons['to'] . ' = ' . sprintf(gettext('All connections %sto%s the hostname are allowed'), '<u>','</u>') . ', '?>
-		<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the hostname are allowed'), '<u>','</u>') . ', '?>
-		<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
+$i++;
+endforeach; ?>
+		<tbody>
+	</table>
+	<?=$directionicons['to'] . ' = ' . sprintf(gettext('All connections %sto%s the hostname are allowed'), '<u>','</u>') . ', '?>
+	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the hostname are allowed'), '<u>','</u>') . ', '?>
+	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
 <?php
 else :
 ?>
-			</tbody>
-		</table>
+		</tbody>
+	</table>
 <?php
 endif;
 ?>
-		<nav class="action-buttons">
-			<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
-		</nav>
-	</div>
-</form>
-
+	<nav class="action-buttons">
+		<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+	</nav>
+</div>
 <?php
 print_info_box($notestr);
 

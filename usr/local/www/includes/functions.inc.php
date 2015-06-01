@@ -355,17 +355,17 @@ function get_nutstats() {
 		$nut_config = $config['installedpackages']['nut']['config'][0];
 	} else {
 		// No NUT package installed, return
-		return "No NUT installed!";
+		return gettext("No NUT installed!");
 	}
 	// "Monitoring" field and get command to fetch ups data - upsdata_array[0]
 	if ($nut_config['monitor'] == "local") {
-		$data = "Local UPS";
+		$data = gettext("Local UPS");
 		$cmd  = "upsc {$nut_config['name']}@localhost";
 	} elseif ($nut_config['monitor'] == "remote") {
-		$data = "Remote UPS";
+		$data = gettext("Remote UPS");
 		$cmd  = "upsc {$nut_config['remotename']}@{$nut_config['remoteaddr']}";
 	} elseif ($nut_config['monitor'] == "snmp") {
-		$data = "SNMP UPS";
+		$data = gettext("SNMP UPS");
 		$cmd  = "upsc {$nut_config['snmpname']}@localhost";
 	}
 	// Find upsmon process
@@ -379,7 +379,7 @@ function get_nutstats() {
 			pclose($handle);
 			$lines = explode("\n", $read);
 			if (count($lines) == 1) {
-				$condition = "ERROR:Data stale!";
+				$condition = gettext("ERROR:Data stale!");
 			} else {
 				$ups = array();
 				foreach ($lines as $line) {
@@ -391,9 +391,9 @@ function get_nutstats() {
 	} else {
 		// No service running
 		if ($nut_config['monitor'] == "snmp") {
-			$condition = "NUT enabled but service not running!\nSNMP UPS may be unreachable.";
+			$condition = gettext("NUT enabled but service not running!\nSNMP UPS may be unreachable.");
 		} else {
-			$condition = "NUT enabled but service not running!";
+			$condition = gettext("NUT enabled but service not running!");
 		}
 	}
 	if (isset($condition)) {
@@ -401,44 +401,44 @@ function get_nutstats() {
 		return $condition;
 	}
 	// "Model" field - upsdata_array[1]
-	$data .= ":" . (($ups['ups.model'] != "") ? $ups['ups.model'] : "n/a");
+	$data .= ":" . (($ups['ups.model'] != "") ? $ups['ups.model'] : gettext("n/a"));
 	// "Status" field - upsdata_array[2]
 	$status = explode(" ", $ups['ups.status']);
 	foreach($status as $condition) {
 		if($disp_status) $disp_status .= ", ";
 		switch ($condition) {
 			case "WAIT":
-				$disp_status .= "Waiting";
+				$disp_status .= gettext("Waiting");
 				break;
 			case "OFF":
-				$disp_status .= "Off Line";
+				$disp_status .= gettext("Off Line");
 				break;
 			case "OL":
-				$disp_status .= "On Line";
+				$disp_status .= gettext("On Line");
 				break;
 			case "OB":
-				$disp_status .= "On Battery";
+				$disp_status .= gettext("On Battery");
 				break;
 			case "TRIM":
-				$disp_status .= "SmartTrim";
+				$disp_status .= gettext("SmartTrim");
 				break;
 			case "BOOST":
-				$disp_status .= "SmartBoost";
+				$disp_status .= gettext("SmartBoost");
 				break;
 			case "OVER":
-				$disp_status .= "Overload";
+				$disp_status .= gettext("Overload");
 				break;
 			case "LB":
-				$disp_status .= "Battery Low";
+				$disp_status .= gettext("Battery Low");
 				break;
 			case "RB":
-				$disp_status .= "Replace Battery";
+				$disp_status .= gettext("Replace Battery");
 				break;
 			case "CAL":
-				$disp_status .= "Calibration";
+				$disp_status .= gettext("Calibration");
 				break;
 			case "CHRG":
-				$disp_status .= "Charging";
+				$disp_status .= gettext("Charging");
 				break;
 			default:
 				$disp_status .= $condition;
@@ -453,7 +453,7 @@ function get_nutstats() {
 	// "Time Remaning" field - upsdata_array[6]
 	$secs = $ups['battery.runtime'];
 	if ($secs < 0 || $secs == "") {
-		$data .= ":" . "n/a";
+		$data .= ":" . gettext("n/a");
 	} else {
 		$m = (int)($secs / 60); 
 		$h = (int)($m / 60) % 24; 

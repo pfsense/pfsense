@@ -351,7 +351,12 @@ function get_nutstats() {
 	global $config;
 	$data = "";
 	$cmd = "";
-	$nut_config = $config['installedpackages']['nut']['config'][0];
+	if (isset($config['installedpackages']['nut']['config'][0])) {
+		$nut_config = $config['installedpackages']['nut']['config'][0];
+	} else {
+		// No NUT package installed, return
+		return "No NUT installed!";
+	}
 	// "Monitoring" field and get command to fetch ups data - upsdata_array[0]
 	if ($nut_config['monitor'] == "local") {
 		$data = "Local UPS";
@@ -383,16 +388,13 @@ function get_nutstats() {
 				}
 			}
 		}
-	} elseif (isset($nut_config)) {
+	} else {
 		// No service running
 		if ($nut_config['monitor'] == "snmp") {
 			$condition = "NUT enabled but service not running!\nSNMP UPS may be unreachable.";
 		} else {
 			$condition = "NUT enabled but service not running!";
 		}
-	} else {
-		// No NUT package installed
-		$condition = "No NUT installed!";	
 	}
 	if (isset($condition)) {
 		// Return error description

@@ -31065,7 +31065,7 @@ msgstr "WINSサーバー"
 #: usr/local/www/services_dhcp.php:874 usr/local/www/services_dhcpv6.php:619
 msgid ""
 "NOTE: leave blank to use the system default DNS servers - this interface's "
-"IP if DNS forwarder is enabled, otherwise the servers configured on the "
+"IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the "
 "General page."
 msgstr ""注：システムのデフォルトのDNSサーバーを使用する場合は、空白のままに - このインタフェースの「 DNSフォワーダが有効になっている場合は、IP 、そうでないサーバは「一般的なページで設定。"
 

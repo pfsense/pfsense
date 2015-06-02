@@ -408,7 +408,7 @@ include("head.inc");
 						<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>" /><br />
 						<input name="radns3" type="text" class="formfld unknown" id="radns3" size="28" value="<?=htmlspecialchars($pconfig['radns3']);?>" /><br />
 						<input name="radns4" type="text" class="formfld unknown" id="radns4" size="28" value="<?=htmlspecialchars($pconfig['radns4']);?>" /><br />
-						<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
+						<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.");?>
 					</td>
 				</tr>
 

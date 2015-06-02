@@ -20617,7 +20617,7 @@ msgstr "DNS sunucular"
 #: usr/local/www/services_router_advertisements.php:383
 msgid ""
 "NOTE: leave blank to use the system default DNS servers - this interface's "
-"IP if DNS forwarder is enabled, otherwise the servers configured on the "
+"IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the "
 "General page."
 msgstr ""
 "Not: Sistem varsayılan DNS sunucusunu kullanmak için boş bırakınız, DNS "

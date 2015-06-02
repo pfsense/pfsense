@@ -367,7 +367,7 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security is offers, but larger keys are generally slower to use.</description>
+			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys are generally slower to use.</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
@@ -498,7 +498,7 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security is offers, but larger keys are generally slower to use.</description>
+			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys are generally slower to use.</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>

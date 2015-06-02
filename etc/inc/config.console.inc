@@ -559,23 +559,52 @@ EOD;
 function check_for_alternate_interfaces() {
 	global $config;
 
-	// If the factory default configured WAN and/or LAN devices do not exist,
-	// then use alternate devices if they exist.
-	// These are devices on Alix (vr) and APU (re) systems, and this lets them boot a
-	// factory default config without being forced to do interface assignment
-	// over the serial port.
+	// If the WAN and/or LAN devices in the factory default config do not exist,
+	// then look for alternate devices.
+	// This lets many systems boot a factory default config without being
+	// forced to do interface assignment on the console.
 
-	$other_devices_arr['wan'] = array("vr1", "re1");
-	$other_devices_arr['lan'] = array("vr0", "re2");
+	$specplatform = system_identify_specific_platform();
+	$default_device = array();
+
+	// If we recognise the platform, then specify the devices directly.
+	switch ($specplatform['name']) {
+		case 'alix':
+			$default_device['wan'] = "vr1";
+			$default_device['lan'] = "vr0";
+			break;
+		case 'APU':
+			$default_device['wan'] = "re1";
+			$default_device['lan'] = "re2";
+			break;
+		case 'RCC-VE':
+			$default_device['wan'] = "igb0";
+			$default_device['lan'] = "igb1";
+			break;
+		default:
+			$default_device['wan'] = "";
+			$default_device['lan'] = "";
+			break;
+	}
+
+	// Other common device names can be put here and will be looked for
+	// if the system was not one of the known platforms.
+	$other_devices_arr['wan'] = array("vr1", "re1", "igb0", "em0");
+	$other_devices_arr['lan'] = array("vr0", "re2", "igb1", "em1");
 	$interface_assignment_changed = false;
 
 	foreach ($other_devices_arr as $ifname => $other_devices) {
 		if (!does_interface_exist($config['interfaces'][$ifname]['if'])) {
-			foreach ($other_devices as $other_device) {
-				if (does_interface_exist($other_device)) {
-					$config['interfaces'][$ifname]['if'] = $other_device;
-					$interface_assignment_changed = true;
-					break;
+			if (does_interface_exist($default_device[$ifname])) {
+				$config['interfaces'][$ifname]['if'] = $default_device[$ifname];
+				$interface_assignment_changed = true;
+			} else {
+				foreach ($other_devices as $other_device) {
+					if (does_interface_exist($other_device)) {
+						$config['interfaces'][$ifname]['if'] = $other_device;
+						$interface_assignment_changed = true;
+						break;
+					}
 				}
 			}
 		}

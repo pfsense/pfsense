@@ -447,7 +447,7 @@
 			die;
 		}
 		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
-			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
+			print_info_box_np("Invalid PPTP Remote IP Address. Please press back in your browser window and correct.");
 			die;
 		}
 		$type = $_POST['selectedtype'];

@@ -1738,6 +1738,9 @@ function system_ntp_configure($start_ntpd=true) {
 	if (is_array($interfaces) && count($interfaces)) {
 		$ntpcfg .= "interface ignore all\n";
 		foreach ($interfaces as $interface) {
+			if (strstr($interface, "_vip")) {
+				$interface = get_configured_carp_interface_list($interface);
+			}
 			if (!is_ipaddr($interface)) {
 				$interface = get_real_interface($interface);
 			}

@@ -71,7 +71,7 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9-]+$</validate>
 			<message>Invalid Hostname</message>
 		</field>
 		<field>
@@ -79,7 +79,7 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9.-]+$</validate>
 			<message>Domain name field is invalid</message>
 		</field>
 		<field>

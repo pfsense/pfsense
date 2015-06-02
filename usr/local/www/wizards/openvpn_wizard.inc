@@ -209,7 +209,7 @@ function step7_submitphpaction() {
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $canames) || in_array($_POST['descr'], $cacns)) {
 		$stepid--;
-		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
+		$savemsg = "Please enter a different name for the Certificate Authority. A Certificate Authority with that name already exists.";
 	} elseif (strlen($_POST['country']) != 2) {
 		$stepid--;
 		$savemsg = "Please enter only a two-letter ISO country code";
@@ -481,7 +481,7 @@ function step12_submitphpaction() {
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
 	} else if (!($auth = auth_get_authserver($pconfig['step2']['authserv']))) {
-		$message = "Not a valid authentication server has been specified.";
+		$message = "An invalid authentication server has been specified.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
 	}
@@ -508,7 +508,7 @@ function step12_submitphpaction() {
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
 		exit;
 	} else if (!($ca = lookup_ca($pconfig['step6']['authcertca']))) {
-		$message = "Not a valid Certificate Authority specified.";
+		$message = "An invalid Certificate Authority has been specified.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
 		exit;
 	}
@@ -535,7 +535,7 @@ function step12_submitphpaction() {
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;
 	} else if (!($cert = lookup_cert($pconfig['step9']['authcertname']))) {
-		$message = "Not a valid Certificate specified.";
+		$message = "An invalid Certificate has been specified.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;
 	}

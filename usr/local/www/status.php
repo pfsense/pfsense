@@ -8,7 +8,7 @@
  *
  */
 /*
-        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+		Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop	
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
-	pfSense_MODULE:	support
+	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat /usr/bin/netstat	/sbin/dmesg /sbin/mount /sbin/setkey	/usr/local/sbin/pftop
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl /sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl /sbin/ifconfig
+	pfSense_MODULE: support
 */
 
 ##|+PRIV
@@ -54,11 +54,13 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 function doCmdT($title, $command) {
-	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
-	echo "\n<a name=\"" . str_replace($rubbish,'',$title) . "\" id=\"" . str_replace($rubbish,'',$title) . "\"></a>\n";
-	echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"" . $title . "\">\n";
-	echo "\t<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
-	echo "\t<tr>\n\t\t<td class=\"listlr\">\n\t\t\t<pre>";		/* no newline after pre */
+	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
+	print( "\n<a name=\"" . str_replace($rubbish,'',$title) . "\" id=\"" . str_replace($rubbish,'',$title) . "\"></a>\n");
+
+	print('<div class="panel panel-default">');
+	print(	  '<div class="panel-heading">' . $title . '</div>');
+	print(	  '<div class="panel-body">');
+	print(		  '<pre>');
 
 	if ($command == "dumpconfigxml") {
 		$fd = @fopen("/conf/config.xml", "r");
@@ -79,7 +81,7 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
 				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
-				$line = str_replace("\t", "    ", $line);
+				$line = str_replace("\t", " ", $line);
 				echo htmlspecialchars($line,ENT_NOQUOTES);
 			}
 		}
@@ -95,8 +97,10 @@ function doCmdT($title, $command) {
 			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
 		}
 	}
-    echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
-    echo "</table>\n";
+
+	print(		  '</pre>');
+	print(	  '</div>');
+	print('</div>');
 }
 
 /* Execute a command, giving it a title which is the same as the command. */
@@ -120,14 +124,24 @@ function defCmd($command) {
 
 /* List all of the commands as an index. */
 function listCmds() {
+	global $currentDate;
 	global $commands;
-	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
-	echo "\n<p>" . gettext("This status page includes the following information") . ":\n";
-	echo "<ul>\n";
+
+	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
+
+	print('<div class="panel panel-default">');
+	print(	  '<div class="panel-heading">' . gettext("System status on ") . $currentDate . '</div>');
+	print(	  '<div class="panel-body">');
+
+	print("\n<p>" . gettext("This status page includes the following information") . ":\n");
+	print("<ul>\n");
 	for ($i = 0; isset($commands[$i]); $i++ ) {
-		echo "\t<li><strong><a href=\"#" . str_replace($rubbish,'',$commands[$i][0]) . "\">" . $commands[$i][0] . "</a></strong></li>\n";
+		print("\t<li><strong><a href=\"#" . str_replace($rubbish,'',$commands[$i][0]) . "\">" . $commands[$i][0] . "</a></strong></li>\n");
 	}
-	echo "</ul>\n";
+
+	print("</ul>\n");
+	print('	   </div>');
+	print('</div>');
 }
 
 /* Execute all of the commands which were defined by a call to defCmd. */
@@ -143,13 +157,9 @@ global $g, $config;
 /* Set up all of the commands we want to execute. */
 defCmdT("System uptime","uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
-
 defCmdT("PF Info","/sbin/pfctl -s info");
-
 defCmdT("Routing tables","netstat -nr");
-
 defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
-
 defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
@@ -167,57 +177,40 @@ defCmdT("pfctl -sa", "/sbin/pfctl -sa");
 defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
 defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
 defCmdT("pfctl -s nat -v","/sbin/pfctl -s nat -v");
-
 defCmdT("PF OSFP","/sbin/pfctl -s osfp");
-
-
 defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
-
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
-
 defCmdT("pfctl -vs Tables","/sbin/pfctl -vs Tables");
-
 defCmdT("Load Balancer","/sbin/pfctl -a slb -s nat");
-
 defCmdT("pftop -w 150 -a -b","/usr/local/sbin/pftop -a -b");
 defCmdT("pftop -w 150 -a -b -v long","/usr/local/sbin/pftop -w 150 -a -b -v long");
 defCmdT("pftop -w 150 -a -b -v queue","/usr/local/sbin/pftop -w 150 -a -b -v queue");
 defCmdT("pftop -w 150 -a -b -v rules","/usr/local/sbin/pftop -w 150 -a -b -v rules");
 defCmdT("pftop -w 150 -a -b -v size","/usr/local/sbin/pftop -w 150 -a -b -v size");
 defCmdT("pftop -w 150 -a -b -v speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
-
 defCmdT("resolv.conf","cat /etc/resolv.conf");
-
 defCmdT("Processes","ps xauww");
 defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
-
 defCmdT("df","/bin/df");
-
 defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
 
-if(isset($config['system']['usefifolog']))  {
+if(isset($config['system']['usefifolog']))	{
 	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
 } else {
 	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
 }
-	
+
 defCmd("ls /conf");
 defCmd("ls /var/run");
-
 defCmd("/sbin/mount");
-
 defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
-
 defCmdT("VMStat", "vmstat -afimsz");
-
 defCmdT("config.xml","dumpconfigxml");
-
 defCmdT("DMESG","/sbin/dmesg -a");
-
 defCmdT("netstat -mb","netstat -mb");
 defCmdT("vmstat -z","vmstat -z");
 
@@ -227,32 +220,11 @@ $currentDate = $dateOutput[0];
 $pgtitle = array("{$g['product_name']}","status");
 include("head.inc");
 
-?>
-<style type="text/css">
-/*<![CDATA[*/
-pre {
-	margin: 0px;
-	font-family: courier new, courier;
-	font-weight: normal;
-	font-size: 9pt;
-}
-/*]]>*/
-</style>
+print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, maybe also IP addresses) before posting " .
+					   "information from this page in public places (like mailing lists)") . '<br />' .
+			   gettext("Passwords in config.xml have been automatically removed"));
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<strong><?=$currentDate;?></strong>
-<p><span class="red"><strong><?=gettext("Note: make sure to remove any sensitive information " .
-"(passwords, maybe also IP addresses) before posting " .
-"information from this page in public places (like mailing lists)"); ?>!</strong></span><br />
-<?=gettext("Passwords in config.xml have been automatically removed"); ?>.
+listCmds();
+execCmds();
 
-<div id="cmdspace" style="width:700px">
-<?php listCmds(); ?>
-
-<?php execCmds(); ?>
-</div>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

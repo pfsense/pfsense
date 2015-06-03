@@ -947,7 +947,7 @@ function reload_all_sync() {
 }
 
 function setup_serial_port($when="save", $path="") {
-	global $g, $config, $device_type;
+	global $g, $config;
 	conf_mount_rw();
 	$ttys_file = "{$path}/etc/ttys";
 	$boot_config_file = "{$path}/boot.config";
@@ -1027,7 +1027,7 @@ function setup_serial_port($when="save", $path="") {
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			
 			$specplatform = system_identify_specific_platform();
-			if ($device_type == "ADI" || $specplatform['name'] == "RCC-VE") {
+			if ($specplatform['name'] == "RCC-VE") {
 				$new_boot_config[] = 'comconsole_port="0x2F8"';
 				$new_boot_config[] = 'hint.uart.0.flags="0x00"';
 				$new_boot_config[] = 'hint.uart.1.flags="0x10"';

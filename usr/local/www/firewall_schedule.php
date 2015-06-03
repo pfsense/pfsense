@@ -40,6 +40,7 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
+define('CLOCK', '&#x1f550;');
 
 $dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 $monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
@@ -54,7 +55,6 @@ if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();
 
 $a_schedules = &$config['schedules']['schedule'];
-
 
 if ($_GET['act'] == "del") {
 	if ($a_schedules[$_GET['id']]) {
@@ -75,7 +75,7 @@ if ($_GET['act'] == "del") {
 		}
 
 		if($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete Schedule.  Currently in use by %s"),$referenced_by);
+			$savemsg = sprintf(gettext("Cannot delete Schedule.	 Currently in use by %s"),$referenced_by);
 		} else {
 			unset($a_schedules[$_GET['id']]);
 			write_config();
@@ -86,163 +86,173 @@ if ($_GET['act'] == "del") {
 }
 
 include("head.inc");
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall schedule">
-	<tr>
-	  <td width="25%" class="listhdrr"><?=gettext("Name");?></td>
-	  <td width="35%" class="listhdrr"><?=gettext("Time Range(s)");?></td>
-	  <td width="35%" class="listhdr"><?=gettext("Description");?></td>
-	  <td width="5%" class="list sort_ignore">
-	    <table border="0" cellspacing="0" cellpadding="1" summary="add">
-	      <tr>
-		<td width="17"></td>
-	        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="add" /></a></td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-	<?php $i = 0; foreach ($a_schedules as $schedule): ?>
-	<tr>
-	   <td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($schedule['name']);?>
-					<?php
-					$schedstatus = filter_get_time_based_rule_status($schedule);
-					 if ($schedstatus) { ?>
-					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="<?=gettext("Schedule is currently active");?>" width="17" height="17" border="0" alt="schedule" />
-					 <?php } ?>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=gettext('Schedules')?></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><!--"Active" indicator--></th>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Range: Date / Times / Name")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><!--Buttons--></th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+$i = 0;
+foreach ($a_schedules as $schedule):
+	$schedstatus = filter_get_time_based_rule_status($schedule);
+?>
+					<tr>
+						<td>
+							<?=($schedstatus) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
+						</td>
+						<td>
+							 <?=htmlspecialchars($schedule['name'])?>
+						</td>
+						<td>
+<?php
+	$first = true;
+	foreach($schedule['timerange'] as $timerange) {
+		$tempFriendlyTime = "";
+		$tempID = "";
+		$firstprint = false;
 
-  		</td>
-  		<td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-  			<table width="98%" border="0" cellpadding="0" cellspacing="0" summary="schedule">
-			<?php
+		if ($timerange) {
+			$dayFriendly = "";
+			$tempFriendlyTime = "";
 
-				foreach($schedule['timerange'] as $timerange) {
-						$tempFriendlyTime = "";
-						$tempID = "";
-						$firstprint = false;
-						if ($timerange){
-							$dayFriendly = "";
-							$tempFriendlyTime = "";
+			//get hours
+			$temptimerange = $timerange['hour'];
+			$temptimeseparator = strrpos($temptimerange, "-");
 
-							//get hours
-							$temptimerange = $timerange['hour'];
-							$temptimeseparator = strrpos($temptimerange, "-");
+			$starttime = substr ($temptimerange, 0, $temptimeseparator);
+			$stoptime = substr ($temptimerange, $temptimeseparator+1);
 
-							$starttime = substr ($temptimerange, 0, $temptimeseparator);
-							$stoptime = substr ($temptimerange, $temptimeseparator+1);
+			if ($timerange['month']) {
+				$tempmontharray = explode(",", $timerange['month']);
+				$tempdayarray = explode(",",$timerange['day']);
+				$arraycounter = 0;
+				$firstDayFound = false;
+				$firstPrint = false;
+				foreach ($tempmontharray as $monthtmp){
+					$month = $tempmontharray[$arraycounter];
+					$day = $tempdayarray[$arraycounter];
 
-							if ($timerange['month']){
-								$tempmontharray = explode(",", $timerange['month']);
-								$tempdayarray = explode(",",$timerange['day']);
-								$arraycounter = 0;
-								$firstDayFound = false;
-								$firstPrint = false;
-								foreach ($tempmontharray as $monthtmp){
-									$month = $tempmontharray[$arraycounter];
-									$day = $tempdayarray[$arraycounter];
+					if (!$firstDayFound) {
+						$firstDay = $day;
+						$firstmonth = $month;
+						$firstDayFound = true;
+					}
 
-									if (!$firstDayFound)
-									{
-										$firstDay = $day;
-										$firstmonth = $month;
-										$firstDayFound = true;
-									}
+					$currentDay = $day;
+					$nextDay = $tempdayarray[$arraycounter+1];
+					$currentDay++;
 
-									$currentDay = $day;
-									$nextDay = $tempdayarray[$arraycounter+1];
-									$currentDay++;
-									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
-										if ($firstPrint)
-											$dayFriendly .= "<br />";
-										$currentDay--;
-										if ($currentDay != $firstDay)
-											$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-										else
-											$dayFriendly .=  $monthArray[$month-1] . " " . $day;
-										$firstDayFound = false;
-										$firstPrint = true;
-									}
-									$arraycounter++;
-								}
-							}
-							else
-							{
-								$tempdayFriendly = $timerange['position'];
-								$firstDayFound = false;
-								$tempFriendlyDayArray = explode(",", $tempdayFriendly);
-								$currentDay = "";
-								$firstDay = "";
-								$nextDay = "";
-								$counter = 0;
-								foreach ($tempFriendlyDayArray as $day){
-									if ($day != ""){
-										if (!$firstDayFound)
-										{
-											$firstDay = $tempFriendlyDayArray[$counter];
-											$firstDayFound = true;
-										}
-										$currentDay =$tempFriendlyDayArray[$counter];
-										//get next day
-										$nextDay = $tempFriendlyDayArray[$counter+1];
-										$currentDay++;
-										if ($currentDay != $nextDay){
-											if ($firstprint)
-												$dayFriendly .= "<br />";
-											$currentDay--;
-											if ($currentDay != $firstDay)
-												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-											else
-												$dayFriendly .= $dayArray[$firstDay-1];
-											$firstDayFound = false;
-											$firstprint = true;
-										}
-										$counter++;
-									}
-								}
-							}
-							$timeFriendly = $starttime . "-" . $stoptime;
-							$description = $timerange['rangedescr'];
+					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+						if ($firstPrint)
+							$dayFriendly .= "<br />";
 
-							?><tr><td><?=$dayFriendly;?></td><td><?=$timeFriendly;?></td><td><?=$description;?></td></tr><?php
+						$currentDay--;
+
+						if ($currentDay != $firstDay)
+							$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
+						else
+							$dayFriendly .=	 $monthArray[$month-1] . " " . $day;
+
+						$firstDayFound = false;
+						$firstPrint = true;
+					}
+					$arraycounter++;
+				}
+			}
+			else {
+				$tempdayFriendly = $timerange['position'];
+				$firstDayFound = false;
+				$tempFriendlyDayArray = explode(",", $tempdayFriendly);
+				$currentDay = "";
+				$firstDay = "";
+				$nextDay = "";
+				$counter = 0;
+
+				foreach ($tempFriendlyDayArray as $day){
+					if ($day != ""){
+						if (!$firstDayFound)
+						{
+							$firstDay = $tempFriendlyDayArray[$counter];
+							$firstDayFound = true;
 						}
-					}//end for?></table>
-	  </td>
-	 <td class="listbg" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-    		<?=htmlspecialchars($schedule['descr']);?>&nbsp;
-  		</td>
-  		  <td valign="middle" class="list nowrap">
-    <table border="0" cellspacing="0" cellpadding="1" summary="buttons">
-      <tr>
-        <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias");?>" alt="edit" /></a></td>
-        <td><a href="firewall_schedule.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this schedule?');?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>" alt="delete" /></a></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<?php $i++; endforeach; ?>
-<tr>
-  <td class="list" colspan="3"></td>
-  <td class="list">
-    <table border="0" cellspacing="0" cellpadding="1" summary="add">
-      <tr>
-	<td width="17"></td>
-        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="add" /></a></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
-  </td>
-</tr>
-</table>
+
+						$currentDay =$tempFriendlyDayArray[$counter];
+						//get next day
+						$nextDay = $tempFriendlyDayArray[$counter+1];
+						$currentDay++;
+
+						if ($currentDay != $nextDay){
+							if ($firstprint)
+								$dayFriendly .= "<br />";
+
+							$currentDay--;
+
+							if ($currentDay != $firstDay)
+								$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
+							else
+								$dayFriendly .= $dayArray[$firstDay-1];
+
+							$firstDayFound = false;
+							$firstprint = true;
+						}
+						$counter++;
+					}
+				}
+			}
+
+			$timeFriendly = $starttime . "-" . $stoptime;
+			$description = $timerange['rangedescr'];
+
+			print(($first ? '':'<br />') . $dayFriendly . ' / ' . $timeFriendly . ' / ' . $description);
+		}
+	$first = false;
+	}
+?>
+						</td>
+
+						<td>
+							<?=htmlspecialchars($schedule['descr'])?>&nbsp;
+						</td>
+
+						<td>
+							<a href="firewall_schedule_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit alias")?></a>
+							<a href="firewall_schedule.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+
+						</td>
+					</tr>
+<?php
+	$i++;
+endforeach;
+?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<?=($i > 0) ? gettext(CLOCK . ' Indicates that the scedule is currently active.'):''?>
+
+	<nav class="action-buttons">
+		<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>
+	</nav>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+
+print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'));
+
+include("foot.inc");

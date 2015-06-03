@@ -38,13 +38,13 @@ class Form_IpAddress extends Form_Input
 		$this->_attributes['pattern'] = '[a-f0-9:.]*';
 	}
 
-	public function addMask($name, $value)
+	public function addMask($name, $value, $max = 128)
 	{
 		$this->_mask = new Form_Select(
 			$name,
 			null,
 			$value,
-			array_combine(range(128, 1), range(128, 1))
+			array_combine(range($max, 1), range($max, 1))
 		);
 
 		return $this;

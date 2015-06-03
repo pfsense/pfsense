@@ -91,34 +91,33 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 ?>
 
-<form action="firewall_schedule.php" method="post">
-	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Schedules')?></div>
-		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
-					<tr>
-						<th><!--"Active" indicator--></th>
-						<th><?=gettext("Name")?></th>
-						<th><?=gettext("Range: Date / Times / Name")?></th>
-						<th><?=gettext("Description")?></th>
-						<th><!--Buttons--></th>
-					</tr>
-				</thead>
-				<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext('Schedules')?></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><!--"Active" indicator--></th>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Range: Date / Times / Name")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><!--Buttons--></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 $i = 0;
 foreach ($a_schedules as $schedule):
 	$schedstatus = filter_get_time_based_rule_status($schedule);
 ?>
-					<tr>
-						<td>
-							<?=($schedstatus) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
-						</td>
-						<td>
-							 <?=htmlspecialchars($schedule['name'])?>
-						</td>
-						<td>
+				<tr>
+					<td>
+						<?=($schedstatus) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
+					</td>
+					<td>
+						 <?=htmlspecialchars($schedule['name'])?>
+					</td>
+					<td>
 <?php
 	$first = true;
 	foreach($schedule['timerange'] as $timerange) {
@@ -223,33 +222,32 @@ foreach ($a_schedules as $schedule):
 	$first = false;
 	}
 ?>
-						</td>
+					</td>
 
-						<td>
-							<?=htmlspecialchars($schedule['descr'])?>&nbsp;
-						</td>
+					<td>
+						<?=htmlspecialchars($schedule['descr'])?>&nbsp;
+					</td>
 
-						<td>
-							<a href="firewall_schedule_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit alias")?></a>
-							<a href="firewall_schedule.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+					<td>
+						<a href="firewall_schedule_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit alias")?></a>
+						<a href="firewall_schedule.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
 
-						</td>
-					</tr>
+					</td>
+				</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-				</tbody>
-			</table>
-		</div>
+			</tbody>
+		</table>
 	</div>
+</div>
 
-	<?=($i > 0) ? gettext(CLOCK . ' Indicates that the scedule is currently active.'):''?>
+<?=($i > 0) ? gettext(CLOCK . ' Indicates that the scedule is currently active.'):''?>
 
-	<nav class="action-buttons">
-		<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>
-	</nav>
-</form>
+<nav class="action-buttons">
+	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>
+</nav>
 
 <?php
 

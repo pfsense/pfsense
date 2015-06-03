@@ -1670,7 +1670,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 60, $timeout = 0) {
+function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 5, $timeout = 0) {
 	global $config, $g;
 
 	$fp = fopen($destination, "wb");
@@ -1705,7 +1705,7 @@ function download_file($url, $destination, $verify_ssl = false, $connect_timeout
 	return ($http_code == 200) ? true : $http_code;
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout=0) {
 	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update, $g;
 	$file_size  = 1;
 	$downloaded = 1;

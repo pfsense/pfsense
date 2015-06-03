@@ -30,7 +30,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -46,7 +46,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if($_GET['reset'] <> "") {
+if($_GET['reset'] != "") {
 	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }
@@ -58,7 +58,7 @@ if ($_POST['apply']) {
 	/* Setup pf rules since the user may have changed the optimization value */
 	$retval = filter_configure();
 	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") <> true)
+	if (stristr($retval, "error") != true)
 		$savemsg = get_std_save_message($retval);
 	else
 		$savemsg = $retval;
@@ -81,65 +81,43 @@ $wizards = array(
 
 $closehead = false;
 include("head.inc");
-?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<?php include("fbegin.inc");  ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+$tab_array = array();
+$tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
+$tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+$tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+$tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
+display_top_tabs($tab_array);
 
-<form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper wizard">
-	<tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
-	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
-	display_top_tabs($tab_array);
+if (is_subsystem_dirty('shaper'))
+	print_info_box_np(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-				<table  width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-					<tr>
-						<td class="listhdrr" width="25%" align="center" ><?=gettext("Wizard function");?></td>
-						<td class="listhdrr" width="75%" align="center"><?=gettext("Wizard Link");?></td>
-					</tr>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext('Traffic Shaper Wizards')?></div>
+	<div class="panel-body">
+		<dl	 class="dl-horizontal responsive">
 <?php
-				foreach ($wizards as $key => $wizard):
+foreach ($wizards as $key => $wizard):
 ?>
-					<tr class="tabcont">
-						<td class="listlr" style="background-color: #e0e0e0" width="25%" align="center">
+			<dt>
+				<?=$key?>
+			</dt>
+			<dd>
+				<?='<a href="wizard.php?xml=' . $wizard . '">' . $wizard . '</a>'?>
+			</dd>
 <?php
-							echo $key;
+endforeach;
 ?>
-						</td>
-						<td class="listr" style="background-color: #e0e0e0" width="75%" align="center">
+		</dl>
+	</div>
+</div>
 <?php
-							echo "<a href=\"wizard.php?xml=" . $wizard ."\" >" .$wizard . "</a>";
-?>
-						</td>
-					</tr>
-<?php
-				endforeach;
-?>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

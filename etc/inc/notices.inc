@@ -410,7 +410,7 @@ function notify_via_growl($message, $force=false) {
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
 
-	if (!empty($growl_ip)) {
+	if(!empty($growl_ip) && (is_ipaddr($growl_ip) || dns_get_record($growl_ip, DNS_A) || dns_get_record($growl_ip, DNS_AAAA))) {
 		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
 	}

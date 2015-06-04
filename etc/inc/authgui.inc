@@ -242,14 +242,14 @@ if ($local_ip == false) {
 							<div class="form-group">
 								<label for="usernamefld" class="col-sm-3 control-label">Username</label>
 								<div class="col-sm-9 col-md-7">
-									<input type="text" class="form-control" name="usernamefld" placeholder="Enter your username">
+									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="Enter your username">
 								</div>
 							</div>
 
 							<div class="form-group">
 								<label for="passwordfld" class="col-sm-3 control-label">Password</label>
 								<div class="col-sm-9 col-md-7">
-									<input type="password" class="form-control" name="passwordfld" placeholder="Enter your password">
+									<input type="password" class="form-control" name="passwordfld" id="passwordfld" placeholder="Enter your password">
 								</div>
 							</div>
 

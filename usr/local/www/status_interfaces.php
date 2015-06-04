@@ -179,12 +179,15 @@ include("head.inc");
 			showDef($interrupt_total, gettext('Total interrupts'), $interrupt_total);
 			showDef($interrupt_total, '', $interrupt_sec . " " . $interrupt_total);
 		}
-		break;
-	endforeach;
 ?>
 		</dl>
 	</div>
 </div>
+
+<?php
+		break;
+	endforeach;
+?>
 
 <div class="alert alert-warning" role="alert">
 	<?=gettext("Using dial-on-demand will bring the connection up again if any packet ".

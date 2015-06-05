@@ -52,8 +52,20 @@
 /* include all configuration functions */
 require_once("guiconfig.inc");
 require_once("functions.inc");
+$output_path = "/tmp/status_output/";
+$output_file = "/tmp/status_output.tgz";
+
+if (is_dir($output_path)) {
+	unlink_if_exists("{$output_path}/*");
+	@rmdir($output_path);
+}
+unlink_if_exists($output_file);
+mkdir($output_path);
 
 function doCmdT($title, $command) {
+	global $output_path, $output_file;
+	/* Fixup output directory */
+
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
 	echo "\n<a name=\"" . str_replace($rubbish,'',$title) . "\" id=\"" . str_replace($rubbish,'',$title) . "\"></a>\n";
 	echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"" . $title . "\">\n";
@@ -61,6 +73,7 @@ function doCmdT($title, $command) {
 	echo "\t<tr>\n\t\t<td class=\"listlr\">\n\t\t\t<pre>";		/* no newline after pre */
 
 	if ($command == "dumpconfigxml") {
+		$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
 		$fd = @fopen("/conf/config.xml", "r");
 		if ($fd) {
 			while (!feof($fd)) {
@@ -83,10 +96,13 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line,ENT_NOQUOTES);
+				fwrite($ofd, $line);
 			}
 		}
 		fclose($fd);
+		fclose($ofd);
 	} else {
+		$ofd = @fopen("{$output_path}/{$title}.txt", "w");
 		$execOutput = "";
 		$execStatus = "";
 		exec ($command . " 2>&1", $execOutput, $execStatus);
@@ -95,15 +111,12 @@ function doCmdT($title, $command) {
 				echo "\n";
 			}
 			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
+			fwrite($ofd, $execOutput[$i] . "\n");
 		}
+		fclose($ofd);
 	}
-	echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
-	echo "</table>\n";
-}
-
-/* Execute a command, giving it a title which is the same as the command. */
-function doCmd($command) {
-	doCmdT($command,$command);
+    echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
+    echo "</table>\n";
 }
 
 /* Define a command, with a title, to be executed later. */
@@ -111,13 +124,6 @@ function defCmdT($title, $command) {
 	global $commands;
 	$title = htmlspecialchars($title,ENT_NOQUOTES);
 	$commands[] = array($title, $command);
-}
-
-/* Define a command, with a title which is the same as the command,
- * to be executed later.
- */
-function defCmd($command) {
-	defCmdT($command,$command);
 }
 
 /* List all of the commands as an index. */
@@ -143,86 +149,87 @@ function execCmds() {
 global $g, $config;
 
 /* Set up all of the commands we want to execute. */
-defCmdT("System uptime","uptime");
+
+/* System stats/info */
+defCmdT("System uptime","/usr/bin/uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
+defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
+defCmdT("Processes","/bin/ps xauww");
+defCmdT("Mounted Filesystems", "/sbin/mount");
+defCmdT("Free Disk Space","/bin/df -hi");
+defCmdT("Routing tables","/usr/bin/netstat -nWr");
+defCmdT("Mbuf Usage","/usr/bin/netstat -mb");
+defCmdT("VMStat", "/usr/bin/vmstat -afimsz");
 
-defCmdT("PF Info","/sbin/pfctl -s info");
-
-defCmdT("Routing tables","netstat -nr");
-
-defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
-
-defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
-
+/* Firewall rules and info */
+defCmdT("Generated Ruleset","/bin/cat {$g['tmp_path']}/rules.debug");
+defCmdT("Generated Ruleset Limiters","/bin/cat {$g['tmp_path']}/rules.limiter");
+defCmdT("Generated Ruleset Limits","/bin/cat {$g['tmp_path']}/rules.limits");
+defCmdT("pf NAT Rules", "/sbin/pfctl -vvsn");
+defCmdT("pf Firewall Rules", "/sbin/pfctl -vvsr");
+defCmdT("pf Tables","/sbin/pfctl -vs Tables");
+defCmdT("pf State Table Contents", "/sbin/pfctl -ss");
+defCmdT("pf Info", "/sbin/pfctl -si");
+defCmdT("pf Show All", "/sbin/pfctl -sa");
+defCmdT("pf Queues","/sbin/pfctl -s queue -v");
+defCmdT("pf OSFP","/sbin/pfctl -s osfp");
+defCmdT("pfsync stats","/usr/bin/netstat -s -ppfsync");
+defCmdT("pftop Default","/usr/local/sbin/pftop -a -b");
+defCmdT("pftop Long","/usr/local/sbin/pftop -w 150 -a -b -v long");
+defCmdT("pftop Queue","/usr/local/sbin/pftop -w 150 -a -b -v queue");
+defCmdT("pftop Rules","/usr/local/sbin/pftop -w 150 -a -b -v rules");
+defCmdT("pftop Size","/usr/local/sbin/pftop -w 150 -a -b -v size");
+defCmdT("pftop Speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
 		if (isset($cpdata['enable'])) {
-			defCmdT("ipfw -x {$cpdata['zoneid']} show", "/sbin/ipfw -x {$cpdata['zoneid']} show");
+			defCmdT("IPFW rules for {$cpdata['zoneid']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
 		}
 	}
 }
 
-defCmdT("pfctl -sn", "/sbin/pfctl -sn");
-defCmdT("pfctl -sr", "/sbin/pfctl -sr");
-defCmdT("pfctl -ss", "/sbin/pfctl -ss");
-defCmdT("pfctl -si", "/sbin/pfctl -si");
-defCmdT("pfctl -sa", "/sbin/pfctl -sa");
-defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
-defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
-defCmdT("pfctl -s nat -v","/sbin/pfctl -s nat -v");
-
-defCmdT("PF OSFP","/sbin/pfctl -s osfp");
-
-
-defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
-
-defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
-
-defCmdT("pfctl -vs Tables","/sbin/pfctl -vs Tables");
-
-defCmdT("Load Balancer","/sbin/pfctl -a slb -s nat");
-
-defCmdT("pftop -w 150 -a -b","/usr/local/sbin/pftop -a -b");
-defCmdT("pftop -w 150 -a -b -v long","/usr/local/sbin/pftop -w 150 -a -b -v long");
-defCmdT("pftop -w 150 -a -b -v queue","/usr/local/sbin/pftop -w 150 -a -b -v queue");
-defCmdT("pftop -w 150 -a -b -v rules","/usr/local/sbin/pftop -w 150 -a -b -v rules");
-defCmdT("pftop -w 150 -a -b -v size","/usr/local/sbin/pftop -w 150 -a -b -v size");
-defCmdT("pftop -w 150 -a -b -v speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
-
-defCmdT("resolv.conf","cat /etc/resolv.conf");
-
-defCmdT("Processes","ps xauww");
-defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
-
-defCmdT("df","/bin/df");
-
-defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
+/* Configuration Files */
+defCmdT("Contents of /var/run", "/bin/ls /var/run");
+defCmdT("Contents of /conf", "/bin/ls /conf");
+defCmdT("config.xml","dumpconfigxml");
+defCmdT("resolv.conf","/bin/cat /etc/resolv.conf");
+defCmdT("DHCP Configuration","/bin/cat /var/dhcpd/etc/dhcpd.conf");
+defCmdT("DHCPv6 Configuration","/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
+defCmdT("strongSwan config","/bin/cat /var/etc/ipsec/strongswan.conf");
+defCmdT("IPsec config","/bin/cat /var/etc/ipsec/ipsec.conf");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
-
-if (isset($config['system']['usefifolog']))  {
+if (file_exists("/cf/conf/upgrade_log.txt")) {
+	defCmdT("Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
+}
+if (file_exists("/boot/loader.conf")) {
+	defCmdT("Loader Configuration", "/bin/cat /boot/loader.conf");
+}
+if (file_exists("/boot/loader.conf.local")) {
+	defCmdT("Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
+}
+if (file_exists("/var/run/apinger.status")) {
+	defCmdT("Gateway Status", "/bin/cat /var/run/apinger.status");
+}
+if (file_exists("/var/etc/apinger.conf")) {
+	defCmdT("Gateway Monitoring Config", "/bin/cat /var/etc/apinger.conf");
+}
+if (file_exists("/var/etc/filterdns.conf")) {
+	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
+}
+if(isset($config['system']['usefifolog']))  {
 	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
 } else {
 	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
 }
-
-defCmd("ls /conf");
-defCmd("ls /var/run");
-
-defCmd("/sbin/mount");
-
-defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
-
-defCmdT("VMStat", "vmstat -afimsz");
-
-defCmdT("config.xml","dumpconfigxml");
-
-defCmdT("DMESG","/sbin/dmesg -a");
-
-defCmdT("netstat -mb","netstat -mb");
-defCmdT("vmstat -z","vmstat -z");
+if (file_exists("/tmp/PHP_errors.log")) {
+	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");
+}
+defCmdT("System Message Buffer","/sbin/dmesg -a");
+defCmdT("System Message Buffer (Boot)","/bin/cat /var/log/dmesg.boot");
+defCmdT("sysctl values","/sbin/sysctl -a");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
@@ -248,13 +255,24 @@ pre {
 <p><span class="red"><strong><?=gettext("Note: make sure to remove any sensitive information " .
 "(passwords, maybe also IP addresses) before posting " .
 "information from this page in public places (like mailing lists)"); ?>!</strong></span><br />
-<?=gettext("Passwords in config.xml have been automatically removed"); ?>.
+<?=gettext("Passwords in config.xml have been automatically removed"); ?>.<br /><br />
+<?=gettext("When the page has finished loading, the output will be stored in {$output_file}. It may be downloaded via Diagnostics > Command Prompt or scp."); ?>
 
 <div id="cmdspace" style="width:700px">
 <?php listCmds(); ?>
 
 <?php execCmds(); ?>
 </div>
+<br />
+<?=gettext("Saving output to archive...");?>
+<?php
+if (is_dir($output_path)) {
+	mwexec("/usr/bin/tar czpf " . escapeshellarg($output_file) . " -C " . escapeshellarg(dirname($output_path))  . " " . escapeshellarg(basename($output_path)));
+	unlink_if_exists("{$output_path}/*");
+	@rmdir($output_path);
+}
+?>
+<?=gettext("Done.");?>
 
 <?php include("fend.inc"); ?>
 </body>

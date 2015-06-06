@@ -2061,6 +2061,16 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		$tod = gettimeofday();
 		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
 
+		// Only add pass-throup MAC for listed users
+		$addmacusers = $config['captiveportal'][$cpzone]['passthrumacaddlimituser'];
+		if ($passthrumac && $addmacusers) {
+  			$allowedusers = explode(",",$addmacusers);
+  			if (!in_array($username, $allowedusers)) {
+  				// User not in list so don't add pass-through MAC
+    				$passthrumac = false;
+  			}
+		}
+
 		if ($passthrumac) {
 			$mac = array();
 			$mac['action'] = 'pass';

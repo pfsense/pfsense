@@ -1559,8 +1559,9 @@ function alias_expand_urltable($name) {
 			if (preg_match("/urltable/i", $alias['type']) && ($alias['name'] == $name)) {
 				if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename)) {
 					return $urltable_filename;
-				} else if (process_alias_urltable($name, $alias["url"], 0, true)) {
-					return $urltable_filename;
+				} else {
+					send_event("service sync alias {$name}");
+					break;
 				}
 			}
 		}

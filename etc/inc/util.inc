@@ -428,17 +428,6 @@ function ip_range_size_v4($startip, $endip) {
 	return -1;
 }
 
-/* Find the smallest possible subnet mask which can contain a given number of IPs
- *  e.g. 512 IPs can fit in a /23, but 513 IPs need a /22
- */
-function find_smallest_cidr_v4($number) {
-	$smallest = 1;
-	for ($b=32; $b > 0; $b--) {
-		$smallest = ($number <= pow(2, $b)) ? $b : $smallest;
-	}
-	return (32-$smallest);
-}
-
 /* Return the previous IP address before the given address */
 function ip_before($ip, $offset = 1) {
 	return long2ip32(ip2long($ip) - $offset);

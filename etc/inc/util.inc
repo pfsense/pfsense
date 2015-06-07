@@ -615,18 +615,10 @@ function is_ipaddrv6($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */
 function is_ipaddrv4($ipaddr) {
-	if (!is_string($ipaddr) || empty($ipaddr)) {
+	if (!is_string($ipaddr) || empty($ipaddr) || ip2long($ipaddr) === FALSE) {
 		return false;
 	}
-
-	$ip_long = ip2long($ipaddr);
-	$ip_reverse = long2ip32($ip_long);
-
-	if ($ipaddr == $ip_reverse) {
-		return true;
-	} else {
-		return false;
-	}
+	return true;
 }
 
 /* returns true if $ipaddr is a valid IPv6 linklocal address */

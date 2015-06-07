@@ -1,4 +1,9 @@
 <?php
+
+/*
+	WARNING: DEPRICATED! SHOULD NOT BE CONVERTED. SEE https://github.com/SjonHortensius/pfsense/issues/229
+*/
+
 /*
 	vpn_pptp_users_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)

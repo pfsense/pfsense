@@ -36304,10 +36304,6 @@ msgid "Wireless (hostapd) log entries"
 msgstr "Wireless (hostapd) registro de logs"
 
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captive Portal"
-msgstr "Captive Portal"
-
-#: usr/local/www/services_captiveportal_zones.php:37
 msgid "Zones"
 msgstr "Zonas"
 

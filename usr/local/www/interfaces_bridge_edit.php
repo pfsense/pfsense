@@ -353,8 +353,8 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'showadvanced',
+	'Advanced',
 	'Show advanced options',
-	'(This setting is not saved between sessions)',
 	$pconfig['showadvanced']
 ))->toggles('.toggle-advanced');
 
@@ -493,22 +493,25 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Input(
 	'maxage',
 	'Valid time',
-	'text',
-	$pconfig['maxage']
+	'number',
+	$pconfig['maxage'],
+	['placeholder' => 20, 'min' => 6, 'max' => 40]
 ))->setHelp('Set the time that a Spanning Tree Protocol configuration is valid. The default is 20 seconds. The minimum is 6 seconds and the maximum is 40 seconds.');
 
 $section->addInput(new Form_Input(
 	'fwdelay',
 	'Forward time',
-	'text',
-	$pconfig['fwdelay']
+	'number',
+	$pconfig['fwdelay'],
+	['placeholder' => 15, 'min' => 4, 'max' => 30]
 ))->setHelp('Set the time that must pass before an interface begins forwarding packets when Spanning Tree is enabled. The default is 15 seconds. The minimum is 4 seconds and the maximum is 30 seconds. ');
 
 $section->addInput(new Form_Input(
 	'hellotime',
 	'Hello time',
-	'text',
-	$pconfig['hellotime']
+	'number',
+	$pconfig['hellotime'],
+	['placeholder' => 2, 'min' => 1, 'max' => 2, 'step' => '0.1']
 ))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode.' .
 			'The default is 2 seconds. The minimum is 1 second and the maximum is 2 seconds.');
 
@@ -516,48 +519,40 @@ $section->addInput(new Form_Input(
 	'priority',
 	'Priority',
 	'text',
-	$pconfig['priority']
+	$pconfig['priority'],
+	['placeholder' => 32768, 'min' => 0, 'max' => 61440]
 ))->setHelp('Set the bridge priority for Spanning Tree. The default is 32768. The minimum is 0 and the maximum is 61440. ');
 
 $section->addInput(new Form_Input(
 	'holdcnt',
 	'Hold Count',
-	'text',
-	$pconfig['holdcnt']
+	'number',
+	$pconfig['holdcnt'],
+	['placeholder' => 6, 'min' => 1, 'max' => 10]
 ))->setHelp('Set the transmit hold count for Spanning Tree. This is the number of packets transmitted before being rate limited. The default is 6. The minimum is 1 and the maximum is 10.');
 
 foreach ($ifacelist as $ifn => $ifdescr) {
-	$section->addInput(new Form_StaticText(
-		$ifdescr . ' Priority', new Form_Input(
+	$section->addInput(new Form_Input(
 		$ifn,
-		null,
-		'text',
-		$pconfig[$ifn]
-	)));
+		$ifdescr . ' Priority',
+		'number',
+		$pconfig[$ifn],
+		['placeholder' => 128, 'min' => 0, 'max' => 240, 'step' => 16]
+	))->setHelp('Set the Spanning Tree priority of interface to value. The default is 128. The minimum is 0 and the maximum is 240. Increments of 16.');
 }
-
-$section->addInput(new Form_StaticText(
-	null,
-	'Set the Spanning Tree priority of interface to value. The default is 128. The minimum is 0 and the maximum is 240. Increments of 16.'
-));
 
 $i = 0;
 foreach ($ifacelist as $ifn => $ifdescr) {
-	$section->addInput(new Form_StaticText(
-		$ifdescr . ' Path cost', new Form_Input(
+	$section->addInput(new Form_Input(
 		$ifn . $i,
-		null,
-		'text',
-		$ifpathcost[$ifn]
-	)));
+		$ifdescr . ' Path cost',
+		'number',
+		$ifpathcost[$ifn],
+		[ 'placeholder' => 0, 'min' => 1, 'max' => 200000000]
+	))->setHelp('Set the Spanning Tree path cost of interface to value. The default is calculated from the link speed. '.
+		'To change a previously selected path cost back to automatic, set the cost to 0. The minimum is 1 and the maximum is 200000000.');
 	$i++;
 }
-
-$section->addInput(new Form_StaticText(
-	null,
-	'Set the Spanning Tree path cost of interface to value. The default is calculated from the link speed. ' .
-	 'To change a previously selected path cost back to automatic, set the cost to 0. The minimum is 1 and the maximum is 200000000.'
-));
 
 $form->add($section);
 print($form);

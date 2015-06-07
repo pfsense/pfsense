@@ -130,7 +130,7 @@ function filter_rule_tracker($tracker) {
 }
 
 function filter_negaterule_tracker() {
-	global $tracker;
+	global $negate_tracker;
 
 	++$negate_tracker;
 	return "tracker {$negate_tracker} ";

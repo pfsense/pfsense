@@ -451,7 +451,7 @@ if (is_array($config['pppoes']['pppoe'])) {
 	}
 }
 
-if (false && $tabscounter == 0) {
+if (empty($tabs_array)) {
 	print_info_box(gettext("The DHCPv6 Server can only be enabled on interfaces configured with a static IPv6 address. This system has none."), 'danger');
 	include("foot.inc");
 	exit;

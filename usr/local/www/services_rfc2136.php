@@ -82,41 +82,29 @@ if ($input_errors)
 		    </thead>
 		    <tbody>
 <?php
+
+
+$iflist = get_configured_interface_with_descr();
+
 $i = 0;
 foreach ($a_rfc2136 as $rfc2136):
 ?>
-		        <tr>
+		        <tr <?=(isset($rfc2136['enable']) ? '' : 'class="disabled"')?>">
 		            <td>
 <?php
-    $iflist = get_configured_interface_with_descr();
-
 	foreach ($iflist as $if => $ifdesc) {
 	    if ($rfc2136['interface'] == $if) {
-	        if (!isset($rfc2136['enable']))
-				print('<font color="gray">' . $ifdesc . '</font>');
-			else
-				print($ifdesc);
-
+	        print($ifdesc);
 			break;
 	    }
 	}
 ?>
 		            </td>
 		            <td>
-<?php
-	if (!isset($rfc2136['enable']))
-	    print('<font color="gray">' .  htmlspecialchars($rfc2136['server']) . '</font>');
-	else
-		print(htmlspecialchars($rfc2136['server']));
-?>
+		                <?=htmlspecialchars($rfc2136['server'])?>
 		            </td>
 		            <td>
-<?php
-	if (!isset($rfc2136['enable']))
-		print('<font color="gray">' .  htmlspecialchars($rfc2136['host']) . '</font>');
-	else
-		print(htmlspecialchars($rfc2136['host']));
-?>
+		                <?=htmlspecialchars($rfc2136['host'])?>
 		            </td>
 		            <td>
 <?php
@@ -165,12 +153,7 @@ foreach ($a_rfc2136 as $rfc2136):
 ?>
 		            </td>
 		            <td>
-<?php
-	if (!isset($rfc2136['enable']))
-		print('<span class="gray">' . htmlspecialchars($rfc2136['descr']) . '</span>');
-	else
-		print(htmlspecialchars($rfc2136['descr']));
-?>
+		                <?=htmlspecialchars($rfc2136['descr'])?>
 		            </td>
 		            <td>
 						<a href="services_rfc2136_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>

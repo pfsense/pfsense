@@ -694,7 +694,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$cert = lookup_cert($settings['certref']);
 				/* XXX: Seems not used at all! */
 				$servercn = urlencode(cert_get_cn($cert['crt']));
-				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
+				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} \"\n";
 			}
 		}
 

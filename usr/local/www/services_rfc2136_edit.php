@@ -165,7 +165,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'ttl',
 	'TTL (seconds)',
-	'text',
+	'number',
 	$pconfig['ttl']
 ));
 
@@ -274,11 +274,11 @@ $form->addGlobal(new Form_Button(
 ));
 
 if (isset($id) && $a_rfc2136[$id]){
-	$section->addInput(new Form_Input(
-	'id',
-	null,
-	'text',
-	$id
+    	$section->addInput(new Form_Input(
+    	'id',
+    	null,
+    	'hidden',
+    	$id
 	));
 }
 

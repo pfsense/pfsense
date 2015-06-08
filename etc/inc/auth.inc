@@ -504,7 +504,6 @@ function local_user_set(& $user) {
 	/* create user directory if required */
 	if (!is_dir($user_home)) {
 		mkdir($user_home, 0700);
-		mwexec("/bin/cp /root/.* {$home_base}/", true);
 	}
 	@chown($user_home, $user_name);
 	@chgrp($user_home, $user_group);

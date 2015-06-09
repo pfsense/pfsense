@@ -231,12 +231,6 @@ fi
 /bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
-# Make sure symlink is correct on nanobsd
-if [ "$PLATFORM" = "nanobsd" ] ; then
-	/bin/rm /conf
-	/bin/ln -s /cf/conf/ /conf
-fi
-
 # Repair symlinks if they are broken
 if [ -f /etc/newsyslog.conf ]; then
 	/bin/rm -f /etc/newsyslog.conf

@@ -74,6 +74,13 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		attempts=$((attempts+1))
 	done
 
+	if [ "${PLATFORM}" = "nanobsd" ]; then
+		# XXX This script does need all filesystems rw!!!!
+		# Put this workaround for now until better ways are found.
+		/sbin/mount -u -w -o sync,noatime /
+		/sbin/mount -u -w -o sync,noatime /cf
+	fi
+
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
@@ -397,6 +404,14 @@ echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	# XXX This script does need all filesystems rw!!!!
+	# Put this workaround for now until better ways are found.
+	/sbin/mount -u -f -r -o sync,noatime /
+	/sbin/mount -u -f -r -o sync,noatime /cf
+fi
+
 /etc/rc.bootup
 
 # /etc/rc.bootup unset $g['booting'], and removes file

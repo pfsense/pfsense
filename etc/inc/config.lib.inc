@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt
 	pfSense_MODULE:	config
 */
 
@@ -331,9 +331,8 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	if ($status <> 0) {
 		if (platform_booting()) {
-			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
+			echo gettext("/cf Filesystem is dirty.") . "\n";
 		}
-		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
@@ -341,10 +340,9 @@ function conf_mount_rw() {
 	 *    compact flash cards root.
 	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
-	/* we could not mount this correctly.  kick off fsck */
+	/* we could not mount this correctly. */
 	if ($status <> 0) {
-		log_error(gettext("File system is dirty.  Launching FSCK for /"));
-		mwexec("/sbin/fsck -y /");
+		log_error(gettext("/ File system is dirty."));
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
 

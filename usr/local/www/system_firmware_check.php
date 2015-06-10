@@ -32,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	firmware
+	pfSense_MODULE: firmware
 */
 
 ##|+PRIV
@@ -50,71 +50,28 @@ $curcfg = $config['system']['firmware'];
 $pgtitle=array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
+$tab_array = array();
+$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+if($g['hidedownloadbackup'] == false)
+	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+display_top_tabs($tab_array);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware check">
-	<tr>
-		<td>
-		<?php
-			$tab_array = array();
-			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
-			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-			if($g['hidedownloadbackup'] == false)
-				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-			display_top_tabs($tab_array);
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="">
-				<tr>
-					<td align="center">
-						<!-- progress bar -->
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+	<div id="statusheading" class="panel panel-default">
+		<div class="panel-heading"><?=gettext('Update progress')?></div>
+		<div class="panel-body" name="output" id="output"></div>
+	</div>
 
-							<tr>
-								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
-								<td>
-									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
-										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-										<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
-										</td></tr>
-									</table>
-								</td>
-								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5"></td>
-							</tr>
-						</table>
-						<br />
-						<!-- command output box -->
-						<script type="text/javascript">
-						//<![CDATA[
-						window.onload=function(){
-							document.getElementById("output").wrap='hard';
-						}
-						//]]>
-						</script>
-						<textarea style="border:1;bordercolordark:#000000;bordercolorlight:#000000" cols="90" rows="9" name="output" id="output"></textarea>
-						<div id="backupdiv" style="visibility:hidden">
-							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
-							<br /><input type="checkbox" name="backupbeforeupgrade" id="backupbeforeupgrade" /><?=gettext("Perform full backup prior to upgrade");?>
-							<?php endif; ?>
-						</div>
-						<input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>" />
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-
-<p>
+	<div id="backupdiv" style="visibility:hidden">
+		<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
+		<br /><input type="checkbox" name="backupbeforeupgrade" id="backupbeforeupgrade" /><?=gettext("Perform full backup prior to upgrade")?>
+		<?php endif; ?>
+	</div>
+	<br />
+	<input id='invokeupgrade' class="btn btn-warning" style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>" />
 
 <?php
 
@@ -123,6 +80,7 @@ if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 else
 	$updater_url = $g['update_url'];
+
 $needs_system_upgrade = false;
 $static_text .= gettext("Downloading new version information...");
 
@@ -138,63 +96,89 @@ if ($g['platform'] == "nanobsd") {
 
 if(download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true)
 	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
-$static_text .= gettext("done") . "\\n";
+
+$static_text .= gettext("done") . "<br />";
+
 if (!$remote_version) {
-	$static_text .= gettext("Unable to check for updates.") . "\\n";
+	$static_text .= gettext("Unable to check for updates.") . "<br />";
+
 	if(isset($curcfg['alturl']['enable']))
-		$static_text .= gettext("Could not contact custom update server.") . "\\n";
+		$static_text .= gettext("Could not contact custom update server.") . "<br />";
 	else
 		$static_text .= sprintf(gettext('Could not contact %1$s update server %2$s%3$s'), $g['product_name'], $updater_url, "\\n");
+
+	panel_heading_class('danger');
 } else {
 	$static_text .= gettext("Obtaining current version information...");
-	update_output_window($static_text);
+	panel_text($static_text);
 
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
 	$current_installed_version = trim(file_get_contents("/etc/version"));
 
-	$static_text .= "done\\n";
-	update_output_window($static_text);
+	$static_text .= "done<br />";
+	panel_text($static_text);
 
 	if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 		$needs_system_upgrade = true;
 	} else {
-		$static_text .= "\\n" . gettext("You are on the latest version.") . "\\n";
+		$static_text .= "<br />" . gettext("You are on the latest version.") . "<br />";
+		panel_text($static_text);
+		panel_heading_class('success');
 	}
 }
 
 update_output_window($static_text);
 if ($needs_system_upgrade == false) {
-	echo "</p>";
-	echo "</form>";
-	require("fend.inc");
-	echo "</body>";
-	echo "</html>";
+	print("</form>");
+	require("foot.inc");
+
 	exit;
 }
-
-echo "\n<script type=\"text/javascript\">\n";
-echo "//<![CDATA[\n";
-echo "jQuery('#invokeupgrade').css('visibility','visible');\n";
-echo "//]]>\n";
-echo "</script>\n";
-echo "\n<script type=\"text/javascript\">\n";
-echo "//<![CDATA[\n";
-echo "jQuery('#backupdiv').css('visibility','visible');\n";
-echo "//]]>\n";
-echo "</script>\n";
-
-$txt  = gettext("A new version is now available") . "\\n\\n";
-$txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
-if ($g['platform'] == "nanobsd") {
-	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
-}
-$txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
-$txt .= "    " . gettext("New version") .": ".  htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
-$txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
-update_output_window($txt);
 ?>
-</p>
+<script>
+	events.push(function(){
+		$('#invokeupgrade').css('visibility','visible');
+		$('#backupdiv').css('visibility','visible');
+	});
+</script>
+<?php
+
+$txt  = gettext("A new version is now available") . "<br />";
+$txt .= gettext("Current version") .": ". $current_installed_version . "<br />";
+if ($g['platform'] == "nanobsd") {
+	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "<br />";
+}
+$txt .= "	   " . gettext("Built On") .": ".  $current_installed_buildtime . "<br />";
+$txt .= "	" . gettext("New version") .": ".  htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "<br /><br />";
+$txt .= "  " . gettext("Update source") .": ".	$updater_url . "<br />";
+panel_text($txt);
+panel_heading_class('info');
+?>
+
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php
+
+// Update the class of the message panel so that it's color changes
+// Use danger, success, info, warning, default etc
+function panel_heading_class($newclass = 'default') {
+?>
+	<script>
+	events.push(function(){
+		$('#statusheading').removeClass().addClass('panel panel-' + '<?=$newclass?>');
+	});
+	</script>
+<?php
+}
+
+// Update the text in the panel-heading
+function panel_text($text) {
+?>
+	<script>
+	events.push(function(){
+		$('#output').html('<?=$text?>');
+	});
+	</script>
+<?php
+}
+
+include("foot.inc");

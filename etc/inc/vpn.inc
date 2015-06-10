@@ -154,6 +154,9 @@ function vpn_ipsec_configure($restart = false) {
 
 	mwexec("/sbin/ifconfig enc0 up");
 	set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
+	if (php_uname('m') != "amd64")
+		set_single_sysctl("net.inet.ipsec.directdispatch", "0");
+
 	/* needed for config files */
 	if (!is_dir("{$g['varetc_path']}/ipsec")) {
 		mkdir("{$g['varetc_path']}/ipsec");

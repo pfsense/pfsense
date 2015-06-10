@@ -179,6 +179,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$params = array(
 		"pkg" => $pkgs, 
 		"info" => $info, 
+		"uuid" => get_single_sysctl('kern.hostuuid'),
 		"freebsd_version" => get_freebsd_version(),
 		"freebsd_machine" => $freebsd_machine
 	);

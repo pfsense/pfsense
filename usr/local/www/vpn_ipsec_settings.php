@@ -171,9 +171,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['noshuntlaninterfaces'] == "yes") {
-			$config['ipsec']['noshuntlaninterfaces'] = true;
-		} elseif (isset($config['ipsec']['noshuntlaninterfaces'])) {
 			unset($config['ipsec']['noshuntlaninterfaces']);
+		} else {
+			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
 
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {

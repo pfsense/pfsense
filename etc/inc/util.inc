@@ -1551,9 +1551,6 @@ function alias_expand_urltable($name) {
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (platform_booting())
-		return;
-
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
 			if (preg_match("/urltable/i", $alias['type']) && ($alias['name'] == $name)) {

@@ -304,8 +304,8 @@ if ($_POST) {
 		if (!$endp)
 			$endp = $begp;
 
-		if (!(   (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
-		      || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
+		if (!(   (($_POST['dstbeginport'] < $begp) && ($_POST['dstendport'] < $begp))
+		      || (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
 
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;

@@ -1770,7 +1770,10 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	if (!isset($config['system']['host_uuid']))
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	else
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1791,7 +1794,8 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout=0) {
-	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update, $g;
+	global $config, $g;
+	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
 	$file_size  = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
@@ -1811,7 +1815,10 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	if (!isset($config['system']['host_uuid']))
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	else
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);

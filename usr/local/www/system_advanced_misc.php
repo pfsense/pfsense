@@ -69,6 +69,7 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
+$pconfig['host_uuid'] = !isset($config['system']['host_uuid']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -177,6 +178,12 @@ if ($_POST) {
 			$config['system']['pkg_nochecksig'] = true;
 		} elseif (isset($config['system']['pkg_nochecksig'])) {
 			unset($config['system']['pkg_nochecksig']);
+		}
+
+		if ($_POST['host_uuid'] == "yes") {
+			unset($config['system']['host_uuid']);
+		} else {
+			$config['system']['host_uuid'] = true;
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -690,6 +697,17 @@ function tmpvar_checked(obj) {
 								</td>
 							</tr>
 
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Installation Feedback"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Host UUID"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="host_uuid" type="checkbox" id="host_uuid" value="yes" <?php if ($pconfig['host_uuid']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Do NOT send HOST UUID with user agent"); ?></strong><br />
+									<?=gettext("Enable this option to not send HOST UUID to pfSense as part of User-Agent header."); ?>
+								</td>
+							</tr>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%">

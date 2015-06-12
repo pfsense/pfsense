@@ -213,8 +213,8 @@ if ($_POST) {
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
-//		header("Location: vpn_ipsec_settings.php");
-//		return;
+		header("Location: vpn_ipsec_settings.php");
+		return;
 	}
 }
 

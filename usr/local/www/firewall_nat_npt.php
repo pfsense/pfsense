@@ -113,7 +113,7 @@ display_top_tabs($tab_array);
 $i = 0;
 foreach ($a_npt as $natent):
 ?>
-			<tr<?=isset($natent['disabled']) ' class="disabled"' : ''?>>
+			<tr<?=isset($natent['disabled'])? ' class="disabled"' : ''?>>
 				<td>
 <?php
 	if (!$natent['interface'])

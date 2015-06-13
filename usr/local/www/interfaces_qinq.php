@@ -148,7 +148,7 @@ print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging
 				</td>
 			</tr>
 <?php
-}
+endforeach;
 ?>
 		</tbody>
 	</table>

@@ -96,73 +96,64 @@ $tab_array[] = array(gettext("NPt"), true, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 ?>
 
-<form action="firewall_nat_npt.php" method="post">
-	<div class="panel panel-default">
-		<div class="panel-body table responsive">
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
-					<tr>
-						<th><?=gettext("Interface")?></th>
-						<th><?=gettext("External Prefix")?></th>
-						<th><?=gettext("Internal prefix")?></th>
-						<th><?=gettext("Description")?></th>
-						<th><!-- Buttons --></th>
-					</tr>
-				</thead>
-				<tbody>
+<div class="panel-body table responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext("Interface")?></th>
+				<th><?=gettext("External Prefix")?></th>
+				<th><?=gettext("Internal prefix")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><!-- Buttons --></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 
 $i = 0;
 foreach ($a_npt as $natent):
-
-	// Disabled interfaces display in light gray
-	$style = isset($natent['disabled']) ? 'style="color:#B0B0B0"':'';
 ?>
-					<tr <?=$style?>>
-						<td>
+			<tr<?=isset($natent['disabled']) ' class="disabled"' : ''?>>
+				<td>
 <?php
 	if (!$natent['interface'])
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan")));
 	else
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])));
 ?>
-						</td>
+				</td>
 <?php
 	$source_net = pprint_address($natent['source']);
 	$source_cidr = strstr($source_net, '/');
 	$destination_net = pprint_address($natent['destination']);
 	$destination_cidr = strstr($destination_net, '/');
 ?>
-						<td>
-							<?=$destination_net?>
-						</td>
-						<td>
-							<?=$source_net?>
-						</td>
-						<td >
-							<?=htmlspecialchars($natent['descr'])?>
-						</td>
-						<td>
-							<a href="firewall_nat_npt_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-							<a href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
-						</td>
-					</tr>
+				<td>
+					<?=$destination_net?>
+				</td>
+				<td>
+					<?=$source_net?>
+				</td>
+				<td>
+					<?=htmlspecialchars($natent['descr'])?>
+				</td>
+				<td>
+					<a href="firewall_nat_npt_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
+					<a href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+				</td>
+			</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-				</tbody>
-			</table>
+		</tbody>
+	</table>
+</div>
 
-			<?=($i > 0) ? sprintf(gettext('Rows shown in %sgray%s are disabled'), '<span style="color:#B0B0B0">', '</span>'):''?>
+<nav class="action-buttons">
+	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success"><?=gettext("Add rule")?></a>
+</nav>
 
-			<nav class="action-buttons">
-				<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success"><?=gettext("Add rule")?></a>
-			</nav>
-
-		</div>
-	</div>
-</form>
 <?php
 
 include("foot.inc");

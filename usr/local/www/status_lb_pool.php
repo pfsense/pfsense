@@ -147,7 +147,7 @@ $rowsprinted = 0;
 				</thead>
 				<tbody>
 <?php
-foreach ($a_pool as & $pool):
+foreach ($a_pool as $pool):
 	$rowsprinted++;
 ?>
 					<tr>

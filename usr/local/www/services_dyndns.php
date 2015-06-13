@@ -88,16 +88,13 @@ display_top_tabs($tab_array);
 $i = 0;
 foreach ($a_dyndns as $dyndns):
 ?>
-				<tr>
+				<tr<?=!isset($dyndns['enable'])?' class="disabled""':''?>>
 					<td>
 <?php
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
 		if ($dyndns['interface'] == $if) {
-			if (!isset($dyndns['enable']))
-				print('<font color="gray">' . $ifdesc . '</font>');
-			else
-				print($ifdesc);
+			print($ifdesc);
 
 			break;
 		}
@@ -106,13 +103,10 @@ foreach ($a_dyndns as $dyndns):
 	$groupslist = return_gateway_groups_array();
 	foreach ($groupslist as $if => $group) {
 		if ($dyndns['interface'] == $if) {
-			if (!isset($dyndns['enable']))
-				print('<font color="gray">' . $if . '</font>');
-			else
 			print($if);
-				break;
-			}
+			break;
 		}
+	}
 ?>
 					</td>
 					<td>
@@ -122,10 +116,7 @@ foreach ($a_dyndns as $dyndns):
 
 	for ($j = 0; $j < count($vals); $j++) {
 		if ($vals[$j] == $dyndns['type']) {
-			if (!isset($dyndns['enable']))
-				print('<font color="gray">' . htmlspecialchars($types[$j]) . '</font');
-			else
-				print(htmlspecialchars($types[$j]));
+			print(htmlspecialchars($types[$j]));
 
 			break;
 		}
@@ -134,10 +125,7 @@ foreach ($a_dyndns as $dyndns):
 					</td>
 					<td>
 <?php
-	if (!isset($dyndns['enable']))
-		print('<font color="gray">' . htmlspecialchars($dyndns['host']) . '</font>');
-	else
-		print(htmlspecialchars($dyndns['host']));
+	print(htmlspecialchars($dyndns['host']));
 ?>
 					</td>
 					<td>
@@ -173,12 +161,9 @@ foreach ($a_dyndns as $dyndns):
 	}
 ?>
 					</td>
-					<td">
+					<td>
 <?php
-	if (!isset($dyndns['enable']))
-		print('<font color="green">' . htmlspecialchars($dyndns['descr']). '</font>');
-	else
-		print(htmlspecialchars($dyndns['descr']));
+	print(htmlspecialchars($dyndns['descr']));
 ?>
 					</td>
 					<td>

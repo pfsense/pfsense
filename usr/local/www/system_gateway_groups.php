@@ -115,67 +115,62 @@ $tab_array[] = array(gettext("Groups"), true, "system_gateway_groups.php");
 display_top_tabs($tab_array);
 ?>
 
-<form action="system_gateway_groups.php" method="post">
-	<input type="hidden" name="y1" value="1" />
-	<div class="panel-default panel-body">
-		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
-					<tr>
-						<th><?=gettext("Group Name")?></th>
-						<th><?=gettext("Gateways")?></th>
-						<th><?=gettext("Priority")?></th>
-						<th><?=gettext("Description")?></th>
-						<th><!-- Action Buttons --></th>
-					</tr>
-				</thead>
-				<tbody>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext("Group Name")?></th>
+				<th><?=gettext("Gateways")?></th>
+				<th><?=gettext("Priority")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><!-- Action Buttons --></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 $i = 0;
 foreach ($a_gateway_groups as $gateway_group):
 ?>
-					<tr>
-						<td>
-						   <?=$gateway_group['name']?>
-						</td>
-						<td>
+			<tr>
+				<td>
+				   <?=$gateway_group['name']?>
+				</td>
+				<td>
 <?php
 	foreach($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
 	}
 ?>
-						</td>
-						<td>
+				</td>
+				<td>
 <?php
 	foreach($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
 	}
 ?>
-						</td>
-						<td>
-							<?=htmlspecialchars($gateway_group['descr'])?>
-						</td>
-						<td>
-							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Edit')?></a>
-							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Duplicate')?></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" ><?=gettext('Delete')?></a>
-						</td>
-					</tr>
+				</td>
+				<td>
+					<?=htmlspecialchars($gateway_group['descr'])?>
+				</td>
+				<td>
+					<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Edit')?></a>
+					<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Duplicate')?></a>
+					<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" ><?=gettext('Delete')?></a>
+				</td>
+			</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-				</tbody>
-			</table>
-		</div>
-	   <nav class="action-buttons">
-		   <a href="system_gateway_groups_edit.php" class="btn btn-default"><?=gettext('Add')?></a>
-		</nav>
-	</div>
-</form>
+		</tbody>
+	</table>
+</div>
 
+<nav class="action-buttons">
+	<a href="system_gateway_groups_edit.php" class="btn btn-default"><?=gettext('Add')?></a>
+</nav>
 
 <?php
 	print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .

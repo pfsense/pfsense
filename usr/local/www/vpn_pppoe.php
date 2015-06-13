@@ -99,53 +99,51 @@ if (is_subsystem_dirty('vpnpppoe'))
 	print_info_box_np(gettext('The PPPoE entry list has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
 ?>
 
-<form action="vpn_pppoe.php" method="post">
-	<div class="panel panel-default panel-body">
-		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
-					<tr>
-						<th><?=gettext("Interface")?></th>
-						<th><?=gettext("Local IP")?></th>
-						<th><?=gettext("Number of users")?></th>
-						<th><?=gettext("Description")?></th>
-						<th><!-- Action buttons --></th>
-					</tr>
-				</thead>
-				<tbody>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext("Interface")?></th>
+				<th><?=gettext("Local IP")?></th>
+				<th><?=gettext("Number of users")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><!-- Action buttons --></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 $i = 0;
 foreach ($a_pppoes as $pppoe):
 ?>
-					<tr>
-						<td>
-							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($pppoe['interface']))?>
-						</td>
-						<td>
-							<?=htmlspecialchars($pppoe['localip'])?>
-						</td>
-						<td>
-							<?=htmlspecialchars($pppoe['n_pppoe_units'])?>
-						</td>
-						<td>
-							<?=htmlspecialchars($pppoe['descr'])?>
-						</td>
-						<td>
-							<a href="vpn_pppoe_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-							<a href="vpn_pppoe.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
-						</td>
-					</tr>
+			<tr>
+				<td>
+					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($pppoe['interface']))?>
+				</td>
+				<td>
+					<?=htmlspecialchars($pppoe['localip'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($pppoe['n_pppoe_units'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($pppoe['descr'])?>
+				</td>
+				<td>
+					<a href="vpn_pppoe_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+					<a href="vpn_pppoe.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+				</td>
+			</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-				</tbody>
-			</table>
-		</div>
-		<nav class="action-buttons">
-			<a href="vpn_pppoe_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
-		</nav>
-	</div>
-</form>
+		</tbody>
+	</table>
+</div>
+
+<nav class="action-buttons">
+	<a href="vpn_pppoe_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+</nav>
+
 <?php
 include("foot.inc");

@@ -110,58 +110,57 @@ $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_fil
 display_top_tabs($tab_array, true);
 
 ?>
-<form action="services_captiveportal_ip.php" method="post">
-	<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone)?>" />
-	<div class="table-responsive">
-		<table class="table table-hover table-striped table-condensed">
-			<thead>
-				<tr>
-				  <th><?=gettext("IP Addresses"); ?></th>
-				  <th><?=gettext("Description"); ?></th>
-				  <th><!-- Buttons --></th>
-				</tr>
-			</thead>
+<div class="table-responsive">
+	<table class="table table-hover table-striped table-condensed">
+		<thead>
+			<tr>
+			  <th><?=gettext("IP Addresses"); ?></th>
+			  <th><?=gettext("Description"); ?></th>
+			  <th><!-- Buttons --></th>
+			</tr>
+		</thead>
 
 <?php
 if (is_array($a_cp[$cpzone]['allowedip'])): ?>
-			<tbody>
+		<tbody>
 <?php
 	$i = 0;
 	foreach ($a_cp[$cpzone]['allowedip'] as $ip): ?>
-				<tr>
-					<td>
-						<?=$directionicons[$ip['dir']]?>&nbsp;<?=$ip['ip']?>
-						<?=($ip['sn'] != "32" && is_numeric($ip['sn'])) ? '/' . $ip['sn'] : ''?>
-					</td>
-					<td >
-						<?=htmlspecialchars($ip['descr'])?>
-					</td>
-					<td>
-						<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
-						<a href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
-					</td>
-				</tr>
+			<tr>
+				<td>
+					<?=$directionicons[$ip['dir']]?>&nbsp;<?=$ip['ip']?>
+					<?=($ip['sn'] != "32" && is_numeric($ip['sn'])) ? '/' . $ip['sn'] : ''?>
+				</td>
+				<td >
+					<?=htmlspecialchars($ip['descr'])?>
+				</td>
+				<td>
+					<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>" class="btn btn-xs btn-info">Edit</a>
+					<a href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+				</td>
+			</tr>
 <?php
 	$i++;
 	endforeach; ?>
-			<tbody>
-		</table>
-		<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>','</u>') . ', '?>
-		<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>','</u>') . ', '?>
-		<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
+		<tbody>
+	</table>
+
+	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>','</u>') . ', '?>
+	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>','</u>') . ', '?>
+	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
 <?php
 else :
 ?>
-			</tbody>
-		</table>
+		</tbody>
+	</table>
 <?php
 endif;
 ?>
-		<nav class="action-buttons">
-			<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
-		</nav>
-	</div>
-</form>
+</div>
+
+<nav class="action-buttons">
+	<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+</nav>
 
 <?php
 print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .

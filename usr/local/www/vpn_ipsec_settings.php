@@ -212,9 +212,12 @@ if ($_POST) {
 
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
-	}
-	header("Location: vpn_ipsec_settings.php");
-	return;
+
+		header("Location: vpn_ipsec_settings.php");
+		return;
+	} else
+		/* NOTE: Do not be smart here check #4655 */
+		$pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));

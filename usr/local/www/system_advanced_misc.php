@@ -118,6 +118,18 @@ if ($_POST) {
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MB.");
 	}
 
+	if (!empty($_POST['proxyport']) && !is_port($_POST['proxyport'])) {
+		$input_errors[] = gettext("Proxy port must be a valid port number, 1-65535.");
+	}
+	
+	if (!empty($_POST['proxyurl']) && !is_fqdn($_POST['proxyurl']) && !is_ipaddr($_POST['proxyurl'])) {
+		$input_errors[] = gettext("Proxy URL must be a valid IP address or FQDN.");
+	}
+	
+	if (!empty($_POST['proxyuser']) && preg_match("/[^a-zA-Z0-9\.\-_@]/", $_POST['proxyuser'])) {
+		$input_errors[] = gettext("The proxy username contains invalid characters.");
+	}
+	
 	if (!$input_errors) {
 
 		if ($_POST['harddiskstandby'] <> "") {

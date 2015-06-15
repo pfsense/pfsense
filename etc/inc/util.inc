@@ -762,7 +762,7 @@ function subnet_expand($subnet) {
 function subnetv4_expand($subnet) {
 	$result = array();
 	list ($ip, $bits) = explode("/", $subnet);
-	$net  = ip2long($ip);
+	$net = ip2long($ip);
 	$mask = (0xffffffff << (32 - $bits));
 	$net &= $mask;
 	$size = round(exp(log(2) * (32 - $bits)));
@@ -1064,7 +1064,7 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 function get_configured_ip_aliases_list($returnfullentry = false) {
 	global $config;
 
-	$alias_list=array();
+	$alias_list = array();
 
 	if (is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
@@ -1086,7 +1086,7 @@ function get_configured_ip_aliases_list($returnfullentry = false) {
 function get_configured_vips_list() {
 	global $config;
 
-	$alias_list=array();
+	$alias_list = array();
 
 	if (is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
@@ -1708,7 +1708,7 @@ function run_plugins($directory) {
  *    safe_mkdir($path, $mode = 0755)
  *    create directory if it doesn't already exist and isn't a file!
  */
-function safe_mkdir($path, $mode=0755) {
+function safe_mkdir($path, $mode = 0755) {
 	global $g;
 
 	if (!is_file($path) && !is_dir($path)) {
@@ -1951,7 +1951,7 @@ function isAjax() {
 function timeout($timer = 9) {
 	while (!isset($key)) {
 		if ($timer >= 9) {
-			echo chr(8) . chr(8) . ($timer == 9 ? chr(32) : null)  . "{$timer}";
+			echo chr(8) . chr(8) . ($timer == 9 ? chr(32) : null) . "{$timer}";
 		} else {
 			echo chr(8). "{$timer}";
 		}
@@ -1977,11 +1977,11 @@ function timeout($timer = 9) {
  * RESULT
  *   returns newly sorted array
  ******/
-function msort($array, $id="id", $sort_ascending=true) {
+function msort($array, $id = "id", $sort_ascending = true) {
 	$temp_array = array();
 	while (count($array)>0) {
 		$lowest_id = 0;
-		$index=0;
+		$index = 0;
 		foreach ($array as $item) {
 			if (isset($item[$id])) {
 				if ($array[$lowest_id][$id]) {

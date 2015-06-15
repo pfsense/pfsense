@@ -39,7 +39,7 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = array(gettext("Status"),gettext("Wireless"));
+$pgtitle = array(gettext("Status"), gettext("Wireless"));
 $shortcut_section = "wireless";
 include("head.inc");
 
@@ -114,7 +114,7 @@ include("fbegin.inc");
 	/* Skip Header */
 	array_shift($states);
 
-	$counter=0;
+	$counter = 0;
 	foreach ($states as $state) {
 		/* Split by Mac address for the SSID Field */
 		$split = preg_split("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state);
@@ -165,7 +165,7 @@ include("fbegin.inc");
 	exec("/sbin/ifconfig {$rwlif} list sta 2>&1", $states, $ret);
 	array_shift($states);
 
-	$counter=0;
+	$counter = 0;
 	foreach ($states as $state) {
 		$split = preg_split("/[ ]+/i", $state);
 		/* Split the rest by using spaces for this line using the 2nd part */

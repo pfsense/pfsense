@@ -156,7 +156,7 @@ function parse_filter_line($line) {
 	$flent['anchor'] = $rule_data[$field++];
 	$flent['tracker'] = $rule_data[$field++];
 	$flent['realint'] = $rule_data[$field++];
-	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
+	$flent['interface'] = convert_real_interface_to_friendly_descr($flent['realint']);
 	$flent['reason'] = $rule_data[$field++];
 	$flent['act'] = $rule_data[$field++];
 	$flent['direction'] = $rule_data[$field++];

@@ -410,7 +410,7 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	fwrite($fd, "/bin/cp -n /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "/bin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
-	$status = `/sbin/mount | /usr/bin/grep -v grep  | /usr/bin/grep  "{$g['dhcpd_chroot_path']}/dev"`;
+	$status = `/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep "{$g['dhcpd_chroot_path']}/dev"`;
 	if (!trim($status)) {
 		fwrite($fd, "/sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	}
@@ -600,7 +600,7 @@ EOD;
 				$my_port = "519";
 				$peer_port = "520";
 				$type = "primary";
-				$dhcpdconf_pri  = "split 128;\n";
+				$dhcpdconf_pri = "split 128;\n";
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
 
@@ -1622,7 +1622,7 @@ function services_dhcrelay_configure() {
 			if (!is_ipaddr($subnet)) {
 				continue;
 			}
-			$subnet .=  "/" . get_interface_subnet($ifname);
+			$subnet .= "/" . get_interface_subnet($ifname);
 			if (ip_in_subnet($srvip, $subnet)) {
 				$destif = get_real_interface($ifname);
 				break;
@@ -1688,10 +1688,10 @@ function services_dhcrelay_configure() {
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -i " .  implode(" -i ", $dhcrelayifs);
+	$cmd = "/usr/local/sbin/dhcrelay -i " . implode(" -i ", $dhcrelayifs);
 
 	if (isset($dhcrelaycfg['agentoption'])) {
-		$cmd .=  " -a -m replace";
+		$cmd .= " -a -m replace";
 	}
 
 	$cmd .= " " . implode(" ", $srvips);
@@ -1755,7 +1755,7 @@ function services_dhcrelay6_configure() {
 			if (!is_ipaddrv6($subnet)) {
 				continue;
 			}
-			$subnet .=  "/" . get_interface_subnetv6($ifname);
+			$subnet .= "/" . get_interface_subnetv6($ifname);
 			if (ip_in_subnet($srvip, $subnet)) {
 				$destif = get_real_interface($ifname);
 				break;
@@ -1848,8 +1848,8 @@ function services_dyndns_configure_client($conf) {
 		$dnsPort = NULL,
 		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
-		$dnsZoneID=$conf['zoneid'],
-		$dnsTTL=$conf['ttl'],
+		$dnsZoneID = $conf['zoneid'],
+		$dnsTTL = $conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
 		$dnsID = "{$conf['id']}",
@@ -2621,7 +2621,7 @@ function upnp_start() {
 	}
 }
 
-function install_cron_job($command, $active=false, $minute="0", $hour="*", $monthday="*", $month="*", $weekday="*", $who="root") {
+function install_cron_job($command, $active = false, $minute = "0", $hour = "*", $monthday = "*", $month = "*", $weekday = "*", $who = "root") {
 	global $config, $g;
 
 	$is_installed = false;
@@ -2634,7 +2634,7 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 		$config['cron']['item'] = array();
 	}
 
-	$x=0;
+	$x = 0;
 	foreach ($config['cron']['item'] as $item) {
 		if (strstr($item['command'], $command)) {
 			$is_installed = true;

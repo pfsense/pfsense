@@ -47,7 +47,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"),gettext("DHCP leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCP leases"));
 $shortcut_section = "dhcp";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
@@ -60,7 +60,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	/* $leases_contents has the lines of the file, including the newline char at the end of each line. */
 	$leases_contents = file($leasesfile);
 	$newleases_contents = array();
-	$i=0;
+	$i = 0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
 		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {\n") {
@@ -116,12 +116,11 @@ function adjust_gmt($dt) {
 	return $dt;
 }
 
-function remove_duplicate($array, $field)
-{
+function remove_duplicate($array, $field) {
 	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];
 	}
-	$unique = array_unique(array_reverse($cmp,true));
+	$unique = array_unique(array_reverse($cmp, true));
 	foreach ($unique as $k => $rien) {
 		$new[] = $array[$k];
 	}
@@ -141,10 +140,10 @@ exec("/usr/sbin/arp -an", $rawdata);
 $arpdata_ip = array();
 $arpdata_mac = array();
 foreach ($rawdata as $line) {
-	$elements = explode(' ',$line);
+	$elements = explode(' ', $line);
 	if ($elements[3] != "(incomplete)") {
 		$arpent = array();
-		$arpdata_ip[] = trim(str_replace(array('(',')'),'',$elements[1]));
+		$arpdata_ip[] = trim(str_replace(array('(', ')'), '', $elements[1]));
 		$arpdata_mac[] = strtolower(trim($elements[3]));
 	}
 }
@@ -167,7 +166,7 @@ foreach ($leases_content as $lease) {
 		$i++;
 		continue;
 	}
-	while($f < $fcount) {
+	while ($f < $fcount) {
 		switch ($data[$f]) {
 			case "failover":
 				$pools[$p]['name'] = trim($data[$f+2], '"');
@@ -251,7 +250,7 @@ foreach ($leases_content as $lease) {
 				break;
 			case "client-hostname":
 				if ($data[$f+1] <> "") {
-					$leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
+					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($leases[$l]['ip']);
 					if ($hostname <> "") {
@@ -276,11 +275,11 @@ unset($lease_content);
 
 /* remove duplicate items by mac address */
 if (count($leases) > 0) {
-	$leases = remove_duplicate($leases,"ip");
+	$leases = remove_duplicate($leases, "ip");
 }
 
 if (count($pools) > 0) {
-	$pools = remove_duplicate($pools,"name");
+	$pools = remove_duplicate($pools, "name");
 	asort($pools);
 }
 
@@ -405,7 +404,7 @@ foreach ($leases as $data) {
 				echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}</td>\n";
 			}
 		}
-		echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}" . htmlentities($data['hostname']) . "{$fspane}</td>\n";
 		if ($data['type'] != "static") {
 			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
 			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";

@@ -190,7 +190,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 						mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 					} else if (stristr($_FILES['ulfile']['name'], "bdiff")) {
 						mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
-					} else  {
+					} else {
 						if ($g['platform'] == "nanobsd") {
 							$whichone = "pfSenseNanoBSDupgrade";
 						} else {
@@ -264,7 +264,7 @@ include("head.inc");
 				<div id="mainarea">
 				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
-						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
+						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] . " " . gettext("Manual Upgrade"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="baseline" class="vncell">&nbsp;</td>

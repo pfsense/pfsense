@@ -52,7 +52,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Halt system"));
 include('head.inc');
 ?>
 
@@ -61,7 +61,7 @@ include('head.inc');
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
 	print_info_box(gettext("The system is halting now. This may take one minute.")); ?>
 <pre>
-<?php 	system_halt(); ?>
+<?php	system_halt(); ?>
 </pre>
 <?php else: ?>
 <form action="halt.php" method="post">

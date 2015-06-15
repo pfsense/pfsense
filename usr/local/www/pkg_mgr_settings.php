@@ -60,7 +60,7 @@ if ($_POST) {
 
 $curcfg = $config['system']['altpkgrepo'];
 $closehead = false;
-$pgtitle = array(gettext("System"),gettext("Package Settings"));
+$pgtitle = array(gettext("System"), gettext("Package Settings"));
 include("head.inc");
 ?>
 <script type="text/javascript">
@@ -138,7 +138,7 @@ function enable_altpkgrepourl(enable_over) {
 								</tr>
 							</table>
 							<span class="vexpl">
-								<?php printf(gettext("This is where %s will check for packages when the"),$g['product_name']);?> <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
+								<?php printf(gettext("This is where %s will check for packages when the"), $g['product_name']);?> <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
 							</span>
 						</td>
 					</tr>

@@ -331,7 +331,7 @@ function system_hosts_generate() {
 		$dnsmasqcfg = $config['dnsmasq'];
 	}
 
-	$hosts =  "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 	$hosts .= "::1		localhost localhost.{$syscfg['domain']}\n";
 	$lhosts = "";
 	$dhosts = "";
@@ -782,7 +782,7 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	// Rather than repeatedly use the same code, use this function to build a list of remote servers.
 	$facility .= " ".
 	$remote_servers = "";
-	$pad_to  = 56;
+	$pad_to = 56;
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
 	if ($syslogcfg['remoteserver']) {
 		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
@@ -1106,7 +1106,7 @@ function system_webgui_start() {
 		if (!$config['system']['webgui']['port']) {
 			$portarg = "443";
 		}
-		$ca  = ca_chain($cert);
+		$ca = ca_chain($cert);
 	}
 
 	/* generate lighttpd configuration */
@@ -1157,7 +1157,7 @@ function system_generate_lighty_config($filename,
 		echo "system_generate_lighty_config() being called $mt\n";
 	}
 
-	if ($captive_portal !== false)  {
+	if ($captive_portal !== false) {
 		$captiveportal = ",\"mod_rewrite\",\"mod_evasive\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 
@@ -1199,7 +1199,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM
-	if ($captive_portal !== false)  {
+	if ($captive_portal !== false) {
 		if ($realmem > 135 and $realmem < 256) {
 			$max_procs += 1; // 2 worker processes
 		} else if ($realmem > 255 and $realmem < 513) {

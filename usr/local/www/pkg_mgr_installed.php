@@ -50,7 +50,7 @@ date_default_timezone_set($timezone);
 
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
@@ -63,8 +63,8 @@ if (is_subsystem_dirty('packagelock')) {
 
 function domTT_title($title_msg, $return="echo") {
 	if (!empty($title_msg)) {
-		$title_msg=preg_replace("/\s+/"," ",$title_msg);
-		$title_msg=preg_replace("/'/","\'",$title_msg);
+		$title_msg = preg_replace("/\s+/", " ", $title_msg);
+		$title_msg = preg_replace("/'/", "\'", $title_msg);
 		$title= "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
 		if ($return =="echo") {
 			echo $title;
@@ -77,10 +77,10 @@ if (is_array($config['installedpackages']['package'])) {
 	foreach ($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink','descr'));
+	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
 }
 $closehead = false;
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"));
 include("head.inc");
 
 ?>
@@ -148,8 +148,8 @@ include("head.inc");
 									}
 
 									// get history/changelog git dir
-									$commit_dir=explode("/",$pkg['config_file']);
-									$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+									$commit_dir = explode("/", $pkg['config_file']);
+									$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/" . $commit_dir[(count($commit_dir)-2)];
 									#check package version
 									$latest_package = $currentvers[$pkg['name']]['version'];
 									if ($latest_package) {
@@ -157,21 +157,21 @@ include("head.inc");
 										if (strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
 											if ($g['disablepackagehistory']) {
-												$pkgver  = "<a>".gettext("Available") .": ". $latest_package . "<br />";
+												$pkgver = "<a>" . gettext("Available") . ": " . $latest_package . "<br />";
 											} else {
-												$pkgver  = "<a target='_blank' href='$changeloglink'>".gettext("Available") .": ". $latest_package . "<br />";
+												$pkgver = "<a target='_blank' href='$changeloglink'>" . gettext("Available") . ": " . $latest_package . "<br />";
 											}
-											$pkgver .= gettext("Installed") .": ". $pkg['version']. "</a>";
+											$pkgver .= gettext("Installed") . ": " . $pkg['version'] . "</a>";
 										}
 										// we're running an older version of the package
 										if (strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
 											if ($g['disablepackagehistory']) {
-												$pkgver  = "<a><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "</font><br />";
+												$pkgver = "<a><font color='#ffffff'>" . gettext("Available") . ": " . $latest_package . "</font><br />";
 											} else {
-												$pkgver  = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br />";
+												$pkgver = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Available") . ": " . $latest_package . "<br />";
 											}
-											$pkgver .= gettext("Installed") .": ". $pkg['version']."</font></a>";
+											$pkgver .= gettext("Installed") . ": " . $pkg['version'] . "</font></a>";
 										}
 										// we're running the current version
 										if (!strcmp($pkg['version'], $latest_package)) {
@@ -187,11 +187,11 @@ include("head.inc");
 										// unknown available package version
 										$tdclass = "listbg";
 										if ($g['disablepackagehistory']) {
-											$pkgver = "<a><font color='#ffffff'>" . gettext("Latest") .": ". gettext("N/A") . "</font><br />";
+											$pkgver = "<a><font color='#ffffff'>" . gettext("Latest") . ": " . gettext("N/A") . "</font><br />";
 										} else {
-											$pkgver = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Latest") .": ". gettext("N/A") . "<br />";
+											$pkgver = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Latest") . ": " . gettext("N/A") . "<br />";
 										}
-										$pkgver .= gettext("Installed") .": ". $pkg['version']."</font></a>";
+										$pkgver .= gettext("Installed") . ": " . $pkg['version'] . "</font></a>";
 										$pkgdescr = $pkg['descr'];
 									}
 									/* Check package info link */
@@ -215,10 +215,10 @@ include("head.inc");
 							if (isset($g['disablepackagehistory'])) {
 								echo "<td class='{$tdclass}'>{$pkgver}</td>";
 							} else {
-								echo "<td class='{$tdclass}' ".domTT_title(gettext("Click on ".ucfirst($pkg['name'])." version to check its change log."),"return").">{$pkgver}</td>";
+								echo "<td class='{$tdclass}' " . domTT_title(gettext("Click on " . ucfirst($pkg['name']) . " version to check its change log."), "return").">{$pkgver}</td>";
 							}
 							?>
-							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($pkg['name'])." package."))?>>
+							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about " . ucfirst($pkg['name']) . " package."))?>>
 								<?=$pkgdescr;?>
 							<?php if (!$g['disablepackageinfo']): ?>
 								<br /><br />
@@ -227,14 +227,14 @@ include("head.inc");
 							</td>
 							<td valign="middle" class="list nowrap">
 								<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?= $pkg['name']; ?>">
-									<img <?=domTT_title(gettext("Remove ".ucfirst($pkg['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
+									<img <?=domTT_title(gettext("Remove " . ucfirst($pkg['name']) . " package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 								</a>
 								<br />
 								<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>">
-									<img <?=domTT_title(gettext("Reinstall ".ucfirst($pkg['name'])." package."));?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" />
+									<img <?=domTT_title(gettext("Reinstall " . ucfirst($pkg['name']) . " package."));?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" />
 								</a>
 								<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?= $pkg['name']; ?>">
-									<img <?=domTT_title(gettext("Reinstall ".ucfirst($pkg['name'])."'s GUI components."));?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0" alt="reinstall" />
+									<img <?=domTT_title(gettext("Reinstall " . ucfirst($pkg['name']) . "'s GUI components."));?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0" alt="reinstall" />
 								</a>
 							</td>
 						</tr>

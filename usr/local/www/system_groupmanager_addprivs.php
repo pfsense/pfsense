@@ -237,7 +237,7 @@ function update_description() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+								<input id="submitt" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($groupid)): ?>
 								<input name="groupid" type="hidden" value="<?=htmlspecialchars($groupid);?>" />

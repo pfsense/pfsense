@@ -98,7 +98,7 @@ if ($macfilter || $passthrumac) {
 	$tmpres = pfSense_ip_to_mac($clientip);
 	if (!is_array($tmpres)) {
 		/* unable to find MAC address - shouldn't happen! - bail out */
-		captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
+		captiveportal_logportalauth("unauthenticated", "noclientmac", $clientip, "ERROR");
 		echo "An error occurred.  Please check the system logs for more information.";
 		log_error("Zone: {$cpzone} - Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
 		ob_flush();
@@ -142,19 +142,19 @@ EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);
 
 } else if ($macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
-	captiveportal_logportalauth($clientmac,$clientmac,$clientip,"Blocked MAC address");
+	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");
 	} else {
 		portal_reply_page($redirurl, "error", "This MAC address has been blocked");
 	}
 
-} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip, $radiusctx)) {
+} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac, $clientip, $radiusctx)) {
 	/* radius functions handle everything so we exit here since we're done */
 
 } else if (portal_consume_passthrough_credit($clientmac)) {
 	/* allow the client through if it had a pass-through credit for its MAC */
-	captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
+	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
 } else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
@@ -163,22 +163,23 @@ EOD;
 	// $timecredit contains either a credit in minutes or an error message
 	if ($timecredit > 0) {  // voucher is valid. Remaining minutes returned
 		// if multiple vouchers given, use the first as username
-		$a_vouchers = preg_split("/[\t\n\r ]+/s",$voucher);
+		$a_vouchers = preg_split("/[\t\n\r ]+/s", $voucher);
 		$voucher = $a_vouchers[0];
-		$attr = array( 'voucher' => 1,
-				'session_timeout' => $timecredit*60,
-				'session_terminate_time' => 0);
-		if (portal_allow($clientip, $clientmac,$voucher,null,$attr)) {
+		$attr = array(
+			'voucher' => 1,
+			'session_timeout' => $timecredit*60,
+			'session_terminate_time' => 0);
+		if (portal_allow($clientip, $clientmac, $voucher, null, $attr)) {
 			// YES: user is good for $timecredit minutes.
-			captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
+			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
 			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
 		}
 	} else if (-1 == $timecredit) {  // valid but expired
-		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
+		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE", "voucher expired");
 		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
 	} else {
-		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
+		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE");
 		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg);
 	}
 
@@ -191,7 +192,7 @@ EOD;
 			$user = $_POST['auth_user2'];
 			$paswd = $_POST['auth_pass2'];
 		}
-		$auth_list = radius($user,$paswd,$clientip,$clientmac,"USER LOGIN", $radiusctx);
+		$auth_list = radius($user, $paswd, $clientip, $clientmac, "USER LOGIN", $radiusctx);
 		$type = "error";
 		if (!empty($auth_list['url_redirection'])) {
 			$redirurl = $auth_list['url_redirection'];
@@ -199,10 +200,10 @@ EOD;
 		}
 
 		if ($auth_list['auth_val'] == 1) {
-			captiveportal_logportalauth($user,$clientmac,$clientip,"ERROR",$auth_list['error']);
+			captiveportal_logportalauth($user, $clientmac, $clientip, "ERROR", $auth_list['error']);
 			portal_reply_page($redirurl, $type, $auth_list['error'] ? $auth_list['error'] : $errormsg);
 		} else if ($auth_list['auth_val'] == 3) {
-			captiveportal_logportalauth($user,$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
+			captiveportal_logportalauth($user, $clientmac, $clientip, "FAILURE", $auth_list['reply_message']);
 			portal_reply_page($redirurl, $type, $auth_list['reply_message'] ? $auth_list['reply_message'] : $errormsg);
 		}
 	} else {
@@ -213,7 +214,7 @@ EOD;
 		} else {
 			$user = 'unknown';
 		}
-		captiveportal_logportalauth($user ,$clientmac,$clientip,"ERROR");
+		captiveportal_logportalauth($user, $clientmac, $clientip, "ERROR");
 		portal_reply_page($redirurl, "error", $errormsg);
 	}
 
@@ -226,11 +227,11 @@ EOD;
 			$loginok = userHasPrivilege(getUserEntry($_POST['auth_user']), "user-services-captiveportal-login");
 		}
 
-		if ($loginok){
-			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
-			portal_allow($clientip, $clientmac,$_POST['auth_user']);
+		if ($loginok) {
+			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "LOGIN");
+			portal_allow($clientip, $clientmac, $_POST['auth_user']);
 		} else {
-			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
+			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "FAILURE");
 			portal_reply_page($redirurl, "error", $errormsg);
 		}
 	} else {
@@ -238,12 +239,12 @@ EOD;
 	}
 
 } else if ($_POST['accept'] && $clientip && $cpcfg['auth_method'] == "none") {
-	captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
+	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
 } else {
 	/* display captive portal page */
-	portal_reply_page($redirurl, "login",null,$clientmac,$clientip);
+	portal_reply_page($redirurl, "login", null, $clientmac, $clientip);
 }
 
 ob_flush();

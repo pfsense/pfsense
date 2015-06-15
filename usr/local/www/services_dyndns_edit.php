@@ -467,7 +467,7 @@ function _onTypeChange(type) {
 					</span>
 					<?php printf(gettext("You must configure a DNS server in %sSystem:
 						General setup%s or allow the DNS server list to be overridden
-						by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">','</a>');?>
+						by DHCP/PPP on WAN for dynamic DNS updates to work."), '<a href="system.php">', '</a>');?>
 				</span>
 			</td>
 		</tr>

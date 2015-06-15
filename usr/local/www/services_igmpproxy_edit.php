@@ -92,7 +92,7 @@ if ($_POST) {
 	$address = "";
 	$isfirst = 0;
 	/* item is a normal igmpentry type */
-	for ($x=0; $x<4999; $x++) {
+	for ($x = 0; $x < 4999; $x++) {
 		if ($_POST["address{$x}"] <> "") {
 			if ($isfirst > 0) {
 				$address .= " ";
@@ -203,15 +203,15 @@ include("head.inc");
 				</select>
 				<br />
 				<span class="vexpl">
-					<?=gettext("The <b>upstream</b> network interface is the outgoing interface which is".
-						" responsible for communicating to available multicast data sources.".
+					<?=gettext("The <b>upstream</b> network interface is the outgoing interface which is" .
+						" responsible for communicating to available multicast data sources." .
 						" There can only be one upstream interface.");?>
 				</span>
 				<br />
 				<span class="vexpl">
 					<b><?=gettext("Downstream"); ?></b>
-					<?=gettext("network interfaces are the distribution  interfaces  to  the".
-						" destination  networks,  where  multicast  clients  can  join groups and".
+					<?=gettext("network interfaces are the distribution interfaces to the" .
+						" destination networks, where multicast clients can join groups and" .
 						" receive multicast data. One or more downstream interfaces must be configured.");?>
 				</span>
 			</td>
@@ -222,8 +222,8 @@ include("head.inc");
 				<input name="threshold" class="formfld unknown" id="threshold" value="<?php echo htmlspecialchars($pconfig['threshold']);?>" />
 				<br />
 				<span class="vexpl">
-					<?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".
-						" with  a lower TTL than the threshold value will be ignored. This".
+					<?=gettext("Defines the TTL threshold for the network interface. Packets" .
+						" with a lower TTL than the threshold value will be ignored. This" .
 						" setting is optional, and by default the threshold is 1.");?>
 				</span>
 			</td>

@@ -1214,7 +1214,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	$ldac_splits = explode(";", $ldapauthcont);
 
 	/* setup the usercount so we think we haven't found anyone yet */
-	$usercount  = 0;
+	$usercount = 0;
 
 	/*****************************************************************/
 	/*  We First find the user based on username and filter          */
@@ -1242,9 +1242,9 @@ function ldap_backed($username, $passwd, $authcfg) {
 		}
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
-			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
+			$search = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		} else {
-			$search  = @$ldapfunc($ldap,$ldapsearchbasedn,$ldapfilter);
+			$search = @$ldapfunc($ldap,$ldapsearchbasedn,$ldapfilter);
 		}
 		if (!$search) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));

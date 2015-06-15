@@ -499,7 +499,7 @@ if ($savemsg) {
 	<tr>
 		<td class="tabcont">
 
-			<?php if ($act=="new" || $act=="edit"): ?>
+			<?php if ($act == "new" || $act == "edit"): ?>
 
 			<form action="vpn_openvpn_client.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="general information">

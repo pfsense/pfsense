@@ -220,7 +220,7 @@ function ipsec_get_phase1_src(& $ph1ent) {
 				$interfaceip = get_interface_ip($if);
 			}
 		} else {
-			$interfaceip=$ph1ent['interface'];
+			$interfaceip = $ph1ent['interface'];
 		}
 	} else {
 		$if = "wan";
@@ -511,7 +511,7 @@ function ipsec_dump_spd() {
 						$upperspec = explode("/", $linea[0]);
 						$cursp['proto'] = $upperspec[0];
 						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
-						$cursp['reqid'] =  substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
 						break;
 				}
 			}
@@ -619,7 +619,7 @@ function ipsec_get_number_of_phase2($ikeid) {
 	global $config;
 	$a_phase2 = $config['ipsec']['phase2'];
 
-	$nbph2=0;
+	$nbph2 = 0;
 
 	if (is_array($a_phase2) && count($a_phase2)) {
 		foreach ($a_phase2 as $ph2tmp) {

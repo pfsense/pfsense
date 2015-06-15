@@ -328,7 +328,7 @@ if ($_POST) {
 	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {
 		if ($_POST['ipprotocol'] == "inet46") {
-			$input_errors[] =  gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
+			$input_errors[] = gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
 		}
 	}
 
@@ -389,7 +389,7 @@ if ($_POST) {
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
-	}  else if ($_POST['dsttype'] == "single") {
+	} else if ($_POST['dsttype'] == "single") {
 		if (is_ipaddrv6($_POST['dst'])) {
 			$_POST['dstmask'] = 128;
 		} else {
@@ -401,31 +401,31 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
-	if (isset($a_filter[$id]['associated-rule-id'])===false) {
+	if (isset($a_filter[$id]['associated-rule-id']) === false) {
 		$reqdfields[] = "src";
 		$reqdfields[] = "dst";
 	}
 	$reqdfieldsn = explode(",", "Type,Protocol");
-	if (isset($a_filter[$id]['associated-rule-id'])===false) {
+	if (isset($a_filter[$id]['associated-rule-id']) === false) {
 		$reqdfieldsn[] = "Source";
 		$reqdfieldsn[] = "Destination";
 	}
 
 	if ($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if ($_POST['proto'] != "tcp") {
-			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."),$_POST['statetype']);
+			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."), $_POST['statetype']);
 		}
 		if (($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != "")) {
-			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."),$_POST['statetype']);
+			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."), $_POST['statetype']);
 		}
 	}
 
-	if (isset($a_filter[$id]['associated-rule-id'])===false &&
+	if (isset($a_filter[$id]['associated-rule-id']) === false &&
 	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
-	if (isset($a_filter[$id]['associated-rule-id'])===false &&
+	if (isset($a_filter[$id]['associated-rule-id']) === false &&
 	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
@@ -443,16 +443,16 @@ if ($_POST) {
 	}
 
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
-		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcbeginposrt']);
+		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginposrt']);
 	}
 	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
-			$input_errors[] = sprintf(gettext("%s  is not a valid end source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcendport']);
+			$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
 	}
 	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
-			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
+			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
 	}
 	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
-			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
+			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 	}
 	if (!$_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
 		if (is_alias($_POST['srcendport_cust'])) {
@@ -463,8 +463,8 @@ if ($_POST) {
 		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
-		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust']!='')) ||
-		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust']))) {
+		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 		}
 	}
@@ -477,8 +477,8 @@ if ($_POST) {
 		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
-		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust']!='')) ||
-		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust']))) {
+		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 		}
 	}
@@ -504,7 +504,7 @@ if ($_POST) {
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."),$_POST['src']);
+			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
 		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
@@ -512,7 +512,7 @@ if ($_POST) {
 	}
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."),$_POST['dst']);
+			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
@@ -594,7 +594,7 @@ if ($_POST) {
 		}
 	}
 
-	if (!in_array($_POST['proto'], array("tcp","tcp/udp"))) {
+	if (!in_array($_POST['proto'], array("tcp", "tcp/udp"))) {
 		if (!empty($_POST['max-src-conn'])) {
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
 		}
@@ -744,7 +744,7 @@ if ($_POST) {
 				$filterent['quick'] = $_POST['quick'];
 			}
 			$filterent['floating'] = "yes";
-			if (isset($_POST['interface']) && count($_POST['interface']) > 0)  {
+			if (isset($_POST['interface']) && count($_POST['interface']) > 0) {
 				$filterent['interface'] = implode(",", $_POST['interface']);
 			}
 		}
@@ -919,7 +919,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Rules"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
 $shortcut_section = "firewall";
 
 $closehead = false;
@@ -1001,7 +1001,7 @@ include("head.inc");
 					$edit_disabled = "disabled";
 					if (is_array($config['nat']['rule'])) {
 						foreach ($config['nat']['rule'] as $index => $nat_rule) {
-							if (isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
+							if (isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
 								echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br />";
 								break;
 							}
@@ -1065,7 +1065,7 @@ include("head.inc");
 						}
 					}
 					/* add openvpn/tun interfaces */
-					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+					if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 						$interfaces["openvpn"] = "OpenVPN";
 					}
 					if (is_array($pconfig['interface'])) {
@@ -1091,7 +1091,7 @@ include("head.inc");
 			</td>
 			<td width="78%" class="vtable">
 				<select name="direction" class="formselect">
-				<?php $directions = array('any','in','out');
+				<?php $directions = array('any', 'in', 'out');
 				foreach ($directions as $direction): ?>
 				<option value="<?=$direction;?>"
 					<?php if ($direction == $pconfig['direction']): ?>
@@ -1109,7 +1109,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="ipprotocol" class="formselect" onchange="proto_change()">
 				<?php
-				$ipproto = array('inet' => 'IPv4','inet6' => 'IPv6', 'inet46' => 'IPv4+IPv6');
+				$ipproto = array('inet' => 'IPv4', 'inet6' => 'IPv6', 'inet46' => 'IPv4+IPv6');
 				foreach ($ipproto as $proto => $name):
 				?>
 					<option value="<?=$proto;?>"
@@ -1213,7 +1213,7 @@ include("head.inc");
 ?>
 								<?php if (have_ruleint_access($ifent)): ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
-									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
+									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] == $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
 									</option>
 								<?php endif; ?>
@@ -1509,13 +1509,13 @@ include("head.inc");
 							$tcpflags1 = "<td width='40' class='nowrap'>set</td>";
 							$tcpflags2 = "<td width='40' class='nowrap'>out of</td>";
 							foreach ($tcpflags as $tcpflag) {
-								$header .= "<td  width='40' class='nowrap'><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
-								$tcpflags1 .= "<td  width='40' class='nowrap'> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
+								$header .= "<td width='40' class='nowrap'><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
+								$tcpflags1 .= "<td width='40' class='nowrap'> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
 								if (array_search($tcpflag, $setflags) !== false) {
 									$tcpflags1 .= "checked=\"checked\"";
 								}
 								$tcpflags1 .= " /></td>\n";
-								$tcpflags2 .= "<td  width='40' class='nowrap'> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
+								$tcpflags2 .= "<td width='40' class='nowrap'> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
 								if (array_search($tcpflag, $outofflags) !== false) {
 									$tcpflags2 .= "checked=\"checked\"";
 								}
@@ -1550,7 +1550,7 @@ include("head.inc");
 					<select name="statetype">
 						<option value="keep state" <?php if (!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected=\"selected\""; ?>><?=gettext("keep state");?></option>
 						<option value="sloppy state" <?php if ($pconfig['statetype'] == "sloppy state") echo "selected=\"selected\""; ?>><?=gettext("sloppy state");?></option>
-						<option value="synproxy state"<?php if ($pconfig['statetype'] == "synproxy state")  echo "selected=\"selected\""; ?>><?=gettext("synproxy state");?></option>
+						<option value="synproxy state"<?php if ($pconfig['statetype'] == "synproxy state") echo "selected=\"selected\""; ?>><?=gettext("synproxy state");?></option>
 						<option value="none"<?php if ($pconfig['statetype'] == "none") echo "selected=\"selected\""; ?>><?=gettext("none");?></option>
 					</select><br />
 					<span class="vexpl">
@@ -1926,7 +1926,7 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 	<?php endif; ?>
 
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("srcbeginport_cust"), new StateSuggestions(customarray));

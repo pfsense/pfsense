@@ -2415,7 +2415,7 @@ function upgrade_062_to_063() {
 
 function upgrade_063_to_064() {
 	global $config;
-	$j=0;
+	$j = 0;
 	$ifcfg = &$config['interfaces'];
 
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
@@ -2448,7 +2448,7 @@ function upgrade_063_to_064() {
 			if (isset($ifinfo['ptpid'])) {
 				continue;
 			}
-			$ppp['ptpid'] =  $j;
+			$ppp['ptpid'] = $j;
 			$ppp['type'] = $ifinfo['ipaddr'];
 			$ppp['if'] = $ifinfo['ipaddr'].$j;
 			$ppp['ports'] = $ifinfo['if'];

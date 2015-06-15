@@ -3802,7 +3802,7 @@ function filter_tdr_install_cron($should_install) {
 		$config['cron']['item'] = array();
 	}
 
-	$x=0;
+	$x = 0;
 	$is_installed = false;
 	foreach ($config['cron']['item'] as $item) {
 		if (strstr($item['command'], "filter_configure_sync")) {

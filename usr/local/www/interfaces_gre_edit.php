@@ -77,7 +77,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("Local address"),gettext("Remote tunnel address"),gettext("Remote tunnel network"), gettext("Local tunnel address"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Local address"), gettext("Remote tunnel address"), gettext("Remote tunnel network"), gettext("Local tunnel address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -93,7 +93,7 @@ if ($_POST) {
 		}
 
 		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
-			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."),$gre['remote-network']);
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."), $gre['remote-network']);
 			break;
 		}
 	}
@@ -134,7 +134,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GRE"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

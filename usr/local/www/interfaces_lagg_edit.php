@@ -146,7 +146,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("LAGG"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

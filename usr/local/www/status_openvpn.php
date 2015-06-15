@@ -115,10 +115,10 @@ include("head.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 	function killClient(mport, remipp) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+		var busy = function(index, icon) {
+			jQuery(icon).bind("onclick", "");
+			jQuery(icon).attr('src', jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor", "wait");
 		}
 
 		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
@@ -138,7 +138,7 @@ include("head.inc"); ?>
 		}
 
 		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+			function(index, row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -219,7 +219,7 @@ include("head.inc"); ?>
 		if (is_array($server['routes']) && count($server['routes'])):
 ?>
 <div id="shroutebut-<?= $i ?>">
-	<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
+	<input type="button" onClick="show_routes('tabroute-<?= $i ?>', 'shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
 	<br /><br />
 </div>
 <table style="display: none; padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" id="tabroute-<?= $i ?>" summary="routing table">

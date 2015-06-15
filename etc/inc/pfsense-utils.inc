@@ -98,7 +98,7 @@ function does_url_exist($url) {
  ******/
 function is_private_ip($iptocheck) {
 	$isprivate = false;
-	$ip_private_list=array(
+	$ip_private_list = array(
 		"10.0.0.0/8",
 		"100.64.0.0/10",
 		"172.16.0.0/12",
@@ -498,7 +498,7 @@ function WakeOnLan($addr, $mac) {
 	$addr_byte = explode(':', $mac);
 	$hw_addr = '';
 
-	for ($a=0; $a < 6; $a++) {
+	for ($a = 0; $a < 6; $a++) {
 		$hw_addr .= chr(hexdec($addr_byte[$a]));
 	}
 
@@ -515,7 +515,7 @@ function WakeOnLan($addr, $mac) {
 		log_error(sprintf(gettext("Error code is '%1\$s' - %2\$s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
 	} else {
 		// setting a broadcast option to socket:
-		$opt_ret =  socket_set_option($s, 1, 6, TRUE);
+		$opt_ret = socket_set_option($s, 1, 6, TRUE);
 		if ($opt_ret < 0) {
 			log_error(sprintf(gettext("setsockopt() failed, error: %s"), strerror($opt_ret)));
 		}
@@ -981,7 +981,7 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function setup_serial_port($when="save", $path="") {
+function setup_serial_port($when = "save", $path = "") {
 	global $g, $config;
 	conf_mount_rw();
 	$ttys_file = "{$path}/etc/ttys";
@@ -1260,7 +1260,7 @@ function is_pppoe_server_enabled() {
 }
 
 function convert_seconds_to_hms($sec) {
-	$min=$hrs=0;
+	$min = $hrs = 0;
 	if ($sec != 0) {
 		$min = floor($sec/60);
 		$sec %= 60;
@@ -1288,7 +1288,7 @@ function get_ppp_uptime($port) {
 	if (file_exists("/conf/{$port}.log")) {
 		$saved_time = file_get_contents("/conf/{$port}.log");
 		$uptime_data = explode("\n", $saved_time);
-		$sec=0;
+		$sec = 0;
 		foreach ($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
 		}
@@ -1770,10 +1770,11 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	if (!isset($config['system']['host_uuid']))
+	if (!isset($config['system']['host_uuid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
-	else
+	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1793,10 +1794,10 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	return ($http_code == 200) ? true : $http_code;
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout=0) {
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
 	global $config, $g;
 	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
-	$file_size  = 1;
+	$file_size = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
 	/* open destination file */
@@ -1815,10 +1816,11 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	if (!isset($config['system']['host_uuid']))
+	if (!isset($config['system']['host_uuid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
-	else
+	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -2354,21 +2356,21 @@ function nanobsd_switch_boot_slice() {
 	}
 	ob_implicit_flush(1);
 	if (strstr($slice, "s2")) {
-		$ASLICE="2";
-		$AOLDSLICE="1";
-		$AGLABEL_SLICE="pfsense1";
-		$AUFS_ID="1";
-		$AOLD_UFS_ID="0";
+		$ASLICE = "2";
+		$AOLDSLICE = "1";
+		$AGLABEL_SLICE = "pfsense1";
+		$AUFS_ID = "1";
+		$AOLD_UFS_ID = "0";
 	} else {
-		$ASLICE="1";
-		$AOLDSLICE="2";
-		$AGLABEL_SLICE="pfsense0";
-		$AUFS_ID="0";
-		$AOLD_UFS_ID="1";
+		$ASLICE = "1";
+		$AOLDSLICE = "2";
+		$AGLABEL_SLICE = "pfsense0";
+		$AUFS_ID = "0";
+		$AOLD_UFS_ID = "1";
 	}
-	$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
-	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
-	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
+	$ATOFLASH = "{$BOOT_DRIVE}s{$ASLICE}";
+	$ACOMPLETE_PATH = "{$BOOT_DRIVE}s{$ASLICE}a";
+	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
 	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
@@ -2442,23 +2444,23 @@ function nanobsd_detect_slice_info() {
 
 	// Detect which slice is active and set information.
 	if (strstr($REAL_BOOT_DEVICE, "s1")) {
-		$SLICE="2";
-		$OLDSLICE="1";
-		$GLABEL_SLICE="pfsense1";
-		$UFS_ID="1";
-		$OLD_UFS_ID="0";
+		$SLICE = "2";
+		$OLDSLICE = "1";
+		$GLABEL_SLICE = "pfsense1";
+		$UFS_ID = "1";
+		$OLD_UFS_ID = "0";
 
 	} else {
-		$SLICE="1";
-		$OLDSLICE="2";
-		$GLABEL_SLICE="pfsense0";
-		$UFS_ID="0";
-		$OLD_UFS_ID="1";
+		$SLICE = "1";
+		$OLDSLICE = "2";
+		$GLABEL_SLICE = "pfsense0";
+		$UFS_ID = "0";
+		$OLD_UFS_ID = "1";
 	}
-	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
-	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+	$TOFLASH = "{$BOOT_DRIVE}s{$SLICE}";
+	$COMPLETE_PATH = "{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH = "{$BOOT_DRIVE}s{$OLDSLICE}";
+	$BOOTFLASH = "{$BOOT_DRIVE}s{$OLDSLICE}";
 }
 
 function nanobsd_friendly_slice_name($slicename) {
@@ -2657,7 +2659,7 @@ function generate_ipv6_from_mac($mac) {
 	$ipv6 = "fe80::";
 	foreach ($elements as $byte) {
 		if ($i == 0) {
-			$hexadecimal =  substr($byte, 1, 2);
+			$hexadecimal = substr($byte, 1, 2);
 			$bitmap = base_convert($hexadecimal, 16, 2);
 			$bitmap = str_pad($bitmap, 4, "0", STR_PAD_LEFT);
 			$bitmap = substr($bitmap, 0, 2) ."1". substr($bitmap, 3, 4);
@@ -2697,7 +2699,7 @@ function load_mac_manufacturer_table() {
 		foreach ($macs as $line) {
 			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)) {
 				/* store values like this $mac_man['000C29']='VMware' */
-				$mac_man["$matches[1]"]=$matches[2];
+				$mac_man["$matches[1]"] = $matches[2];
 			}
 		}
 		return $mac_man;
@@ -2819,7 +2821,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5)  == $vip['uniqdid']) {
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5) == $vip['uniqdid']) {
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {

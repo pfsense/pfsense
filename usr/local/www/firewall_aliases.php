@@ -52,7 +52,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-$tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
+$tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
 if ($_POST) {
 
@@ -160,7 +160,7 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"));
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"));
 $shortcut_section = "aliases";
 
 include("head.inc");
@@ -180,10 +180,10 @@ include("head.inc");
 		<td class="tabnavtbl">
 			<?php
 				$tab_array = array();
-				$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
-				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-				$tab_array[] = array(gettext("URLs"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
-				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
+				$tab_array[] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
+				$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
+				$tab_array[] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
+				$tab_array[] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 				display_top_tabs($tab_array);
 			?>
 			<input type="hidden" name="tab" value="<?=htmlspecialchars($tab);?>" />
@@ -198,7 +198,7 @@ include("head.inc");
 						<td width="43%" class="listhdrr"><?=gettext("Values"); ?></td>
 						<td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 						<td width="7%" class="list">
-							<table  border="0" cellspacing="0" cellpadding="1" summary="add">
+							<table border="0" cellspacing="0" cellpadding="1" summary="add">
 								<tr>
 									<td valign="middle" width="17">&nbsp;</td>
 									<td valign="middle"><a href="firewall_aliases_edit.php?tab=<?=$tab?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" <?=dom_title(gettext("Add a new alias"));?> alt="add" /></a></td>
@@ -208,21 +208,21 @@ include("head.inc");
 					</tr>
 					<?php
 					asort($a_aliases);
-					foreach ($a_aliases as $i=> $alias){
+					foreach ($a_aliases as $i=> $alias) {
 						unset ($show_alias);
-						switch ($tab){
+						switch ($tab) {
 							case "all":
 								$show_alias= true;
 								break;
 							case "ip":
 							case "host":
 							case "network":
-								if (preg_match("/(host|network)/",$alias["type"])) {
+								if (preg_match("/(host|network)/", $alias["type"])) {
 									$show_alias= true;
 								}
 								break;
 							case "url":
-								if (preg_match("/(url)/i",$alias["type"])) {
+								if (preg_match("/(url)/i", $alias["type"])) {
 									$show_alias= true;
 								}
 								break;

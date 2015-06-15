@@ -222,7 +222,7 @@ function show_advanced_dns() {
 					" their hostname when requesting a DHCP lease will be registered".
 					" in the DNS forwarder, so that their name can be resolved.".
 					" You should also set the domain in %sSystem:".
-					" General setup%s to the proper value."),'<a href="system.php">','</a>')?>
+					" General setup%s to the proper value."), '<a href="system.php">', '</a>')?>
 			</p>
 		</td>
 	</tr>
@@ -237,7 +237,7 @@ function show_advanced_dns() {
 				<?php printf(gettext("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
 					"resolved. You should also set the domain in %s".
-					"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?>
+					"System: General setup%s to the proper value."), '<a href="system.php">', '</a>');?>
 			</p>
 		</td>
 	</tr>
@@ -383,7 +383,7 @@ function show_advanced_dns() {
 			" is checked. If you don't use that option (or if you use".
 			" a static IP address on WAN), you must manually specify at".
 			" least one DNS server on the %sSystem:".
-			"General setup%s page."),'<a href="system.php">','</a>','<a href="system.php">','</a>');?><br />
+			"General setup%s page."), '<a href="system.php">', '</a>', '<a href="system.php">', '</a>');?><br />
 	</span>
 </p>
 

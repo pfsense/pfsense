@@ -240,9 +240,9 @@ include("head.inc");
 
 function maxmss_checked(obj) {
 	if (obj.checked) {
-		jQuery('#maxmss').attr('disabled',false);
+		jQuery('#maxmss').attr('disabled', false);
 	} else {
-		jQuery('#maxmss').attr('disabled','true');
+		jQuery('#maxmss').attr('disabled', 'true');
 	}
 }
 
@@ -294,8 +294,9 @@ function maxmss_checked(obj) {
 										echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
 										foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
 											echo "<option value=\"{$lidx}\" ";
-											if ($pconfig["ipsec_{$lkey}"] == $lidx)
+											if ($pconfig["ipsec_{$lkey}"] == $lidx) {
 												echo "selected=\"selected\"";
+											}
 											echo ">{$lvalue}</option>\n";
 										}
 										?>

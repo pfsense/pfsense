@@ -1063,9 +1063,9 @@ function enable_change(enable_change) {
 											$macformats = array("singledash", "ietf", "cisco", "unformatted");
 											foreach ($macformats as $macformat) {
 												if ($pconfig['radmac_format'] == $macformat) {
-													echo "<option selected=\"selected\" value=\"$macformat\">",gettext($macformat),"</option>\n";
+													echo "<option selected=\"selected\" value=\"$macformat\">", gettext($macformat), "</option>\n";
 												} else {
-													echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
+													echo "<option value=\"$macformat\">", gettext($macformat), "</option>\n";
 												}
 											}
 										?>
@@ -1136,7 +1136,7 @@ function enable_change(enable_change) {
 								$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 8001);
 								$href = "https://{$host}:{$port}";
 							} else {
-								$port = $pconfig['listenporthttp']  ? $pconfig['listenporthttp']  : ($zoneid + 8000);
+								$port = $pconfig['listenporthttp'] ? $pconfig['listenporthttp'] : ($zoneid + 8000);
 								$href = "http://{$host}:{$port}";
 							}
 						?>

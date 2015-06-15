@@ -49,7 +49,7 @@ if ($_POST['action']) {
 				echo "|5|" . gettext("No file name specified") . ".|";
 			} elseif (is_dir($_POST['file'])) {
 				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
-			} elseif (! is_file($_POST['file'])) {
+			} elseif (!is_file($_POST['file'])) {
 				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
@@ -129,11 +129,11 @@ outputJavaScriptFileInline("javascript/base64.js");
 			if (file.indexOf(".php") > 0) lang = "php";
 			else if (file.indexOf(".inc") > 0) lang = "php";
 			else if (file.indexOf(".xml") > 0) lang = "xml";
-			else if (file.indexOf(".js" ) > 0) lang = "js";
+			else if (file.indexOf(".js") > 0) lang = "js";
 			else if (file.indexOf(".css") > 0) lang = "css";
 
 			if (jQuery("#highlight").checked && lang != "none") {
-				jQuery("fileContent").prop("className",lang + ":showcolumns");
+				jQuery("fileContent").prop("className", lang + ":showcolumns");
 				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
 			}
 		} else {
@@ -148,7 +148,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 		jQuery("#fileStatusBox").show(500);
 
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
-		fileContent = fileContent.replace(/\+/g,"%2B");
+		fileContent = fileContent.replace(/\+/g, "%2B");
 
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {

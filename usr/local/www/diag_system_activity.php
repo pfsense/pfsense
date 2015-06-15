@@ -71,7 +71,7 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#cpuactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		jQuery('#cpuactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText + '<\/pre><\/font>');
 		setTimeout('getcpuactivity()', 2500);
 	}
 	setTimeout('getcpuactivity()', 1000);

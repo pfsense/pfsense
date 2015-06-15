@@ -80,7 +80,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tag");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN tag"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("VLAN tag"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -105,7 +105,7 @@ if ($_POST) {
 		}
 
 		if (($vlan['if'] == $_POST['if']) && ($vlan['tag'] == $_POST['tag'])) {
-			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."),$vlan['tag']);
+			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."), $vlan['tag']);
 			break;
 		}
 	}
@@ -161,7 +161,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("VLAN"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("VLAN"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

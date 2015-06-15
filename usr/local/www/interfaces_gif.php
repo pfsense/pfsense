@@ -80,7 +80,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GIF"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIF"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -120,7 +120,7 @@ include("head.inc");
 				$i = 0;
 				foreach ($a_gifs as $gif):
 			?>
-					<tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
+					<tr ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
 						<td class="listlr">
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
 						</td>

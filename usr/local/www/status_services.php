@@ -67,7 +67,7 @@ if ($_GET['batch']) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"),gettext("Services"));
+$pgtitle = array(gettext("Status"), gettext("Services"));
 include("head.inc");
 
 ?>

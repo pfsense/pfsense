@@ -59,9 +59,9 @@ function gentitle_pkg($pgname) {
 
 function domTT_title($title_msg) {
 	if (!empty($title_msg)) {
-		$title_msg=preg_replace("/\s+/"," ",$title_msg);
-		$title_msg=preg_replace("/'/","\'",$title_msg);
-		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'delay',300,'styleClass', 'niceTitle');\"";
+		$title_msg = preg_replace("/\s+/", " ", $title_msg);
+		$title_msg = preg_replace("/'/", "\'", $title_msg);
+		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'delay', 300, 'styleClass', 'niceTitle');\"";
 	}
 }
 
@@ -210,13 +210,14 @@ if ($_POST) {
 						$rowhelpername="row";
 						foreach ($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
 							foreach ($_POST as $key => $value) {
-								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches))
-									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']]=$value;
+								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/", $key, $matches)) {
+									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
+								}
 							}
 						}
 						break;
 					default:
-						$fieldname  = $fields['fieldname'];
+						$fieldname = $fields['fieldname'];
 						if ($fieldname == "interface_array") {
 							$fieldvalue = $_POST[$fieldname];
 						} elseif (is_array($_POST[$fieldname])) {
@@ -283,7 +284,7 @@ if ($_POST) {
 }
 
 if ($pkg['title'] <> "") {
-	$edit = ($only_edit ? '' : ": " .  gettext("Edit"));
+	$edit = ($only_edit ? '' : ": " . gettext("Edit"));
 	$title = $pkg['title'] . $edit;
 } else {
 	$title = gettext("Package Editor");
@@ -321,7 +322,7 @@ if ($pkg['custom_php_after_head_command']) {
 			cursor: 'move',
 			distance: 10,
 			opacity: 0.8,
-			helper: function(e,ui) {
+			helper: function(e, ui) {
 				ui.children().each(function() {
 					jQuery(this).width(jQuery(this).width());
 				});
@@ -497,7 +498,7 @@ if ($pkg['tabs'] <> "") {
 			continue;
 		}
 
-		if ($pkga['combinefields']=="begin") {
+		if ($pkga['combinefields'] == "begin") {
 			$input="<tr valign='top' id='tr_{$pkga['fieldname']}'>";
 			if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
@@ -553,7 +554,7 @@ if ($pkg['tabs'] <> "") {
 				echo $input;
 			}
 		}
-		if ($pkga['combinefields']=="begin") {
+		if ($pkga['combinefields'] == "begin") {
 			$input="<td class=\"vncell\"><table summary=\"advanced\"><tr>";
 			if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
@@ -682,7 +683,7 @@ if ($pkg['tabs'] <> "") {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 					$selected = (in_array($source_value, $items)? 'selected="selected"' : '');
-					$input  .= "\t<option value=\"{$source_value}\" $selected>{$source_name}</option>\n";
+					$input .= "\t<option value=\"{$source_value}\" $selected>{$source_name}</option>\n";
 				}
 				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
 				if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -762,7 +763,7 @@ if ($pkg['tabs'] <> "") {
 					if (!empty($pkga['typealiases'])) {
 						foreach ($a_aliases as $alias) {
 							if ($alias['type'] == $pkga['typealiases']) {
-								if ($addrisfirst == 1)  {
+								if ($addrisfirst == 1) {
 									$aliasesaddr .= ",";
 								}
 								$aliasesaddr .= "'" . $alias['name'] . "'";
@@ -795,39 +796,39 @@ if ($pkg['tabs'] <> "") {
 				break;
 
 			case "interfaces_selection":
-				$ips=array();
+				$ips = array();
 				$interface_regex=(isset($pkga['hideinterfaceregex']) ? $pkga['hideinterfaceregex'] : "nointerfacestohide");
 				if (is_array($config['interfaces'])) {
 					foreach ($config['interfaces'] as $iface_key=>$iface_value) {
-						if (isset($iface_value['enable']) && !preg_match("/$interface_regex/",$iface_key)) {
+						if (isset($iface_value['enable']) && !preg_match("/$interface_regex/", $iface_key)) {
 							$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
 							if (isset($pkga['showips'])) {
 								$iface_description .= " address";
 							}
-							$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
+							$ips[] = array('ip'=> $iface_key, 'description'=> $iface_description);
 						}
 					}
 				}
 				if (is_array($config['virtualip']) && isset($pkga['showvirtualips'])) {
 					foreach ($config['virtualip']['vip'] as $vip) {
-						if (!preg_match("/$interface_regex/",$vip['interface'])) {
+						if (!preg_match("/$interface_regex/", $vip['interface'])) {
 							$vip_description=($vip['descr'] !="" ? " ({$vip['descr']}) " : " ");
 						}
 						switch ($vip['mode']) {
 							case "ipalias":
 							case "carp":
-								$ips[]=array('ip'=> $vip['subnet'],'description' => "{$vip['subnet']} $vip_description");
+								$ips[] = array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
 								break;
 							case "proxyarp":
-								if ($vip['type']=="network") {
+								if ($vip['type'] == "network") {
 									$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
 									$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
 									$len = $end - $start;
 									for ($i = 0; $i <= $len; $i++) {
-										$ips[]= array('ip'=>long2ip32($start+$i),'description'=> long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
+										$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
 									}
 								} else {
-									$ips[]= array('ip'=>$vip['subnet'],'description'=> "{$vip['subnet']} $vip_description");
+									$ips[]= array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
 								}
 								break;
 						}
@@ -835,11 +836,11 @@ if ($pkg['tabs'] <> "") {
 				}
 				sort($ips);
 				if (isset($pkga['showlistenall'])) {
-					array_unshift($ips,array('ip'=> 'All', 'description'=> 'Listen on All interfaces/ip addresses '));
+					array_unshift($ips, array('ip' => 'All', 'description' => 'Listen on All interfaces/ip addresses '));
 				}
-				if (!preg_match("/$interface_regex/","loopback")) {
+				if (!preg_match("/$interface_regex/", "loopback")) {
 					$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (loopback)" : "loopback");
-					array_push($ips,array('ip'=> 'lo0', 'description'=> $iface_description));
+					array_push($ips, array('ip' => 'lo0', 'description' => $iface_description));
 				}
 
 				#show interfaces array on gui
@@ -854,7 +855,7 @@ if ($pkg['tabs'] <> "") {
 				if (is_array($value)) {
 					$values = $value;
 				} else {
-					$values  =  explode(',',  $value);
+					$values = explode(',', $value);
 				}
 				foreach ($ips as $iface) {
 					$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
@@ -947,7 +948,7 @@ if ($pkg['tabs'] <> "") {
 					if (isset($a_pkg[$id][$rowhelpername])) {
 						$saved_rows=$a_pkg[$id][$rowhelpername];
 					} else {
-						$saved_rows[]=array();
+						$saved_rows[] = array();
 					}
 
 					foreach ($saved_rows as $row) {
@@ -1019,16 +1020,16 @@ if ($pkg['tabs'] <> "") {
 			// The tr tag end is used to end the whole set of combined fields,
 			// but also if usecolspan2 is not in effect then we also put each combined field in its own tr.
 			if (($pkga['combinefields'] == "end") || (!isset($pkga['usecolspan2']))) {
-				$input.="</tr>";
+				$input .= "</tr>";
 			}
 			// At the end of the combined fields we finish up the table that encloses the combined fields...
 			if ($pkga['combinefields'] == "end") {
-				$input.="</table></td></tr>";
+				$input .= "</table></td></tr>";
 			}
 		} else {
 			$input = "</td></tr>";
 			if ($pkga['usecolspan2']) {
-				$input.= "</tr><br />";
+				$input .= "</tr><br />";
 			}
 		}
 		if (isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -1115,7 +1116,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		case "textarea":
 			echo "<textarea rows='2' cols='12' id='{$fieldname}{$trc}' class='formfld unknown' name='{$fieldname}{$trc}'>{$value}</textarea>\n";
 		case "select":
-			echo "<select style='height:22px;'  id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$title}>\n";
+			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$title}>\n";
 			foreach ($rowhelper['options']['option'] as $rowopt) {
 				$text .= "<option value='{$rowopt['value']}'>{$rowopt['name']}</option>";
 				echo "<option value='{$rowopt['value']}'".($rowopt['value'] == $value?" selected=\"selected\"":"").">{$rowopt['name']}</option>\n";
@@ -1138,7 +1139,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			if (is_array($value)) {
 				$values = $value;
 			} else {
-				$values  =  explode(',',  $value);
+				$values = explode(',', $value);
 			}
 			$ifaces["lo0"] = "loopback";
 			echo "<option><name></name><value></value></option>/n";
@@ -1218,7 +1219,7 @@ function parse_package_templates() {
 						$row_helper_data = "";
 						foreach ($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
 							foreach ($_POST as $key => $value) {
-								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches)) {
+								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/", $key, $matches)) {
 									$row_helper_total_rows++;
 									$row_helper_data .= $value;
 									$sep = "";
@@ -1236,7 +1237,7 @@ function parse_package_templates() {
 						}
 						break;
 					default:
-						$fieldname  = $fields['fieldname'];
+						$fieldname = $fields['fieldname'];
 						$fieldvalue = $_POST[$fieldname];
 						$template_text = str_replace($fieldname . "_fieldvalue", $fieldvalue, $template_text);
 				}
@@ -1248,7 +1249,7 @@ function parse_package_templates() {
 			$template_text = str_replace("\\n", "\n", $template_text);
 
 			/* write out new template file */
-			$fout = fopen($filename,"w");
+			$fout = fopen($filename, "w");
 			fwrite($fout, $template_text);
 			fclose($fout);
 		}

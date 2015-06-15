@@ -46,7 +46,7 @@ require_once("shaper.inc");
 
 // Variables protocols (dynamic) and structures (static)
 $avail_protos =& generate_protocols_array();
-$avail_structures = array("action","queue","limiter");
+$avail_structures = array("action", "queue", "limiter");
 
 // Available behaviours
 $avail_behaviours_action = array("block");
@@ -57,7 +57,7 @@ $avail_behaviours_limiter = get_dummynet_name_list();
 $show_proto_form = false;
 
 //More variables
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Layer7"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Layer7"));
 $shortcut_section = "trafficshaper";
 
 $output_form = "";
@@ -131,17 +131,17 @@ if ($_GET) {
 			$l7r =& new layer7();
 			$_POST['divert_port'] = $l7r->gen_divert_port();
 		}
-		for ($i=0; $_POST['protocol'][$i] <> ""; $i++) {
+		for ($i = 0; $_POST['protocol'][$i] <> ""; $i++) {
 			$_POST['l7rules'][$i]['protocol'] = $_POST['protocol'][$i];
 			$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];
 			$_POST['l7rules'][$i]['behaviour'] = $_POST['behaviour'][$i];
 		}
-		$l7r->validate_input($_POST,$input_errors);
+		$l7r->validate_input($_POST, $input_errors);
 		$l7r->ReadConfig($_POST['container'], $_POST);
 		//Before writing the results, we need to test for repeated protocols
 		$non_dupes = array();
 		$dupes = array();
-		for ($j=0; $j<$i; $j++) {
+		for ($j = 0; $j < $i; $j++) {
 			if (!$non_dupes[$_POST['protocol'][$j]]) {
 				$non_dupes[$_POST['protocol'][$j]] = true;
 			} else {
@@ -340,7 +340,7 @@ function changeBehaviourValues(row) {
 	//Build the html statement with the array values previously selected
 	var new_behav;
 	var name;
-	for (i=0; i<a_behav.length; i++) {
+	for (i = 0; i < a_behav.length; i++) {
 		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "<\/option>";
 	}
 
@@ -357,8 +357,8 @@ function addRow(table_id) {
 		initial_count[table_id] = rows_count;
 	}
 	// determining real count of added fields
-	var tFielsNum =  rows_count - initial_count[table_id];
-	if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
+	var tFielsNum = rows_count - initial_count[table_id];
+	if (rows_limit != 0 && tFielsNum >= rows_limit) return false;
 
 	var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /><\/a>';
 
@@ -380,7 +380,7 @@ function addRow(table_id) {
 }
 
 /* Remove row from the table */
-function removeRow(tbl,row) {
+function removeRow(tbl, row) {
 	var table = document.getElementById(tbl);
 	try {
 		table.deleteRow(row.rowIndex);
@@ -402,7 +402,7 @@ function removeRow(tbl,row) {
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed")  .  ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper layer7">
 	<tr><td>
@@ -434,7 +434,7 @@ function removeRow(tbl,row) {
 						?>
 							<br /><br />
 							<a href="firewall_shaper_layer7.php?action=add">
-								<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new l7 rules group"); ?>" width="17" height="17" border="0" alt="add" />  <?=gettext("Create new l7 rules group"); ?>
+								<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new l7 rules group"); ?>" width="17" height="17" border="0" alt="add" /> <?=gettext("Create new l7 rules group"); ?>
 							</a>
 							<br />
 						</td>
@@ -489,14 +489,14 @@ function removeRow(tbl,row) {
 												<tr>
 													<td>
 														<select name="protocol[]" class="formselect" style="font-size:8pt">
-										<?php 	foreach ($avail_protos as $proto): ?>
+										<?php	foreach ($avail_protos as $proto): ?>
 															<option value="<?=$proto;?>" <?php if ($proto == $l7rule->GetRProtocol()) echo "selected=\"selected\""; ?>><?=$proto;?></option>
-										<?php 	endforeach; ?>
+										<?php	endforeach; ?>
 														</select>
 													</td>
 													<td>
 														<select name="structure[]" class="formselect" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">
-										<?php 	foreach ($avail_structures as $struct) {
+										<?php	foreach ($avail_structures as $struct) {
 													if ($struct == "queue") {
 														if (!empty($avail_behaviours_altq)) { ?>
 															<option value="<?=$struct ?>" <?php if ($struct == $l7rule->GetRStructure()) echo "selected=\"selected\""; ?>><?=$struct;?></option>
@@ -535,7 +535,7 @@ function removeRow(tbl,row) {
 														</select>
 													</td>
 													<td>
-														<a onclick="removeRow('maintable',this.parentNode.parentNode); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>
+														<a onclick="removeRow('maintable', this.parentNode.parentNode); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>
 													</td>
 												</tr>
 										<?php

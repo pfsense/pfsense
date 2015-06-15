@@ -46,7 +46,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
 include("head.inc");
 
 ?>
@@ -56,7 +56,7 @@ include("head.inc");
 <meta http-equiv=\"refresh\" content=\"70;url=/\">
 <?php	print_info_box(gettext("The system is rebooting now. This may take one minute.")); ?>
 <pre>
-<?php 	system_reboot(); ?>
+<?php	system_reboot(); ?>
 </pre>
 <?php else: ?>
 <form action="reboot.php" method="post">

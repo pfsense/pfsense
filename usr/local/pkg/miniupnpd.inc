@@ -37,7 +37,7 @@
 		/* md5 hash of wan mac */
 		$uuid = md5(get_interface_mac(get_real_interface("wan")));
 		/* put uuid in correct format 8-4-4-4-12 */
-		return substr($uuid,0,8).'-'.substr($uuid,9,4).'-'.substr($uuid,13,4).'-'.substr($uuid,17,4).'-'.substr($uuid,21,12);
+		return substr($uuid, 0, 8) . '-' . substr($uuid, 9, 4) . '-' . substr($uuid, 13, 4) . '-' . substr($uuid, 17, 4) . '-' . substr($uuid, 21, 12);
 	}
 
 	function upnp_validate_queue($qname) {
@@ -102,7 +102,7 @@
 				}
 			}
 		}
-		if ($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'],false)) {
+		if ($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'], false)) {
 			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
 		}
 		if (($post['download'] && !$post['upload']) || ($post['upload'] && !$post['download'])) {
@@ -120,9 +120,9 @@
 
 		/* user permissions validation */
 		$j = substr_count(implode(array_keys($post)), "permuser");
-		for ($i=0; $i<$j; $i++){
+		for ($i = 0; $i < $j; $i++) {
 			if ($post["permuser{$i}"]) {
-				$perm = explode(' ',$post["permuser{$i}"]);
+				$perm = explode(' ', $post["permuser{$i}"]);
 				/* should explode to 4 args */
 				if (count($perm) != 4) {
 					$input_errors[] = "You must follow the specified format in the 'User specified permissions {$i}' field";
@@ -136,7 +136,7 @@
 						$input_errors[] = "You must specify a port or port range between 0 and 65535 in the 'User specified permissions {$i}' field";
 					}
 					/* verify ip address */
-					if (!upnp_validate_ip($perm[2],true)) {
+					if (!upnp_validate_ip($perm[2], true)) {
 						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions {$i}' field";
 					}
 				}
@@ -179,7 +179,7 @@
 				}
 				$if = convert_friendly_interface_to_real_interface_name($iface);
 				/* above function returns iface if fail */
-				if ($if!=$iface) {
+				if ($if != $iface) {
 					$addr = find_interface_ip($if);
 					$bits = find_interface_subnet($if);
 					/* check that the interface has an ip address before adding parameters */
@@ -235,14 +235,14 @@
 
 				/* set uuid and serial */
 				$config_text .= "uuid=".upnp_uuid()."\n";
-				$config_text .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
+				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
 
 				/* set model number */
 				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
 
 				/* upnp access restrictions */
-				foreach($upnp_config['row'] as $row){
-					if($row['permuser']) {
+				foreach ($upnp_config['row'] as $row) {
+					if ($row['permuser']) {
 						$config_text .= "{$row["permuser"]}\n";
 					}
 				}
@@ -257,13 +257,13 @@
 				}
 
 				/* Add shaper queue */
-				if($upnp_config['upnpqueue']) {
+				if ($upnp_config['upnpqueue']) {
 					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
 				}
 
 				/* Allow UPnP or NAT-PMP as requested */
-				$config_text .= "enable_upnp="   . ( $upnp_config['enable_upnp']   ? "yes\n" : "no\n" );
-				$config_text .= "enable_natpmp=" . ( $upnp_config['enable_natpmp'] ? "yes\n" : "no\n" );
+				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
+				$config_text .= "enable_natpmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
 
 				/* write out the configuration */
 				upnp_write_config($config_file, $config_text);

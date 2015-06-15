@@ -167,7 +167,7 @@ if ($intnum > $count) {
 
 $index = 1;
 foreach ($ifdescrs as $ifname => $ifdesc) {
-	if ($intnum == $index)  {
+	if ($intnum == $index) {
 		$interface = $ifname;
 		break;
 	} else {

@@ -898,9 +898,10 @@ function backup_config() {
 
 function set_device_perms() {
 	$devices = array(
-		'pf'	=> array(	'user'	=> 'root',
-					'group'	=> 'proxy',
-					'mode'	=> 0660),
+		'pf' => array(
+			'user' => 'root',
+			'group' => 'proxy',
+			'mode' => 0660),
 		);
 
 	foreach ($devices as $name => $attr) {
@@ -975,8 +976,7 @@ function pfSense_clear_globals() {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			print($errorstr);
 			log_error($errorstr);
-		} else
-		if ($error['type'] != E_NOTICE) {
+		} else if ($error['type'] != E_NOTICE) {
 			$errorstr = "PHP WARNING: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			// XXX: comment out for now, should re-enable post-2.2
 			//print($errorstr);

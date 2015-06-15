@@ -80,12 +80,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name mode port monitor servers");
-	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Mode"), gettext("Port"), gettext("Monitor"), gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
 		}
@@ -135,7 +135,7 @@ if ($_POST) {
 		}
 	}
 	$m = array();
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
 	}
 
@@ -184,7 +184,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -196,7 +196,7 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 function clearcombo() {
-	for (var i=document.iform.serversSelect.options.length-1; i>=0; i--) {
+	for (var i = document.iform.serversSelect.options.length - 1; i >= 0; i--) {
 		document.iform.serversSelect.options[i] = null;
 	}
 	document.iform.serversSelect.selectedIndex = -1;
@@ -225,7 +225,7 @@ function clearcombo() {
 			<td width="78%" class="vtable" colspan="2">
 				<select id="mode" name="mode" onchange="enforceFailover(); checkPoolControls();">
 					<option value="loadbalance" <?if (!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected=\"selected\"";?>><?=gettext("Load Balance");?></option>
-					<option value="failover"  <?if ($pconfig['mode'] == "failover") echo "selected=\"selected\"";?>><?=gettext("Manual Failover");?></option>
+					<option value="failover" <?if ($pconfig['mode'] == "failover") echo "selected=\"selected\"";?>><?=gettext("Manual Failover");?></option>
 				</select>
 			</td>
 		</tr>

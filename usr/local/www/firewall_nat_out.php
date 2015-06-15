@@ -228,7 +228,7 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
 include("head.inc");
 
 ?>
@@ -360,7 +360,7 @@ if (is_subsystem_dirty('natconf')) {
 				$alias_dst_span_begin = "";
 				$alias_dst_port_span_begin = "";
 
-				$alias_popup = rule_popup($natent['source']['network'],pprint_port($natent['sourceport']),$natent['destination']['address'],pprint_port($natent['dstport']));
+				$alias_popup = rule_popup($natent['source']['network'], pprint_port($natent['sourceport']), $natent['destination']['address'], pprint_port($natent['dstport']));
 
 				$alias_src_span_begin = $alias_popup["src"];
 				$alias_src_port_span_begin = $alias_popup["srcport"];

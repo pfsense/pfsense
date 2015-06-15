@@ -120,7 +120,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 		} elseif ($resp->faultCode()) {
 			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		} else {
-			$parsed_response =  XML_RPC_decode($resp->value());
+			$parsed_response = XML_RPC_decode($resp->value());
 			if (!is_array($parsed_response)) {
 				if (trim($parsed_response) == "Authentication failed") {
 					$error = "An authentication failure occurred while trying to access {$url}:{$port} ({$method}).";

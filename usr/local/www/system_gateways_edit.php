@@ -628,9 +628,9 @@ function calculated_change(calculated_obj, samples_obj) {
 function valid_value(object, min, max) {
 	if (object.value) {
 		object.value = Math.round(object.value);		// Round to integer
-		if (object.value < min)  object.value = min;	// Min Value
-		if (object.value > max)  object.value = max;	// Max Value
-		if (isNaN(object.value)) object.value =  '';	// Empty Value
+		if (object.value < min) object.value = min;	// Min Value
+		if (object.value > max) object.value = max;	// Max Value
+		if (isNaN(object.value)) object.value = '';	// Empty Value
 	}
 }
 

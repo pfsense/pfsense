@@ -235,7 +235,7 @@ function interface_vlan_configure(&$vlan) {
 		return;
 	}
 	$if = $vlan['if'];
-	$vlanif  = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
 	$tag = $vlan['tag'];
 
 	if (empty($if)) {
@@ -2020,12 +2020,12 @@ EOD;
 	mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
 	foreach ($ports as $port) {
 		if (preg_match("/huawei/i", implode("\n", $usbmodemoutput))) {
-			$mondev  = substr(basename($port), 0, -1);
+			$mondev = substr(basename($port), 0, -1);
 			$devlist = glob("/dev/{$mondev}?");
 			$mondev = basename(end($devlist));
 		}
 		if (preg_match("/zte/i", implode("\n", $usbmodemoutput))) {
-			$mondev  = substr(basename($port), 0, -1) . "1";
+			$mondev = substr(basename($port), 0, -1) . "1";
 		}
 		if ($mondev != '') {
 			log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
@@ -2169,7 +2169,7 @@ function interface_proxyarp_configure($interface = "") {
 			mwexec_bg("/usr/local/sbin/choparp " . $args);
 		}
 	} else if (count($paa) > 0) {
-		foreach ($paa as $paif => $paents)  {
+		foreach ($paa as $paif => $paents) {
 			$paaifip = get_interface_ip($paif);
 			if (!is_ipaddr($paaifip)) {
 				continue;
@@ -3162,7 +3162,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
-	}  else {
+	} else {
 
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
@@ -3963,7 +3963,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 			$id_assoc_statement_address .= ";\n";
 		}
 
-		$id_assoc_statement_address  .= "};\n";
+		$id_assoc_statement_address .= "};\n";
 	}
 
 	$id_assoc_statement_prefix = "";
@@ -4005,7 +4005,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 			$id_assoc_statement_prefix .= "\n";
 		}
 
-		$id_assoc_statement_prefix  .= "};\n";
+		$id_assoc_statement_prefix .= "};\n";
 	}
 
 	$authentication_statement = "";
@@ -4135,7 +4135,7 @@ EOD;
 		$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
 		$dhclientconf .= <<<EOD
 alias {
-	interface  "{$wanif}";
+	interface "{$wanif}";
 	fixed-address {$wancfg['alias-address']};
 	option subnet-mask {$subnetmask};
 }
@@ -4379,7 +4379,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 
 	if (stripos($interface, "_vip")) {
 		foreach ($config['virtualip']['vip'] as $counter => $vip) {
-			if ($vip['mode'] == "carp")  {
+			if ($vip['mode'] == "carp") {
 				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
 					return $vip['interface'];
 				}
@@ -4452,7 +4452,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} else if (substr($interface, 0, 4) == '_vip') {
 				if (is_array($config['virtualip']['vip'])) {
 					foreach ($config['virtualip']['vip'] as $counter => $vip) {
-						if ($vip['mode'] == "carp")  {
+						if ($vip['mode'] == "carp") {
 							if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
 								return "{$vip['subnet']} - {$vip['descr']}";
 							}
@@ -5438,7 +5438,7 @@ function get_interfaces_with_gateway() {
 				$ints[$ifdescr] = $ifdescr;
 				break;
 			default:
-				if (substr($ifname['if'], 0, 4) ==  "ovpn" ||
+				if (substr($ifname['if'], 0, 4) == "ovpn" ||
 				    !empty($ifname['gateway'])) {
 					$ints[$ifdescr] = $ifdescr;
 				}
@@ -5463,7 +5463,7 @@ function interface_has_gateway($friendly) {
 				return true;
 			break;
 			default:
-				if (substr($ifname['if'], 0, 4) ==  "ovpn") {
+				if (substr($ifname['if'], 0, 4) == "ovpn") {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -5494,7 +5494,7 @@ function interface_has_gatewayv6($friendly) {
 				return true;
 				break;
 			default:
-				if (substr($ifname['if'], 0, 4) ==  "ovpn") {
+				if (substr($ifname['if'], 0, 4) == "ovpn") {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -5671,7 +5671,7 @@ function get_interface_mac($interface) {
  ******/
 function generate_random_mac_address() {
 	$mac = "02";
-	for ($x=0; $x<5; $x++) {
+	for ($x = 0; $x < 5; $x++) {
 		$mac .= ":" . dechex(rand(16, 255));
 	}
 	return $mac;

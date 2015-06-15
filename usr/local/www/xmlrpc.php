@@ -246,7 +246,7 @@ function restore_config_section_xmlrpc($raw_params) {
 
 	/* Log what happened */
 	$mergedkeys = implode(",", array_merge(array_keys($params[0]), $sync_full_done));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
 
 	/*
 	 * The real work on handling the vips specially
@@ -341,7 +341,7 @@ function merge_installedpackages_section_xmlrpc($raw_params) {
 	}
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
 
 	return $xmlrpc_g['return']['true'];
 }
@@ -575,13 +575,13 @@ $server = new XML_RPC_Server(
 
 unlock($xmlrpclockkey);
 
-function array_overlay($a1,$a2) {
+function array_overlay($a1, $a2) {
 	foreach ($a1 as $k => $v) {
-		if (!array_key_exists($k,$a2)) {
+		if (!array_key_exists($k, $a2)) {
 			continue;
 		}
 		if (is_array($v) && is_array($a2[$k])) {
-			$a1[$k] = array_overlay($v,$a2[$k]);
+			$a1[$k] = array_overlay($v, $a2[$k]);
 		} else {
 			$a1[$k] = $a2[$k];
 		}

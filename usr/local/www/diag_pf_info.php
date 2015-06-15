@@ -74,7 +74,7 @@ jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
 		});
 	}
 	function activitycallback(transport) {
-		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText + '<\/pre><\/font>');
 		setTimeout('getpfinfo()', 2000);
 	}
 //]]>

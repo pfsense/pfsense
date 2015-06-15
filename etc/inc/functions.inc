@@ -81,7 +81,7 @@ if (!function_exists("get_menu_messages")) {
 		global $g, $config;
 		if (are_notices_pending()) {
 			$notices = get_notices();
-			$requests=array();
+			$requests = array();
 
 			## Get Query Arguments from URL ###
 			foreach ($_REQUEST as $key => $value) {

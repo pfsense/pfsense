@@ -301,7 +301,7 @@ $status = ipsec_smp_dump_status();
 			<tr>
 				<td class="listrborder" colspan="9">
 				<div id="btnchildsa-<?=$ikeid;?>">
-					<input  type="button" onclick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
+					<input type="button" onclick="show_childsa('childsa-<?=$ikeid;?>', 'btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
 				</div>
 				<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="childsa-<?=$ikeid;?>" style="display:none" summary="">
 					<thead>

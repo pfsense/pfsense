@@ -90,7 +90,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQ"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -131,7 +131,7 @@ include("head.inc");
 	$i = 0;
 	foreach ($a_qinqs as $qinq):
 ?>
-				<tr  ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i;?>'">
+				<tr ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i;?>'">
 					<td class="listlr">
 						<?=htmlspecialchars($qinq['if']);?>
 					</td>

@@ -79,7 +79,7 @@ if ($_POST) {
 			if (!is_numeric($_POST['prefork'])) {
 				$input_errors[] = gettext("Prefork must be a numeric value");
 			} else {
-				if (($_POST['prefork']<=0) || ($_POST['prefork']>32)) {
+				if (($_POST['prefork'] <= 0) || ($_POST['prefork'] > 32)) {
 					$input_errors[] = gettext("Prefork value must be between 1 and 32");
 				}
 			}
@@ -97,7 +97,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Settings"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Settings"));
 $shortcut_section = "relayd";
 
 include("head.inc");

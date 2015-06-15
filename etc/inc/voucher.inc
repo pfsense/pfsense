@@ -56,7 +56,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
@@ -90,7 +90,7 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 
 	return $toreturn;
 }
@@ -114,7 +114,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	$dbent_str = serialize($dbent);
 	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
@@ -150,7 +150,7 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 
 	return $toreturn;
 }
@@ -172,7 +172,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
@@ -208,7 +208,7 @@ EOF;
 	} else {
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 	if (!is_array($config['voucher'])) {
 		$config['voucher'] = array();
 	}

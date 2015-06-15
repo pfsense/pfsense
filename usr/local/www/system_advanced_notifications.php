@@ -368,7 +368,7 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Shutdown Sound"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked=\"checked\""; ?>  />
+								<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Disable the startup/shutdown beep"); ?></strong>
 								<br />
 								<span class="vexpl"><?=gettext("When this is checked, startup and shutdown sounds will no longer play."); ?></span>
@@ -396,7 +396,7 @@ include("head.inc");
 	jQuery(document).ready(function() {
 		if (jQuery('#smtpssl').is(':checked')) {
 			jQuery('#smtptls').prop('disabled', true);
-		} else if  (jQuery('#smtptls').is(':checked')) {
+		} else if (jQuery('#smtptls').is(':checked')) {
 			jQuery('#smtpssl').prop('disabled', true);
 		}
 	});

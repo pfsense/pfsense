@@ -338,7 +338,7 @@ include("fbegin.inc");
 					<option value="full"   <?php if ($detail == "full")   echo "selected=\"selected\""; ?>><?=gettext("Full");?></option>
 				</select>
 				<br />
-				<?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br /><b>" .
+				<?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") . "<br /><b>" .
 					gettext("Note:") . "</b> " .
 					gettext("This option does not affect the level of detail when downloading the packet capture.");?>
 			</td>

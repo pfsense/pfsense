@@ -47,7 +47,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Rules"));
+$pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 function delete_nat_association($id) {
@@ -122,7 +122,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 }
 
 /* add openvpn/tun interfaces */
-if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$iflist["openvpn"] = "OpenVPN";
 }
 
@@ -152,7 +152,7 @@ if ($_POST) {
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/apply");
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"), "<a href='status_filter_reload.php'>", "</a>");
 	}
 }
 
@@ -516,7 +516,7 @@ include("head.inc");
 				$alias_dst_span_begin = "";
 				$alias_dst_port_span_begin = "";
 
-				$alias_popup = rule_popup($filterent['source']['address'],pprint_port($filterent['source']['port']),$filterent['destination']['address'],pprint_port($filterent['destination']['port']));
+				$alias_popup = rule_popup($filterent['source']['address'], pprint_port($filterent['source']['port']), $filterent['destination']['address'], pprint_port($filterent['destination']['port']));
 
 				$alias_src_span_begin = $alias_popup["src"];
 				$alias_src_port_span_begin = $alias_popup["srcport"];
@@ -535,8 +535,8 @@ include("head.inc");
 				$sched_caption_escaped = "";
 				$sched_content = "";
 				$schedstatus = false;
-				$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-				$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+				$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
+				$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 				if ($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])) {
 					foreach ($a_schedules as $schedule) {
 						if ($schedule['name'] == $filterent['sched']) {
@@ -559,7 +559,7 @@ include("head.inc");
 
 									if ($timerange['month']) {
 										$tempmontharray = explode(",", $timerange['month']);
-										$tempdayarray = explode(",",$timerange['day']);
+										$tempdayarray = explode(",", $timerange['day']);
 										$arraycounter = 0;
 										$firstDayFound = false;
 										$firstPrint = false;
@@ -584,7 +584,7 @@ include("head.inc");
 												if ($currentDay != $firstDay) {
 													$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
 												} else {
-													$dayFriendly .=  $monthArray[$month-1] . " " . $day;
+													$dayFriendly .= $monthArray[$month-1] . " " . $day;
 												}
 												$firstDayFound = false;
 												$firstPrint = true;
@@ -702,7 +702,7 @@ include("head.inc");
 										}
 										break;
 									case 'openvpn':
-										if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
+										if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
 											$selected_descs[] = 'OpenVPN';
 										}
 										break;
@@ -743,7 +743,7 @@ include("head.inc");
 					echo strtoupper($filterent['protocol']);
 					if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
 						echo ' <span style="cursor: help;" title="ICMP type: ' .
-							($filterent['ipprotocol'] == "inet6" ?  $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
+							($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
 							'"><u>';
 						echo $filterent['icmptype'];
 						echo '</u></span>';
@@ -767,7 +767,7 @@ include("head.inc");
 					<?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
 				</td>
 				<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-					<?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
+					<?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
 				</td>
 				<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 					<?=$textss;?>

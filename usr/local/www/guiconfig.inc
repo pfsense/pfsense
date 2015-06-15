@@ -37,7 +37,7 @@
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ?  $config['system']['webgui']['session_timeout'] : 240;
+		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
@@ -152,22 +152,22 @@ $ldap_protvers = array(
 $ldap_templates = array(
 
 	'open' => array(
-				'desc' => "OpenLDAP",
-				'attr_user' => "cn",
-				'attr_group' => "cn",
-				'attr_member' => "member"),
+		'desc' => "OpenLDAP",
+		'attr_user' => "cn",
+		'attr_group' => "cn",
+		'attr_member' => "member"),
 
 	'msad' => array(
-				'desc' => "Microsoft AD",
-				'attr_user' => "samAccountName",
-				'attr_group' => "cn",
-				'attr_member' => "memberOf"),
+		'desc' => "Microsoft AD",
+		'attr_user' => "samAccountName",
+		'attr_group' => "cn",
+		'attr_member' => "memberOf"),
 
 	'edir' => array(
-				'desc' => "Novell eDirectory",
-				'attr_user' => "cn",
-				'attr_group' => "cn",
-				'attr_member' => "uniqueMember"));
+		'desc' => "Novell eDirectory",
+		'attr_user' => "cn",
+		'attr_group' => "cn",
+		'attr_member' => "uniqueMember"));
 
 $radius_srvcs = array(
 	'both' => "Authentication and Accounting",
@@ -307,7 +307,7 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
+function print_info_box_np($msg, $name = "apply", $value = "", $showapply = false) {
 	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
 
 	if (empty($value)) {
@@ -325,7 +325,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		if ($_POST['if']) {
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
-		$savebutton.="</td>";
+		$savebutton .= "</td>";
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
@@ -380,7 +380,7 @@ EOFnp;
 
 }
 
-function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
+function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes", $undo) {
 	global $g;
 
 	if (stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
@@ -678,11 +678,11 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		echo "<tr valign=\"top\">\n";
 		if ($withorig) {
 			if (isset($config['system']['usefifolog'])) {
-				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
+				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
 				$entry_text = htmlspecialchars($logent[5]);
 			} else {
 				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-				$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
+				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
 				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
 			echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
@@ -779,7 +779,7 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 	}
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $pendport=0) {
+function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0) {
 	$adr = array();
 
 	if ($padr == "any") {
@@ -836,9 +836,9 @@ function display_widget_tabs(& $tab_array) {
 	echo "<div id=\"tabs\">";
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
-		$dashpos = strpos($ta[2],'-');
+		$dashpos = strpos($ta[2], '-');
 		$tabname = $ta[2] . "-tab";
-		$tabclass = substr($ta[2],0,$dashpos);
+		$tabclass = substr($ta[2], 0, $dashpos);
 		$tabclass = $tabclass . "-class";
 		if ($ta[1] == true) {
 			$tabActive = "table-cell";
@@ -978,7 +978,7 @@ function print_rfc2616_select($tag, $current) {
 }
 
 // Useful debugging function, much cleaner than print_r
-function echo_array($array,$return_me=false) {
+function echo_array($array, $return_me = false) {
 	if (is_array($array) == false) {
 		$return = "The provided variable is not an array.";
 	} else {
@@ -986,7 +986,7 @@ function echo_array($array,$return_me=false) {
 			if (is_array($value)) {
 				$return .= "";
 				$return .= "['<b>$name</b>'] {<div style=\"margin-left:10px;\">\n";
-				$return .= echo_array($value,true);
+				$return .= echo_array($value, true);
 				$return .= "</div>}";
 				$return .= "\n\n";
 			} else {
@@ -1073,7 +1073,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
-			if ($ta[1]=="true") {
+			if ($ta[1] == "true") {
 				$selected = " selected=\"selected\"";
 			} else {
 				$selected = "";
@@ -1120,7 +1120,7 @@ function add_package_tabs($pkgname, &$tab_array) {
 		return;
 	}
 
-	foreach($pkg_config['tabs']['tab'] as $tab) {
+	foreach ($pkg_config['tabs']['tab'] as $tab) {
 		$tab_entry = array();
 		if ($tab['name']) {
 			$tab_entry[] = $tab['name'];
@@ -1136,13 +1136,13 @@ function alias_info_popup($alias_id) {
 	$maxlength = 60;
 	$close_title="title='".gettext('move mouse out of this alias to hide')."'";
 	if (is_array($config['aliases']['alias'][$alias_id])) {
-		$alias_name=$config['aliases']['alias'][$alias_id];
+		$alias_name = $config['aliases']['alias'][$alias_id];
 		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
 		if ($alias_name['url']) {
 			// TODO: Change it when pf supports tables with ports
 			if ($alias_name['type'] == "urltable") {
 				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-				$counter=preg_replace("/\D/","",$total_entries[0]);
+				$counter = preg_replace("/\D/", "", $total_entries[0]);
 				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
 			} else {
 				$urlfn = alias_expand_urltable($alias_name['name']);
@@ -1150,8 +1150,8 @@ function alias_info_popup($alias_id) {
 				$counter = count($alias_addresses);
 			}
 			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
-			$x=0;
-			foreach ($alias_addresses as $alias_ports_address ) {
+			$x = 0;
+			foreach ($alias_addresses as $alias_ports_address) {
 				switch ($x) {
 					case 0:
 						$x++;
@@ -1162,8 +1162,8 @@ function alias_info_popup($alias_id) {
 						$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
 						break;
 					default:
-						$x=0;
-						$alias_objects_with_details .= "<td  $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td><tr>";
+						$x = 0;
+						$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td><tr>";
 						break;
 				}
 			}
@@ -1182,7 +1182,7 @@ function alias_info_popup($alias_id) {
 			$counter = 0;
 			foreach ($alias_addresses as $alias_ports_address) {
 				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
-				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
+				$alias_detail_default = strpos ($alias_details[$counter], "Entry added");
 				if ($alias_details[$counter] != "" && $alias_detail_default === False) {
 					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_details[$counter]}</td>";
 				} else {
@@ -1204,8 +1204,8 @@ function alias_info_popup($alias_id) {
 	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
 }
 
-function rule_popup($src,$srcport,$dst,$dstport) {
-	global $config,$g;
+function rule_popup($src, $srcport, $dst, $dstport) {
+	global $config, $g;
 	$aliases_array = array();
 	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		$descriptions = array ();
@@ -1232,7 +1232,7 @@ function rule_popup($src,$srcport,$dst,$dstport) {
 				$descriptions['srcport'] = $span_begin;
 				$descriptions['srcport_end'] = $span_end;
 			}
-			if ($alias_name['name'] == $dst ) {
+			if ($alias_name['name'] == $dst) {
 				$descriptions['dst'] = $span_begin;
 				$descriptions['dst_end'] = $span_end;
 			}

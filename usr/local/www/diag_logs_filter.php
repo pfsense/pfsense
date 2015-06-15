@@ -181,8 +181,8 @@ include("head.inc");
 									<td rowspan="2">
 										<div align="center"><?=gettext("Action");?></div>
 										<div align="left">
-											<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
-											<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
+											<input id="actpass" name="actpass" type="checkbox" value="Pass" <?php if (in_arrayi('Pass', $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
+											<input id="actblock" name="actblock" type="checkbox" value="Block" <?php if (in_arrayi('Block', $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
 										</div>
 									</td>
 									<td>

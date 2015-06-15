@@ -203,15 +203,14 @@ if ($_POST) {
 	if (($pconfig['method'] == "existing") || ($act == "editimported")) {
 		$reqdfields = explode(" ", "descr crltext");
 		$reqdfieldsn = array(
-		gettext("Descriptive name"),
-		gettext("Certificate Revocation List data"));
+			gettext("Descriptive name"),
+			gettext("Certificate Revocation List data"));
 	}
 	if ($pconfig['method'] == "internal") {
-		$reqdfields = explode(" ",
-			"descr caref");
+		$reqdfields = explode(" ", "descr caref");
 		$reqdfieldsn = array(
-		gettext("Descriptive name"),
-		gettext("Certificate Authority"));
+			gettext("Descriptive name"),
+			gettext("Certificate Authority"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);

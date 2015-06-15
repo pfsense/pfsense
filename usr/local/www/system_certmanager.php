@@ -464,7 +464,7 @@ if ($_POST) {
 //				$subject_mismatch = true;
 //			}
 //		}
-		$mod_csr  =  csr_get_modulus($pconfig['csr'], false);
+		$mod_csr = csr_get_modulus($pconfig['csr'], false);
 		$mod_cert = cert_get_modulus($pconfig['cert'], false);
 
 		if (strcmp($mod_csr, $mod_cert)) {

@@ -43,7 +43,7 @@ $stopidx = isset($_GET['cpzone']) ? $_GET['stopidx'] : trim($argv[3]);
 $cpzoneidx = $config['captiveportal'][$cpzone]['zoneid'];
 $filename = "{$g['tmp_path']}/{$cpzoneidx}_mac_{$startidx}_{$stopidx}";
 
-//log_error("STARTED: "  . time() . " - {$cpzone} : $startidx : {$stopidx} : {$cpzoneidx} : {$filename}");
+//log_error("STARTED: " . time() . " - {$cpzone} : $startidx : {$stopidx} : {$cpzoneidx} : {$filename}");
 captiveportal_passthrumac_configure($filename, $startidx, $stopidx);
 //log_error("STOPPED: " .time() . " - {$cpzone} : $startidx : {$stopidx} : {$cpzoneidx} : {$filename}");
 

@@ -92,7 +92,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"), $nentries);?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s IPsec log entries"), $nentries);?></td>
 				</tr>
 				<?php
 				foreach ($ipsec_logarr as $logent) {
@@ -100,7 +100,7 @@ include("head.inc");
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
 					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					echo "<td class=\"listlr nowrap\">" . $entry_date_time  . "</td>\n";
+					echo "<td class=\"listlr nowrap\">" . $entry_date_time . "</td>\n";
 					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
 					echo "</tr>\n";
 				}

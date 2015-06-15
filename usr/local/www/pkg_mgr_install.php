@@ -55,7 +55,7 @@ $static_output = "";
 $static_status = "";
 $sendto = "output";
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Install Package"));
 include("head.inc");
 
 if ($_POST) {

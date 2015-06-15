@@ -72,7 +72,7 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
 $shortcut_section = "trafficshaper";
 
 $wizards = array(
@@ -88,7 +88,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 
-<?php include("fbegin.inc");  ?>
+<?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">
@@ -112,7 +112,7 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
-				<table  width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 					<tr>
 						<td class="listhdrr" width="25%" align="center" ><?=gettext("Wizard function");?></td>
 						<td class="listhdrr" width="75%" align="center"><?=gettext("Wizard Link");?></td>

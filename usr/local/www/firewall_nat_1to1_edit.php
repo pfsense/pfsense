@@ -116,7 +116,7 @@ if ($_POST) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 		if ($newpost <> $temp) {
-			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
 		}
 	}
 
@@ -241,7 +241,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"), gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -390,8 +390,8 @@ if ($input_errors) {
 <?php
 							$sel = is_specialnet($pconfig['src']);
 ?>
-								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-								<option value="single"  <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>>
+								<option value="any" <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
+								<option value="single" <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>>
 									<?=gettext("Single host"); ?>
 								</option>
 								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
@@ -417,7 +417,7 @@ if ($input_errors) {
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>>
 										<?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?>
 									</option>
-									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
+									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] == $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
 									</option>
 <?php

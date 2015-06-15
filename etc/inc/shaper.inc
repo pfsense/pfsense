@@ -525,7 +525,7 @@ class altq_root_queue {
 
 	function &find_parentqueue($interface, $qname) {
 		if ($qname == $interface) {
-			$result =  NULL;
+			$result = NULL;
 		} else if ($this->queues[$qname]) {
 			$result = $this;
 		} else if ($this->GetScheduler() <> "PRIQ") {
@@ -545,7 +545,7 @@ class altq_root_queue {
 		$tree .= "\">" . $shaperIFlist[$this->GetInterface()] . "</a>";
 		if (is_array($this->queues)) {
 			$tree .= "<ul>";
-			foreach ($this->queues as $q)  {
+			foreach ($this->queues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -707,7 +707,7 @@ class altq_root_queue {
 		$form .= "<br /></td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
 		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/disable discipline and its children") . "</span>";
 		$form .= "</td></tr>";
@@ -790,8 +790,8 @@ class altq_root_queue {
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">";
 		$form .= gettext("Adjusts the size, in bytes, of the token bucket regulator. "
-			  .  "If not specified, heuristics based on the interface "
-			  .  "bandwidth are used to determine the size.");
+			. "If not specified, heuristics based on the interface "
+			. "bandwidth are used to determine the size.");
 		$form .= "</span></td></tr>";
 		$form .= "<input type=\"hidden\" id=\"interface\" name=\"interface\"";
 		$form .= " value=\"" . $this->GetInterface() . "\" />";
@@ -1278,7 +1278,7 @@ class priq_queue {
 		$form .= "<br /></td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
 		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
 		$form .= "</td></tr>";
@@ -1322,25 +1322,25 @@ class priq_queue {
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
 		$tmpvalue = $this->GetRed();
 		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#red\">" . gettext("Random Early Detection") . "</a><br />";
 		$form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\" value=\"rio\"";
 		$tmpvalue = $this->GetRio();
 		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#rio\">" . gettext("Random Early Detection In and Out") . "</a><br />";
 		$form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\" value=\"ecn\"";
 		$tmpvalue = $this->GetEcn();
 		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">" . gettext("Explicit Congestion Notification") . "</a><br />";
 		$form .= "<input type=\"checkbox\" id=\"codel\" name=\"codel\" value=\"codel\"";
 		$tmpvalue = $this->GetCodel();
 		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /> <a target=\"_new\" href=\"http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br />";
 		$form .= "<span class=\"vexpl\"><br />" . gettext("Select options for this queue");
@@ -1698,7 +1698,7 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q)  {
+		foreach ($this->subqueues as $q) {
 			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
 				$q->delete_queue();
 		}
@@ -1772,10 +1772,10 @@ class hfsc_queue extends priq_queue {
 		*/
 		}
 
-		if ($data['upperlimit1'] <> "" &&  $data['upperlimit2'] == "") {
+		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
 			$input_errors[] = gettext("upperlimit service curve defined but missing (d) value");
 		}
-		if ($data['upperlimit2'] <> "" &&  $data['upperlimit1'] == "") {
+		if ($data['upperlimit2'] <> "" && $data['upperlimit1'] == "") {
 			$input_errors[] = gettext("upperlimit service curve defined but missing initial bandwidth (m1) value");
 		}
 		if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1'])) {
@@ -1801,10 +1801,10 @@ class hfsc_queue extends priq_queue {
 			}
 		}
 		*/
-		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "") {
+		if ($data['linkshare1'] <> "" && $data['linkshare2'] == "") {
 			$input_errors[] = gettext("linkshare service curve defined but missing (d) value");
 		}
-		if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "") {
+		if ($data['linkshare2'] <> "" && $data['linkshare1'] == "") {
 			$input_errors[] = gettext("linkshare service curve defined but missing initial bandwidth (m1) value");
 		}
 		if ($data['linkshare1'] <> "" && !is_valid_shaperbw($data['linkshare1'])) {
@@ -1816,10 +1816,10 @@ class hfsc_queue extends priq_queue {
 		if ($data['linkshare3'] <> "" && !is_valid_shaperbw($data['linkshare3'])) {
 			$input_errors[] = gettext("linkshare m2 value needs to be Kb, Mb, Gb, or %");
 		}
-		if ($data['realtime1'] <> "" &&  $data['realtime2'] == "") {
+		if ($data['realtime1'] <> "" && $data['realtime2'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing (d) value");
 		}
-		if ($data['realtime2'] <> "" &&  $data['realtime1'] == "") {
+		if ($data['realtime2'] <> "" && $data['realtime1'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing initial bandwidth (m1) value");
 		}
 
@@ -1927,7 +1927,7 @@ class hfsc_queue extends priq_queue {
 		$tree .= " >" . $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -1993,13 +1993,13 @@ class hfsc_queue extends priq_queue {
 				$default = true;
 			}
 
-			if ($this->GetRealtime() <> "")  {
+			if ($this->GetRealtime() <> "") {
 				if ($comma) {
 					$pfq_rule .= " , ";
 				}
-				if ($this->GetR_m1()  <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "") {
+				if ($this->GetR_m1() <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime (".$this->GetR_m1() . ", " . $this->GetR_d().", ". $this->GetR_m2() .") ";
-				} else  if ($this->GetR_m2() <> "") {
+				} else if ($this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime " . $this->GetR_m2();
 				}
 				$comma = 1;
@@ -2136,7 +2136,7 @@ class hfsc_queue extends priq_queue {
 		$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
 		if ($this->GetUpperlimit()<> "") {
-			$form .=  " checked=\"checked\" ";
+			$form .= " checked=\"checked\" ";
 		}
 		$form .= "onchange=\"enable_upperlimit()\" /> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_m1());
@@ -2159,7 +2159,7 @@ class hfsc_queue extends priq_queue {
 		$form .= " /></td><td>" . gettext("The maximum allowed bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
 		if ($this->GetRealtime() <> "") {
-			$form .=  " checked=\"checked\" ";
+			$form .= " checked=\"checked\" ";
 		}
 		$form .= "onchange=\"enable_realtime()\" /> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_m1());
@@ -2182,7 +2182,7 @@ class hfsc_queue extends priq_queue {
 		$form .= " /></td><td>" . gettext("The minimum required bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" name=\"linkshare\"";
 		if ($this->GetLinkshare() <> "") {
-			$form .=  " checked=\"checked\" ";
+			$form .= " checked=\"checked\" ";
 		}
 		$form .= "onchange=\"enable_linkshare()\" /> " . gettext("Link share:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetL_m1());
@@ -2205,9 +2205,9 @@ class hfsc_queue extends priq_queue {
 		$form .= " /></td><td>" . gettext("The bandwidth share of a backlogged queue - this overrides priority.") . "</td></tr>";
 		$form .= "</table><br />";
 		$form .= gettext("The format for service curve specifications is (m1, d, m2).  m2 controls "
-			  .  "the bandwidth assigned to the queue.  m1 and d are optional and can be "
-			  .  "used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value "
-			  .  "given in m2.");
+			. "the bandwidth assigned to the queue.  m1 and d are optional and can be "
+			. "used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value "
+			. "given in m2.");
 		$form .= "</td>";
 		$form .= "</tr>";
 
@@ -2543,7 +2543,7 @@ class cbq_queue extends priq_queue {
 		$tree .= " >" . $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -2677,7 +2677,7 @@ class cbq_queue extends priq_queue {
 		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
 		$form .= "<td class=\"vtable\"><input type=\"checkbox\" id=\"borrow\" name=\"borrow\"";
 		if ($this->GetBorrow() == "on") {
-			$form .=  " checked=\"checked\" ";
+			$form .= " checked=\"checked\" ";
 		}
 		$form .= " /> " . gettext("Borrow from other queues when available") . "<br /></td></tr>";
 
@@ -2989,13 +2989,13 @@ class fairq_queue extends priq_queue {
 		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
 		$tmpvalue = trim($this->GetBuckets());
 		if (!empty($tmpvalue)) {
-			$form .=  $this->GetBuckets();
+			$form .= $this->GetBuckets();
 		}
 		$form .= "\" /> " . gettext("Number of buckets available.") . "<br /></td></tr>";
 		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
 		$tmpvalue = trim($this->GetHogs());
 		if (!empty($tmpvalue)) {
-			$form .=  $this->GetHogs();
+			$form .= $this->GetHogs();
 		}
 		$form .= "\" /> " . gettext("Bandwidth limit for hosts to not saturate link.") . "<br /></td></tr>";
 		$form .= "</table></td></tr>";
@@ -3481,7 +3481,7 @@ class dnpipe_class extends dummynet_class {
 		$tree .= $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -3655,7 +3655,7 @@ EOD;
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
 		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable limiter and its children") . "</span>";
 		$form .= "</td></tr>";
@@ -3740,10 +3740,10 @@ EOD;
 		$form .= "</select>";
 		$form .= "&nbsp;<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
-			  .  "be created for each source/destination IP address encountered, \n"
-			  .  "respectively. This makes it possible to easily specify bandwidth \n"
-			  .  "limits per host.") . "</span><br />";
+			. "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
+			. "be created for each source/destination IP address encountered, \n"
+			. "respectively. This makes it possible to easily specify bandwidth \n"
+			. "limits per host.") . "</span><br />";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none") {
 			$form .= $mask['bits'];
@@ -3765,9 +3765,9 @@ EOD;
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
-			  .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
-			  .  "per pipe.") . "</span>";
+			. "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+			. "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+			. "per pipe.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3790,7 +3790,7 @@ EOD;
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\" />";
 		$form .= "&nbsp;ms<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty)") . "</span><br />";
+			. "should specify 0 here (or leave the field empty)") . "</span><br />";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
@@ -3798,8 +3798,8 @@ EOD;
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty). "
-			  .  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
+			. "should specify 0 here (or leave the field empty). "
+			. "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
@@ -3808,9 +3808,9 @@ EOD;
 		$form .= $this->GetQlimit() . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-			  .  "then they are delayed by value specified in the Delay field, and then they "
-			  .  "are delivered to their destination.") . "</span>";
+			. "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
+			. "then they are delayed by value specified in the Delay field, and then they "
+			. "are delivered to their destination.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
@@ -3819,7 +3819,7 @@ EOD;
 		$form .= $this->GetBuckets() . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			.  "should leave the field empty. It increases the hash size set.");
+			. "should leave the field empty. It increases the hash size set.");
 		$form .= "</span></td></tr>";
 
 		return $form;
@@ -4011,7 +4011,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
 		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
+			$form .= " checked=\"checked\"";
 		}
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue") . "</span>";
 		$form .= "</td></tr>";
@@ -4048,10 +4048,10 @@ class dnqueue_class extends dummynet_class {
 		$form .= "</select>";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			.  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
-			.  "be created for each source/destination IP address encountered, \n"
-			.  "respectively. This makes it possible to easily specify bandwidth \n"
-			.  "limits per host.") . "</span><br />";
+			. "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
+			. "be created for each source/destination IP address encountered, \n"
+			. "respectively. This makes it possible to easily specify bandwidth \n"
+			. "limits per host.") . "</span><br />";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none") {
 			$form .= $mask['bits'];
@@ -4073,9 +4073,9 @@ class dnqueue_class extends dummynet_class {
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			.  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
-			.  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
-			.  "per queue.") . "</span>";
+			. "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+			. "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+			. "per queue.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -4097,7 +4097,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<input name=\"weight\" type=\"text\" id=\"weight\" size=\"5\" value=\"";
 		$form .= $this->GetWeight() . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: For queues under the same parent "
-			.  "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
+			. "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
@@ -4105,8 +4105,8 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			.  "should specify 0 here (or leave the field empty). "
-			.  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
+			. "should specify 0 here (or leave the field empty). "
+			. "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
@@ -4115,9 +4115,9 @@ class dnqueue_class extends dummynet_class {
 		$form .= $this->GetQlimit() . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			.  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-			.  "then they are delayed by value specified in the Delay field, and then they "
-			.  "are delivered to their destination.") . "</span>";
+			. "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
+			. "then they are delayed by value specified in the Delay field, and then they "
+			. "are delivered to their destination.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
@@ -4126,7 +4126,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= $this->GetBuckets() . "\" />";
 		$form .= "&nbsp;" . gettext("slots") . "<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			.  "should leave the field empty. It increases the hash size set.");
+			. "should leave the field empty. It increases the hash size set.");
 		$form .= "</span></td></tr>";
 
 		$form .= "<input type=\"hidden\" id=\"pipe\" name=\"pipe\"";
@@ -4268,7 +4268,7 @@ class layer7 {
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
 		if ($this->GetREnabled() == "on") {
-			$form .=  "checked=\"checked\"";
+			$form .= "checked=\"checked\"";
 		}
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable layer7 Container") . "</span>";
 		$form .= "</td></tr>";
@@ -4816,7 +4816,7 @@ function get_interface_list_to_show() {
 	foreach ($shaperIFlist as $shif => $shDescr) {
 		if ($altq_list_queues[$shif]) {
 			continue;
-		} else  {
+		} else {
 			if (!is_altq_capable(get_real_interface($shif))) {
 				continue;
 			}
@@ -4952,14 +4952,14 @@ function build_iface_without_this_queue($iface, $qname) {
 }
 
 
-$default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
+$default_shaper_msg = "<tr><td align=\"center\" width=\"80%\">";
 $default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
 $default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
 	. "buttons at the bottom represent queue actions and are activated accordingly.");
 $default_shaper_msg .= "</strong></span>";
 $default_shaper_msg .= "</td></tr>";
 
-$dn_default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
+$dn_default_shaper_msg = "<tr><td align=\"center\" width=\"80%\">";
 $dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
 $dn_default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
 	. "buttons at the bottom represent queue actions and are activated accordingly.");

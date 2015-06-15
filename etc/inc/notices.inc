@@ -346,7 +346,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	$smtp->tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
-	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];
+	$smtp->localhost = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
@@ -410,7 +410,7 @@ function notify_via_growl($message, $force=false) {
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
 
-	if(!empty($growl_ip) && (is_ipaddr($growl_ip) || dns_get_record($growl_ip, DNS_A) || dns_get_record($growl_ip, DNS_AAAA))) {
+	if (!empty($growl_ip) && (is_ipaddr($growl_ip) || dns_get_record($growl_ip, DNS_A) || dns_get_record($growl_ip, DNS_AAAA))) {
 		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
 	}

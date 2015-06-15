@@ -175,7 +175,8 @@ EOD;
 		$config['system']['enablesshd'] = 'enabled';
 		$key = 'y';
 
-	} else {		//Manually assign interfaces
+	} else {
+		//Manually assign interfaces
 		if (in_array($key, array('y', 'Y'))) {
 			vlan_setup();
 		}
@@ -515,7 +516,7 @@ EOD;
 		if (!is_array($iflist)) {
 			echo gettext("No interfaces found!") . "\n";
 		} else {
-			$vlan_capable=0;
+			$vlan_capable = 0;
 			foreach ($iflist as $iface => $ifa) {
 				if (is_jumbo_capable($iface)) {
 					echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],

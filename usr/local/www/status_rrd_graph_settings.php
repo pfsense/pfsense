@@ -115,7 +115,7 @@ foreach ($databases as $database) {
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
 include("head.inc");
 
 ?>

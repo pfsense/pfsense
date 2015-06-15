@@ -138,7 +138,7 @@ include("head.inc");
 	</tr>
 <?php $count = 0; foreach($entries as $entryA): ?>
 	<?php $entry = trim($entryA); ?>
-	<tr id="<?=$entry?>">
+	<tr id="entry_<?=str_replace("/", "-", $entry)?>">
 		<td>
 			<?php echo $entry; ?>
 		</td>

@@ -904,6 +904,9 @@
 /usr/local/www/includes/log.inc.php
 /usr/local/www/includes/sajax.class.php
 /usr/local/www/index.html
+/usr/local/www/installer/index.php
+/usr/local/www/installer/installer.php
+/usr/local/www/installer
 /usr/local/www/interfaces_lan.php
 /usr/local/www/interfaces_opt.php
 /usr/local/www/interfaces_ppp.php

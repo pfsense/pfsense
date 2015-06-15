@@ -54,6 +54,23 @@ if ($_REQUEST['type']) {
 	$tablename = $_REQUEST['type'];
 }
 
+// Gather selected alias metadata.
+foreach ($config['aliases']['alias'] as $alias) {
+	if ( $alias['name'] == $tablename ) {
+		$tmp = array();
+		$tmp['type'] = $alias['type'];
+		$tmp['name'] = $alias['name'];
+		$tmp['url']  = $alias['url'];
+		$tmp['freq'] = $alias['updatefreq'];
+	}
+}
+
+# Determine if selected alias is a URL table.
+$urltable = false;
+if (preg_match('/urltable/i', $tmp['type'])) {
+	$urltable = true;
+}
+
 if ($_REQUEST['delete']) {
 	if (is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
@@ -136,7 +153,30 @@ include("head.inc");
 	?>
 </select>
 
-<br/><br/>
+<br />
+
+<?php
+# If selected table is either bogons or an alias URL table, display embedded comments.
+	if( ($tablename == "bogons") || ($tablename == "bogonsv6") || $urltable ) {
+		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+			$table_file =                '/etc/' . $tablename;
+		elseif( $urltable )
+			$table_file = '/var/db/aliastables/' . $tablename . '.txt';
+
+		# Display up to 10 comment lines (lines that begin with '#').
+		unset($comment_lines);
+		$res = exec('/usr/bin/grep -i -m 10 -E "^#" ' . escapeshellarg($table_file), $comment_lines);
+
+		foreach ($comment_lines as $comment_line) {
+			echo "<br />" . "$comment_line";
+		}
+
+		if ($comment_lines)
+			echo "<br />";
+	}
+?>
+
+<br />
 
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="tables">
 	<tr>
@@ -174,8 +214,7 @@ include("head.inc");
 <?php
 	if ($count > 0) {
 		if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
-			$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
-			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
+			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
 		} else {
 			echo "<tr><td>" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
 		}

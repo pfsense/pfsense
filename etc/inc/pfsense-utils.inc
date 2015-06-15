@@ -2301,7 +2301,8 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		unlink_if_exists($urltable_filename . ".tmp");
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
-			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			# Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
+			mwexec("/usr/bin/sed -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
 				$ports = explode("\n", file_get_contents($urltable_filename));
 				$ports = group_ports($ports);

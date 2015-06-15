@@ -180,7 +180,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	</tr>
 	<?php 
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
-	processQueues($altqstats, 0, "")?>
+	processQueues($altqstats, 0, "");?>
 <?php endif; ?>
 </table>
 <p>

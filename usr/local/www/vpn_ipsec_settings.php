@@ -215,9 +215,15 @@ if ($_POST) {
 
 		header("Location: vpn_ipsec_settings.php");
 		return;
-	} else
-		/* NOTE: Do not be smart here check #4655 */
-		$pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
+	}
+
+	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
+	if ($_POST['noshuntlaninterfaces'] == "yes") {
+		$pconfig['noshuntlaninterfaces'] = false;
+	} else {
+		$pconfig['noshuntlaninterfaces'] = true;
+	}
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));

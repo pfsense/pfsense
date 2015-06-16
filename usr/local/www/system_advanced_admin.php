@@ -504,7 +504,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("SSH port"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
+									<input name="sshport" type="text" id="sshport" value="<?php echo htmlspecialchars($pconfig['sshport']); ?>" />
 									<br />
 									<span class="vexpl"><?=gettext("Note: Leave this blank for the default of 22."); ?></span>
 								</td>

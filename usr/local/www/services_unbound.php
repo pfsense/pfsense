@@ -268,7 +268,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
 								<td width="78%" class="vtable">
 									<p>
-										<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?> />
+										<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"" . htmlspecialchars($pconfig['port']) . "\"";?> />
 										<br /><br />
 										<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?>
 									</p>

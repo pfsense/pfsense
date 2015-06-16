@@ -31,7 +31,12 @@ rm -f /root/*.md5 >/dev/null 2>&1
 
 # Fixup permissions on installed files
 if [ -f ${ROOT}etc/installed_filesystem.mtree ]; then
-	/usr/sbin/mtree -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log
+	if [ -x "/tmp/mtree.old" ]; then
+		MTREE_BIN=/tmp/mtree.old
+	else
+		MTREE_BIN=/usr/sbin/mtree
+	fi
+	${MTREE_BIN} -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log
 fi
 
 # Make sure to preserve existing time zone

@@ -194,18 +194,18 @@ include("head.inc");
 						<?php foreach ($tunables as $i => $tunable):
 
 								if (!isset($tunable['modified'])) {
-									$i = $tunable['tunable'];
+									$i = urlencode($tunable['tunable']);
 								}
 						?>
 						<tr>
 							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo $tunable['tunable']; ?>
+								<?php echo htmlspecialchars($tunable['tunable']); ?>
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo $tunable['descr']; ?>
+								<?php echo htmlspecialchars($tunable['descr']); ?>
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo $tunable['value']; ?>
+								<?php echo htmlspecialchars($tunable['value']); ?>
 								<?php
 									if ($tunable['value'] == "default") {
 										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
@@ -263,19 +263,19 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunable"); ?></td>
 								<td width="78%" class="vtable">
-									<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>" />
+									<input size="65" name="tunable" value="<?php echo htmlspecialchars($pconfig['tunable']); ?>" />
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 								<td width="78%" class="vtable">
-									<textarea rows="7" cols="50" name="descr"><?php echo $pconfig['descr']; ?></textarea>
+									<textarea rows="7" cols="50" name="descr"><?php echo htmlspecialchars($pconfig['descr']); ?></textarea>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Value"); ?></td>
 								<td width="78%" class="vtable">
-									<input size="65" name="value" value="<?php echo $pconfig['value']; ?>" />
+									<input size="65" name="value" value="<?php echo htmlspecialchars($pconfig['value']); ?>" />
 								</td>
 							</tr>
 							<tr>

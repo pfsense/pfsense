@@ -125,7 +125,7 @@ function enable_altpkgrepourl(enable_over) {
 		<td class="vtable">
 			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a non-official server for packages");?> <br />
 			<table summary="alternative URL">
-			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>" /></td></tr>
+			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo htmlspecialchars($curcfg['xmlrpcbaseurl']); else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
 				<?php printf(gettext("This is where %s will check for packages when the"),$g['product_name']);?> <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>

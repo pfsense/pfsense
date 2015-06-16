@@ -133,7 +133,7 @@ function enable_altpkgrepourl(enable_over) {
 								<tr>
 									<td><?=gettext("Base URL:");?></td>
 									<td>
-										<input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if ($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>" />
+										<input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if ($curcfg['xmlrpcbaseurl']) echo htmlspecialchars($curcfg['xmlrpcbaseurl']); else echo $g['']; ?>" />
 									</td>
 								</tr>
 							</table>

@@ -329,7 +329,7 @@ include("head.inc");
 							}
 							echo ">\n";
 
-							echo "<input name=\"server{$i}\" class=\"formfld unknown\" id=\"server{$i}\" size=\"30\" value=\"{$timeservers[$i]}\" type=\"text\" />&emsp;";
+							echo "<input name=\"server{$i}\" class=\"formfld unknown\" id=\"server{$i}\" size=\"30\" value=\"" . htmlspecialchars($timeservers[$i]) . "\" type=\"text\" />&emsp;";
 							echo "\n<input name=\"servprefer{$i}\" class=\"formcheckbox\" id=\"servprefer{$i}\" onclick=\"CheckOffOther('servprefer{$i}', 'servselect{$i}')\" type=\"checkbox\"";
 							if (isset($config['ntpd']['prefer']) && isset($timeservers[$i]) && substr_count($config['ntpd']['prefer'], $timeservers[$i])) {
 								echo " checked=\"checked\"";

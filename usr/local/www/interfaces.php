@@ -3036,9 +3036,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														<?php else: ?>
 															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
 														<?php endif; ?>
-														<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= $pconfig['pppoe_resethour']; ?>" size="3" />
+														<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= htmlspecialchars($pconfig['pppoe_resethour']); ?>" size="3" />
 														<?=gettext("hour (0-23)"); ?><br />
-														<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" />
+														<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= htmlspecialchars($pconfig['pppoe_resetminute']); ?>" size="3" />
 														<?=gettext("minute (0-59)"); ?><br />
 														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" />
 														<?=gettext("reset at a specific date (mm/dd/yyyy)"); ?>
@@ -3576,14 +3576,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
-								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>" />
+								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo htmlspecialchars($pconfig['wpa_group_rekey']) ? $pconfig['wpa_group_rekey'] : "60";?>" />
 								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>" />
+								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo htmlspecialchars($pconfig['wpa_gmk_rekey']) ? $pconfig['wpa_gmk_rekey'] : "3600";?>" />
 								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be longer than Key Rotation time."); ?>
 							</td>
 						</tr>

@@ -26,7 +26,8 @@ if [ ${PRIOR_VERSION} -le 8 ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware; t
 		cp -fp /bin/sh /tmp/sh.old
 		kill ${PID} >/dev/null 2>&1
 		kill -9 ${PID} >/dev/null 2>&1
-		sed -i '' -e 's,sh /,/tmp/sh.old /,' /etc/rc.firmware
+		sed -i '' -e 's,sh /,/tmp/sh.old /,' \
+			  -e 's,/usr/sbin/mtree,/tmp/mtree.old,' /etc/rc.firmware
 		# To avoid restarting rc.firmware twice because of #4328
 		sed -i '' -e '/^restore_chflags()/, /^}/ s/mtree *-PU/mtree -P/' /etc/rc.firmware
 		/etc/rc.firmware pfSenseupgrade "${IMG}"

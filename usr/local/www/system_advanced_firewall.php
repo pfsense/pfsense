@@ -506,11 +506,11 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<strong><?=gettext("Timeouts for states can be scaled adaptively as the number of state table entries grows.");?></strong>
 									<br />
-									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
+									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo htmlspecialchars($pconfig['adaptivestart']); ?>" />
 									<br /><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
 
 									<br />
-									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
+									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo htmlspecialchars($pconfig['adaptiveend']); ?>" />
 									<br /><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
 									<br />
 									<span class="vexpl"><?=gettext("Note: Leave this blank for the default, which auto-calculates these values from your maximum state table size. Adaptive start is 60% and end is 120% of the state table size by default.");?></span>
@@ -519,7 +519,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum States");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
+									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo htmlspecialchars($pconfig['maximumstates']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br />
@@ -529,7 +529,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Table Entries");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo $pconfig['maximumtableentries']; ?>" />
+									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo htmlspecialchars($pconfig['maximumtableentries']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of table entries for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
 									<br />
@@ -588,7 +588,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
 								<td width="78%" class="vtable">
-									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
+									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo htmlspecialchars($pconfig['aliasesresolveinterval']); ?>" />
 									<br />
 									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
 									<br />

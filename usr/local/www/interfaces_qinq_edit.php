@@ -398,7 +398,7 @@ function removeRow(el) {
 ?>
 					<tr>
 						<td class="vtable">
-							<input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo $member;?>" />
+							<input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo htmlspecialchars($member);?>" />
 						</td>
 						<td>
 							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>

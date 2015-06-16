@@ -1090,7 +1090,7 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%">
-		<?php echo "<input name='zone' id='zone' type='hidden' value='" . htmlspecialchars($cpzone) . "' />"; ?>
+		<?php echo "<input name='zone' id='zone' type='hidden' value='" . htmlspecialchars($cpzone, ENT_QUOTES | ENT_HTML401) . "' />"; ?>
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
 		<a href="services_captiveportal_zones.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="enable_change(true)" /></a>
 	  </td>

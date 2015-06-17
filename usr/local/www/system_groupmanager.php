@@ -52,14 +52,16 @@ require("guiconfig.inc");
 
 $pgtitle = array(gettext("System"), gettext("Group manager"));
 
-if (!is_array($config['system']['group']))
+if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
+}
 
 $a_group = &$config['system']['group'];
 
 unset($id);
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid']))
+if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$id = $_POST['groupid'];
+}
 
 $act = (isset($_POST['act']) ? $_POST['act'] : '');
 
@@ -76,8 +78,8 @@ if ($act == "delgroup") {
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
-	$savemsg = gettext("Group")." {$groupdeleted} ".
-		gettext("successfully deleted")."<br />";
+	$savemsg = gettext("Group") . " {$groupdeleted} " .
+		gettext("successfully deleted") . "<br />";
 }
 
 if ($act == "delpriv") {
@@ -93,15 +95,16 @@ if ($act == "delpriv") {
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
 			$user = getUserEntryByUID($uid);
-			if ($user)
+			if ($user) {
 				local_user_set($user);
+			}
 		}
 	}
 
 	write_config();
 	$act = "edit";
-	$savemsg = gettext("Privilege")." {$privdeleted} ".
-				gettext("successfully deleted")."<br />";
+	$savemsg = gettext("Privilege") . " {$privdeleted} " .
+		gettext("successfully deleted") . "<br />";
 }
 
 if ($act == "edit") {
@@ -115,13 +118,13 @@ if ($act == "edit") {
 	}
 }
 
-if(isset($_POST['dellall_x'])) {
+if (isset($_POST['dellall_x'])) {
 
 	$del_groups = $_POST['delete_check'];
 
-	if(!empty($del_groups)) {
-		foreach($del_groups as $groupid) {
-			if(isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
+	if (!empty($del_groups)) {
+		foreach ($del_groups as $groupid) {
+			if (isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
 				conf_mount_rw();
 				local_group_del($a_group[$groupid]);
 				conf_mount_ro();
@@ -144,11 +147,13 @@ if (isset($_POST['save'])) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname'])) {
 		$input_errors[] = gettext("The group name contains invalid characters.");
+	}
 
-	if (strlen($_POST['groupname']) > 16)
+	if (strlen($_POST['groupname']) > 16) {
 		$input_errors[] = gettext("The group name is longer than 16 characters.");
+	}
 
 	if (!$input_errors && !(isset($id) && $a_group[$id])) {
 		/* make sure there are no dupes */
@@ -162,20 +167,22 @@ if (isset($_POST['save'])) {
 
 	if (!$input_errors) {
 		$group = array();
-		if (isset($id) && $a_group[$id])
+		if (isset($id) && $a_group[$id]) {
 			$group = $a_group[$id];
+		}
 
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
 
-		if (empty($_POST['members']))
+		if (empty($_POST['members'])) {
 			unset($group['member']);
-		else if ($group['gid'] != 1998) // all group
+		} else if ($group['gid'] != 1998) { // all group
 			$group['member'] = $_POST['members'];
+		}
 
-		if (isset($id) && $a_group[$id])
+		if (isset($id) && $a_group[$id]) {
 			$a_group[$id] = $group;
-		else {
+		} else {
 			$group['gid'] = $config['system']['nextgid']++;
 			$a_group[] = $group;
 		}
@@ -188,8 +195,9 @@ if (isset($_POST['save'])) {
 		if (is_array($group['member'])) {
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
-				if (in_array($user['uid'], $group['member']))
+				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
+				}
 			}
 		}
 
@@ -213,31 +221,37 @@ include("head.inc");
 function setall_selected(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
+	for (index = 0; index<count; index++) {
 		selbox.options[index].selected = true;
+	}
 }
 
 function delete_empty(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
-		if (selbox.options[index].value == '')
+	for (index = 0; index<count; index++) {
+		if (selbox.options[index].value == '') {
 			selbox.remove(index);
+		}
+	}
 }
 
 function clear_selected(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
-	for (index = 0; index<count; index++)
+	for (index = 0; index<count; index++) {
 		selbox.options[index].selected = false;
+	}
 }
 
 function remove_selected(id) {
 	selbox = document.getElementById(id);
 	index = selbox.options.length - 1;
-	for (; index >= 0; index--)
-		if (selbox.options[index].selected)
+	for (; index >= 0; index--) {
+		if (selbox.options[index].selected) {
 			selbox.remove(index);
+		}
+	}
 }
 
 function copy_selected(srcid, dstid) {
@@ -275,10 +289,12 @@ function presubmit() {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="group manager">
 	<tr>
@@ -298,7 +314,7 @@ function presubmit() {
 			<div class="tabcont">
 
 <?php
-			if($act == "new" || $act == "edit"):
+			if ($act == "new" || $act == "edit"):
 ?>
 				<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 					<input type="hidden" id="act" name="act" value="" />
@@ -307,8 +323,9 @@ function presubmit() {
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 						$ro = "";
-						if ($pconfig['gtype'] == "system")
+						if ($pconfig['gtype'] == "system") {
 							$ro = "readonly=\"readonly\"";
+						}
 ?>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
@@ -342,12 +359,13 @@ function presubmit() {
 										<td align="center" width="50%">
 											<strong><?=gettext("Not Members");?></strong><br />
 											<br />
-												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onchange="clear_selected('members')" multiple="multiple">
+											<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onchange="clear_selected('members')" multiple="multiple">
 <?php
 											$rowIndex = 0;
 											foreach ($config['system']['user'] as $user):
-												if (is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members']))
+												if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members'])) {
 													continue;
+												}
 												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>" <?=$selected;?>>
@@ -355,19 +373,20 @@ function presubmit() {
 												</option>
 <?php
 											endforeach;
-											if ($rowIndex == 0)
+											if ($rowIndex == 0) {
 												echo "<option></option>";
+											}
 ?>
 											</select>
 											<br />
 										</td>
 										<td>
 											<br />
-											<a href="javascript:move_selected('notmembers','members')">
+											<a href="javascript:move_selected('notmembers', 'members')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Members");?>" alt="<?=gettext("Add Members");?>" width="17" height="17" border="0" />
 											</a>
 											<br /><br />
-											<a href="javascript:move_selected('members','notmembers')">
+											<a href="javascript:move_selected('members', 'notmembers')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Members");?>" alt="<?=gettext("Remove Members");?>" width="17" height="17" border="0" />
 											</a>
 										</td>
@@ -378,8 +397,9 @@ function presubmit() {
 <?php
 											$rowIndex = 0;
 											foreach ($config['system']['user'] as $user):
-												if (!(is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members'])))
+												if (!(is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members']))) {
 													continue;
+												}
 												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>">
@@ -387,8 +407,9 @@ function presubmit() {
 												</option>
 <?php
 											endforeach;
-											if ($rowIndex == 0)
+											if ($rowIndex == 0) {
 												echo "<option></option>";
+											}
 ?>
 											</select>
 											<br />
@@ -412,7 +433,7 @@ function presubmit() {
 										<td class="list"></td>
 									</tr>
 <?php
-							if(is_array($pconfig['priv'])):
+							if (is_array($pconfig['priv'])):
 								$i = 0;
 								foreach ($pconfig['priv'] as $priv):
 ?>
@@ -447,7 +468,6 @@ function presubmit() {
 
 										</td>
 									</tr>
-
 								</table>
 							</td>
 						</tr>
@@ -509,20 +529,22 @@ function presubmit() {
 						<tbody>
 <?php
 						$i = 0;
-						foreach($a_group as $group):
-							if($group['scope'] == "system")
+						foreach ($a_group as $group):
+							if ($group['scope'] == "system") {
 								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
-							else
+							} else {
 								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+							}
 							$groupcount = count($group['member']);
-							if ($group["name"] == "all")
+							if ($group["name"] == "all") {
 								$groupcount = count($config['system']['user']);
+							}
 ?>
 							<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 								document.getElementById('groupid').value='<?=$i;?>';
 								document.iform2.submit();" id="fr<?=$i?>">
 								<td class="list" id="frd<?=$i?>">
-								<?php if($group['scope'] != "system") : ?>
+								<?php if ($group['scope'] != "system") : ?>
 									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
 								<?php endif; ?>
 								</td>
@@ -552,7 +574,7 @@ function presubmit() {
 										title="<?=gettext("edit group");?>" />
 									&nbsp;
 <?php
-								if($group['scope'] != "system"):
+								if ($group['scope'] != "system"):
 ?>
 									<input type="image" name="delgroup[]" width="17" height="17" border="0"
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"

@@ -214,10 +214,10 @@ if ($_POST) {
 	/* input validation */
 	if (strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 		$reqdfields = explode(" ", "interface proto dstbeginport dstendport");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Destination port from"),gettext("Destination port to"));
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Destination port from"), gettext("Destination port to"));
 	} else {
 		$reqdfields = explode(" ", "interface proto");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"));
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
 	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
@@ -276,8 +276,8 @@ if ($_POST) {
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
-	if (($_POST['srctype'] == "network" && is_alias($_POST['src']) ) ||
-	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) )) {
+	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
+	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
 
@@ -332,13 +332,13 @@ if ($_POST) {
 			continue;
 		}
 
-		list($begp,$endp) = explode("-", $natent['destination']['port']);
+		list($begp, $endp) = explode("-", $natent['destination']['port']);
 		if (!$endp) {
 			$endp = $begp;
 		}
 
-		if (!((($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp)) ||
-		     (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
+		if (!((($_POST['dstbeginport'] < $begp) && ($_POST['dstendport'] < $begp)) ||
+		     (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
@@ -405,15 +405,15 @@ if ($_POST) {
 			$need_filter_rule = true;
 		}
 		// Create a rule or if we want to create a new one
-		if ($natent['associated-rule-id']=='new') {
+		if ($natent['associated-rule-id'] == 'new') {
 			$need_filter_rule = true;
-			unset( $natent['associated-rule-id'] );
+			unset($natent['associated-rule-id']);
 			$_POST['filter-rule-association']='add-associated';
 		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
 		else if (isset($_POST['filter-rule-association']) &&
-		    ($_POST['filter-rule-association']=='add-associated' ||
-		     $_POST['filter-rule-association']=='add-unassociated')) {
+		    ($_POST['filter-rule-association'] == 'add-associated' ||
+		     $_POST['filter-rule-association'] == 'add-unassociated')) {
 			$need_filter_rule = true;
 		}
 
@@ -456,7 +456,7 @@ if ($_POST) {
 			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 62);
 
 			// If this is a new rule, create an ID and add the rule
-			if ($_POST['filter-rule-association']=='add-associated') {
+			if ($_POST['filter-rule-association'] == 'add-associated') {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
@@ -496,7 +496,7 @@ if ($_POST) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -536,7 +536,7 @@ include("fbegin.inc"); ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 			<td width="78%" class="vtable">
-				<select name="interface" class="formselect" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
+				<select name="interface" class="formselect" onchange="dst_change(this.value, iface_old, document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 					<?php
 					$iflist = get_configured_interface_with_descr(false, true);
 					// Allow extending of the firewall edit interfaces
@@ -623,24 +623,24 @@ include("fbegin.inc"); ?>
 							<select name="srctype" class="formselect" onchange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
-								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
+								<option value="any" <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
+								<option value="single" <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
 								<?php if (have_ruleint_access("pptp")): ?>
-								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
+								<option value="pptp" <?php if ($pconfig['src'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>
 								<?php if (have_ruleint_access("pppoe")): ?>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
+								<option value="pppoe" <?php if ($pconfig['src'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
 								<?php endif; ?>
 								<?php if (have_ruleint_access("l2tp")): ?>
-								<option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
+								<option value="l2tp" <?php if ($pconfig['src'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
 								<?php endif; ?>
 <?php
 								foreach ($ifdisp as $ifent => $ifdesc):
 									if (have_ruleint_access($ifent)):
 ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
-									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
+									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] == $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
 									</option>
 <?php
@@ -898,7 +898,7 @@ include("fbegin.inc"); ?>
 						foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 							if (isset($filter_rule['associated-rule-id'])) {
 								echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
-								if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
+								if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
 									echo " selected=\"selected\"";
 									$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">" . gettext("View the filter rule") . "</a><br />";
 								}
@@ -994,7 +994,7 @@ include("fbegin.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));

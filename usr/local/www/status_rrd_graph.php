@@ -47,7 +47,7 @@ require_once("rrd.inc");
 unset($input_errors);
 
 /* if the rrd graphs are not enabled redirect to settings page */
-if (! isset($config['rrd']['enable'])) {
+if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
 }
 
@@ -59,7 +59,7 @@ $databases = glob("*.rrd");
 if ($_GET['cat']) {
 	$curcat = htmlspecialchars($_GET['cat']);
 } else {
-	if (! empty($config['rrd']['category'])) {
+	if (!empty($config['rrd']['category'])) {
 		$curcat = $config['rrd']['category'];
 	} else {
 		$curcat = "system";
@@ -75,7 +75,7 @@ if ($_GET['zone']) {
 if ($_GET['period']) {
 	$curperiod = $_GET['period'];
 } else {
-	if (! empty($config['rrd']['period'])) {
+	if (!empty($config['rrd']['period'])) {
 		$curperiod = $config['rrd']['period'];
 	} else {
 		$curperiod = "absolute";
@@ -193,12 +193,13 @@ $styles = array('inverse' => gettext('Inverse'),
 $curstyle = "inverse";
 
 if ($_GET['style']) {
-	foreach ($styles as $style)
+	foreach ($styles as $style) {
 		if (strtoupper($style) == strtoupper($_GET['style'])) {
 			$curstyle = $_GET['style'];
 		}
+	}
 } else {
-	if (! empty($config['rrd']['style'])) {
+	if (!empty($config['rrd']['style'])) {
 		$curstyle = $config['rrd']['style'];
 	} else {
 		$curstyle = "inverse";
@@ -259,7 +260,7 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
 
 $closehead = false;
 
@@ -558,7 +559,7 @@ function get_dates($curperiod, $graph) {
 									}
 								}
 								foreach ($ui_databases as $db => $database) {
-									if (! preg_match("/($curcat)/i", $database)) {
+									if (!preg_match("/($curcat)/i", $database)) {
 										continue;
 									}
 
@@ -669,7 +670,7 @@ function get_dates($curperiod, $graph) {
 		foreach ($graphs as $graph) {
 			/* check which databases are valid for our category */
 			foreach ($ui_databases as $curdatabase) {
-				if (! preg_match("/($curcat)/i", $curdatabase)) {
+				if (!preg_match("/($curcat)/i", $curdatabase)) {
 					continue;
 				}
 
@@ -707,7 +708,7 @@ function get_dates($curperiod, $graph) {
 								continue 2;
 							}
 						}
-						if (! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+						if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 						break;
@@ -719,7 +720,7 @@ function get_dates($curperiod, $graph) {
 						break;
 					default:
 						/* just use the name here */
-						if (! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+						if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 				}
@@ -752,7 +753,7 @@ function get_dates($curperiod, $graph) {
 									foreach ($graphs as $graph) {
 										/* check which databases are valid for our category */
 										foreach ($ui_databases as $curdatabase) {
-											if (! stristr($curdatabase, $curcat)) {
+											if (!stristr($curdatabase, $curcat)) {
 												continue;
 											}
 											$optionc = explode("-", $curdatabase);
@@ -785,7 +786,7 @@ function get_dates($curperiod, $graph) {
 															continue 2;
 														}
 													}
-													if (! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+													if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 														continue 2;
 													}
 													break;
@@ -797,7 +798,7 @@ function get_dates($curperiod, $graph) {
 													break;
 												default:
 													/* just use the name here */
-													if (! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+													if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 														continue 2;
 													}
 											}

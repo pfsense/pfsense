@@ -84,7 +84,7 @@ for ($x=2; $x<12; $x++) {
 	// echo $bandwidthinfo;
 	$emptyinfocounter = 1;
 	if ($bandwidthinfo != "") {
-		$infoarray = explode (":",$bandwidthinfo);
+		$infoarray = explode (":", $bandwidthinfo);
 		if (($filter == "all") ||
 		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
 		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {

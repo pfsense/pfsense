@@ -56,7 +56,7 @@ if ($_POST['clear']) {
 	clear_log_file($wireless_logfile);
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Wireless"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Wireless"));
 $shortcut_section = "wireless";
 include("head.inc");
 
@@ -103,7 +103,7 @@ include("head.inc");
 				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 					<tr>
 						<td colspan="2" class="listtopic">
-							<?php printf(gettext("Wireless (hostapd) log entries"),$nentries);?>
+							<?php printf(gettext("Wireless (hostapd) log entries"), $nentries);?>
 						</td>
 					</tr>
 					<?php dump_clog($wireless_logfile, $nentries); ?>

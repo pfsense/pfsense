@@ -526,14 +526,14 @@ function openvpn_reconfigure($mode, $settings) {
 	// Otherwise, if a specific interface is requested, use it
 	// If "any" interface was selected, local directive will be omitted.
 	if (is_ipaddrv4($ipaddr)) {
-		$iface_ip=$ipaddr;
+		$iface_ip = $ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
 		}
 	}
 	if (is_ipaddrv6($ipaddr)) {
-		$iface_ipv6=$ipaddr;
+		$iface_ipv6 = $ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ipv6=get_interface_ipv6($interface);
@@ -694,7 +694,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$cert = lookup_cert($settings['certref']);
 				/* XXX: Seems not used at all! */
 				$servercn = urlencode(cert_get_cn($cert['crt']));
-				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
+				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} \"\n";
 			}
 		}
 
@@ -789,11 +789,21 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 		}
 
-		if ($settings['auth_user'] && $settings['auth_pass']) {
+		if ($settings['auth_user'] || $settings['auth_pass']) {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
-			$userpass = "{$settings['auth_user']}\n";
-			$userpass .= "{$settings['auth_pass']}\n";
+			if ($settings['auth_user']) {
+				$userpass = "{$settings['auth_user']}\n";
+			} else {
+				$userpass = "";
+			}
+			if ($settings['auth_pass']) {
+				$userpass .= "{$settings['auth_pass']}\n";
+			}
+			// If only auth_pass is given, then it acts like a user name and we put a blank line where pass would normally go.
+			if (!($settings['auth_user'] && $settings['auth_pass'])) {
+				$userpass .= "\n";
+			}
 			file_put_contents($up_file, $userpass);
 		}
 
@@ -1316,7 +1326,7 @@ function openvpn_get_active_clients() {
 			$client['vpnid'] = $settings['vpnid'];
 			$client['mgmt'] = "client{$client['vpnid']}";
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$client['mgmt']}.sock";
-			$client['status']="down";
+			$client['status'] = "down";
 
 			$clients[] = openvpn_get_client_status($client, $socket);
 		}
@@ -1344,29 +1354,29 @@ function openvpn_get_client_status($client, $socket) {
 			}
 
 			/* Get the client state */
-			if (strstr($line,"CONNECTED")) {
-				$client['status']="up";
+			if (strstr($line, "CONNECTED")) {
+				$client['status'] = "up";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr']  = $list[3];
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
 			}
-			if (strstr($line,"CONNECTING")) {
-				$client['status']="connecting";
+			if (strstr($line, "CONNECTING")) {
+				$client['status'] = "connecting";
 			}
-			if (strstr($line,"ASSIGN_IP")) {
-				$client['status']="waiting";
+			if (strstr($line, "ASSIGN_IP")) {
+				$client['status'] = "waiting";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr']  = $list[3];
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr'] = $list[3];
 			}
-			if (strstr($line,"RECONNECTING")) {
-				$client['status']="reconnecting";
+			if (strstr($line, "RECONNECTING")) {
+				$client['status'] = "reconnecting";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
 				$client['status'] .= "; " . $list[2];
 			}
 			/* parse end of output line */
@@ -1388,12 +1398,12 @@ function openvpn_get_client_status($client, $socket) {
 					break;
 				}
 
-				if (strstr($line,"TCP/UDP read bytes")) {
+				if (strstr($line, "TCP/UDP read bytes")) {
 					$list = explode(",", $line);
 					$client['bytes_recv'] = $list[1];
 				}
 
-				if (strstr($line,"TCP/UDP write bytes")) {
+				if (strstr($line, "TCP/UDP write bytes")) {
 					$list = explode(",", $line);
 					$client['bytes_sent'] = $list[1];
 				}

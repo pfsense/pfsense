@@ -52,7 +52,7 @@ if ($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"));
 $shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();
@@ -163,7 +163,7 @@ if ($_GET) {
 						$q = new cbq_queue();
 						break;
 					default:
-						/* XXX: Happens when sched==NONE?! */
+						/* XXX: Happens when sched == NONE?! */
 						$q = new altq_root_queue();
 						break;
 				}
@@ -194,8 +194,9 @@ if ($_GET) {
 			if ($queue) {
 					$queue->SetEnabled("on");
 					$output_form .= $queue->build_form();
-					if (write_config())
+					if (write_config()) {
 						mark_subsystem_dirty('shaper');
+					}
 			} else {
 					$input_errors[] = gettext("Queue not found!");
 			}
@@ -333,7 +334,7 @@ if ($_GET) {
 		}
 		read_altq_config();
 		$output_form .= $queue->build_form();
-	} else  {
+	} else {
 		$output_form .= $default_shaper_msg;
 		$dontshow = true;
 	}
@@ -405,7 +406,7 @@ if (!$dontshow || $newqueue) {
 	$output_form .= "</table>";
 }
 
-$output = "<table  summary=\"output form\">";
+$output = "<table summary=\"output form\">";
 $output .= $output_form;
 
 //$pgtitle = "Firewall: Shaper: By Interface View";

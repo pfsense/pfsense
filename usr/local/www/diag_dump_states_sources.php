@@ -62,7 +62,7 @@ if ($_GET['filter']) {
 	exec("/sbin/pfctl -s Sources", $sources);
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show Source Tracking"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show Source Tracking"));
 include("head.inc");
 
 ?>
@@ -74,10 +74,10 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 	function removeSource(srcip, dstip) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+		var busy = function(index, icon) {
+			jQuery(icon).bind("onclick", "");
+			jQuery(icon).attr('src', jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor", "wait");
 		}
 
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
@@ -97,7 +97,7 @@ include("head.inc");
 		}
 
 		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+			function(index, row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -170,19 +170,19 @@ if (count($sources) > 0) {
 		list($all, $srcip, $dstip) = $source_split;
 
 		?>
-		<tr valign='top' name='r:<?php echo "{$srcip}:{$dstip}" ?>'>
-				<td class='listlr'><?php echo $info;?></td>
-				<td class='listr'><?php echo $numstates;?></td>
-				<td class='listr'><?php echo $numconnections;?></td>
-				<td class='listr'><?php echo $rate;?></td>
-				<td class='list'>
-				<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
-					name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
-					title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
-				</td>
-			  </tr>
-		<?php
+				<tr valign='top' name='r:<?php echo "{$srcip}:{$dstip}" ?>'>
+					<td class='listlr'><?php echo $info;?></td>
+					<td class='listr'><?php echo $numstates;?></td>
+					<td class='listr'><?php echo $numconnections;?></td>
+					<td class='listr'><?php echo $rate;?></td>
+					<td class='list'>
+						<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
+							onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
+							name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
+							title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
+					</td>
+				</tr>
+<?php
 		$row++;
 	}
 } else {
@@ -193,7 +193,7 @@ if (count($sources) > 0) {
 		  </tr>";
 }
 ?>
-			</tbody>
+				</tbody>
 			</table>
 		</td>
 	</tr>
@@ -201,9 +201,9 @@ if (count($sources) > 0) {
 
 <!-- End of tab content -->
 
-		</div>
-	</td>
-  </tr>
+			</div>
+		</td>
+	</tr>
 </table>
 
 <?php require("fend.inc"); ?>

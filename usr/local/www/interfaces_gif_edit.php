@@ -88,7 +88,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
 
-	$alias = strstr($_POST['if'],'|');
+	$alias = strstr($_POST['if'], '|');
 	if ((is_ipaddrv4($alias) && !is_ipaddrv4($_POST['remote-addr'])) ||
 	    (is_ipaddrv6($alias) && !is_ipaddrv6($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The alias IP address family has to match the family of the remote peer address.");
@@ -108,7 +108,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$gif = array();
-		list($gif['if'], $gif['ipaddr']) = explode("|",$_POST['if']);
+		list($gif['if'], $gif['ipaddr']) = explode("|", $_POST['if']);
 		$gif['tunnel-local-addr'] = $_POST['tunnel-local-addr'];
 		$gif['tunnel-remote-addr'] = $_POST['tunnel-remote-addr'];
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
@@ -141,7 +141,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GIF"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIF"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

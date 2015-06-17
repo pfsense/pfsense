@@ -319,8 +319,9 @@ if ($local_ip == false) {
 			"cookie_test=1" +
 			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-		if (document.cookie.indexOf("cookie_test") == -1)
+		if (document.cookie.indexOf("cookie_test") == -1) {
 			document.getElementById("no_cookies").style.display="";
+		}
 
 		// Delete it
 		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";

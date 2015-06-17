@@ -72,7 +72,7 @@ function getHeadJS() {
 		}
 	}
 
-	function submit_form(e){
+	function submit_form(e) {
 		// debugging helper
 		//alert(Form.serialize($('iform')));
 
@@ -88,7 +88,7 @@ function getHeadJS() {
 			jQuery('#submit').keydown();
 			jQuery('#submit').css('visibility','hidden');
 		}
-		if(jQuery('#cancelbutton')) {
+		if (jQuery('#cancelbutton')) {
 			jQuery('#cancelbutton').css('visibility','hidden');
 		}
 		jQuery('#loading').css('visibility','visible');

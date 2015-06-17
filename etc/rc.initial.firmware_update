@@ -11,7 +11,7 @@ echo "Starting the {$g['product_name']} console firmware update system";
 require("functions.inc");
 echo ".";
 
-if(isset($config['system']['firmware']['alturl']['enable'])) {
+if (isset($config['system']['firmware']['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 } else {
 	$updater_url = $g['update_url'];
@@ -95,8 +95,8 @@ switch ($command) {
 				}
 			}
 			if (file_exists("/root/firmware.tgz.sha256")) {
-				$source_sha256 = trim(`cat /root/firmware.tgz.sha256 | awk '{ print \$4 }'`,"\r");
-				$file_sha256 = trim(`sha256 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
+				$source_sha256 = trim(`cat /root/firmware.tgz.sha256 | awk '{ print \$4 }'`, "\r");
+				$file_sha256 = trim(`sha256 /root/firmware.tgz | awk '{ print \$4 }'`, "\r");
 				echo "URL sha256: $source_sha256\n";
 				echo "Downloaded file sha256: $file_sha256\n";
 				if ($source_sha256 <> $file_sha256) {
@@ -109,10 +109,10 @@ switch ($command) {
 				echo "\nsha256 checksum matches.\n";
 				unlink_if_exists("/root/firmware.tgz.sha256");
 			}
-			if (strstr($url,"bdiff")) {
+			if (strstr($url, "bdiff")) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
-			} elseif (strstr($url,"nanobsd")) {
+			} elseif (strstr($url, "nanobsd")) {
 				echo "NanoBSD upgrade file detected...\n";
 				$type = "nanobsd";
 			} else {
@@ -129,10 +129,10 @@ switch ($command) {
 			fclose($fp);
 			die;
 		}
-		if (stristr($path,"bdiff")) {
+		if (stristr($path, "bdiff")) {
 			$type = "bdiff";
 		}
-		if (stristr($path,"nanobsd")) {
+		if (stristr($path, "nanobsd")) {
 			$type = "nanobsd";
 		}
 		if (file_exists($path)) {

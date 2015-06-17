@@ -61,12 +61,12 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
     $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
 
-    switch($radiusvendor) {
+    switch ($radiusvendor) {
 
         case 'cisco':
-        $calledstationid = $clientmac;
-        $callingstationid = $clientip;
-        break;
+			$calledstationid = $clientmac;
+			$callingstationid = $clientip;
+			break;
 
         default:
             if (!function_exists('getNasIP'))

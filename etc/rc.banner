@@ -36,7 +36,7 @@
 	require_once("gwlb.inc");
 	require_once("interfaces.inc");
 
-	$version  = trim(file_get_contents("{$g['etc_path']}/version"));
+	$version = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];
 	$product = $g['product_name'];
@@ -111,7 +111,7 @@
 		}
 		if (!empty($ipaddr6) && !empty($subnet6)) {
 			if (!$v6first) {
-				printf("\n%s", str_repeat(" ",34));
+				printf("\n%s", str_repeat(" ", 34));
 			}
 			printf("v6%s: %s/%s",
 				$class6,

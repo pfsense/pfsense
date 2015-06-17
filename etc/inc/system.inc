@@ -331,7 +331,7 @@ function system_hosts_generate() {
 		$dnsmasqcfg = $config['dnsmasq'];
 	}
 
-	$hosts =  "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 	$hosts .= "::1		localhost localhost.{$syscfg['domain']}\n";
 	$lhosts = "";
 	$dhosts = "";
@@ -782,7 +782,7 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	// Rather than repeatedly use the same code, use this function to build a list of remote servers.
 	$facility .= " ".
 	$remote_servers = "";
-	$pad_to  = 56;
+	$pad_to = 56;
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
 	if ($syslogcfg['remoteserver']) {
 		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
@@ -832,14 +832,15 @@ function system_syslogd_start() {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp','ntpd','ntpdate','charon','ipsec_starter','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','filterdns','unbound','dhcpd','dhcrelay','dhclient','dhcp6c','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd','miniupnpd','filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'pptps', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'apinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
 				if ($package['logging']) {
 					array_push($separatelogfacilities, $package['logging']['facilityname']);
-					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename']))
+					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename'])) {
 						mwexec("{$log_create_directive} {$log_size} {$g['varlog_path']}/{$package['logging']['logfilename']}");
+					}
 					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}
@@ -1105,7 +1106,7 @@ function system_webgui_start() {
 		if (!$config['system']['webgui']['port']) {
 			$portarg = "443";
 		}
-		$ca  = ca_chain($cert);
+		$ca = ca_chain($cert);
 	}
 
 	/* generate lighttpd configuration */
@@ -1156,7 +1157,7 @@ function system_generate_lighty_config($filename,
 		echo "system_generate_lighty_config() being called $mt\n";
 	}
 
-	if ($captive_portal !== false)  {
+	if ($captive_portal !== false) {
 		$captiveportal = ",\"mod_rewrite\",\"mod_evasive\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 
@@ -1198,7 +1199,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM
-	if ($captive_portal !== false)  {
+	if ($captive_portal !== false) {
 		if ($realmem > 135 and $realmem < 256) {
 			$max_procs += 1; // 2 worker processes
 		} else if ($realmem > 255 and $realmem < 513) {
@@ -1564,6 +1565,30 @@ function system_ntp_setup_gps($serialport) {
 	unlink_if_exists($gps_device);
 	@symlink($serialport, $gps_device);
 
+	$gpsbaud = '4800';
+	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['speed'])) {
+		switch ($config['ntpd']['gps']['speed']) {
+			case '16':
+				$gpsbaud = '9600';
+				break;
+			case '32':
+				$gpsbaud = '19200';
+				break;
+			case '48':
+				$gpsbaud = '38400';
+				break;
+			case '64':
+				$gpsbaud = '57600';
+				break;
+			case '80':
+				$gpsbaud = '115200';
+				break;
+		}
+	}
+
+	/* Configure the serial port for raw IO and set the speed */
+	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
+
 	/* Send the following to the GPS port to initialize the GPS */
 	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
 		$gps_init = base64_decode($config['ntpd']['gps']['initcmd']);
@@ -1573,30 +1598,10 @@ function system_ntp_setup_gps($serialport) {
 
 	/* XXX: Why not file_put_contents to the device */
 	@file_put_contents('/tmp/gps.init', $gps_init);
-	`cat /tmp/gps.init > $serialport`;
+	mwexec("cat /tmp/gps.init > {$serialport}");
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
 	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {
-		$gpsbaud = '4800';
-		if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['speed'])) {
-			switch ($config['ntpd']['gps']['speed']) {
-				case '16':
-					$gpsbaud = '9600';
-					break;
-				case '32':
-					$gpsbaud = '19200';
-					break;
-				case '48':
-					$gpsbaud = '38400';
-					break;
-				case '64':
-					$gpsbaud = '57600';
-					break;
-				case '80':
-					$gpsbaud = '115200';
-					break;
-			}
-		}
 		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:", FILE_APPEND);
 	}
 
@@ -1872,6 +1877,9 @@ function system_ntp_configure($start_ntpd=true) {
 	if (is_array($interfaces) && count($interfaces)) {
 		$ntpcfg .= "interface ignore all\n";
 		foreach ($interfaces as $interface) {
+			if (strstr($interface, "_vip")) {
+				$interface = get_configured_carp_interface_list($interface);
+			}
 			if (!is_ipaddr($interface)) {
 				$interface = get_real_interface($interface);
 			}

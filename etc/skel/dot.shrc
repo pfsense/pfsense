@@ -1,0 +1,14 @@
+HTTP_PROXY=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyurl)' /conf/config.xml`
+if [ "${HTTP_PROXY}" != "" ]; then
+	HTTP_PROXY_PORT=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyport)' /conf/config.xml`
+	if [ "${HTTP_PROXY_PORT}" != "" ]; then
+		HTTP_PROXY="${HTTP_PROXY}:${HTTP_PROXY_PORT}"
+	fi
+	export HTTP_PROXY
+fi
+
+# Detect interactive logins and display the shell
+if [ -n "${SSH_TTY}" -o "${TERM}" = "cons25" ]; then
+	/etc/rc.initial
+	exit
+fi

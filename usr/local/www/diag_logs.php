@@ -68,7 +68,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("General"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("General"));
 include("head.inc");
 
 ?>
@@ -95,7 +95,8 @@ include("head.inc");
 ?>
 		</td>
 	</tr>
-  <tr><td class="tabnavtbl">
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("General"), true, "/diag_logs.php");
@@ -112,7 +113,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"),$nentries); ?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"), $nentries); ?></td>
 				</tr>
 				<?php
 					if ($filtertext) {

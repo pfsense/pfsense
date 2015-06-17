@@ -41,7 +41,7 @@
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"),gettext("Assign network ports"));
+$pgtitle = array(gettext("Interfaces"), gettext("Assign network ports"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
@@ -56,7 +56,7 @@ require_once("rrd.inc");
 function interface_assign_description($portinfo, $portname) {
 	global $ovpn_descrs;
 	if ($portinfo['isvlan']) {
-		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
+		$descr = sprintf(gettext('VLAN %1$s on %2$s'), $portinfo['tag'], $portinfo['if']);
 		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
 		}
@@ -88,7 +88,7 @@ function interface_assign_description($portinfo, $portname) {
 			$descr .= " (" . $portinfo['descr'] . ")";
 		}
 	} elseif ($portinfo['isqinq']) {
-		$descr =  $portinfo['descr'];
+		$descr = $portinfo['descr'];
 	} elseif (substr($portname, 0, 4) == 'ovpn') {
 		$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
 	} else {
@@ -531,7 +531,7 @@ if ($input_errors) {
 <?php
 						foreach ($portlist as $portname => $portinfo):
 ?>
-							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
+							<option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
 								<?=interface_assign_description($portinfo, $portname);?>
 							</option>
 <?php
@@ -565,7 +565,7 @@ if ($input_errors) {
 <?php
 						foreach ($unused_portlist as $portname => $portinfo):
 ?>
-							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
+							<option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
 								<?=interface_assign_description($portinfo, $portname);?>
 							</option>
 <?php

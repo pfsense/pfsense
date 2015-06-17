@@ -171,9 +171,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['noshuntlaninterfaces'] == "yes") {
-			$config['ipsec']['noshuntlaninterfaces'] = true;
-		} elseif (isset($config['ipsec']['noshuntlaninterfaces'])) {
 			unset($config['ipsec']['noshuntlaninterfaces']);
+		} else {
+			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
 
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -213,8 +213,16 @@ if ($_POST) {
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
-//		header("Location: vpn_ipsec_settings.php");
-//		return;
+		header("Location: vpn_ipsec_settings.php");
+		return;
+	}
+
+	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
+	if ($_POST['noshuntlaninterfaces'] == "yes") {
+		$pconfig['noshuntlaninterfaces'] = false;
+	} else {
+		$pconfig['noshuntlaninterfaces'] = true;
 	}
 }
 
@@ -232,9 +240,9 @@ include("head.inc");
 
 function maxmss_checked(obj) {
 	if (obj.checked) {
-		jQuery('#maxmss').attr('disabled',false);
+		jQuery('#maxmss').attr('disabled', false);
 	} else {
-		jQuery('#maxmss').attr('disabled','true');
+		jQuery('#maxmss').attr('disabled', 'true');
 	}
 }
 
@@ -286,8 +294,9 @@ function maxmss_checked(obj) {
 										echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
 										foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
 											echo "<option value=\"{$lidx}\" ";
-											if ($pconfig["ipsec_{$lkey}"] == $lidx)
+											if ($pconfig["ipsec_{$lkey}"] == $lidx) {
 												echo "selected=\"selected\"";
+											}
 											echo ">{$lvalue}</option>\n";
 										}
 										?>
@@ -364,7 +373,7 @@ function maxmss_checked(obj) {
 							<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
 							<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
 							<br />
-							<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
+							<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo htmlspecialchars($pconfig['maxmss']); else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
 							<br />
 							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
 							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>

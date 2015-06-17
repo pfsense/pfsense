@@ -89,10 +89,10 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
-	$pconfig['bandwidth'] = explode(",",$a_ppps[$id]['bandwidth']);
-	$pconfig['mtu'] = explode(",",$a_ppps[$id]['mtu']);
-	$pconfig['mru'] = explode(",",$a_ppps[$id]['mru']);
-	$pconfig['mrru'] = explode(",",$a_ppps[$id]['mrru']);
+	$pconfig['bandwidth'] = explode(",", $a_ppps[$id]['bandwidth']);
+	$pconfig['mtu'] = explode(",", $a_ppps[$id]['mtu']);
+	$pconfig['mru'] = explode(",", $a_ppps[$id]['mru']);
+	$pconfig['mrru'] = explode(",", $a_ppps[$id]['mrru']);
 	if (isset($a_ppps[$id]['shortseq'])) {
 		$pconfig['shortseq'] = true;
 	}
@@ -117,14 +117,14 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['apnum'] = $a_ppps[$id]['apnum'];
 			$pconfig['phone'] = $a_ppps[$id]['phone'];
 			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
+			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
 			break;
 		case "l2tp":
 		case "pptp":
-			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
-			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
+			$pconfig['subnet'] = explode(",", $a_ppps[$id]['subnet']);
+			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
@@ -202,16 +202,16 @@ if ($_POST) {
 	switch ($_POST['type']) {
 		case "ppp":
 			$reqdfields = explode(" ", "interfaces phone");
-			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
+			$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username passwordfld ondemand idletimeout");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username passwordfld");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
@@ -219,10 +219,10 @@ if ($_POST) {
 		case "pptp":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway ondemand idletimeout");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Local IP address"), gettext("Subnet"), gettext("Remote IP address"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Local IP address"), gettext("Subnet"), gettext("Remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
@@ -254,7 +254,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
 	}
 	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetdate'] <> "" && is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
-		$date_nums = explode("/",$_POST['pppoe_resetdate']);
+		$date_nums = explode("/", $_POST['pppoe_resetdate']);
 		if ($date_nums[0] < 1 || $date_nums[0] > 12) {
 			$input_errors[] = gettext("A valid PPPoE reset month must be specified (1-12) in the Custom PPPoE Periodic reset fields.");
 		}
@@ -268,19 +268,19 @@ if ($_POST) {
 
 	foreach ($_POST['interfaces'] as $iface) {
 		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface])) {
-			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."),$iface);
+			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."), $iface);
 		}
 		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) {
-			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."),$iface);
+			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."), $iface);
 		}
 		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) {
-			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."),$iface);
+			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."), $iface);
 		}
 		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) {
-			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."),$iface);
+			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."), $iface);
 		}
 		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) {
-			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."),$iface);
+			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."), $iface);
 		}
 	}
 
@@ -302,7 +302,7 @@ if ($_POST) {
 		$ppp['ptpid'] = $_POST['ptpid'];
 		$ppp['type'] = $_POST['type'];
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
-		$ppp['ports'] = implode(',',$_POST['interfaces']);
+		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = base64_encode($_POST['passwordfld']);
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
@@ -351,8 +351,8 @@ if ($_POST) {
 					unset($ppp['apnum']);
 				}
 				$ppp['phone'] = $_POST['phone'];
-				$ppp['localip'] = implode(',',$port_data['localip']);
-				$ppp['gateway'] = implode(',',$port_data['gateway']);
+				$ppp['localip'] = implode(',', $port_data['localip']);
+				$ppp['gateway'] = implode(',', $port_data['gateway']);
 				if (!empty($_POST['connect-timeout'])) {
 					$ppp['connect-timeout'] = $_POST['connect-timeout'];
 				} else {
@@ -375,9 +375,9 @@ if ($_POST) {
 				break;
 			case "pptp":
 			case "l2tp":
-				$ppp['localip'] = implode(',',$port_data['localip']);
-				$ppp['subnet'] = implode(',',$port_data['subnet']);
-				$ppp['gateway'] = implode(',',$port_data['gateway']);
+				$ppp['localip'] = implode(',', $port_data['localip']);
+				$ppp['subnet'] = implode(',', $port_data['subnet']);
+				$ppp['gateway'] = implode(',', $port_data['gateway']);
 				break;
 			default:
 				break;
@@ -425,11 +425,11 @@ if ($_POST) {
 } // end if ($_POST)
 
 $closehead = false;
-$pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/);
+$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP", "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/);
 
 ?>
 	<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
@@ -479,7 +479,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" name="portlists" id="portlists">
 			<td id="serialports">
 			<?php
-				$selected_ports = explode(',',$pconfig['interfaces']);
+				$selected_ports = explode(',', $pconfig['interfaces']);
 				if (!is_dir("/var/spool/lock")) {
 					mwexec("/bin/mkdir -p /var/spool/lock");
 				}
@@ -488,7 +488,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				$serport_count = 0;
 				foreach ($serialports as $port) {
 					$serport_count++;
-					echo $port.",".trim($port);
+					echo $port . "," . trim($port);
 					if (in_array($port, $selected_ports)) {
 						echo ",1|";
 					} else {
@@ -538,7 +538,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		</tr>
 		<tr style="display:none" name="select" id="select"><td style="display:none"></td></tr>
 		<?php
-			$k=0;
+			$k = 0;
 		?>
 		<tr style="display:none" name="ppp_provider" id="ppp_provider">
 			<td width="22%" valign="top" class="vncell">
@@ -685,9 +685,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 										<?php else: ?>
 											<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
 										<?php endif; ?>
-										<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= $pconfig['pppoe_resethour']; ?>" size="3" />
+										<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= htmlspecialchars($pconfig['pppoe_resethour']); ?>" size="3" />
 										<?= gettext("hour (0-23)"); ?><br />
-										<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" />
+										<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= htmlspecialchars($pconfig['pppoe_resetminute']); ?>" size="3" />
 										<?= gettext("minute (0-59)"); ?><br />
 										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" />
 										<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
@@ -722,13 +722,13 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		</tr>
 
 <?php
-	for ($j=0; $j < $port_count; $j++) :
+	for ($j = 0; $j < $port_count; $j++) :
 ?>
 
 		<tr style="display:none" id="gw_fields<?=$j;?>">
 			<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>" />
+				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['localip'][$j]);?>" />
 				/
 				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="disabled">
 				<?php for ($i = 31; $i > 0; $i--): ?>
@@ -828,7 +828,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td style="display:none" id="adv_show" name="adv_show">0</td>
 		</tr>
 <?php
-	for ($i=0; $i < $port_count; $i++) :
+	for ($i = 0; $i < $port_count; $i++) :
 ?>
 		<tr style="display:none" id="link<?=$i;?>">
 			<td width="22%" valign="top" id="linklabel<?=$i;?>" class="vncell"> <?=gettext("Link Parameters");?></td>

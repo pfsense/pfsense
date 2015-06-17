@@ -73,7 +73,7 @@ $a_roll = $config['voucher'][$cpzone]['roll'];
 
 $db = array();
 
-foreach($a_roll as $rollent) {
+foreach ($a_roll as $rollent) {
 	$roll = $rollent['number'];
 	$minutes = $rollent['minutes'];
 
@@ -83,7 +83,7 @@ foreach($a_roll as $rollent) {
 
 	$active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	foreach ($active_vouchers as $voucher => $line) {
-		list($voucher,$timestamp, $minutes) = explode(",", $line);
+		list($voucher, $timestamp, $minutes) = explode(",", $line);
 		$remaining = (($timestamp + 60*$minutes) - time());
 		if ($remaining > 0) {
 			$dbent[0] = $voucher;

@@ -114,12 +114,12 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
+		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
-				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
+				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -151,7 +151,7 @@ if ($_POST) {
 					$input_errors[] = sprintf(gettext("No password specified for username %s"), $_POST["username{$x}"]);
 				}
 				if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"])) {
-					$input_errors[] = sprintf(gettext("Incorrect ip address  specified for username %s"), $_POST["username{$x}"]);
+					$input_errors[] = sprintf(gettext("Incorrect ip address specified for username %s"), $_POST["username{$x}"]);
 				}
 			}
 		}
@@ -290,8 +290,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-function get_radio_value(obj)
-{
+function get_radio_value(obj) {
 	for (i = 0; i < obj.length; i++) {
 		if (obj[i].checked) {
 			return obj[i].value;
@@ -533,7 +532,7 @@ if ($savemsg) {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS issued IPs"); ?></td>
 						<td width="78%" valign="top" class="vtable">
-							<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips" <?php if($pconfig['radiusissueips']) echo "checked=\"checked\""; ?> />
+							<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips" <?php if ($pconfig['radiusissueips']) echo "checked=\"checked\""; ?> />
 							<br /><?=gettext("Issue IP Addresses via RADIUS server"); ?>.
 						</td>
 					</tr>
@@ -638,7 +637,7 @@ if ($savemsg) {
 							echo "<input type=\"hidden\" name=\"pppoeid\" id=\"pppoeid\" value=\"{$pppoeid}\" />";
 						}
 ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"  onclick="enable_change(true)" />
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
 							<a href="vpn_pppoe.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
 						</td>
 					</tr>

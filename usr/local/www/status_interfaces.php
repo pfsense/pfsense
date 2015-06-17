@@ -58,7 +58,7 @@ if ($_POST['if'] && $_POST['submit']) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"),gettext("Interfaces"));
+$pgtitle = array(gettext("Status"), gettext("Interfaces"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -556,7 +556,7 @@ include("head.inc");
 		if ($ifinfo['bridge']):
 ?>
 	<tr>
-		<td width="22%" class="vncellt"><?php printf(gettext("Bridge (%s)"),$ifinfo['bridgeint']);?></td>
+		<td width="22%" class="vncellt"><?php printf(gettext("Bridge (%s)"), $ifinfo['bridgeint']);?></td>
 		<td width="78%" class="listr">
 			<?=$ifinfo['bridge'];?>
 		</td>
@@ -600,7 +600,7 @@ include("head.inc");
 "triggers it. To substantiate this point: disconnecting manually ".
 "will %snot%s prevent dial-on-demand from making connections ".
 "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
-"is kept disconnected."),'<strong>','</strong>')?>
+"is kept disconnected."), '<strong>', '</strong>')?>
 
 <?php include("fend.inc"); ?>
 </body>

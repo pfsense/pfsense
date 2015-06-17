@@ -60,12 +60,12 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Schedules"), gettext("Edit"));
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
 
-$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
+$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
 if (!is_array($config['schedules']['schedule'])) {
 	$config['schedules']['schedule'] = array();
@@ -126,7 +126,7 @@ if ($_POST) {
 	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
 
 	$timerangeFound = false;
-	for ($x=0; $x<99; $x++) {
+	for ($x = 0; $x < 99; $x++) {
 		if ($_POST['schedule' . $x]) {
 			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['starttime' . $x])) {
 				$input_errors[] = sprintf(gettext("Invalid start time - '%s'"), $_POST['starttime' . $x]);
@@ -162,7 +162,7 @@ if ($_POST) {
 						$monthpos = strpos($currentselection, "m");
 						$daypos = strpos($currentselection, "d");
 						$monthstr .= substr($currentselection, $monthpos+1, $daypos-$monthpos-1);
-						$daystr .=  substr($currentselection, $daypos+1);
+						$daystr .= substr($currentselection, $daypos+1);
 						$firstprint = true;
 					}
 				}
@@ -220,8 +220,8 @@ $jscriptstr = <<<EOD
 <script type="text/javascript">
 //<![CDATA[
 var daysSelected = "";
-var month_array = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var day_array = ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'];
+var month_array = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var day_array = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 var schCounter = 0;
 
 function rgb2hex(rgb) {
@@ -239,10 +239,10 @@ function repeatExistingDays() {
 	var tempstr, tempstrdaypos, week, daypos, dayposdone = "";
 
 	var dayarray = daysSelected.split(",");
-	for (i=0; i<=dayarray.length; i++) {
+	for (i = 0; i <= dayarray.length; i++) {
 		tempstr = dayarray[i];
 		tempstrdaypos = tempstr.search("p");
-		week = tempstr.substring(1,tempstrdaypos);
+		week = tempstr.substring(1, tempstrdaypos);
 		week = parseInt(week);
 		dashpos = tempstr.search("-");
 		daypos = tempstr.substring(tempstrdaypos+1, dashpos);
@@ -253,21 +253,21 @@ function repeatExistingDays() {
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1") {
 			if (rgb2hex(daycell.style.backgroundColor) == "#F08080") { // lightcoral
-				daytogglerepeating(week,daypos,true);
+				daytogglerepeating(week, daypos, true);
 			} else {
-				daytogglerepeating(week,daypos,false);
+				daytogglerepeating(week, daypos, false);
 			}
 			dayposdone += daypos + ",";
 		}
 	}
 }
 
-function daytogglerepeating(week,daypos,bExists) {
+function daytogglerepeating(week, daypos, bExists) {
 	var tempstr, daycell, dayoriginal = "";
 	for (j=1; j<=53; j++) {
 		tempstr = 'w' + j + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
-		dayoriginalpos =  daysSelected.indexOf(tempstr);
+		dayoriginalpos = daysSelected.indexOf(tempstr);
 
 		//if bExists set to true, means cell is already select it
 		//unselect it and remove original day from daysSelected string
@@ -295,7 +295,7 @@ function daytoggle(id) {
 
 	iddashpos = id.search("-");
 	var tempstrdaypos = id.search("p");
-	var week = id.substring(1,tempstrdaypos);
+	var week = id.substring(1, tempstrdaypos);
 	week = parseInt(week);
 
 	if (iddashpos == "-1") {
@@ -303,8 +303,8 @@ function daytoggle(id) {
 		runrepeat = true;
 		var daypos = id.substr(tempstrdaypos+1);
 	} else {
-		idmod = id.substring(0,iddashpos);
-		var daypos = id.substring(tempstrdaypos+1,iddashpos);
+		idmod = id.substring(0, iddashpos);
+		var daypos = id.substring(tempstrdaypos+1, iddashpos);
 	}
 
 	daypos = parseInt(daypos);
@@ -318,14 +318,14 @@ function daytoggle(id) {
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
 			} else if (rgb2hex(daycell.style.backgroundColor) == "#F08080") { // lightcoral
-				daytogglerepeating(week,daypos,true);
+				daytogglerepeating(week, daypos, true);
 			} else {
 				//color is white cell
 				if (!runrepeat) {
 					daycell.style.backgroundColor = "#FF0000";  // red
 				} else {
 					daycell.style.backgroundColor = "#F08080";  // lightcoral
-					daytogglerepeating(week,daypos,false);
+					daytogglerepeating(week, daypos, false);
 				}
 				daysSelected += id + ",";
 			}
@@ -343,7 +343,7 @@ function update_month() {
 	var indexNum = document.forms[0].monthsel.selectedIndex;
 	var selected = document.forms[0].monthsel.options[indexNum].text;
 
-	for (i=0; i<=11; i++) {
+	for (i = 0; i <= 11; i++) {
 		option = document.forms[0].monthsel.options[i].text;
 		document.popupMonthLayer = eval('document.getElementById (option)');
 
@@ -413,7 +413,7 @@ function addTimeRange() {
 
 	//check for existing entries
 	var findCurrentCounter;
-	for (u=0; u<99; u++) {
+	for (u = 0; u < 99; u++) {
 		findCurrentCounter = document.getElementById("schedule" + u);
 		if (!findCurrentCounter) {
 			schCounter = u;
@@ -423,11 +423,11 @@ function addTimeRange() {
 
 	if (daysSelected != "") {
 		//get days selected
-		for (i=0; i<tempdayarray.length; i++) {
+		for (i = 0; i < tempdayarray.length; i++) {
 			tempstr = tempdayarray[i];
 			if (tempstr != "") {
 				tempstrdaypos = tempstr.search("p");
-				week = tempstr.substring(1,tempstrdaypos);
+				week = tempstr.substring(1, tempstrdaypos);
 				week = parseInt(week);
 				dashpos = tempstr.search("-");
 
@@ -461,7 +461,7 @@ function addTimeRange() {
 		var tempFriendlyMonthArray = monthstr.split(",");
 		var tempFriendlyDayArray = daystr.split(",");
 		var currentDay, firstDay, nextDay, currentMonth, nextMonth, firstDay, firstMonth = "";
-		for (k=0; k<tempFriendlyMonthArray.length; k++) {
+		for (k = 0; k < tempFriendlyMonthArray.length; k++) {
 			tempstr = tempFriendlyMonthArray[k];
 			if (tempstr != "") {
 				if (!firstDayFound) {
@@ -502,7 +502,7 @@ function addTimeRange() {
 		tempFriendlyDayArray = rtempFriendlyDay.split(",");
 		tempFriendlyDayArray.sort();
 		currentDay, firstDay, nextDay = "";
-		for (k=0; k<tempFriendlyDayArray.length; k++) {
+		for (k = 0; k < tempFriendlyDayArray.length; k++) {
 			tempstr = tempFriendlyDayArray[k];
 			if (tempstr != "") {
 				if (!firstDayFound) {
@@ -538,7 +538,7 @@ function addTimeRange() {
 		tempsortArray.sort();
 		//clear tempID
 		rtempID = "";
-		for (t=0; t<tempsortArray.length; t++) {
+		for (t = 0; t < tempsortArray.length; t++) {
 			if (tempsortArray[t] != "") {
 				if (!isFirstdone) {
 					rtempID += tempsortArray[t];
@@ -551,7 +551,7 @@ function addTimeRange() {
 
 
 		//get time specified
-		starttimehour =  document.getElementById("starttimehour").value
+		starttimehour = document.getElementById("starttimehour").value
 		starttimemin = document.getElementById("starttimemin").value;
 		stoptimehour = document.getElementById("stoptimehour").value;
 		stoptimemin = document.getElementById("stoptimemin").value;
@@ -694,7 +694,7 @@ function editRow(incTime, el) {
 		document.getElementById("timerangedescr").value = descr;
 
 		//toggle the appropriate days
-		for (i=0; i<tempdayArray.length; i++) {
+		for (i = 0; i < tempdayArray.length; i++) {
 			if (tempdayArray[i]) {
 				var tempweekstr = tempdayArray[i];
 				dashpos = tempweekstr.search("-");
@@ -762,7 +762,7 @@ EOD;
 						<td width="15%" valign="top" class="vncellreq"><?=gettext("Schedule Name");?></td>
 						<td width="85%" class="vtable">
 						<?php if (is_schedule_inuse($pconfig['name']) == true): ?>
-							<input name="name" type="hidden" id="name" size="40"  value="<?=htmlspecialchars($pconfig['name']);?>" />
+							<input name="name" type="hidden" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
 							<?php echo $pconfig['name']; ?>
 							<p>
 								<span class="vexpl"><?=gettext("NOTE: This schedule is in use so the name may not be modified!");?></span>
@@ -793,7 +793,7 @@ EOD;
 								$monthcounter = date("n");
 								$monthlimit = $monthcounter + 12;
 								$yearcounter = date("Y");
-								for ($k=0; $k<12; $k++) {?>
+								for ($k = 0; $k < 12; $k++) {?>
 									<option value="<?php echo $monthcounter;?>"><?php echo date("F_y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></option>
 							<?php
 									if ($monthcounter == 12) {
@@ -809,7 +809,7 @@ EOD;
 								$firstmonth = TRUE;
 								$monthcounter = date("n");
 								$yearcounter = date("Y");
-								for ($k=0; $k<12; $k++) {
+								for ($k = 0; $k < 12; $k++) {
 									$firstdayofmonth = date("w", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));
 									if ($firstdayofmonth == 0) {
 										$firstdayofmonth = 7;
@@ -822,7 +822,7 @@ EOD;
 									$lasttr = FALSE;
 									$positioncounter = 1;//7 for Sun, 1 for Mon, 2 for Tues, etc
 							?>
-							<div id="<?php echo date("F_y",mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" style=" position:relative; display:<?php if ($firstmonth)echo "block";else echo "none";?>">
+							<div id="<?php echo date("F_y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" style=" position:relative; display:<?php if ($firstmonth)echo "block";else echo "none";?>">
 							<table border="1" cellspacing="1" cellpadding="1" id="calTable<?=$monthcounter . $yearcounter;?>" class="tabcont" summary="month">
 								<tr>
 									<td colspan="7" align="center" class="listbg"><b><?php echo date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></b></td>
@@ -839,7 +839,7 @@ EOD;
 								<?php
 									$firstmonth = FALSE;
 									while ($daycounter<=$numberofdays) {
-										$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date($yearcounter)));
+										$weekcounter = date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date($yearcounter)));
 										$weekcounter = ltrim($weekcounter, "0");
 										if ($positioncounter == 1) {
 											echo "<tr>";
@@ -898,7 +898,7 @@ EOD;
 									<td>
 										<select name="starttimehour" class="formselect" id="starttimehour">
 										<?php
-											for ($i=0; $i<24; $i++) {
+											for ($i = 0; $i < 24; $i++) {
 												echo "<option value=\"$i\">";
 												echo $i;
 												echo "</option>";
@@ -917,8 +917,8 @@ EOD;
 									<td>
 										<select name="stoptimehour" class="formselect" id="stoptimehour">
 										<?php
-											for ($i=0; $i<24; $i++) {
-												if ($i==23) {
+											for ($i = 0; $i < 24; $i++) {
+												if ($i == 23) {
 													$selected = "selected=\"selected\"";
 												} else {
 													$selected = "";
@@ -955,7 +955,7 @@ EOD;
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
-							<input type="button" value="<?=gettext("Add Time");?>"  class="formbtn"  onclick="javascript:processEntries();" />&nbsp;&nbsp;&nbsp;
+							<input type="button" value="<?=gettext("Add Time");?>" class="formbtn" onclick="javascript:processEntries();" />&nbsp;&nbsp;&nbsp;
 							<input type="button" value="<?=gettext("Clear Selection");?>" class="formbtn" onclick="javascript:clearCalendar(); clearTime(); clearDescr();" />
 						</td>
 					</tr>
@@ -1005,7 +1005,7 @@ EOD;
 
 												if ($timerange['month']) {
 													$tempmontharray = explode(",", $timerange['month']);
-													$tempdayarray = explode(",",$timerange['day']);
+													$tempdayarray = explode(",", $timerange['day']);
 													$arraycounter = 0;
 													foreach ($tempmontharray as $monthtmp) {
 														$month = $tempmontharray[$arraycounter];
@@ -1021,7 +1021,7 @@ EOD;
 														if ($firstPrint) {
 															$tempID .= ",";
 														}
-														$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
+														$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" . $month . "d" . $day;
 														$firstPrint = true;
 
 														if (!$firstDayFound) {
@@ -1041,7 +1041,7 @@ EOD;
 															if ($currentDay != $firstDay) {
 																$tempFriendlyTime .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
 															} else {
-																$tempFriendlyTime .=  $monthArray[$month-1] . " " . $day;
+																$tempFriendlyTime .= $monthArray[$month-1] . " " . $day;
 															}
 															$firstDayFound = false;
 															$firstprint2 = true;

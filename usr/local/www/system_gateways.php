@@ -47,12 +47,14 @@ require_once("shaper.inc");
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
-foreach ($a_gateways as $gw)
+foreach ($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
+}
 $a_gateways = $a_gateways_arr;
 
-if (!is_array($config['gateways']['gateway_item']))
+if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
+}
 
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
@@ -70,16 +72,18 @@ if ($_POST) {
 		setup_gateways_monitor();
 
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('staticroutes');
+		}
 	}
 }
 
 function can_delete_gateway_item($id) {
 	global $config, $input_errors, $a_gateways;
 
-	if (!isset($a_gateways[$id]))
+	if (!isset($a_gateways[$id])) {
 		return false;
+	}
 
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach ($config['gateways']['gateway_group'] as $group) {
@@ -102,8 +106,9 @@ function can_delete_gateway_item($id) {
 		}
 	}
 
-	if (isset($input_errors))
+	if (isset($input_errors)) {
 		return false;
+	}
 
 	return true;
 }
@@ -111,22 +116,25 @@ function can_delete_gateway_item($id) {
 function delete_gateway_item($id) {
 	global $config, $a_gateways;
 
-	if (!isset($a_gateways[$id]))
+	if (!isset($a_gateways[$id])) {
 		return;
+	}
 
 	/* NOTE: Cleanup static routes for the monitor ip if any */
 	if (!empty($a_gateways[$id]['monitor']) &&
-	    $a_gateways[$id]['monitor'] != "dynamic" &&
-	    is_ipaddr($a_gateways[$id]['monitor']) &&
-	    $a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
-		if (is_ipaddrv4($a_gateways[$id]['monitor']))
+		$a_gateways[$id]['monitor'] != "dynamic" &&
+		is_ipaddr($a_gateways[$id]['monitor']) &&
+		$a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
+		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
 			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']));
-		else
+		} else {
 			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']));
+		}
 	}
 
-	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name'])
+	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name']) {
 		unset($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway']);
+	}
 	unset($config['gateways']['gateway_item'][$a_gateways[$id]['attribute']]);
 }
 
@@ -145,9 +153,11 @@ if ($_GET['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected items */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei)
-			if(!can_delete_gateway_item($rulei))
+		foreach ($_POST['rule'] as $rulei) {
+			if (!can_delete_gateway_item($rulei)) {
 				break;
+			}
+		}
 
 		if (!isset($input_errors)) {
 			$items_deleted = "";
@@ -167,19 +177,21 @@ if (isset($_POST['del_x'])) {
 } else if ($_GET['act'] == "toggle" && $a_gateways[$_GET['id']]) {
 	$realid = $a_gateways[$_GET['id']]['attribute'];
 
-	if(isset($a_gateway_item[$realid]['disabled']))
+	if (isset($a_gateway_item[$realid]['disabled'])) {
 		unset($a_gateway_item[$realid]['disabled']);
-	else
+	} else {
 		$a_gateway_item[$realid]['disabled'] = true;
+	}
 
-	if (write_config("Gateways: enable/disable"))
+	if (write_config("Gateways: enable/disable")) {
 		mark_subsystem_dirty('staticroutes');
+	}
 
 	header("Location: system_gateways.php");
 	exit;
 }
 
-$pgtitle = array(gettext("System"),gettext("Gateways"));
+$pgtitle = array(gettext("System"), gettext("Gateways"));
 $shortcut_section = "gateways";
 
 include("head.inc");
@@ -284,8 +296,9 @@ include("head.inc");
 <?php
 							echo $textss;
 							echo $gateway['name'];
-							if(isset($gateway['defaultgw']))
+							if (isset($gateway['defaultgw'])) {
 								echo " <strong>(default)</strong>";
+							}
 							echo $textse;
 ?>
 						</td>

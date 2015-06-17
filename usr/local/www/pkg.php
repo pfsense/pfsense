@@ -181,7 +181,7 @@ include("head.inc");
 					cursor: 'move',
 					distance: 10,
 					opacity: 0.8,
-					helper: function(e,ui) {
+					helper: function(e, ui) {
 						ui.children().each(function() {
 							jQuery(this).width(jQuery(this).width());
 						});
@@ -190,8 +190,8 @@ include("head.inc");
 				});
 			});
 			function save_changes_to_xml(xml) {
-				var ids=jQuery('#mainarea table tbody').sortable('serialize',{key:"ids[]"});
-				var strloading="<img src='/themes/<?= $g['theme']; ?>/images/misc/loader.gif' alt='loader' /> " +  "<?=gettext('Saving changes...');?>";
+				var ids=jQuery('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
+				var strloading="<img src='/themes/<?= $g['theme']; ?>/images/misc/loader.gif' alt='loader' /> " + "<?=gettext('Saving changes...');?>";
 				if (confirm("<?=gettext("Do you really want to save changes?");?>")) {
 					jQuery.ajax({
 						type: 'get',
@@ -332,7 +332,7 @@ include("head.inc");
 				<tr>
 <?php
 	if ($display_maximum_rows) {
-		$totalpages = ceil(round((count($evaledvar) / $display_maximum_rows),9));
+		$totalpages = ceil(round((count($evaledvar) / $display_maximum_rows), 9));
 		$page = 1;
 		$tmpcount = 0;
 		$tmppp = 0;
@@ -354,7 +354,7 @@ include("head.inc");
 		echo "<tr>";
 		echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
 		echo "<td align='right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
-		for ($x=0; $x<250; $x++) {
+		for ($x = 0; $x < 250; $x++) {
 			if ($x == $display_maximum_rows) {
 				$SELECTED = "selected=\"selected\"";
 			} else {
@@ -378,8 +378,8 @@ include("head.inc");
 				</tr>
 <?php
 	$i = 0;
-	$pagination_startingrow=0;
-	$pagination_counter=0;
+	$pagination_startingrow = 0;
+	$pagination_counter = 0;
 	if ($evaledvar) {
 		foreach ($evaledvar as $ip) {
 			if ($startdisplayingat) {
@@ -453,11 +453,11 @@ include("head.inc");
 							echo gettext("Yes");
 						}
 					} else if ($column['type'] == "interface") {
-						echo  $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
+						echo $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
 					} else {
 						#Check if columnitem has an encoding field declared
 						if ($column['encoding'] == "base64") {
-							echo  $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
+							echo $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
 						#Check if there is a custom info to show when $fieldname is not empty
 						} else if ($column['listmodeon'] && $fieldname != "") {
 							echo $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
@@ -499,29 +499,29 @@ include("head.inc");
 					$colcount = count($pkg['adddeleteeditpagefields']['columnitem']);
 					$final_footer = "";
 					$final_footer .= "<tr><td colspan='$colcount'>";
-					$final_footer .=  "<table width='100%' summary=''><tr>";
-					$final_footer .=  "<td align='left'>";
+					$final_footer .= "<table width='100%' summary=''><tr>";
+					$final_footer .= "<td align='left'>";
 					$startingat = $startdisplayingat - $display_maximum_rows;
 					if ($startingat > -1) {
-						$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat={$startingat}&amp;display_maximum_rows={$display_maximum_rows}'>";
+						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat={$startingat}&amp;display_maximum_rows={$display_maximum_rows}'>";
 					} else if ($startdisplayingat > 1) {
-						$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=0&amp;display_maximum_rows={$display_maximum_rows}'>";
+						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=0&amp;display_maximum_rows={$display_maximum_rows}'>";
 					}
-					$final_footer .=  "<font size='2'><< Previous page</font></a>";
+					$final_footer .= "<font size='2'><< Previous page</font></a>";
 					if ($tmppp + $display_maximum_rows > count($evaledvar)) {
 						$endingrecord = count($evaledvar);
 					} else {
 						$endingrecord = $tmppp + $display_maximum_rows;
 					}
-					$final_footer .=  "</td><td align='center'>";
+					$final_footer .= "</td><td align='center'>";
 					$tmppp++;
-					$final_footer .=  "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
-					$final_footer .=  "</font></td><td align='right'>&nbsp;";
+					$final_footer .= "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
+					$final_footer .= "</font></td><td align='right'>&nbsp;";
 					if (($i+1) < count($evaledvar)) {
-						$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&amp;display_maximum_rows={$display_maximum_rows}'>";
+						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&amp;display_maximum_rows={$display_maximum_rows}'>";
 					}
-					$final_footer .=  "<font size='2'>Next page >></font></a>";
-					$final_footer .=  "</td></tr></table></td></tr>";
+					$final_footer .= "<font size='2'>Next page >></font></a>";
+					$final_footer .= "</td></tr></table></td></tr>";
 					$i = count($evaledvar);
 					break;
 				}

@@ -34,19 +34,22 @@
 	require_once("functions.inc");
 
 	$removed = 0;
-	if (!is_array($config['system']['user']))
+	if (!is_array($config['system']['user'])) {
 		return;
+	}
 
 	$count = count($config['system']['user']);
 	$index = 0;
 	for (; $index < $count; $index++) {
 		$user =& $config['system']['user'][$index];
-		if ($user['scope'] == "system")
+		if ($user['scope'] == "system") {
 			continue;
+		}
 		echo "1\n";
 		echo "User {$user['name']} expires {$user['expires']}\n";
-		if (!$user['expires'] || isset($user['disabled']))
+		if (!$user['expires'] || isset($user['disabled'])) {
 			continue;
+		}
 		echo "1\n";
 		if (strtotime("-1 day") > strtotime($user['expires'])) {
 			echo "Disabling user {$user['name']} at index #{$index}\n";

@@ -29,7 +29,7 @@ function led_ctl($led, $str) {
 /*
  * Blink an LED at set speed from 1-9 (1=Very Fast, 9=Very Slow)
  */
-function led_blink($led, $speed=0) {
+function led_blink($led, $speed = 0) {
 	switch ($speed) {
 		case "reallyfast":
 		case "veryfast":
@@ -60,7 +60,7 @@ function led_blink($led, $speed=0) {
  * Letters A-J are on from 1/10s to 1s
  * Letters a-j are off from 1/10s to 1s
  */
-function led_pattern($led, $pattern, $repeat=true) {
+function led_pattern($led, $pattern, $repeat = true) {
 	/*  End with a . to stop after one iteration. */
 	$end = $repeat ? "" : ".";
 	return led_ctl($led, "s{$pattern}{$end}");

@@ -127,8 +127,8 @@ if ($_POST) {
 			$rollent = $a_roll[$id];
 		}
 
-		$rollent['zone']  = $_POST['zone'];
-		$rollent['number']  = $_POST['number'];
+		$rollent['zone'] = $_POST['zone'];
+		$rollent['number'] = $_POST['number'];
 		$rollent['minutes'] = $_POST['minutes'];
 		$rollent['descr'] = $_POST['descr'];
 

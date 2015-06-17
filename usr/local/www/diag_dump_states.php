@@ -69,7 +69,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 
 ?>
@@ -80,10 +80,10 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 	function removeState(srcip, dstip) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+		var busy = function(index, icon) {
+			jQuery(icon).bind("onclick", "");
+			jQuery(icon).attr('src', jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor", "wait");
 		}
 
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
@@ -110,7 +110,7 @@ include("head.inc");
 		}
 
 		jQuery('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+			function(index, row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -179,7 +179,7 @@ include("head.inc");
 $row = 0;
 /* get our states */
 $grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
-$fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
+$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
 while ($line = chop(fgets($fd))) {
 	if ($row >= 10000) {
 		break;
@@ -187,10 +187,10 @@ while ($line = chop(fgets($fd))) {
 
 	$line_split = preg_split("/\s+/", $line);
 
-	$iface  = array_shift($line_split);
+	$iface = array_shift($line_split);
 	$proto = array_shift($line_split);
 	$state = array_pop($line_split);
-	$info  = implode(" ", $line_split);
+	$info = implode(" ", $line_split);
 
 	// We may want to make this optional, with a large state table, this could get to be expensive.
 	$iface = convert_real_interface_to_friendly_descr($iface);
@@ -203,34 +203,35 @@ while ($line = chop(fgets($fd))) {
 	$dstip = trim($parts[0]);
 
 ?>
-	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
-		<td class="listlr"><?= $iface ?></td>
-		<td class="listr"><?= $proto ?></td>
-		<td class="listr"><?= $info ?></td>
-		<td class="listr"><?= $state ?></td>
-		<td class="list">
-		<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
-			onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
-			name="i:<?= $srcip ?>:<?= $dstip ?>"
-			title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
-		</td>
-	</tr>
+				<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
+					<td class="listlr"><?= $iface ?></td>
+					<td class="listr"><?= $proto ?></td>
+					<td class="listr"><?= $info ?></td>
+					<td class="listr"><?= $state ?></td>
+					<td class="list">
+						<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
+							onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
+							name="i:<?= $srcip ?>:<?= $dstip ?>"
+							title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
+					</td>
+				</tr>
 <?php
 	$row++;
 	ob_flush();
 }
 
-if ($row == 0): ?>
-	<tr>
-		<td class="list" colspan="4" align="center" valign="top">
-		<?= gettext("No states were found.") ?>
-		</td>
-	</tr>
+if ($row == 0):
+?>
+				<tr>
+					<td class="list" colspan="4" align="center" valign="top">
+						<?= gettext("No states were found.") ?>
+					</td>
+				</tr>
 <?php
 endif;
 pclose($fd);
 ?>
-			</tbody>
+				</tbody>
 			</table>
 		</td>
 	</tr>
@@ -245,9 +246,9 @@ pclose($fd);
 
 <!-- End of tab content -->
 
-		</div>
-	</td>
-  </tr>
+			</div>
+		</td>
+	</tr>
 </table>
 
 <?php require("fend.inc"); ?>

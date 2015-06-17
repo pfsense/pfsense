@@ -51,14 +51,14 @@ function delete_id($id, &$array) {
 	// Search for the item in the array
 	foreach ($array as $key => $item) {
 		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id']==$id ) {
+		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
 			$delete_index = $key;
 			break;
 		}
 	}
 
 	// If we found the item, unset it
-	if ($delete_index!==NULL) {
+	if ($delete_index !== NULL) {
 		unset($array[$delete_index]);
 		return true;
 	} else {
@@ -86,7 +86,7 @@ function get_id($id, &$array) {
 	// Search for the item in the array
 	foreach ($array as $key => $item) {
 		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id']==$id) {
+		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
 			return $key;
 		}
 	}

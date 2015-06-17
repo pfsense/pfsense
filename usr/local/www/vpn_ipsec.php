@@ -233,7 +233,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -385,7 +385,7 @@ include("head.inc");
 							<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name'];?>
 <?php
 							if ($ph1ent['encryption-algorithm']['keylen']) {
-								if ($ph1ent['encryption-algorithm']['keylen']=="auto") {
+								if ($ph1ent['encryption-algorithm']['keylen'] == "auto") {
 									echo " (" . gettext("auto") . ")";
 								} else {
 									echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
@@ -455,7 +455,7 @@ include("head.inc");
 							<input type="hidden" name="tdph2-<?=$i;?>-visible" id="tdph2-<?=$i;?>-visible" value="<?=$tdph2_visible?>" />
 							<div id="shph2but-<?=$i?>" <?php echo ($tdph2_visible == '1' ? 'style="display:none"' : '');?>>
 <?php
-							$phase2count=0;
+							$phase2count = 0;
 							foreach ($a_phase2 as $ph2ent) {
 								if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 									continue;
@@ -465,7 +465,7 @@ include("head.inc");
 							$fr_prefix = "frp2{$i}";
 							$fr_header = $fr_prefix . "header";
 ?>
-								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
+								<input type="button" onclick="show_phase2('tdph2-<?=$i?>', 'shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
 							</div>
 							<div id="tdph2-<?=$i?>" <?php echo ($tdph2_visible != '1' ? 'style="display:none"' : '');?>>
 							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="phase-2 entries">
@@ -544,7 +544,7 @@ include("head.inc");
 											}
 											echo $p2_ealgos[$ph2ea['name']]['name'];
 											if ($ph2ea['keylen']) {
-												if ($ph2ea['keylen']=="auto") {
+												if ($ph2ea['keylen'] == "auto") {
 													echo " (" . gettext("auto") . ")";
 												} else {
 													echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";

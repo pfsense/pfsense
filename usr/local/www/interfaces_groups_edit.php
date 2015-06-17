@@ -44,7 +44,7 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Groups"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 if (!is_array($config['ifgroups']['ifgroupentry'])) {
@@ -93,7 +93,7 @@ if ($_POST) {
 	$members = "";
 	$isfirst = 0;
 	/* item is a normal ifgroupentry type */
-	for ($x=0; $x<9999; $x++) {
+	for ($x = 0; $x < 9999; $x++) {
 		if ($_POST["members{$x}"] <> "") {
 			if ($isfirst > 0) {
 				$members .= " ";
@@ -318,10 +318,11 @@ function removeRow(el) {
 			}
 
 			if ($found === false) {
-				foreach ($iflist_disabled as $ifnam => $ifdescr)
+				foreach ($iflist_disabled as $ifnam => $ifdescr) {
 					if ($ifnam == $members) {
 						echo "<option value=\"{$ifnam}\" selected=\"selected\">{$ifdescr}</option>";
 					}
+				}
 			}
 ?>
 						</select>

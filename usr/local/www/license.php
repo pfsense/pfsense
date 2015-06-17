@@ -74,7 +74,7 @@ include("head.inc");
 		<?=gettext("POSSIBILITY OF SUCH DAMAGE");?></strong>.</p>
 	<hr size="1">
 	<p><?= "{$g['product_name']} " . gettext("is based upon/includes various free software packages, listed below.");?><br />
-		<?php printf(gettext("The authors of %s would like to thank the authors of these software packages for their efforts"),$g['product_name']);?>.</p>
+		<?php printf(gettext("The authors of %s would like to thank the authors of these software packages for their efforts"), $g['product_name']);?>.</p>
 	<p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br />
 		<?=gettext("Copyright");?> &copy;<?=gettext("1992-2015 The FreeBSD Project. All rights reserved");?>.<br />
 		<br />

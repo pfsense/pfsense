@@ -69,7 +69,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Gateways"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Gateways"));
 $shortcut_section = "gateways";
 include("head.inc");
 
@@ -115,7 +115,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"),$nentries); ?></td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"), $nentries); ?></td>
 				</tr>
 				<?php
 					if ($filtertext) {

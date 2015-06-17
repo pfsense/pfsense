@@ -38,7 +38,7 @@ vc_invalidate();
 unlink_if_exists("/tmp/config.cache");
 
 $iflist = get_configured_interface_with_descr();
-foreach($iflist as $ifname => $interface) {
+foreach ($iflist as $ifname => $interface) {
 	$real_interface = get_real_interface($ifname);
 	if ($config['interfaces'][$ifname]['ipaddr'] == "dhcp") {
 		$pid = find_dhclient_process($real_interface);

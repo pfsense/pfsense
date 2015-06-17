@@ -75,7 +75,7 @@ if ($_POST) {
 // Returns true or false depending on blankness of argument.
 
 function isBlank($arg) {
-	return preg_match( "/^\s*$/", $arg );
+	return preg_match("/^\s*$/", $arg);
 }
 
 // Function: Puts
@@ -96,7 +96,7 @@ $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $closehead = false;
-$pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
 
@@ -107,16 +107,16 @@ include("head.inc");
 
 <?php
 
-if (isBlank( $_POST['txtRecallBuffer'] )) {
-	puts( "   var arrRecallBuffer = new Array;" );
+if (isBlank($_POST['txtRecallBuffer'])) {
+	puts("   var arrRecallBuffer = new Array;");
 } else {
-	puts( "   var arrRecallBuffer = new Array(" );
-	$arrBuffer = explode( "&", $_POST['txtRecallBuffer'] );
-	for ($i=0; $i < (count( $arrBuffer ) - 1); $i++) {
-		puts( "      '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "'," );
+	puts("   var arrRecallBuffer = new Array(");
+	$arrBuffer = explode("&", $_POST['txtRecallBuffer']);
+	for ($i = 0; $i < (count($arrBuffer) - 1); $i++) {
+		puts("      '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "',");
 	}
-	puts( "      '" . htmlspecialchars($arrBuffer[count( $arrBuffer ) - 1], ENT_QUOTES | ENT_HTML401) . "'" );
-	puts( "   );" );
+	puts("      '" . htmlspecialchars($arrBuffer[count($arrBuffer) - 1], ENT_QUOTES | ENT_HTML401) . "'");
+	puts("   );");
 }
 
 ?>
@@ -161,7 +161,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
 		// If nothing in recall buffer, then error.
 		if (!arrRecallBuffer.length) {
-			alert( '<?=gettext("Nothing to recall"); ?>!' );
+			alert('<?=gettext("Nothing to recall"); ?>!');
 			form.txtCommand.focus();
 			return;
 		}
@@ -241,7 +241,7 @@ if (!isBlank($_POST['txtCommand'])) {
 	puts("\$ " . htmlspecialchars($_POST['txtCommand']));
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));	/* PHP scripts */
-	$ph = popen($_POST['txtCommand'] . ' 2>&1', "r" );
+	$ph = popen($_POST['txtCommand'] . ' 2>&1', "r");
 	while ($line = fgets($ph)) {
 		echo htmlspecialchars($line);
 	}
@@ -260,7 +260,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 
 ?>
 <div id="niftyOutter">
-<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
+<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit(this);">
 	<table summary="exec">
 		<tr>
 		<td colspan="2" valign="top" class="vnsepcell"><?=gettext("Execute Shell command"); ?></td>
@@ -273,10 +273,10 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
 			<td valign="top" class="label">
 				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
-				<input type="button" class="button" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
+				<input type="button" class="button" name="btnRecallPrev" value="<" onclick="btnRecall_onClick(this.form, -1);" />
 				<input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
-				<input type="button" class="button" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
-				<input type="button"  class="button" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+				<input type="button" class="button" name="btnRecallNext" value=">" onclick="btnRecall_onClick(this.form, 1);" />
+				<input type="button" class="button" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick(this.form);" />
 			</td>
 		</tr>
 		<tr>
@@ -294,7 +294,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 		<tr>
 			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
 			<td valign="top" class="label">
-				<input name="submit" type="submit"  class="button" id="download" value="<?=gettext("Download"); ?>" />
+				<input name="submit" type="submit" class="button" id="download" value="<?=gettext("Download"); ?>" />
 			</td>
 		</tr>
 		<tr>
@@ -312,7 +312,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 		<tr>
 			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
 			<td valign="top" class="label">
-				<input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload"); ?>" /></td>
+				<input name="submit" type="submit" class="button" id="upload" value="<?=gettext("Upload"); ?>" /></td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top" height="16"></td>

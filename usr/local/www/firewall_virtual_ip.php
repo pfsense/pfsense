@@ -107,7 +107,7 @@ if ($_GET['act'] == "del") {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
-				if($rule['destination']['address'] <> "") {
+				if ($rule['destination']['address'] <> "") {
 					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
@@ -152,7 +152,7 @@ if ($_GET['act'] == "del") {
 		$if_subnet .= "/" . $if_subnet_bits;
 
 		if (is_array($config['gateways']['gateway_item'])) {
-			foreach($config['gateways']['gateway_item'] as $gateway) {
+			foreach ($config['gateways']['gateway_item'] as $gateway) {
 				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface']) {
 					continue;
 				}
@@ -242,7 +242,7 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
 include("head.inc");
 
 ?>
@@ -299,20 +299,20 @@ include("head.inc");
 						$interfaces['lo0'] = "Localhost";
 						$i = 0;
 						foreach ($a_vip as $vipent):
-							if($vipent['subnet'] <> "" or $vipent['range'] <> "" or $vipent['subnet_bits'] <> "" or (isset($vipent['range']['from']) && $vipent['range']['from'] <> "")):
+							if ($vipent['subnet'] <> "" or $vipent['range'] <> "" or $vipent['subnet_bits'] <> "" or (isset($vipent['range']['from']) && $vipent['range']['from'] <> "")):
 					?>
 					<tr>
 						<td class="listlr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
 						<?php
 							if (($vipent['type'] == "single") || ($vipent['type'] == "network")) {
-								if($vipent['subnet_bits']) {
+								if ($vipent['subnet_bits']) {
 									echo "{$vipent['subnet']}/{$vipent['subnet_bits']}";
 								}
 							}
 							if ($vipent['type'] == "range") {
 								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
 							}
-							if($vipent['mode'] == "carp") {
+							if ($vipent['mode'] == "carp") {
 								echo " (vhid {$vipent['vhid']})";
 							}
 						?>
@@ -321,7 +321,7 @@ include("head.inc");
 							<?=htmlspecialchars($interfaces[$vipent['interface']]);?>&nbsp;
 						</td>
 						<td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-							<?php if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP' alt='proxy arp' />"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP' alt='carp' />"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other' alt='other' />"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias' alt='ip alias' />";?>
+							<?php if ($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP' alt='proxy arp' />"; elseif ($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP' alt='carp' />"; elseif ($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other' alt='other' />"; elseif ($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias' alt='ip alias' />";?>
 						</td>
 						<td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
 							<?=htmlspecialchars($vipent['descr']);?>&nbsp;

@@ -167,7 +167,7 @@ function add_base_packages_menu_items() {
 }
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z_0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
 
 function check_and_returnif_section_exists($section) {
@@ -207,7 +207,7 @@ function spit_out_select_items($name, $showall) {
 		"wol" => gettext("Wake on LAN")
 		);
 
-	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
+	$select = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
 
 	if ($showall == true) {
@@ -457,7 +457,7 @@ if ($_POST) {
 											if (is_alias($config['interfaces'][$iface]['descr'])) {
 												// Firewall rules
 												$origname = $config['interfaces'][$iface]['descr'];
-												$newname  = $config['interfaces'][$iface]['descr'] . "Alias";
+												$newname = $config['interfaces'][$iface]['descr'] . "Alias";
 												update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $newname, $origname);
 												update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $newname, $origname);
 												// NAT Rules
@@ -603,7 +603,7 @@ $id = rand() . '.' . time();
 $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
 include("head.inc");
 
 ?>

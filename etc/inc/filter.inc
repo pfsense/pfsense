@@ -1217,6 +1217,8 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$subnet = $route['subnet'];
 		$subnet_split = explode("/", $subnet);
 		$subnet_if = $route['if'];
+		/* Blacklist invalid "from" sources since they can be picked up accidentally and cause rule errors. */
+		$no_reflect_from = array("l2tp");
 		if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
 			$ifsubnet_ip = "";
 			/* Find interface IP to use for NAT */
@@ -1226,7 +1228,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 					break;
 				}
 			}
-			if(!empty($ifsubnet_ip)) {
+			if(!empty($ifsubnet_ip) && !in_array($subnet, $no_reflect_from)) {
 				$subnets = array($subnet);
 				/* Find static routes that also need to be referenced in the NAT rule */
 				foreach($route_table as $rtentry) {

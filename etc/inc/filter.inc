@@ -359,6 +359,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$limitrules .= "set limit src-nodes {$max_states}\n";
 	}
 
+	/* Frag limit. pf default is 5000 */
+	if ($config['system']['maximumfrags'] <> "" && is_numeric($config['system']['maximumfrags'])) {
+		$limitrules .= "set limit frags {$config['system']['maximumfrags']}\n";
+	}
+
 	if (isset($config['system']['lb_use_sticky']) && is_numeric($config['system']['srctrack']) && ($config['system']['srctrack'] > 0))
 		$limitrules .= "set timeout src.track {$config['system']['srctrack']}\n";
 

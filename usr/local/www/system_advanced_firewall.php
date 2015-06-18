@@ -61,6 +61,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
@@ -108,6 +109,9 @@ if ($_POST) {
 	}
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	}
+	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
+		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
 	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
@@ -205,6 +209,7 @@ if ($_POST) {
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
+		$config['system']['maximumfrags'] = $_POST['maximumfrags'];
 
 		if (!empty($_POST['tcpfirsttimeout'])) {
                         $config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
@@ -518,6 +523,18 @@ function update_description(itemnum) {
 										<?php if (empty($pconfig['maximumtableentries'])): ?>
 											<?= gettext("On your system the default size is:");?> <?= pfsense_default_table_entries_size(); ?>
 										<?php endif; ?>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Fragment Entries");?></td>
+								<td width="78%" class="vtable">
+									<input name="maximumfrags" type="text" id="maximumfrags" value="<?php echo htmlspecialchars($pconfig['maximumfrags']); ?>" />
+									<br />
+									<strong><?=gettext("Maximum number of packet fragments to hold for reassembly by scrub rules.");?></strong>
+									<br />
+									<span class="vexpl">
+										<?=gettext("Note:  Leave this blank for the default (5000).");?>
 									</span>
 								</td>
 							</tr>

@@ -1175,7 +1175,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 }
 
 function captiveportal_allowedhostname_configure() {
-	global $config, $g, $cpzone;
+	global $config, $g, $cpzone, $cpzoneid;
 
 	$rules = "";
 	if (is_array($config['captiveportal'][$cpzone]['allowedhostname'])) {
@@ -1192,7 +1192,7 @@ function captiveportal_allowedhostname_configure() {
 		if (isvalidpid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid")) {
 			sigkillbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid", "HUP");
 		} else {
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzoneid} -d 1");
 		}
 	} else {
 		killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");

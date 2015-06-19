@@ -128,8 +128,13 @@ if (is_array($config['dhcpdv6'][$if])){
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-$ifcfgip = get_interface_ipv6($if);
-$ifcfgsn = get_interface_subnetv6($if);
+if ($config['interfaces'][$if]['ipaddrv6'] != 'track6') {
+	$ifcfgip = get_interface_ipv6($if);
+	$ifcfgsn = get_interface_subnetv6($if);
+} else {
+	$ifcfgip = '::';
+	$ifcfgsn = 64;
+}
 
 /*   set the enabled flag which will tell us if DHCP relay is enabled
  *   on any interface. We will use this to disable DHCP server since
@@ -180,10 +185,23 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to'])))
 			$input_errors[] = gettext("A valid prefix range must be specified.");
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from'])))
-			$input_errors[] = gettext("A valid range must be specified.");
-		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to'])))
-			$input_errors[] = gettext("A valid range must be specified.");
+		if ($_POST['range_from']) {
+			if (!is_ipaddrv6($_POST['range_from'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			}
+			if ($config['interfaces'][$if]['ipaddrv6'] == 'track6' && !Net_IPv6::isInNetmask($_POST['range_from'], '::', 64)) {
+				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			}
+		}
+		if ($_POST['range_to']) {
+			if (!is_ipaddrv6($_POST['range_to'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			}
+			if ($config['interfaces'][$if]['ipaddrv6'] == 'track6' && !Net_IPv6::isInNetmask($_POST['range_to'], '::', 64)) {
+				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			}
+		}
+
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway'])))
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
 		if (($_POST['dns1'] && !is_ipaddrv6($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv6($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv6($_POST['dns4'])))

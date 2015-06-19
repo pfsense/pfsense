@@ -57,6 +57,8 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
+global $cpzone, $cpzoneid;
+
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
 $shortcut_section = "captiveportal";
 
@@ -68,6 +70,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
 }
+$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
@@ -142,8 +145,7 @@ if ($_POST) {
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules");
+		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules", true);
 		unset($rules);
 		
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");

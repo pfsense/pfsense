@@ -350,6 +350,10 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
+		preg_match('/[\w\s]+/', $from, $matches);
+		$from_display = trim($matches[0]);
+		if(preg_match('/(?:<)(.+)(?:>)$/', $from, $matches))
+			$from = $matches[1];
 	}
 
 	// Use SMTP Auth if fields are filled out
@@ -365,7 +369,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	}
 
 	$headers = array(
-		"From: {$from}",
+		"From: {$from_display} <{$from}>",
 		"To: {$to}",
 		"Subject: {$subject}",
 		"Date: " . date("r")

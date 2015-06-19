@@ -1356,8 +1356,17 @@ EOD;
 
 		$dhcpdv6conf .= " {\n";
 
+		$range_from = $dhcpv6ifconf['range']['from'];
+		$range_to = $dhcpv6ifconf['range']['to'];
+		if ($ifcfgv6['ipaddrv6'] == 'track6') {
+			$prefix = explode(':', Net_IPv6::uncompress($ifcfgipv6));
+			$suffix = explode(':', Net_IPv6::uncompress($range_from));
+			$range_from = Net_IPv6::compress(implode(':', array_merge(array_slice($prefix, 0, 4), array_slice($suffix, 4))));
+			$suffix = explode(':', Net_IPv6::uncompress($range_to));
+			$range_to = Net_IPv6::compress(implode(':', array_merge(array_slice($prefix, 0, 4), array_slice($suffix, 4))));
+		}
 		$dhcpdv6conf .= <<<EOD
-	range6 {$dhcpv6ifconf['range']['from']} {$dhcpv6ifconf['range']['to']};
+	range6 {$range_from} {$range_to};
 $dnscfgv6
 EOD;
 

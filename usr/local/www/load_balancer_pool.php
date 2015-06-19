@@ -95,7 +95,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">" . htmlspecialchars($a_pool[$i]['monitor']) . "</a>";
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -128,12 +128,12 @@ include("head.inc");
 				$t = new MainTable();
 				$t->edit_uri('load_balancer_pool_edit.php');
 				$t->my_uri('load_balancer_pool.php');
-				$t->add_column(gettext('Name'),'name',10);
-				$t->add_column(gettext('Mode'),'mode',10);
-				$t->add_column(gettext('Servers'),'servers',15);
-				$t->add_column(gettext('Port'),'port',10);
-				$t->add_column(gettext('Monitor'),'monitor',10);
-				$t->add_column(gettext('Description'),'descr',25);
+				$t->add_column(gettext('Name'), 'name', 10);
+				$t->add_column(gettext('Mode'), 'mode', 10);
+				$t->add_column(gettext('Servers'), 'servers', 15);
+				$t->add_column(gettext('Port'), 'port', 10);
+				$t->add_column(gettext('Monitor'), 'monitor', 10);
+				$t->add_column(gettext('Description'), 'descr', 25);
 				$t->add_button('edit');
 				$t->add_button('dup');
 				$t->add_button('del');

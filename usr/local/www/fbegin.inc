@@ -76,7 +76,7 @@ function return_ext_menu($section) {
 
 function output_menu($arrayitem, $target = null) {
 	foreach ($arrayitem as $item) {
-		if (isAllowedPage($item[1]) || $item[1]=="/index.php?logout") {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout") {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -114,7 +114,7 @@ if (!isAllowedPage("system_usermanager.php*")) {
 } else {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
-$system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
+$system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
 $interfaces_menu = array();
@@ -127,7 +127,7 @@ foreach ($opts as $oif => $odescr) {
 		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")),0);
+$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
 
 // Firewall
 $firewall_menu = array();
@@ -137,7 +137,7 @@ $firewall_menu[] = array(gettext("Rules"), "/firewall_rules.php");
 $firewall_menu[] = array(gettext("Schedules"), "/firewall_schedule.php");
 $firewall_menu[] = array(gettext("Traffic Shaper"), "/firewall_shaper.php");
 $firewall_menu[] = array(gettext("Virtual IPs"), "/firewall_virtual_ip.php");
-$firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),0);
+$firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")), 0);
 
 // Services
 $services_menu = array();
@@ -163,7 +163,7 @@ if (count($config['interfaces']) > 1) {
 	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 $services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
-$services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
+$services_menu = msort(array_merge($services_menu, return_ext_menu("Services")), 0);
 
 // VPN
 $vpn_menu = array();
@@ -171,7 +171,7 @@ $vpn_menu[] = array(gettext("IPsec"), "/vpn_ipsec.php");
 $vpn_menu[] = array(gettext("OpenVPN"), "/vpn_openvpn_server.php");
 $vpn_menu[] = array(gettext("PPTP"), "/vpn_pptp.php");
 $vpn_menu[] = array(gettext("L2TP"), "/vpn_l2tp.php");
-$vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")),0);
+$vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 
 // Status
 $status_menu = array();
@@ -210,7 +210,7 @@ foreach ($ifentries as $ent => $entdesc) {
 if (count($wifdescrs) > 0) {
 	$status_menu[] = array(gettext("Wireless"), "/status_wireless.php");
 }
-$status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
+$status_menu = msort(array_merge($status_menu, return_ext_menu("Status")), 0);
 
 // Diagnostics
 $diagnostics_menu = array();
@@ -223,11 +223,11 @@ $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
 
 if (file_exists("/var/run/gmirror_active")) {
-	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php" );
+	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php");
 }
-$diagnostics_menu[] = array(gettext("Halt System"), "/halt.php" );
-$diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php" );
-$diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );
+$diagnostics_menu[] = array(gettext("Halt System"), "/halt.php");
+$diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php");
+$diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php");
 
 $diagnostics_menu[] = array(gettext("Tables"), "/diag_tables.php");
 $diagnostics_menu[] = array(gettext("Ping"), "/diag_ping.php");
@@ -237,7 +237,7 @@ $diagnostics_menu[] = array(gettext("pfTop"), "/diag_system_pftop.php");
 $diagnostics_menu[] = array(gettext("Reboot"), "/reboot.php");
 $diagnostics_menu[] = array(gettext("Routes"), "/diag_routes.php");
 $diagnostics_menu[] = array(gettext("SMART Status"), "/diag_smart.php");
-$diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php" );
+$diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php");
 $diagnostics_menu[] = array(gettext("States"), "/diag_dump_states.php");
 $diagnostics_menu[] = array(gettext("States Summary"), "/diag_states_summary.php");
 $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.php");
@@ -250,11 +250,11 @@ if ($g['platform'] == "nanobsd") {
 if (isset($config['system']['developer'])) {
 	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
 }
-$diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
+$diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
 $gold_menu = array();
 $gold_menu[] = array(gettext("pfSense Gold"), "https://www.pfsense.org/gold");
-$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
+$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")), 0);
 
 if (!$g['disablehelpmenu']) {
 	$help_menu = array();
@@ -269,7 +269,7 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
 	$help_menu[] = array(gettext("Search portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
-	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
+	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
 
 ?>
@@ -450,7 +450,7 @@ if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync'
 	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 		$info_text = sprintf(gettext("%s is booting then packages will be reinstalled in the background.<p>Do not make changes in the GUI until this is complete."), $g['product_name']);
 	} else {
-		$pgtitle = array(gettext("System"),gettext("Package Manager"));
+		$pgtitle = array(gettext("System"), gettext("Package Manager"));
 		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
 	}
 	print_info_box($info_text . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");

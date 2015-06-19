@@ -39,7 +39,7 @@
 ##|*MATCH=interfaces_qinq_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQ"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
@@ -134,11 +134,11 @@ if ($_POST) {
 	$members = "";
 	$isfirst = 0;
 	/* item is a normal qinqentry type */
-	for ($x=0; $x<9999; $x++) {
+	for ($x = 0; $x < 9999; $x++) {
 		if ($_POST["members{$x}"] <> "") {
 			$member = explode("-", $_POST["members{$x}"]);
 			if (count($member) > 1) {
-				if (preg_match("/([^0-9])+/", $member[0], $match)  ||
+				if (preg_match("/([^0-9])+/", $member[0], $match) ||
 				    preg_match("/([^0-9])+/", $member[1], $match)) {
 					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
 				}
@@ -398,7 +398,7 @@ function removeRow(el) {
 ?>
 					<tr>
 						<td class="vtable">
-							<input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo $member;?>" />
+							<input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo htmlspecialchars($member);?>" />
 						</td>
 						<td>
 							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>

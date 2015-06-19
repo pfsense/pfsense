@@ -751,7 +751,7 @@ function tuntap_change() {
 	mindex = document.iform.mode.selectedIndex;
 	mvalue = document.iform.mode.options[mindex].value;
 
-	switch( mvalue) {
+	switch (mvalue) {
 		case "p2p_tls":
 		case "p2p_shared_key":
 			p2p = true;
@@ -833,7 +833,7 @@ if ($savemsg) {
 	<tr>
 		<td class="tabcont">
 
-			<?php if ($act=="new" || $act=="edit"): ?>
+			<?php if ($act == "new" || $act == "edit"): ?>
 
 			<form action="vpn_openvpn_server.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="general information">
@@ -922,7 +922,7 @@ if ($savemsg) {
 							<?php
 								foreach ($openvpn_dev_mode as $device):
 									$selected = "";
-									if (! empty($pconfig['dev_mode'])) {
+									if (!empty($pconfig['dev_mode'])) {
 										if ($pconfig['dev_mode'] == $device) {
 											$selected = "selected=\"selected\"";
 										}

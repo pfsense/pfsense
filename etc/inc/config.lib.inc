@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt
 	pfSense_MODULE:	config
 */
 
@@ -114,8 +114,9 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting(true))
+	if (platform_booting(true)) {
 		echo ".";
+	}
 
 	// Check for encrypted config.xml
 	encrypted_configxml();
@@ -216,7 +217,7 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
-		copy("$file","/cf/conf/config.xml");
+		copy("$file", "/cf/conf/config.xml");
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -330,9 +331,8 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	if ($status <> 0) {
 		if (platform_booting()) {
-			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
+			echo gettext("/cf Filesystem is dirty.") . "\n";
 		}
-		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
@@ -340,10 +340,9 @@ function conf_mount_rw() {
 	 *    compact flash cards root.
 	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
-	/* we could not mount this correctly.  kick off fsck */
+	/* we could not mount this correctly. */
 	if ($status <> 0) {
-		log_error(gettext("File system is dirty.  Launching FSCK for /"));
-		mwexec("/sbin/fsck -y /");
+		log_error(gettext("/ File system is dirty."));
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
 
@@ -407,9 +406,9 @@ function convert_config() {
 	/* fix every minute crontab bogons entry */
 	if (is_array($config['cron'])) {
 		$cron_item_count = count($config['cron']['item']);
-		for($x=0; $x<$cron_item_count; $x++) {
+		for ($x = 0; $x < $cron_item_count; $x++) {
 			if (stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-				if ($config['cron']['item'][$x]['hour'] == "*" ) {
+				if ($config['cron']['item'][$x]['hour'] == "*") {
 					$config['cron']['item'][$x]['hour'] = "3";
 					write_config(gettext("Updated bogon update frequency to 3am"));
 					log_error(gettext("Updated bogon update frequency to 3am"));
@@ -899,9 +898,10 @@ function backup_config() {
 
 function set_device_perms() {
 	$devices = array(
-		'pf'	=> array(	'user'	=> 'root',
-					'group'	=> 'proxy',
-					'mode'	=> 0660),
+		'pf' => array(
+			'user' => 'root',
+			'group' => 'proxy',
+			'mode' => 0660),
 		);
 
 	foreach ($devices as $name => $attr) {
@@ -976,8 +976,7 @@ function pfSense_clear_globals() {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			print($errorstr);
 			log_error($errorstr);
-		} else
-		if ($error['type'] != E_NOTICE) {
+		} else if ($error['type'] != E_NOTICE) {
 			$errorstr = "PHP WARNING: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			// XXX: comment out for now, should re-enable post-2.2
 			//print($errorstr);

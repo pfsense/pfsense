@@ -44,7 +44,7 @@
 ##|-PRIV
 
 // Turn on buffering to speed up rendering
-ini_set('output_buffering','true');
+ini_set('output_buffering', 'true');
 
 // Start buffering with a cache size of 100000
 ob_start(null, "1000");
@@ -61,7 +61,7 @@ if (isset($_REQUEST['closenotice'])) {
 	echo get_menu_messages();
 	exit;
 }
-if ($_REQUEST['act'] == 'alias_info_popup' && !preg_match("/\D/",$_REQUEST['aliasid'])) {
+if ($_REQUEST['act'] == 'alias_info_popup' && !preg_match("/\D/", $_REQUEST['aliasid'])) {
 	alias_info_popup($_REQUEST['aliasid']);
 	exit;
 }
@@ -91,7 +91,7 @@ if ($g['disablecrashreporter'] != true) {
 
 ##build list of widgets
 $directory = "/usr/local/www/widgets/widgets/";
-$dirhandle  = opendir($directory);
+$dirhandle = opendir($directory);
 $filename = "";
 $widgetnames = array();
 $widgetfiles = array();
@@ -142,7 +142,7 @@ require_once('includes/functions.inc.php');
 ## if true, display, if false, hide it ...
 if (file_exists("/usr/sbin/swapinfo")) {
 	$swapinfo = `/usr/sbin/swapinfo`;
-	if (stristr($swapinfo,'%') == true) {
+	if (stristr($swapinfo, '%') == true) {
 		$showswap=true;
 	}
 }
@@ -195,10 +195,10 @@ EOF;
 	echo "<center>\n";
 	echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\" alt=\"logo\" /><p>\n";
 	echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
-	echo sprintf(gettext("Welcome to %s!\n"),$g['product_name']) . "<p>";
+	echo sprintf(gettext("Welcome to %s!\n"), $g['product_name']) . "<p>";
 	echo gettext("One moment while we start the initial setup wizard.") . "<p>\n";
 	echo gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.") . "<p>\n";
-	echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."),$g['product_name']) . "\n";
+	echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name']) . "\n";
 	echo "</div>\n";
 	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 	echo "<script type=\"text/javascript\">\n";
@@ -239,7 +239,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	$colpos = array();
 	$savedwidgetfiles = array();
 	$widgetname = "";
-	$widgetlist = explode(",",$widgetlist);
+	$widgetlist = explode(",", $widgetlist);
 
 	##read the widget position and display information
 	foreach ($widgetlist as $widget) {
@@ -247,8 +247,8 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		$widgetname = substr($widget, 0, $dashpos);
 		$colposition = strpos($widget, ":");
 		$displayposition = strrpos($widget, ":");
-		$colpos[] = substr($widget,$colposition+1, $displayposition - $colposition-1);
-		$displayarray[] = substr($widget,$displayposition+1);
+		$colpos[] = substr($widget, $colposition + 1, $displayposition - $colposition - 1);
+		$displayarray[] = substr($widget, $displayposition + 1);
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
 
@@ -275,7 +275,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 ##build list of php include files
 $phpincludefiles = array();
 $directory = "/usr/local/www/widgets/include/";
-$dirhandle  = opendir($directory);
+$dirhandle = opendir($directory);
 $filename = "";
 while (false !== ($filename = readdir($dirhandle))) {
 	$phpincludefiles[] = $filename;
@@ -345,7 +345,7 @@ function configureWidget(selectedDiv) {
 	}
 }
 
-function showWidget(selectedDiv,swapButtons) {
+function showWidget(selectedDiv, swapButtons) {
 	//appear element
 	jQuery('#' + selectedDiv).show('blind');
 	showSave();
@@ -367,7 +367,7 @@ function showWidget(selectedDiv,swapButtons) {
 
 }
 
-function minimizeWidget(selectedDiv,swapButtons) {
+function minimizeWidget(selectedDiv, swapButtons) {
 	//fade element
 	jQuery('#' + selectedDiv).hide('blind');
 	showSave();
@@ -407,7 +407,7 @@ function updatePref() {
 	var widgetSequence = "";
 	var firstprint = false;
 	d = document;
-	for (i=0; i<widgets.length; i++) {
+	for (i = 0; i < widgets.length; i++) {
 		if (firstprint) {
 			widgetSequence += ",";
 		}
@@ -425,31 +425,31 @@ function updatePref() {
 }
 
 function hideAllWidgets() {
-	jQuery('#niftyOutter').fadeTo('slow',0.2);
+	jQuery('#niftyOutter').fadeTo('slow', 0.2);
 }
 
 function showAllWidgets() {
-	jQuery('#niftyOutter').fadeTo('slow',1.0);
+	jQuery('#niftyOutter').fadeTo('slow', 1.0);
 }
 
 
 function changeTabDIV(selectedDiv) {
 	var dashpos = selectedDiv.indexOf("-");
-	var tabclass = selectedDiv.substring(0,dashpos);
+	var tabclass = selectedDiv.substring(0, dashpos);
 	d = document;
 
 	//get deactive tabs first
 	tabclass = tabclass + "-class-tabdeactive";
 	var tabs = document.getElementsByClassName(tabclass);
 	var incTabSelected = selectedDiv + "-deactive";
-	for (i=0; i<tabs.length; i++) {
+	for (i = 0; i < tabs.length; i++) {
 		var tab = tabs[i].id;
 		dashpos = tab.lastIndexOf("-");
-		var tab2 = tab.substring(0,dashpos) + "-deactive";
+		var tab2 = tab.substring(0, dashpos) + "-deactive";
 		if (tab2 == incTabSelected) {
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "none";
-			tab2 = tab.substring(0,dashpos) + "-active";
+			tab2 = tab.substring(0, dashpos) + "-active";
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "table-cell";
 
@@ -459,15 +459,15 @@ function changeTabDIV(selectedDiv) {
 		}
 		else
 		{
-			tab2 = tab.substring(0,dashpos) + "-deactive";
+			tab2 = tab.substring(0, dashpos) + "-deactive";
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "table-cell";
-			tab2 = tab.substring(0,dashpos) + "-active";
+			tab2 = tab.substring(0, dashpos) + "-active";
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "none";
 
 			//hide sections we don't want to see
-			tab2 = tab.substring(0,dashpos);
+			tab2 = tab.substring(0, dashpos);
 			tabmain = d.getElementById(tab2);
 			tabmain.style.display = "none";
 
@@ -489,7 +489,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-columns = ['col1','col2','col3','col4', 'col5','col6','col7','col8','col9','col10'];
+columns = ['col1', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'];
 //]]>
 </script>
 
@@ -570,7 +570,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<input type="hidden" value="" name="sequence" id="sequence" />
 	<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="<?=gettext("Click here to add widgets"); ?>" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
-	<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="<?=gettext("Click here for help"); ?>" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+	<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="<?=gettext("Click here for help"); ?>" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
 &nbsp;&nbsp;&nbsp;
 	<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
@@ -731,9 +731,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				</div>
 				<div align="right" style="float:right;">
 					<div id="<?php echo $widgetname;?>-configure" onclick='return configureWidget("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" alt="configure" /></div>
-					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="open" /></div>
-					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="minimize" /></div>
-					<div id="<?php echo $widgetname;?>-close" onclick='return closeWidget("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" /></div>
+					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>", true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="open" /></div>
+					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>", true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="minimize" /></div>
+					<div id="<?php echo $widgetname;?>-close" onclick='return closeWidget("<?php echo $widgetname;?>", true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" /></div>
 				</div>
 				<div style="clear:both;"></div>
 			</div>
@@ -769,9 +769,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	{
 			jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
 
-	<?php if (!$config['widgets']  && $pconfig['sequence'] != "") { ?>
+	<?php if (!$config['widgets'] && $pconfig['sequence'] != "") { ?>
 			hideAllWidgets();
-			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');
+			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '', 'delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');
 	<?php } ?>
 	});
 //]]>
@@ -780,7 +780,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	//build list of javascript include files
 	$jsincludefiles = array();
 	$directory = "widgets/javascript/";
-	$dirhandle  = opendir($directory);
+	$dirhandle = opendir($directory);
 	$filename = "";
 	while (false !== ($filename = readdir($dirhandle))) {
 		$jsincludefiles[] = $filename;

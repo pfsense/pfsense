@@ -187,10 +187,10 @@ while ($line = chop(fgets($fd))) {
 
 	$line_split = preg_split("/\s+/", $line);
 
-	$iface  = array_shift($line_split);
+	$iface = array_shift($line_split);
 	$proto = array_shift($line_split);
 	$state = array_pop($line_split);
-	$info  = implode(" ", $line_split);
+	$info = implode(" ", $line_split);
 
 	// We may want to make this optional, with a large state table, this could get to be expensive.
 	$iface = convert_real_interface_to_friendly_descr($iface);

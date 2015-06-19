@@ -41,7 +41,7 @@ require_once("rrd.inc");
 
 global $g;
 
-$pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer"));
+$pgtitle = array(gettext("System"), gettext("RRD Graphs"), gettext("Image viewer"));
 
 if ($_GET['database']) {
 	$curdatabase = basename($_GET['database']);
@@ -218,32 +218,32 @@ $colorpacketsdown	= array('990000', 'CC0000', 'FFC875', 'FF9900');
 $colortraffic95		= array('660000', 'FF0000');
 
 /* State Table			pfrate,  pfstates, pfnat,  srcip,   dstip */
-$colorstates		= array('00AA00','990000','0000FF','000000','DD9B00');
+$colorstates		= array('00AA00', '990000', '0000FF', '000000', 'DD9B00');
 
 /* Processor Usage		user,    nice,    system,  int,     processes */
-$colorprocessor		= array('00AA00','990000','0000FF','DD9B00','000000');
+$colorprocessor		= array('00AA00', '990000', '0000FF', 'DD9B00', '000000');
 
 /* Memory Usage			active,  inact,   free,    cache,   wire */
-$colormemory		= array('00AA00','990000','0000FF','666666','DD9B00');
+$colormemory		= array('00AA00', '990000', '0000FF', '666666', 'DD9B00');
 
 /* MBUF Usage			current, cache,   total,   max */
-$colormbuf		= array('0080FF','00E344','FF0000','000000');
+$colormbuf		= array('0080FF', '00E344', 'FF0000', '000000');
 
 /* Traffic Shaper Queues	q1,      q2,      q3,      q4,      q5,      q6,      q7,      q8,      q9 */
-$colorqueuesup		= array('000000','7B0000','0080FF','00E344','FF0000','2217AA','FFC875','FF9900','CC0000');
-$colorqueuesdown	= array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
+$colorqueuesup		= array('000000', '7B0000', '0080FF', '00E344', 'FF0000', '2217AA', 'FFC875', 'FF9900', 'CC0000');
+$colorqueuesdown	= array('000000', '7B7B7B', '999999', 'BBBBBB', 'CCCCCC', 'D9D9D9', 'EEEEEE', 'FFFFFF', 'CCCCCC');
 
-$colorqueuesdropup	= array('000000','7B0000','0080FF','00E344','FF0000','2217AA','FFC875','FF9900','CC0000');
-$colorqueuesdropdown	= array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
+$colorqueuesdropup	= array('000000', '7B0000', '0080FF', '00E344', 'FF0000', '2217AA', 'FFC875', 'FF9900', 'CC0000');
+$colorqueuesdropdown	= array('000000', '7B7B7B', '999999', 'BBBBBB', 'CCCCCC', 'D9D9D9', 'EEEEEE', 'FFFFFF', 'CCCCCC');
 
 /* Quality Graph Delay	>420,    180-420, 60-180,  20-60,   <20,     Delay Avg */
-$colorqualityrtt	= array('990000','a83c3c','b36666','bd9090','cccccc','000000');
+$colorqualityrtt	= array('990000', 'a83c3c', 'b36666', 'bd9090', 'cccccc', '000000');
 /* Quality Graph Loss */
 $colorqualityloss	= 'ee0000';
 
 /* Wireless Graph		SNR,     Rate,    Channel*/
 /* Cellular Graph		RSSI,     */
-$colorwireless		= array('333333','a83c3c','999999');
+$colorwireless		= array('333333', 'a83c3c', '999999');
 
 /* SPAMD Times			min area, avg area, max area, Time line */
 $colorspamdtime		= array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066');
@@ -254,7 +254,7 @@ $colorspamdconn		= array('AA00BB', 'FFFFFF', '660088', 'FFFF88', '006600');
 $colorvpnusers		= array('990000');
 
 /* NTPD stats			offset, clk jit,   sys jit,   wander */
-$colorntpd		= array('0080FF','00E344','FF0000','000000');
+$colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 
 /* Captive Portal Total Users	Total Users */
 /* Captive Portal Concurrent	Concurrent Users */
@@ -265,7 +265,7 @@ $rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
 if (file_exists($rrdcolors)) {
 	include($rrdcolors);
 } else {
-	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"),$g['theme']));
+	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"), $g['theme']));
 }
 
 switch ($curstyle) {
@@ -1240,17 +1240,17 @@ if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 		usleep(500);
 	}
 }
-if (($graphcmdreturn <> 0) || (! $data)) {
-	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
+if (($graphcmdreturn <> 0) || (!$data)) {
+	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'), $graphcmdreturn, $graphcmdoutput));
 	if (strstr($curdatabase, "queues")) {
-		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
+		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"), $rrddbpath, $curdatabase));
 		unlink_if_exists($rrddbpath . $curif . $queues);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();
 	}
 	if (strstr($curdatabase, "queuesdrop")) {
-		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
+		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"), $rrddbpath, $curdatabase));
 		unlink_if_exists($rrddbpath . $curdatabase);
 		flush();
 		usleep(500);

@@ -38,8 +38,8 @@
 	pfSense_MODULE:	utils
 */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dhs dnsexit dnsimple dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DHS,DNSexit,DNSimple,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dhs dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DHS,DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -161,6 +161,10 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tAdvManagedFlag on;\n";
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
+			case "stateless_dhcp":
+				$radvdconf .= "\tAdvManagedFlag off;\n";
+				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
+				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		if ($carpif == true) {
@@ -179,6 +183,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvAutonomous off;\n";
 				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
+			case "stateless_dhcp":
 			case "assist":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
@@ -221,7 +226,7 @@ function services_radvd_configure($blacklist = array()) {
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous on;\n";
 							$radvdconf .= "\t\tAdvRouterAddr on;\n";
-							break;				
+							break;
 					}
 					$radvdconf .= "\t};\n";
 				}
@@ -392,7 +397,7 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
 	/* configure DHCPD chroot once */
-	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
+	$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
@@ -407,7 +412,7 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	fwrite($fd, "/bin/cp -n /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "/bin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
-	$status = `/sbin/mount | /usr/bin/grep -v grep  | /usr/bin/grep  "{$g['dhcpd_chroot_path']}/dev"`;
+	$status = `/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep "{$g['dhcpd_chroot_path']}/dev"`;
 	if (!trim($status)) {
 		fwrite($fd, "/sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	}
@@ -597,7 +602,7 @@ EOD;
 				$my_port = "519";
 				$peer_port = "520";
 				$type = "primary";
-				$dhcpdconf_pri  = "split 128;\n";
+				$dhcpdconf_pri = "split 128;\n";
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
 
@@ -1066,8 +1071,7 @@ EOD;
 	return 0;
 }
 
-function dhcpdkey($dhcpifconf)
-{
+function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
 	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "") {
 		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
@@ -1079,8 +1083,7 @@ function dhcpdkey($dhcpifconf)
 	return $dhcpdconf;
 }
 
-function dhcpdzones($ddns_zones, $dhcpifconf)
-{
+function dhcpdzones($ddns_zones, $dhcpifconf) {
 	$dhcpdconf = "";
 
 	if (is_array($ddns_zones)) {
@@ -1645,7 +1648,7 @@ function services_dhcrelay_configure() {
 			if (!is_ipaddr($subnet)) {
 				continue;
 			}
-			$subnet .=  "/" . get_interface_subnet($ifname);
+			$subnet .= "/" . get_interface_subnet($ifname);
 			if (ip_in_subnet($srvip, $subnet)) {
 				$destif = get_real_interface($ifname);
 				break;
@@ -1711,10 +1714,10 @@ function services_dhcrelay_configure() {
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -i " .  implode(" -i ", $dhcrelayifs);
+	$cmd = "/usr/local/sbin/dhcrelay -i " . implode(" -i ", $dhcrelayifs);
 
 	if (isset($dhcrelaycfg['agentoption'])) {
-		$cmd .=  " -a -m replace";
+		$cmd .= " -a -m replace";
 	}
 
 	$cmd .= " " . implode(" ", $srvips);
@@ -1755,8 +1758,9 @@ function services_dhcrelay6_configure() {
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
 		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif))
+		    link_interface_to_bridge($dhcrelayif)) {
 			continue;
+		}
 
 		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif))) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
@@ -1777,7 +1781,7 @@ function services_dhcrelay6_configure() {
 			if (!is_ipaddrv6($subnet)) {
 				continue;
 			}
-			$subnet .=  "/" . get_interface_subnetv6($ifname);
+			$subnet .= "/" . get_interface_subnetv6($ifname);
 			if (ip_in_subnet($srvip, $subnet)) {
 				$destif = get_real_interface($ifname);
 				break;
@@ -1870,8 +1874,8 @@ function services_dyndns_configure_client($conf) {
 		$dnsPort = NULL,
 		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
-		$dnsZoneID=$conf['zoneid'],
-		$dnsTTL=$conf['ttl'],
+		$dnsZoneID = $conf['zoneid'],
+		$dnsTTL = $conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
 		$dnsID = "{$conf['id']}",
@@ -1926,7 +1930,7 @@ function dyndnsCheckIP($int) {
 		$ip_ch = curl_init($hosttocheck);
 		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
+		curl_setopt($ip_ch, CURLOPT_INTERFACE, 'host!' . $ip_address);
 		curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
 		curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
 		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
@@ -1970,7 +1974,7 @@ function services_dnsmasq_configure() {
 		}
 
 		/* generate hosts file */
-		if (system_hosts_generate()!=0) {
+		if (system_hosts_generate() != 0) {
 			$return = 1;
 		}
 
@@ -2126,7 +2130,7 @@ function services_dnsmasq_configure() {
 	}
 
 	if (!platform_booting()) {
-		if (services_dhcpd_configure()!=0) {
+		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
 	}
@@ -2156,7 +2160,7 @@ function services_unbound_configure() {
 		}
 
 		/* generate hosts file */
-		if (system_hosts_generate()!=0) {
+		if (system_hosts_generate() != 0) {
 			$return = 1;
 		}
 
@@ -2170,7 +2174,7 @@ function services_unbound_configure() {
 	}
 
 	if (!platform_booting()) {
-		if (services_dhcpd_configure()!=0) {
+		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
 	}
@@ -2201,7 +2205,7 @@ function services_snmpd_configure() {
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
-			printf(gettext("Error: cannot open snmpd.conf in services_snmpd_configure().%s"),"\n");
+			printf(gettext("Error: cannot open snmpd.conf in services_snmpd_configure().%s"), "\n");
 			return 1;
 		}
 
@@ -2643,7 +2647,7 @@ function upnp_start() {
 	}
 }
 
-function install_cron_job($command, $active=false, $minute="0", $hour="*", $monthday="*", $month="*", $weekday="*", $who="root") {
+function install_cron_job($command, $active = false, $minute = "0", $hour = "*", $monthday = "*", $month = "*", $weekday = "*", $who = "root") {
 	global $config, $g;
 
 	$is_installed = false;
@@ -2656,7 +2660,7 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 		$config['cron']['item'] = array();
 	}
 
-	$x=0;
+	$x = 0;
 	foreach ($config['cron']['item'] as $item) {
 		if (strstr($item['command'], $command)) {
 			$is_installed = true;

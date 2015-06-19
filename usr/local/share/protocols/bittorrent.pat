@@ -19,7 +19,7 @@ bittorrent
 # bitcomet-specific strings contributed by liangjun.
 
 # This is not a valid GNU basic regular expression (but that's ok).
-^(\x13bittorrent protocol|azver\x01$|get /scrape\?info_hash=get /announce\?info_hash=|get /client/bitcomet/|GET /data\?fid=)|d1:ad2:id20:|\x08'7P\)[RP]
+^(\x13bittorrent protocol|azver\x01$|get /scrape\?info_hash=|get /announce\?info_hash=|get /client/bitcomet/|GET /data\?fid=)|d1:ad2:id20:|\x08'7P\)[RP]
 
 # This pattern is "fast", but won't catch as much
 #^(\x13bittorrent protocol|azver\x01$|get /scrape\?info_hash=)

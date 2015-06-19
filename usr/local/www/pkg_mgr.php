@@ -56,7 +56,7 @@ date_default_timezone_set($timezone);
 
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
@@ -68,8 +68,8 @@ if (is_subsystem_dirty('packagelock')) {
 }
 function domTT_title($title_msg) {
 	if (!empty($title_msg)) {
-		$title_msg=preg_replace("/\s+/"," ",$title_msg);
-		$title_msg=preg_replace("/'/","\'",$title_msg);
+		$title_msg = preg_replace("/\s+/", " ", $title_msg);
+		$title_msg = preg_replace("/'/", "\'", $title_msg);
 		echo "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
 	}
 }
@@ -104,7 +104,7 @@ if (!empty($_GET)) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"));
 include("head.inc");
 
 ?>
@@ -152,18 +152,18 @@ include("head.inc");
 		natcasesort($pkg_keys);
 
 		//Check categories
-		$categories=array();
+		$categories = array();
 		if (is_array($pkg_keys)) {
 			foreach ($pkg_keys as $key) {
 				$categories[$pkg_info[$key]['category']]++;
 			}
 		}
 		ksort($categories);
-		$cm_count=0;
+		$cm_count = 0;
 		$tab_array = array();
-		$visible_categories=array();
-		$categories_min_count=($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
-		$categories_max_display=($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
+		$visible_categories = array();
+		$categories_min_count = ($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
+		$categories_max_display = ($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
 
 		/* check selected category or define default category to show */
 		if (isset($_REQUEST['category'])) {
@@ -177,15 +177,15 @@ include("head.inc");
 		$menu_category = (isset($_REQUEST['category']) ? $_REQUEST['category'] : "All");
 		$show_category = ($menu_category == "Other" || $menu_category == "All");
 
-		$tab_array[] = array(gettext("All"), $menu_category=="All" ? true : false, "pkg_mgr.php?category=All");
+		$tab_array[] = array(gettext("All"), $menu_category == "All" ? true : false, "pkg_mgr.php?category=All");
 		foreach ($categories as $category => $c_count) {
 			if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
-				$tab_array[] = array(gettext($category) , $menu_category==$category ? true : false, "pkg_mgr.php?category={$category}");
+				$tab_array[] = array(gettext($category) , $menu_category == $category ? true : false, "pkg_mgr.php?category={$category}");
 				$visible_categories[]=$category;
 				$cm_count++;
 			}
 		}
-		$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
+		$tab_array[] = array(gettext("Other Categories"), $menu_category == "Other" ? true : false, "pkg_mgr.php?category=Other");
 		if (count($categories) > 1) {
 			display_top_tabs($tab_array);
 		}
@@ -219,7 +219,7 @@ include("head.inc");
 				}
 
 				/* get history/changelog git dir */
-				$commit_dir=explode("/",$index['config_file']);
+				$commit_dir = explode("/", $index['config_file']);
 				$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
 				if ($commit_dir[(count($commit_dir)-2)] == "config") {
 					$changeloglink .= $commit_dir[(count($commit_dir)-1)];
@@ -236,7 +236,7 @@ include("head.inc");
 					$pkginfo=gettext("No package info, check the forum");
 				}
 
-				if ($menu_category == "All" || $index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'],$visible_categories))):
+				if ($menu_category == "All" || $index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'], $visible_categories))):
 ?>
 					<tr valign="top" class="<?= $index['category'] ?>">
 						<td class="listlr" <?=domTT_title(gettext("Click on package name to access its website."))?>>

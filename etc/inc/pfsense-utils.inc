@@ -79,7 +79,7 @@ function have_ruleint_access($if) {
  *   returns true if a url is available
  ******/
 function does_url_exist($url) {
-	$fd = fopen("$url","r");
+	$fd = fopen("$url", "r");
 	if ($fd) {
 		fclose($fd);
 		return true;
@@ -98,14 +98,14 @@ function does_url_exist($url) {
  ******/
 function is_private_ip($iptocheck) {
 	$isprivate = false;
-	$ip_private_list=array(
+	$ip_private_list = array(
 		"10.0.0.0/8",
 		"100.64.0.0/10",
 		"172.16.0.0/12",
 		"192.168.0.0/16",
 	);
 	foreach ($ip_private_list as $private) {
-		if (ip_in_subnet($iptocheck,$private)==true) {
+		if (ip_in_subnet($iptocheck, $private) == true) {
 			$isprivate = true;
 		}
 	}
@@ -494,12 +494,11 @@ function get_dir($dir) {
  * RESULT
  *   true/false - true if the operation was successful
  ******/
-function WakeOnLan($addr, $mac)
-{
+function WakeOnLan($addr, $mac) {
 	$addr_byte = explode(':', $mac);
 	$hw_addr = '';
 
-	for ($a=0; $a < 6; $a++) {
+	for ($a = 0; $a < 6; $a++) {
 		$hw_addr .= chr(hexdec($addr_byte[$a]));
 	}
 
@@ -516,7 +515,7 @@ function WakeOnLan($addr, $mac)
 		log_error(sprintf(gettext("Error code is '%1\$s' - %2\$s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
 	} else {
 		// setting a broadcast option to socket:
-		$opt_ret =  socket_set_option($s, 1, 6, TRUE);
+		$opt_ret = socket_set_option($s, 1, 6, TRUE);
 		if ($opt_ret < 0) {
 			log_error(sprintf(gettext("setsockopt() failed, error: %s"), strerror($opt_ret)));
 		}
@@ -561,7 +560,7 @@ function backup_config_section($section_name) {
 function restore_config_section($section_name, $new_contents) {
 	global $config, $g;
 	conf_mount_rw();
-	$fout = fopen("{$g['tmp_path']}/tmpxml","w");
+	$fout = fopen("{$g['tmp_path']}/tmpxml", "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
 
@@ -622,10 +621,10 @@ function merge_config_section($section_name, $new_contents) {
 function http_post($server, $port, $url, $vars) {
 	$user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
 	$urlencoded = "";
-	while (list($key,$value) = each($vars)) {
-		$urlencoded.= urlencode($key) . "=" . urlencode($value) . "&";
+	while (list($key, $value) = each($vars)) {
+		$urlencoded .= urlencode($key) . "=" . urlencode($value) . "&";
 	}
-	$urlencoded = substr($urlencoded,0,-1);
+	$urlencoded = substr($urlencoded, 0, -1);
 	$content_length = strlen($urlencoded);
 	$headers = "POST $url HTTP/1.1
 Accept: */*
@@ -651,7 +650,7 @@ Content-Length: $content_length
 
 	$ret = "";
 	while (!feof($fp)) {
-		$ret.= fgets($fp, 1024);
+		$ret .= fgets($fp, 1024);
 	}
 	fclose($fp);
 
@@ -665,7 +664,7 @@ if (!function_exists('php_check_syntax')) {
 	global $g;
 	function php_check_syntax($code_to_check, &$errormessage) {
 		return false;
-		$fout = fopen("{$g['tmp_path']}/codetocheck.php","w");
+		$fout = fopen("{$g['tmp_path']}/codetocheck.php", "w");
 		$code = $_POST['content'];
 		$code = str_replace("<?php", "", $code);
 		$code = str_replace("?>", "", $code);
@@ -706,11 +705,11 @@ if (!function_exists('php_check_syntax')) {
 }
 
 /*
- * rmdir_recursive($path,$follow_links=false)
+ * rmdir_recursive($path, $follow_links=false)
  * Recursively remove a directory tree (rm -rf path)
  * This is for directories _only_
  */
-function rmdir_recursive($path,$follow_links=false) {
+function rmdir_recursive($path, $follow_links=false) {
 	$to_do = glob($path);
 	if (!is_array($to_do)) {
 		$to_do = array($to_do);
@@ -722,7 +721,7 @@ function rmdir_recursive($path,$follow_links=false) {
 				while ($entry = readdir($dir)) {
 					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry"))) {
 						unlink("$workingdir/$entry");
-					} elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..') {
+					} elseif (is_dir("$workingdir/$entry") && $entry != '.' && $entry != '..') {
 						rmdir_recursive("$workingdir/$entry");
 					}
 				}
@@ -982,7 +981,7 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function setup_serial_port($when="save", $path="") {
+function setup_serial_port($when = "save", $path = "") {
 	global $g, $config;
 	conf_mount_rw();
 	$ttys_file = "{$path}/etc/ttys";
@@ -1009,7 +1008,7 @@ function setup_serial_port($when="save", $path="") {
 		}
 
 		$boot_config_split = explode("\n", $boot_config);
-		$fd = fopen($boot_config_file,"w");
+		$fd = fopen($boot_config_file, "w");
 		if ($fd) {
 			foreach ($boot_config_split as $bcs) {
 				if (stristr($bcs, "-D") || stristr($bcs, "-h")) {
@@ -1040,9 +1039,12 @@ function setup_serial_port($when="save", $path="") {
 			//  do not contain a console directive.
 			foreach ($boot_config_split as $bcs) {
 				if (!empty($bcs) &&
-				    (stripos($bcs, "console") === false) &&
-				    (stripos($bcs, "boot_multicons") === false) &&
-				    (stripos($bcs, "boot_serial") === false)) {
+				(stripos($bcs, "console") === false) &&
+				(stripos($bcs, "boot_multicons") === false) &&
+				(stripos($bcs, "boot_serial") === false) &&
+				(stripos($bcs, "hw.usb.no_pf") === false) &&
+				(stripos($bcs, "hint.uart.0.flags") === false) &&
+				(stripos($bcs, "hint.uart.1.flags") === false)) {
 					$new_boot_config[] = $bcs;
 				}
 			}
@@ -1064,6 +1066,14 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+			
+			$specplatform = system_identify_specific_platform();
+			if ($specplatform['name'] == "RCC-VE") {
+				$new_boot_config[] = 'comconsole_port="0x2F8"';
+				$new_boot_config[] = 'hint.uart.0.flags="0x00"';
+				$new_boot_config[] = 'hint.uart.1.flags="0x10"';
+			}
+			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
@@ -1250,7 +1260,7 @@ function is_pppoe_server_enabled() {
 }
 
 function convert_seconds_to_hms($sec) {
-	$min=$hrs=0;
+	$min = $hrs = 0;
 	if ($sec != 0) {
 		$min = floor($sec/60);
 		$sec %= 60;
@@ -1277,8 +1287,8 @@ function convert_seconds_to_hms($sec) {
 function get_ppp_uptime($port) {
 	if (file_exists("/conf/{$port}.log")) {
 		$saved_time = file_get_contents("/conf/{$port}.log");
-		$uptime_data = explode("\n",$saved_time);
-		$sec=0;
+		$uptime_data = explode("\n", $saved_time);
+		$sec = 0;
 		foreach ($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
 		}
@@ -1743,7 +1753,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 60, $timeout = 0) {
+function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 5, $timeout = 0) {
 	global $config, $g;
 
 	$fp = fopen($destination, "wb");
@@ -1760,7 +1770,11 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	if (!isset($config['system']['host_uuid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	} else {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1780,9 +1794,10 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	return ($http_code == 200) ? true : $http_code;
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update, $g;
-	$file_size  = 1;
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
+	global $config, $g;
+	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
+	$file_size = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
 	/* open destination file */
@@ -1801,7 +1816,11 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	if (!isset($config['system']['host_uuid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+	} else {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -2337,21 +2356,21 @@ function nanobsd_switch_boot_slice() {
 	}
 	ob_implicit_flush(1);
 	if (strstr($slice, "s2")) {
-		$ASLICE="2";
-		$AOLDSLICE="1";
-		$AGLABEL_SLICE="pfsense1";
-		$AUFS_ID="1";
-		$AOLD_UFS_ID="0";
+		$ASLICE = "2";
+		$AOLDSLICE = "1";
+		$AGLABEL_SLICE = "pfsense1";
+		$AUFS_ID = "1";
+		$AOLD_UFS_ID = "0";
 	} else {
-		$ASLICE="1";
-		$AOLDSLICE="2";
-		$AGLABEL_SLICE="pfsense0";
-		$AUFS_ID="0";
-		$AOLD_UFS_ID="1";
+		$ASLICE = "1";
+		$AOLDSLICE = "2";
+		$AGLABEL_SLICE = "pfsense0";
+		$AUFS_ID = "0";
+		$AOLD_UFS_ID = "1";
 	}
-	$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
-	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
-	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
+	$ATOFLASH = "{$BOOT_DRIVE}s{$ASLICE}";
+	$ACOMPLETE_PATH = "{$BOOT_DRIVE}s{$ASLICE}a";
+	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
 	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
@@ -2425,23 +2444,23 @@ function nanobsd_detect_slice_info() {
 
 	// Detect which slice is active and set information.
 	if (strstr($REAL_BOOT_DEVICE, "s1")) {
-		$SLICE="2";
-		$OLDSLICE="1";
-		$GLABEL_SLICE="pfsense1";
-		$UFS_ID="1";
-		$OLD_UFS_ID="0";
+		$SLICE = "2";
+		$OLDSLICE = "1";
+		$GLABEL_SLICE = "pfsense1";
+		$UFS_ID = "1";
+		$OLD_UFS_ID = "0";
 
 	} else {
-		$SLICE="1";
-		$OLDSLICE="2";
-		$GLABEL_SLICE="pfsense0";
-		$UFS_ID="0";
-		$OLD_UFS_ID="1";
+		$SLICE = "1";
+		$OLDSLICE = "2";
+		$GLABEL_SLICE = "pfsense0";
+		$UFS_ID = "0";
+		$OLD_UFS_ID = "1";
 	}
-	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
-	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+	$TOFLASH = "{$BOOT_DRIVE}s{$SLICE}";
+	$COMPLETE_PATH = "{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH = "{$BOOT_DRIVE}s{$OLDSLICE}";
+	$BOOTFLASH = "{$BOOT_DRIVE}s{$OLDSLICE}";
 }
 
 function nanobsd_friendly_slice_name($slicename) {
@@ -2466,8 +2485,7 @@ function get_include_contents($filename) {
  * The reason we do not use it for pfSense is that it does not know about array fields
  * which causes it to fail on array fields with single items. Possible Todo?
  */
-function xml2array($contents, $get_attributes = 1, $priority = 'tag')
-{
+function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 	if (!function_exists('xml_parser_create')) {
 		return array ();
 	}
@@ -2641,10 +2659,10 @@ function generate_ipv6_from_mac($mac) {
 	$ipv6 = "fe80::";
 	foreach ($elements as $byte) {
 		if ($i == 0) {
-			$hexadecimal =  substr($byte, 1, 2);
+			$hexadecimal = substr($byte, 1, 2);
 			$bitmap = base_convert($hexadecimal, 16, 2);
 			$bitmap = str_pad($bitmap, 4, "0", STR_PAD_LEFT);
-			$bitmap = substr($bitmap, 0, 2) ."1". substr($bitmap, 3,4);
+			$bitmap = substr($bitmap, 0, 2) ."1". substr($bitmap, 3, 4);
 			$byte = substr($byte, 0, 1) . base_convert($bitmap, 2, 16);
 		}
 		$ipv6 .= $byte;
@@ -2681,7 +2699,7 @@ function load_mac_manufacturer_table() {
 		foreach ($macs as $line) {
 			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)) {
 				/* store values like this $mac_man['000C29']='VMware' */
-				$mac_man["$matches[1]"]=$matches[2];
+				$mac_man["$matches[1]"] = $matches[2];
 			}
 		}
 		return $mac_man;
@@ -2700,7 +2718,7 @@ function load_mac_manufacturer_table() {
  *   check_localip - if true then also check for matches with PPTP and LT2P addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified, 
+ *     If check_subnets is true and cidrprefix is specified,
  *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   returns true if the IP Address is configured and present on this device or overlaps a configured subnet.
@@ -2721,7 +2739,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  *   check_localip - if true then also check for matches with PPTP and LT2P addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified, 
+ *     If check_subnets is true and cidrprefix is specified,
  *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   Returns an array of the interfaces 'if' plus IP address or subnet 'ip_or_subnet' that match or overlap the IP address to check.
@@ -2803,7 +2821,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5)  == $vip['uniqdid']) {
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5) == $vip['uniqdid']) {
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {
@@ -2859,8 +2877,8 @@ function set_language($lang = 'en_US', $encoding = "UTF-8") {
 	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
-	bindtextdomain("pfSense","/usr/local/share/locale");
-	bind_textdomain_codeset("pfSense","{$lang}.{$encoding}");
+	bindtextdomain("pfSense", "/usr/local/share/locale");
+	bind_textdomain_codeset("pfSense", "{$lang}.{$encoding}");
 }
 
 function get_locale_list() {
@@ -3155,7 +3173,7 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 			continue;
 		}
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
-		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."),0,-1);
+		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
 		if (is_array($pkg_config['plugins']['item'])) {
 			foreach ($pkg_config['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {

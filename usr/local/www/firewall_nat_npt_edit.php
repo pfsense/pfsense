@@ -151,7 +151,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
 include("head.inc");
 
 ?>

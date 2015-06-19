@@ -309,7 +309,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Port");?></td>
 			<td colspan="2" width="83%" class="vtable">
-				<input name="port" class="formfld unknown" id="port" size="5" value="<?=$port;?>" />
+				<input name="port" class="formfld unknown" id="port" size="5" value="<?=htmlspecialchars($port);?>" />
 				<br /><?=gettext("The port can be either the source or destination port. The packet capture will look for this port in either field.");?>
 				<br /><?=gettext("Leave blank if you do not want to filter by port.");?>
 			</td>
@@ -317,14 +317,14 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
 			<td colspan="2" width="83%" class="vtable">
-				<input name="snaplen" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>" />
+				<input name="snaplen" class="formfld unknown" id="snaplen" size="5" value="<?=htmlspecialchars($snaplen);?>" />
 				<br /><?=gettext("The Packet length is the number of bytes of each packet that will be captured. Default value is 0, which will capture the entire frame regardless of its size.");?>
 			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Count");?></td>
 			<td colspan="2" width="83%" class="vtable">
-				<input name="count" class="formfld unknown" id="count" size="5" value="<?=$count;?>" />
+				<input name="count" class="formfld unknown" id="count" size="5" value="<?=htmlspecialchars($count);?>" />
 				<br /><?=gettext("This is the number of packets the packet capture will grab. Default value is 100.") . "<br />" . gettext("Enter 0 (zero) for no count limit.");?>
 			</td>
 		</tr>
@@ -338,7 +338,7 @@ include("fbegin.inc");
 					<option value="full"   <?php if ($detail == "full")   echo "selected=\"selected\""; ?>><?=gettext("Full");?></option>
 				</select>
 				<br />
-				<?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br /><b>" .
+				<?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") . "<br /><b>" .
 					gettext("Note:") . "</b> " .
 					gettext("This option does not affect the level of detail when downloading the packet capture.");?>
 			</td>

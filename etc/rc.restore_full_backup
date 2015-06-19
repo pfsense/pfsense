@@ -11,7 +11,8 @@ if [ `tar tzPf $1 /etc/rc 2>/dev/null` ]; then
 		EXCLUDE=""
 	fi
 	tar xzPfU $1 $EXCLUDE -C / 2>/var/etc/restore_log.txt
-	echo "Restore of $1 complete."
+	echo "Restore of $1 complete. Rebooting"
+        /sbin/reboot
 else
 	echo " Error."
 	echo "File not found or invalid backup file. Available backups:"

@@ -170,7 +170,7 @@
 			<field>
 				<name>Address</name>
 				<type>inputalias</type>
-				<description>This allows you to just provide the IP address of the computer(s) or Penalize. NOTE: You can also use a Firewall Alias in this location.</description>
+				<description>This allows you to just provide the IP address of the computer(s) to penalize. NOTE: You can also use a Firewall Alias in this location.</description>
 				<bindstofield>ezshaper-&gt;step4-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>
@@ -762,7 +762,7 @@
 				<type>checkbox</type>
 				<typehint>Other networking protocols</typehint>
 				<description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-				<enablefields>AppleRemoteDesktop,MSRDP,PCAnywhere,VNC,AIM,Facetime,GoogleHangouts,ICQ,IRC,Jabber,MSN,TeamSpeak,TeamSpeak3,Ventrilo,PPTP,IPSEC,iTunesRadio,StreamingMP3,RTSP,HTTP,IMAP,LotusNotes,POP3,SMTP,BattleNETDownloader,SteamDownloader,APNS,AppleMobileSync,CrashPlan,CVSUP,DNS,GIT,HBCI,ICMP,MySqlServer,NNTP,Slingbox,SMB,SNMP,Subversion</enablefields>
+				<enablefields>AppleRemoteDesktop,MSRDP,PCAnywhere,VNC,AIM,Facetime,GoogleHangouts,ICQ,IRC,Jabber,MSN,TeamSpeak,TeamSpeak3,Ventrilo,PPTP,IPSEC,iTunesRadio,StreamingMP3,RTSP,RTMP,HTTP,IMAP,LotusNotes,POP3,SMTP,BattleNETDownloader,SteamDownloader,APNS,AppleMobileSync,CrashPlan,CVSUP,DNS,GIT,HBCI,ICMP,MySqlServer,NNTP,Slingbox,SMB,SNMP,Subversion</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step7-&gt;enable</bindstofield>
 			</field>
@@ -956,7 +956,7 @@
 						<value>L</value>
 					</option>
 				</options>
-				<typehint>Jabber instant messanger</typehint>
+				<typehint>Jabber instant messenger</typehint>
 			</field>
 			<field>
 				<name>GoogleHangouts</name>
@@ -1165,6 +1165,26 @@
 					</option>
 				</options>
 				<typehint>RealTime streaming protocol</typehint>
+			</field>
+			<field>
+				<name>RTMP</name>
+				<bindstofield>ezshaper-&gt;step7-&gt;rtmp</bindstofield>
+				<type>select</type>
+				<options>
+					<option>
+						<name>Default priority</name>
+						<value>D</value>
+					</option>
+					<option>
+						<name>Higher priority</name>
+						<value>H</value>
+					</option>
+					<option>
+						<name>Lower priority</name>
+						<value>L</value>
+					</option>
+				</options>
+				<typehint>Real-Time Messaging Protocol - Used by video streaming services such as Twitch.tv.</typehint>
 			</field>
 			<field>
 				<name>Web</name>

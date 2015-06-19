@@ -51,7 +51,7 @@ if ($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Limiter"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiter"));
 $shortcut_section = "trafficshaper-limiters";
 
 read_dummynet_config();
@@ -121,7 +121,7 @@ if ($_GET) {
 				}
 				$output_form .= $queue->build_form();
 			} else {
-				$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
+				$input_errors[] = sprintf(gettext("No queue with name %s was found!"), $qname);
 				$output_form .= $dn_default_shaper_msg;
 				$dontshow = true;
 			}
@@ -305,7 +305,7 @@ if ($_GET) {
 		}
 		read_dummynet_config();
 		$output_form .= $queue->build_form();
-	} else  {
+	} else {
 		$output_form .= $dn_default_shaper_msg;
 		$dontshow = true;
 	}

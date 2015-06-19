@@ -56,7 +56,7 @@ function easyrule_find_rule_interface($int) {
 	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])){
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
 		$iflist["enc0"] = "IPSEC";
 	}
 
@@ -183,17 +183,32 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	}
 
 	if (isset($id) && $a_aliases[$id]) {
-		/* Make sure this IP isn't already in the list. */
-		if (in_array($host.'/'.$mask, explode(" ", $a_aliases[$id]['address']))) {
-			return true;
+
+		// Catch case when the list is empty
+		if (empty($a_aliases[$id]['address'])) {
+			$a_address = array();
+			$a_detail = array();
+		} else {
+			$a_address = explode(" ", $a_aliases[$id]['address']);
+
+			/* Make sure this IP isn't already in the list. */
+			if (in_array($host.'/'.$mask, $a_address)) {
+				return true;
+			}
+			$a_detail = explode("||", $a_aliases[$id]['detail']);
 		}
+
 		/* Since the alias already exists, just add to it. */
 		$alias['name']    = $a_aliases[$id]['name'];
 		$alias['type']    = $a_aliases[$id]['type'];
 		$alias['descr']   = $a_aliases[$id]['descr'];
 
-		$alias['address'] = $a_aliases[$id]['address'] . ' ' . $host . '/' . $mask;
-		$alias['detail']  = $a_aliases[$id]['detail'] . gettext('Entry added') . ' ' . date('r') . '||';
+		$a_address[] = $host.'/'.$mask;
+		$a_detail[] = gettext('Entry added') . ' ' . date('r');
+
+		$alias['address'] = join(" ", $a_address);
+		$alias['detail']  = join("||", $a_detail);
+
 	} else {
 		/* Create a new alias with all the proper information */
 		$alias['name']    = $blockaliasname . strtoupper($int);
@@ -354,6 +369,87 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 	}
 	return gettext("Unknown block error.");
 }
+
+function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
+	global $blockaliasname, $config;
+
+	if (!empty($host) && !empty($int)) {
+		$host = trim($host, "[]");
+		if (!is_ipaddr($host) && !is_subnet($host)) {
+			return gettext("Tried to unblock invalid IP:") . ' ' . htmlspecialchars($host);
+		}
+		$real_int = easyrule_find_rule_interface($int);
+		if ($real_int === false) {
+			return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
+		}
+
+		/* Try to get the ID - will fail if there are no rules/alias on this interface */
+		$id = easyrule_block_alias_getid($real_int);
+		if ($id === false || !$config['aliases']['alias'][$id]) {
+			return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
+		}
+
+		$alias = &$config['aliases']['alias'][$id];
+
+		if (is_subnet($host)) {
+			list($host, $mask) = explode("/", $host);
+		} elseif (is_specialnet($host)) {
+			$mask = 0;
+		} elseif (is_ipaddrv6($host)) {
+			$mask = 128;
+		} else {
+			$mask = 32;
+		}
+
+		// Create the expected string representation
+		$unblock = $host.'/'.$mask;
+
+		$a_address = explode(" ", $config['aliases']['alias'][$id]['address']);
+		$a_detail = explode("||", $config['aliases']['alias'][$id]['detail']);
+
+		if (($key = array_search($unblock, $a_address)) !== false) {
+			unset($a_address[$key]);
+			unset($a_detail[$key]);
+			// Write back the result to the config array
+			$config['aliases']['alias'][$id]['address'] = join(" ", $a_address);
+			$config['aliases']['alias'][$id]['detail'] = join("||", $a_detail);
+
+			// Update config
+			write_config();
+			$retval = filter_configure();
+			if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+				header("Location: firewall_aliases.php");
+				exit;
+			} else {
+				return gettext("Host unblocked successfully");
+			}
+		} else {
+			return gettext("Host ist not on block list: " . $host);
+		}
+	}
+
+	return gettext("Tried to unblock but had no host IP or interface");
+
+}
+
+function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
+	global $blockaliasname, $config;
+
+	$real_int = easyrule_find_rule_interface($int);
+	if ($real_int === false) {
+		return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
+	}
+
+	/* Try to get the ID - will fail if there are no rules/alias on this interface */
+	$id = easyrule_block_alias_getid($real_int);
+
+	if ($id === false || !$config['aliases']['alias'][$id] || empty($config['aliases']['alias'][$id]['address'])) {
+		return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
+	}
+	return join($sep, explode(" ", $config['aliases']['alias'][$id]['address']));
+
+}
+
 function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;

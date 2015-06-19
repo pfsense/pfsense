@@ -55,7 +55,7 @@ $static_output = "";
 $static_status = "";
 $sendto = "output";
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Install Package"));
 include("head.inc");
 
 if ($_POST) {
@@ -115,12 +115,14 @@ if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($
 	} else if ($_GET['mode'] == 'reinstallall') {
 		$pkgmode = 'reinstallall';
 	}
+	$pkg_gui_xml_text = "";
 	switch ($pkgmode) {
 		case 'reinstallall':
 			$pkgname = 'All packages';
 			$pkgtxt = 'reinstalled';
 			break;
 		case 'reinstallxml':
+			$pkg_gui_xml_text = " GUI XML components";
 		case 'reinstallpkg':
 			$pkgtxt = 'reinstalled';
 			break;
@@ -136,7 +138,7 @@ if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
+								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b><?=$pkg_gui_xml_text;?> will be <?=$pkgtxt;?>.<br/>
 									Please confirm the action.<br/>
 								</td>
 								<td class="tabcont" align="center">
@@ -238,6 +240,7 @@ if ($_GET) {
 		case 'reinstallxml':
 			pkg_fetch_config_file($pkgid);
 			pkg_fetch_additional_files($pkgid);
+			break;
 		case 'reinstallpkg':
 			delete_package_xml($pkgid);
 			if (install_package($pkgid) < 0) {

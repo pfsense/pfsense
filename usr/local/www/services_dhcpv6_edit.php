@@ -153,7 +153,7 @@ if ($_POST) {
 			continue;
 		}
 
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['duid'] == $_POST['duid'])) {
+		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname']) || ($mapent['duid'] == $_POST['duid'])) {
 			$input_errors[] = gettext("This Hostname, IP or DUID already exists.");
 			break;
 		}

@@ -96,7 +96,7 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Servers"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"));
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
@@ -129,13 +129,13 @@ include("head.inc");
 				$t = new MainTable();
 				$t->edit_uri('load_balancer_virtual_server_edit.php');
 				$t->my_uri('load_balancer_virtual_server.php');
-				$t->add_column(gettext('Name'),'name',10);
-				$t->add_column(gettext('Protocol'),'relay_protocol',10);
-				$t->add_column(gettext('IP Address'),'ipaddr',15);
-				$t->add_column(gettext('Port'),'port',10);
-				$t->add_column(gettext('Pool'),'poolname',15);
-				$t->add_column(gettext('Fall Back Pool'),'sitedown',15);
-				$t->add_column(gettext('Description'),'descr',30);
+				$t->add_column(gettext('Name'), 'name', 10);
+				$t->add_column(gettext('Protocol'), 'relay_protocol', 10);
+				$t->add_column(gettext('IP Address'), 'ipaddr', 15);
+				$t->add_column(gettext('Port'), 'port', 10);
+				$t->add_column(gettext('Pool'), 'poolname', 15);
+				$t->add_column(gettext('Fall Back Pool'), 'sitedown', 15);
+				$t->add_column(gettext('Description'), 'descr', 30);
 				$t->add_button('edit');
 				$t->add_button('dup');
 				$t->add_button('del');

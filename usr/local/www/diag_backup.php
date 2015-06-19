@@ -207,7 +207,7 @@ function spit_out_select_items($name, $showall) {
 		"wol" => gettext("Wake on LAN")
 		);
 
-	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
+	$select = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
 
 	if ($showall == true) {
@@ -457,7 +457,7 @@ if ($_POST) {
 											if (is_alias($config['interfaces'][$iface]['descr'])) {
 												// Firewall rules
 												$origname = $config['interfaces'][$iface]['descr'];
-												$newname  = $config['interfaces'][$iface]['descr'] . "Alias";
+												$newname = $config['interfaces'][$iface]['descr'] . "Alias";
 												update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $newname, $origname);
 												update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $newname, $origname);
 												// NAT Rules

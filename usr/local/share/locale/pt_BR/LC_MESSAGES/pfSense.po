@@ -26264,7 +26264,7 @@ msgstr "Servidores WINS"
 #: usr/local/www/services_dhcp.php:854 usr/local/www/services_dhcpv6.php:619
 #: usr/local/www/services_router_advertisements.php:371
 #: usr/local/www/services_dhcp.php:874 usr/local/www/services_dhcp.php:886
-msgid "NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page."
+msgid "NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page."
 msgstr "NOTA: deixe em branco para usar os servidores DNS padrão do sistema - esse IP de interface se o DNS forwarder estiver habilitado, do contrário os servidores configurados na página Principal."
 
 #: usr/local/www/services_dhcp.php:658 usr/local/www/services_dhcpv6.php:602

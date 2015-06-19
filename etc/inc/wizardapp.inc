@@ -556,6 +556,10 @@ $othersplist = array();
 		/* realtime streaming protocol */
 		$othersplist['rtsp'][] = array('RTSP1', 'tcp', '554', '554', 'both');
 
+	$othersplist['rtmp'] = array();
+		/* Real-Time Messaging Protocol */
+		$othersplist['rtmp'][] = array('RTMP', 'tcp', '1935', '1935', 'both');
+
 	/* Web */
 
 	$othersplist['http'] = array();

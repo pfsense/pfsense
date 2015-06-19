@@ -80,12 +80,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name mode port monitor servers");
-	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Mode"), gettext("Port"), gettext("Monitor"), gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
 		}
@@ -135,7 +135,7 @@ if ($_POST) {
 		}
 	}
 	$m = array();
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
 	}
 
@@ -184,7 +184,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -196,7 +196,7 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 function clearcombo() {
-	for (var i=document.iform.serversSelect.options.length-1; i>=0; i--) {
+	for (var i = document.iform.serversSelect.options.length - 1; i >= 0; i--) {
 		document.iform.serversSelect.options[i] = null;
 	}
 	document.iform.serversSelect.selectedIndex = -1;
@@ -225,7 +225,7 @@ function clearcombo() {
 			<td width="78%" class="vtable" colspan="2">
 				<select id="mode" name="mode" onchange="enforceFailover(); checkPoolControls();">
 					<option value="loadbalance" <?if (!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected=\"selected\"";?>><?=gettext("Load Balance");?></option>
-					<option value="failover"  <?if ($pconfig['mode'] == "failover") echo "selected=\"selected\"";?>><?=gettext("Manual Failover");?></option>
+					<option value="failover" <?if ($pconfig['mode'] == "failover") echo "selected=\"selected\"";?>><?=gettext("Manual Failover");?></option>
 				</select>
 			</td>
 		</tr>
@@ -239,7 +239,7 @@ function clearcombo() {
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input class="formfldalias" id="port" name="port" type="text" <?if (isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16" /><br />
+				<input class="formfldalias" id="port" name="port" type="text" <?if (isset($pconfig['port'])) echo "value=\"" . htmlspecialchars($pconfig['port']) . "\"";?> size="16" maxlength="16" /><br />
 				<div id="monitorport_desc">
 					<?=gettext("This is the port your servers are listening on."); ?><br />
 					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
@@ -255,7 +255,7 @@ function clearcombo() {
 		<tr align="left">
 			<td width="22%" valign="top" id="retry_text" class="vncell"><?=gettext("Retry"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="retry" type="text" <?if (isset($pconfig['retry'])) echo "value=\"{$pconfig['retry']}\"";?> size="16" maxlength="16" /><br />
+				<input name="retry" type="text" <?if (isset($pconfig['retry'])) echo "value=\"" . htmlspecialchars($pconfig['retry']) . "\"";?> size="16" maxlength="16" /><br />
 				<div id="retry_desc"><?=gettext("Optionally specify how many times to retry checking a server before declaring it down."); ?></div>
 			</td>
 		</tr>

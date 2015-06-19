@@ -43,42 +43,55 @@ require_once("notices.inc");
 
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
-if($config['notifications']['growl']['password']) 
+if ($config['notifications']['growl']['password']) {
 	$pconfig['password'] = $config['notifications']['growl']['password'];
-if($config['notifications']['growl']['ipaddress']) 
+}
+if ($config['notifications']['growl']['ipaddress']) {
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
+}
 
-if($config['notifications']['growl']['notification_name']) 
+if ($config['notifications']['growl']['notification_name']) {
 	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
-else
+} else {
   $pconfig['notification_name'] = "{$g['product_name']} growl alert";
-  
-if($config['notifications']['growl']['name']) 
+}
+
+if ($config['notifications']['growl']['name']) {
 	$pconfig['name'] = $config['notifications']['growl']['name'];
-else
+} else {
   $pconfig['name'] = 'PHP-Growl';
+}
 
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
-if ($config['notifications']['smtp']['ipaddress'])
+if ($config['notifications']['smtp']['ipaddress']) {
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
-if ($config['notifications']['smtp']['port'])
+}
+if ($config['notifications']['smtp']['port']) {
 	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
-if (isset($config['notifications']['smtp']['ssl']))
+}
+if (isset($config['notifications']['smtp']['ssl'])) {
 	$pconfig['smtpssl'] = true;
-if (isset($config['notifications']['smtp']['tls']))
+}
+if (isset($config['notifications']['smtp']['tls'])) {
 	$pconfig['smtptls'] = true;
-if ($config['notifications']['smtp']['notifyemailaddress'])
+}
+if ($config['notifications']['smtp']['notifyemailaddress']) {
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
-if ($config['notifications']['smtp']['username'])
+}
+if ($config['notifications']['smtp']['username']) {
 	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
-if ($config['notifications']['smtp']['password'])
+}
+if ($config['notifications']['smtp']['password']) {
 	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
-if ($config['notifications']['smtp']['authentication_mechanism'])
+}
+if ($config['notifications']['smtp']['authentication_mechanism']) {
 	$pconfig['smtpauthmech'] = $config['notifications']['smtp']['authentication_mechanism'];
-if ($config['notifications']['smtp']['fromaddress'])
+}
+if ($config['notifications']['smtp']['fromaddress']) {
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
+}
 
 // System Sounds
 $pconfig['disablebeep'] = isset($config['system']['disablebeep']);
@@ -96,7 +109,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		system_setup_sysctl();		
+		system_setup_sysctl();
 		$savemsg = get_std_save_message($retval);
 	}
 
@@ -109,38 +122,43 @@ if ($_POST) {
 		$config['notifications']['growl']['name'] = $_POST['name'];
 		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
-		if($_POST['disable_growl'] == "yes")
+		if ($_POST['disable_growl'] == "yes") {
 			$config['notifications']['growl']['disable'] = true;
-		else
+		} else {
 			unset($config['notifications']['growl']['disable']);
+		}
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
-		if (isset($_POST['smtpssl']))
+		if (isset($_POST['smtpssl'])) {
 			$config['notifications']['smtp']['ssl'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['ssl']);
-		if (isset($_POST['smtptls']))
+		}
+		if (isset($_POST['smtptls'])) {
 			$config['notifications']['smtp']['tls'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['tls']);
+		}
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
-		if($_POST['disable_smtp'] == "yes")
+		if ($_POST['disable_smtp'] == "yes") {
 			$config['notifications']['smtp']['disable'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['disable']);
+		}
 
 		// System Sounds
-		if($_POST['disablebeep'] == "yes")
+		if ($_POST['disablebeep'] == "yes") {
 			$config['system']['disablebeep'] = true;
-		else
+		} else {
 			unset($config['system']['disablebeep']);
+		}
 
 		write_config();
 		pfSenseHeader("system_advanced_notifications.php");
@@ -149,8 +167,8 @@ if ($_POST) {
 	}
 	if ($_POST['test_growl'] == gettext("Test Growl")) {
 		// Send test message via growl
-		if($config['notifications']['growl']['ipaddress'] && 
-			$config['notifications']['growl']['password'] = $_POST['password']) {
+		if ($config['notifications']['growl']['ipaddress'] &&
+		    $config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
@@ -158,13 +176,14 @@ if ($_POST) {
 	}
 	if ($_POST['test_smtp'] == gettext("Test SMTP")) {
 		// Send test message via smtp
-		if(file_exists("/var/db/notices_lastmsg.txt"))
+		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
+		}
 		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Notifications"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Notifications"));
 include("head.inc");
 
 ?>
@@ -173,10 +192,12 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 	<form action="system_advanced_notifications.php" method="post">
 		<?php
-			if ($input_errors)
+			if ($input_errors) {
 				print_input_errors($input_errors);
-			if ($savemsg)
+			}
+			if ($savemsg) {
 				print_info_box($savemsg);
+			}
 		?>
 	</form>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced notifications">
@@ -213,28 +234,28 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Registration Name"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='name' value='<?php echo htmlspecialchars($pconfig['name']); ?>' /><br />
+								<input name='name' value='<?php echo htmlspecialchars($pconfig['name'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("Enter the name to register with the Growl server (default: PHP-Growl)."); ?>
 							</td>
 						</tr>
-  					<tr>
+					<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Notification Name"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='notification_name' value='<?php echo htmlspecialchars($pconfig['notification_name']); ?>' /><br />
+								<input name='notification_name' value='<?php echo htmlspecialchars($pconfig['notification_name'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=sprintf(gettext("Enter a name for the Growl notifications (default: %s growl alert)."), $g['product_name']); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("IP Address"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='ipaddress' value='<?php echo htmlspecialchars($pconfig['ipaddress']); ?>' /><br />
+								<input name='ipaddress' value='<?php echo htmlspecialchars($pconfig['ipaddress'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("This is the IP address that you would like to send growl notifications to."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='password' type='password' value='<?php echo htmlspecialchars($pconfig['password']); ?>' /><br />
+								<input name='password' type='password' value='<?php echo htmlspecialchars($pconfig['password'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("Enter the password of the remote growl notification device."); ?>
 							</td>
 						</tr>
@@ -249,7 +270,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<!-- SMTP -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>
@@ -264,14 +285,14 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpipaddress' value='<?php echo htmlspecialchars($pconfig['smtpipaddress']); ?>' /><br />
+								<input name='smtpipaddress' value='<?php echo htmlspecialchars($pconfig['smtpipaddress'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("This is the FQDN or IP address of the SMTP E-Mail server to which notifications will be sent."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("SMTP Port of E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpport' value='<?php echo htmlspecialchars($pconfig['smtpport']); ?>' /><br />
+								<input name='smtpport' value='<?php echo htmlspecialchars($pconfig['smtpport'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("This is the port of the SMTP E-Mail server, typically 25, 587 (submission) or 465 (smtps)"); ?>
 							</td>
 						</tr>
@@ -285,28 +306,28 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("From e-mail address"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpfromaddress' type='text' value='<?php echo htmlspecialchars($pconfig['smtpfromaddress']); ?>' /><br />
+								<input name='smtpfromaddress' type='text' value='<?php echo htmlspecialchars($pconfig['smtpfromaddress'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("This is the e-mail address that will appear in the from field."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail address"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpnotifyemailaddress' type='text' value='<?php echo htmlspecialchars($pconfig['smtpnotifyemailaddress']); ?>' /><br />
+								<input name='smtpnotifyemailaddress' type='text' value='<?php echo htmlspecialchars($pconfig['smtpnotifyemailaddress'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("Enter the e-mail address that you would like email notifications sent to."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail auth username (optional)"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpusername' type='text' value='<?php echo htmlspecialchars($pconfig['smtpusername']); ?>' /><br />
+								<input name='smtpusername' type='text' value='<?php echo htmlspecialchars($pconfig['smtpusername'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("Enter the e-mail address username for SMTP authentication."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail auth password"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtppassword' type='password' value='<?php echo htmlspecialchars($pconfig['smtppassword']); ?>' /><br />
+								<input name='smtppassword' type='password' value='<?php echo htmlspecialchars($pconfig['smtppassword'], ENT_QUOTES | ENT_HTML401); ?>' /><br />
 								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
 							</td>
 						</tr>
@@ -317,10 +338,11 @@ include("head.inc");
 								<?php
 									foreach ($smtp_authentication_mechanisms as $name => $desc):
 										$selected = "";
-										if ($pconfig['smtpauthmech'] == $name)
+										if ($pconfig['smtpauthmech'] == $name) {
 											$selected = "selected=\"selected\"";
+										}
 								?>
-								<option value="<?=$name;?>" <?=$selected;?>><?=$desc;?></option>
+									<option value="<?=$name;?>" <?=$selected;?>><?=$desc;?></option>
 								<?php endforeach; ?>
 								</select>
 								<br />
@@ -338,7 +360,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<!-- System Sounds -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("System Sounds"); ?></td>
@@ -346,7 +368,7 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Shutdown Sound"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked=\"checked\""; ?>  />
+								<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Disable the startup/shutdown beep"); ?></strong>
 								<br />
 								<span class="vexpl"><?=gettext("When this is checked, startup and shutdown sounds will no longer play."); ?></span>
@@ -354,7 +376,7 @@ include("head.inc");
 						</tr>
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>	
+						</tr>
 						<tr>
 							<td valign="top" class="">
 								&nbsp;
@@ -374,7 +396,7 @@ include("head.inc");
 	jQuery(document).ready(function() {
 		if (jQuery('#smtpssl').is(':checked')) {
 			jQuery('#smtptls').prop('disabled', true);
-		} else if  (jQuery('#smtptls').is(':checked')) {
+		} else if (jQuery('#smtptls').is(':checked')) {
 			jQuery('#smtpssl').prop('disabled', true);
 		}
 	});

@@ -167,7 +167,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	$numberoptions = array();
-	for ($x=0; $x<99; $x++) {
+	for ($x = 0; $x < 99; $x++) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
@@ -710,7 +710,7 @@ include("head.inc");
 							<input name="dns2" type="text" class="formfld unknown" id="dns2" size="28" value="<?=htmlspecialchars($pconfig['dns2']);?>" /><br />
 							<input name="dns3" type="text" class="formfld unknown" id="dns3" size="28" value="<?=htmlspecialchars($pconfig['dns3']);?>" /><br />
 							<input name="dns4" type="text" class="formfld unknown" id="dns4" size="28" value="<?=htmlspecialchars($pconfig['dns4']);?>" /><br />
-							<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
+							<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.");?>
 						</td>
 					</tr>
 					<tr>

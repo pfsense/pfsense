@@ -78,7 +78,7 @@ if (empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."),$g['www_path'],$xml));
+	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
 	die;
 }
 
@@ -135,7 +135,7 @@ if ($_POST && !$input_errors) {
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
-	$field_split = explode("->",$field);
+	$field_split = explode("->", $field);
 	foreach ($field_split as $f) {
 		$field_conv .= "['" . $f . "']";
 	}
@@ -200,8 +200,7 @@ if (file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) {
 <script type="text/javascript">
 //<![CDATA[
 
-function  FieldValidate(userinput,  regexp,  message)
-{
+function FieldValidate(userinput, regexp, message) {
 	if (!userinput.match(regexp)) {
 		alert(message);
 	}
@@ -768,7 +767,7 @@ function showchange() {
 				sort($timezonelist);
 
 				/* kill carriage returns */
-				for ($x=0; $x<count($timezonelist); $x++) {
+				for ($x = 0; $x < count($timezonelist); $x++) {
 					$timezonelist[$x] = str_replace("\n", "", $timezonelist[$x]);
 				}
 
@@ -876,7 +875,7 @@ function showchange() {
 	$aliases = "";
 	$addrisfirst = 0;
 	$aliasesaddr = "";
-	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias_name) {
 			if ($isfirst == 1) {
 				$aliases .= ",";
@@ -884,6 +883,7 @@ function showchange() {
 			$aliases .= "'" . $alias_name['name'] . "'";
 			$isfirst = 1;
 		}
+	}
 ?>
 
 	var customarray=new Array(<?php echo $aliases; ?>);
@@ -891,7 +891,7 @@ function showchange() {
 	window.onload = function () {
 
 <?php
-	$counter=0;
+	$counter = 0;
 	foreach ($inputaliases as $alias) {
 		echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(customarray));\n";
 		$counter++;

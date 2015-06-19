@@ -56,7 +56,7 @@ $lb_logfile = "{$g['varlog_path']}/relayd.log";
 $now = time();
 $year = date("Y");
 
-$pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Pool"));
+$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
 include("head.inc");
 
@@ -154,23 +154,23 @@ if ($_POST) {
 					<td class="listr" align="center">
 						<table border="0" cellpadding="2" cellspacing="0" summary="status">
 <?php
-		$pool_hosts=array();
+		$pool_hosts = array();
 		foreach ((array) $pool['servers'] as $server) {
-			$svr['ip']['addr']=$server;
-			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
-			$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
+			$svr['ip']['addr'] = $server;
+			$svr['ip']['state'] = $relay_hosts[$pool['name'] . ":" . $pool['port']][$server]['state'];
+			$svr['ip']['avail'] = $relay_hosts[$pool['name'] . ":" . $pool['port']][$server]['avail'];
 			$pool_hosts[]=$svr;
 		}
 		foreach ((array) $pool['serversdisabled'] as $server) {
-			$svr['ip']['addr']="$server";
-			$svr['ip']['state']='disabled';
-			$svr['ip']['avail']='disabled';
+			$svr['ip']['addr'] = "$server";
+			$svr['ip']['state'] = 'disabled';
+			$svr['ip']['avail'] = 'disabled';
 			$pool_hosts[]=$svr;
 		}
 		asort($pool_hosts);
 
 		foreach ((array) $pool_hosts as $server) {
-			if ($server['ip']['addr']!="") {
+			if ($server['ip']['addr'] != "") {
 				switch ($server['ip']['state']) {
 					case 'up':
 						$bgcolor = "#90EE90";  // lightgreen

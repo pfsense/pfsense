@@ -74,6 +74,13 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		attempts=$((attempts+1))
 	done
 
+	if [ "${PLATFORM}" = "nanobsd" ]; then
+		# XXX This script does need all filesystems rw!!!!
+		# Put this workaround for now until better ways are found.
+		/sbin/mount -u -w -o sync,noatime /
+		/sbin/mount -u -w -o sync,noatime /cf
+	fi
+
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
@@ -128,10 +135,6 @@ CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
 if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
-
-# sync pw database after mount.
-rm -f /etc/spwd.db.tmp
-/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
 
 product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
@@ -224,12 +227,6 @@ fi
 /bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
-# Make sure symlink is correct on nanobsd
-if [ "$PLATFORM" = "nanobsd" ] ; then
-	/bin/rm /conf
-	/bin/ln -s /cf/conf/ /conf
-fi
-
 # Repair symlinks if they are broken
 if [ -f /etc/newsyslog.conf ]; then
 	/bin/rm -f /etc/newsyslog.conf
@@ -397,6 +394,14 @@ echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	# XXX This script does need all filesystems rw!!!!
+	# Put this workaround for now until better ways are found.
+	/sbin/mount -u -f -r -o sync,noatime /
+	/sbin/mount -u -f -r -o sync,noatime /cf
+fi
+
 /etc/rc.bootup
 
 # /etc/rc.bootup unset $g['booting'], and removes file

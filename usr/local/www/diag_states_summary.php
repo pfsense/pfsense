@@ -68,7 +68,7 @@ if (count($states) > 0) {
 		$iface = array_shift($line_split);
 		$proto = array_shift($line_split);
 		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
+		$info = implode(" ", $line_split);
 
 		/* Handle NAT cases
 		   Replaces an external IP + NAT by the internal IP */

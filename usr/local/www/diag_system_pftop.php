@@ -108,7 +108,7 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#pftopactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		jQuery('#pftopactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText + '<\/pre><\/font>');
 		setTimeout('getpftopactivity()', 2500);
 	}
 	setTimeout('getpftopactivity()', 1000);

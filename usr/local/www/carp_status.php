@@ -122,7 +122,7 @@ if (!empty($_POST['resetdemotion'])) {
 	$carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
 }
 
-$pgtitle = array(gettext("Status"),gettext("CARP"));
+$pgtitle = array(gettext("Status"), gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
 

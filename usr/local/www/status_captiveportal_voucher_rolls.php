@@ -102,9 +102,9 @@ include("head.inc");
 				<?php
 					$voucherlck = lock("vouche{$cpzone}r");
 					$i = 0;
-					foreach($a_roll as $rollent):
+					foreach ($a_roll as $rollent):
 						$used = voucher_used_count($rollent['number']);
-						$active = count(voucher_read_active_db($rollent['number']),$rollent['minutes']);
+						$active = count(voucher_read_active_db($rollent['number']), $rollent['minutes']);
 						$ready = $rollent['count'] - $used;
 						/* used also count active vouchers, remove them */
 						$used = $used - $active;

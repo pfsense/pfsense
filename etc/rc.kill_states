@@ -34,8 +34,9 @@ require_once("interfaces.inc");
 require_once("util.inc");
 
 // Do not process while booting
-if (platform_booting())
+if (platform_booting()) {
 	return;
+}
 
 /* Interface address to cleanup states */
 $interface = str_replace("\n", "", $argv[1]);

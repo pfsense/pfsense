@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	services_unbound_host_edit.php
@@ -6,20 +6,20 @@
 	Copyright (C) 2014 Warren Baker (warren@decoy.co.za)
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -51,23 +51,27 @@ function hostcmp($a, $b) {
 function hosts_sort() {
 	global $g, $config;
 
-	if (!is_array($config['unbound']['hosts']))
+	if (!is_array($config['unbound']['hosts'])) {
 		return;
+	}
 
 	usort($config['unbound']['hosts'], "hostcmp");
 }
 
 require("guiconfig.inc");
 
-if (!is_array($config['unbound']['hosts'])) 
+if (!is_array($config['unbound']['hosts'])) {
 	$config['unbound']['hosts'] = array();
+}
 
 $a_hosts = &$config['unbound']['hosts'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -84,12 +88,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
-	
+	$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if ($_POST['host']) {
-		if (!is_hostname($_POST['host'])) { 
+		if (!is_hostname($_POST['host'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9, '_' and '-'. It may not start or end with '-'.");
 		} else {
 			if (!is_unqualified_hostname($_POST['host'])) {
@@ -98,11 +102,13 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
+	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 		$input_errors[] = gettext("A valid domain must be specified.");
-		
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
+	}
+
+	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
 		$input_errors[] = gettext("A valid IP address must be specified.");
+	}
 
 	/* collect aliases */
 	$aliases = array();
@@ -111,12 +117,10 @@ if ($_POST) {
 		if (!substr_compare('aliashost', $key, 0, 9)) {
 			$entry = substr($key, 9);
 			$field = 'host';
-		}
-		elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
+		} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
 			$entry = substr($key, 11);
 			$field = 'domain';
-		}
-		elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
+		} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
 			$entry = substr($key, 16);
 			$field = 'description';
 		}
@@ -141,17 +145,20 @@ if ($_POST) {
 				}
 			}
 		}
-		if (($alias['domain'] && !is_domain($alias['domain'])))
+		if (($alias['domain'] && !is_domain($alias['domain']))) {
 			$input_errors[] = gettext("A valid domain must be specified in alias list.");
+		}
 	}
 
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
-		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent))
+		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
 			continue;
+		}
 
-		if (($hostent['host'] == $_POST['host']) && ($hostent['domain'] == $_POST['domain'])
-			&& ((is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) || (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])))) {
+		if (($hostent['host'] == $_POST['host']) &&
+		    ($hostent['domain'] == $_POST['domain']) &&
+		    ((is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) || (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])))) {
 			$input_errors[] = gettext("This host/domain already exists.");
 			break;
 		}
@@ -165,22 +172,23 @@ if ($_POST) {
 		$hostent['descr'] = $_POST['descr'];
 		$hostent['aliases']['item'] = $aliases;
 
-		if (isset($id) && $a_hosts[$id])
+		if (isset($id) && $a_hosts[$id]) {
 			$a_hosts[$id] = $hostent;
-		else
+		} else {
 			$a_hosts[] = $hostent;
+		}
 		hosts_sort();
-		
+
 		mark_subsystem_dirty('unbound');
-		
+
 		write_config();
-		
+
 		header("Location: services_unbound.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit host"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit host"));
 $shortcut_section = "resolver";
 include("head.inc");
 
@@ -217,7 +225,8 @@ include("head.inc");
 				<td width="78%" class="vtable">
 					<input name="host" type="text" class="formfld unknown" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" /><br />
 					<span class="vexpl"><?=gettext("Name of the host, without domain part"); ?><br />
-					<?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span>
+						<?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em>
+					</span>
 				</td>
 			</tr>
 			<tr>
@@ -225,7 +234,8 @@ include("head.inc");
 				<td width="78%" class="vtable">
 					<input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" /><br />
 					<span class="vexpl"><?=gettext("Domain of the host"); ?><br />
-						<?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span>
+						<?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em>
+					</span>
 				</td>
 			</tr>
 			<tr>
@@ -233,7 +243,8 @@ include("head.inc");
 				<td width="78%" class="vtable">
 					<input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" /><br />
 					<span class="vexpl"><?=gettext("IP address of the host"); ?><br />
-						<?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span>
+						<?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em>
+					</span>
 				</td>
 			</tr>
 			<tr>
@@ -263,7 +274,7 @@ include("head.inc");
 							<?php
 								$counter = 0;
 								if ($pconfig['aliases']['item']):
-									foreach($pconfig['aliases']['item'] as $item):
+									foreach ($pconfig['aliases']['item'] as $item):
 										$host = $item['host'];
 										$domain = $item['domain'];
 										$description = $item['description'];

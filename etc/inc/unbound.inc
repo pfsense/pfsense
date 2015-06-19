@@ -62,7 +62,7 @@ function unbound_optimization() {
 	$numprocs = intval(get_single_sysctl('kern.smp.cpus'));
 	if ($numprocs > 1) {
 		$optimization['number_threads'] = "num-threads: {$numprocs}";
-		$optimize_num = pow(2,floor(log($numprocs,2)));
+		$optimize_num = pow(2, floor(log($numprocs, 2)));
 	} else {
 		$optimization['number_threads'] = "num-threads: 1";
 		$optimize_num = 4;
@@ -500,7 +500,7 @@ function unbound_add_domain_overrides($pvt_rev="") {
 			$domain_entries .= "private-domain: \"$domain\"\n";
 			$domain_entries .= "domain-insecure: \"$domain\"\n";
 		} else if ($pvt_rev == "reverse") {
-			if ((substr($domain,-14) == ".in-addr.arpa.") || (substr($domain,-13) == ".in-addr.arpa")) {
+			if ((substr($domain, -14) == ".in-addr.arpa.") || (substr($domain, -13) == ".in-addr.arpa")) {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {

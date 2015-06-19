@@ -50,16 +50,18 @@ require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
 
-if(isset($curcfg['alturl']['enable']))
+if (isset($curcfg['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else
+} else {
 	$updater_url = $g['update_url'];
+}
 
-if($_POST['backupbeforeupgrade'])
+if ($_POST['backupbeforeupgrade']) {
 	touch("/tmp/perform_full_backup.txt");
+}
 
 $closehead = false;
-$pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
 ?>
@@ -81,8 +83,9 @@ include("head.inc");
 			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
 			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
 			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-			if($g['hidedownloadbackup'] == false)
+			if ($g['hidedownloadbackup'] == false) {
 				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+			}
 			display_top_tabs($tab_array);
 		?>
 		</td>
@@ -96,15 +99,16 @@ include("head.inc");
 							<tr>
 								<td align="center">
 									<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
-
 										<tr>
 											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5">	</td>
 											<td>
-											<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
-												<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-												<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
-												</td></tr>
-											</table>
+												<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
+													<tr>
+														<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
+															<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
+														</td>
+													</tr>
+												</table>
 											</td>
 											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5"></td>
 										</tr>
@@ -112,7 +116,7 @@ include("head.inc");
 									<br />
 									<script type="text/javascript">
 									//<![CDATA[
-									window.onload=function(){
+									window.onload=function() {
 										document.getElementById("status").wrap='hard';
 										document.getElementById("output").wrap='hard';
 									}
@@ -141,10 +145,11 @@ include("head.inc");
 update_status(gettext("Downloading current version information") . "...");
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt"))
+	if (file_exists("/etc/nano_use_vga.txt")) {
 		$nanosize = "-nanobsd-vga-";
-	else
+	} else {
 		$nanosize = "-nanobsd-";
+	}
 
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 }
@@ -152,7 +157,7 @@ if ($g['platform'] == "nanobsd") {
 @unlink("/tmp/{$g['product_name']}_version");
 download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
-if(!$latest_version) {
+if (!$latest_version) {
 	update_output_window(gettext("Unable to check for updates."));
 	require("fend.inc");
 	exit;
@@ -161,7 +166,7 @@ if(!$latest_version) {
 	$current_installed_version = trim(file_get_contents("/etc/version"));
 	$latest_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
-	if(!$latest_version) {
+	if (!$latest_version) {
 		update_output_window(gettext("Unable to check for updates."));
 		require("fend.inc");
 		exit;
@@ -189,10 +194,11 @@ if(!$latest_version) {
 /* launch external upgrade helper */
 $external_upgrade_helper_text = "/etc/rc.firmware ";
 
-if($g['platform'] == "nanobsd")
+if ($g['platform'] == "nanobsd") {
 	$external_upgrade_helper_text .= "pfSenseNanoBSDupgrade ";
-else
+} else {
 	$external_upgrade_helper_text .= "pfSenseupgrade ";
+}
 
 $external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
@@ -201,8 +207,9 @@ $upgrade_latest_tgz_sha256 = str_replace("\n", "", `/bin/cat {$g['upload_path']}
 
 $sigchk = 0;
 
-if(!isset($curcfg['alturl']['enable']))
+if (!isset($curcfg['alturl']['enable'])) {
 	$sigchk = verify_digital_signature("{$g['upload_path']}/latest.tgz");
+}
 
 $exitstatus = 0;
 if ($sigchk == 1) {
@@ -210,8 +217,9 @@ if ($sigchk == 1) {
 	$exitstatus = 1;
 } else if ($sigchk == 2) {
 	$sig_warning = gettext("This image is not digitally signed.");
-	if (!isset($config['system']['firmware']['allowinvalidsig']))
+	if (!isset($config['system']['firmware']['allowinvalidsig'])) {
 		$exitstatus = 1;
+	}
 } else if (($sigchk >= 3)) {
 	$sig_warning = gettext("There has been an error verifying the signature on this image.");
 	$exitstatus = 1;
@@ -239,7 +247,7 @@ if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 	exit;
 }
 
-if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
+if ($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_status(gettext("Downloading complete but sha256 does not match."));
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
@@ -274,7 +282,7 @@ function read_body_firmware($ch, $string) {
 	$text .= "  " . gettext("Percent") . "         : {$c}%\\n";
 	$text .= "----------------------------------------------------\\n";
 	$counter++;
-	if($counter > 150) {
+	if ($counter > 150) {
 		update_output_window($text);
 		update_progress_bar($downloadProgress);
 		$counter = 0;

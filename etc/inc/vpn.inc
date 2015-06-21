@@ -628,12 +628,13 @@ EOD;
 			} else {
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
+				
+				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
 
 				if (empty($peerid_data)) {
 					continue;
 				}
 
-				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
 				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
 				if (!empty($ph1ent['pre-shared-key'])) {
 					if ($myid_type == 'fqdn' && !empty($myid_data)) {
@@ -650,7 +651,7 @@ EOD;
 	if (is_array($config['system']) && is_array($config['system']['user'])) {
 		foreach ($config['system']['user'] as $user) {
 			if (!empty($user['ipsecpsk'])) {
-				$pskconf .= "%any {$user['name']} : PSK 0s" . base64_encode($user['ipsecpsk']) . "\n";
+				$pskconf .= "{$myid} {$user['name']} : PSK 0s" . base64_encode($user['ipsecpsk']) . "\n";
 			}
 		}
 		unset($user);
@@ -665,7 +666,7 @@ EOD;
 			if (empty($key['type'])) {
 				$key['type'] = 'PSK';
 			}
-			$pskconf .= "%any {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
+			$pskconf .= "{$myid} {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
 		}
 		unset($key);
 	}

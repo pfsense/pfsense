@@ -110,10 +110,7 @@ $p1_dhgroups = array(
 	21 => '21 (nist ecp521)',
 	22 => '22 (1024(sub 160) bit)',
 	23 => '23 (2048(sub 224) bit)',
-	24 => '24 (2048(sub 256) bit)',
-	28 => '28 (brainpool ecp256)',
-	29 => '29 (brainpool ecp384)',
-	30 => '30 (brainpool ecp512)'
+	24 => '24 (2048(sub 256) bit)'
 );
 
 global $p2_halgos;
@@ -164,13 +161,7 @@ $p2_pfskeygroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)',
-	19 => '19 (nist ecp256)',
-	20 => '20 (nist ecp384)',
-	21 => '21 (nist ecp521)',
-	28 => '28 (brainpool ecp256)',
-	29 => '29 (brainpool ecp384)',
-	30 => '30 (brainpool ecp512)'
+	18 => '18 (8192 bit)'
 );
 
 /*

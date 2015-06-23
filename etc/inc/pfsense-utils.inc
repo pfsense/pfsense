@@ -1002,7 +1002,8 @@ function setup_serial_port($when = "save", $path = "") {
 			$serial_only = true;
 		} else {
 			$specific_platform = system_identify_specific_platform();
-			if ($specific_platform['name'] == 'RCC-VE') {
+			if ($specific_platform['name'] == 'RCC-VE' ||
+			    $specific_platform['name'] == 'RCC-DFF') {
 				$serial_only = true;
 			}
 		}
@@ -1068,7 +1069,8 @@ function setup_serial_port($when = "save", $path = "") {
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			
 			$specplatform = system_identify_specific_platform();
-			if ($specplatform['name'] == "RCC-VE") {
+			if ($specplatform['name'] == 'RCC-VE' ||
+			    $specplatform['name'] == 'RCC-DFF') {
 				$new_boot_config[] = 'comconsole_port="0x2F8"';
 				$new_boot_config[] = 'hint.uart.0.flags="0x00"';
 				$new_boot_config[] = 'hint.uart.1.flags="0x10"';

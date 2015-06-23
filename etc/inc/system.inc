@@ -2220,6 +2220,9 @@ function system_identify_specific_platform() {
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
 			break;
+		case 'SYS-5018D-FN4T':
+			return (array('name' => 'D1540-XG', 'descr' => 'Super Micro D1540-XG'));
+			break;
 	}
 
 	/* the rest of the code only deals with 'embedded' platforms */

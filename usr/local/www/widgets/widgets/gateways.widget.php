@@ -66,7 +66,7 @@ $counter = 1;
 <input type="hidden" id="gateways-config" name="gateways-config" value="" />
 
 <div id="gateways-settings" class="widgetconfigdiv" style="display:none;">
-<form action="/widgets/widgets/gateways.widget.php" method="post" name="iform" id="iform">
+<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
 	Display:
 		<?php 
 			$display_type_gw_ip="checked=\"checked\"";

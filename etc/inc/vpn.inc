@@ -579,12 +579,26 @@ EOD;
 				if (empty($peerid_data))
 					continue;
 
+				if ($myid_type == 'fqdn' && !empty($myid)) {
+					$myid = "@{$myid}";
+				}
+
 				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
+
+				if ($peerid_type == 'fqdn' && !empty($peerid)) {
+					$peerid = "@{$peerid}";
+				}
+
 				if (!empty($ph1ent['pre-shared-key'])) {
-					if ($myid_type == 'fqdn' && !empty($myid))
-						$pskconf .= "@{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
-					else
-						$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+					$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+
+					/*
+					 * XXX: Remove after following strongswan issue is fixed:
+					 *https://wiki.strongswan.org/issues/1004
+					 */
+					if ($peerid_type == 'address' && is_fqdn($ph1ent['remote-gateway'])) {
+						$pskconf .= "{$myid} @{$ph1ent['remote-gateway']} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+					}
 				}
 			}
 		}

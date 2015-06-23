@@ -1136,8 +1136,7 @@ EOD;
 		if (isvalidpid("{$g['varrun_path']}/starter.charon.pid")) {
 			/* Update configuration changes */
 			/* Read secrets */
-			mwexec("/usr/local/sbin/ipsec rereadsecrets", false);
-			mwexec("/usr/local/sbin/ipsec reload", false);
+			mwexec("/usr/local/sbin/ipsec rereadall", false);
 		} else {
 			mwexec("/usr/local/sbin/ipsec start", false); 
 		}

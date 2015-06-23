@@ -574,14 +574,14 @@ EOD;
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
 				
-				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
+				$myid = trim($myid_data);
 
 				if (empty($peerid_data))
 					continue;
 
 				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
 				if (!empty($ph1ent['pre-shared-key'])) {
-					if ($myid_type == 'fqdn' && !empty($myid_data))
+					if ($myid_type == 'fqdn' && !empty($myid))
 						$pskconf .= "@{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					else
 						$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";

@@ -1110,10 +1110,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 					<td width="78%" class="vtable">
-						<div id="showddnsbox">
+						<div id="showddnsbox" <?php if ($pconfig['ddnsupdate'] || !empty($pconfig['ddnsdomain']) || !empty($pconfig['ddnsdomainprimary']) || !empty($pconfig['ddnsdomainkeyname']) || !empty($pconfig['ddnsdomainkey'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?>
 						</div>
-						<div id="showddns" style="display:none">
+						<div id="showddns" <?php if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) && empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) echo "style='display:none'"; ?>>
 							<input style="vertical-align:middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if ($pconfig['ddnsupdate']) echo " checked=\"checked\""; ?> />&nbsp;
 							<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
 							<br/>
@@ -1132,10 +1132,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("MAC Address Control");?></td>
 					<td width="78%" class="vtable">
-						<div id="showmaccontrolbox">
+						<div id="showmaccontrolbox" <?php if (!empty($pconfig['mac_allow']) || !empty($pconfig['mac_deny'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_maccontrol_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show MAC Address Control");?>
 						</div>
-						<div id="showmaccontrol" style="display:none">
+						<div id="showmaccontrol" <?php if (empty($pconfig['mac_allow']) && empty($pconfig['mac_deny'])) echo "style='display:none'"; ?>>
 							<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=htmlspecialchars($pconfig['mac_allow']);?>" /><br />
 							<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF<br />
 							<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=htmlspecialchars($pconfig['mac_deny']);?>" /><br />
@@ -1146,10 +1146,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 					<td width="78%" class="vtable">
-						<div id="showntpbox">
+						<div id="showntpbox" <?php if (!empty($pconfig['ntp1']) || !empty($pconfig['ntp2'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
 						</div>
-						<div id="showntp" style="display:none">
+						<div id="showntp" <?php if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) echo "style='display:none'"; ?>>
 							<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>" /><br />
 							<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>" />
 						</div>
@@ -1158,10 +1158,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 					<td width="78%" class="vtable">
-						<div id="showtftpbox">
+						<div id="showtftpbox" <?php if (!empty($pconfig['tftp'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
 						</div>
-						<div id="showtftp" style="display:none">
+						<div id="showtftp" <?php if (empty($pconfig['tftp'])) echo "style='display:none'"; ?>>
 							<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>" /><br />
 							<?=gettext("Leave blank to disable.  Enter a full hostname or IP for the TFTP server.");?>
 						</div>
@@ -1170,10 +1170,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("LDAP URI");?></td>
 					<td width="78%" class="vtable">
-						<div id="showldapbox">
+						<div id="showldapbox" <?php if (!empty($pconfig['ldap'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_ldap_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show LDAP configuration");?>
 						</div>
-						<div id="showldap" style="display:none">
+						<div id="showldap" <?php if (empty($pconfig['ldap'])) echo "style='display:none'"; ?>>
 							<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>" /><br />
 							<?=gettext("Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com");?>
 						</div>
@@ -1182,10 +1182,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Enable network booting");?></td>
 					<td width="78%" class="vtable">
-						<div id="shownetbootbox">
+						<div id="shownetbootbox" <?php if ($pconfig['netboot'] || !empty($pconfig['nextserver']) || !empty($pconfig['filename']) || !empty($pconfig['filename32']) || !empty($pconfig['filename64']) || !empty($pconfig['rootpath'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_netboot_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Network booting");?>
 						</div>
-						<div id="shownetboot" style="display:none">
+						<div id="shownetboot" <?php if (!$pconfig['netboot'] && empty($pconfig['nextserver']) && empty($pconfig['filename']) && empty($pconfig['filename32']) && empty($pconfig['filename64']) && empty($pconfig['rootpath'])) echo "style='display:none'"; ?>>
 							<input style="vertical-align:middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if ($pconfig['netboot']) echo " checked=\"checked\""; ?> />&nbsp;
 							<b><?=gettext("Enables network booting.");?></b>
 							<br/>
@@ -1237,10 +1237,10 @@ include("head.inc");
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Additional BOOTP/DHCP Options");?></td>
 					<td width="78%" class="vtable">
-						<div id="shownumbervaluebox">
+						<div id="shownumbervaluebox" <?php if (!empty($pconfig['numberoptions'])) echo "style='display:none'"; ?>>
 							<input type="button" onclick="show_shownumbervalue()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Additional BOOTP/DHCP Options");?>
 						</div>
-						<div id="shownumbervalue" style="display:none">
+						<div id="shownumbervalue" <?php if (empty($pconfig['numberoptions'])) echo "style='display:none'"; ?>>
 							<table id="maintable" summary="bootp-dhcp options">
 							<tbody>
 								<tr>

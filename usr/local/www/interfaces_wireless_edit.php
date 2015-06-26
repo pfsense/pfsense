@@ -174,8 +174,10 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="if" class="formselect">
 				<?php
+					$rowIndex = 0;
 					foreach ($portlist as $ifn => $ifinfo) {
 						if (preg_match($g['wireless_regex'], $ifn)) {
+							$rowIndex++;
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if']) {
 								echo " selected=\"selected\"";
@@ -184,6 +186,9 @@ include("head.inc");
 							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
 							echo "</option>";
 						}
+					}
+					  if ($rowIndex == 0) {
+						echo "<option></option>";
 					}
 				?>
 				</select>

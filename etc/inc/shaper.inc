@@ -491,7 +491,7 @@ class altq_root_queue {
 					$myBw = $this->GetAvailableBandwidth() * $queue['bandwidth'] / 100;
 					break;
 				default:
-					$myBw = $queue['bandwidth'] * get_bandwidthtype_scale($queue['bandwdithtype']);
+					$myBw = $queue['bandwidth'] * get_bandwidthtype_scale($queue['bandwidthtype']);
 					break;
 			}
 		}

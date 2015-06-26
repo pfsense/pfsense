@@ -50,10 +50,10 @@ if (isset($_POST['servicestatusfilter'])) {
 ?>
 <input type="hidden" id="services_status-config" name="services_status-config" value="" />
 <div id="services_status-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/services_status.widget.php" method="post" name="iformd">
+	<form action="/widgets/widgets/services_status.widget.php" method="post" name="services_status_widget_iform">
 		Comma separated list of services to NOT display in the widget<br />
 		<input type="text" size="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>" />
-		<input id="submitd" name="submitd" type="submit" class="formbtn" value="Save" />
+		<input id="services_status_widget_submit" name="services_status_widget_submit" type="submit" class="formbtn" value="Save" />
     </form>
 </div>
 

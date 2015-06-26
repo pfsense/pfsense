@@ -224,7 +224,6 @@ fi
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
-/bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
 # Repair symlinks if they are broken

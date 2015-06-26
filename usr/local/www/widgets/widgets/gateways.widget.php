@@ -37,6 +37,24 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
+if ($_POST) {
+	if (!is_array($config["widgets"]["gateways_widget"])) {
+		$config["widgets"]["gateways_widget"] = array();
+	}
+	if (isset($_POST["display_type"])) {
+		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
+	}
+	write_config("Updated gateways widget settings via dashboard.");
+	header("Location: /");
+	exit(0);
+}
+
+if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+} else {
+	$display_type = "gw_ip";
+}
+
 $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);
@@ -44,6 +62,49 @@ $gateways_status = return_gateways_status(true);
 $counter = 1;
 
 ?>
+
+<input type="hidden" id="gateways-config" name="gateways-config" value="" />
+
+<div id="gateways-settings" class="widgetconfigdiv" style="display:none;">
+<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
+	Display:
+		<?php 
+			$display_type_gw_ip="checked=\"checked\"";
+			$display_type_monitor_ip="";
+			$display_type_both_ip="";
+			if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+				$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
+				if ($selected_radio == "gw_ip") {
+					$display_type_gw_ip = "checked=\"checked\"";
+					$display_type_monitor_ip="";
+					$display_type_both_ip="";
+				} else if ($selected_radio == "monitor_ip") {
+					$display_type_gw_ip = "";
+					$display_type_monitor_ip="checked=\"checked\"";
+					$display_type_both_ip="";
+				} else if ($selected_radio == "both_ip") {
+					$display_type_gw_ip = "";
+					$display_type_monitor_ip="";
+					$display_type_both_ip="checked=\"checked\"";
+				}
+			}
+		?>
+	<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?php echo $display_type_gw_ip; ?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
+	<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?php echo $display_type_monitor_ip; ?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
+	<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?php echo $display_type_both_ip; ?> onchange="updateGatewayDisplays();" /> <span>Both</span>
+	<br /><br />
+	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+</form>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	d = document;
+	selectIntLink = "gateways-configure";
+	textlink = d.getElementById(selectIntLink);
+	textlink.style.display = "inline";
+//]]>
+</script>
 
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="gateway status">
 	<tr>
@@ -63,19 +124,41 @@ $counter = 1;
 	<td colspan="3" class="listr ellipsis" align="center">
 				<div id="gateway<?php echo $counter; ?>" style="display:inline"><b>
 					<?php
-						$if_gw = '';
-						if (is_ipaddr($gateway['gateway'])) {
-							$if_gw = htmlspecialchars($gateway['gateway']);
-						} else {
-							if ($gateway['ipprotocol'] == "inet") {
-								$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
-							}
-							if ($gateway['ipprotocol'] == "inet6") {
-								$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+						$monitor_address = "";
+						$monitor_address_disp = "";
+						if ($display_type == "monitor_ip" || $display_type == "both_ip") {
+							$monitor_address = $gateway['monitor'];
+							if ($monitor_address != "" && $display_type == "both_ip") {
+								$monitor_address_disp = " (" . $monitor_address . ")";
+							} else {
+								$monitor_address_disp = $monitor_address;
 							}
 						}
-						echo ($if_gw == '' ? '~' : $if_gw);
+						$if_gw = '';
+						// If the user asked to display Gateway IP or both IPs, or asked for just monitor IP but the monitor IP is blank
+						// then find the gateway IP (which is also the monitor IP if the monitor IP was not explicitly set).
+						if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+							if (is_ipaddr($gateway['gateway'])) {
+								$if_gw = htmlspecialchars($gateway['gateway']);
+							} else {
+								if ($gateway['ipprotocol'] == "inet") {
+									$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
+								}
+								if ($gateway['ipprotocol'] == "inet6") {
+									$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+								}
+							}
+							if ($if_gw == "") {
+								$if_gw = "~";
+							}
+						}
+						if ($monitor_address == $if_gw) {
+							$monitor_address_disp = "";
+						}
+						echo $if_gw . $monitor_address_disp;
 						unset ($if_gw);
+						unset ($monitor_address);
+						unset ($monitor_address_disp);
 						$counter++;
 					?>
 				</b></div>
@@ -142,5 +225,3 @@ $counter = 1;
 	</tr>
 	<?php } // foreach ?>
 </table>
-
-

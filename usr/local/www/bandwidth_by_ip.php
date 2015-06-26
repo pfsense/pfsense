@@ -1,8 +1,6 @@
 <?php
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- *
+	bandwidth_by_ip.php
  */
 
 /*
@@ -57,16 +55,41 @@ if ($sort == "out") {
 // get the desired format for displaying the host name or IP
 $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
-// If hostname display is requested and the DNS forwarder does not already have DHCP static names registered,
-// then load the DHCP static mappings into an array keyed by IP address.
-if (($hostipformat != "") && ((!isset($config['dnsmasq']['enable']) || !isset($config['dnsmasq']['regdhcpstatic'])) ||
-    (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic'])))) {
+// If hostname, description or FQDN is requested then load the locally-known IP address - host/description mappings into an array keyed by IP address.
+if ($hostipformat != "") {
 	if (is_array($config['dhcpd'])) {
+		// Build an array of static-mapped DHCP entries keyed by IP address.
 		foreach ($config['dhcpd'] as $ifdata) {
 			if (is_array($ifdata['staticmap'])) {
 				foreach ($ifdata['staticmap'] as $hostent) {
 					if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {
-						$iplookup[$hostent['ipaddr']] = $hostent['hostname'];
+						if ($hostipformat == "descr" && $hostent['descr'] != "") {
+							$iplookup[$hostent['ipaddr']] = $hostent['descr'];
+						} else {
+							$iplookup[$hostent['ipaddr']] = $hostent['hostname'];
+							if ($hostipformat == "fqdn") {
+								$iplookup[$hostent['ipaddr']] .= "." . $config['system']['domain'];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	// Add any DNS host override data keyed by IP address.
+	foreach (array('dnsmasq', 'unbound') as $dns_type) {
+		if (isset($config[$dns_type]['enable'])) {
+			if (is_array($config[$dns_type]['hosts'])) {
+				foreach ($config[$dns_type]['hosts'] as $hostent) {
+					if (($hostent['ip'] != "") && ($hostent['host'] != "")) {
+						if ($hostipformat == "descr" && $hostent['descr'] != "") {
+							$iplookup[$hostent['ip']] = $hostent['descr'];
+						} else {
+							$iplookup[$hostent['ip']] = $hostent['host'];
+							if ($hostipformat == "fqdn") {
+								$iplookup[$hostent['ip']] .= "." . $hostent['domain'];
+							}
+						}
 					}
 				}
 			}
@@ -89,20 +112,23 @@ for ($x=2; $x<12; $x++) {
 		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
 		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
 			if ($hostipformat == "") {
+				// pass back just the raw IP address
 				$addrdata = $infoarray[0];
 			} else {
-				// $hostipformat is "hostname" or "fqdn"
-				$addrdata = gethostbyaddr($infoarray[0]);
-				if ($addrdata == $infoarray[0]) {
-					// gethostbyaddr() gave us back the IP address, so try the static mapping array
-					if ($iplookup[$infoarray[0]] != "") {
-						$addrdata = $iplookup[$infoarray[0]];
-					}
+				// $hostipformat is one of "hostname", "descr" or "fqdn" - we want a text representation if we can get it.
+				if ($iplookup[$infoarray[0]] != "") {
+					// We have a local entry, so use it.
+					$addrdata = $iplookup[$infoarray[0]];
 				} else {
-					if ($hostipformat == "hostname") {
-						// Only pass back the first part of the name, not the FQDN.
-						$name_array = explode(".", $addrdata);
-						$addrdata = $name_array[0];
+					// Try to reverse lookup the IP address.
+					$addrdata = gethostbyaddr($infoarray[0]);
+					if ($addrdata != $infoarray[0]) {
+						// Reverse lookup returned something other than the IP address (FQDN, we hope!)
+						if ($hostipformat != "fqdn") {
+							// The user does not want the whole FQDN, so only pass back the first part of the name.
+							$name_array = explode(".", $addrdata);
+							$addrdata = $name_array[0];
+						}
 					}
 				}
 			}

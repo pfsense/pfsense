@@ -89,7 +89,7 @@ if ($config['widgets']['rssfeed']) {
 <input type="hidden" id="rss-config" name="rss-config" value="" />
 
 <div id="rss-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/rss.widget.php" method="post" name="iformc">
+	<form action="/widgets/widgets/rss.widget.php" method="post" name="rss_widget_iform">
 		<textarea name="rssfeed" class="formfld unknown textarea_widget" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
 		<br />
 		<table summary="rss widget">
@@ -143,7 +143,7 @@ if ($config['widgets']['rssfeed']) {
 					&nbsp;
 				</td>
 				<td>
-					<input id="submitc" name="submitc" type="submit" class="formbtn" value="Save" />
+					<input id="rss_widget_submit" name="rss_widget_submit" type="submit" class="formbtn" value="Save" />
 				</td>
 			</tr>
 		</table>

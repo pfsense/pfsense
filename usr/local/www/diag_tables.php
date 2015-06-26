@@ -89,24 +89,49 @@ if ($_REQUEST['deleteall']) {
 	}
 }
 
-if ((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download'])) {
-	mwexec_bg("/etc/rc.update_bogons.sh now");
-	$maxtimetowait = 0;
-	$loading = true;
-	while ($loading == true) {
-		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-		if ($isrunning == "") {
-			$loading = false;
+if( $_POST['Download'] ) {
+
+# If selected table is either bogons or bogonsv6.
+	if(($tablename == "bogons") || ($tablename == "bogonsv6")) {
+		mwexec_bg("/etc/rc.update_bogons.sh now");
+		$maxtimetowait = 0;
+		$loading = true;
+		while($loading == true) {
+			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
+			if($isrunning == "") {
+				$loading = false;
+			}
+			$maxtimetowait++;
+			if($maxtimetowait > 89) {
+				$loading = false;
+			}
+			sleep(1);
 		}
-		$maxtimetowait++;
-		if ($maxtimetowait > 89) {
-			$loading = false;
+		if($maxtimetowait < 90) {
+			$savemsg = gettext("The bogons database has been updated.");
 		}
-		sleep(1);
 	}
-	if ($maxtimetowait < 90) {
-		$savemsg = gettext("The bogons database has been updated.");
-	}
+
+# If selected alias is a URL table.
+	elseif($urltable){
+		mwexec_bg("/etc/rc.update_urltables now forceupdate $tablename");
+		$maxtimetowait = 0;
+		$loading = true;
+		while($loading == true) {
+			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep urltables`;
+			if($isrunning == "") {
+				$loading = false;
+			}
+			$maxtimetowait++;
+			if($maxtimetowait > 89) {
+				$loading = false;
+			}
+			sleep(1);
+		}
+		if($maxtimetowait < 90) {
+			$savemsg = gettext("The") . " " . $tablename . " " . gettext("database has been updated.");
+		}
+ 	}
 }
 
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
@@ -174,6 +199,8 @@ include("head.inc");
 
 		if ($comment_lines)
 			echo "<br />";
+
+		echo "<br />&nbsp;" . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest ") . $tablename . gettext(" data.") . "<br />";
 	}
 ?>
 
@@ -204,18 +231,14 @@ include("head.inc");
 		$count++;
 	endforeach;
 	if ($count == 0) {
-		if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
-			echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
-		} else {
-			echo "<tr><td>" . gettext("No entries exist in this table.");
-		}
+		echo "<tr><td>" . gettext("No entries exist in this table.");
 	}
 ?>
 
 <?php
 	if ($count > 0) {
-		if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
-			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
+		if (($tablename == "bogons") || ($tablename == "bogonsv6") || ($urltable)) {
+			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.");
 		} else {
 			echo "<tr><td>" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
 		}

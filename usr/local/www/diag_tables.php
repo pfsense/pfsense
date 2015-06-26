@@ -205,6 +205,8 @@ include("head.inc");
 ?>
 
 <br />
+<div id="table_status">Loading Table Data . . . </div>
+<br />
 
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="tables">
 	<tr>
@@ -220,7 +222,7 @@ include("head.inc");
 			<?php echo $entry; ?>
 		</td>
 		<td>
-			<?php if (($tablename != "bogons") && ($tablename != "bogonsv6")) { ?>
+			<?php if (($tablename != "bogons") && ($tablename != "bogonsv6") && !($urltable)) { ?>
 			<a onclick="del_entry('<?=htmlspecialchars($entry)?>');">
 				<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" />
 			</a>
@@ -230,23 +232,39 @@ include("head.inc");
 <?php
 		$count++;
 	endforeach;
-	if ($count == 0) {
-		echo "<tr><td>" . gettext("No entries exist in this table.");
-	}
 ?>
+	<tr>
+		<td class="listhdrr"></td>
+	</tr>
+</table>
+ 
+</form>
 
+<!-- Update the table status -->
+<script type="text/javascript">
+//<![CDATA[
+	var table_status = document.getElementById('table_status');
 <?php
+	if ($count == 0) {
+?>
+	table_status.innerHTML = '<?="&nbsp;" . gettext("No entries exist in this table.") . "<br />"?>';
+<?php
+	}
 	if ($count > 0) {
-		if (($tablename == "bogons") || ($tablename == "bogonsv6") || ($urltable)) {
-			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.");
-		} else {
-			echo "<tr><td>" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
+		if( ($tablename == "bogons") || ($tablename == "bogonsv6") || ($urltable) ) {
+?>
+	table_status.innerHTML = '<?="&nbsp;<b>$count</b> " . gettext("entries in this table.") . "<br />"?>';
+<?php
+		}
+		else {
+?>
+	table_status.innerHTML = '<?="&nbsp;" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a>" . "&nbsp;<b>$count</b> " . gettext("entries in this table.") . "<br />"?>';
+<?php
 		}
 	}
 ?>
-</td></tr>
-</table>
-</form>
+//]]>
+</script>
 
 <?php include("fend.inc"); ?>
 </body>

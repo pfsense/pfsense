@@ -2,11 +2,12 @@
 /* $Id$ */
 /*
 	status_dhcpv6_leases.php
-	Copyright (C) 2004-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Seth Mos
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -47,7 +48,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"),gettext("DHCPv6 leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCPv6 leases"));
 $shortcut_section = "dhcp6";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
@@ -59,7 +60,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	/* Read existing leases */
 	$leases_contents = explode("\n", file_get_contents($leasesfile));
 	$newleases_contents = array();
-	$i=0;
+	$i = 0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
 		if ($leases_contents[$i] == "  iaaddr {$_GET['deleteip']} {") {
@@ -110,8 +111,9 @@ function adjust_gmt($dt) {
 		$dhcpdv6 = $config['dhcpdv6'];
 		foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
 			$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
-			if ($dhcpv6leaseinlocaltime == "yes")
+			if ($dhcpv6leaseinlocaltime == "yes") {
 				break;
+			}
 		}
 	}
 
@@ -123,23 +125,25 @@ function adjust_gmt($dt) {
 		$offset = $this_tz->getOffset($dhcp_lt);
 		$ts = $ts + $offset;
 		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-	}
-	else
+	} else {
 		return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	}
 }
 
 function remove_duplicate($array, $field) {
-	foreach ($array as $sub)
+	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];
-	$unique = array_unique(array_reverse($cmp,true));
-	foreach ($unique as $k => $rien)
+	}
+	$unique = array_unique(array_reverse($cmp, true));
+	foreach ($unique as $k => $rien) {
 		$new[] = $array[$k];
+	}
 	return $new;
 }
 
 function parse_duid($duid_string) {
 	$parsed_duid = array();
-	for ($i=0; $i < strlen($duid_string); $i++) {
+	for ($i = 0; $i < strlen($duid_string); $i++) {
 		$s = substr($duid_string, $i, 1);
 		if ($s == '\\') {
 			$n = substr($duid_string, $i+1, 1);
@@ -171,10 +175,10 @@ $leases_count = count($leases_content);
 exec("/usr/sbin/ndp -an", $rawdata);
 $ndpdata = array();
 foreach ($rawdata as $line) {
-	$elements = preg_split('/\s+/ ',$line);
+	$elements = preg_split('/\s+/ ', $line);
 	if ($elements[1] != "(incomplete)") {
 		$ndpent = array();
-		$ip = trim(str_replace(array('(',')'),'',$elements[0]));
+		$ip = trim(str_replace(array('(', ')'), '', $elements[0]));
 		$ndpent['mac'] = trim($elements[1]);
 		$ndpent['interface'] = trim($elements[2]);
 		$ndpdata[$ip] = $ndpent;
@@ -190,7 +194,7 @@ $l = 0;
 $p = 0;
 
 // Put everything together again
-while($i < $leases_count) {
+while ($i < $leases_count) {
 	$entry = array();
 	/* split the line by space */
 	$duid_split = array();
@@ -207,12 +211,12 @@ while($i < $leases_count) {
 	$f = 0;
 	$fcount = count($data);
 	/* with less then 12 fields there is nothing useful */
-	if($fcount < 12) {
+	if ($fcount < 12) {
 		$i++;
 		continue;
 	}
-	while($f < $fcount) {
-		switch($data[$f]) {
+	while ($f < $fcount) {
+		switch ($data[$f]) {
 			case "failover":
 				$pools[$p]['name'] = $data[$f+2];
 				$pools[$p]['mystate'] = $data[$f+7];
@@ -284,7 +288,7 @@ while($i < $leases_count) {
 				$f = $f+3;
 				break;
 			case "binding":
-				switch($data[$f+2]) {
+				switch ($data[$f+2]) {
 					case "active":
 						$entry['act'] = "active";
 						break;
@@ -310,11 +314,11 @@ while($i < $leases_count) {
 				$f = $f+2;
 				break;
 			case "client-hostname":
-				if($data[$f+1] <> "") {
-					$entry['hostname'] = preg_replace('/"/','',$data[$f+1]);
+				if ($data[$f+1] <> "") {
+					$entry['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($entry['ip']);
-					if($hostname <> "") {
+					if ($hostname <> "") {
 						$entry['hostname'] = $hostname;
 					}
 				}
@@ -337,23 +341,23 @@ while($i < $leases_count) {
 	$is_prefix = false;
 }
 
-if(count($leases) > 0) {
-	$leases = remove_duplicate($leases,"ip");
+if (count($leases) > 0) {
+	$leases = remove_duplicate($leases, "ip");
 }
 
-if(count($prefixes) > 0) {
-	$prefixes = remove_duplicate($prefixes,"prefix");
+if (count($prefixes) > 0) {
+	$prefixes = remove_duplicate($prefixes, "prefix");
 }
 
-if(count($pools) > 0) {
-	$pools = remove_duplicate($pools,"name");
+if (count($pools) > 0) {
+	$pools = remove_duplicate($pools, "name");
 	asort($pools);
 }
 
-foreach($config['interfaces'] as $ifname => $ifarr) {
+foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpdv6'][$ifname]) &&
-		is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
-		foreach($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
+	    is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
+		foreach ($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
 			$slease = array();
 			$slease['ip'] = $static['ipaddrv6'];
 			$slease['type'] = "static";
@@ -373,11 +377,12 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 	}
 }
 
-if ($_GET['order'])
+if ($_GET['order']) {
 	usort($leases, "leasecmp");
+}
 
 /* only print pool status when we have one */
-if(count($pools) > 0) {
+if (count($pools) > 0) {
 ?>
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
 	<tr>
@@ -388,18 +393,17 @@ if(count($pools) > 0) {
 		<td class="listhdrr"><?=gettext("Since"); ?></a></td>
 	</tr>
 <?php
-foreach ($pools as $data) {
-	echo "<tr>\n";
-	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}</td>\n";
-	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
-	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
-	echo "</tr>\n";
-}
-
+	foreach ($pools as $data) {
+		echo "<tr>\n";
+		echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}</td>\n";
+		echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
+		echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
+		echo "</tr>\n";
+	}
 ?>
 </table>
 
@@ -411,15 +415,15 @@ foreach ($pools as $data) {
 <br/>
 
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
-  <tr>
-    <td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("DUID"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("Hostname/MAC"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("End"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("Online"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("Lease Type"); ?></a></td>
+	<tr>
+		<td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("DUID"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("Hostname/MAC"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("End"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("Online"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("Lease Type"); ?></a></td>
 	</tr>
 <?php
 foreach ($leases as $data) {
@@ -434,7 +438,7 @@ foreach ($leases as $data) {
 
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-				if(is_array($dhcpifconf['staticmap'])) {
+				if (is_array($dhcpifconf['staticmap'])) {
 					foreach ($dhcpifconf['staticmap'] as $staticent) {
 						if ($data['ip'] == $staticent['ipaddr']) {
 							$data['if'] = $dhcpif;
@@ -443,8 +447,9 @@ foreach ($leases as $data) {
 					}
 				}
 				/* exit as soon as we have an interface */
-				if ($data['if'] != "")
+				if ($data['if'] != "") {
 					break;
+				}
 			}
 		} else {
 			$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
@@ -462,7 +467,9 @@ foreach ($leases as $data) {
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+			if (isset($mac_man[$mac_hi])) {
+				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
+			}
 		}
 
 		echo "{$fspane}&nbsp;</td>\n";
@@ -518,7 +525,7 @@ foreach ($prefixes as $data) {
 
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-				if(is_array($dhcpifconf['staticmap'])) {
+				if (is_array($dhcpifconf['staticmap'])) {
 					foreach ($dhcpifconf['staticmap'] as $staticent) {
 						if ($data['ip'] == $staticent['ipaddr']) {
 							$data['if'] = $dhcpif;
@@ -527,8 +534,9 @@ foreach ($prefixes as $data) {
 					}
 				}
 				/* exit as soon as we have an interface */
-				if ($data['if'] != "")
+				if ($data['if'] != "") {
 					break;
+				}
 			}
 		} else {
 			$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
@@ -555,16 +563,16 @@ foreach ($prefixes as $data) {
 </table>
 <br/>
 <form action="status_dhcpv6_leases.php" method="get">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
+	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if ($_GET['all']): ?>
-<input type="hidden" name="all" value="0" />
-<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />
+	<input type="hidden" name="all" value="0" />
+	<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />
 <?php else: ?>
-<input type="hidden" name="all" value="1" />
-<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>" />
+	<input type="hidden" name="all" value="1" />
+	<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>" />
 <?php endif; ?>
 </form>
-<?php if($leases == 0): ?>
+<?php if ($leases == 0): ?>
 <p><strong><?=gettext("No leases file found. Is the DHCP server active"); ?>?</strong></p>
 <?php endif; ?>
 

@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-	rc.initial.setlanip
+	rc.initial.store_config_to_removable_device
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -40,14 +40,15 @@
 	do {
 		$dirs = array();
 		$dirs = return_dir_as_array("/var/db/pfi/");
-		if(!is_array($dirs)) {
+		if (!is_array($dirs)) {
 			echo "\nNo capable storage devices detected.\n";
-			exit;
+			fclose($fp);
+			return;
 		}
 		echo "\nDevices capable of config.xml storage:\n";
-		foreach($dirs as $dir) {
-			preg_match_all("/capable\_(.*)/",$dir,$match_array);
-			echo $match_array[1][0] . " ";	
+		foreach ($dirs as $dir) {
+			preg_match_all("/capable\_(.*)/", $dir, $match_array);
+			echo $match_array[1][0] . " ";
 		}
 		echo "\n\n";
 		echo "Enter the device that you wish the";
@@ -55,16 +56,18 @@
 		echo "{$g['product_name']} configuration file to reside on: ";
 		$move_config_to_device = chop(fgets($fp));
 		if ($move_config_to_device == "") {
-			exit(0);
-		}		
+			fclose($fp);
+			return 0;
+		}
 	} while (!$move_config_to_device);
-	
+
 	mwexec("/bin/mkdir -p /tmp/mnt/cf");
 
 	$status = mwexec("/sbin/mount -w -t msdosfs /dev/{$move_config_to_device} /tmp/mnt/cf");
-	if(!$status) {
+	if (!$status) {
 		echo "Error while mounting {$move_config_to_device}.\n";
-		exit;
+		fclose($fp);
+		return;
 	}
 
 	echo "\n\nProcessing: ";
@@ -76,7 +79,7 @@
 	echo " nullfs... ";
 	system("/sbin/umount /cf/conf");
 	system("/sbin/umount /conf");
-        mwexec("/bin/rm -rf /conf/*.*");
+	mwexec("/bin/rm -rf /conf/*.*");
 	/* use nullfs to mount */
 	system("/sbin/mount_nullfs /tmp/mnt/cf/conf /conf");
 	system("/sbin/mount_nullfs /tmp/mnt/cf /cf");

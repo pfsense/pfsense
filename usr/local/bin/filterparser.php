@@ -7,6 +7,7 @@
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2009 Jim Pingle <myfirstname>@<mylastname>.org
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -30,8 +31,8 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
- A quick CLI log parser. 
- Examples: 
+ A quick CLI log parser.
+ Examples:
 	clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
 	clog -f /var/log/filter.log | /usr/local/www/filterparser.php
 */
@@ -44,7 +45,7 @@ include_once("filter_log.inc");
 
 $log = fopen("php://stdin", "r");
 $lastline = "";
-while(!feof($log)) { 
+while (!feof($log)) {
 	$line = fgets($log);
 	$line = rtrim($line);
 	$flent = parse_filter_line(trim($line));

@@ -3,6 +3,7 @@
 /* $Id$ */
 /*
 	diag_routes.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2006 Fernando Lamos
 	All rights reserved.
 
@@ -30,7 +31,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
+	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
 	pfSense_MODULE:	routing
 */
 ##|+PRIV
@@ -51,29 +52,32 @@ if (isset($_REQUEST['isAjax'])) {
 		$netstat .= " -f inet";
 		echo "IPv4\n";
 	}
-	if (!isset($_REQUEST['resolve']))
+	if (!isset($_REQUEST['resolve'])) {
 		$netstat .= " -n";
+	}
 
-	if (!empty($_REQUEST['filter']))
+	if (!empty($_REQUEST['filter'])) {
 		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
-	else
+	} else {
 		$netstat .= " | /usr/bin/sed -e '1,3d'";
+	}
 
-	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0)
+	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0) {
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
+	}
 
 	echo htmlspecialchars_decode(shell_exec($netstat));
 
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Routing tables"));
 $shortcut_section = "routing";
 
 include('head.inc');
 
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
 
@@ -85,10 +89,12 @@ include('head.inc');
 		var limit = jQuery('#limit option:selected').text();
 		var filter = jQuery('#filter').val();
 		var params = "isAjax=true&limit=" + limit + "&filter=" + filter;
-		if (jQuery('#resolve').is(':checked'))
+		if (jQuery('#resolve').is(':checked')) {
 			params += "&resolve=true";
-		if (section == "IPv6")
+		}
+		if (section == "IPv6") {
 			params += "&IPv6=true";
+		}
 		var myAjax = new Ajax.Request(
 			url,
 			{
@@ -109,8 +115,9 @@ include('head.inc');
 
 		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '<\/strong><\/td><\/tr>' + "\n";
 		for (var i = 0; i < responseTextArr.length; i++) {
-			if (responseTextArr[i] == "")
+			if (responseTextArr[i] == "") {
 				continue;
+			}
 			var tmp = '';
 			if (i == 0) {
 				tr_class = 'listhdrr';
@@ -122,23 +129,28 @@ include('head.inc');
 			var j = 0;
 			var entry = responseTextArr[i].split(" ");
 			for (var k = 0; k < entry.length; k++) {
-				if (entry[k] == "")
+				if (entry[k] == "") {
 					continue;
-				if (i == 0 && j == (elements - 1))
+				}
+				if (i == 0 && j == (elements - 1)) {
 					tr_class = 'listhdr';
+				}
 				tmp += '<td class="' + tr_class + '">' + entry[k] + '<\/td>' + "\n";
-				if (i > 0)
+				if (i > 0) {
 					tr_class = 'listr';
+				}
 				j++;
 			}
 			// The 'Expire' field might be blank
-			if (j == (elements - 1))
+			if (j == (elements - 1)) {
 				tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
+			}
 			tmp += '<\/tr>' + "\n";
-			if (i == 0)
+			if (i == 0) {
 				thead += tmp;
-			else
+			} else {
 				tbody += tmp;
+			}
 		}
 		jQuery('#' + section + ' > thead').html(thead);
 		jQuery('#' + section + ' > tbody').html(tbody);
@@ -155,7 +167,7 @@ include('head.inc');
 		update_routes("IPv6");
 	}
 
-	jQuery(document).ready(function(){setTimeout('update_all_routes()', 5000);});
+	jQuery(document).ready(function() {setTimeout('update_all_routes()', 5000);});
 
 //]]>
 </script>
@@ -163,50 +175,48 @@ include('head.inc');
 <div id="mainarea">
 <form action="diag_routes.php" method="post">
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="diag routes">
+	<tr>
+		<td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
+		<td class="vtable" width="78%">
+			<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo "checked=\"checked\""; ?> /><?=gettext("Enable");?>
+			<br />
+			<span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
+		</td>
+	</tr>
 
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
-<td class="vtable" width="78%">
-<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo "checked=\"checked\""; ?> /><?=gettext("Enable");?>
-<br />
-<span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
-</td>
-</tr>
-
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Number of rows");?></td>
-<td class="vtable" width="78%">
-<select id="limit" name="limit">
+	<tr>
+		<td class="vncellreq" width="22%"><?=gettext("Number of rows");?></td>
+		<td class="vtable" width="78%">
+			<select id="limit" name="limit">
 <?php
 	foreach (array("10", "50", "100", "200", "500", "1000", gettext("all")) as $item) {
 		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected=\"selected\"" : "") . ">{$item}</option>\n";
 	}
 ?>
-</select>
-<br />
-<span class="expl"><?=gettext("Select how many rows to display.");?></span>
-</td>
-</tr>
+			</select>
+			<br />
+			<span class="expl"><?=gettext("Select how many rows to display.");?></span>
+		</td>
+	</tr>
 
-<tr>
-<td class="vncellreq" width="22%"><?=gettext("Filter expression");?></td>
-<td class="vtable" width="78%">
-<input type="text" class="formfld search" name="filter" id="filter" />
-<br />
-<span class="expl"><?=gettext("Use a regular expression to filter IP address or hostnames.");?></span>
-</td>
-</tr>
+	<tr>
+		<td class="vncellreq" width="22%"><?=gettext("Filter expression");?></td>
+		<td class="vtable" width="78%">
+			<input type="text" class="formfld search" name="filter" id="filter" />
+			<br />
+			<span class="expl"><?=gettext("Use a regular expression to filter IP address or hostnames.");?></span>
+		</td>
+	</tr>
 
-<tr>
-<td class="vncellreq" width="22%">&nbsp;</td>
-<td class="vtable" width="78%">
-<input type="button" class="formbtn" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" />
-<br />
-<br />
-<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
-</td>
-</tr>
-
+	<tr>
+		<td class="vncellreq" width="22%">&nbsp;</td>
+		<td class="vtable" width="78%">
+			<input type="button" class="formbtn" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" />
+			<br />
+			<br />
+			<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
+		</td>
+	</tr>
 </table>
 </form>
 

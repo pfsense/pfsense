@@ -3,8 +3,9 @@
 /*
 	pkg_mgr_install.php
 	part of pfSense (https://www.pfsense.org)
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
- 	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2005 Colin Smith
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -54,7 +55,7 @@ $static_output = "";
 $static_status = "";
 $sendto = "output";
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Install Package"));
 include("head.inc");
 
 if ($_POST) {
@@ -64,24 +65,24 @@ if ($_POST) {
 	}
 } else if ($_GET) {
 	switch ($_GET['mode']) {
-	case 'reinstallall':
-	case 'showlog':
-		break;
-	case 'installedinfo':
-	case 'reinstallxml':
-        case 'reinstallpkg':
-	case 'delete':
-		if (empty($_GET['pkg'])) {
-			header("Location: pkg_mgr_installed.php");
-			return;
-		}
-		break;
-	default:
-		if (empty($_GET['id'])) {
-			header("Location: pkg_mgr_installed.php");
-			return;
-		}
-		break;
+		case 'reinstallall':
+		case 'showlog':
+			break;
+		case 'installedinfo':
+		case 'reinstallxml':
+		case 'reinstallpkg':
+		case 'delete':
+			if (empty($_GET['pkg'])) {
+				header("Location: pkg_mgr_installed.php");
+				return;
+			}
+			break;
+		default:
+			if (empty($_GET['id'])) {
+				header("Location: pkg_mgr_installed.php");
+				return;
+			}
+			break;
 	}
 }
 
@@ -103,7 +104,8 @@ if ($_POST) {
 						?>
 					</td>
 				</tr>
-<?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
+<?php
+if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = 'installed';
@@ -113,29 +115,31 @@ if ($_POST) {
 	} else if ($_GET['mode'] == 'reinstallall') {
 		$pkgmode = 'reinstallall';
 	}
+	$pkg_gui_xml_text = "";
 	switch ($pkgmode) {
-	case 'reinstallall':
-		$pkgname = 'All packages';
-		$pkgtxt = 'reinstalled';
-		break;
-	case 'reinstallxml':
-	case 'reinstallpkg':
-		$pkgtxt = 'reinstalled';
-		break;
-	case 'delete':
-		$pkgtxt = 'deleted';
-		break;
-	default:
-		$pkgtxt = $pkgmode;
-		break;
+		case 'reinstallall':
+			$pkgname = 'All packages';
+			$pkgtxt = 'reinstalled';
+			break;
+		case 'reinstallxml':
+			$pkg_gui_xml_text = " GUI XML components";
+		case 'reinstallpkg':
+			$pkgtxt = 'reinstalled';
+			break;
+		case 'delete':
+			$pkgtxt = 'deleted';
+			break;
+		default:
+			$pkgtxt = $pkgmode;
+			break;
 	}
 ?>
 				<tr>
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action.<br/>
+								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b><?=$pkg_gui_xml_text;?> will be <?=$pkgtxt;?>.<br/>
+									Please confirm the action.<br/>
 								</td>
 								<td class="tabcont" align="center">
 									<input type="hidden" name="id" value="<?=$pkgname;?>" />
@@ -147,7 +151,10 @@ if ($_POST) {
 						</table>
 					</td>
 				</tr>
-<?php endif; if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))): ?>
+<?php
+endif;
+if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
+?>
 				<tr>
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
@@ -155,9 +162,11 @@ if ($_POST) {
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
 									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
-										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-											<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
-										</td></tr>
+										<tr>
+											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
+												<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
+											</td>
+										</tr>
 									</table>
 								</td>
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5">
@@ -167,6 +176,7 @@ if ($_POST) {
 						<br />
 						<!-- status box -->
 						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
+						<br />
 						<!-- command output box -->
 						<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 					</td>
@@ -189,25 +199,27 @@ ob_flush();
 
 if ($_GET) {
 	$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
-	switch($_GET['mode']) {
-	case 'showlog':
-		if (strpos($pkgname, ".")) {
-			update_output_window(gettext("Something is wrong on the request."));
-		} else if (file_exists("/tmp/pkg_mgr_{$pkgname}.log"))
-			update_output_window(@file_get_contents("/tmp/pkg_mgr_{$pkgname}.log"));
-		else
-			update_output_window(gettext("Log was not retrievable."));
-		break;
-	case 'installedinfo':
-		if (file_exists("/tmp/{$pkgname}.info")) {
-			$status = @file_get_contents("/tmp/{$pkgname}.info");
-			update_status("{$pkgname} " . gettext("installation completed."));
-			update_output_window($status);
-		} else
-			update_output_window(sprintf(gettext("Could not find %s."), $pkgname));
-		break;
-	default:
-		break;
+	switch ($_GET['mode']) {
+		case 'showlog':
+			if (strpos($pkgname, ".")) {
+				update_output_window(gettext("Something is wrong on the request."));
+			} else if (file_exists("/tmp/pkg_mgr_{$pkgname}.log")) {
+				update_output_window(@file_get_contents("/tmp/pkg_mgr_{$pkgname}.log"));
+			} else {
+				update_output_window(gettext("Log was not retrievable."));
+			}
+			break;
+		case 'installedinfo':
+			if (file_exists("/tmp/{$pkgname}.info")) {
+				$status = @file_get_contents("/tmp/{$pkgname}.info");
+				update_status("{$pkgname} " . gettext("installation completed."));
+				update_output_window($status);
+			} else {
+				update_output_window(sprintf(gettext("Could not find %s."), $pkgname));
+			}
+			break;
+		default:
+			break;
 	}
 } else if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
@@ -226,6 +238,9 @@ if ($_GET) {
 			filter_configure();
 			break;
 		case 'reinstallxml':
+			pkg_fetch_config_file($pkgid);
+			pkg_fetch_additional_files($pkgid);
+			break;
 		case 'reinstallpkg':
 			delete_package_xml($pkgid);
 			if (install_package($pkgid) < 0) {
@@ -241,31 +256,35 @@ if ($_GET) {
 			@file_put_contents("/tmp/{$pkgid}.info", $static_output);
 			$pkgid = htmlspecialchars($pkgid);
 			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
+			send_event("service restart packages");
 			break;
 		case 'reinstallall':
 			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
 				$todo = array();
-				foreach($config['installedpackages']['package'] as $package)
+				foreach ($config['installedpackages']['package'] as $package) {
 					$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-				foreach($todo as $pkgtodo) {
+				}
+				foreach ($todo as $pkgtodo) {
 					$static_output = "";
-					if($pkgtodo['name']) {
+					if ($pkgtodo['name']) {
 						update_output_window($static_output);
 						uninstall_package($pkgtodo['name']);
-						install_package($pkgtodo['name']);
+						install_package($pkgtodo['name'], '', true);
 					}
 				}
 				update_status(gettext("All packages reinstalled."));
 				$static_output .= "\n" . gettext("All packages reinstalled.");
 				update_output_window($static_output);
 				filter_configure();
-			} else
+				send_event("service restart packages");
+			} else {
 				update_output_window(gettext("No packages are installed."));
+			}
 			break;
 		case 'installed':
 		default:
 			$status = install_package($pkgid);
-			if($status == -1) {
+			if ($status == -1) {
 				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
 				$static_output .= "\n" . gettext("Installation halted.");
 				update_output_window($static_output);
@@ -273,10 +292,11 @@ if ($_GET) {
 				$status_a = gettext(sprintf("Installation of %s completed.", $pkgid));
 				update_status($status_a);
 				$status = get_after_install_info($pkgid);
-				if($status) 
+				if ($status) {
 					$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
-				else
+				} else {
 					$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
+				}
 
 				@file_put_contents("/tmp/{$pkgid}.info", $static_output);
 				echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
@@ -290,8 +310,9 @@ if ($_GET) {
 	rmdir_recursive("/var/tmp/instmp*");
 
 	// close log
-	if($fd_log)
+	if ($fd_log) {
 		fclose($fd_log);
+	}
 
 	/* Restore to read only fs */
 	conf_mount_ro();

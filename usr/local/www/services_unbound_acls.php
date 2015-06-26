@@ -5,6 +5,7 @@
 	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2011 Warren Baker <warren@decoy.co.za>
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -32,18 +33,28 @@
 require("guiconfig.inc");
 require("unbound.inc");
 
-if (!is_array($config['unbound']['acls']))
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
+
+if (!is_array($config['unbound']['acls'])) {
 	$config['unbound']['acls'] = array();
+}
 
 $a_acls = &$config['unbound']['acls'];
 
 $id = $_GET['id'];
-if (isset($_POST['aclid']))
+if (isset($_POST['aclid'])) {
 	$id = $_POST['aclid'];
+}
+
+if (!empty($id) && !is_numeric($id)) {
+	pfSenseHeader("services_unbound_acls.php");
+	exit;
+}
 
 $act = $_GET['act'];
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 	if (!$a_acls[$id]) {
@@ -74,32 +85,38 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
+		}
 	} else {
 
 		// input validation - only allow 50 entries in a single ACL
-		for($x=0; $x<50; $x++) {
+		for ($x = 0; $x < 50; $x++) {
 			if (isset($pconfig["acl_network{$x}"])) {
 				$networkacl[$x] = array();
 				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
 				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
 				$networkacl[$x]['description'] = $pconfig["description{$x}"];
-				if (!is_ipaddr($networkacl[$x]['acl_network']))
-					$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
+				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
+					$input_errors[] = gettext("You must enter a valid IP address for each row under Networks.");
+				}
 
 				if (is_ipaddr($networkacl[$x]['acl_network'])) {
-					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-						$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+						$input_errors[] = gettext("You must enter a valid IPv4 netmask for each IPv4 row under Networks.");
+					}
 				} else if (function_exists("is_ipaddrv6")) {
-					if (!is_ipaddrv6($networkacl[$x]['acl_network']))
+					if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
 						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
-					else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-						$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-				} else
-					$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-			} else if (isset($networkacl[$x]))
+					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+						$input_errors[] = gettext("You must enter a valid IPv6 netmask for each IPv6 row under Networks.");
+					}
+				} else {
+					$input_errors[] = gettext("You must enter a valid IP address for each row under Networks.");
+				}
+			} else if (isset($networkacl[$x])) {
 				unset($networkacl[$x]);
+			}
 		}
 
 		if (!$input_errors) {
@@ -111,14 +128,15 @@ if ($_POST) {
 				$acl_entry['description'] = $pconfig['description'];
 				$acl_entry['aclid'] = $pconfig['aclid'];
 				$acl_entry['row'] = array();
-				foreach ($networkacl as $acl)
+				foreach ($networkacl as $acl) {
 					$acl_entry['row'][] = $acl;
+				}
 
-				if (isset($id) && $a_acls[$id])
+				if (isset($id) && $a_acls[$id]) {
 					$a_acls[$id] = $acl_entry;
-				else
+				} else {
 					$a_acls[] = $acl_entry;
-
+				}
 
 				mark_subsystem_dirty("unbound");
 				write_config();
@@ -126,13 +144,13 @@ if ($_POST) {
 				pfSenseHeader("/services_unbound_acls.php");
 				exit;
 			}
-
 		}
 	}
 }
 
 $closehead = false;
 $pgtitle = "Services: DNS Resolver: Access Lists";
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>
@@ -161,19 +179,12 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_acls.php" method="post" name="iform" id="iform">
-<?php
-if (!$savemsg)
-	$savemsg = "";
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if (is_subsystem_dirty('unbound')): ?><br/>
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
+<?php endif; ?>
 
-if ($input_errors)
-	print_input_errors($input_errors);
-
-if ($savemsg)
-	print_info_box($savemsg);
-
-if (is_subsystem_dirty("unbound"))
-		print_info_box_np(gettext("The settings for the DNS Resolver have changed. You must apply the configuration to take affect."));
-?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound acls">
 	<tbody>
 		<tr>
@@ -190,13 +201,15 @@ if (is_subsystem_dirty("unbound"))
 		<tr>
 			<td id="mainarea">
 				<div class="tabcont">
-					<?php if($act=="new" || $act=="edit"): ?>
-						<input name="aclid" type="hidden" value="<?=$id;?>" />
-						<input name="act" type="hidden" value="<?=$act;?>" />
+<?php
+	if ($act == "new" || $act == "edit"):
+?>
+					<input name="aclid" type="hidden" value="<?=$id;?>" />
+					<input name="act" type="hidden" value="<?=$act;?>" />
 
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=ucwords(sprintf(gettext("%s Access List"),$act));?></td>
+							<td colspan="2" valign="top" class="listtopic"><?=ucwords(sprintf(gettext("%s Access List"), $act));?></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Access List name");?></td>
@@ -210,11 +223,16 @@ if (is_subsystem_dirty("unbound"))
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
 							<td width="78%" class="vtable">
 								<select name="aclaction" class="formselect">
-									<?php $types = explode(",", "Allow,Deny,Refuse,Allow Snoop"); foreach ($types as $type): ?>
+									<?php
+										$types = explode(",", "Allow,Deny,Refuse,Allow Snoop");
+										foreach ($types as $type):
+									?>
 									<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['aclaction'])) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($type);?>
 									</option>
-									<?php endforeach; ?>
+									<?php
+										endforeach;
+									?>
 								</select>
 								<br />
 								<span class="vexpl">
@@ -236,16 +254,14 @@ if (is_subsystem_dirty("unbound"))
 										<td><div id="twocolumn"><?=gettext("CIDR");?></div></td>
 										<td><div id="threecolumn"><?=gettext("Description");?></div></td>
 									</tr>
-									<?php $counter = 0; ?>
 									<?php
-										if($networkacl)
-											foreach($networkacl as $item):
-									?>
-											<?php
+										$counter = 0;
+										if ($networkacl) {
+											foreach ($networkacl as $item):
 												$network = $item['acl_network'];
 												$cidr = $item['mask'];
 												$description = $item['description'];
-											?>
+									?>
 									<tr>
 										<td>
 											<input name="acl_network<?=$counter;?>" type="text" class="formfld unknown ipv4v6" id="acl_network<?=$counter;?>" size="30" value="<?=htmlspecialchars($network);?>" />
@@ -268,8 +284,11 @@ if (is_subsystem_dirty("unbound"))
 											<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
 										</td>
 									</tr>
-									<?php $counter++; ?>
-									<?php endforeach; ?>
+									<?php
+												$counter++;
+											endforeach;
+										}
+									?>
 								</tbody>
 							</table>
 							<a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
@@ -302,14 +321,15 @@ if (is_subsystem_dirty("unbound"))
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								&nbsp;<br />&nbsp;
-								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+								<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 							</td>
 						</tr>
 					</table>
-
-				<?php else: ?>
-
-				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="results">
+<?php
+	else:
+?>
+					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="results">
 					<thead>
 						<tr>
 							<td width="25%" class="listhdrr"><?=gettext("Access List Name"); ?></td>
@@ -325,9 +345,11 @@ if (is_subsystem_dirty("unbound"))
 								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 									<tr>
 										<td width="17">&nbsp;</td>
-										<td valign="middle"><a href="services_unbound_acls.php?act=new">
-											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
-										</a></td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=new">
+												<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
+											</a>
+										</td>
 									</tr>
 								</table>
 							</td>
@@ -343,7 +365,7 @@ if (is_subsystem_dirty("unbound"))
 					<tbody>
 					<?php
 						$i = 0;
-						foreach($a_acls as $acl):
+						foreach ($a_acls as $acl):
 					?>
 						<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
@@ -358,25 +380,31 @@ if (is_subsystem_dirty("unbound"))
 							<td valign="middle" class="list nowrap">
 								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 									<tr>
-										<td valign="middle"><a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
-											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
-										</a></td>
-										<td valign="middle"><a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
-											<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
-										</a></td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
+												<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
+											</a>
+										</td>
+										<td valign="middle">
+											<a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
+												<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
+											</a>
+										</td>
 									</tr>
 								</table>
 							</td>
 						</tr>
 					<?php
-						$i++;
+							$i++;
 						endforeach;
 					?>
-					<tr style="display:none"><td></td></tr>
+						<tr style="display:none"><td></td></tr>
 					</tbody>
-				</table>
-			<?php endif; ?>
-			</div>
+					</table>
+<?php
+	endif;
+?>
+				</div>
 			</td>
 		</tr>
 	</tbody>

@@ -1,12 +1,17 @@
 <?php
 /*
+	diag_smart.php
 	Part of pfSense
 
-	Copyright (C) 2006, Eric Friesen
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved
 
 	Some modifications:
 	Copyright (C) 2010 - Jim Pingle
+
+	Copyright (C) 2006, Eric Friesen
+	All rights reserved
+
 */
 
 require("guiconfig.inc");
@@ -60,13 +65,12 @@ pre {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php 
-include("fbegin.inc"); 
+<?php
+include("fbegin.inc");
 
-// Highlates the words "PASSED", "FAILED", and "WARNING".
-function add_colors($string)
-{
-	// To add words keep arrayes matched by numbers
+// Highlights the words "PASSED", "FAILED", and "WARNING".
+function add_colors($string) {
+	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
@@ -79,24 +83,18 @@ function add_colors($string)
 }
 
 // Edits smartd.conf file, adds or removes email for failed disk reporting
-function update_email($email)
-{
+function update_email($email) {
 	// Did they pass an email?
-	if(!empty($email))
-	{
+	if (!empty($email)) {
 		// Put it in the smartd.conf file
 		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . escapeshellarg($email) . "/' /usr/local/etc/smartd.conf");
-	}
-	// Nope
-	else
-	{
+	} else {
 		// Remove email flags in smartd.conf
 		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
 	}
 }
 
-function smartmonctl($action)
-{
+function smartmonctl($action) {
 	global $start_script;
 	shell_exec($start_script . escapeshellarg($action));
 }
@@ -109,7 +107,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 	echo "Device does not exist, bailing.";
 	return;
 }
-switch($action) {
+switch ($action) {
 	// Testing devices
 	case 'test':
 	{
@@ -166,32 +164,28 @@ switch($action) {
 	// Config changes, users email in xml config and write changes to smartd.conf
 	case 'config':
 	{
-		if(isset($_POST['submit']))
-		{
+		if (isset($_POST['submit'])) {
 			// DOES NOT WORK YET...
-			if($_POST['testemail'])
-			{
+			if ($_POST['testemail']) {
 // FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
 				$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
 				smartmonctl("stop");
 				smartmonctl("start");
-			}
-			else
-			{
+			} else {
 				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 				write_config();
 
-				// Don't know what all this means, but it addes the config changed header when config is saved
+				// Don't know what all this means, but it adds the config changed header when config is saved
 				$retval = 0;
 				config_lock();
-				if(stristr($retval, "error") <> true)
+				if (stristr($retval, "error") <> true) {
 					$savemsg = get_std_save_message($retval);
-				else
+				} else {
 					$savemsg = $retval;
+				}
 				config_unlock();
 
-				if($_POST['email'])
-				{
+				if ($_POST['email']) {
 					// Write the changes to the smartd.conf file
 					update_email($_POST['smartmonemail']);
 				}
@@ -201,7 +195,9 @@ switch($action) {
 			}
 		}
 		// Was the config changed? if so , print the message
-		if ($savemsg) print_info_box($savemsg);
+		if ($savemsg) {
+			print_info_box($savemsg);
+		}
 		// Get users email from the xml file
 		$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
 
@@ -215,7 +211,7 @@ switch($action) {
 					$tab_array[0] = array(gettext("Information/Tests"), false, $_SERVER['PHP_SELF'] . "?action=default");
 					$tab_array[1] = array(gettext("Config"), true, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
-				?>
+					?>
 				</td>
 			</tr>
 		</table>
@@ -276,8 +272,7 @@ switch($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default:
 	{
-		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
-		exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs);
+		$devs = get_smart_drive_list();
 		?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="default page">
 			<tr>
@@ -287,7 +282,7 @@ switch($action) {
 					$tab_array[0] = array(gettext("Information/Tests"), true, $_SERVER['PHP_SELF']);
 					//$tab_array[1] = array("Config", false, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
-				?>
+					?>
 				</td>
 			</tr>
 		</table>
@@ -313,8 +308,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -352,8 +346,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -389,8 +382,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -419,8 +411,7 @@ switch($action) {
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
-						foreach($devs as $dev)
-						{
+						foreach ($devs as $dev) {
 							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
@@ -444,13 +435,18 @@ switch($action) {
 }
 
 // print back button on pages
-if(isset($_POST['submit']) && $_POST['submit'] != "Save")
-{
-	echo '<br /><a href="' . $_SERVER['PHP_SELF'] . '">' . gettext("Back") . '</a>';
+if (isset($_POST['submit']) && $_POST['submit'] != "Save") {
+?>
+	<input type="button" class="formbtn" value="<?=gettext("Back");?>" onclick="window.location.href='<?=$_SERVER['PHP_SELF'];?>'" />
+<?php
 }
 ?>
 <br />
-<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
+<?php
+if ($ulmsg) {
+	echo "<p><strong>" . $ulmsg . "</strong></p>\n";
+}
+?>
 
 <?php include("fend.inc"); ?>
 </body>

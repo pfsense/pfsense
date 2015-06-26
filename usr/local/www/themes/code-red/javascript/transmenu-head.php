@@ -1,10 +1,12 @@
 <?php
 /* $Id$ */
-/* DISABLE_PHP_LINT_CHECKING                                                  */
 /* ========================================================================== */
 /*
-  transmenu.php
+  transmenu-head.php
   Copyright (C) 2006 Daniel S. Haischt <me@daniel.stefan.haischt.name>
+  All rights reserved.
+
+  Copyright (C) 2013-2015 Electric Sheep Fencing, LP
   All rights reserved.
                                                                               */
 /* ========================================================================== */

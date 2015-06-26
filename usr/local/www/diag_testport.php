@@ -1,8 +1,8 @@
 <?php
 /*
 	diag_testport.php
-
 	Copyright (C) 2013 Jim P (jimp@pfsense.org)
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Portions based on diag_ping.php
@@ -14,11 +14,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -50,14 +50,14 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Test Port"));
 require("guiconfig.inc");
 
 define('NC_TIMEOUT', 10);
+$do_testport = false;
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
-	unset($do_testport);
 
 	/* input validation */
 	$reqdfields = explode(" ", "host port");
-	$reqdfieldsn = array(gettext("Host"),gettext("Port"));
+	$reqdfieldsn = array(gettext("Host"), gettext("Port"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!is_ipaddr($_REQUEST['host']) && !is_hostname($_REQUEST['host'])) {
@@ -68,7 +68,7 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("Please enter a valid port number.");
 	}
 
-	if (is_numeric($_REQUEST['srcport']) && !is_port($_REQUEST['srcport'])) {
+	if (($_REQUEST['srcport'] != "") && (!is_numeric($_REQUEST['srcport']) || !is_port($_REQUEST['srcport']))) {
 		$input_errors[] = gettext("Please enter a valid source port number, or leave the field blank.");
 	}
 
@@ -81,25 +81,20 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_testport = true;
-		$host = $_REQUEST['host'];
-		$sourceip = $_REQUEST['sourceip'];
-		$port = $_REQUEST['port'];
-		$srcport = $_REQUEST['srcport'];
-		$showtext = isset($_REQUEST['showtext']);
-		$ipprotocol = $_REQUEST['ipprotocol'];
 		$timeout = NC_TIMEOUT;
 	}
-}
-if (!isset($do_testport)) {
-	$do_testport = false;
-	$host = '';
-	$port = '';
-	$srcport = '';
-	unset($showtext);
+
+	/* Save these request vars even if there were input errors. Then the fields are refilled for the user to correct. */
+	$host = $_REQUEST['host'];
+	$sourceip = $_REQUEST['sourceip'];
+	$port = $_REQUEST['port'];
+	$srcport = $_REQUEST['srcport'];
+	$showtext = isset($_REQUEST['showtext']);
+	$ipprotocol = $_REQUEST['ipprotocol'];
 }
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag test port">
 <tr><td>
@@ -116,19 +111,20 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 			<td width="78%" class="vtable">
-			<?=$mandfldhtml;?>
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+				<?=$mandfldhtml;?>
+				<input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
+				<input name="port" type="text" class="formfld unknown" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Source Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
+				<input name="srcport" type="text" class="formfld unknown" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
 				<br /><br /><?php echo gettext("This should typically be left blank."); ?>
 			</td>
 		</tr>
@@ -145,15 +141,16 @@ include("head.inc"); ?>
 				<select name="sourceip" class="formselect">
 					<option value="">Any</option>
 				<?php   $sourceips = get_possible_traffic_source_addresses(true);
-					foreach ($sourceips as $sip):
+					foreach ($sourceips as $sipvalue => $sipname):
 						$selected = "";
-						if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
+						if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
 							$selected = "selected=\"selected\"";
+						}
 				?>
-					<option value="<?=$sip['value'];?>" <?=$selected;?>>
-						<?=htmlspecialchars($sip['name']);?>
+					<option value="<?=$sipvalue;?>" <?=$selected;?>>
+						<?=htmlspecialchars($sipname);?>
 					</option>
-					<?php endforeach; ?>
+				<?php endforeach; ?>
 				</select>
 			</td>
 		</tr>
@@ -182,103 +179,108 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 		<tr>
-		<td valign="top" colspan="2">
-		<?php if ($do_testport) {
-			echo "<font face=\"terminal\" size=\"2\">";
-			echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
-		?>
-			<script type="text/javascript">
-			//<![CDATA[
-			window.onload=function(){
-				document.getElementById("testportCaptured").wrap='off';
-			}
-			//]]>
-			</script>
-		<?php
-			echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
-			$result = "";
-			$nc_base_cmd = "/usr/bin/nc";
-			$nc_args = "-w {$timeout}";
-			if (!$showtext)
-				$nc_args .= " -z ";
-			if (!empty($srcport))
-				$nc_args .= " -p {$srcport} ";
-
-			/* Attempt to determine the interface address, if possible. Else try both. */
-			if (is_ipaddrv4($host)) {
-				$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
-				$nc_args .= " -4";
-			} elseif (is_ipaddrv6($host)) {
-				if ($sourceip == "any")
-					$ifaddr = "";
-				else if (is_linklocal($sourceip))
-					$ifaddr = $sourceip;
-				else
-					$ifaddr = get_interface_ipv6($sourceip);
-				$nc_args .= " -6";
-			} else {
-				switch ($ipprotocol) {
-					case "ipv4":
-						$ifaddr = get_interface_ip($sourceip);
-						$nc_ipproto = " -4";
-						break;
-					case "ipv6":
-						$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
-						$nc_ipproto = " -6";
-						break;
-					case "any":
-						$ifaddr = get_interface_ip($sourceip);
-						$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
-						if (empty($ifaddr)) {
-							$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
-							$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
-						}
-						break;
+			<td valign="top" colspan="2">
+			<?php if ($do_testport) {
+				echo "<font face=\"terminal\" size=\"2\">";
+				echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
+			?>
+				<script type="text/javascript">
+				//<![CDATA[
+				window.onload=function() {
+					document.getElementById("testportCaptured").wrap='off';
 				}
-				/* Netcat doesn't like it if we try to connect using a certain type of IP without specifying the family. */
-				if (!empty($ifaddr)) {
-					$nc_args .= $nc_ipproto;
-				} elseif ($sourceip == "any") {
+				//]]>
+				</script>
+			<?php
+				echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
+				$result = "";
+				$nc_base_cmd = "/usr/bin/nc";
+				$nc_args = "-w " . escapeshellarg($timeout);
+				if (!$showtext) {
+					$nc_args .= " -z ";
+				}
+				if (!empty($srcport)) {
+					$nc_args .= " -p " . escapeshellarg($srcport) . " ";
+				}
+
+				/* Attempt to determine the interface address, if possible. Else try both. */
+				if (is_ipaddrv4($host)) {
+					$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
+					$nc_args .= " -4";
+				} elseif (is_ipaddrv6($host)) {
+					if ($sourceip == "any") {
+						$ifaddr = "";
+					} else if (is_linklocal($sourceip)) {
+						$ifaddr = $sourceip;
+					} else {
+						$ifaddr = get_interface_ipv6($sourceip);
+					}
+					$nc_args .= " -6";
+				} else {
 					switch ($ipprotocol) {
 						case "ipv4":
+							$ifaddr = get_interface_ip($sourceip);
 							$nc_ipproto = " -4";
 							break;
 						case "ipv6":
+							$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
 							$nc_ipproto = " -6";
 							break;
+						case "any":
+							$ifaddr = get_interface_ip($sourceip);
+							$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
+							if (empty($ifaddr)) {
+								$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
+								$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
+							}
+							break;
 					}
-					$nc_args .= $nc_ipproto;
+					/* Netcat doesn't like it if we try to connect using a certain type of IP without specifying the family. */
+					if (!empty($ifaddr)) {
+						$nc_args .= $nc_ipproto;
+					} elseif ($sourceip == "any") {
+						switch ($ipprotocol) {
+							case "ipv4":
+								$nc_ipproto = " -4";
+								break;
+							case "ipv6":
+								$nc_ipproto = " -6";
+								break;
+						}
+						$nc_args .= $nc_ipproto;
+					}
 				}
-			}
-			/* Only add on the interface IP if we managed to find one. */
-			if (!empty($ifaddr)) {
-				$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
-				$scope = get_ll_scope($ifaddr);
-				if (!empty($scope) && !strstr($host, "%"))
-					$host .= "%{$scope}";
-			}
+				/* Only add on the interface IP if we managed to find one. */
+				if (!empty($ifaddr)) {
+					$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
+					$scope = get_ll_scope($ifaddr);
+					if (!empty($scope) && !strstr($host, "%")) {
+						$host .= "%{$scope}";
+					}
+				}
 
-			$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
-			exec($nc_cmd, $result, $retval);
-			//echo "NC CMD: {$nc_cmd}\n\n";
-			if (empty($result)) {
-				if ($showtext)
-					echo gettext("No output received, or connection failed. Try with \"Show Remote Text\" unchecked first.");
-				else
-					echo gettext("Connection failed (Refused/Timeout)");
-			} else {
-				if (is_array($result)) {
-					foreach ($result as $resline) {
-						echo htmlspecialchars($resline) . "\n";
+				$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
+				exec($nc_cmd, $result, $retval);
+				//echo "NC CMD: {$nc_cmd}\n\n";
+				if (empty($result)) {
+					if ($showtext) {
+						echo gettext("No output received, or connection failed. Try with \"Show Remote Text\" unchecked first.");
+					} else {
+						echo gettext("Connection failed (Refused/Timeout)");
 					}
 				} else {
-					echo htmlspecialchars($result);
+					if (is_array($result)) {
+						foreach ($result as $resline) {
+							echo htmlspecialchars($resline) . "\n";
+						}
+					} else {
+						echo htmlspecialchars($result);
+					}
 				}
+				echo '</textarea>&nbsp;</font>' ;
 			}
-			echo '</textarea>&nbsp;</font>' ;
-		}
-		?>
-		</td>
+			?>
+			</td>
 		</tr>
 	</table>
 </form>

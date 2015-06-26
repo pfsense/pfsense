@@ -1,7 +1,8 @@
 <?php
 /*
 	diag_states_summary.php
-	Copyright (C) 2010 Jim Pingle
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2010-2014 Jim Pingle
 
 	Portions borrowed from diag_dump_states.php:
 	Copyright (C) 2005-2009 Scott Ullrich
@@ -61,13 +62,23 @@ function addipinfo(&$iparr, $ip, $proto, $srcport, $dstport) {
 }
 
 $row = 0;
-if(count($states) > 0) {
-	foreach($states as $line) {
+if (count($states) > 0) {
+	foreach ($states as $line) {
 		$line_split = preg_split("/\s+/", $line);
-		$type  = array_shift($line_split);
+		$iface = array_shift($line_split);
 		$proto = array_shift($line_split);
 		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
+		$info = implode(" ", $line_split);
+
+		/* Handle NAT cases
+		   Replaces an external IP + NAT by the internal IP */
+		if (strpos($info, ') ->') !== FALSE) {
+			/* Outbound NAT */
+			$info = preg_replace('/(\S+) \((\S+)\)/U', "$2", $info);
+		} elseif (strpos($info, ') <-') !== FALSE) {
+			/* Inbound NAT/Port Forward */
+			$info = preg_replace('/(\S+) \((\S+)\)/U', "$1", $info);
+		}
 
 		/* break up info and extract $srcip and $dstip */
 		$ends = preg_split("/\<?-\>?/", $info);
@@ -82,7 +93,7 @@ if(count($states) > 0) {
 
 		/* Handle IPv6 */
 		$parts = explode(":", $srcinfo);
-		$partcount = count($parts);		
+		$partcount = count($parts);
 		if ($partcount <= 2) {
 			$srcip = trim($parts[0]);
 			$srcport = trim($parts[1]);
@@ -91,9 +102,9 @@ if(count($states) > 0) {
 			$srcip = $matches[1];
 			$srcport = trim($matches[3]);
 		}
-		
+
 		$parts = explode(":", $dstinfo);
-		$partcount = count($parts);		
+		$partcount = count($parts);
 		if ($partcount <= 2) {
 			$dstip = trim($parts[0]);
 			$dstport = trim($parts[1]);
@@ -118,16 +129,18 @@ function sort_by_ip($a, $b) {
 }
 
 function build_port_info($portarr, $proto) {
-	if (!$portarr)
+	if (!$portarr) {
 		return '';
+	}
 	$ports = array();
 	asort($portarr);
 	foreach (array_reverse($portarr, TRUE) as $port => $count) {
 		$str = "";
 		$service = getservbyport($port, strtolower($proto));
 		$port = "{$proto}/{$port}";
-		if ($service)
+		if ($service) {
 			$port = "{$port} ({$service})";
+		}
 		$ports[] = "{$port}: {$count}";
 	}
 	return implode($ports, ', ');
@@ -145,9 +158,11 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		<td class="listhdrr"><?=gettext("Src Ports");?></td>
 		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
 	</tr>
-<?php   if ($sort)
+<?php
+	if ($sort) {
 		uksort($iparr, "sort_by_ip");
-	foreach($iparr as $ip => $ipinfo) { ?>
+	}
+	foreach ($iparr as $ip => $ipinfo) { ?>
 	<tr>
 		<td class="vncell"><?php echo $ip; ?></td>
 		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
@@ -156,7 +171,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		<td class="vncell">&nbsp;</td>
 		<td class="vncell">&nbsp;</td>
 	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+	<?php foreach ($ipinfo['protos'] as $proto => $protoinfo) { ?>
 	<tr>
 		<td class="list">&nbsp;</td>
 		<td class="list">&nbsp;</td>
@@ -173,7 +188,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 <?php
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
+$pgtitle = array(gettext("Diagnostics"), gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
 echo "<body>";

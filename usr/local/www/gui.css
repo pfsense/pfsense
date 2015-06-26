@@ -131,7 +131,7 @@ a {
 	background-color: #FFFFFF;
 	border-right: 1px solid #999999;
 	border-bottom: 1px solid #999999;
-	border-left: 1px solid #999999;	
+	border-left: 1px solid #999999;
 	font-size: 11px;
 	padding-right: 6px;
 	padding-left: 6px;
@@ -176,13 +176,13 @@ a {
 }
 .listbggrey {
 	border-right: 1px solid #999999;
-        border-bottom: 1px solid #999999;
-        font-size: 11px;
-        background-color: #999999;
-        padding-right: 16px;
-        padding-left: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	background-color: #999999;
+	padding-right: 16px;
+	padding-left: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 .listhdr {
 	background-color: #BBBBBB;

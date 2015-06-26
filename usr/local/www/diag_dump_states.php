@@ -1,8 +1,9 @@
 <?php
 /*
 	diag_dump_states.php
-	Copyright (C) 2005-2009 Scott Ullrich
 	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2005-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -43,69 +44,73 @@ require_once("guiconfig.inc");
 require_once("interfaces.inc");
 
 /* handle AJAX operations */
-if($_GET['action']) {
-	if($_GET['action'] == "remove") {
-		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
-			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
-		} else {
-			echo gettext("invalid input");
-		}
-		return;
+if (isset($_POST['action']) && $_POST['action'] == "remove") {
+	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
+		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
+		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
+	} else {
+		echo gettext("invalid input");
 	}
+	return;
 }
 
-if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
-	if (is_ipaddr($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter'] . "/32");
-	} elseif (is_subnet($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter']);
+if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
+	if (is_ipaddr($_POST['filter'])) {
+		$tokill = $_POST['filter'] . "/32";
+	} elseif (is_subnet($_POST['filter'])) {
+		$tokill = $_POST['filter'];
 	} else {
 		// Invalid filter
 		$tokill = "";
 	}
 	if (!empty($tokill)) {
-		$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
-		$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+		$retval = pfSense_kill_states($tokill);
+		$retval = pfSense_kill_states("0.0.0.0/0", $tokill);
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <?php include("fbegin.inc"); ?>
-<form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
 //<![CDATA[
 	function removeState(srcip, dstip) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+		var busy = function(index, icon) {
+			jQuery(icon).bind("onclick", "");
+			jQuery(icon).attr('src', jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor", "wait");
 		}
 
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
 
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=remove&srcip=" + srcip + "&dstip=" + dstip,
-			{ type: "get", complete: removeComplete }
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action: "remove",
+					srcip: srcip,
+					dstip: dstip
+				},
+				complete: removeComplete
+			}
 		);
 	}
 
 	function removeComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>');
 			return;
 		}
 
 		jQuery('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+			function(index, row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -117,8 +122,9 @@ include("head.inc");
 		<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-			if (isset($config['system']['lb_use_sticky']))
+			if (isset($config['system']['lb_use_sticky'])) {
 				$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+			}
 			$tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 			display_top_tabs($tab_array);
 		?>
@@ -137,7 +143,7 @@ include("head.inc");
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states">
 	<tr>
 		<td>
-			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
+			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="post" name="iform">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="filter">
 				<tr>
 					<td>
@@ -145,9 +151,9 @@ include("head.inc");
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_POST['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
+					<?php if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
 					<?php endif; ?>
 					</td>
@@ -172,18 +178,19 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = ($_GET['filter']) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
-$fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
+$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
+$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
 while ($line = chop(fgets($fd))) {
-	if($row >= 10000)
+	if ($row >= 10000) {
 		break;
+	}
 
 	$line_split = preg_split("/\s+/", $line);
 
-	$iface  = array_shift($line_split);
+	$iface = array_shift($line_split);
 	$proto = array_shift($line_split);
 	$state = array_pop($line_split);
-	$info  = implode(" ", $line_split);
+	$info = implode(" ", $line_split);
 
 	// We may want to make this optional, with a large state table, this could get to be expensive.
 	$iface = convert_real_interface_to_friendly_descr($iface);
@@ -196,39 +203,41 @@ while ($line = chop(fgets($fd))) {
 	$dstip = trim($parts[0]);
 
 ?>
-	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
-			<td class="listlr"><?= $iface ?></td>
-			<td class="listr"><?= $proto ?></td>
-			<td class="listr"><?= $info ?></td>
-			<td class="listr"><?= $state ?></td>
-			<td class="list">
-			<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
-				onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
-				name="i:<?= $srcip ?>:<?= $dstip ?>"
-				title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
-			</td>
-	</tr>
+				<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
+					<td class="listlr"><?= $iface ?></td>
+					<td class="listr"><?= $proto ?></td>
+					<td class="listr"><?= $info ?></td>
+					<td class="listr"><?= $state ?></td>
+					<td class="list">
+						<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
+							onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
+							name="i:<?= $srcip ?>:<?= $dstip ?>"
+							title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
+					</td>
+				</tr>
 <?php
 	$row++;
 	ob_flush();
 }
 
-if ($row == 0): ?>
-	<tr>
-		<td class="list" colspan="4" align="center" valign="top">
-		<?= gettext("No states were found.") ?>
-		</td>
-	</tr>
-<?php endif;
+if ($row == 0):
+?>
+				<tr>
+					<td class="list" colspan="4" align="center" valign="top">
+						<?= gettext("No states were found.") ?>
+					</td>
+				</tr>
+<?php
+endif;
 pclose($fd);
 ?>
-			</tbody>
+				</tbody>
 			</table>
 		</td>
 	</tr>
 	<tr>
 		<td class="list" colspan="4" align="center" valign="top">
-		<?php if (!empty($_GET['filter'])): ?>
+		<?php if (isset($_POST['filter']) && !empty($_POST['filter'])): ?>
 			<?=gettext("States matching current filter")?>: <?= $row ?>
 		<?php endif; ?>
 		</td>
@@ -237,11 +246,10 @@ pclose($fd);
 
 <!-- End of tab content -->
 
-		</div>
-	</td>
-  </tr>
+			</div>
+		</td>
+	</tr>
 </table>
-</form>
 
 <?php require("fend.inc"); ?>
 </body>

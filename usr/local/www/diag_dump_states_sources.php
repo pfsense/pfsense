@@ -1,8 +1,9 @@
 <?php
 /*
-	diag_dump_states.php
-	Copyright (C) 2005-2009 Scott Ullrich
+	diag_dump_states_sources.php
 	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2005-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -28,7 +29,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
 	pfSense_MODULE:	filter
 */
 
@@ -42,8 +43,8 @@
 require_once("guiconfig.inc");
 
 /* handle AJAX operations */
-if($_GET['action']) {
-	if($_GET['action'] == "remove") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "remove") {
 		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_GET['srcip']) . " -K " . escapeshellarg($_GET['dstip']));
 			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
@@ -55,14 +56,13 @@ if($_GET['action']) {
 }
 
 /* get our states */
-if($_GET['filter']) {
+if ($_GET['filter']) {
 	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
-}
-else {
+} else {
 	exec("/sbin/pfctl -s Sources", $sources);
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show Source Tracking"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show Source Tracking"));
 include("head.inc");
 
 ?>
@@ -74,10 +74,10 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 	function removeSource(srcip, dstip) {
-		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+		var busy = function(index, icon) {
+			jQuery(icon).bind("onclick", "");
+			jQuery(icon).attr('src', jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor", "wait");
 		}
 
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
@@ -91,13 +91,13 @@ include("head.inc");
 
 	function removeComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>');
 			return;
 		}
 
 		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+			function(index, row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -153,10 +153,11 @@ include("head.inc");
 				<tbody>
 <?php
 $row = 0;
-if(count($sources) > 0) {
-	foreach($sources as $line) {
-		if($row >= 1000)
+if (count($sources) > 0) {
+	foreach ($sources as $line) {
+		if ($row >= 1000) {
 			break;
+		}
 
 		// 192.168.20.2 -> 216.252.56.1 ( states 10, connections 0, rate 0.0/0s )
 
@@ -169,23 +170,22 @@ if(count($sources) > 0) {
 		list($all, $srcip, $dstip) = $source_split;
 
 		?>
-		<tr valign='top' name='r:<?php echo "{$srcip}:{$dstip}" ?>'>
-				<td class='listlr'><?php echo $info;?></td>
-				<td class='listr'><?php echo $numstates;?></td>
-				<td class='listr'><?php echo $numconnections;?></td>
-				<td class='listr'><?php echo $rate;?></td>
-				<td class='list'>
-				<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
-					name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
-					title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
-				</td>
-			  </tr>
-		<?php
+				<tr valign='top' name='r:<?php echo "{$srcip}:{$dstip}" ?>'>
+					<td class='listlr'><?php echo $info;?></td>
+					<td class='listr'><?php echo $numstates;?></td>
+					<td class='listr'><?php echo $numconnections;?></td>
+					<td class='listr'><?php echo $rate;?></td>
+					<td class='list'>
+						<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
+							onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
+							name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
+							title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
+					</td>
+				</tr>
+<?php
 		$row++;
 	}
-}
-else {
+} else {
 	echo "<tr>
 			<td class='list' colspan='5' align='center' valign='top'>
 			  " . gettext("No source tracking entries were found.") . "
@@ -193,7 +193,7 @@ else {
 		  </tr>";
 }
 ?>
-			</tbody>
+				</tbody>
 			</table>
 		</td>
 	</tr>
@@ -201,9 +201,9 @@ else {
 
 <!-- End of tab content -->
 
-		</div>
-	</td>
-  </tr>
+			</div>
+		</td>
+	</tr>
 </table>
 
 <?php require("fend.inc"); ?>

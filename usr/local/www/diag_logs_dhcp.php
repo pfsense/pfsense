@@ -3,9 +3,10 @@
 /*
 	diag_logs_dhcp.php
 	Copyright (C) 2004-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -31,7 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	dhcpserver
 */
 
@@ -47,8 +48,9 @@ require("guiconfig.inc");
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
 if ($_POST['clear']) {
 	clear_log_file($dhcpd_logfile);
@@ -56,7 +58,7 @@ if ($_POST['clear']) {
 	services_dhcpd_configure();
 }
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("DHCP"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("DHCP"));
 $shortcut_section = "dhcp";
 include("head.inc");
 
@@ -65,7 +67,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs dhcp">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -81,23 +84,31 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Last %s DHCP service log entries"), $nentries);?></td>
-		  </tr>
-		  <?php dump_clog($dhcpd_logfile, $nentries); ?>
-		<tr><td><br /><form action="diag_logs_dhcp.php" method="post">
-			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>" /></form></td>
-			<td>NOTE: Clearing the log file will restart the DHCP daemon.</td></tr>
-		</table>
-	</div>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
+				<tr>
+					<td colspan="2" class="listtopic">
+						<?php printf(gettext("Last %s DHCP service log entries"), $nentries);?>
+					</td>
+				</tr>
+				<?php dump_clog($dhcpd_logfile, $nentries); ?>
+				<tr>
+					<td>
+						<br />
+						<form action="diag_logs_dhcp.php" method="post">
+							<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>" />
+						</form>
+					</td>
+					<td>NOTE: Clearing the log file will restart the DHCP daemon.</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

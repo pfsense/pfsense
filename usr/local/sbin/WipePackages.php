@@ -5,6 +5,7 @@
 	WipePackages.php
 	part of the pfSense project
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -29,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-if(!function_exists("readline")) {
+if (!function_exists("readline")) {
 	echo "\nThis script requires the readline() libary which is not present on this system.";
 	echo "\n\nSorry, but we cannot continue.\n";
 	die("Need readline() library");
@@ -41,23 +42,23 @@ require("config.inc");
 echo "\nThis script will wipe all installed packages off of your pfSense installation.\n";
 
 $command = readline("\nAre you sure you would like to continue [y/N]? ");
-if(strtoupper($command) == "Y" || strtoupper($command) == "YES") {
+if (strtoupper($command) == "Y" || strtoupper($command) == "YES") {
 
 	$rmconfig = readline("\nWould you like to remove all package configuration information as well [y/N]? ");
 
 	echo "\n\nStarting package wipe... One moment please... ";
 	exec("cd /var/db/pkg/ && find . -exec 'pkg_delete {}' \; ");
 	exec("rm -rf /var/db/pkg/*");
-	
-	if(strtoupper($rmconfig) == "Y" || strtoupper($rmconfig) == "YES") {
+
+	if (strtoupper($rmconfig) == "Y" || strtoupper($rmconfig) == "YES") {
 		echo "\nRemoving pfSense package configuration information...";
-		if($config['installedpackages']['package']) {
+		if ($config['installedpackages']['package']) {
 			unset($config['installedpackages']['package']);
 			write_config("Package wipe procedure completed.");
 		}
 		echo "\n";
 	}
-	
+
 	echo "\npfSense package wipe procedure has completed.\n\n";
 }
 

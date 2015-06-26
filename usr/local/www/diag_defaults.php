@@ -3,9 +3,10 @@
 /*
 	diag_defaults.php
 	Copyright (C) 2004-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -49,7 +50,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Factory defaults"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Factory defaults"));
 include("head.inc");
 
 ?>

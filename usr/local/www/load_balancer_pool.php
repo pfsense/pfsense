@@ -4,6 +4,7 @@
 	load_balancer_pool.php
 	part of pfSense (https://www.pfsense.org/)
 
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
 
@@ -91,10 +92,10 @@ for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 	$mondex[$config['load_balancer']['monitor_type'][$i]['name']] = $i;
 }
 for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">{$a_pool[$i]['monitor']}</a>";
+	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">" . htmlspecialchars($a_pool[$i]['monitor']) . "</a>";
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -109,45 +110,48 @@ include("head.inc");
 <?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer pools">
-  <tr><td class="tabnavtbl">
-  <?php
-        /* active tabs */
-        $tab_array = array();
-        $tab_array[] = array(gettext("Pools"), true, "load_balancer_pool.php");
-        $tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
-        $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
-        $tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
-        display_top_tabs($tab_array);
-  ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
+	<tr><td class="tabnavtbl">
+	<?php
+		/* active tabs */
+		$tab_array = array();
+		$tab_array[] = array(gettext("Pools"), true, "load_balancer_pool.php");
+		$tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
+		$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+		$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
+		display_top_tabs($tab_array);
+	?>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
 <?php
-			$t = new MainTable();
-			$t->edit_uri('load_balancer_pool_edit.php');
-			$t->my_uri('load_balancer_pool.php');
-			$t->add_column(gettext('Name'),'name',10);
-			$t->add_column(gettext('Mode'),'mode',10);
-			$t->add_column(gettext('Servers'),'servers',15);
-			$t->add_column(gettext('Port'),'port',10);
-			$t->add_column(gettext('Monitor'),'monitor',10);
-			$t->add_column(gettext('Description'),'descr',25);
-			$t->add_button('edit');
-			$t->add_button('dup');
-			$t->add_button('del');
-			$t->add_content_array($a_pool);
-			$t->display();
+				$t = new MainTable();
+				$t->edit_uri('load_balancer_pool_edit.php');
+				$t->my_uri('load_balancer_pool.php');
+				$t->add_column(gettext('Name'), 'name', 10);
+				$t->add_column(gettext('Mode'), 'mode', 10);
+				$t->add_column(gettext('Servers'), 'servers', 15);
+				$t->add_column(gettext('Port'), 'port', 10);
+				$t->add_column(gettext('Monitor'), 'monitor', 10);
+				$t->add_column(gettext('Description'), 'descr', 25);
+				$t->add_button('edit');
+				$t->add_button('dup');
+				$t->add_button('del');
+				$t->add_content_array($a_pool);
+				$t->display();
 ?>
-
-	</div>
-    </td>
-  </tr>
-  <tr><td>
-	<br /><span class="red"><strong><?=gettext("Hint:");?></strong></span><br />
-	<?= sprintf(gettext("The Load Balancer in %s 2.0 is for server load balancing, not Multi-WAN. For load balancing or failover for multiple WANs, use "), $g['product_name']);?>
-	<a href="/system_gateway_groups.php"><?= gettext("Gateway Groups"); ?></a>
-  </td></tr>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<br />
+			<span class="red"><strong><?=gettext("Hint:");?></strong></span>
+			<br />
+			<?= sprintf(gettext("The Load Balancer in %s 2.0 is for server load balancing, not Multi-WAN. For load balancing or failover for multiple WANs, use "), $g['product_name']);?>
+			<a href="/system_gateway_groups.php"><?= gettext("Gateway Groups"); ?></a>
+		</td>
+	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

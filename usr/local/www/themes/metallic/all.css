@@ -1,6 +1,6 @@
 /* Element CSS Definitions */
 html, body, td, th, input, select {
-	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-family: Tahoma, sans-serif;
 	font-size: 0.9em;
 }
 
@@ -78,7 +78,7 @@ div.niceTitle
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 250px;
+	width: 220px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -142,6 +142,7 @@ form {
 a {
 	text-decoration: none;
 }
+
 form input {
 	font-size: 1.1em;
 }
@@ -334,12 +335,9 @@ table#marquee div#container div#scroller {
 
 /* Style the List */
 #navigation {
-	/* background: url('images/menu.gif') no-repeat; */
-	/* width: 693px; */
 	position: relative;
 	top: -24px;
 	left: -4px;
-	width: 800px;
 	padding: 0px;
 	height: 28px;
 	z-index: 3;
@@ -359,8 +357,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	/* width: 7.5em; */
-	width: 7.47em;
+	width: 80px;
 }
 #navigation ul li div {
 	font-size: 1em;
@@ -728,7 +725,7 @@ ul#wzdnav a:active {
 }
 .listn {
 	font-size: 11px;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -739,7 +736,7 @@ ul#wzdnav a:active {
 	font-size: 11px;
 	color: #FFFFFF;
 	background-color: #990000;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -749,14 +746,14 @@ ul#wzdnav a:active {
         border-bottom: 1px solid #999999;
         font-size: 11px;
         background-color: #999999;
-        padding-right: 16px;
+        padding-right: 6px;
         padding-left: 6px;
         padding-top: 4px;
         padding-bottom: 4px;
 }
 .listhdr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-bottom: 1px solid #999999;
@@ -769,7 +766,7 @@ ul#wzdnav a:active {
 }
 .listhdrr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-right: 1px solid #999999;

@@ -3,9 +3,10 @@
 /*
 	diag_ipsec_sad.php
 	Copyright (C) 2004-2009 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -46,7 +47,7 @@
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SAD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
@@ -72,9 +73,10 @@ if ($_GET['act'] == "del") {
 				<?php
 					$tab_array = array();
 					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-					$tab_array[1] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
-					$tab_array[2] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-					$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
+					$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
+					$tab_array[2] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
+					$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+					$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>

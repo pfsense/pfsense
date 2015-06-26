@@ -1,29 +1,30 @@
 <?php
 /* $Id$ */
 /*
-  Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
-  All rights reserved.
+	rrd.inc
+	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
+	All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice,
-  this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form must reproduce the above copyright
-  notice, this list of conditions and the following disclaimer in the
-  documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-  AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 
   */
 
@@ -54,31 +55,37 @@ function restore_rrd() {
 
 	$rrdrestore = "";
 	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != "pfSense")) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
-		$_gb = exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
-		$rrdrestore = implode(" ", $rrdrestore);
-		if($rrdreturn != 0) {
-			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
-		}
 		unset($rrdrestore);
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
+		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
+		if ($rrdreturn != 0) {
+			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+			return;
+		}
+		foreach ($rrdrestore as $xml_file) {
+			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
 			if (file_exists("{$rrd_file}")) {
 				@unlink($rrd_file);
 			}
-			$output = array();
-			$status = null;
-			$_gb = exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
+			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
+			if (!file_exists("/{$xml_file}")) {
+				log_error("Could not extract {$xml_file} RRD xml file from archive!");
+				continue;
+			}
+			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
 				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unset($output);
-			@unlink($xml_file);
+			@unlink("/{$xml_file}");
 		}
+		unset($rrdrestore);
+		@unlink("{$g['tmp_path']}/rrd_restore");
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
@@ -101,7 +108,7 @@ function create_new_rrd($rrdcreatecmd) {
 }
 
 function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
-	if(!file_exists("/tmp/rrd_notice_sent.txt")) {
+	if (!file_exists("/tmp/rrd_notice_sent.txt")) {
 		$_gb = exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
 		@touch("/tmp/rrd_notice_sent.txt");
 	}
@@ -109,12 +116,12 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
+	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew , $numrranew));
 
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
-	foreach($rrdnewxml['ds'] as $ds) {
-		if(!is_array($rrdoldxml['ds'][$i])) {
+	foreach ($rrdnewxml['ds'] as $ds) {
+		if (!is_array($rrdoldxml['ds'][$i])) {
 			$rrdoldxml['ds'][$i] = $rrdnewxml['ds'][$i];
 			/* set unknown values to 0 */
 			$rrdoldxml['ds'][$i]['last_ds'] = " 0.0000000000e+00 ";
@@ -128,16 +135,16 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$rracountold = count($rrdoldxml['rra']);
 	$rracountnew = count($rrdnewxml['rra']);
 	/* process each RRA, which contain a database */
-	foreach($rrdnewxml['rra'] as $rra) {
-		if(!is_array($rrdoldxml['rra'][$i])) {
+	foreach ($rrdnewxml['rra'] as $rra) {
+		if (!is_array($rrdoldxml['rra'][$i])) {
 			$rrdoldxml['rra'][$i] = $rrdnewxml['rra'][$i];
 		}
 
 		$d = 0;
 		/* process cdp_prep */
 		$cdp_prep = $rra['cdp_prep'];
-		foreach($cdp_prep['ds'] as $ds) {
-			if(!is_array($rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d])) {
+		foreach ($cdp_prep['ds'] as $ds) {
+			if (!is_array($rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d])) {
 				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d] = $rrdnewxml['rra'][$i]['cdp_prep']['ds'][$d];
 				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['primary_value'] = " 0.0000000000e+00 ";
 				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['secondary_value'] = " 0.0000000000e+00 ";
@@ -157,28 +164,28 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 		$rowsdata = $rows;
 		$rowsempty = array();
 		$r = 0;
-		while($r < $rowcountdiff) {
+		while ($r < $rowcountdiff) {
 			$rowsempty[] = $rrdnewxml['rra'][$i]['database']['row'][$r];
 			$r++;
 		}
 		$rows = $rowsempty + $rowsdata;
 		/* now foreach the rows in the database */
-		foreach($rows['row'] as $row) {
-			if(!is_array($rrdoldxml['rra'][$i]['database']['row'][$k])) {
+		foreach ($rows['row'] as $row) {
+			if (!is_array($rrdoldxml['rra'][$i]['database']['row'][$k])) {
 				$rrdoldxml['rra'][$i]['database']['row'][$k] = $rrdnewxml['rra'][$i]['database']['row'][$k];
 			}
 			$m = 0;
 			$vcountold = count($rrdoldxml['rra'][$i]['database']['row'][$k]['v']);
 			$vcountnew = count($rrdnewxml['rra'][$i]['database']['row'][$k]['v']);
-			foreach($row['v'] as $value) {
-				if(empty($rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m])) {
-					if(isset($valid)) {
+			foreach ($row['v'] as $value) {
+				if (empty($rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m])) {
+					if (isset($valid)) {
 						$rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m] = "0.0000000000e+00 ";
 					} else {
 						$rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m] = $rrdnewxml['rra'][$i]['database']['row'][$k]['v'][$m];
 					}
 				} else {
-					if($value <> " NaN ") {
+					if ($value <> " NaN ") {
 						$valid = true;
 					} else {
 						$valid = false;
@@ -200,8 +207,9 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
-	if($g['booting'])
+	if (platform_booting()) {
 		echo gettext("Generating RRD graphs...");
+	}
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
@@ -282,7 +290,7 @@ function enable_rrd_graphing() {
 		}
 		chown($rrddbpath, "nobody");
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			restore_rrd();
 		}
 
@@ -303,17 +311,25 @@ function enable_rrd_graphing() {
 		/* IPsec counters */
 		$ifdescrs['ipsec'] = "IPsec";
 		/* OpenVPN server counters */
-		if(is_array($config['openvpn']['openvpn-server'])) {
-			foreach($config['openvpn']['openvpn-server'] as $server) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as $server) {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
 		}
 
+		if (platform_booting()) {
+			if (!is_dir("{$g['vardb_path']}/rrd")) {
+				mkdir("{$g['vardb_path']}/rrd", 0775);
+			}
+
+			@chown("{$g['vardb_path']}/rrd", "nobody");
+		}
+
 		/* process all real and pseudo interfaces */
 		foreach ($ifdescrs as $ifname => $ifdescr) {
 			$temp = get_real_interface($ifname);
-			if($temp <> "") {
+			if ($temp <> "") {
 				$realif = $temp;
 			}
 
@@ -338,7 +354,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
+			if (platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U:U:U:U:U");
 			}
 
@@ -371,7 +387,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
+			if (platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U:U:U:U:U");
 			}
 
@@ -384,7 +400,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "END {print b4pi \":\" b4po \":\" b4bi \":\" b4bo \":\" b6pi \":\" b6po \":\" b6bi \":\" b6bo};'`\n";
 
 			/* WIRELESS, set up the rrd file */
-			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
+			if ($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
 				if (!file_exists("$rrddbpath$ifname$wireless")) {
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$wireless --step $rrdwirelessinterval ";
 					$rrdcreate .= "DS:snr:GAUGE:$wirelessvalid:0:1000 ";
@@ -400,7 +416,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if (platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
 				}
 
@@ -411,7 +427,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* OpenVPN, set up the rrd file */
-			if(stristr($ifname, "ovpns")) {
+			if (stristr($ifname, "ovpns")) {
 				if (!file_exists("$rrddbpath$ifname$vpnusers")) {
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$vpnusers --step $rrdvpninterval ";
 					$rrdcreate .= "DS:users:GAUGE:$vpnvalid:0:10000 ";
@@ -425,13 +441,13 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if (platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$vpnusers N:U");
 				}
 
-				if(is_array($config['openvpn']['openvpn-server'])) {
-					foreach($config['openvpn']['openvpn-server'] as $server) {
-						if("ovpns{$server['vpnid']}" == $ifname) {
+				if (is_array($config['openvpn']['openvpn-server'])) {
+					foreach ($config['openvpn']['openvpn-server'] as $server) {
+						if ("ovpns{$server['vpnid']}" == $ifname) {
 							$port = $server['local_port'];
 							$vpnid = $server['vpnid'];
 						}
@@ -469,7 +485,7 @@ function enable_rrd_graphing() {
 							break;
 				}
 				$qbandwidth = $altq->GetBandwidth() * $factor;
-				if ($qbandwidth <=0) {
+				if ($qbandwidth <= 0) {
 					$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 				}
 				$qlist =& $altq->get_queue_list($notused);
@@ -507,12 +523,12 @@ function enable_rrd_graphing() {
 					unset($rrdcreate);
 				}
 
-				if($g['booting']) {
+				if (platform_booting()) {
 					$rrdqcommand = "-t ";
 					$rrducommand = "N";
 					$qi = 0;
 					foreach ($qlist as $qname => $q) {
-						if($qi == 0) {
+						if ($qi == 0) {
 							$rrdqcommand .= "{$qname}";
 						} else {
 							$rrdqcommand .= ":{$qname}";
@@ -560,7 +576,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* 3G interfaces */
-			if(preg_match("/ppp[0-9]+/i", $realif))	{
+			if (preg_match("/ppp[0-9]+/i", $realif))	{
 				if (!file_exists("$rrddbpath$ifname$cellular")) {
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$cellular --step $rrdcellularinterval ";
 					$rrdcreate .= "DS:rssi:GAUGE:$cellularvalid:0:100 ";
@@ -575,7 +591,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if (platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U:U");
 				}
 
@@ -592,7 +608,7 @@ function enable_rrd_graphing() {
 		$ifname = "system";
 
 		/* STATES, create pf states database */
-		if(! file_exists("$rrddbpath$ifname$states")) {
+		if (!file_exists("$rrddbpath$ifname$states")) {
 			$rrdcreate = "$rrdtool create $rrddbpath$ifname$states --step $rrdstatesinterval ";
 			$rrdcreate .= "DS:pfrate:GAUGE:$statesvalid:0:10000000 ";
 			$rrdcreate .= "DS:pfstates:GAUGE:$statesvalid:0:10000000 ";
@@ -609,7 +625,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if (platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$states N:U:U:U:U:U");
 		}
 
@@ -627,7 +643,7 @@ function enable_rrd_graphing() {
 		/* End pf states statistics */
 
 		/* CPU, create CPU statistics database */
-		if(! file_exists("$rrddbpath$ifname$proc")) {
+		if (!file_exists("$rrddbpath$ifname$proc")) {
 			$rrdcreate = "$rrdtool create $rrddbpath$ifname$proc --step $rrdprocinterval ";
 			$rrdcreate .= "DS:user:GAUGE:$procvalid:0:10000000 ";
 			$rrdcreate .= "DS:nice:GAUGE:$procvalid:0:10000000 ";
@@ -644,7 +660,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if (platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$proc N:U:U:U:U:U");
 		}
 
@@ -657,7 +673,7 @@ function enable_rrd_graphing() {
 		/* End CPU statistics */
 
 		/* Memory, create Memory statistics database */
-		if(! file_exists("$rrddbpath$ifname$mem")) {
+		if (!file_exists("$rrddbpath$ifname$mem")) {
 			$rrdcreate = "$rrdtool create $rrddbpath$ifname$mem --step $rrdmeminterval ";
 			$rrdcreate .= "DS:active:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "DS:inactive:GAUGE:$memvalid:0:10000000 ";
@@ -682,7 +698,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if (platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
 		}
 
@@ -695,7 +711,7 @@ function enable_rrd_graphing() {
 		/* End Memory statistics */
 
 		/* mbuf, create mbuf statistics database */
-		if(! file_exists("$rrddbpath$ifname$mbuf")) {
+		if (!file_exists("$rrddbpath$ifname$mbuf")) {
 			$rrdcreate = "$rrdtool create $rrddbpath$ifname$mbuf --step $rrdmbufinterval ";
 			$rrdcreate .= "DS:current:GAUGE:$mbufvalid:0:10000000 ";
 			$rrdcreate .= "DS:cache:GAUGE:$mbufvalid:0:10000000 ";
@@ -719,7 +735,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if (platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U");
 		}
 
@@ -732,7 +748,7 @@ function enable_rrd_graphing() {
 
 		/* SPAMD, set up the spamd rrd file */
 		if (isset($config['installedpackages']['spamdsettings']) &&
-			 $config['installedpackages']['spamdsettings']['config'][0]['enablerrd']) {
+		    $config['installedpackages']['spamdsettings']['config'][0]['enablerrd']) {
 			/* set up the spamd rrd file */
 			if (!file_exists("$rrddbpath$ifname$spamd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$spamd --step $rrdspamdinterval ";
@@ -764,10 +780,11 @@ function enable_rrd_graphing() {
 		/* End System statistics */
 
 		/* Captive Portal statistics, set up the rrd file */
-		if(is_array($config['captiveportal'])) {
+		if (is_array($config['captiveportal'])) {
 			foreach ($config['captiveportal'] as $cpkey => $cp) {
-				if (!isset($cp['enable']))
+				if (!isset($cp['enable'])) {
 					continue;
+				}
 
 				$ifname= "captiveportal";
 				$concurrent_filename = $rrddbpath . $ifname . '-' . $cpkey . $captiveportalconcurrent;
@@ -796,7 +813,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if (platform_booting()) {
 					mwexec("$rrdtool update $concurrent_filename N:U");
 				}
 
@@ -832,7 +849,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if (platform_booting()) {
 					mwexec("$rrdtool update $loggedin_filename N:U");
 				}
 
@@ -875,8 +892,8 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
-			mwexec("$rrdtool update $rrddbpath$ntpd N:U:U:U:U:U:U");
+			if (platform_booting()) {
+				mwexec("$rrdtool update $rrddbpath$ntpd N:U:U:U:U:U:U");
 			}
 
 			/* the ntp stats gathering function. */
@@ -918,18 +935,20 @@ function enable_rrd_graphing() {
 	}
 
 	$databases = glob("{$rrddbpath}/*.rrd");
-	foreach($databases as $database) {
+	foreach ($databases as $database) {
 		chown($database, "nobody");
 	}
 
-	if($g['booting'])
+	if (platform_booting()) {
 		echo gettext("done.") . "\n";
+	}
 
 }
 
 # Create gateway quality RRD with settings suitable for pfSense graph set.
 function create_gateway_quality_rrd($rrd_file) {
 	global $g;
+
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
@@ -949,7 +968,13 @@ function create_gateway_quality_rrd($rrd_file) {
 	}
 
 	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-	if($g['booting']) {
+	if (platform_booting()) {
+		if (!is_dir("{$g['vardb_path']}/rrd")) {
+			mkdir("{$g['vardb_path']}/rrd", 0775);
+		}
+
+		@chown("{$g['vardb_path']}/rrd", "nobody");
+
 		mwexec("$rrdtool update $rrd_file N:U:U");
 	}
 	unset($rrdtool, $rrdinterval, $valid, $rrd_file);

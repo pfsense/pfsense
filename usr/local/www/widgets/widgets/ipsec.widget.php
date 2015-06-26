@@ -1,34 +1,36 @@
 <?php
 /*
-        $Id$
-        Copyright 2007 Scott Dale
-        Part of pfSense widgets (https://www.pfsense.org)
-        originally based on m0n0wall (http://m0n0.ch/wall)
+	ipsec.widget.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
-        Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-        and Jonathan Watt <jwatt@jwatt.org>.
-        All rights reserved.
+	Copyright 2007 Scott Dale
+	Part of pfSense widgets (https://www.pfsense.org)
+	originally based on m0n0wall (http://m0n0.ch/wall)
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
+	and Jonathan Watt <jwatt@jwatt.org>.
+	All rights reserved.
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 $nocsrf = true;
@@ -37,9 +39,10 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
-if (isset($config['ipsec']['phase1'])){?>
+if (isset($config['ipsec']['phase1'])) {
+?>
 	<div>&nbsp;</div>
-	<?php
+<?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
 	$tab_array[1] = array("Tunnels", false, "ipsec-tunnel");
@@ -49,61 +52,112 @@ if (isset($config['ipsec']['phase1'])){?>
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
+	$ipsec_status = ipsec_smp_dump_status();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
 
+	if (!is_array($ipsec_status['query'])) {
+		$ipsec_status['query'] = array();
+		$ipsec_status['query']['ikesalist'] = array();
+		$ipsec_status['query']['ikesalist']['ikesa'] = array();
+	} else if (!is_array($ipsec_status['query']['ikesalist'])) {
+		$ipsec_status['query']['ikesalist'] = array();
+		$ipsec_status['query']['ikesalist']['ikesa'] = array();
+	} else if (!is_array($ipsec_status['query']['ikesalist']['ikesa'])) {
+		$ipsec_status['query']['ikesalist']['ikesa'] = array();
+	}
+
 	$ipsec_detail_array = array();
-	foreach ($config['ipsec']['phase2'] as $ph2ent){
-		if ($ph2ent['remoteid']['type'] == "mobile")
-			continue;
-		ipsec_lookup_phase1($ph2ent,$ph1ent);
-		$ipsecstatus = false;
+	$ikenum = array();
+	if (isset($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase2'] as $ph2ent) {
+			if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
+				continue;
+			}
 
-		$tun_disabled = "false";
-		$foundsrc = false;
-		$founddst = false;
+			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
+				continue;
+			}
+			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
+				continue;
+			}
 
-		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-			$tun_disabled = "true";
-			continue;
-		}
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
+				if (!isset($ikenum[$ph1ent['ikeid']])) {
+					$ikenum[$ph1ent['ikeid']] = 0;
+				} else {
+					$ikenum[$ph1ent['ikeid']]++;
+				}
+				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
+			} else {
+				if (isset($ikenum[$ph1ent['ikeid']])) {
+					continue;
+				}
+				$ikeid = "con{$ph1ent['ikeid']}";
+				$ikenum[$ph1ent['ikeid']] = true;
+			}
 
-		if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
-			/* tunnel is up */
-			$iconfn = "true";
-			$activecounter++;
-		} else {
-			/* tunnel is down */
-			$iconfn = "false";
-			$inactivecounter++;
-		}
+			$found = false;
+			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
+				if (isset($ikesa['childsalist']) && isset($ikesa['childsalist']['childsa'])) {
+					foreach ($ikesa['childsalist']['childsa'] as $childsa) {
+						if ($ikeid == $childsa['childconfig']) {
+							$found = true;
+							break;
+						}
+					}
+				} else if ($ikeid == $ikesa['peerconfig']) {
+					$found = true;
+				}
 
-		$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+				if ($found === true) {
+					if ($ikesa['status'] == 'established') {
+						/* tunnel is up */
+						$iconfn = "true";
+						$activecounter++;
+					} else {
+						/* tunnel is down */
+						$iconfn = "false";
+						$inactivecounter++;
+					}
+					break;
+				}
+			}
+
+			if ($found === false) {
+				/* tunnel is down */
+				$iconfn = "false";
+				$inactivecounter++;
+			}
+
+			$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
 					'dest' => $ph1ent['remote-gateway'],
 					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
 					'descr' => $ph2ent['descr'],
-					'status' => $iconfn,
-					'disabled' => $tun_disabled);
+					'status' => $iconfn);
+		}
 	}
+	unset($ikenum);
 }
 
-	if (isset($config['ipsec']['phase2'])){ ?>
+if (isset($config['ipsec']['phase2'])) {
+?>
 
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
-	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="heading">
-	<tr>
-		<td class="listhdrr nowrap">Active Tunnels</td>
-		<td class="listhdrr nowrap">Inactive Tunnels</td>
-		<td class="listhdrr nowrap">Mobile Users</td>
-	</tr>
-	<tr>
-		<td class="listlr"><?php echo $activecounter; ?></td>
-		<td class="listr"><?php echo $inactivecounter; ?></td>
-		<td class="listr"><?php echo count($mobile); ?></td>
-	</tr>
-	</table>
+		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="heading">
+			<tr>
+				<td class="listhdrr nowrap">Active Tunnels</td>
+				<td class="listhdrr nowrap">Inactive Tunnels</td>
+				<td class="listhdrr nowrap">Mobile Users</td>
+			</tr>
+			<tr>
+				<td class="listlr"><?php echo $activecounter; ?></td>
+				<td class="listr"><?php echo $inactivecounter; ?></td>
+				<td class="listr"><?php if (is_array($mobile['pool'])) echo htmlspecialchars($mobile['pool'][0]['usage']); else echo 0; ?></td>
+			</tr>
+		</table>
 	</div>
 </div>
 
@@ -116,94 +170,96 @@ if (isset($config['ipsec']['phase1'])){?>
 			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-	<?php
-	foreach ($ipsec_detail_array as $ipsec) :
 
-		if ($ipsec['disabled'] == "true"){
-			$spans = "<span class=\"gray\">";
-			$spane = "</span>";
-		}
-		else {
-			$spans = $spane = "";
-		}
-
+		<?php
+		foreach ($ipsec_detail_array as $ipsec) :
 		?>
 
-		<div style="display:table-row;">
-			<div class="listlr" style="display:table-cell;width:39px">
-				<?php echo $spans;?>
+			<div style="display:table-row;">
+				<div class="listlr" style="display:table-cell;width:39px">
 					<?php echo htmlspecialchars($ipsec['src']);?>
-				<?php echo $spane;?>
+				</div>
+				<div class="listr"  style="display:table-cell;width:100px">
+					<?php echo $ipsec['remote-subnet'];?>
+					<br />
+					(<?php echo htmlspecialchars($ipsec['dest']);?>)
+				</div>
+				<div class="listr"  style="display:table-cell;width:90px">
+					<?php echo htmlspecialchars($ipsec['descr']);?>
+				</div>
+				<div class="listr"  style="display:table-cell;width:37px" align="center">
+				<?php
+				if ($ipsec['status'] == "true") {
+					/* tunnel is up */
+					$iconfn = "interface_up";
+				} else {
+					/* tunnel is down */
+					$iconfn = "interface_down";
+				}
+
+				echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='Tunnel status' width='11' height='11' />";
+				?>
+				</div>
 			</div>
-			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
-				<?php echo $ipsec['remote-subnet'];?>
-				<br />
-				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
-			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
-			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
-			<?php
-
-			if($ipsec['status'] == "true") {
-				/* tunnel is up */
-				$iconfn = "interface_up";
-			} else {
-				/* tunnel is down */
-				$iconfn = "interface_down";
-			}
-
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='Tunnel status' width='11' height='11' />";
-
-			?><?php echo $spane;?></div>
+		<?php 
+		endforeach;
+		?>
 		</div>
-	<?php endforeach; ?>
 	</div>
- </div>
 </div>
 <div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
-			<div class="widgetsubheader" style="display:table-cell;width:140px">User/Time</div>
-			<div class="widgetsubheader" style="display:table-cell;width:130px">Local/Remote</div>
-			<div class="widgetsubheader" style="display:table-cell;width:30px">&nbsp;</div>
+			<div class="widgetsubheader" style="display:table-cell;width:140px">User</div>
+			<div class="widgetsubheader" style="display:table-cell;width:130px">IP</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-<?php	foreach ($mobile as $muser) : ?>
-		<div style="display:table-row;">
-			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo htmlspecialchars($muser['username']);?><br />
-				<?php echo htmlspecialchars($muser['logintime']);?>
+<?php
+	if (is_array($mobile['pool'])):
+		foreach ($mobile['pool'] as $pool):
+			if (is_array($pool['lease'])):
+				foreach ($pool['lease'] as $muser) :
+?>
+			<div style="display:table-row;">
+				<div class="listlr" style="display:table-cell;width:139px">
+					<?php echo htmlspecialchars($muser['id']);?><br />
+				</div>
+				<div class="listr"  style="display:table-cell;width:130px">
+					<?php echo htmlspecialchars($muser['host']);?><br />
+				</div>
+				<div class="listr"  style="display:table-cell;width:30px">
+					<?php echo htmlspecialchars($muser['status']);?><br/>
+				</div>
 			</div>
-			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo htmlspecialchars($muser['local']);?><br />
-				<?php echo htmlspecialchars($muser['remote']);?>
-			</div>
-			<div class="listr"  style="display:table-cell;width:30px" align="center">
-				<a href="diag_ipsec.php?act=disconnect&amp;user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt='x' /></a>
-			</div>
-		</div>
-<?php	endforeach; ?>
+<?php
+				endforeach;
+			endif;
+		endforeach;
+	endif;
+?>
 		</div>
 	</div>
 </div>
-<?php //end ipsec tunnel
-}//end if tunnels are configured, else show code below
-else { ?>
+<?php // end if tunnels are configured, else show code below
+} else {
+?>
 <div style="display:block">
-	 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="note">
-	  <tr>
-	    <td colspan="4">
-	        <span class="vexpl">
-	          <span class="red">
-	            <strong>
-	              Note: There are no configured IPsec Tunnels<br />
-	            </strong>
-	          </span>
-	          You can configure your IPsec
-	          <a href="vpn_ipsec.php">here</a>.
-	        </span>
-		</td>
-	  </tr>
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="note">
+		<tr>
+			<td colspan="4">
+				<span class="vexpl">
+					<span class="red">
+						<strong>
+							Note: There are no configured IPsec Tunnels<br />
+						</strong>
+					</span>
+					You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
+				</span>
+			</td>
+		</tr>
 	</table>
 </div>
-<?php } ?>
+<?php
+}
+?>

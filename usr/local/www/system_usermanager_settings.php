@@ -1,12 +1,13 @@
 <?php
 /* $Id$ */
 /*
+	system_usermanager_settings.php
+
 	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
-
 	Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -48,39 +49,44 @@ $pconfig['authmode'] = &$config['system']['webgui']['authmode'];
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
-$pgtitle = array(gettext("System"),gettext("User manager settings"));
+$pgtitle = array(gettext("System"), gettext("User manager settings"));
 
 $save_and_test = false;
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if(isset($_POST['session_timeout'])) {
+	if (isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0))
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0)) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
+		}
 	}
 
 	if (!$input_errors) {
 		if ($_POST['authmode'] != "local") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
-			if ($_POST['savetest'])
-				if ($authsrv['type'] == "ldap")
+			if ($_POST['savetest']) {
+				if ($authsrv['type'] == "ldap") {
 					$save_and_test = true;
-				else
+				} else {
 					$savemsg = gettext("The test was not performed because it is supported only for ldap based backends.");
+				}
+			}
 		}
 
 
-		if(isset($_POST['session_timeout']) && $_POST['session_timeout'] != "")
+		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
-		else
+		} else {
 			unset($config['system']['webgui']['session_timeout']);
+		}
 
-		if($_POST['authmode'])
+		if ($_POST['authmode']) {
 			$config['system']['webgui']['authmode'] = $_POST['authmode'];
-		else
+		} else {
 			unset($config['system']['webgui']['authmode']);
+		}
 
 		write_config();
 
@@ -90,13 +96,13 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
 
 <?php
-	if($save_and_test) {
+	if ($save_and_test) {
 		echo "<script type=\"text/javascript\">\n";
 		echo "//<![CDATA[\n";
 		echo "myRef = window.open('system_usermanager_settings_test.php?authserver={$pconfig['authmode']}','mywin', ";
@@ -119,8 +125,9 @@ include("head.inc");
 				display_top_tabs($tab_array);
 
 				/* Default to pfsense backend type if none is defined */
-				if(!$pconfig['backend'])
+				if (!$pconfig['backend']) {
 					$pconfig['backend'] = "pfsense";
+				}
 ?>
 			</td>
 		</tr>
@@ -146,10 +153,12 @@ include("head.inc");
 									$auth_servers = auth_get_authserver_list();
 									foreach ($auth_servers as $auth_server):
 										$selected = "";
-										if ($auth_server['name'] == $pconfig['authmode'])
+										if ($auth_server['name'] == $pconfig['authmode']) {
 											$selected = "selected=\"selected\"";
-										if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
+										}
+										if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database") {
 											$selected = "selected=\"selected\"";
+										}
 ?>
 										<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
 <?php

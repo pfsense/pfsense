@@ -2,17 +2,18 @@
 /*
 	diag_logs_filter_summary.php
 	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -26,8 +27,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
-	pfSense_BUILDER_BINARIES:	
+/*
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	filter
 */
 
@@ -53,16 +54,16 @@ $fields = array(
 
 $summary = array();
 foreach (array_keys($fields) as $f) {
-	$summary[$f]  = array();
+	$summary[$f] = array();
 }
 
 $totals = array();
 
 function cmp($a, $b) {
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a < $b) ? 1 : -1;
+	if ($a == $b) {
+		return 0;
+	}
+	return ($a < $b) ? 1 : -1;
 }
 
 function stat_block($summary, $stat, $num) {
@@ -73,7 +74,7 @@ function stat_block($summary, $stat, $num) {
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
-	for ($i=0; $i < $num; $i++) {
+	for ($i = 0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
@@ -83,8 +84,9 @@ function stat_block($summary, $stat, $num) {
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
-				if ($service)
+				if ($service) {
 					$outstr .= ": {$service}";
+				}
 			}
 			print "<tr><td>{$outstr}</td><td width=\"50\" align=\"right\">{$summary[$stat][$k[$i]]}</td></tr>";
 		}
@@ -104,7 +106,7 @@ function pie_block($summary, $stat, $num) {
 	$numentries = 0;
 	print "\n<script type=\"text/javascript\">\n";
 	print "//<![CDATA[\n";
-	for ($i=0; $i < $num; $i++) {
+	for ($i = 0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
@@ -121,17 +123,19 @@ function pie_block($summary, $stat, $num) {
 	print "Event.observe(window, 'load', function() {\n";
 	print "	new Proto.Chart($('piechart{$stat}'),\n";
 	print "	[\n";
-	for ($i=0; $i < $num; $i++) {
+	for ($i = 0; $i < $num; $i++) {
 		if ($k[$i]) {
 			print "		{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
-			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
+			if (!(($i == ($numentries - 1)) && ($leftover <= 0))) {
 				print ",\n";
-			else
+			} else {
 				print "\n";
+			}
 		}
 	}
-	if ($leftover > 0)
+	if ($leftover > 0) {
 		print "		{ data: d{$stat}{$i}, label: \"Other\"}\n";
+	}
 	print "	],\n";
 	print "	{\n";
 	print "		pies: {show: true, autoScale: true},\n";
@@ -149,22 +153,25 @@ function pie_block($summary, $stat, $num) {
 foreach ($filterlog as $fe) {
 	$specialfields = array('srcport', 'dstport');
 	foreach (array_keys($fields) as $field) {
-		if (!in_array($field, $specialfields))
+		if (!in_array($field, $specialfields)) {
 			$summary[$field][$fe[$field]]++;
+		}
 	}
 	/* Handle some special cases */
-	if ($fe['srcport'])
+	if ($fe['srcport']) {
 		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
-	else
+	} else {
 		$summary['srcport'][$fe['srcport']]++;
-	if ($fe['dstport'])
+	}
+	if ($fe['dstport']) {
 		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
-	else
+	} else {
 		$summary['dstport'][$fe['dstport']]++;
+	}
 }
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
 <script type="text/javascript" src="/protochart/prototype.js"></script>
 <script type="text/javascript" src="/protochart/ProtoChart.js"></script>
@@ -182,7 +189,8 @@ include("head.inc"); ?>
 
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter summary">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -198,8 +206,10 @@ include("head.inc"); ?>
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
- </td></tr>
-  <tr><td class="tabnavtbl">
+		</td>
+	</tr>
+	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
@@ -209,27 +219,30 @@ include("head.inc"); ?>
 ?>
 		</td>
 	</tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
-		<tr><td align="center">
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
+				<tr>
+					<td align="center">
 
 <?php printf (gettext('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines)?><br />
 <?=gettext("NOTE: IE8 users must enable compatibility view.")?>
 
 <?php
-foreach(array_keys($fields) as $field) {
+foreach (array_keys($fields) as $field) {
 	pie_block($summary, $field , $entriesperblock);
 	echo "<br /><br />";
 	stat_block($summary, $field , $entriesperblock);
 	echo "<br /><br />";
 }
 ?>
-		</td></tr></table>
-		</div>
-	</td>
-  </tr>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

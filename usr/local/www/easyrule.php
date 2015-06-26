@@ -2,6 +2,7 @@
 /*
 	easyrule.php
 
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
 	Originally Sponsored By Anathematic @ pfSense Forums
 	All rights reserved.
@@ -60,11 +61,12 @@ if ($_GET && isset($_GET['action'])) {
 	}
 }
 
-if(stristr($retval, "error") == true)
-    $message = $retval;
+if (stristr($retval, "error") == true) {
+	$message = $retval;
+}
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>

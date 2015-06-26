@@ -2,9 +2,10 @@
 /*
 	system_routes_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-
+	part of pfSense
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2010 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -44,30 +45,37 @@ require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 
-if (!is_array($config['staticroutes']['route']))
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+
+if (!is_array($config['staticroutes']['route'])) {
 	$config['staticroutes']['route'] = array();
+}
 
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true);
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	$id = $_GET['dup'];
+}
 
 if (isset($id) && $a_routes[$id]) {
-	list($pconfig['network'],$pconfig['network_subnet']) =
+	list($pconfig['network'], $pconfig['network_subnet']) =
 		explode('/', $a_routes[$id]['network']);
 	$pconfig['gateway'] = $a_routes[$id]['gateway'];
 	$pconfig['descr'] = $a_routes[$id]['descr'];
 	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
+}
 
 if ($_POST) {
 
@@ -79,9 +87,9 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "network network_subnet gateway");
 	$reqdfieldsn = explode(",",
-			gettext("Destination network") . "," .
-			gettext("Destination network bit count") . "," .
-			gettext("Gateway"));
+		gettext("Destination network") . "," .
+		gettext("Destination network bit count") . "," .
+		gettext("Gateway"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -92,53 +100,62 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid destination network bit count must be specified.");
 	}
 	if (($_POST['gateway']) && is_ipaddr($_POST['network'])) {
-		if (!isset($a_gateways[$_POST['gateway']]))
+		if (!isset($a_gateways[$_POST['gateway']])) {
 			$input_errors[] = gettext("A valid gateway must be specified.");
-		if(!validate_address_family($_POST['network'], lookup_gateway_ip_by_name($_POST['gateway'])))
+		}
+		if (!validate_address_family($_POST['network'], $_POST['gateway'])) {
 			$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family as network '{$_POST['network']}'.");
+		}
 	}
 
 	/* check for overlaps */
 	$current_targets = get_staticroutes(true);
 	$new_targets = array();
-	if(is_ipaddrv6($_POST['network'])) {
+	if (is_ipaddrv6($_POST['network'])) {
 		$osn = gen_subnetv6($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
 		$new_targets[] = $osn;
 	}
 	if (is_ipaddrv4($_POST['network'])) {
-		if($_POST['network_subnet'] > 32)
+		if ($_POST['network_subnet'] > 32) {
 			$input_errors[] = gettext("A IPv4 subnet can not be over 32 bits.");
-		else {
+		} else {
 			$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
 			$new_targets[] = $osn;
 		}
 	} elseif (is_alias($_POST['network'])) {
 		$osn = $_POST['network'];
 		foreach (preg_split('/\s+/', $aliastable[$osn]) as $tgt) {
-			if (is_ipaddrv4($tgt))
+			if (is_ipaddrv4($tgt)) {
 				$tgt .= "/32";
-			if (is_ipaddrv6($tgt))
+			}
+			if (is_ipaddrv6($tgt)) {
 				$tgt .= "/128";
-			if (!is_subnet($tgt))
+			}
+			if (!is_subnet($tgt)) {
 				continue;
-			if (!is_subnetv6($tgt))
+			}
+			if (!is_subnetv6($tgt)) {
 				continue;
+			}
 			$new_targets[] = $tgt;
 		}
 	}
-	if (!isset($id))
+	if (!isset($id)) {
 		$id = count($a_routes);
+	}
 	$oroute = $a_routes[$id];
 	$old_targets = array();
 	if (!empty($oroute)) {
 		if (is_alias($oroute['network'])) {
 			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
-				if (is_ipaddrv4($tgt))
+				if (is_ipaddrv4($tgt)) {
 					$tgt .= "/32";
-				else if (is_ipaddrv6($tgt))
+				} else if (is_ipaddrv6($tgt)) {
 					$tgt .= "/128";
-				if (!is_subnet($tgt))
+				}
+				if (!is_subnet($tgt)) {
 					continue;
+				}
 				$old_targets[] = $tgt;
 			}
 		} else {
@@ -154,19 +171,19 @@ if ($_POST) {
 
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $if) {
-			if (is_ipaddrv4($_POST['network'])
-				&& isset($if['ipaddr']) && isset($if['subnet'])
-				&& is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet'])
-				&& ($_POST['network_subnet'] == $if['subnet'])
-				&& (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet'])))
+			if (is_ipaddrv4($_POST['network']) &&
+			    isset($if['ipaddr']) && isset($if['subnet']) &&
+			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
+			    ($_POST['network_subnet'] == $if['subnet']) &&
+			    (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
 					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
-
-			else if (is_ipaddrv6($_POST['network'])
-				&& isset($if['ipaddrv6']) && isset($if['subnetv6'])
-				&& is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6'])
-				&& ($_POST['network_subnet'] == $if['subnetv6'])
-				&& (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6'])))
+			} else if (is_ipaddrv6($_POST['network']) &&
+			    isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
+			    is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
+			    ($_POST['network_subnet'] == $if['subnetv6']) &&
+			    (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
 					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
+			}
 		}
 	}
 
@@ -175,25 +192,29 @@ if ($_POST) {
 		$route['network'] = $osn;
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
-		if ($_POST['disabled'])
+		if ($_POST['disabled']) {
 			$route['disabled'] = true;
-		else
+		} else {
 			unset($route['disabled']);
+		}
 
-		if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
+		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
-		else
+		} else {
 			$toapplylist = array();
+		}
 		$a_routes[$id] = $route;
 
 		if (!empty($oroute)) {
 			$delete_targets = array_diff($old_targets, $new_targets);
-			if (count($delete_targets))
+			if (count($delete_targets)) {
 				foreach ($delete_targets as $dts) {
-					if(is_ipaddrv6($dts))
+					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
+					}
 					$toapplylist[] = "/sbin/route delete {$family} {$dts}";
 				}
+			}
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 
@@ -206,14 +227,14 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
+$pgtitle = array(gettext("System"), gettext("Static Routes"), gettext("Edit route"));
 $shortcut_section = "routing";
 include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -244,8 +265,9 @@ include("head.inc");
 					<?php
 						foreach ($a_gateways as $gateway) {
 							echo "<option value='{$gateway['name']}' ";
-							if ($gateway['name'] == $pconfig['gateway'])
+							if ($gateway['name'] == $pconfig['gateway']) {
 								echo "selected=\"selected\"";
+							}
 							echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
 						}
 					?>
@@ -275,8 +297,9 @@ include("head.inc");
 											<td>
 												<select name="addinterfacegw" id="addinterfacegw">
 												<?php $gwifs = get_configured_interface_with_descr();
-													foreach($gwifs as $fif => $dif)
+													foreach ($gwifs as $fif => $dif) {
 														echo "<option value=\"{$fif}\">{$dif}</option>\n";
+													}
 												?>
 												</select>
 											</td>
@@ -326,7 +349,8 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()" />
+					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_routes[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
@@ -366,8 +390,9 @@ include("head.inc");
 		gatewayip = jQuery('#gatewayip').val();
 		addrtype = jQuery('#addrtype').val();
 		var defaultgw = '';
-		if (jQuery('#defaultgw').checked)
+		if (jQuery('#defaultgw').checked) {
 			defaultgw = 'yes';
+		}
 		var url = "system_gateways_edit.php";
 		var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
 		jQuery.ajax(
@@ -379,13 +404,12 @@ include("head.inc");
 				complete: save_callback
 		});
 	}
-	function addOption(selectbox,text,value)
-	{
+	function addOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
 		selectbox.append(optn);
-		selectbox.prop('selectedIndex',selectbox.children('option').length-1);
+		selectbox.prop('selectedIndex', selectbox.children('option').length-1);
 		jQuery('#notebox').html("<p><strong><?=gettext("NOTE:");?><\/strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_blank' href='system_gateways.php'>", "<\/a>");?> <\/strong><\/p>");
 	}
 	function report_failure() {

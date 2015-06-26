@@ -1,31 +1,34 @@
 <?php
 /*
-    Original status page code from: services_dyndns.php
-    Copyright (C) 2008 Ermal Luci
-    Edits to convert it to a widget: dyn_dns_status.widget.php
-    Copyright (C) 2013 Stanley P. Miller \ stan-qaz
-    All rights reserved.
+	Original status page code from: services_dyndns.php
+	Copyright (C) 2008 Ermal Luçi
+	Edits to convert it to a widget: dyn_dns_status.widget.php
+	Copyright (C) 2013 Stanley P. Miller \ stan-qaz
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/host
@@ -39,29 +42,32 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/dyn_dns_status.inc");
 
-if (!is_array($config['dyndnses']['dyndns']))
+if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
+}
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-if($_REQUEST['getdyndnsstatus']) {
+if ($_REQUEST['getdyndnsstatus']) {
 	$first_entry = true;
 	foreach ($a_dyndns as $dyndns) {
-		if ($first_entry)
+		if ($first_entry) {
 			$first_entry = false;
-		else
+		} else {
 			// Put a vertical bar delimiter between the echoed HTML for each entry processed.
 			echo "|";
+		}
 
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 		if (file_exists($filename)) {
 			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = split(":", file_get_contents($filename));
+			$cached_ip_s = explode(':', file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
-			if ($ipaddr <> $cached_ip)
+			if ($ipaddr <> $cached_ip) {
 				echo "<font color='red'>";
-			else
+			} else {
 				echo "<font color='green'>";
+			}
 			echo htmlspecialchars($cached_ip);
 			echo "</font>";
 		} else {
@@ -86,20 +92,22 @@ if($_REQUEST['getdyndnsstatus']) {
 		<?php $iflist = get_configured_interface_with_descr();
 		foreach ($iflist as $if => $ifdesc) {
 			if ($dyndns['interface'] == $if) {
-				if (!isset($dyndns['enable']))
+				if (!isset($dyndns['enable'])) {
 					echo "<span class=\"gray\">{$ifdesc}</span>";
-				else
+				} else {
 					echo "{$ifdesc}";
+				}
 				break;
 			}
 		}
 		$groupslist = return_gateway_groups_array();
 		foreach ($groupslist as $if => $group) {
 			if ($dyndns['interface'] == $if) {
-				if (!isset($dyndns['enable']))
+				if (!isset($dyndns['enable'])) {
 					echo "<span class=\"gray\">{$if}</span>";
-				else
+				} else {
 					echo "{$if}";
+				}
 				break;
 			}
 		}
@@ -109,22 +117,25 @@ if($_REQUEST['getdyndnsstatus']) {
 		<?php
 		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
-		for ($j = 0; $j < count($vals); $j++)
+		for ($j = 0; $j < count($vals); $j++) {
 			if ($vals[$j] == $dyndns['type']) {
-				if (!isset($dyndns['enable']))
+				if (!isset($dyndns['enable'])) {
 					echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
-				else
+				} else {
 					echo htmlspecialchars($types[$j]);
+				}
 				break;
 			}
+		}
 		?>
 		</td>
 		<td class="listr">
 		<?php
-		if (!isset($dyndns['enable']))
+		if (!isset($dyndns['enable'])) {
 			echo "<span class=\"gray\">".htmlspecialchars($dyndns['host'])."</span>";
-		else
+		} else {
 			echo htmlspecialchars($dyndns['host']);
+		}
 		?>
 		</td>
 		<td class="listr">
@@ -152,8 +163,7 @@ if($_REQUEST['getdyndnsstatus']) {
 	function dyndnscallback(transport) {
 		// The server returns a string of statuses separated by vertical bars
 		var responseStrings = transport.responseText.split("|");
-		for (var count=0; count<responseStrings.length; count++)
-		{
+		for (var count=0; count<responseStrings.length; count++) {
 			var divlabel = '#dyndnsstatus' + count;
 			jQuery(divlabel).prop('innerHTML',responseStrings[count]);
 		}

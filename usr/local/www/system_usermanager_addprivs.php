@@ -3,6 +3,9 @@
 /*
 	system_usermanager_addprivs.php
 
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Copyright (C) 2006 Daniel S. Haischt.
 	All rights reserved.
 
@@ -44,26 +47,25 @@ function admusercmp($a, $b) {
 
 require("guiconfig.inc");
 
-$pgtitle = array("System","User manager","Add privileges");
+$pgtitle = array("System", "User manager", "Add privileges");
 
-if (is_numericint($_GET['userid']))
+if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
-if (isset($_POST['userid']) && is_numericint($_POST['userid']))
+}
+if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
-
-$a_user = & $config['system']['user'][$userid];
-if (!is_array($a_user)) {
-	pfSenseHeader("system_usermanager.php?id={$userid}");
-	exit;
 }
 
-if (!is_array($a_user)) {
+if (!isset($config['system']['user'][$userid]) && !is_array($config['system']['user'][$userid])) {
 	pfSenseHeader("system_usermanager.php");
 	exit;
 }
 
-if (!is_array($a_user['priv']))
+$a_user = & $config['system']['user'][$userid];
+
+if (!is_array($a_user['priv'])) {
 	$a_user['priv'] = array();
+}
 
 if ($_POST) {
 	conf_mount_rw();
@@ -73,42 +75,45 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "sysprivs");
-	$reqdfieldsn = array(gettext("Selected priveleges"));
+	$reqdfieldsn = array(gettext("Selected privileges"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
-	if(isAjax() && is_array($input_errors)) {
+	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
 
 	if (!$input_errors) {
 
-		if (!is_array($pconfig['sysprivs']))
+		if (!is_array($pconfig['sysprivs'])) {
 			$pconfig['sysprivs'] = array();
+		}
 
-		if (!count($a_user['priv']))
+		if (!count($a_user['priv'])) {
 			$a_user['priv'] = $pconfig['sysprivs'];
-		else
+		} else {
 			$a_user['priv'] = array_merge($a_user['priv'], $pconfig['sysprivs']);
+		}
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
 		conf_mount_ro();
-		
-		pfSenseHeader("system_usermanager.php?act=edit&amp;id={$userid}");
-		
+
+		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
+
 		exit;
 	}
 	conf_mount_ro();
 }
 
 /* if ajax is calling, give them an update message */
-if(isAjax())
+if (isAjax()) {
 	print_info_box_np($savemsg);
+}
 
 include("head.inc");
 ?>
@@ -124,9 +129,10 @@ if (is_array($priv_list)) {
 	$id = 0;
 
 	$jdescs = "var descs = new Array();\n";
-	foreach($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_user['priv']))
+	foreach ($priv_list as $pname => $pdata) {
+		if (in_array($pname, $a_user['priv'])) {
 			continue;
+		}
 		$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 		$jdescs .= "descs[{$id}] = '{$desc}';\n";
 		$id++;
@@ -145,12 +151,14 @@ function update_description() {
 //]]>
 </script>
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager add priveleges">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager add privileges">
 	<tr>
 		<td>
 		<?php
@@ -173,9 +181,10 @@ function update_description() {
 							<td width="78%" class="vtable">
 								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple="multiple" size="35">
 									<?php
-										foreach($priv_list as $pname => $pdata):
-											if (in_array($pname, $a_user['priv']))
+										foreach ($priv_list as $pname => $pdata):
+											if (in_array($pname, $a_user['priv'])) {
 												continue;
+											}
 									?>
 									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
 									<?php endforeach; ?>
@@ -193,7 +202,7 @@ function update_description() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+								<input id="submitt" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($userid)): ?>
 								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />

@@ -3,6 +3,7 @@
 /*
 	firewall_aliases_import.php
 	Copyright (C) 2005 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -46,46 +47,55 @@ require_once("util.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
+
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
 // Add all Load balance names to reserved_keywords
-if (is_array($config['load_balancer']['lbpool']))
-	foreach ($config['load_balancer']['lbpool'] as $lbpool)
+if (is_array($config['load_balancer']['lbpool'])) {
+	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
 		$reserved_keywords[] = $lbpool['name'];
+	}
+}
 
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 
-if (!is_array($config['aliases']['alias']))
-        $config['aliases']['alias'] = array();
+if (!is_array($config['aliases']['alias'])) {
+	$config['aliases']['alias'] = array();
+}
 $a_aliases = &$config['aliases']['alias'];
 
-if($_POST['aliasimport'] <> "") {
+if ($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-		
-	if (is_validaliasname($_POST['name']) == false)
+
+	if (is_validaliasname($_POST['name']) == false) {
 		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
+	}
 
 	/* check for name duplicates */
-	if (is_alias($_POST['name']))
+	if (is_alias($_POST['name'])) {
 		$input_errors[] = gettext("An alias with this name already exists.");
+	}
 
 
 	/* Check for reserved keyword names */
-        foreach($reserved_keywords as $rk)
-                if ($rk == $_POST['name'])
-                        $input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+	foreach ($reserved_keywords as $rk) {
+		if ($rk == $_POST['name']) {
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+		}
+	}
 
-        /* check for name interface description conflicts */
-        foreach($config['interfaces'] as $interface) {
-                if($interface['descr'] == $_POST['name']) {
-                        $input_errors[] = gettext("An interface description with this name already exists.");
-                        break;
-                }
-        }
+	/* check for name interface description conflicts */
+	foreach ($config['interfaces'] as $interface) {
+		if ($interface['descr'] == $_POST['name']) {
+			$input_errors[] = gettext("An interface description with this name already exists.");
+			break;
+		}
+	}
 
 	if ($_POST['aliasimport']) {
 		$tocheck = explode("\n", $_POST['aliasimport']);
@@ -94,32 +104,33 @@ if($_POST['aliasimport'] <> "") {
 		$desc_len_err_found = false;
 		$desc_fmt_err_found = false;
 		foreach ($tocheck as $impline) {
-			$implinea = explode(" ",trim($impline),2);
+			$implinea = explode(" ", trim($impline), 2);
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
-					if (is_iprange($impip)) {
+					$iprange_type = is_iprange($impip);
+					if ($iprange_type == 4) {
 						list($startip, $endip) = explode('-', $impip);
 						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
 						$imported_ips = array_merge($imported_ips, $rangesubnets);
 						$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
 						$imported_descs = array_merge($imported_descs, $rangedescs);
+					} else if ($iprange_type == 6) {
+						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
 					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
 						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 					} elseif (!empty($impip)) {
 						$imported_ips[] = $impip;
 						$imported_descs[] = $impdesc;
 					}
-				}
-				else {
+				} else {
 					if (!$desc_fmt_err_found) {
 						$input_errors[] = gettext("Descriptions may not start or end with vertical bar (|) or contain double vertical bar ||.");
 						$desc_fmt_err_found = true;
 					}
 				}
-			}
-			else {
+			} else {
 				if (!$desc_len_err_found) {
 					/* Note: The 200 character limit is just a practical check to avoid accidents */
 					/* if the user pastes a large number of IP addresses without line breaks.     */
@@ -144,10 +155,11 @@ if($_POST['aliasimport'] <> "") {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('aliases');
+		}
 		pfSenseHeader("firewall_aliases.php");
-		
+
 		exit;
 	}
 }
@@ -163,38 +175,53 @@ include("head.inc");
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall alias import">
 	<tr>
-	  <td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
-	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=htmlspecialchars($_POST['name']);?>" />
-	    <br /> <span class="vexpl">
-	    <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?></span></td>
+		<td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
+		<td class="vtable">
+			<input name="name" type="text" class="formfld unknown" id="name" size="40" maxlength="31" value="<?=htmlspecialchars($_POST['name']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?>
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-	  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($_POST['descr']);?>" />
-	    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
-	    "for your reference (not parsed)"); ?>.</span></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($_POST['descr']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
-	  <td class="vtable"><textarea name="aliasimport" rows="15" cols="40"><?php echo $_POST['aliasimport']; ?></textarea>
-		<br /> <span class="vexpl"><?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?> 
-		<br /> <?=gettext("The list may contain IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) and an optional description after each IP. e.g.:"); ?>
-		<br />172.16.1.2
-		<br />172.16.0.0/24
-		<br />10.11.12.100-10.11.12.200
-		<br />192.168.1.254 Home router
-		<br />10.20.0.0/16 Office network
-		<br />10.40.1.10-10.40.1.19 Managed switches</span></td>
+		<td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
+		<td class="vtable">
+			<textarea name="aliasimport" rows="15" cols="40"><?php echo $_POST['aliasimport']; ?></textarea>
+			<br />
+			<span class="vexpl">
+				<?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?>
+				<br />
+				<?=gettext("The list may contain IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) and an optional description after each IP. e.g.:"); ?>
+				<br />172.16.1.2
+				<br />172.16.0.0/24
+				<br />10.11.12.100-10.11.12.200
+				<br />192.168.1.254 Home router
+				<br />10.20.0.0/16 Office network
+				<br />10.40.1.10-10.40.1.19 Managed switches
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%">
-      <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-      <input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
-	</td></tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+		</td>
+	</tr>
 </table>
 
 
@@ -202,7 +229,7 @@ include("head.inc");
 </div>
 
 <?php include("fend.inc"); ?>
-	    
+
 <script type="text/javascript">
 //<![CDATA[
 	NiftyCheck();

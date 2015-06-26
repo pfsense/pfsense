@@ -6,7 +6,7 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 fi
 
 product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
-        
+
 echo
 echo "${product} is now shutting down ..."
 echo
@@ -24,7 +24,7 @@ export PATH
 # temporary files on shutdown from /tmp/
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "pfSense" ]; then
-	find -x /tmp/* -type f -exec rm -f {} \;
+	find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
 fi
 
 USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`

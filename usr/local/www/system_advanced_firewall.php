@@ -4,8 +4,8 @@
 	system_advanced_firewall.php
 	part of pfSense
 	Copyright (C) 2005-2007 Scott Ullrich
-
 	Copyright (C) 2008 Shrew Soft Inc
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -61,6 +61,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
@@ -71,6 +72,20 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout'];
+$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout'];
+$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout'];
+$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout'];
+$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout'];
+$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout'];
+$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
+$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
+$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
+$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout'];
+$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
+$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
+$pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
+$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
 
 if ($_POST) {
 
@@ -78,8 +93,9 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend'])))
+	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend']))) {
 		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
+	}
 	if (!empty($_POST['adaptivestart']) && !is_numericint($_POST['adaptivestart'])) {
 		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
 	}
@@ -95,11 +111,56 @@ if ($_POST) {
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
 	}
+	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
+		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
+	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
 	}
 	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
+	}
+	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) {
+		$input_errors[] = gettext("The TCP first timeout value must be an integer.");
+	}
+	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) {
+		$input_errors[] = gettext("The TCP opening timeout value must be an integer.");
+	}
+	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) {
+		$input_errors[] = gettext("The TCP established timeout value must be an integer.");
+	}
+	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) {
+		$input_errors[] = gettext("The TCP closing timeout value must be an integer.");
+	}
+	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) {
+		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer.");
+	}
+	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) {
+		$input_errors[] = gettext("The TCP closed timeout value must be an integer.");
+	}
+	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) {
+		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
+	}
+	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) {
+		$input_errors[] = gettext("The UDP single timeout value must be an integer.");
+	}
+	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) {
+		$input_errors[] = gettext("The UDP multiple timeout value must be an integer.");
+	}
+	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) {
+		$input_errors[] = gettext("The ICMP first timeout value must be an integer.");
+	}
+	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) {
+		$input_errors[] = gettext("The ICMP error timeout value must be an integer.");
+	}
+	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) {
+		$input_errors[] = gettext("The Other first timeout value must be an integer.");
+	}
+	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) {
+		$input_errors[] = gettext("The Other single timeout value must be an integer.");
+	}
+	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
+		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
 	}
 
 	ob_flush();
@@ -107,53 +168,133 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if($_POST['disablefilter'] == "yes")
+		if ($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
-		else
+		} else {
 			unset($config['system']['disablefilter']);
+		}
 
-		if($_POST['disablevpnrules'] == "yes")
+		if ($_POST['disablevpnrules'] == "yes") {
 			$config['system']['disablevpnrules'] = true;
-		else
+		} else {
 			unset($config['system']['disablevpnrules']);
-		if($_POST['rfc959workaround'] == "yes")
+		}
+		if ($_POST['rfc959workaround'] == "yes") {
 			$config['system']['rfc959workaround'] = "enabled";
-		else
+		} else {
 			unset($config['system']['rfc959workaround']);
+		}
 
-		if($_POST['scrubnodf'] == "yes")
+		if ($_POST['scrubnodf'] == "yes") {
 			$config['system']['scrubnodf'] = "enabled";
-		else
+		} else {
 			unset($config['system']['scrubnodf']);
+		}
 
-		if($_POST['scrubrnid'] == "yes")
+		if ($_POST['scrubrnid'] == "yes") {
 			$config['system']['scrubrnid'] = "enabled";
-		else
+		} else {
 			unset($config['system']['scrubrnid']);
+		}
 
-		if (!empty($_POST['adaptiveend']))
+		if (!empty($_POST['adaptiveend'])) {
 			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
-		else
+		} else {
 			unset($config['system']['adaptiveend']);
-		if (!empty($_POST['adaptivestart']))
+		}
+		if (!empty($_POST['adaptivestart'])) {
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
-		else
+		} else {
 			unset($config['system']['adaptivestart']);
+		}
 
-		if ($_POST['checkaliasesurlcert'] == "yes")
+		if ($_POST['checkaliasesurlcert'] == "yes") {
 			$config['system']['checkaliasesurlcert'] = true;
-		else
+		} else {
 			unset($config['system']['checkaliasesurlcert']);
+		}
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
+		$config['system']['maximumfrags'] = $_POST['maximumfrags'];
 
-		if($_POST['natreflection'] == "proxy") {
+		if (!empty($_POST['tcpfirsttimeout'])) {
+			$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
+		} else {
+			unset($config['system']['tcpfirsttimeout']);
+		}
+		if (!empty($_POST['tcpopeningtimeout'])) {
+			$config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
+		} else {
+			unset($config['system']['tcpopeningtimeout']);
+		}
+		if (!empty($_POST['tcpestablishedtimeout'])) {
+			$config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
+		} else {
+			unset($config['system']['tcpestablishedtimeout']);
+		}
+		if (!empty($_POST['tcpclosingtimeout'])) {
+			$config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
+		} else {
+			unset($config['system']['tcpclosingtimeout']);
+		}
+		if (!empty($_POST['tcpfinwaittimeout'])) {
+			$config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
+		} else {
+			unset($config['system']['tcpfinwaittimeout']);
+		}
+		if (!empty($_POST['tcpclosedtimeout'])) {
+			$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
+		} else {
+			unset($config['system']['tcpclosedtimeout']);
+		}
+		if (!empty($_POST['udpfirsttimeout'])) {
+			$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
+		} else {
+			unset($config['system']['udpfirsttimeout']);
+		}
+		if (!empty($_POST['udpsingletimeout'])) {
+			$config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
+		} else {
+			unset($config['system']['udpsingletimeout']);
+		}
+		if (!empty($_POST['udpmultipletimeout'])) {
+			$config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
+		} else {
+			unset($config['system']['udpmultipletimeout']);
+		}
+		if (!empty($_POST['icmpfirsttimeout'])) {
+			$config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
+		} else {
+			unset($config['system']['icmpfirsttimeout']);
+		}
+		if (!empty($_POST['icmperrortimeout'])) {
+			$config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
+		} else {
+			unset($config['system']['icmperrortimeout']);
+		}
+		if (!empty($_POST['otherfirsttimeout'])) {
+			$config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
+		} else {
+			unset($config['system']['otherfirsttimeout']);
+		}
+		if (!empty($_POST['othersingletimeout'])) {
+			$config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
+		} else {
+			unset($config['system']['othersingletimeout']);
+		}
+		if (!empty($_POST['othermultipletimeout'])) {
+			$config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
+		} else {
+			unset($config['system']['othermultipletimeout']);
+		}
+
+		if ($_POST['natreflection'] == "proxy") {
 			unset($config['system']['disablenatreflection']);
 			unset($config['system']['enablenatreflectionpurenat']);
-		} else if($_POST['natreflection'] == "purenat") {
+		} else if ($_POST['natreflection'] == "purenat") {
 			unset($config['system']['disablenatreflection']);
 			$config['system']['enablenatreflectionpurenat'] = "yes";
 		} else {
@@ -161,42 +302,49 @@ if ($_POST) {
 			unset($config['system']['enablenatreflectionpurenat']);
 		}
 
-		if($_POST['enablebinatreflection'] == "yes")
+		if ($_POST['enablebinatreflection'] == "yes") {
 			$config['system']['enablebinatreflection'] = "yes";
-		else
+		} else {
 			unset($config['system']['enablebinatreflection']);
+		}
 
-		if($_POST['disablereplyto'] == "yes")
+		if ($_POST['disablereplyto'] == "yes") {
 			$config['system']['disablereplyto'] = $_POST['disablereplyto'];
-		else
+		} else {
 			unset($config['system']['disablereplyto']);
+		}
 
-		if($_POST['disablenegate'] == "yes")
+		if ($_POST['disablenegate'] == "yes") {
 			$config['system']['disablenegate'] = $_POST['disablenegate'];
-		else
+		} else {
 			unset($config['system']['disablenegate']);
+		}
 
-		if($_POST['enablenatreflectionhelper'] == "yes")
+		if ($_POST['enablenatreflectionhelper'] == "yes") {
 			$config['system']['enablenatreflectionhelper'] = "yes";
-		else
+		} else {
 			unset($config['system']['enablenatreflectionhelper']);
+		}
 
 		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
 
-		if($_POST['bypassstaticroutes'] == "yes")
+		if ($_POST['bypassstaticroutes'] == "yes") {
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
-		elseif(isset($config['filter']['bypassstaticroutes']))
+		} elseif (isset($config['filter']['bypassstaticroutes'])) {
 			unset($config['filter']['bypassstaticroutes']);
+		}
 
-		if($_POST['disablescrub'] == "yes")
+		if ($_POST['disablescrub'] == "yes") {
 			$config['system']['disablescrub'] = $_POST['disablescrub'];
-		else
+		} else {
 			unset($config['system']['disablescrub']);
+		}
 
-		if ($_POST['tftpinterface'])
+		if ($_POST['tftpinterface']) {
 			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
-		else
+		} else {
 			unset($config['system']['tftpinterface']);
+		}
 
 		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['bogonsinterval']) {
@@ -218,19 +366,21 @@ if ($_POST) {
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-		    isvalidpid("{$g['varrun_path']}/filterdns.pid"))
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
+		}
 
 		$retval = 0;
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
-		else
+		} else {
 			$savemsg = $retval;
+		}
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Firewall and NAT"));
 include("head.inc");
 
 ?>
@@ -256,10 +406,12 @@ function update_description(itemnum) {
 </script>
 
 <?php
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
-	if ($savemsg)
+	}
+	if ($savemsg) {
 		print_info_box($savemsg);
+	}
 ?>
 	<form action="system_advanced_firewall.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced firewall/nat">
@@ -318,10 +470,10 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Optimization Options");?></td>
 								<td width="78%" class="vtable">
 									<select onchange="update_description(this.selectedIndex);" name="optimization" id="optimization">
-										<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected=\"selected\""; ?>><?=gettext("normal");?></option>
-										<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected=\"selected\""; ?>><?=gettext("high-latency");?></option>
-										<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected=\"selected\""; ?>><?=gettext("aggressive");?></option>
-										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected=\"selected\""; ?>><?=gettext("conservative");?></option>
+										<option value="normal"<?php if ($config['system']['optimization'] == "normal") echo " selected=\"selected\""; ?>><?=gettext("normal");?></option>
+										<option value="high-latency"<?php if ($config['system']['optimization'] == "high-latency") echo " selected=\"selected\""; ?>><?=gettext("high-latency");?></option>
+										<option value="aggressive"<?php if ($config['system']['optimization'] == "aggressive") echo " selected=\"selected\""; ?>><?=gettext("aggressive");?></option>
+										<option value="conservative"<?php if ($config['system']['optimization'] == "conservative") echo " selected=\"selected\""; ?>><?=gettext("conservative");?></option>
 									</select>
 									<br />
 									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
@@ -359,20 +511,20 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<strong><?=gettext("Timeouts for states can be scaled adaptively as the number of state table entries grows.");?></strong>
 									<br />
-									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
+									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo htmlspecialchars($pconfig['adaptivestart']); ?>" />
 									<br /><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
 
 									<br />
-									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
+									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo htmlspecialchars($pconfig['adaptiveend']); ?>" />
 									<br /><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
 									<br />
-									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default(0).");?></span>
+									<span class="vexpl"><?=gettext("Note: Leave this blank for the default, which auto-calculates these values from your maximum state table size. Adaptive start is 60% and end is 120% of the state table size by default.");?></span>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum States");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
+									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo htmlspecialchars($pconfig['maximumstates']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br />
@@ -382,7 +534,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Table Entries");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo $pconfig['maximumtableentries']; ?>" />
+									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo htmlspecialchars($pconfig['maximumtableentries']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of table entries for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
 									<br />
@@ -391,6 +543,18 @@ function update_description(itemnum) {
 										<?php if (empty($pconfig['maximumtableentries'])): ?>
 											<?= gettext("On your system the default size is:");?> <?= pfsense_default_table_entries_size(); ?>
 										<?php endif; ?>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Fragment Entries");?></td>
+								<td width="78%" class="vtable">
+									<input name="maximumfrags" type="text" id="maximumfrags" value="<?php echo htmlspecialchars($pconfig['maximumfrags']); ?>" />
+									<br />
+									<strong><?=gettext("Maximum number of packet fragments to hold for reassembly by scrub rules.");?></strong>
+									<br />
+									<span class="vexpl">
+										<?=gettext("Note:  Leave this blank for the default (5000).");?>
 									</span>
 								</td>
 							</tr>
@@ -412,7 +576,8 @@ function update_description(itemnum) {
 									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
 									<br />
-									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?>
+									<span class="vexpl">
+										<?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?>
 									</span>
 								</td>
 							</tr>
@@ -440,7 +605,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
 								<td width="78%" class="vtable">
-									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
+									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo htmlspecialchars($pconfig['aliasesresolveinterval']); ?>" />
 									<br />
 									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
 									<br />
@@ -467,9 +632,9 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Update Frequency");?></td>
 								<td width="78%" class="vtable">
 									<select name="bogonsinterval" class="formselect">
-									<option value="monthly" <?php if (empty($pconfig['bogonsinterval']) || $pconfig['bogonsinterval'] == 'monthly') echo "selected=\"selected\""; ?>><?=gettext("Monthly"); ?></option>
-									<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected=\"selected\""; ?>><?=gettext("Weekly"); ?></option>
-									<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected=\"selected\""; ?>><?=gettext("Daily"); ?></option>
+										<option value="monthly" <?php if (empty($pconfig['bogonsinterval']) || $pconfig['bogonsinterval'] == 'monthly') echo "selected=\"selected\""; ?>><?=gettext("Monthly"); ?></option>
+										<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected=\"selected\""; ?>><?=gettext("Weekly"); ?></option>
+										<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected=\"selected\""; ?>><?=gettext("Daily"); ?></option>
 									</select>
 									<br />
 									<?=gettext("The frequency of updating the lists of IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA.");?>
@@ -478,7 +643,9 @@ function update_description(itemnum) {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php if(count($config['interfaces']) > 1): ?>
+<?php
+	if (count($config['interfaces']) > 1):
+?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Network Address Translation");?></td>
 							</tr>
@@ -486,9 +653,9 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("NAT Reflection mode for port forwards");?></td>
 								<td width="78%" class="vtable">
 									<select name="natreflection" class="formselect">
-									<option value="disable" <?php if (isset($config['system']['disablenatreflection'])) echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
-									<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
-									<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
+										<option value="disable" <?php if (isset($config['system']['disablenatreflection'])) echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
+										<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
+										<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
 									</select>
 									<br />
 									<strong><?=gettext("When enabled, this automatically creates additional NAT redirect rules for access to port forwards on your external IP addresses from within your internal networks.");?></strong>
@@ -543,17 +710,87 @@ function update_description(itemnum) {
 ?>
 											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected=\"selected\""; ?>><?=gettext($ifdesc);?></option>
 <?php									endforeach;
-										if ($rowIndex == 0)
+										if ($rowIndex == 0) {
 											echo "<option></option>";
+										}
  ?>
 									</select>
-									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
+									<br/><strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
+								</td>
+							</tr>
+<?php
+	endif;
+?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("State Timeouts");?></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<strong><?=gettext("NOTE: The options below should usually be left at their defaults, as chosen by Firewall Optimization Options above. Click the Help link on this page for information.");?>&nbsp;</strong>
+								</td>
+							<br />
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("TCP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("TCP First: ");?></strong><input name="tcpfirsttimeout" id="tcpfirsttimeout" value="<?php echo $config['system']['tcpfirsttimeout']; ?>" /> <br/>
+									<?=gettext("Enter value for TCP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Opening: ");?></strong><input name="tcpopeningtimeout" id="tcpopeningtimeout" value="<?php echo $config['system']['tcpopeningtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP opening timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Established: ");?></strong><input name="tcpestablishedtimeout" id="tcpestablishedtimeout" value="<?php echo $config['system']['tcpestablishedtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP established timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Closing: ");?></strong><input name="tcpclosingtimeout" id="tcpclosingtimeout" value="<?php echo $config['system']['tcpclosingtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP closing timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP FIN Wait: ");?></strong><input name="tcpfinwaittimeout" id="tcpfinwaittimeout" value="<?php echo $config['system']['tcpfinwaittimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP FIN wait timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Closed: ");?></strong><input name="tcpclosedtimeout" id="tcpclosedtimeout" value="<?php echo $config['system']['tcpclosedtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP closed timeout in seconds. Leave blank for default (recommended).");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("UDP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("UDP First: ");?></strong><input name="udpfirsttimeout" id="udpfirsttimeout" value="<?php echo $config['system']['udpfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("UDP Single: ");?></strong><input name="udpsingletimeout" id="udpsingletimeout" value="<?php echo $config['system']['udpsingletimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP single timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("UDP Multiple: ");?></strong><input name="udpmultipletimeout" id="udpmultipletimeout" value="<?php echo $config['system']['udpmultipletimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP multiple timeout in seconds. Leave blank for default (recommended).");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("ICMP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("ICMP First: ");?></strong><input name="icmpfirsttimeout" id="icmpfirsttimeout" value="<?php echo $config['system']['icmpfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for ICMP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("ICMP Error: ");?></strong><input name="icmperrortimeout" id="icmperrortimeout" value="<?php echo $config['system']['icmperrortimeout']; ?>" /><br />
+									<?=gettext("Enter value for ICMP error timeout in seconds. Leave blank for default (recommended).");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Other Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("Other First: ");?></strong><input name="otherfirsttimeout" id="otherfirsttimeout" value="<?php echo $config['system']['otherfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("Other Single: ");?></strong><input name="othersingletimeout" id="othersingletimeout" value="<?php echo $config['system']['othersingletimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other single timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("Other Multiple: ");?></strong><input name="othermultipletimeout" id="othermultipletimeout" value="<?php echo $config['system']['othermultipletimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other multiple timeout in seconds. Leave blank for default (recommended).");?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php endif; ?>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>

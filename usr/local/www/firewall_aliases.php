@@ -3,9 +3,10 @@
 /*
 	firewall_aliases.php
 	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -46,11 +47,12 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['aliases']['alias']))
+if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
+}
 $a_aliases = &$config['aliases']['alias'];
 
-$tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
+$tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
 if ($_POST) {
 
@@ -60,12 +62,14 @@ if ($_POST) {
 		/* reload all components that use aliases */
 		$retval = filter_configure();
 
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
-		if ($retval == 0)
+		if (stristr($retval, "error") <> true) {
+			$savemsg = get_std_save_message($retval);
+		} else {
+			$savemsg = $retval;
+		}
+		if ($retval == 0) {
 			clear_subsystem_dirty('aliases');
+		}
 	}
 }
 
@@ -92,11 +96,11 @@ if ($_GET['act'] == "del") {
 		//find_alias_reference(array('nat', 'onetoone'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
 		find_alias_reference(array('nat', 'onetoone'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
 		// NAT Outbound Rules
-		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('source', 'network'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('sourceport'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('dstport'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'outbound', 'rule'), array('source', 'network'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'outbound', 'rule'), array('sourceport'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'outbound', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'outbound', 'rule'), array('dstport'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'outbound', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Alias in an alias
 		find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Load Balancer
@@ -104,7 +108,7 @@ if ($_GET['act'] == "del") {
 		find_alias_reference(array('load_balancer', 'virtual_server'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
-		if($is_alias_referenced == true) {
+		if ($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_aliases[$_GET['id']]);
@@ -120,40 +124,43 @@ if ($_GET['act'] == "del") {
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
 	global $config;
-	if(!$origname || $is_alias_referenced)
+	if (!$origname || $is_alias_referenced) {
 		return;
-
-	$sectionref = &$config;
-	foreach($section as $sectionname) {
-		if(is_array($sectionref) && isset($sectionref[$sectionname]))
-			$sectionref = &$sectionref[$sectionname];
-		else
-			return;
 	}
 
-	if(is_array($sectionref)) {
-		foreach($sectionref as $itemkey => $item) {
+	$sectionref = &$config;
+	foreach ($section as $sectionname) {
+		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
+			$sectionref = &$sectionref[$sectionname];
+		} else {
+			return;
+		}
+	}
+
+	if (is_array($sectionref)) {
+		foreach ($sectionref as $itemkey => $item) {
 			$fieldfound = true;
 			$fieldref = &$sectionref[$itemkey];
-			foreach($field as $fieldname) {
-				if(is_array($fieldref) && isset($fieldref[$fieldname]))
+			foreach ($field as $fieldname) {
+				if (is_array($fieldref) && isset($fieldref[$fieldname])) {
 					$fieldref = &$fieldref[$fieldname];
-				else {
+				} else {
 					$fieldfound = false;
 					break;
 				}
 			}
-			if($fieldfound && $fieldref == $origname) {
+			if ($fieldfound && $fieldref == $origname) {
 				$is_alias_referenced = true;
-				if(is_array($item))
+				if (is_array($item)) {
 					$referenced_by = $item['descr'];
+				}
 				break;
 			}
 		}
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"));
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"));
 $shortcut_section = "aliases";
 
 include("head.inc");
@@ -173,10 +180,10 @@ include("head.inc");
 		<td class="tabnavtbl">
 			<?php
 				$tab_array = array();
-				$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
-				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-				$tab_array[] = array(gettext("URLs"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
-				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
+				$tab_array[] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
+				$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
+				$tab_array[] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
+				$tab_array[] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 				display_top_tabs($tab_array);
 			?>
 			<input type="hidden" name="tab" value="<?=htmlspecialchars($tab);?>" />
@@ -191,7 +198,7 @@ include("head.inc");
 						<td width="43%" class="listhdrr"><?=gettext("Values"); ?></td>
 						<td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 						<td width="7%" class="list">
-							<table  border="0" cellspacing="0" cellpadding="1" summary="add">
+							<table border="0" cellspacing="0" cellpadding="1" summary="add">
 								<tr>
 									<td valign="middle" width="17">&nbsp;</td>
 									<td valign="middle"><a href="firewall_aliases_edit.php?tab=<?=$tab?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" <?=dom_title(gettext("Add a new alias"));?> alt="add" /></a></td>
@@ -201,26 +208,29 @@ include("head.inc");
 					</tr>
 					<?php
 					asort($a_aliases);
-					foreach ($a_aliases as $i=> $alias){
+					foreach ($a_aliases as $i=> $alias) {
 						unset ($show_alias);
-						switch ($tab){
-						case "all":
-							$show_alias= true;
-							break;
-						case "ip":
-						case "host":
-						case "network":
-							if (preg_match("/(host|network)/",$alias["type"]))
+						switch ($tab) {
+							case "all":
 								$show_alias= true;
-							break;
-						case "url":
-							if (preg_match("/(url)/i",$alias["type"]))
-								$show_alias= true;
-							break;
-						case "port":
-							if($alias["type"] == "port")
-								$show_alias= true;
-							break;
+								break;
+							case "ip":
+							case "host":
+							case "network":
+								if (preg_match("/(host|network)/", $alias["type"])) {
+									$show_alias= true;
+								}
+								break;
+							case "url":
+								if (preg_match("/(url)/i", $alias["type"])) {
+									$show_alias= true;
+								}
+								break;
+							case "port":
+								if ($alias["type"] == "port") {
+									$show_alias= true;
+								}
+								break;
 						}
 						if ($show_alias) {
 					?>
@@ -233,10 +243,10 @@ include("head.inc");
 						if ($alias["url"]) {
 							echo $alias["url"] . "<br />";
 						} else {
-							if(is_array($alias["aliasurl"])) {
+							if (is_array($alias["aliasurl"])) {
 								$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 								echo $aliasurls;
-								if(count($aliasurls) > 10) {
+								if (count($aliasurls) > 10) {
 									echo "...<br />";
 								}
 								echo "<br />\n";
@@ -244,7 +254,7 @@ include("head.inc");
 							$tmpaddr = explode(" ", $alias['address']);
 							$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 							echo $addresses;
-							if(count($tmpaddr) > 10) {
+							if (count($tmpaddr) > 10) {
 								echo "...";
 							}
 						}

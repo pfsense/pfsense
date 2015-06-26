@@ -4,6 +4,7 @@
 	crash_reporter.php
 	part of pfSense
 	Copyright (C) 2011 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -48,19 +49,19 @@ function upload_crash_report($files) {
 	global $g;
 	$post = array();
 	$counter = 0;
-	foreach($files as $file) {
+	foreach ($files as $file) {
 		$post["file{$counter}"] = "@{$file}";
 		$counter++;
 	}
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_VERBOSE, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
-    $response = curl_exec($ch);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
+	$response = curl_exec($ch);
 	return $response;
 }
 
@@ -70,12 +71,12 @@ function output_crash_reporter_html($crash_reports) {
 	echo "<p><i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i></p>";
 	echo "<p>" . gettext("Contents of crash reports") . ":<br />";
 	echo "<textarea readonly=\"readonly\" rows=\"40\" cols=\"65\" name=\"crashreports\">{$crash_reports}</textarea></p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") . "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") . "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
 	echo "</form>";
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
 include('head.inc');
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
@@ -97,18 +98,21 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
-		if (!is_dir("/var/crash"))
+		if (!is_dir("/var/crash")) {
 			mkdir("/var/crash", 0750, true);
+		}
 		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
-		if(file_exists("/tmp/PHP_errors.log"))
+		if (file_exists("/tmp/PHP_errors.log")) {
 			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
+		}
+		exec("find /var/crash -type l -exec rm {} +");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<br/>";
 		echo gettext("Uploading...");
 		ob_flush();
 		flush();
-		if(is_array($files_to_upload)) {
+		if (is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
 			array_map('unlink', glob("/var/crash/*"));
 			// Erase the contents of the PHP error log
@@ -119,7 +123,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		} else {
 			echo "Could not find any crash files.";
 		}
-	} else if(gettext($_POST['Submit']) == "No") {
+	} else if (gettext($_POST['Submit']) == "No") {
 		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
@@ -132,14 +136,14 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			$crash_reports .= "\nPHP Errors:\n";
 			$crash_reports .= implode("\n", $php_errors) . "\n\n";
 		}
-		if(is_array($crash_files))	{
-			foreach($crash_files as $cf) {
-				if(filesize($cf) < FILE_SIZE) {
+		if (is_array($crash_files))	{
+			foreach ($crash_files as $cf) {
+				if (filesize($cf) < FILE_SIZE) {
 					$crash_reports .= "\nFilename: {$cf}\n";
 					$crash_reports .= file_get_contents($cf);
 				}
 			}
-		} else { 
+		} else {
 			echo "Could not locate any crash data.";
 		}
 		output_crash_reporter_html($crash_reports);

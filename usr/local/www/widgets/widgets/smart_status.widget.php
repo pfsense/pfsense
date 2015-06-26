@@ -1,5 +1,7 @@
 <?php
 /*
+	smart_status.widget.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright 2012 mkirbst @ pfSense Forum
 	Part of pfSense widgets (https://www.pfsense.org)
 	All rights reserved.
@@ -42,25 +44,25 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 <?php
 $devs = array();
 ## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
-exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs); ## From SMART status page
+$devs = get_smart_drive_list();
 
-if(count($devs) > 0)  {
-	foreach($devs as $dev)  {	## for each found drive do
+if (count($devs) > 0)  {
+	foreach ($devs as $dev)  { ## for each found drive do
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
 		switch ($dev_state) {
-		case "PASSED":
-		case "OK":
-			$color = "#90EE90";
-			break;
-		case "":
-			$dev_state = "Unknown";
-			$color = "#C0B788";
-			break;
-		default:
-			$color = "#F08080";
-			break;
+			case "PASSED":
+			case "OK":
+				$color = "#90EE90";
+				break;
+			case "":
+				$dev_state = "Unknown";
+				$color = "#C0B788";
+				break;
+			default:
+				$color = "#F08080";
+				break;
 		}
 ?>
 		<tr>

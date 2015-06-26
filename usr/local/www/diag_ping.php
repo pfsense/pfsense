@@ -6,15 +6,18 @@
 	Copyright (C) 2003-2005 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -44,7 +47,6 @@ $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require_once("guiconfig.inc");
 
-
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
 
@@ -54,7 +56,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
-	$reqdfieldsn = array(gettext("Host"),gettext("Count"));
+	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
@@ -63,17 +65,20 @@ if ($_POST || $_REQUEST['host']) {
 
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
-	if (($ipproto == "ipv4") && is_ipaddrv6($host))
+	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
-	if (($ipproto == "ipv6") && is_ipaddrv4($host))
+	}
+	if (($ipproto == "ipv6") && is_ipaddrv4($host)) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
+	}
 
 	if (!$input_errors) {
 		$do_ping = true;
 		$sourceip = $_REQUEST['sourceip'];
 		$count = $_POST['count'];
-		if (preg_match('/[^0-9]/', $count) )
+		if (preg_match('/[^0-9]/', $count)) {
 			$count = DEFAULT_COUNT;
+		}
 	}
 }
 if (!isset($do_ping)) {
@@ -83,107 +88,111 @@ if (!isset($do_ping)) {
 }
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ping">
 <tr><td>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="diag_ping.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
-<tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
-	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="ipproto" class="formselect">
-			<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
-			<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="sourceip" class="formselect">
-			<option value="">Default</option>
-		<?php $sourceips = get_possible_traffic_source_addresses(true);
-			foreach ($sourceips as $sip):
-				$selected = "";
-				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
-					$selected = "selected=\"selected\"";
-		?>
-			<option value="<?=$sip['value'];?>" <?=$selected;?>>
-				<?=htmlspecialchars($sip['name']);?>
-			</option>
-			<?php endforeach; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
-	<td width="78%" class="vtable">
-		<select name="count" class="formfld" id="count">
-		<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
-			<option value="<?=$i;?>" <?php if ($i == $count) echo "selected=\"selected\""; ?>><?=$i;?></option>
-		<?php endfor; ?>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top">&nbsp;</td>
-	<td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>" />
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-	<?php if ($do_ping) {
-		echo "<font face=\"terminal\" size=\"2\">";
-		echo "<strong>" . gettext("Ping output") . ":</strong><br />";
-?>
-		<script type="text/javascript">
-		//<![CDATA[
-		window.onload=function(){
-			document.getElementById("pingCaptured").wrap='off';
-		}
-		//]]>
-		</script>
-<?php
-		echo "<textarea id=\"pingCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
-		$ifscope = '';
-		$command = "/sbin/ping";
-		if ($ipproto == "ipv6") {
-			$command .= "6";
-			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-			if (is_linklocal($ifaddr))
-				$ifscope = get_ll_scope($ifaddr);
-		} else {
-			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-		}
-		if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-			$srcip = "-S" . escapeshellarg($ifaddr);
-			if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope))
-				$host .= "%{$ifscope}";
-		}
-
-		$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
-		//echo "Ping command: {$cmd}\n";
-		system($cmd);
-		echo('</textarea>&nbsp;</font>');
-	}
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
+		<td width="78%" class="vtable">
+			<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
+		<td width="78%" class="vtable">
+			<select name="ipproto" class="formselect">
+				<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
+				<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
+		<td width="78%" class="vtable">
+			<select name="sourceip" class="formselect">
+				<option value="">Default</option>
+			<?php $sourceips = get_possible_traffic_source_addresses(true);
+				foreach ($sourceips as $sipvalue => $sipname):
+					$selected = "";
+					if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
+						$selected = "selected=\"selected\"";
+					}
+			?>
+				<option value="<?=$sipvalue;?>" <?=$selected;?>>
+					<?=htmlspecialchars($sipname);?>
+				</option>
+				<?php endforeach; ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
+		<td width="78%" class="vtable">
+			<select name="count" class="formfld" id="count">
+			<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
+				<option value="<?=$i;?>" <?php if ($i == $count) echo "selected=\"selected\""; ?>><?=$i;?></option>
+			<?php endfor; ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>" />
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" colspan="2">
+		<?php if ($do_ping) {
+			echo "<font face=\"terminal\" size=\"2\">";
+			echo "<strong>" . gettext("Ping output") . ":</strong><br />";
 	?>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top">&nbsp;</td>
-	<td width="78%">&nbsp;</td>
-</tr>
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function() {
+				document.getElementById("pingCaptured").wrap='off';
+			}
+			//]]>
+			</script>
+	<?php
+			echo "<textarea id=\"pingCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
+			$ifscope = '';
+			$command = "/sbin/ping";
+			if ($ipproto == "ipv6") {
+				$command .= "6";
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+				if (is_linklocal($ifaddr)) {
+					$ifscope = get_ll_scope($ifaddr);
+				}
+			} else {
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+			}
+			if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+				$srcip = "-S" . escapeshellarg($ifaddr);
+				if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope)) {
+					$host .= "%{$ifscope}";
+				}
+			}
+
+			$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
+			//echo "Ping command: {$cmd}\n";
+			system($cmd);
+			echo('</textarea>&nbsp;</font>');
+		}
+		?>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">&nbsp;</td>
+	</tr>
 </table>
 </form>
 </td></tr>

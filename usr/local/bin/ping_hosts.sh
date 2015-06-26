@@ -5,9 +5,9 @@
 # (C)2006 Scott Ullrich
 # All rights reserved.
 
-# Format of file should be deliminted by |
-#  Field 1:  Source ip
-#  Field 2:  Destination ip
+# Format of file should be delimited by |
+#  Field 1:  Source IP
+#  Field 2:  Destination IP
 #  Field 3:  Ping count
 #  Field 4:  Script to run when service is down
 #  Field 5:  Script to run once service is restored
@@ -40,7 +40,7 @@ if [ -f /var/db/pkgpinghosts ]; then
 	PKGHOSTS="/var/db/pkgpinghosts"
 fi
 
-cat $PKGHOSTS $HOSTS $IPSECHOSTS >/tmp/tmpHOSTS
+cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
 
 if [ ! -d /var/db/pingstatus ]; then
 	/bin/mkdir -p /var/db/pingstatus
@@ -85,23 +85,23 @@ for TOPING in $PINGHOSTS ; do
 		# Host is up
 		if [ "$PREVIOUSSTATUS" != "UP" ]; then
 			# Service restored
+			echo "UP" > /var/db/pingstatus/$DSTIP
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $SERVICERESTOREDSCRIPT
 			fi
-			echo "UP" > /var/db/pingstatus/$DSTIP
 		fi
 	else
 		# Host is down
 		if [ "$PREVIOUSSTATUS" != "DOWN" ]; then
 			# Service is down
+			echo "DOWN" > /var/db/pingstatus/$DSTIP
 			if [ "$FAILURESCRIPT" != "" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $FAILURESCRIPT
 			fi
-			echo "DOWN" > /var/db/pingstatus/$DSTIP
 		fi
 	fi
 	echo "Checking ping time $DSTIP"

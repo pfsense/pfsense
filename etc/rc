@@ -31,94 +31,63 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/etc/rc.dumpon
 fi
 
+# Setup ddb on all platforms. On full install it will save the dump, on NanoBSD it will print to console and auto-reboot.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/ddb.conf
+fi
+
 if [ -e /root/force_fsck ]; then
-	echo "Forcing filesystem check..."
-	/sbin/fsck -y -t ufs /
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/fsck -y -t ufs /cf
-	fi
+	echo "Forcing filesystem(s) check..."
+	/sbin/fsck -y -F -t ufs
 fi
 
-if [ "${PLATFORM}" = "nanobsd" ]; then
-	kldstat -qm zfs
-	if [ $? = 0 ]; then
-		kldunload zfs
+if [ ! "${PLATFORM}" = "cdrom" ]; then
+	/sbin/fsck -p -F
+	FSCK_ACTION_NEEDED=0
+	case $? in
+	0)
+		echo "Filesystems are clean, continuing..."
+		echo "Mounting filesystems..."
+		;;
+	8)
+		echo "Preen mode recommended running a check that will be performed now."
+		FSCK_ACTION_NEEDED=1
+		;;
+	*)
+		echo "Stopping boot is recommended due to  filesystem manual action needed, nevertheless it will be tried to repair the filesystem."
+		FSCK_ACTION_NEEDED=1
+		;;
+	esac
+
+	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
+		echo "WARNING: Trying to recover filesystem from inconsistency..."
+		/sbin/fsck -yF
 	fi
-fi
 
-# Mount memory file system if it exists
-echo "Mounting filesystems..."
-
-kldstat -qm zfs
-# Handle ZFS read-only case
-if [ "$PLATFORM" = "pfSense" ]; then
-	kldstat -qm zfs
-	if [ $? = 0 ]; then
-		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-		if [ $ZFSAVAILABLE -eq 0 ]; then
-			kldunload zfs
-		elif [ -f /usr/bin/grep ]; then
-			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-			if [ "$ZFSROOT" != "" ]; then
-				/sbin/zfs set readonly=off $ZFSROOT
-			fi
-		fi
-	fi
-fi
-
-if [ "${PLATFORM}" = "cdrom" ]; then
-	/etc/rc.cdrom
-else
-	# Mount /. If it fails run a fsck.
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		export PKG_TMPDIR=/root/
-		/sbin/mount -uw / 2>/dev/null
-		mount_rc=$?
-		attempts=0
-		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
-			/sbin/fsck -y /
-			/sbin/fsck -y /cf
-			/sbin/mount -uw / 2>/dev/null
-			mount_rc=$?
-			attempts=$((attempts+1))
-		done
-	else
+	/sbin/mount -a 2>/dev/null
+	mount_rc=$?
+	attempts=0
+	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
+		/sbin/fsck -yF
 		/sbin/mount -a 2>/dev/null
 		mount_rc=$?
-		attempts=0
-		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
-			/sbin/fsck -y /
-			/sbin/mount -a 2>/dev/null
-			mount_rc=$?
-			attempts=$((attempts+1))
-		done
+		attempts=$((attempts+1))
+	done
+
+	if [ "${PLATFORM}" = "nanobsd" ]; then
+		# XXX This script does need all filesystems rw!!!!
+		# Put this workaround for now until better ways are found.
+		/sbin/mount -u -w -o sync,noatime /
+		/sbin/mount -u -w -o sync,noatime /cf
 	fi
 
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
-		CONFPOINTSTO=`readlink /conf` 
-		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
+		CONFPOINTSTO=`readlink /conf`
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
 			/bin/rm -rf /conf
 			/bin/ln -s /cf/conf /conf
-		fi
-	fi
-
-	if [ ! "$PLATFORM" = "jail" ]; then
-		# Check to see if a compact flash mountpoint exists
-		# If it fails to mount then run a fsck -y
-		if grep -q cf /etc/fstab; then
-			/sbin/mount -w /cf 2>/dev/null
-			/sbin/mount -uw /cf 2>/dev/null
-			mount_rc=$?
-			attempts=0
-			while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
-				/sbin/umount /cf
-				/sbin/fsck -y /cf
-				/sbin/mount -w /cf 2>/dev/null
-				mount_rc=$?
-				attempts=$((attempts+1))
-			done
 		fi
 	fi
 
@@ -132,6 +101,29 @@ fi
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
 
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		/sbin/kldunload zfs
+	fi
+elif [ "$PLATFORM" = "pfSense" ]; then
+	# Handle ZFS read-only case
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+		if [ $ZFSFSAVAILABLE -eq 0 ]; then
+			/sbin/kldunload zfs
+		elif [ -f /usr/bin/grep ]; then
+			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+			if [ "$ZFSROOT" != "" ]; then
+				/sbin/zfs set readonly=off $ZFSROOT
+			fi
+		fi
+	fi
+elif [ "${PLATFORM}" = "cdrom" ]; then
+	/etc/rc.cdrom
+fi
+
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then
 	/etc/rc.disable_hdd_apm
@@ -143,10 +135,6 @@ CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
 if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
-
-# sync pw database after mount.
-rm -f /etc/spwd.db.tmp
-/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
 
 product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
@@ -220,15 +208,15 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	/bin/mkdir /tmp/unionfs/confdefault
 	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
 	/sbin/mount_unionfs /tmp/unionfs/root /root/
-	/sbin/mount_unionfs /tmp/unionfs/bin /bin/		
-	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/	
+	/sbin/mount_unionfs /tmp/unionfs/bin /bin/
+	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/
 	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
 	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
 	echo "done."
 fi
 
 # make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
 if [ "$PLATFORM" != "pfSense" ]; then
 	/bin/rm /var/log/* 2>/dev/null
@@ -236,15 +224,8 @@ fi
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
-/bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
-# Make sure symlink is correct on nanobsd
-if [ "$PLATFORM" = "nanobsd" ] ; then
-	/bin/rm /conf
-	/bin/ln -s /cf/conf/ /conf
-fi
-
 # Repair symlinks if they are broken
 if [ -f /etc/newsyslog.conf ]; then
 	/bin/rm -f /etc/newsyslog.conf
@@ -264,17 +245,22 @@ if [ ! -L /etc/hosts ]; then
 fi
 
 if [ ! -L /etc/resolv.conf ]; then
-    /bin/rm -rf /etc/resolv.conf
-    /bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
+	/bin/rm -rf /etc/resolv.conf
+	/bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
+fi
+
+if [ ! -L /etc/resolvconf.conf ]; then
+	/bin/rm -rf /etc/resolvconf.conf
+	/bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
 fi
 
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
 # separated PREFIX area
-# Only create if symlink does not exist. 
+# Only create if symlink does not exist.
 if [ ! -h /tmp/tmp ]; then
-    /bin/ln -hfs / /tmp/tmp
+	/bin/ln -hfs / /tmp/tmp
 fi
 
 # Make sure our /tmp is 777 + Sticky
@@ -286,13 +272,13 @@ fi
 if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# Malloc debugging check
 	if [ -L /etc/malloc.conf ]; then
-	    #ln -s aj /etc/malloc.conf
+		#ln -s aj /etc/malloc.conf
 		/bin/rm /etc/malloc.conf
 	fi
 fi
 
 if [ ! -L /etc/dhclient.conf ]; then
-    /bin/rm -rf /etc/dhclient.conf
+	/bin/rm -rf /etc/dhclient.conf
 fi
 
 if [ ! -d /var/tmp ]; then
@@ -300,7 +286,7 @@ if [ ! -d /var/tmp ]; then
 fi
 
 if [ ! -d /cf/conf/backup/ ]; then
-	/bin/mkdir -p /cf/conf/backup/ 
+	/bin/mkdir -p /cf/conf/backup/
 fi
 
 set -T
@@ -308,10 +294,6 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Remove old nameserver resolution files
 /bin/rm -f /var/etc/nameserver*
-
-# Create uploadbar tmp directory
-/bin/mkdir -p /tmp/uploadbar
-/bin/chmod 0777 /tmp/uploadbar
 
 echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
@@ -324,18 +306,18 @@ if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
 fi
 
 for logfile in $LOG_FILES; do
-	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
+	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 		/usr/bin/touch /var/log/$logfile.log
-	else 
+	else
 		if [ ! -f /var/log/$logfile.log ]; then
 			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
 				# generate fifolog files
 				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
-			else 
+			else
 				/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
-	fi 
+	fi
 done
 
 # change permissions on newly created fifolog files.
@@ -358,7 +340,7 @@ echo -n "."
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
-    /bin/rm -rf /etc/rc.conf
+	/bin/rm -rf /etc/rc.conf
 fi
 
 if [ ! "$PLATFORM" = "jail" ]; then
@@ -411,13 +393,23 @@ echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	# XXX This script does need all filesystems rw!!!!
+	# Put this workaround for now until better ways are found.
+	/sbin/mount -u -f -r -o sync,noatime /
+	/sbin/mount -u -f -r -o sync,noatime /cf
+fi
+
 /etc/rc.bootup
 
-# /etc/rc.bootup unset $g['booting'], remove file right now to be
-# consistent
-/bin/rm $varrunpath/booting
+# /etc/rc.bootup unset $g['booting'], and removes file
+# Be sure the file is removed to not create troubles after
+if [ -f $varrunpath/booting ]; then
+	/bin/rm $varrunpath/booting
+fi
 
-# If a shell was selected from recovery 
+# If a shell was selected from recovery
 # console then just drop to the shell now.
 if [ -f "/tmp/donotbootup" ]; then
 	echo "Dropping to recovery shell."

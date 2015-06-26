@@ -4,6 +4,7 @@
 	interfaces_wireless_edit.php
 
 	Copyright (C) 2010 Erik Fonnesbeck
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -40,10 +41,14 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['wireless']))
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_wireless.php');
+
+if (!is_array($config['wireless'])) {
 	$config['wireless'] = array();
-if (!is_array($config['wireless']['clone']))
+}
+if (!is_array($config['wireless']['clone'])) {
 	$config['wireless']['clone'] = array();
+}
 
 $a_clones = &$config['wireless']['clone'];
 
@@ -52,8 +57,9 @@ function clone_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
+		}
 	}
 
 	return false;
@@ -65,10 +71,12 @@ function clone_compare($a, $b) {
 
 $portlist = get_interface_list();
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_clones[$id]) {
 	$pconfig['if'] = $a_clones[$id]['if'];
@@ -84,7 +92,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if mode");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("Mode"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Mode"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -95,8 +103,9 @@ if ($_POST) {
 		$clone['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_clones[$id]) {
-			if ($clone['if'] == $a_clones[$id]['if'])
+			if ($clone['if'] == $a_clones[$id]['if']) {
 				$clone['cloneif'] = $a_clones[$id]['cloneif'];
+			}
 		}
 		if (!$clone['cloneif']) {
 			$clone_id = 1;
@@ -115,10 +124,11 @@ if ($_POST) {
 
 		if (isset($id) && $a_clones[$id]) {
 			if (clone_inuse($id)) {
-				if ($clone['if'] != $a_clones[$id]['if'])
+				if ($clone['if'] != $a_clones[$id]['if']) {
 					$input_errors[] = gettext("This wireless clone cannot be modified because it is still assigned as an interface.");
-				else if ($clone['mode'] != $a_clones[$id]['mode'])
+				} else if ($clone['mode'] != $a_clones[$id]['mode']) {
 					$input_errors[] = gettext("Use the configuration page for the assigned interface to change the mode.");
+				}
 			}
 		}
 		if (!$input_errors) {
@@ -126,8 +136,9 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.  The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
 			} else {
 				if (isset($id) && $a_clones[$id]) {
-					if ($clone['if'] != $a_clones[$id]['if'])
+					if ($clone['if'] != $a_clones[$id]['if']) {
 						mwexec("/sbin/ifconfig " . $a_clones[$id]['cloneif'] . " destroy");
+					}
 					$input_errors[] = sprintf(gettext("Created with id %s"), $id);
 					$a_clones[$id] = $clone;
 				} else {
@@ -145,7 +156,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -153,59 +164,65 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="interfaces_wireless_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces wireless edit">
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic"><?=gettext("Wireless clone configuration");?></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
-                  <td width="78%" class="vtable">
-                    <select name="if" class="formselect">
-                      <?php
+<form action="interfaces_wireless_edit.php" method="post" name="iform" id="iform">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces wireless edit">
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Wireless clone configuration");?></td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
+			<td width="78%" class="vtable">
+				<select name="if" class="formselect">
+				<?php
+					foreach ($portlist as $ifn => $ifinfo) {
 					  $rowIndex = 0;
-                      foreach ($portlist as $ifn => $ifinfo)
-                        if (preg_match($g['wireless_regex'], $ifn)) {
+						if (preg_match($g['wireless_regex'], $ifn)) {
 							$rowIndex++;
-                            echo "<option value=\"{$ifn}\"";
-                            if ($ifn == $pconfig['if'])
-                                echo " selected=\"selected\"";
-                            echo ">";
-                            echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-                            echo "</option>";
-                        }
+							echo "<option value=\"{$ifn}\"";
+							if ($ifn == $pconfig['if']) {
+								echo " selected=\"selected\"";
+							}
+							echo ">";
+							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+							echo "</option>";
+						}
+					}
 					  if ($rowIndex == 0)
 						echo "<option></option>";
-                      ?>
-                    </select></td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncellreq"><?=gettext("Mode");?></td>
-                  <td class="vtable">
-                    <select name="mode" class="formselect">
-                      <option <?php if ($pconfig['mode'] == 'bss') echo "selected=\"selected\"";?> value="bss"><?=gettext("Infrastructure (BSS)");?></option>
-                      <option <?php if ($pconfig['mode'] == 'adhoc') echo "selected=\"selected\"";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)");?></option>
-                      <option <?php if ($pconfig['mode'] == 'hostap') echo "selected=\"selected\"";?> value="hostap"><?=gettext("Access Point");?></option>
-                    </select></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
-                    "for your reference (not parsed).");?></span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input type="hidden" name="cloneif" value="<?=htmlspecialchars($pconfig['cloneif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
-                    <?php if (isset($id) && $a_clones[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-                    <?php endif; ?>
-                  </td>
-                </tr>
-              </table>
+				?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncellreq"><?=gettext("Mode");?></td>
+			<td class="vtable">
+				<select name="mode" class="formselect">
+					<option <?php if ($pconfig['mode'] == 'bss') echo "selected=\"selected\"";?> value="bss"><?=gettext("Infrastructure (BSS)");?></option>
+					<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected=\"selected\"";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)");?></option>
+					<option <?php if ($pconfig['mode'] == 'hostap') echo "selected=\"selected\"";?> value="hostap"><?=gettext("Access Point");?></option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<br />
+				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input type="hidden" name="cloneif" value="<?=htmlspecialchars($pconfig['cloneif']); ?>" />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<?php if (isset($id) && $a_clones[$id]): ?>
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<?php endif; ?>
+			</td>
+		</tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

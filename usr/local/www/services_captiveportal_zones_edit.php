@@ -1,7 +1,8 @@
 <?php
 /*
-	services_captiveportal_mac_edit.php
-	Copyright (C) 2011 Ermal Luci
+	services_captiveportal_zones_edit.php
+	Copyright (C) 2011 Ermal Luçi
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -42,11 +43,12 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Zones"));
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
 if ($_POST) {
@@ -91,7 +93,7 @@ include("head.inc");
 	<form action="services_captiveportal_zones_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captive portal edit">
 			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Captiveportal Zones");?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Captive Portal Zones");?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Zone name"); ?></td>

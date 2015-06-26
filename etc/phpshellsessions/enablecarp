@@ -3,16 +3,21 @@ require_once("config.inc");
 require_once("interfaces.inc");
 require_once("util.inc");
 
-if(is_array($config['virtualip']['vip'])) {
+if (is_array($config['virtualip']['vip'])) {
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		switch ($vip['mode']) {
 			case "carp":
 				interface_carp_configure($vip);
 				sleep(1);
-			break;
+				break;
+			case "ipalias":
+				if (strpos($vip['interface'], '_vip')) {
+					interface_ipalias_configure($vip);
+				}
+				break;
 		}
 	}
 }
-interfaces_carp_setup();
+interfaces_sync_setup();
 set_single_sysctl("net.inet.carp.allow", "1");

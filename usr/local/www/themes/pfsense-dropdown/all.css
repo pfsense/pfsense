@@ -76,6 +76,7 @@ form {
 a {
 	text-decoration: none;
 }
+
 form input {
 	font-size: 1.1em;
 }
@@ -88,7 +89,7 @@ div.niceTitle
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 250px;
+	width: 220px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -333,11 +334,12 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 7.5em;
+	width: 6.2em;
 }
 #navigation ul li div {
 	font-size: 1em;
 	font-weight: bold;
+	text-align: center;
 }
 /* Make the List inside the List Elements */
 /* initially hidden with absolute position */
@@ -549,7 +551,7 @@ table#marquee div#container div#scroller {
 }
 .listn {
 	font-size: 11px;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -560,7 +562,7 @@ table#marquee div#container div#scroller {
 	font-size: 11px;
 	color: #FFFFFF;
 	background-color: #990000;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -570,14 +572,14 @@ table#marquee div#container div#scroller {
         border-bottom: 1px solid #999999;
         font-size: 11px;
         background-color: #999999;
-        padding-right: 16px;
+        padding-right: 6px;
         padding-left: 6px;
         padding-top: 4px;
         padding-bottom: 4px;
 }
 .listhdr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-bottom: 1px solid #999999;
@@ -590,7 +592,7 @@ table#marquee div#container div#scroller {
 }
 .listhdrr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-right: 1px solid #999999;

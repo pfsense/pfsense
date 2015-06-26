@@ -1,34 +1,34 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        rc.newwanipv6
-        Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
-        part of pfSense (https://www.pfsense.org)
+	rc.newwanipv6
+	Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
+	part of pfSense (https://www.pfsense.org)
 
-		Originally part of m0n0wall (http://m0n0.ch)
-        Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-        All rights reserved.
+	Originally part of m0n0wall (http://m0n0.ch)
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* parse the configuration and include all functions used below */
@@ -50,17 +50,18 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an ip change $oldipv6 ->  $curwanipv6 ... Restarting packages.");		
+	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");
 	send_event("service reload packages");
 }
 
 /* Interface IP address has changed */
-if (isset($_GET)) 
+if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
-else
+} else {
 	$argument = trim($argv[1], " \n\t");
+}
 
-log_error("rc.newwanipv6: Informational is starting {$argument}.");
+log_error("rc.newwanipv6: Info: starting on {$argument}.");
 
 if (empty($argument)) {
 	$interface = "wan";
@@ -81,54 +82,65 @@ if (empty($interface)) {
 }
 
 //Do not process while booting
-if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6") {
 	return;
+}
 
 /*
  * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
  *	i.e. OpenVPN might be in tap mode and not have an ip.
  */
 if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
-        log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
+	log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");
-        return;
+	return;
 }
 
-if (isset($_GET))
+if (isset($_GET['dmips'])) {
 	$new_domain_name_servers = $_GET['dmips'];
-else
+} else {
 	$new_domain_name_servers = getenv("new_domain_name_servers");
+}
+
 if (!empty($new_domain_name_servers)) {
 	$name_servers = explode(" ", $new_domain_name_servers);
 	$valid_ns = array();
-	foreach($name_servers as $ns) {
-		if (is_ipaddrv6(trim($ns)))
+	foreach ($name_servers as $ns) {
+		if (is_ipaddrv6(trim($ns))) {
 			$valid_ns[] = trim($ns);
+		}
 	}
 
-	if (count($valid_ns > 0))
+	if (count($valid_ns > 0)) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
+	}
 }
-if (isset($_GET))
+if (isset($_GET['dmnames'])) {
 	$new_domain_name = $_GET['dmnames'];
-else
+} else {
 	$new_domain_name = getenv("new_domain_name");
-if (!empty($new_domain_name))
+}
+
+if (!empty($new_domain_name)) {
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
+}
 
 /* write current WAN IPv6 to file */
-if (is_ipaddrv6($curwanipv6))
+if (is_ipaddrv6($curwanipv6)) {
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+}
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
-$oldipv6 = "";
-if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
+$oldipv6 = '';
+if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6")) {
 	$oldipv6 = file_get_contents("{$g['vardb_path']}/{$interface}_cacheipv6");
+}
 
 $grouptmp = link_interface_to_group($interface);
-if (!empty($grouptmp))
+if (!empty($grouptmp)) {
 	array_walk($grouptmp, 'interface_group_add_member');
+}
 
 link_interface_to_track6($interface, "update");
 
@@ -144,7 +156,7 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
-if (is_ipaddrv6($oldipv6)) {
+if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if ($curwanipv6 == $oldipv6) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
 		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
@@ -152,15 +164,20 @@ if (is_ipaddrv6($oldipv6)) {
 			vpn_ipsec_force_reload($interface);
 
 			/* start OpenVPN server & clients */
-			if (substr($interface_real, 0, 4) != "ovpn")
+			if (substr($interface_real, 0, 4) != "ovpn") {
 				openvpn_resync_all($interface);
+			}
 		}
 		return;
-	} else if (does_interface_exist($interface_real))
+	} else if (does_interface_exist($interface_real) && !empty($oldipv6)) {
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
+	}
 
 	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 }
+
+/* reload unbound */
+services_unbound_configure();
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);
@@ -172,8 +189,9 @@ services_dyndns_configure($interface);
 vpn_ipsec_force_reload($interface);
 
 /* start OpenVPN server & clients */
-if (substr($interface_real, 0, 4) != "ovpn")
+if (substr($interface_real, 0, 4) != "ovpn") {
 	openvpn_resync_all($interface);
+}
 
 /* reload graphing functions */
 enable_rrd_graphing();

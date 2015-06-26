@@ -90,6 +90,12 @@ $priv_list['page-status-ipsec']['descr'] = gettext("Allow access to the 'Status:
 $priv_list['page-status-ipsec']['match'] = array();
 $priv_list['page-status-ipsec']['match'][] = "diag_ipsec.php*";
 
+$priv_list['page-status-ipsec-leases'] = array();
+$priv_list['page-status-ipsec-leases']['name'] = gettext("WebCfg - Status: IPsec: Leasespage");
+$priv_list['page-status-ipsec-leases']['descr'] = gettext("Allow access to the 'Status: IPsec: Leases' page.");
+$priv_list['page-status-ipsec-leases']['match'] = array();
+$priv_list['page-status-ipsec-leases']['match'][] = "diag_ipsec_leases.php*";
+
 $priv_list['page-status-ipsec-sad'] = array();
 $priv_list['page-status-ipsec-sad']['name'] = gettext("WebCfg - Status: IPsec: SAD page");
 $priv_list['page-status-ipsec-sad']['descr'] = gettext("Allow access to the 'Status: IPsec: SAD' page.");
@@ -638,30 +644,6 @@ $priv_list['page-loadbalancer-pool-edit']['descr'] = gettext("Allow access to th
 $priv_list['page-loadbalancer-pool-edit']['match'] = array();
 $priv_list['page-loadbalancer-pool-edit']['match'][] = "load_balancer_pool_edit.php*";
 
-$priv_list['page-services-loadbalancer-relay-action'] = array();
-$priv_list['page-services-loadbalancer-relay-action']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Actions page");
-$priv_list['page-services-loadbalancer-relay-action']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Actions' page.");
-$priv_list['page-services-loadbalancer-relay-action']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-action']['match'][] = "load_balancer_relay_action.php*";
-
-$priv_list['page-services-loadbalancer-relay-action-edit'] = array();
-$priv_list['page-services-loadbalancer-relay-action-edit']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Action: Edit page");
-$priv_list['page-services-loadbalancer-relay-action-edit']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Action: Edit' page.");
-$priv_list['page-services-loadbalancer-relay-action-edit']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-action-edit']['match'][] = "load_balancer_relay_action_edit.php*";
-
-$priv_list['page-services-loadbalancer-relay-protocol'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Protocols page");
-$priv_list['page-services-loadbalancer-relay-protocol']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Protocols' page.");
-$priv_list['page-services-loadbalancer-relay-protocol']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol']['match'][] = "load_balancer_relay_protocol.php*";
-
-$priv_list['page-services-loadbalancer-relay-protocol-edit'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Protocol: Edit page");
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Protocol: Edit' page.");
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['match'][] = "load_balancer_relay_protocol_edit.php*";
-
 $priv_list['page-services-loadbalancer-setting'] = array();
 $priv_list['page-services-loadbalancer-setting']['name'] = gettext("Webcfg - Services: Load Balancer: setting page");
 $priv_list['page-services-loadbalancer-setting']['descr'] = gettext("Allow access to the 'Settings: Load Balancer: Settings' page.");
@@ -813,8 +795,8 @@ $priv_list['page-services-captiveportal-voucher-edit']['match'] = array();
 $priv_list['page-services-captiveportal-voucher-edit']['match'][] = "services_captiveportal_vouchers_edit.php*";
 
 $priv_list['page-services-captiveportal-zones'] = array();
-$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captiveprotal Zones page");
-$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: CaptivePortal Zones' page.");
+$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captive portal Zones page");
+$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: Captive portal Zones' page.");
 $priv_list['page-services-captiveportal-zones']['match'] = array();
 $priv_list['page-services-captiveportal-zones']['match'][] = "services_captiveportal_zones.php*";
 
@@ -939,7 +921,7 @@ $priv_list['page-services-rfc2136clients']['match'] = array();
 $priv_list['page-services-rfc2136clients']['match'][] = "services_rfc2136.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
-$priv_list['page-services-router-advertisements']['name'] = gettext("Webcfg - Services: Router advertisementspage");
+$priv_list['page-services-router-advertisements']['name'] = gettext("Webcfg - Services: Router Advertisements page");
 $priv_list['page-services-router-advertisements']['descr'] = gettext("Allow access to the 'Services: Router Advertisements' page.");
 $priv_list['page-services-router-advertisements']['match'] = array();
 $priv_list['page-services-router-advertisements']['match'][] = "services_router_advertisements.php*";
@@ -987,7 +969,7 @@ $priv_list['page-status-captiveportal-expire']['match'] = array();
 $priv_list['page-status-captiveportal-expire']['match'][] = "status_captiveportal_expire.php*";
 
 $priv_list['page-status-captiveportal-test'] = array();
-$priv_list['page-status-captiveportal-test']['name'] = gettext("WebCfg - Status: Captive portal test Vouchers page");
+$priv_list['page-status-captiveportal-test']['name'] = gettext("WebCfg - Status: Captive portal Test Vouchers page");
 $priv_list['page-status-captiveportal-test']['descr'] = gettext("Allow access to the 'Status: Captive portal Test Vouchers' page.");
 $priv_list['page-status-captiveportal-test']['match'] = array();
 $priv_list['page-status-captiveportal-test']['match'][] = "status_captiveportal_test.php*";
@@ -1040,6 +1022,8 @@ $priv_list['page-status-trafficgraph']['descr'] = gettext("Allow access to the '
 $priv_list['page-status-trafficgraph']['match'] = array();
 $priv_list['page-status-trafficgraph']['match'][] = "status_graph.php*";
 $priv_list['page-status-trafficgraph']['match'][] = "bandwidth_by_ip.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "graph.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "ifstats.php*";
 
 $priv_list['page-status-cpuload'] = array();
 $priv_list['page-status-cpuload']['name'] = gettext("WebCfg - Status: CPU load page");
@@ -1133,7 +1117,7 @@ $priv_list['page-system-advanced-misc']['match'] = array();
 $priv_list['page-system-advanced-misc']['match'][] = "system_advanced_misc.php*";
 
 $priv_list['page-system-advanced-network'] = array();
-$priv_list['page-system-advanced-network']['name'] = gettext("WebCfg - System: Advanced: Network page");
+$priv_list['page-system-advanced-network']['name'] = gettext("WebCfg - System: Advanced: Networking page");
 $priv_list['page-system-advanced-network']['descr'] = gettext("Allow access to the 'System: Advanced: Networking' page.");
 $priv_list['page-system-advanced-network']['match'] = array();
 $priv_list['page-system-advanced-network']['match'][] = "system_advanced_network.php*";

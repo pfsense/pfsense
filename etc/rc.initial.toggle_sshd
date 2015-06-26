@@ -1,6 +1,7 @@
 #! /usr/local/bin/php -f
 <?php
 /*
+	rc.initial.toggle_sshd
 	sshd - Modified to work on disk based system
 	Copyright 2004 Scott K Ullrich
 
@@ -52,7 +53,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo " done.\n";
 		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
 	}
-	
+
 } else {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
@@ -66,7 +67,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo "\nReloading firewall rules.";
 		filter_configure();
 		echo " done.\n\n";
-	}	
+	}
 }
 
 fclose($fp);

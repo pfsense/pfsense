@@ -1,30 +1,31 @@
 <?php
 /* $Id$ */
 /*
-    diag_limiter_info.php
-    Copyright (C) 2010 Scott Ullrich
-    All rights reserved.
+	diag_limiter_info.php
+	Copyright (C) 2010 Scott Ullrich
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -44,14 +45,15 @@ require("guiconfig.inc");
 $pgtitle = gettext("Diagnostics: Limiter Info");
 $shortcut_section = "trafficshaper-limiters";
 
-if($_REQUEST['getactivity']) {
+if ($_REQUEST['getactivity']) {
 	$text = `/sbin/ipfw pipe show`;
-	if($text == "") 
+	if ($text == "") {
 		$text = "We could not find any limiters on this system.";
+	}
 	echo "Limiters:\n";
 	echo $text;
 	$text = `/sbin/ipfw queue show`;
-	if($text != "") {
+	if ($text != "") {
 		echo "\n\nQueues:\n";
 		echo $text;
 	}
@@ -77,7 +79,7 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText + '<\/pre><\/font>');
 		setTimeout('getlimiteractivity()', 2000);
 	}
 	setTimeout('getlimiteractivity()', 5000);
@@ -85,31 +87,32 @@ include("head.inc");
 </script>
 <div id="maincontent">
 <?php
-	if($savemsg) {
+	if ($savemsg) {
 		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
-		echo "</div>";	
+		echo "</div>";
 	}
-	if ($input_errors)
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag limiter info">
   <tr>
-    <td>
-	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
-		<tr>
-			<td align="center">
-				<table summary="results">
-					<tr><td>
-						<div id="limiteractivitydiv">
-							<?=gettext("Gathering Limiter information, please wait...");?>
-						</div>
-					</td></tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-    </td>
+	<td>
+		<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
+			<tr>
+				<td align="center">
+					<table summary="results">
+						<tr><td>
+							<div id="limiteractivitydiv">
+								<?=gettext("Gathering Limiter information, please wait...");?>
+							</div>
+						</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</td>
   </tr>
 </table>
 </div>

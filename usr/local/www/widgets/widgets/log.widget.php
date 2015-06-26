@@ -1,6 +1,8 @@
 <?php
 /*
-	$Id$
+	log.widget.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
@@ -14,7 +16,7 @@
 
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
@@ -40,24 +42,32 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if(is_numeric($_POST['filterlogentries'])) {
+if (is_numeric($_POST['filterlogentries'])) {
 	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
 	$acts = array();
-	if ($_POST['actpass'])   $acts[] = "Pass";
-	if ($_POST['actblock'])  $acts[] = "Block";
-	if ($_POST['actreject']) $acts[] = "Reject";
+	if ($_POST['actpass']) {
+		$acts[] = "Pass";
+	}
+	if ($_POST['actblock']) {
+		$acts[] = "Block";
+	}
+	if ($_POST['actreject']) {
+		$acts[] = "Reject";
+	}
 
-	if (!empty($acts))
+	if (!empty($acts)) {
 		$config['widgets']['filterlogentriesacts'] = implode(" ", $acts);
-	else
+	} else {
 		unset($config['widgets']['filterlogentriesacts']);
+	}
 	unset($acts);
 
-	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") )
+	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
 		$config['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
-	else
+	} else {
 		unset($config['widgets']['filterlogentriesinterfaces']);
+	}
 
 	write_config("Saved Filter Log Entries via Dashboard");
 	Header("Location: /");
@@ -95,19 +105,41 @@ var isPaused = false;
 var nentries = <?php echo $nentries; ?>;
 
 <?php
-if(isset($config['syslog']['reverse']))
+if (isset($config['syslog']['reverse'])) {
 	echo "var isReverse = true;\n";
-else
+} else {
 	echo "var isReverse = false;\n";
+}
 ?>
 
 /* Called by the AJAX updater */
 function format_log_line(row) {
-	var line = '<td class="listMRlr" align="center">' + row[0] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
+	var rrText = "<?php echo gettext("Reverse Resolve with DNS"); ?>";
+
+	if (row[8] == '6') {
+		srcIP = '[' + row[3] + ']';
+		dstIP = '[' + row[5] + ']';
+	} else {
+		srcIP = row[3];
+		dstIP = row[5];
+	}
+
+	if (row[4] == '') {
+		srcPort = '';
+	} else {
+		srcPort = ':' + row[4];
+	}
+	if (row[6] == '') {
+		dstPort = '';
+	} else {
+		dstPort = ':' + row[6];
+	}
+
+	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + srcIP + srcPort + '"><a href="diag_dns.php?host=' + row[3] + '" title="' + rrText + '">' + srcIP + '</a></td>' +
+		'<td class="listMRr ellipsis" title="' + dstIP + dstPort + '"><a href="diag_dns.php?host=' + row[5] + '" title="' + rrText + '">' + dstIP + '</a>' + dstPort + '</td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -115,8 +147,12 @@ function format_log_line(row) {
 	var Action = row[0].match(/alt=.*?(pass|block|reject)/i).join("").match(/pass|block|reject/i).join("");
 	var Interface = row[2];
 
-	if ( !(in_arrayi(Action,	nentriesacts.replace      (/\s+/g, ',').split(',') ) ) && (nentriesacts != 'All') )			return false;
-	if ( !(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(',') ) ) && (nentriesinterfaces != 'All') )	return false;
+	if (!(in_arrayi(Action,	nentriesacts.replace      (/\s+/g, ',').split(','))) && (nentriesacts != 'All')) {
+		return false;
+	}
+	if (!(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(','))) && (nentriesinterfaces != 'All')) {
+		return false;
+	}
 
 	return line;
 }
@@ -126,7 +162,7 @@ function format_log_line(row) {
 <input type="hidden" id="log-config" name="log-config" value="" />
 
 <div id="log-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
+	<form action="/widgets/widgets/log.widget.php" method="post" name="log_widget_iform">
 		Number of lines to display:
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
 		<?php for ($i = 1; $i <= 20; $i++) { ?>
@@ -136,7 +172,9 @@ function format_log_line(row) {
 
 <?php
 		$Include_Act = explode(" ", $nentriesacts);
-		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
+		if ($nentriesinterfaces == "All") {
+			$nentriesinterfaces = "";
+		}
 ?>
 		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass
 		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
@@ -159,7 +197,7 @@ function format_log_line(row) {
 ?>
 		</select>
 
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+		<input id="log_widget_submit" name="log_widget_submit" type="submit" class="formbtn" value="Save" />
 	</form>
 </div>
 
@@ -184,8 +222,28 @@ function format_log_line(row) {
 	<?php
 	$rowIndex = 0;
 	foreach ($filterlog as $filterent):
-	$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-	$rowIndex++;
+		$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+		$rowIndex++;
+		if ($filterent['version'] == '6') {
+			$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
+			$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
+		} else {
+			$srcIP = htmlspecialchars($filterent['srcip']);
+			$dstIP = htmlspecialchars($filterent['dstip']);
+		}
+
+		if ($filterent['srcport']) {
+			$srcPort = ":" . htmlspecialchars($filterent['srcport']);
+		} else {
+			$srcPort = "";
+		}
+
+		if ($filterent['dstport']) {
+			$dstPort = ":" . htmlspecialchars($filterent['dstport']);
+		} else {
+			$dstPort = "";
+		}
+
 	?>
 		<tr class="<?=$evenRowClass?>">
 			<td class="listMRlr nowrap" align="center">
@@ -195,19 +253,21 @@ function format_log_line(row) {
 			</td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo $srcIP . $srcPort;?>">
+				<a href="diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<?php echo $srcIP;?></a></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo $dstIP . $dstPort;?>">
+				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<?php echo $dstIP;?></a><?php echo $dstPort;?></td>
 			<?php
-				if ($filterent['proto'] == "TCP")
+				if ($filterent['proto'] == "TCP") {
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
+				}
 			?>
 		</tr>
-	<?php endforeach; ?>
-		<tr style="display:none;"><td></td></tr>
+	<?php
+	endforeach;
+	?>
 	</tbody>
 </table>
 

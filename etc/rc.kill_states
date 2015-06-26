@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-	rc.newwanip
+	rc.kill_states
 	Copyright (C) 2013 Renato Botelho (garga@pfsense.org)
 	part of pfSense (https://www.pfsense.org)
 
@@ -34,8 +34,9 @@ require_once("interfaces.inc");
 require_once("util.inc");
 
 // Do not process while booting
-if($g['booting'])
-	exit;
+if (platform_booting()) {
+	return;
+}
 
 /* Interface address to cleanup states */
 $interface = str_replace("\n", "", $argv[1]);
@@ -45,18 +46,19 @@ $local_ip = str_replace("\n", "", $argv[2]);
 
 if (empty($interface) || !does_interface_exist($interface)) {
 	log_error("rc.kill_states: Invalid interface '{$interface}'");
-	exit;
+	return;
 }
 
 if (!empty($local_ip)) {
 	list($local_ip, $subnet_bits) = explode("/", $local_ip);
 
-	if (empty($subnet_bits))
+	if (empty($subnet_bits)) {
 		$subnet_bits = "32";
+	}
 
 	if (!is_ipaddr($local_ip)) {
 		log_error("rc.kill_states: Invalid IP address '{$local_ip}'");
-		exit;
+		return;
 	}
 }
 
@@ -67,23 +69,25 @@ if (!isset($config['system']['kill_states'])) {
 			"/usr/bin/egrep '\-> +{$local_ip}:[0-9]+ +\->'");
 
 		$cleared_states = array();
-		foreach(explode("\n", $nat_states) as $nat_state) {
-			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3)
+		foreach (explode("\n", $nat_states) as $nat_state) {
+			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3) {
 				continue;
+			}
 
 			$src = $matches[0][1];
 			$dst = $matches[2][1];
 
-			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states))
+			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states)) {
 				continue;
+			}
 
 			$cleared_states[] = "{$src},{$dst}";
-			mwexec("/sbin/pfctl -k {$src} -k {$dst}", true);
+			pfSense_kill_states($src, $dst);
 		}
 
-		mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$local_ip}/{$subnet_bits}", true);
-		mwexec("/sbin/pfctl -k {$local_ip}/{$subnet_bits}", true);
-		mwexec("/sbin/pfctl -K {$local_ip}/{$subnet_bits}", true);
+		pfSense_kill_states("0.0.0.0/0", "{$local_ip}/{$subnet_bits}");
+		pfSense_kill_states("{$local_ip}/{$subnet_bits}");
+		pfSense_kill_srcstates("{$local_ip}/{$subnet_bits}");
 	}
 	log_error("rc.kill_states: Removing states for interface {$interface}");
 	mwexec("/sbin/pfctl -i {$interface} -Fs", true);

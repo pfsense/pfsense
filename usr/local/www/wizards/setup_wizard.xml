@@ -3,7 +3,7 @@
 <copyright>
 /* $Id$ */
 /*
-	setup.xml
+	setup_wizard.xml
         part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2004, 2005 Scott Ullrich
@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>9</totalsteps>
+<totalsteps>10</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
@@ -51,6 +51,18 @@
 </step>
 <step>
 	<id>2</id>
+	<title>Bling your pfSense with pfSense Gold</title>
+	<disableheader>true</disableheader>
+	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now &lt;br/&gt; &lt;br/&gt; </description>
+	<fields>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+</step>
+<step>
+	<id>3</id>
 	<title>General Information</title>
 	<description>On this screen you will set the general pfSense parameters.</description>
 	<fields>
@@ -59,7 +71,7 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9-]+$</validate>
 			<message>Invalid Hostname</message>
 		</field>
 		<field>
@@ -67,8 +79,13 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9.-]+$</validate>
 			<message>Domain name field is invalid</message>
+		</field>
+		<field>
+			<name>DNS Resolver Behavior</name>
+			<type>text</type>
+			<description>The default behavior of the DNS Resolver will ignore manually configured DNS servers for client queries and query root DNS servers directly. To use the manually configured DNS servers below for client queries, visit Services &gt; DNS Resolver and enable DNS Query Forwarding after completing the wizard.</description>
 		</field>
 		<field>
 			<name>Primary DNS Server</name>
@@ -109,7 +126,7 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['hostname']) || !is_hostname($_POST['hostname'])) {
+		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			print_info_box_np("Hostname is invalid. Please press back in your browser window and correct.");
 			die;
 		}
@@ -129,7 +146,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>3</id>
+	<id>4</id>
 	<title>Time Server Information</title>
 	<description>Please enter the time, date and time zone.</description>
 	<fields>
@@ -161,7 +178,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>4</id>
+	<id>5</id>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
 	<description>On this screen we will configure the Wide Area Network information.</description>
@@ -393,9 +410,14 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
+		if (empty($config['interfaces']['wan']['gateway'])) {
+			$wangw_name = "WANGW";
+		} else {
+			$wangw_name = $config['interfaces']['wan']['gateway'];
+		}
 		if (is_array($config['gateways']['gateway_item']))
 			foreach ($config['gateways']['gateway_item'] as $gw)
-				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
+				if ($gw['name'] == $wangw_name || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
 					$config['wizardtemp']['wangateway'] = $gw['gateway'];
 		]]>
 	</stepbeforeformdisplay>
@@ -430,7 +452,7 @@
 			die;
 		}
 		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
-			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
+			print_info_box_np("Invalid PPTP Remote IP Address. Please press back in your browser window and correct.");
 			die;
 		}
 		$type = $_POST['selectedtype'];
@@ -483,13 +505,13 @@
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
 				if(!$config['interfaces']['lan']) 
-					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
+					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
 	</stepsubmitbeforesave>
 </step>
 <step>
-	<id>5</id>
+	<id>6</id>
 	<title>Configure LAN Interface</title>
 	<description>On this screen we will configure the Local Area Network information.</description>
 	<fields>
@@ -517,24 +539,57 @@
 			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
 			die;
 		}
-		if ($_POST['subnetmask'] < 31 &&
-		    ($_POST['lanipaddress'] == gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']) ||
-		     $_POST['lanipaddress'] == gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']))) {
-			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+
+		$lowestip = gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']);
+		$highestip = gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']);
+
+		if ($_POST['subnetmask'] < 31) {
+			if ($_POST['lanipaddress'] == $lowestip) {
+				print_info_box_np("LAN IP Address equals subnet network address. This is not allowed. Please press back in your browser window and correct.");
+				die;
+			}
+			if ($_POST['lanipaddress'] == $highestip) {
+				print_info_box_np("LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in your browser window and correct.");
+				die;
+			}
+		} else {
+			print_info_box_np("Invalid subnet mask, choose a mask less than 31. Please press back in your browser window and correct.");
 			die;
 		}
-		$ft = explode(".", $_POST['lanipaddress']);
-		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
-		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
-		$highestip = gen_subnet_max($_POST['lanipaddress'], $config['interfaces']['lan']['subnet']);
-		$hi = explode(".", $highestip);
-		$highestip = $hi[3]-10;
-		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
+
+		$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
+		$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+
+		if ($ipaddresses_after >= $ipaddresses_before) {
+			// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
+			if ($ipaddresses_after > 30) {
+				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+				// This case will work out like the old defaults if the user has specified the ".1" address.
+				// The range will be something like ".10" to ".245"
+				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+			} else {
+				// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
+				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+			}
+		} else {
+			// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
+			if ($ipaddresses_before > 30) {
+				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+			} else {
+				// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
+				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+			}
+		}
 		]]>
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>6</id>
+	<id>7</id>
 	<title>Set Admin WebGUI Password</title>
 	<description>On this screen we will set the admin password, which is used to access the WebGUI and also SSH services if you wish to enable them.</description>
 	<fields>
@@ -566,7 +621,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>7</id>
+	<id>8</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
 	<description>Click 'Reload' to reload pfSense with new changes.</description>
@@ -578,11 +633,11 @@
 	</fields>
 </step>
 <step>
-	<id>8</id>
+	<id>9</id>
 	<title>Reload in progress</title>
 	<description>
 		A reload is now in progress.  Please wait. &lt;p&gt; 
-		&lt;meta http-equiv="refresh" content="60; url=wizard.php?xml=setup_wizard.xml&amp;stepid=8" &gt;
+		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
 	</description>
@@ -626,7 +681,7 @@
 	</stepafterformdisplay>
 </step>
 <step>
-	<id>9</id>
+	<id>10</id>
 	<title>Wizard completed.</title>
 	<stepbeforeformdisplay>
 	<![CDATA[
@@ -639,8 +694,8 @@
 	<description>
 	<![CDATA[
 		Congratulations!  pfSense is now configured.<p/>
-		Please consider donating to the project to help us with our overhead costs.<p/>
-		Click <a target='_new' href='https://www.pfsense.org/j.php?jumpto=donate'>here</a> to donate or purchase services offered by the pfSense team.<p/>
+		Please consider contributing back to the project!<p/>
+		Click <a target='_new' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.<p/>
 		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
 	]]>
 	</description>

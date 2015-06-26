@@ -461,9 +461,13 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 							echo " selected=\"selected\"";
 						}
 						echo " value=\"{$key}\" >" . htmlspecialchars($opt) . "</option>";
-					}
+<<<<<<< HEAD
+					} 
 					if (!count($opt))
 						echo "<option></option>";
+=======
+					}
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 				?>
 				</select>
 			</td>
@@ -478,11 +482,18 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<span class="vexpl"><?= gettext("Select at least two interfaces for Multilink (MLPPP) connections."); ?></span>
 			</td>
 		</tr>
+<<<<<<< HEAD
 		<tr style="display:none" id="portlists">
+			<td id="serialports"><?php
+				$selected_ports = explode(',',$pconfig['interfaces']);
+				if (!is_dir("/var/spool/lock"))
+=======
+		<tr style="display:none" name="portlists" id="portlists">
 			<td id="serialports">
 			<?php
 				$selected_ports = explode(',', $pconfig['interfaces']);
 				if (!is_dir("/var/spool/lock")) {
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 					mwexec("/bin/mkdir -p /var/spool/lock");
 				}
 				// $serialports = pfSense_get_modem_devices();
@@ -523,11 +534,19 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					}
 				}
 				echo $port_count;
+<<<<<<< HEAD
+				if($serport_count > $port_count)
+					$port_count=$serport_count;
+			?></td>
+			<td style="display:none" id="port_count"><?=htmlspecialchars($port_count);?></td>
+=======
 				if ($serport_count > $port_count) {
 					$port_count = $serport_count;
 				}
 			?>
 			</td>
+			<td style="display:none" name="port_count" id="port_count"><?=htmlspecialchars($port_count);?></td>
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Description"); ?></td>
@@ -536,11 +555,17 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<br />
 				<span class="vexpl"><?= gettext("You may enter a description here for your reference. Description will appear in the \"Interfaces Assign\" select lists."); ?></span>
 			</td>
-		</tr>
+<<<<<<< HEAD
+		</tr>	
 		<tr style="display:none" id="select"><td style="display:none"></td></tr>
+		<?php $k=0; ?>
+=======
+		</tr>
+		<tr style="display:none" name="select" id="select"><td style="display:none"></td></tr>
 		<?php
 			$k = 0;
 		?>
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 		<tr style="display:none" name="ppp_provider" id="ppp_provider">
 			<td width="22%" valign="top" class="vncell">
 				<?= gettext("Service Provider"); ?>
@@ -588,8 +613,13 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			</td>
 		</tr>
 
+<<<<<<< HEAD
 		<tr style="display:none" id="phone_num">
+			<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
+=======
+		<tr style="display:none" name="phone_num" id="phone_num">
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Phone Number"); ?></td>
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 			<td width="78%" class="vtable">
 				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>" />
 				<br />
@@ -603,10 +633,17 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			</td>
 		</tr>
 
+<<<<<<< HEAD
 		<tr style="display:none" id="ppp">
 			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="advanced">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="advanced">		
 					<tr style="display:none" id="advanced_<?=$k;?>" <?$k++;?>>
+=======
+		<tr style="display:none" name="ppp" id="ppp">
+			<td colspan="2" style="padding:0px;">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="advanced">
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 						<td width="22%" valign="top" class="vncell"><?= gettext("APN number (optional)"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>" />
@@ -620,8 +657,13 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>" />
 						</td>
 					</tr>
-
+<<<<<<< HEAD
+			
 					<tr style="display:none" id="advanced_<?=$k;?>" <?$k++;?>>
+=======
+
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN wait"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>" />
@@ -754,8 +796,13 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" <?$k++;?>>
 			<td colspan="2" valign="top" class="listtopic"><?= gettext("Advanced Options"); ?></td>
 		</tr>
+<<<<<<< HEAD
 		<tr style="display:none" id="advanced_<?=$k;?>" <?$k++;?>>
+		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
+=======
+		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
+>>>>>>> 608f68288175ba877cbb05db361af231c89207a8
 			<td class="vtable">
 				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked=\"checked\""; ?> /> <?= gettext("Enable Dial-on-Demand mode"); ?>
 				<br />

@@ -81,7 +81,7 @@ if ($_POST) {
 	foreach ($_POST as $key => $val) {
 		if (stristr($key, 'options') !== false) {
 			if (stristr($key, $pconfig['type'].'_') !== false) {
-				$opt = explode('_',$key);
+				$opt = explode('_', $key);
 				$pconfig['options'][$opt[2]] = $val;
 			}
 			unset($pconfig[$key]);
@@ -90,12 +90,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name type descr");
-	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Type"), gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our monitor names are unique */
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This monitor name has already been used.  Monitor names must be unique.");
 		}
@@ -206,7 +206,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -292,13 +292,13 @@ function updateType(t) {
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
 							<input name="http_options_host" type="text" <?if (isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
 						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("http_options_code", $pconfig['options']['code']); ?>
 						</td>
@@ -319,19 +319,19 @@ function updateType(t) {
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="https">
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("Path"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("Path"); ?></td>
 						<td class="vtable" colspan="2">
 							<input name="https_options_path" type="text" <?if (isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) ."\"";?> size="64" />
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
 							<input name="https_options_host" type="text" <?if (isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
 						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("https_options_code", $pconfig['options']['code']); ?>
 						</td>
@@ -353,13 +353,13 @@ function updateType(t) {
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="send expect">
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable"><?=gettext("Send string"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("Send string"); ?></td>
 						<td class="vtable" colspan="2">
 							<input name="send_options_send" type="text" <?if (isset($pconfig['options']['send'])) echo "value=\"" . htmlspecialchars($pconfig['options']['send']) . "\"";?> size="64" />
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top" align="right"  class="vtable"><?=gettext("Expect string"); ?></td>
+						<td valign="top" align="right" class="vtable"><?=gettext("Expect string"); ?></td>
 						<td class="vtable" colspan="2">
 							<input name="send_options_expect" type="text" <?if (isset($pconfig['options']['expect'])) echo "value=\"" . htmlspecialchars($pconfig['options']['expect']) . "\"";?> size="64" />
 						</td>

@@ -42,7 +42,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
+$pgtitle = array(gettext("Status"), gettext("Filter Reload Status"));
 $shortcut_section = "firewall";
 
 if (file_exists("{$g['varrun_path']}/filter_reload_status")) {
@@ -100,8 +100,8 @@ function update_data(obj) {
 	var result_text = obj.content;
 	var result_text_split = result_text.split("|");
 	result_text = result_text_split[1];
-	result_text = result_text.replace("\n","");
-	result_text = result_text.replace("\r","");
+	result_text = result_text.replace("\n", "");
+	result_text = result_text.replace("\r", "");
 	if (result_text) {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> ' + result_text + '...');
 	} else {
@@ -112,8 +112,8 @@ function update_data(obj) {
 	} else if (result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
-		jQuery('#reloadinfo').css("visibility","hidden");
-		jQuery('#doneurl').css("visibility","visible");
+		jQuery('#reloadinfo').css("visibility", "hidden");
+		jQuery('#doneurl').css("visibility", "visible");
 		jQuery('#doneurl').html("<p><a href='status_queues.php'>Queue Status<\/a><\/p>");
 	}
 	window.setTimeout('update_status_thread()', 2500);

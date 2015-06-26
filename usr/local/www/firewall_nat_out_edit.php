@@ -92,7 +92,7 @@ if (isset($id) && $a_out[$id]) {
 	}
 
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
-	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
+	list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
 	if (!is_numeric($pconfig['source_subnet'])) {
 		$pconfig['source_subnet'] = 32;
 	}
@@ -148,13 +148,13 @@ if ($_POST) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 		if ($newpost <> $temp) {
-			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
 		}
 	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
-	$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Source"),gettext("Source bit count"),gettext("Destination"),gettext("Destination bit count"));
+	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Source"), gettext("Source bit count"), gettext("Destination"), gettext("Destination bit count"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -364,7 +364,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));
 $closehead = false;
 include("head.inc");
 
@@ -440,19 +440,19 @@ function proto_change() {
 	}
 }
 function poolopts_change() {
-	if (jQuery('#target option:selected').text().trim().substring(0,4) == "Host") {
-		jQuery('#poolopts_tr').css('display','');
-		jQuery('#target_network').css('display','none');
-	} else if (jQuery('#target option:selected').text().trim().substring(0,6) == "Subnet") {
-		jQuery('#poolopts_tr').css('display','');
-		jQuery('#target_network').css('display','none');
-	} else if (jQuery('#target option:selected').text().trim().substring(0,5) == "Other") {
-		jQuery('#poolopts_tr').css('display','');
-		jQuery('#target_network').css('display','');
+	if (jQuery('#target option:selected').text().trim().substring(0, 4) == "Host") {
+		jQuery('#poolopts_tr').css('display', '');
+		jQuery('#target_network').css('display', 'none');
+	} else if (jQuery('#target option:selected').text().trim().substring(0, 6) == "Subnet") {
+		jQuery('#poolopts_tr').css('display', '');
+		jQuery('#target_network').css('display', 'none');
+	} else if (jQuery('#target option:selected').text().trim().substring(0, 5) == "Other") {
+		jQuery('#poolopts_tr').css('display', '');
+		jQuery('#target_network').css('display', '');
 	} else {
-		jQuery('#poolopts').prop('selectedIndex',0);
-		jQuery('#poolopts_tr').css('display','none');
-		jQuery('#target_network').css('display','none');
+		jQuery('#poolopts').prop('selectedIndex', 0);
+		jQuery('#poolopts_tr').css('display', 'none');
+		jQuery('#target_network').css('display', 'none');
 		jQuery('#targetip').val('');
 		jQuery('#targetip_subnet').val('0');
 	}
@@ -525,7 +525,7 @@ function poolopts_change() {
 					}
 
 					/* add openvpn/tun interfaces */
-					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+					if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 						$interfaces["openvpn"] = "OpenVPN";
 					}
 
@@ -558,7 +558,7 @@ function poolopts_change() {
 				</select><br />
 				<span class="vexpl"><?=gettext("Choose which protocol this rule should match.");?><br />
 <?php
-					printf(gettext("Hint: in most cases, you should specify %s any %s here."),"<em>","</em>&nbsp;");
+					printf(gettext("Hint: in most cases, you should specify %s any %s here."), "<em>", "</em>&nbsp;");
 ?>
 				</span>
 			</td>
@@ -887,7 +887,7 @@ function poolopts_change() {
 	poolopts_change();
 
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("sourceport"), new StateSuggestions(customarray));

@@ -87,7 +87,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("LAGG"));
+$pgtitle = array(gettext("Interfaces"), gettext("LAGG"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -127,7 +127,7 @@ include("head.inc");
 		$i = 0;
 		foreach ($a_laggs as $lagg):
 ?>
-				<tr  ondblclick="document.location='interfaces_lagg_edit.php?id=<?=$i;?>'">
+				<tr ondblclick="document.location='interfaces_lagg_edit.php?id=<?=$i;?>'">
 					<td class="listlr">
 						<?=htmlspecialchars(strtoupper($lagg['laggif']));?>
 					</td>

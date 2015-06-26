@@ -13,7 +13,7 @@ echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 /usr/bin/sed -i '' 's/^\(\/.*[[:space:]]*\/[[:space:]]*ufs[[:space:]]*\)rw\([[:space:]]*[[:digit:]][[:space:]]*[[:digit:]]\)$/\1rw,sync\2/' /etc/fstab
 
 # Hack to workaround ticket #3749
-if [ "${PRIOR_VERSION}" = "8" ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware; then
+if [ ${PRIOR_VERSION} -le 8 ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware; then
 	PROC=$(ps axwww | grep '/etc/rc.firmware *pfSenseupgrade')
 	PID=''
 	IMG=''
@@ -26,7 +26,8 @@ if [ "${PRIOR_VERSION}" = "8" ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware;
 		cp -fp /bin/sh /tmp/sh.old
 		kill ${PID} >/dev/null 2>&1
 		kill -9 ${PID} >/dev/null 2>&1
-		sed -i '' -e 's,sh /,/tmp/sh.old /,' /etc/rc.firmware
+		sed -i '' -e 's,sh /,/tmp/sh.old /,' \
+			  -e 's,/usr/sbin/mtree,/tmp/mtree.old,' /etc/rc.firmware
 		# To avoid restarting rc.firmware twice because of #4328
 		sed -i '' -e '/^restore_chflags()/, /^}/ s/mtree *-PU/mtree -P/' /etc/rc.firmware
 		/etc/rc.firmware pfSenseupgrade "${IMG}"

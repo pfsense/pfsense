@@ -81,7 +81,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"));
+$pgtitle = array(gettext("Interfaces"), gettext("GRE"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -121,7 +121,7 @@ include("head.inc");
 			$i = 0;
 			foreach ($a_gres as $gre):
 		?>
-				<tr  ondblclick="document.location='interfaces_gre_edit.php?id=<?=$i;?>'">
+				<tr ondblclick="document.location='interfaces_gre_edit.php?id=<?=$i;?>'">
 					<td class="listlr">
 						<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']));?>
 					</td>

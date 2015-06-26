@@ -47,7 +47,7 @@ require_once("util.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
@@ -68,7 +68,7 @@ $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -104,7 +104,7 @@ if ($_POST['aliasimport'] <> "") {
 		$desc_len_err_found = false;
 		$desc_fmt_err_found = false;
 		foreach ($tocheck as $impline) {
-			$implinea = explode(" ",trim($impline),2);
+			$implinea = explode(" ", trim($impline), 2);
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {

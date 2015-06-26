@@ -78,7 +78,7 @@ foreach (array('server', 'client') as $mode) {
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$found = false;
-	foreach($ifdescrs as $descr => $ifdescr) {
+	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
 			$found = true;
 			break;
@@ -113,7 +113,7 @@ if ($_GET['hostipformat']) {
 	$curhostipformat = "";
 }
 
-$pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
+$pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
 
@@ -158,7 +158,7 @@ function updateBandwidthHosts(data) {
 	var hosts_split = data.split("|");
 	d = document;
 	//parse top ten bandwidth abuser hosts
-	for (var y=0; y<10; y++) {
+	for (var y = 0; y < 10; y++) {
 		if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
 			hostinfo = hosts_split[y].split(";");
 
@@ -233,6 +233,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 	<select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 		<option value="">IP Address</option>
 		<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
+		<option value="descr"<?php if ($curhostipformat == "descr") echo " selected=\"selected\"";?>>Description</option>
 		<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected=\"selected\"";?>>FQDN</option>
 	</select>
 </form>
@@ -250,7 +251,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 	<div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
 			<tr>
-				<td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
+				<td class="listtopic" valign="top"><?=(($curhostipformat == "") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
 				<td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
 				<td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
 			</tr>

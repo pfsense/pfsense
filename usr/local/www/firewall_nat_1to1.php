@@ -157,7 +157,7 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
 include("head.inc");
 
 ?>

@@ -186,7 +186,7 @@ if ($_POST) {
 			$idtracker = 0;
 			foreach ($config['virtualip']['vip'] as $vip) {
 				if ($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker <> $id) {
-					$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."),$_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
+					$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
 				}
 				$idtracker++;
 			}
@@ -214,7 +214,7 @@ if ($_POST) {
 				if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") &&
 				    !ip_in_interface_alias_subnet(link_carp_interface_to_parent($_POST['interface']), $_POST['subnet'])) {
 					$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-					$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+					$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."), $cannot_find);
 				}
 				unset($parent_ip, $parent_sn, $subnet);
 			}
@@ -299,7 +299,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Address"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Address"), gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -337,9 +337,9 @@ function enable_change() {
 	document.iform.vhid.disabled     = $mode != "carp";
 	document.iform.advskew.disabled  = $mode != "carp";
 	document.iform.advbase.disabled  = $mode != "carp";
-	document.iform.type.disabled     = $mode in {"carp":1,"ipalias":1};
+	document.iform.type.disabled     = $mode in {"carp":1, "ipalias":1};
 
-	if ($mode in {"carp":1,"ipalias":1}) {
+	if ($mode in {"carp":1, "ipalias":1}) {
 		document.iform.type.selectedIndex = 0;// single-adress
 	}
 	switch ($mode) {
@@ -357,13 +357,13 @@ function typesel_change() {
 			document.iform.subnet.disabled = 0;
 			document.iform.subnet_bits.disabled = (get_radio_value(document.iform.mode) == "proxyarp") || (get_radio_value(document.iform.mode) == "other");
 			document.iform.noexpand.disabled = 1;
-			jQuery('#noexpandrow').css('display','none');
+			jQuery('#noexpandrow').css('display', 'none');
 			break;
 		case 1: // network
 			document.iform.subnet.disabled = 0;
 			document.iform.subnet_bits.disabled = 0;
 			document.iform.noexpand.disabled = 0;
-			jQuery('#noexpandrow').css('display','');
+			jQuery('#noexpandrow').css('display', '');
 			//document.iform.range_from.disabled = 1;
 			//document.iform.range_to.disabled = 1;
 			break;
@@ -371,7 +371,7 @@ function typesel_change() {
 			document.iform.subnet.disabled = 1;
 			document.iform.subnet_bits.disabled = 1;
 			document.iform.noexpand.disabled = 1;
-			jQuery('#noexpandrow').css('display','none');
+			jQuery('#noexpandrow').css('display', 'none');
 			//document.iform.range_from.disabled = 0;
 			//document.iform.range_to.disabled = 0;
 			break;
@@ -379,7 +379,7 @@ function typesel_change() {
 			document.iform.subnet.disabled = 1;
 			document.iform.subnet_bits.disabled = 0;
 			document.iform.noexpand.disabled = 1;
-			jQuery('#noexpandrow').css('display','none');
+			jQuery('#noexpandrow').css('display', 'none');
 			//document.iform.range_from.disabled = 0;
 			//document.iform.range_to.disabled = 0;
 			break;
@@ -485,7 +485,7 @@ function typesel_change() {
 		</tr>
 		<tr valign="top">
 			<td width="22%" class="vncellreq"><?=gettext("Virtual IP Password");?></td>
-			<td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<td class="vtable"><input type='password' name='password' value="<?=htmlspecialchars($pconfig['password']);?>" />
 				<br /><?=gettext("Enter the VHID group password.");?>
 			</td>
 		</tr>

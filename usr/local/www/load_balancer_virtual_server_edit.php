@@ -75,19 +75,19 @@ if ($_POST) {
 	switch ($pconfig['mode']) {
 		case "redirect": {
 			$reqdfields = explode(" ", "ipaddr name mode");
-			$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Mode"));
+			$reqdfieldsn = array(gettext("IP Address"), gettext("Name"), gettext("Mode"));
 			break;
 		}
 		case "relay": {
 			$reqdfields = explode(" ", "ipaddr name mode relay_protocol");
-			$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Relay Protocol"));
+			$reqdfieldsn = array(gettext("IP Address"), gettext("Name"), gettext("Relay Protocol"));
 			break;
 		}
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This virtual server name has already been used.  Virtual server names must be unique.");
 		}
@@ -160,7 +160,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Server"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Server"), gettext("Edit"));
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");

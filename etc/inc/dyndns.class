@@ -595,10 +595,10 @@
 					/* Setting Variables */
 					$hostname = "{$this->_dnsHost}.";
 					$ZoneID = $this->_dnsZoneID;
-					$AccessKeyId=$this->_dnsUser;
-					$SecretAccessKey=$this->_dnsPass;
-					$NewIP=$this->_dnsIP;
-					$NewTTL=$this->_dnsTTL;
+					$AccessKeyId = $this->_dnsUser;
+					$SecretAccessKey = $this->_dnsPass;
+					$NewIP = $this->_dnsIP;
+					$NewTTL = $this->_dnsTTL;
 
 					/* Include Route 53 Library Class */
 					require_once('/etc/inc/r53.class');
@@ -623,10 +623,10 @@
 
 					/* Get IP for your hostname in Route 53 */
 					if (false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
-						$OldTTL=$a_result[0][TTL];
-						$OldIP=$a_result[0][ResourceRecords][0];
+						$OldTTL = $a_result[0][TTL];
+						$OldIP = $a_result[0][ResourceRecords][0];
 					} else {
-						$OldIP="";
+						$OldIP = "";
 					}
 
 					/* Check if we need to update DNS Record */
@@ -1231,7 +1231,7 @@
 					$lines = count($data)-1;
 
 					// loop over the lines
-					for ($pos=0; ($successful_update || $pos == 0) && $pos < $lines; $pos++) {
+					for ($pos = 0; ($successful_update || $pos == 0) && $pos < $lines; $pos++) {
 						$resp = $data[$pos];
 						if (preg_match('/UAUTH/i', $resp)) {
 							$status = "DynDNS: The username specified is not authorized to update this hostname and domain.";

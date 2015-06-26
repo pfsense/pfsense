@@ -92,7 +92,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if mode");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("Mode"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Mode"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -156,7 +156,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
 include("head.inc");
 
 ?>

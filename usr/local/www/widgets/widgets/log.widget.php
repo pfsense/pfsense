@@ -162,7 +162,7 @@ function format_log_line(row) {
 <input type="hidden" id="log-config" name="log-config" value="" />
 
 <div id="log-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
+	<form action="/widgets/widgets/log.widget.php" method="post" name="log_widget_iform">
 		Number of lines to display:
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
 		<?php for ($i = 1; $i <= 20; $i++) { ?>
@@ -197,7 +197,7 @@ function format_log_line(row) {
 ?>
 		</select>
 
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+		<input id="log_widget_submit" name="log_widget_submit" type="submit" class="formbtn" value="Save" />
 	</form>
 </div>
 

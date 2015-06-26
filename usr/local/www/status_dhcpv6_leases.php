@@ -48,7 +48,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"),gettext("DHCPv6 leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCPv6 leases"));
 $shortcut_section = "dhcp6";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
@@ -60,7 +60,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	/* Read existing leases */
 	$leases_contents = explode("\n", file_get_contents($leasesfile));
 	$newleases_contents = array();
-	$i=0;
+	$i = 0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
 		if ($leases_contents[$i] == "  iaaddr {$_GET['deleteip']} {") {
@@ -134,7 +134,7 @@ function remove_duplicate($array, $field) {
 	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];
 	}
-	$unique = array_unique(array_reverse($cmp,true));
+	$unique = array_unique(array_reverse($cmp, true));
 	foreach ($unique as $k => $rien) {
 		$new[] = $array[$k];
 	}
@@ -143,7 +143,7 @@ function remove_duplicate($array, $field) {
 
 function parse_duid($duid_string) {
 	$parsed_duid = array();
-	for ($i=0; $i < strlen($duid_string); $i++) {
+	for ($i = 0; $i < strlen($duid_string); $i++) {
 		$s = substr($duid_string, $i, 1);
 		if ($s == '\\') {
 			$n = substr($duid_string, $i+1, 1);
@@ -175,10 +175,10 @@ $leases_count = count($leases_content);
 exec("/usr/sbin/ndp -an", $rawdata);
 $ndpdata = array();
 foreach ($rawdata as $line) {
-	$elements = preg_split('/\s+/ ',$line);
+	$elements = preg_split('/\s+/ ', $line);
 	if ($elements[1] != "(incomplete)") {
 		$ndpent = array();
-		$ip = trim(str_replace(array('(',')'),'',$elements[0]));
+		$ip = trim(str_replace(array('(', ')'), '', $elements[0]));
 		$ndpent['mac'] = trim($elements[1]);
 		$ndpent['interface'] = trim($elements[2]);
 		$ndpdata[$ip] = $ndpent;
@@ -194,7 +194,7 @@ $l = 0;
 $p = 0;
 
 // Put everything together again
-while($i < $leases_count) {
+while ($i < $leases_count) {
 	$entry = array();
 	/* split the line by space */
 	$duid_split = array();
@@ -215,7 +215,7 @@ while($i < $leases_count) {
 		$i++;
 		continue;
 	}
-	while($f < $fcount) {
+	while ($f < $fcount) {
 		switch ($data[$f]) {
 			case "failover":
 				$pools[$p]['name'] = $data[$f+2];
@@ -315,7 +315,7 @@ while($i < $leases_count) {
 				break;
 			case "client-hostname":
 				if ($data[$f+1] <> "") {
-					$entry['hostname'] = preg_replace('/"/','',$data[$f+1]);
+					$entry['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($entry['ip']);
 					if ($hostname <> "") {
@@ -342,15 +342,15 @@ while($i < $leases_count) {
 }
 
 if (count($leases) > 0) {
-	$leases = remove_duplicate($leases,"ip");
+	$leases = remove_duplicate($leases, "ip");
 }
 
 if (count($prefixes) > 0) {
-	$prefixes = remove_duplicate($prefixes,"prefix");
+	$prefixes = remove_duplicate($prefixes, "prefix");
 }
 
 if (count($pools) > 0) {
-	$pools = remove_duplicate($pools,"name");
+	$pools = remove_duplicate($pools, "name");
 	asort($pools);
 }
 

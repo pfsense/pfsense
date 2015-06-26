@@ -106,7 +106,7 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 		$target = $rule['target'];
 			// Check for filter rule associations
-			if (isset($a_nat[$rulei]['associated-rule-id'])){
+			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
 
 				mark_subsystem_dirty('filter');
@@ -171,7 +171,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 include("head.inc");
 
 echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
@@ -251,7 +251,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 		$alias_dst_span_end        = $alias_popup["dst_end"];
 		$alias_dst_port_span_end   = $alias_popup["dstport_end"];
 
-		$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
+		$alias_popup = rule_popup("", "", $natent['target'], pprint_port($natent['local-port']));
 
 		$alias_target_span_begin     = $alias_popup["dst"];
 		$alias_local_port_span_begin = $alias_popup["dstport"];

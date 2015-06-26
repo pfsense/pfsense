@@ -32,6 +32,13 @@ function get_stats() {
 }
 
 function get_gatewaystats() {
+	global $config;
+	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+	} else {
+		$display_type = "gw_ip";
+	}
+
 	$a_gateways = return_gateways_array();
 	$gateways_status = array();
 	$gateways_status = return_gateways_status(true);
@@ -43,8 +50,29 @@ function get_gatewaystats() {
 		}
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
+
+		$monitor_address = "";
+		$monitor_address_disp = "";
+		if ($display_type == "monitor_ip" || $display_type == "both_ip") {
+			$monitor_address = $gw['monitor'];
+			if ($monitor_address != "" && $display_type == "both_ip") {
+				$monitor_address_disp = " (" . $monitor_address . ")";
+			} else {
+				$monitor_address_disp = $monitor_address;
+			}
+		}
+
 		if ($gateways_status[$gname]) {
-			$data .= "<b>" . lookup_gateway_ip_by_name($gname) . "</b>,";
+			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+				$if_gw = lookup_gateway_ip_by_name($gname);
+			} else {
+				$if_gw = "";
+			}
+			if ($monitor_address == $if_gw) {
+				$monitor_address_disp = "";
+			}
+
+			$data .= "<b>" . $if_gw . $monitor_address_disp . "</b>,";
 			$gws = $gateways_status[$gname];
 			switch (strtolower($gws['status'])) {
 				case "none":
@@ -68,7 +96,12 @@ function get_gatewaystats() {
 					break;
 			}
 		} else {
-			$data .= "~,";
+			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+				$if_gw = "~";
+			} else {
+				$if_gw = "";
+			}
+			$data .= $if_gw . $monitor_address_disp . ",";
 			$gws['delay'] = "~";
 			$gws['loss'] = "~";
 			$online = "Unknown";

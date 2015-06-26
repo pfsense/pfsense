@@ -1175,7 +1175,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 }
 
 function captiveportal_allowedhostname_configure() {
-	global $config, $g, $cpzone;
+	global $config, $g, $cpzone, $cpzoneid;
 
 	$rules = "";
 	if (is_array($config['captiveportal'][$cpzone]['allowedhostname'])) {
@@ -1192,7 +1192,7 @@ function captiveportal_allowedhostname_configure() {
 		if (isvalidpid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid")) {
 			sigkillbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid", "HUP");
 		} else {
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzoneid} -d 1");
 		}
 	} else {
 		killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");
@@ -1825,7 +1825,7 @@ function portal_hostname_from_client_ip($cliip) {
 			$ourhostname .= ":" . $listenporthttps;
 		}
 	} else {
-		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : ($cpcfg['zoneid'] + 8000);
+		$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : ($cpcfg['zoneid'] + 8000);
 		$ifip = portal_ip_from_client_ip($cliip);
 		if (!$ifip) {
 			$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}";
@@ -1930,7 +1930,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
 }
 
-function portal_allow($clientip, $clientmac, $username, $password = null, $attributes = null, $pipeno = null, $radiusctx = null)  {
+function portal_allow($clientip, $clientmac, $username, $password = null, $attributes = null, $pipeno = null, $radiusctx = null) {
 	global $redirurl, $g, $config, $type, $passthrumac, $_POST, $cpzone, $cpzoneid;
 
 	// Ensure we create an array if we are missing attributes
@@ -2073,9 +2073,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 				}
 			}
 			if ($username == "unauthenticated") {
-				$mac['descr'] =  "Auto-added";
+				$mac['descr'] = "Auto-added";
 			} else {
-				$mac['descr'] =  "Auto-added for user {$username}";
+				$mac['descr'] = "Auto-added for user {$username}";
 			}
 			if (!empty($bw_up)) {
 				$mac['bw_up'] = $bw_up;
@@ -2149,7 +2149,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval, radiusctx) ";
+			$insertquery = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval, radiusctx) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
 			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval}, '{$radiusctx}')";
 

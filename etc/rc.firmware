@@ -104,7 +104,7 @@ binary_update() {
 		PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE} 2>/dev/null`
 
 		if [ "$PATCHED_MD5" = "$NEW_PATCH_MD5" ]; then
-			/usr/bin/install -S  /tmp/patched/${FILE} /${i}
+			/usr/bin/install -S /tmp/patched/${FILE} /${i}
 		else
 			#echo "${i} file does not match intended final md5."
 			echo "${i} file does not match intended final md5." >> ${ERR_F}
@@ -154,7 +154,7 @@ pfSenseNanoBSDupgrade)
 
 	touch /var/run/firmwarelock.dirty
 
-	echo "NanoBSD Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
+	echo "NanoBSD Firmware upgrade in progress..." >> /conf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade in progress..." | wall
 	/etc/rc.notify_message -e -g -m "NanoBSD Firmware upgrade in progress..."
 
@@ -371,7 +371,7 @@ pfSenseNanoBSDupgrade)
 	/etc/rc.conf_mount_ro
 	/bin/sync
 
-	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
+	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds." >> /conf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds." | wall
 	/etc/rc.notify_message -e -g -m "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."
 
@@ -423,8 +423,8 @@ pfSenseupgrade)
 		sh /tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
 	fi
 
-	echo "Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
-	echo "Firmware upgrade in progress..."  | wall
+	echo "Firmware upgrade in progress..." >> /conf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade in progress..." | wall
 	/etc/rc.notify_message -e -g -m "Firmware upgrade in progress..."
 
 	# backup config
@@ -502,8 +502,8 @@ pfSenseupgrade)
 	rm -f /var/run/firmware.lock
 	/bin/sync
 
-	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
-	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  | wall
+	echo "Firmware upgrade is complete. Rebooting in 10 seconds." >> /conf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade is complete. Rebooting in 10 seconds." | wall
 	/etc/rc.notify_message -e -g -m "Firmware upgrade is complete. Rebooting in 10 seconds."
 
 	# Sleep and allow disks to catch up

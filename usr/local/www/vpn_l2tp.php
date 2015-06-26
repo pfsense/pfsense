@@ -72,7 +72,7 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
+		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
@@ -144,19 +144,20 @@ if ($_POST) {
 
 
 		if ($_POST['l2tp_dns1'] == "") {
-			if (isset($l2tpcfg['dns1']))
+			if (isset($l2tpcfg['dns1'])) {
 				unset($l2tpcfg['dns1']);
-			} else {
-				$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
 			}
+		} else {
+			$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
+		}
 
-			if ($_POST['l2tp_dns2'] == "") {
-				if (isset($l2tpcfg['dns2'])) {
-					unset($l2tpcfg['dns2']);
-				}
-			} else {
-				$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		if ($_POST['l2tp_dns2'] == "") {
+			if (isset($l2tpcfg['dns2'])) {
+				unset($l2tpcfg['dns2']);
 			}
+		} else {
+			$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		}
 
 		if ($_POST['radiusenable'] == "yes") {
 			$l2tpcfg['radius']['enable'] = true;
@@ -197,8 +198,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-function get_radio_value(obj)
-{
+function get_radio_value(obj) {
 	for (i = 0; i < obj.length; i++) {
 		if (obj[i].checked) {
 			return obj[i].value;
@@ -358,7 +358,7 @@ function enable_change(enable_over) {
 						<td width="78%" class="vtable">
 							<select id="l2tp_subnet" name="l2tp_subnet">
 							<?php
-								for ($x=0; $x<33; $x++) {
+								for ($x = 0; $x < 33; $x++) {
 									if ($x == $pconfig['l2tp_subnet']) {
 										$SELECTED = " selected=\"selected\"";
 									} else {
@@ -376,7 +376,7 @@ function enable_change(enable_over) {
 						<td width="78%" class="vtable">
 							<select id="n_l2tp_units" name="n_l2tp_units">
 							<?php
-								for ($x=0; $x<255; $x++) {
+								for ($x = 0; $x < 255; $x++) {
 									if ($x == $pconfig['n_l2tp_units']) {
 										$SELECTED = " selected=\"selected\"";
 									} else {

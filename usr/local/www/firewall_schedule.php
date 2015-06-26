@@ -41,14 +41,14 @@
 ##|-PRIV
 
 
-$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
+$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
 require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"));
+$pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
 if (!is_array($config['schedules']['schedule'])) {
 	$config['schedules']['schedule'] = array();
@@ -76,7 +76,7 @@ if ($_GET['act'] == "del") {
 		}
 
 		if ($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete Schedule.  Currently in use by %s"),$referenced_by);
+			$savemsg = sprintf(gettext("Cannot delete Schedule.  Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_schedules[$_GET['id']]);
 			write_config();
@@ -137,7 +137,7 @@ include("head.inc");
 
 						if ($timerange['month']) {
 							$tempmontharray = explode(",", $timerange['month']);
-							$tempdayarray = explode(",",$timerange['day']);
+							$tempdayarray = explode(",", $timerange['day']);
 							$arraycounter = 0;
 							$firstDayFound = false;
 							$firstPrint = false;
@@ -162,7 +162,7 @@ include("head.inc");
 									if ($currentDay != $firstDay) {
 										$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
 									} else {
-										$dayFriendly .=  $monthArray[$month-1] . " " . $day;
+										$dayFriendly .= $monthArray[$month-1] . " " . $day;
 									}
 									$firstDayFound = false;
 									$firstPrint = true;

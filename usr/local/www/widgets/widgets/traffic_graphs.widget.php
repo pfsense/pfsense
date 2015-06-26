@@ -102,7 +102,7 @@ if (isset($a_config["scale_type"])) {
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
 
 <div id="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
-<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="iform" id="iform">
+<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="traffic_graphs_widget_iform" id="traffic_graphs_widget_iform">
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
@@ -129,7 +129,7 @@ if (isset($a_config["scale_type"])) {
 			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected=\"selected\"";?>><?= $i ?></option>
 		<?php } ?>
 	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
-	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	<input id="traffic_graphs_widget_submit" name="traffic_graphs_widget_submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
 </div>
 

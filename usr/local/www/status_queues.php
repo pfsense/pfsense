@@ -68,7 +68,7 @@ if (!$fd) {
 	$error = "Something wrong happened during communication with stat gathering";
 } else {
 	$stats = "";
-	while(!feof($fd)) {
+	while (!feof($fd)) {
 		$stats .= fread($fd, 4096);
 	}
 	fclose($fd);
@@ -87,16 +87,13 @@ if ($_REQUEST['getactivity']) {
 		statsQueues($q);
 	}
 	/* calculate the bigger amount of packets or bandwidth being moved through all queues. */
-	if ($stat_type == "0")
-	{
+	if ($stat_type == "0") {
 		foreach ($statistics as $q) {
 			if ($bigger_stat < $q->pps) {
 				$bigger_stat = $q->pps;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		foreach ($statistics as $q) {
 			if ($bigger_stat < $q->bandwidth) {
 				$bigger_stat = $q->bandwidth;
@@ -115,7 +112,7 @@ if ($_REQUEST['getactivity']) {
 		}
 		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
 		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (150 - $packet_s) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps,1) . "');";
+		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
 		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
@@ -127,7 +124,7 @@ if ($_REQUEST['getactivity']) {
 	echo $finscript;
 	exit;
 }
-$pgtitle = array(gettext("Status"),gettext("Traffic shaper"),gettext("Queues"));
+$pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
 ?>
@@ -187,7 +184,7 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 	</tr>
 <?php
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
-	processQueues($altqstats, 0, "")
+	processQueues($altqstats, 0, "");
 ?>
 <?php endif; ?>
 </table>

@@ -55,7 +55,7 @@ if ($_GET['act'] == "del") {
 		foreach ($members as $ifs) {
 			$realif = get_real_interface($ifs);
 			if ($realif) {
-				mwexec("/sbin/ifconfig  {$realif} -group " . $a_ifgroups[$_GET['id']]['ifname']);
+				mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$_GET['id']]['ifname']);
 			}
 		}
 		unset($a_ifgroups[$_GET['id']]);
@@ -65,7 +65,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Groups"));
+$pgtitle = array(gettext("Interfaces"), gettext("Groups"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

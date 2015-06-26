@@ -144,7 +144,7 @@ if ($_POST['submit']) {
 	/* input validation */
 
 	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn =  array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
+	$reqdfieldsn = array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -174,7 +174,7 @@ if ($_POST['submit']) {
 
 	if ($pconfig['dns_server_enable']) {
 		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
-		    !$pconfig['dns_server3'] && !$pconfig['dns_server4'] ) {
+		    !$pconfig['dns_server3'] && !$pconfig['dns_server4']) {
 			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
 		}
 		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1'])) {
@@ -375,7 +375,7 @@ function login_banner_change() {
 		}
 	}
 	if ($pconfig['enable'] && !$ph1found) {
-		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
+		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), gettext("create"), gettext("Create Phase1"));
 	}
 	if ($input_errors) {
 		print_input_errors($input_errors);

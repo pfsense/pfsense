@@ -131,7 +131,8 @@ include("head.inc");
 			if (200 == response.status) {
 				// Escape all dots to not confuse jQuery selectors
 				name = response.responseText.replace(/\./g,'\\.');
-				name = name.replace(/\//g,'\\/');
+				name = name.replace(/\//g,'\\-');
+				name = "entry_" + name;
 				jQuery('#' + name).fadeOut(1000);
 			}
 		}
@@ -187,7 +188,7 @@ include("head.inc");
 	foreach ($entries as $entryA):
 		$entry = trim($entryA);
 ?>
-	<tr id="<?=$entry?>">
+	<tr id="entry_<?=str_replace("/", "-", $entry);?>">
 		<td>
 			<?php echo $entry; ?>
 		</td>

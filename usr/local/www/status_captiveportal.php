@@ -141,7 +141,7 @@ $mac_man = load_mac_manufacturer_table();
 					</td>
 					<td class="vncell" width="30%" align="center">
 <?php
-	if (count($a_cp) >  1) {
+	if (count($a_cp) > 1) {
 ?>
 						<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
 							<select name="zone" class="formselect" onchange="document.form1.submit()">

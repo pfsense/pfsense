@@ -119,7 +119,7 @@ include("head.inc");
 	$i = 0;
 	foreach ($a_ppps as $id => $ppp):
 ?>
-				<tr  ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
+				<tr ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
 					<td class="listr">
 						<?=htmlspecialchars($ppp['if']);?>
 					</td>

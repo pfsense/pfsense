@@ -636,7 +636,7 @@ function change_protocol() {
 												$iflist = get_configured_interface_with_descr();
 												foreach ($iflist as $ifname => $ifdescr):
 											?>
-											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
 										</select>
 									</td>
@@ -673,9 +673,9 @@ function change_protocol() {
 												$iflist = get_configured_interface_with_descr();
 												foreach ($iflist as $ifname => $ifdescr):
 											?>
-											<option value="<?=$ifname; ?>" <?php if ($pconfig['natlocalid_type'] == $ifname ) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['natlocalid_type'] == $ifname) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
-											<option value="none" <?php if (empty($pconfig['natlocalid_type']) || $pconfig['natlocalid_type'] == "none" ) echo "selected=\"selected\"";?>><?=gettext("None"); ?></option>
+											<option value="none" <?php if (empty($pconfig['natlocalid_type']) || $pconfig['natlocalid_type'] == "none") echo "selected=\"selected\"";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -958,7 +958,7 @@ function pconfig_to_idinfo($prefix,& $pconfig) {
 		case "network":
 			return array('type' => $type, 'address' => $address, 'netbits' => $netbits);
 		default:
-			return array('type' => $type );
+			return array('type' => $type);
 	}
 }
 

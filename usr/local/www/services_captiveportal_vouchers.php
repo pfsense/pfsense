@@ -241,10 +241,10 @@ if ($_POST) {
 		if ($_POST['charset'] && (strlen($_POST['charset'] < 2))) {
 			$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
 		}
-		if ($_POST['charset'] && (strpos($_POST['charset'], "\"")>0)) {
+		if ($_POST['charset'] && (strpos($_POST['charset'], "\"") > 0)) {
 			$input_errors[] = gettext("Double quotes aren't allowed.");
 		}
-		if ($_POST['charset'] && (strpos($_POST['charset'], ",")>0)) {
+		if ($_POST['charset'] && (strpos($_POST['charset'], ",") > 0)) {
 			$input_errors[] = "',' " . gettext("aren't allowed.");
 		}
 		if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) {
@@ -317,7 +317,7 @@ if ($_POST) {
 					$url = "http://{$newvoucher['vouchersyncdbip']}";
 				}
 
-				$execcmd  = <<<EOF
+				$execcmd = <<<EOF
 				\$toreturn = array();
 				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
 				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
@@ -351,7 +351,7 @@ EOF;
 					log_error("The Captive Portal voucher database has been synchronized with {$url}:{$port} (pfsense.exec_php).");
 				}
 				if (!$input_errors) {
-					$toreturn =  XML_RPC_Decode($resp->value());
+					$toreturn = XML_RPC_Decode($resp->value());
 					if (!is_array($toreturn)) {
 						if ($toreturn == "Authentication failed") {
 							$input_errors[] = "Could not synchronize the voucher database: Authentication Failed.";
@@ -428,7 +428,7 @@ function before_save() {
 	document.iform.privatekey.disabled = false;
 	document.iform.msgnoaccess.disabled = false;
 	document.iform.msgexpired.disabled = false;
-	for (var x=0; x < <?php echo count($a_roll); ?>; x++) {
+	for (var x = 0; x < <?php echo count($a_roll); ?>; x++) {
 		jQuery('#addeditdelete' + x).show();
 	}
 	jQuery('#addnewroll').show();
@@ -459,12 +459,12 @@ function enable_change(enable_change) {
 		document.iform.privatekey.disabled = true;
 		document.iform.msgnoaccess.disabled = true;
 		document.iform.msgexpired.disabled = true;
-		for (var x=0; x < <?php echo count($a_roll); ?>; x++) {
+		for (var x = 0; x < <?php echo count($a_roll); ?>; x++) {
 			jQuery('#addeditdelete' + x).hide();
 		}
 		jQuery('#addnewroll').hide();
 	} else {
-		for (var x=0; x < <?php echo count($a_roll); ?>; x++) {
+		for (var x = 0; x < <?php echo count($a_roll); ?>; x++) {
 			jQuery('#addeditdelete' + x).show();
 		}
 		jQuery('#addnewroll').show();

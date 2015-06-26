@@ -526,14 +526,14 @@ function openvpn_reconfigure($mode, $settings) {
 	// Otherwise, if a specific interface is requested, use it
 	// If "any" interface was selected, local directive will be omitted.
 	if (is_ipaddrv4($ipaddr)) {
-		$iface_ip=$ipaddr;
+		$iface_ip = $ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
 		}
 	}
 	if (is_ipaddrv6($ipaddr)) {
-		$iface_ipv6=$ipaddr;
+		$iface_ipv6 = $ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ipv6=get_interface_ipv6($interface);
@@ -1326,7 +1326,7 @@ function openvpn_get_active_clients() {
 			$client['vpnid'] = $settings['vpnid'];
 			$client['mgmt'] = "client{$client['vpnid']}";
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$client['mgmt']}.sock";
-			$client['status']="down";
+			$client['status'] = "down";
 
 			$clients[] = openvpn_get_client_status($client, $socket);
 		}
@@ -1355,28 +1355,28 @@ function openvpn_get_client_status($client, $socket) {
 
 			/* Get the client state */
 			if (strstr($line, "CONNECTED")) {
-				$client['status']="up";
+				$client['status'] = "up";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr']  = $list[3];
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
 			}
 			if (strstr($line, "CONNECTING")) {
-				$client['status']="connecting";
+				$client['status'] = "connecting";
 			}
 			if (strstr($line, "ASSIGN_IP")) {
-				$client['status']="waiting";
+				$client['status'] = "waiting";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr']  = $list[3];
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr'] = $list[3];
 			}
 			if (strstr($line, "RECONNECTING")) {
-				$client['status']="reconnecting";
+				$client['status'] = "reconnecting";
 				$list = explode(",", $line);
 
-				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
 				$client['status'] .= "; " . $list[2];
 			}
 			/* parse end of output line */

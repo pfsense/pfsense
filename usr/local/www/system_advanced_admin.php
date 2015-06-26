@@ -545,7 +545,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("SSH port"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
+									<input name="sshport" type="text" id="sshport" value="<?php echo htmlspecialchars($pconfig['sshport']); ?>" />
 									<br />
 									<span class="vexpl"><?=gettext("Note: Leave this blank for the default of 22."); ?></span>
 								</td>
@@ -585,8 +585,8 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Primary Console")?></td>
 								<td width="78%" class="vtable">
 									<select name="primaryconsole" id="primaryconsole" class="formselect">
-										<option value="serial"   <?php if ($pconfig['primaryconsole'] == "serial")   echo "selected=\"selected\"";?>>Serial Console</option>
-										<option value="video"  <?php if ($pconfig['primaryconsole'] == "video")  echo "selected=\"selected\"";?>>VGA Console</option>
+										<option value="serial" <?php if ($pconfig['primaryconsole'] == "serial") echo "selected=\"selected\"";?>>Serial Console</option>
+										<option value="video" <?php if ($pconfig['primaryconsole'] == "video") echo "selected=\"selected\"";?>>VGA Console</option>
 									</select>
 									<br /><?=gettext("Select the preferred console if multiple consoles are present. The preferred console will show pfSense boot script output. All consoles display OS boot messages, console messages, and the console menu."); ?>
 								</td>
@@ -601,7 +601,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Console menu"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?>  />
+									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Password protect the console menu"); ?></strong>
 								</td>
 							</tr>

@@ -50,7 +50,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
@@ -93,7 +93,7 @@ function alias_same_type($name, $type) {
 			    in_array($alias['type'], array("host", "network"))) {
 				return true;
 			}
-			if ($type  == $alias['type']) {
+			if ($type == $alias['type']) {
 				return true;
 			} else {
 				return false;
@@ -194,7 +194,7 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
-			} elseif (! process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
+			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data.");
 			}
 			if ($_POST["detail0"] <> "") {
@@ -214,7 +214,7 @@ if ($_POST) {
 		$desc_fmt_err_found = false;
 
 		/* item is a url type */
-		for ($x=0; $x<$max_alias_addresses-1; $x++) {
+		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
 			$_POST['address' . $x] = trim($_POST['address' . $x]);
 			if ($_POST['address' . $x]) {
 				/* fetch down and add in */
@@ -278,7 +278,7 @@ if ($_POST) {
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
 		// They can also put an IP range.
 		// This loop expands out that stuff so it can easily be validated.
-		for ($x=0; $x<($max_alias_addresses-1); $x++) {
+		for ($x = 0; $x < ($max_alias_addresses - 1); $x++) {
 			if ($_POST["address{$x}"] <> "") {
 				if ($_POST["detail{$x}"] <> "") {
 					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {

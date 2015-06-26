@@ -91,7 +91,7 @@ if ($_POST) {
 	} else {
 
 		// input validation - only allow 50 entries in a single ACL
-		for ($x=0; $x<50; $x++) {
+		for ($x = 0; $x < 50; $x++) {
 			if (isset($pconfig["acl_network{$x}"])) {
 				$networkacl[$x] = array();
 				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];

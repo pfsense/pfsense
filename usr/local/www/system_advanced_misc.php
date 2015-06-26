@@ -365,7 +365,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy URL"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown" />
+									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo htmlspecialchars($pconfig['proxyurl']); ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Hostname or IP address of proxy server this system will use for its outbound Internet access.")); ?>
 								</td>
@@ -373,7 +373,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Port"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown" />
+									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo htmlspecialchars($pconfig['proxyport']); ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Port where proxy server is listening.")); ?>
 								</td>
@@ -381,7 +381,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Username"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown" />
+									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo htmlspecialchars($pconfig['proxyuser']); ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Username for authentication to proxy server. Optional, leave blank to not use authentication.")); ?>
 								</td>
@@ -389,7 +389,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Password"); ?></td>
 								<td width="78%" class="vtable">
-									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown" />
+									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo htmlspecialchars($pconfig['proxypass']); ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Password for authentication to proxy server.")); ?>
 								</td>
@@ -411,7 +411,7 @@ function tmpvar_checked(obj) {
 										"will be redirected to the next web server in the round " .
 										"robin. Changing this option will restart the Load Balancing service."); ?>
 									<br />
-									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo $pconfig['srctrack']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled=\"disabled\""; ?> />
+									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo htmlspecialchars($pconfig['srctrack']); else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled=\"disabled\""; ?> />
 									<br />
 									<?=gettext("Set the source tracking timeout for sticky connections. " .
 										"By default this is 0, so source tracking is removed as soon as the state expires. " .
@@ -617,7 +617,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("/tmp RAM Disk Size"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="use_mfs_tmp_size" id="use_mfs_tmp_size" value="<?php if ($pconfig['use_mfs_tmp_size'] <> "") echo $pconfig['use_mfs_tmp_size']; ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<input name="use_mfs_tmp_size" id="use_mfs_tmp_size" value="<?php if ($pconfig['use_mfs_tmp_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_tmp_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
 									<br />
 									<?=gettext("Set the size, in MB, for the /tmp RAM disk. " .
 										"Leave blank for 40MB. Do not set lower than 40."); ?>
@@ -626,7 +626,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("/var RAM Disk Size"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="use_mfs_var_size" id="use_mfs_var_size" value="<?php if ($pconfig['use_mfs_var_size'] <> "") echo $pconfig['use_mfs_var_size']; ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<input name="use_mfs_var_size" id="use_mfs_var_size" value="<?php if ($pconfig['use_mfs_var_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_var_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
 									<br />
 									<?=gettext("Set the size, in MB, for the /var RAM disk. " .
 										"Leave blank for 60MB. Do not set lower than 60."); ?>

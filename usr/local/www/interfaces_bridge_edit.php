@@ -89,7 +89,7 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
 		$ifpriority = array();
 		foreach ($pconfig['ifpriority'] as $cfg) {
-			list ($key, $value)  = explode(":", $cfg);
+			list ($key, $value) = explode(":", $cfg);
 			$embprioritycfg[$key] = $value;
 			foreach ($embprioritycfg as $key => $value) {
 				$ifpriority[$key] = $value;
@@ -101,7 +101,7 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpathcost'] = explode(",", $a_bridges[$id]['ifpathcost']);
 		$ifpathcost = array();
 		foreach ($pconfig['ifpathcost'] as $cfg) {
-			list ($key, $value)  = explode(":", $cfg);
+			list ($key, $value) = explode(":", $cfg);
 			$embpathcfg[$key] = $value;
 			foreach ($embpathcfg as $key => $value) {
 				$ifpathcost[$key] = $value;
@@ -273,7 +273,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Bridge"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -339,7 +339,7 @@ function show_source_port_range() {
 			</td>
 		</tr>
 		<tr style="display:none" id="sprtable1">
-			<td valign="top" class="vncell" align="center"><?=gettext("RSTP/STP"); ?>  </td>
+			<td valign="top" class="vncell" align="center"><?=gettext("RSTP/STP"); ?> </td>
 			<td class="vtable">
 				<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked=\"checked\"";?> />
 				<span class="vexpl"><strong><?=gettext("Enable spanning tree options for this bridge."); ?> </strong></span>
@@ -447,8 +447,10 @@ function show_source_port_range() {
 						<td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
 						<td class="vtable" width="80%">
 							<table summary="priority">
-							<?php foreach ($ifacelist as $ifn => $ifdescr)
-								echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unknown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\" /></td></tr>";
+							<?php
+								foreach ($ifacelist as $ifn => $ifdescr) {
+									echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unknown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\" /></td></tr>";
+								}
 							?>
 								<tr>
 									<td></td>

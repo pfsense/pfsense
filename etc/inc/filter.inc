@@ -377,6 +377,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$limitrules .= "set limit src-nodes {$max_states}\n";
 	}
 
+	/* Frag limit. pf default is 5000 */
+	if ($config['system']['maximumfrags'] <> "" && is_numeric($config['system']['maximumfrags'])) {
+		$limitrules .= "set limit frags {$config['system']['maximumfrags']}\n";
+	}
+
 	if (isset($config['system']['lb_use_sticky']) && is_numeric($config['system']['srctrack']) && ($config['system']['srctrack'] > 0)) {
 		$limitrules .= "set timeout src.track {$config['system']['srctrack']}\n";
 	}
@@ -1301,6 +1306,8 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$subnet = $route['subnet'];
 		$subnet_split = explode("/", $subnet);
 		$subnet_if = $route['if'];
+		/* Blacklist invalid "from" sources since they can be picked up accidentally and cause rule errors. */
+		$no_reflect_from = array("l2tp");
 		if (in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
 			$ifsubnet_ip = "";
 			/* Find interface IP to use for NAT */
@@ -1310,7 +1317,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 					break;
 				}
 			}
-			if (!empty($ifsubnet_ip)) {
+			if(!empty($ifsubnet_ip) && !in_array($subnet, $no_reflect_from)) {
 				$subnets = array($subnet);
 				/* Find static routes that also need to be referenced in the NAT rule */
 				foreach ($route_table as $rtentry) {
@@ -3802,7 +3809,7 @@ function filter_tdr_install_cron($should_install) {
 		$config['cron']['item'] = array();
 	}
 
-	$x=0;
+	$x = 0;
 	$is_installed = false;
 	foreach ($config['cron']['item'] as $item) {
 		if (strstr($item['command'], "filter_configure_sync")) {

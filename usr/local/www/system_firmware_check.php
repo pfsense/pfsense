@@ -47,7 +47,7 @@ require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
-$pgtitle=array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
+$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
 ?>
@@ -191,13 +191,13 @@ echo "//]]>\n";
 echo "</script>\n";
 
 $txt  = gettext("A new version is now available") . "\\n\\n";
-$txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
+$txt .= gettext("Current version") . ": " . $current_installed_version . "\\n";
 if ($g['platform'] == "nanobsd") {
 	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
 }
-$txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
-$txt .= "    " . gettext("New version") .": ".  htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
-$txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
+$txt .= "       " . gettext("Built On") . ": " . $current_installed_buildtime . "\\n";
+$txt .= "    " . gettext("New version") . ": " . htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
+$txt .= "  " . gettext("Update source") . ": " . $updater_url . "\\n";
 update_output_window($txt);
 ?>
 </p>

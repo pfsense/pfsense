@@ -143,7 +143,7 @@ include("head.inc");
 				<tr valign="top">
 					<td width="22%" class="vncell">pfsync Synchronize Peer IP</td>
 					<td class="vtable">
-						<input  id='pfsyncpeerip' name='pfsyncpeerip' class='formfld unknown' value='<?= htmlentities($pconfig['pfsyncpeerip']); ?>' />
+						<input id='pfsyncpeerip' name='pfsyncpeerip' class='formfld unknown' value='<?= htmlentities($pconfig['pfsyncpeerip'], ENT_QUOTES | ENT_HTML401); ?>' />
 						<br />
 						Setting this option will force pfsync to synchronize its state table to this IP address.  The default is directed multicast.
 					</td>
@@ -157,7 +157,7 @@ include("head.inc");
 				<tr valign="top">
 					<td width="22%" class="vncell">Synchronize Config to IP</td>
 					<td class="vtable">
-						<input  id='synchronizetoip' name='synchronizetoip' class='formfld unknown' value='<?= htmlentities($pconfig['synchronizetoip']); ?>' />
+						<input id='synchronizetoip' name='synchronizetoip' class='formfld unknown' value='<?= htmlentities($pconfig['synchronizetoip'], ENT_QUOTES | ENT_HTML401); ?>' />
 						<br />
 						Enter the IP address of the firewall to which the selected configuration sections should be synchronized.<br />
 						<br />
@@ -169,7 +169,7 @@ include("head.inc");
 				<tr valign="top">
 					<td width="22%" class="vncell">Remote System Username</td>
 					<td class="vtable">
-						<input  id='username' name='username' class='formfld unknown' value='<?= htmlentities($pconfig['username']); ?>' />
+						<input id='username' name='username' class='formfld unknown' value='<?= htmlentities($pconfig['username'], ENT_QUOTES | ENT_HTML401); ?>' />
 						<br />
 						Enter the webConfigurator username of the system entered above for synchronizing your configuration.<br />
 						<br />
@@ -179,7 +179,7 @@ include("head.inc");
 				<tr valign="top">
 					<td width="22%" class="vncell">Remote System Password</td>
 					<td class="vtable">
-						<input  id='passwordfld' type='password'  name='passwordfld' class='formfld pwd' value='<?= htmlentities($pconfig['passwordfld']); ?>' />
+						<input id='passwordfld' type='password' name='passwordfld' class='formfld pwd' value='<?= htmlentities($pconfig['passwordfld'], ENT_QUOTES | ENT_HTML401); ?>' />
 						<br />
 						Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />
 						<br />

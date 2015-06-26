@@ -179,7 +179,7 @@ function enable_altfirmwareurl(enable_over) {
 									<?=gettext("Base URL:"); ?>
 								</td>
 								<td>
-									<input name="firmwareurl" type="text" class="formfld url" id="firmwareurl" size="64" value="<?php if ($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>" />
+									<input name="firmwareurl" type="text" class="formfld url" id="firmwareurl" size="64" value="<?php if ($curcfg['alturl']['firmwareurl']) echo htmlspecialchars($curcfg['alturl']['firmwareurl']); else echo $g['']; ?>" />
 								</td>
 							</tr>
 						</table>
@@ -241,7 +241,7 @@ function enable_altfirmwareurl(enable_over) {
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
 					<td width="78%" class="vtable">
-						<input name="repositoryurl" type="text" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
+						<input name="repositoryurl" type="text" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo htmlspecialchars($gitcfg['repositoryurl']); ?>" />
 <?php
 		if ($lastrepositoryurl):
 ?>
@@ -271,7 +271,7 @@ function enable_altfirmwareurl(enable_over) {
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
 					<td width="78%" class="vtable">
-						<input name="branch" type="text" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
+						<input name="branch" type="text" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo htmlspecialchars($gitcfg['branch']); ?>" />
 <?php
 		if ($lastbranch):
 ?>

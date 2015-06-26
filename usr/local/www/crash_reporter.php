@@ -71,12 +71,12 @@ function output_crash_reporter_html($crash_reports) {
 	echo "<p><i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i></p>";
 	echo "<p>" . gettext("Contents of crash reports") . ":<br />";
 	echo "<textarea readonly=\"readonly\" rows=\"40\" cols=\"65\" name=\"crashreports\">{$crash_reports}</textarea></p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") . "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") . "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
 	echo "</form>";
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
 include('head.inc');
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";

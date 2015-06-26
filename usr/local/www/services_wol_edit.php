@@ -148,7 +148,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>" />
 				<br />
-				<span class="vexpl"><?=gettext("Enter a MAC address  in the following format: xx:xx:xx:xx:xx:xx");?></span>
+				<span class="vexpl"><?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx");?></span>
 			</td>
 		</tr>
 		<tr>

@@ -129,7 +129,7 @@ if ($_POST) {
 				write_config();
 				echo gettext("The entry was successfully deleted") . "\n";
 			} else {
-				echo gettext("No entry exists for this mac address:") . " " .  $_POST['delmac'] . "\n";
+				echo gettext("No entry exists for this mac address:") . " " . $_POST['delmac'] . "\n";
 			}
 		}
 		exit;
@@ -182,7 +182,7 @@ include("head.inc");
 		<td class="tabcont">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main">
 				<tr>
-					<td width="3%"  class="list"></td>
+					<td width="3%" class="list"></td>
 					<td width="37%" class="listhdrr"><?=gettext("MAC address"); ?></td>
 					<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>

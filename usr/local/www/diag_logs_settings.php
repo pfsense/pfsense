@@ -379,7 +379,7 @@ function check_everything() {
 				<tr>
 					<td width="22%" valign="top">Reset Logs</td>
 					<td width="78%">
-						<input name="resetlogs" type="submit" class="formbtn" value="<?=gettext("Reset Log Files"); ?>"  onclick="return confirm('<?=gettext('Do you really want to reset the log files? This will erase all local log data.');?>')" />
+						<input name="resetlogs" type="submit" class="formbtn" value="<?=gettext("Reset Log Files"); ?>" onclick="return confirm('<?=gettext('Do you really want to reset the log files? This will erase all local log data.');?>')" />
 						<br /><br />
 						<?= gettext("Note: Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes."); ?>
 					</td>

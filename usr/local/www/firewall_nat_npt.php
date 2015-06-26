@@ -79,7 +79,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
 include("head.inc");
 
 ?>

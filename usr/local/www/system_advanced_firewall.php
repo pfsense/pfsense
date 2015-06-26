@@ -61,6 +61,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
@@ -109,6 +110,9 @@ if ($_POST) {
 	}
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	}
+	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
+		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
 	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
@@ -214,6 +218,7 @@ if ($_POST) {
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
+		$config['system']['maximumfrags'] = $_POST['maximumfrags'];
 
 		if (!empty($_POST['tcpfirsttimeout'])) {
 			$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
@@ -506,11 +511,11 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<strong><?=gettext("Timeouts for states can be scaled adaptively as the number of state table entries grows.");?></strong>
 									<br />
-									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
+									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo htmlspecialchars($pconfig['adaptivestart']); ?>" />
 									<br /><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
 
 									<br />
-									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
+									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo htmlspecialchars($pconfig['adaptiveend']); ?>" />
 									<br /><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
 									<br />
 									<span class="vexpl"><?=gettext("Note: Leave this blank for the default, which auto-calculates these values from your maximum state table size. Adaptive start is 60% and end is 120% of the state table size by default.");?></span>
@@ -519,7 +524,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum States");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
+									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo htmlspecialchars($pconfig['maximumstates']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br />
@@ -529,7 +534,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Table Entries");?></td>
 								<td width="78%" class="vtable">
-									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo $pconfig['maximumtableentries']; ?>" />
+									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo htmlspecialchars($pconfig['maximumtableentries']); ?>" />
 									<br />
 									<strong><?=gettext("Maximum number of table entries for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
 									<br />
@@ -538,6 +543,18 @@ function update_description(itemnum) {
 										<?php if (empty($pconfig['maximumtableentries'])): ?>
 											<?= gettext("On your system the default size is:");?> <?= pfsense_default_table_entries_size(); ?>
 										<?php endif; ?>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Fragment Entries");?></td>
+								<td width="78%" class="vtable">
+									<input name="maximumfrags" type="text" id="maximumfrags" value="<?php echo htmlspecialchars($pconfig['maximumfrags']); ?>" />
+									<br />
+									<strong><?=gettext("Maximum number of packet fragments to hold for reassembly by scrub rules.");?></strong>
+									<br />
+									<span class="vexpl">
+										<?=gettext("Note:  Leave this blank for the default (5000).");?>
 									</span>
 								</td>
 							</tr>
@@ -588,7 +605,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
 								<td width="78%" class="vtable">
-									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
+									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo htmlspecialchars($pconfig['aliasesresolveinterval']); ?>" />
 									<br />
 									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
 									<br />

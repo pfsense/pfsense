@@ -12,7 +12,7 @@ function trafficshowDiv(incDiv,swapButtons) {
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
 	}
-	document.iform["shown[" + incDiv + "]"].value = "show";
+	document.traffic_graphs_widget_iform["shown[" + incDiv + "]"].value = "show";
 }
 
 function  trafficminimizeDiv(incDiv,swapButtons) {
@@ -29,6 +29,6 @@ function  trafficminimizeDiv(incDiv,swapButtons) {
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
 	}
-	document.iform["shown[" + incDiv + "]"].value = "hide";
+	document.traffic_graphs_widget_iform["shown[" + incDiv + "]"].value = "hide";
 }
 

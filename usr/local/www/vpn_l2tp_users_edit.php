@@ -36,21 +36,21 @@
 ##|*MATCH=vpn_l2tp_users_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("User"),gettext("Edit"));
+$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("User"), gettext("Edit"));
 $shortcut_section = "l2tps";
 
-function  l2tpusercmp($a,  $b) {
-	return  strcasecmp($a['name'],  $b['name']);
+function l2tpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
 }
 
-function  l2tp_users_sort() {
+function l2tp_users_sort() {
 	global $config;
 
 	if (!is_array($config['l2tp']['user'])) {
 		return;
 	}
 
-	usort($config['l2tp']['user'],  "l2tpusercmp");
+	usort($config['l2tp']['user'], "l2tpusercmp");
 }
 
 require("guiconfig.inc");
@@ -86,7 +86,7 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
 		$reqdfields = explode(" ", "usernamefld passwordfld");
-		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
+		$reqdfieldsn = array(gettext("Username"), gettext("Password"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);

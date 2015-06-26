@@ -267,10 +267,10 @@ EOD;
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
 
 		## How often the probe should be sent
-		if (!empty($gateway['interval']) &&  is_numeric($gateway['interval'])) {
+		if (!empty($gateway['interval']) && is_numeric($gateway['interval'])) {
 			$interval = intval($gateway['interval']);	# Restrict to Integer
-			if ($interval <  1) {
-				$interval =  1;	# Minimum
+			if ($interval < 1) {
+				$interval = 1;	# Minimum
 			}
 			if ($interval != $apinger_default['interval']) {	# If not default value
 				$apingercfg .= "	interval " . $interval . "s\n";
@@ -281,8 +281,8 @@ EOD;
 		## for controlling "delay" alarms
 		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
 			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
-			if ($avg_delay_samples <  1) {
-				$avg_delay_samples =  1;	# Minimum
+			if ($avg_delay_samples < 1) {
+				$avg_delay_samples = 1;	# Minimum
 			}
 			if ($avg_delay_samples != $apinger_default['avg_delay_samples']) {	# If not default value
 				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
@@ -629,7 +629,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				break;
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+				if (substr($ifcfg['if'], 0, 4) == "ovpn") {
 					// if current iface is an ovpn server endpoint then check its type, skip tap only
 					if (substr($ifcfg['if'], 4, 1) == 's') {
 						$ovpnid = substr($ifcfg['if'], 5);
@@ -725,7 +725,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				break;
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+				if (substr($ifcfg['if'], 0, 4) == "ovpn") {
 					// if current iface is an ovpn server endpoint then check its type, skip tap only
 					if (substr($ifcfg['if'], 4, 1) == 's') {
 						$ovpnid = substr($ifcfg['if'], 5);
@@ -762,7 +762,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
 
-		if (($gateway['dynamic'] === "default")  && ($found_defaultv6 == 0)) {
+		if (($gateway['dynamic'] === "default") && ($found_defaultv6 == 0)) {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
 			$found_defaultv6 = 1;
@@ -992,9 +992,9 @@ function return_gateway_groups_array() {
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
 							if (is_ipaddr($gatewayip)) {
 								$groupmember = array();
-								$groupmember['int']  = $int;
-								$groupmember['gwip']  = $gatewayip;
-								$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+								$groupmember['int'] = $int;
+								$groupmember['gwip'] = $gatewayip;
+								$groupmember['weight'] = isset($gateway['weight']) ? $gateway['weight'] : 1;
 								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member])) {
 									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
 								}

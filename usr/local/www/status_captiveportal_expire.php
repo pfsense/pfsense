@@ -109,7 +109,7 @@ if ($_POST) {
 	if ($_POST['vouchers']) {
 		$result = voucher_expire($_POST['vouchers']);
 		echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\" summary=\"results\">\n";
-		if ( $result) {
+		if ($result) {
 			echo "<tr><td bgcolor=\"#D9DEE8\"><img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" alt=\"pass\" /></td>";
 			echo "<td bgcolor=\"#D9DEE8\">Success</td></tr>";
 		} else {

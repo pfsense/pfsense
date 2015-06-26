@@ -47,11 +47,11 @@ $a_aliases = &$config['aliases']['alias'];
 
 $aliasname = str_replace(array(".", "-"), "_", $host);
 $alias_exists = false;
-$counter=0;
+$counter = 0;
 foreach ($a_aliases as $a) {
 	if ($a['name'] == $aliasname) {
 		$alias_exists = true;
-		$id=$counter;
+		$id = $counter;
 	}
 	$counter++;
 }
@@ -289,7 +289,7 @@ include("head.inc"); ?>
 	if (!$input_errors && $ipaddr) {
 ?>
 				<tr>
-					<td width="22%" valign="top"  class="vncell"><?=gettext("More Information:");?></td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("More Information:");?></td>
 					<td width="78%" class="vtable">
 						<a href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping");?></a> <br />
 						<a href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute");?></a>

@@ -160,6 +160,8 @@ EOF;
 	} else {
 		$bindints .= "interface: 0.0.0.0\n";
 		$bindints .= "interface: ::0\n";
+		/* If the active interface array is empty, treat it the same as "All" as is done above. Otherwise it breaks CARP with a default config. */
+		$bindints .= "interface-automatic: yes\n";
 	}
 
 	// Determine interfaces to run on

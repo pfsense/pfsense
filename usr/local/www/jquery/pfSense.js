@@ -113,12 +113,28 @@ $(function() {
 		a.appendTo($(this));
 	});
 
+	// Hide advanced inputs by default
+	if ($('.advanced').length > 0)
+	{
+		var advButt = $('<a class="btn btn-default">toggle advanced options</a>');
+		advButt.on('click', function() {
+			$('.advanced').parents('.form-group').collapse('toggle');
+		});
+
+		advButt.insertAfter($('#save'));
+
+		$('.advanced').parents('.form-group').collapse({toggle: true});
+	}
+
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover();
 
 	// Force correct initial state for toggleable checkboxes
 	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function() {
 		$( $(this).data('target') ).addClass('collapse');
+	});
+	$('input[type=checkbox][data-toggle="disable"]:not(:checked)').each(function() {
+		$( $(this).data('target') ).prop('disabled', true);
 	});
 
 	// Focus first input
@@ -128,3 +144,65 @@ $(function() {
 	while (func = window.events.shift())
 		func();
 });
+
+// Implement data-toggle=disable
+// Source: https://github.com/synergic-cz/synergic-ui/blob/master/src/js/disable.js
+;(function($, window, document) {
+	'use strict';
+
+	var Disable = function($element) {
+		this.$element = $element;
+	};
+
+	Disable.prototype.toggle = function() {
+		this.$element.prop('disabled', !this.$element.prop('disabled'));
+	};
+
+	function Plugin(options) {
+		$(document).trigger('toggle.sui.disable');
+
+		this.each(function() {
+			var $this = $(this);
+			var data = $this.data('sui.disable');
+
+			if (!data) {
+				$this.data('sui.disable', (data = new Disable($this)));
+			}
+
+			if (options === 'toggle') {
+				data.toggle();
+			}
+		});
+
+		$(document).trigger('toggled.sui.disable');
+
+		return this;
+	}
+
+	var old = $.fn.disable;
+
+	$.fn.disable = Plugin;
+	$.fn.disable.Constructor = Disable;
+
+	$.fn.disable.noConflict = function() {
+		$.fn.disable = old;
+		return this;
+	};
+
+	(function(Plugin, $, window) {
+		$(window).load(function() {
+			var $controls = $('[data-toggle=disable]');
+
+			$controls.each(function() {
+				var $this = $(this);
+				var eventType = $this.data('disable-event');
+				if (!eventType) {
+					eventType = 'change';
+				}
+				$this.on(eventType + '.sui.disable.data-api', function() {
+					Plugin.call($($this.data('target')), 'toggle');
+				});
+			});
+		});
+	}(Plugin, $, window, document));
+}(jQuery, window, document));

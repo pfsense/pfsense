@@ -188,7 +188,6 @@ if ($savemsg)
 if (is_subsystem_dirty('hosts'))
 	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
-
 require('classes/Form.class.php');
 
 $form = new Form();
@@ -200,7 +199,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable DNS forwarder',
 	$pconfig['enable']
-));
+))->toggles('.toggle-dhcp', 'disable');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
@@ -211,7 +210,8 @@ $section->addInput(new Form_Checkbox(
 			" their hostname when requesting a DHCP lease will be registered".
 			" in the DNS forwarder, so that their name can be resolved.".
 			" You should also set the domain in %sSystem:".
-			" General setup%s to the proper value.",'<a href="system.php">','</a>'));
+			" General setup%s to the proper value.",'<a href="system.php">','</a>'))
+	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
@@ -221,7 +221,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
 					"resolved. You should also set the domain in %s".
-					"System: General setup%s to the proper value.",'<a href="system.php">','</a>'));
+					"System: General setup%s to the proper value.",'<a href="system.php">','</a>'))
+	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
 	'dhcpfirst',
@@ -230,9 +231,12 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dhcpfirst']
 ))->setHelp(sprintf("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR)."));
+					"affects the name given for a reverse lookup (PTR)."))
+	->addClass('toggle-dhcp');
 
-$section->addInput(new Form_Checkbox(
+$group = new Form_Group('DNS Query Forwarding');
+
+$group->add(new Form_Checkbox(
 	'strict_order',
 	'DNS Query Forwarding',
 	'Query DNS servers sequentially',
@@ -241,7 +245,7 @@ $section->addInput(new Form_Checkbox(
 					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
 					"rather than all at once in parallel. ", $g['product_name']));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'domain_needed',
 	null,
 	'Require domain',
@@ -250,7 +254,7 @@ $section->addInput(new Form_Checkbox(
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.	 ".
 					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']));
 
-$section->addInput(new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'no_private_reverse',
 	null,
 	'Do not forward private reverse lookups',
@@ -260,11 +264,14 @@ $section->addInput(new Form_Checkbox(
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
 					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']));
 
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'port',
 	'Listen Port',
-	'text',
-	$pconfig['port']
+	'number',
+	$pconfig['port'],
+	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
 $iflist = build_if_list();
@@ -280,30 +287,19 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Checkbox(
 	'strictbind',
-	null,
+	'Strict binding',
 	'Strict interface binding',
 	$pconfig['strictbind']
 ))->setHelp('If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, ' .
 					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
 					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
 
-$btnadvdns = new Form_Button(
-	'btnadvdns',
-	'Advanced'
-);
-
-$btnadvdns->removeClass('btn-primary')->addClass('btn-default btn-sm');
-
-$section->addInput(new Form_StaticText(
-	'Advanced',
-	$btnadvdns . '&nbsp;' . 'Show advanced DNS settings'
-));
-
-$section->addInput(new Form_TextArea (
+$section->addInput(new Form_TextArea(
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
-))->setHelp('Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline');
+))->setHelp('Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline')
+	->addClass('advanced');
 
 $form->add($section);
 print($form);
@@ -321,56 +317,8 @@ print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'));
 ?>
 
-<script>
-//<![CDATA[
-events.push(function(){
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	// If hte enable checkbox is not checked, disable the next three checkboxes
-	function disableDHCP() {
-		var hide = ! $('#enable').prop('checked');
-
-		disableInput('regdhcp', hide);
-		disableInput('regdhcpstatic', hide);
-		disableInput('dhcpfirst', hide);
-	}
-
-	// Make the ‘aditional options’ button a plain button, not a submit button
-	$("#btnadvdns").prop('type','button');
-
-	// Un-hide aditional  controls
-	$("#btnadvdns").click(function() {
-		hideInput('custom_options', false);
-
-	});
-
-
-	// When 'enable' is clicked, diable/enable the following three checkboxes
-	$('#enable').click(function() {
-		disableDHCP();
-	});
-
-	// On initial load
-	hideInput('custom_options', true);
-	disableDHCP();
-
-});
-//]]>
-</script>
-
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Host Overrides")?></div>
+	<div class="panel-heading"><h2><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -384,8 +332,7 @@ events.push(function(){
 			</thead>
 			<tbody>
 <?php
-$i = 0;
-foreach ($a_hosts as $hostent):
+foreach ($a_hosts as $i => $hostent):
 ?>
 				<tr>
 					<td>
@@ -395,7 +342,7 @@ foreach ($a_hosts as $hostent):
 						<?=strtolower($hostent['domain'])?>
 					</td>
 					<td>
-						<?=$hostent['ip']?>&nbsp;
+						<?=$hostent['ip']?>
 					</td>
 					<td>
 						<?=htmlspecialchars($hostent['descr'])?>
@@ -408,7 +355,7 @@ foreach ($a_hosts as $hostent):
 
 <?php
 	if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])):
-		foreach ($hostent['aliases']['item'] as $alias):
+		foreach ($hostent['aliases']['item'] as $i => $alias):
 ?>
 				<tr>
 					<td>
@@ -430,7 +377,6 @@ foreach ($a_hosts as $hostent):
 <?php
 		endforeach;
 	endif;
-	$i++;
 endforeach;
 ?>
 			</tbody>
@@ -443,12 +389,12 @@ endforeach;
 </nav>
 
 <?php
-	print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				   gettext("Use these for changing DNS results or for adding custom DNS records."));
+print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
+				gettext("Use these for changing DNS results or for adding custom DNS records."));
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Domain Overrides")?></div>
+	<div class="panel-heading"><h2><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -462,18 +408,17 @@ endforeach;
 
 			<tbody>
 <?php
-$i = 0;
-foreach ($a_domainOverrides as $doment):
+foreach ($a_domainOverrides as $i => $doment):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($doment['domain'])?>&nbsp;
+						<?=strtolower($doment['domain'])?>
 					</td>
 					<td>
-						<?=$doment['ip']?>&nbsp;
+						<?=$doment['ip']?>
 					</td>
 					<td>
-						<?=htmlspecialchars($doment['descr'])?>&nbsp;
+						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
 						<a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
@@ -481,7 +426,6 @@ foreach ($a_domainOverrides as $doment):
 					</td>
 				</tr>
 <?php
-	$i++;
 endforeach;
 ?>
 			</tbody>
@@ -495,6 +439,6 @@ endforeach;
 
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-					   " authoritative DNS server to be queried for that domain."));
+						" authoritative DNS server to be queried for that domain."));
 
 include("foot.inc");

@@ -10,6 +10,8 @@ require_once("service-utils.inc");
 
 /* $Id$ */
 
+header('Content-Type: text/html; charset=utf-8');
+
 $pagetitle = gentitle( $pgtitle );
 
 if (isset($config['system']['webgui']['pagenamefirst']))

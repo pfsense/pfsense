@@ -50,13 +50,25 @@ if ($argc == 1) {
 	exit;
 }
 
-if ($argc != 3) {
+$pkg = '';
+$when = '';
+
+if (isset($_GET['pkg'])) {
+	$pkg = $_GET['pkg'];
+} else {
+	$pkg = $argv[1];
+}
+
+if (isset($_GET['when'])) {
+	$when = strtolower($_GET['when']);
+} else {
+	$when = strtolower($argv[2]);
+}
+
+if ($pkg == '' || $when == '') {
 	print "Error: invalid parameters\n";
 	usage();
 }
-
-$pkg = $argv[1];
-$when = strtolower($argv[2]);
 
 /* Remove pkg_prefix from pkg name */
 pkg_remove_prefix($pkg);

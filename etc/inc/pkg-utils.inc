@@ -291,20 +291,48 @@ function get_package_internal_name($package_data) {
 	}
 }
 
-/****f* pkg-utils/get_pkg_info
- * NAME
- *   get_pkg_info - Retrieve package information from package server.
- * INPUTS
- *   $pkgs - 'all' to retrieve all packages, an array containing package names otherwise
- *   $info - 'all' to retrieve all information, an array containing keys otherwise
- * RESULT
- *   $raw_versions - Array containing retrieved information, indexed by package name.
- ******/
+/* Get information about packages */
 function get_pkg_info($pkgs = 'all', $info = 'all') {
-	global $g;
+	global $g, $static_output;
 
-	// XXX: implement
-	return array();
+	$out = '';
+	$err = '';
+
+	if ($pkgs == 'all') {
+		$pkgs = $g['pkg_prefix'];
+	}
+
+	/* Make sure repo metadata is up2date */
+	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
+	update_status($static_output);
+	if (!pkg_call("update")) {
+		$static_output .= "\n" . gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
+		update_status($static_output);
+		return array();
+	}
+
+	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
+
+	if ($rc != 0) {
+		$static_output .= "\n" . gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
+		$static_output .= $err;
+		update_status($static_output);
+		return array();
+	}
+
+	$result = array();
+	$pkgs_info = explode("\n", $out);
+	foreach ($pkgs_info as $pkg_info_json) {
+		$pkg_info = json_decode($pkg_info_json, true);
+		if (!isset($pkg_info['name'])) {
+			continue;
+		}
+
+		$result[] = $pkg_info;
+		unset($pkg_info);
+	}
+
+	return $result;
 }
 
 /*

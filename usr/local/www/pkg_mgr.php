@@ -97,9 +97,6 @@ include("head.inc");
 	<tr><td>
 <?php
 	if ($pkg_info) {
-		$pkg_keys = array_keys($pkg_info);
-		natcasesort($pkg_keys);
-
 		//Check categories
 		$categories = array();
 		foreach ($pkg_info as $pkg_data) {
@@ -160,7 +157,7 @@ include("head.inc");
 	if (!$pkg_info) {
 		echo "<tr><td colspan=\"5\"><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 	} else {
-		if (is_array($pkg_keys)) {
+		if (is_array($pkg_info)) {
 			foreach ($pkg_info as $index):
 				if (get_package_id($index['name']) >= 0) {
 					continue;
@@ -211,7 +208,7 @@ include("head.inc");
 			endforeach;
 		} else {
 			echo "<tr><td colspan='5' align='center'>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
-		} /* if (is_array($pkg_keys)) */
+		} /* if (is_array($pkg_info)) */
 	} /* if (!$pkg_info) */
 ?>
 				</table>

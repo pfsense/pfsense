@@ -525,7 +525,6 @@ delta_update)
 	remove_chflags
 	binary_update $IMG
 	restore_chflags
-	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
 	find / -name CVS -type d -exec rm {} \;
 	rm -rf /usr/savecore/*

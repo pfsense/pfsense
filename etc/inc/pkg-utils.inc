@@ -591,10 +591,11 @@ function install_package_xml($package_name) {
 		if ($pkg_config['include_file'] <> "") {
 			$static_output .= gettext("Loading package instructions...") . "\n";
 			update_output_window($static_output);
-			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file'])) {
+				pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 				require_once($pkg_config['include_file']);
 			} else {
+				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
 				$static_output .= "Include " . basename($pkg_config['include_file']) . " is missing!\n";
 				update_output_window($static_output);
@@ -673,6 +674,7 @@ function install_package_xml($package_name) {
 			update_output_window($static_output);
 		}
 	} else {
+		pkg_debug("Unable to find config file\n");
 		$static_output .= gettext("Loading package configuration... failed!") . "\n\n" . gettext("Installation aborted.");
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
@@ -812,10 +814,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		if ($pkg_config['include_file'] <> "") {
 			$static_output .= gettext("Loading package instructions...") . "\n";
 			update_output_window($static_output);
-			pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
 			if (file_exists($pkg_config['include_file'])) {
+				pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
 				require_once($pkg_config['include_file']);
 			} else {
+				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
 				update_output_window($static_output);
 				$static_output .= "Include file " . basename($pkg_config['include_file']) . " could not be found for inclusion.\n";

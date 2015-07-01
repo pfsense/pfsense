@@ -60,7 +60,7 @@ if (!function_exists("pkg_debug")) {
 		}
 
 		if (!$fd_log) {
-			if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w")) {
+			if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_debug.log", "w")) {
 				update_output_window("Warning, could not open log for writing.");
 			}
 		}

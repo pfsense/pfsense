@@ -66,35 +66,8 @@ function domTT_title($title_msg) {
 		echo "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
 	}
 }
-//get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
-$pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
-$xmlrpc_base_url = get_active_xml_rpc_base_url();
-if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
-	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
-	//create cache file after get_pkg_info
-	if ($pkg_info) {
-		$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
-		fwrite($fout, serialize($pkg_info));
-		fclose($fout);
-	} else {
-		$using_cache = true;
-		if (file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-			$savemsg = sprintf(gettext("Unable to retrieve package info from %s. Cached data will be used."), $xmlrpc_base_url);
-			$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
-		} else {
-			$savemsg = sprintf(gettext('Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
-		}
-	}
-} else {
-	$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
-}
-
-if (!empty($_GET)) {
-	if (isset($_GET['ver'])) {
-		$requested_version = htmlspecialchars($_GET['ver']);
-	}
-}
+$pkg_info = get_pkg_info();
 
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Manager"));
@@ -111,44 +84,27 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");
-
-	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-	if (!verify_all_package_servers()) {
-		print_info_box(package_server_mismatch_message());
-	}
-
-	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-	if (check_package_server_ssl() === false) {
-		print_info_box(package_server_ssl_failure_message());
-	}
-
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager">
 	<tr><td>
 <?php
-	$version = rtrim(file_get_contents("/etc/version"));
-
 	$tab_array = array();
-	$tab_array[] = array(gettext("Available Packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
+	$tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
 ?>
 	</td></tr>
 	<tr><td>
 <?php
-	$version = rtrim(file_get_contents("/etc/version"));
 	if ($pkg_info) {
 		$pkg_keys = array_keys($pkg_info);
 		natcasesort($pkg_keys);
 
 		//Check categories
 		$categories = array();
-		if (is_array($pkg_keys)) {
-			foreach ($pkg_keys as $key) {
-				$categories[$pkg_info[$key]['category']]++;
+		foreach ($pkg_info as $pkg_data) {
+			if (isset($pkg_data['categories'][0])) {
+				$categories[$pkg_data['categories'][0]]++;
 			}
 		}
 		ksort($categories);
@@ -196,7 +152,7 @@ include("head.inc");
 		print '<td width="18%" class="listhdr">'.gettext("Category").'</td>'."\n";
 	}
 ?>
-						<td width="<?php print $show_category ? "15%" : "20%"; ?>" class="listhdr"><?=gettext("Status"); ?></td>
+						<td width="<?php print $show_category ? "15%" : "20%"; ?>" class="listhdr"><?=gettext("Version"); ?></td>
 						<td width="<?php print $show_category ? "58%" : "70%"; ?>" class="listhdr"><?=gettext("Description"); ?></td>
 						<td width="17">&nbsp;</td>
 					</tr>
@@ -205,64 +161,38 @@ include("head.inc");
 		echo "<tr><td colspan=\"5\"><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 	} else {
 		if (is_array($pkg_keys)) {
-			foreach ($pkg_keys as $key):
-				$index = &$pkg_info[$key];
+			foreach ($pkg_info as $index):
 				if (get_package_id($index['name']) >= 0) {
 					continue;
 				}
 
-				/* get history/changelog git dir */
-				$commit_dir = explode("/", $index['config_file']);
-				$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
-				if ($commit_dir[(count($commit_dir)-2)] == "config") {
-					$changeloglink .= $commit_dir[(count($commit_dir)-1)];
-				} else {
-					$changeloglink .= $commit_dir[(count($commit_dir)-2)];
-				}
+				$shortname = $index['name'];
+				pkg_remove_prefix($shortname);
 
 				/* Check package info link */
-				if ($index['pkginfolink']) {
-					$pkginfolink = $index['pkginfolink'];
+				if ($index['www'] && $index['www'] != 'UNKNOWN') {
+					$pkginfolink = $index['www'];
 					$pkginfo=gettext("Package info");
 				} else {
 					$pkginfolink = "https://forum.pfsense.org/index.php/board,15.0.html";
 					$pkginfo=gettext("No package info, check the forum");
 				}
 
-				if ($menu_category == "All" || $index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'], $visible_categories))):
+				if ($menu_category == "All" || $index['categories'][0] == $menu_category || ($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))):
 ?>
-					<tr valign="top" class="<?= $index['category'] ?>">
+					<tr valign="top" class="<?= $index['categories'][0] ?>">
 						<td class="listlr" <?=domTT_title(gettext("Click on package name to access its website."))?>>
-							<a target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
+							<a target="_blank" href="<?= $index['www'] ?>"><?=$shortname;?></a>
 						</td>
 <?php
 					if ($show_category) {
-						print '<td class="listr">'.gettext($index['category']).'</td>'."\n";
+						print '<td class="listr">'.gettext($index['categories'][0]).'</td>'."\n";
 					}
 
-					if ($g['disablepackagehistory']) {
-						print '<td class="listr">'."\n";
-					} else {
-						print '<td class="listr" ';
-						domTT_title(gettext("Click ").ucfirst($index['name']).gettext(" version to check its change log."));
-						print ">\n";
-					}
-
-					print "{$index['status']} <br />\n";
-
-					if ($g['disablepackagehistory']) {
-						echo"<a>{$index['version']}</a>";
-					} else {
-						echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
-					}
 ?>
-							<br />
-							<?=gettext("platform") .": ". $index['required_version'] ?>
-							<br />
-							<?=$index['maximum_version'] ?>
-						</td>
-						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
-							<?= $index['descr'] ?>
+						<td class="listr"><?=$index['version'];?></td>
+						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($shortname)." package."))?>>
+							<?=str_replace("\n", '<br />', $index['desc']);?>
 <?php
 					if (!$g['disablepackageinfo']):
 ?>
@@ -273,7 +203,7 @@ include("head.inc");
 ?>
 						</td>
 						<td valign="middle" class="list nowrap" width="17">
-							<a href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a>
+							<a href="pkg_mgr_install.php?id=<?=$shortname;?>"><img <?=domTT_title(gettext("Install ".ucfirst($shortname)." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a>
 						</td>
 					</tr>
 <?php

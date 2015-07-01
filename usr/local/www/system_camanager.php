@@ -105,7 +105,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br />";
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name)) . "<br />";
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -222,6 +222,10 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	if ($pconfig['method'] != "existing") {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
+		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+		}
+
 		for ($i = 0; $i < count($reqdfields); $i++) {
 			if ($reqdfields[$i] == 'dn_email') {
 				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
@@ -486,7 +490,7 @@ function method_change() {
 											$selected = " selected=\"selected\"";
 										}
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
 								<?php
 									endforeach;
 								?>
@@ -655,7 +659,7 @@ function method_change() {
 
 							$issuer_ca = lookup_ca($ca['caref']);
 							if ($issuer_ca) {
-								$issuer_name = $issuer_ca['descr'];
+								$issuer_name = htmlspecialchars($issuer_ca['descr']);
 							}
 
 							// TODO : Need gray certificate icon

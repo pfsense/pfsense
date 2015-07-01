@@ -305,13 +305,17 @@ function relayd_configure($kill_first=false) {
 				for ($k = 0; $k < count($src_port_array) && $k < count($dest_port_array); $k += 1) {
 					$src_port = $src_port_array[$k];
 					$dest_port = $dest_port_array[$k];
+					if (is_portrange($dest_port)) {
+						$dest_ports = explode(':', $dest_port);
+						$dest_port = $dest_ports[0];
+					}
 
 					$name = $vs_a[$i]['name'];
 					if ($append_ip_to_name) {
 						$name .= "_" . $j;
 					}
 					if ($append_port_to_name) {
-						$name .= "_" . $src_port;
+						$name .= "_" . str_replace(":", "_", $src_port);
 					}
 
 					if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {

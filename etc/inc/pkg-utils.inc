@@ -442,7 +442,7 @@ function sync_package($package_name) {
 		} else {
 			log_error("Reinstalling package {$package['name']} because its include file({$include_file}) is missing!");
 			uninstall_package($package['name']);
-			if (install_package($package['name']) < 0) {
+			if (install_package($package['name']) != 0) {
 				log_error("Reinstalling package {$package['name']} failed. Take appropriate measures!!!");
 				return;
 			}

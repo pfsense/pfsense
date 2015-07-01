@@ -100,10 +100,9 @@ if ($act == "del") {
 		exit;
 	}
 
-	$name = $a_cert[$id]['descr'];
 	unset($a_cert[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br />";
+	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), htmlspecialchars($a_cert[$id]['descr'])) . "<br />";
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
@@ -296,6 +295,11 @@ if ($_POST) {
 			}
 
 			/* Make sure we do not have invalid characters in the fields for the certificate */
+
+			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+			}
+
 			for ($i = 0; $i < count($reqdfields); $i++) {
 				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
 					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
@@ -421,6 +425,10 @@ if ($_POST) {
 			gettext("Final Certificate data"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+		}
 
 //		old way
 		/* make sure this csr and certificate subjects match */
@@ -683,7 +691,7 @@ function internalca_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = " selected=\"selected\"";
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -994,7 +1002,7 @@ function internalca_change() {
 											continue;
 										$ca = lookup_ca($cert['caref']);
 										if ($ca)
-											$caname = " (CA: {$ca['descr']})";
+											$caname = " (CA: " . htmlspecialchars($ca['descr']) . ")";
 										if ($pconfig['certref'] == $cert['refid'])
 											$selected = " selected=\"selected\"";
 										if (cert_in_use($cert['refid']))
@@ -1002,7 +1010,7 @@ function internalca_change() {
 											if (is_cert_revoked($cert))
 											$revoked = " *Revoked";
 								?>
-									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
+									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=htmlspecialchars($cert['descr']) . $caname . $inuse . $revoked;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -1110,7 +1118,7 @@ function internalca_change() {
 
 							$ca = lookup_ca($cert['caref']);
 							if ($ca)
-								$caname = $ca['descr'];
+								$caname = htmlspecialchars($ca['descr']);
 
 							if($cert['prv'])
 								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";

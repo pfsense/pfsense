@@ -808,7 +808,7 @@ function sshkeyClicked(obj) {
 													continue;
 												$rowIndex++;
 ?>
-												<option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
+												<option value="<?=$ca['refid'];?>"><?=htmlspecialchars($ca['descr']);?></option>
 <?php
 											endforeach;
 											if ($rowIndex == 0)

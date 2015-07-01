@@ -805,7 +805,7 @@ function dpdchkbox_change() {
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected=\"selected\"";
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=htmlspecialchars($cert['descr']);?></option>
 							<?php endforeach; ?>
 							</select>
 							<br />
@@ -824,7 +824,7 @@ function dpdchkbox_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected=\"selected\"";
 							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
 							<?php endforeach; ?>
 							</select>
 							<br />

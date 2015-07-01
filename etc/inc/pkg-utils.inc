@@ -483,7 +483,7 @@ function read_package_config($package_name) {
 }
 
 function get_after_install_info($package_name) {
-	$pkg_config = read_pkg_config($package_name);
+	$pkg_config = read_package_config($package_name);
 
 	if (isset($pkg_config['after_install_info'])) {
 		return $pkg_config['after_install_info'];

@@ -540,7 +540,7 @@ function select_clicked() {
                                                                         if ($pconfig['ldap_caref'] == $ca['refid'])
                                                                                 $selected = "selected=\"selected\"";
                                                         ?>
-									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
                                                         <?php	endforeach; ?>
 								</select>
 								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br />

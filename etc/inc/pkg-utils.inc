@@ -83,15 +83,135 @@ function pkg_remove_prefix(&$pkg_name) {
 }
 
 /* Execute a pkg call */
-function pkg_call($params) {
+function pkg_call($params, $mute = false) {
+	global $static_output, $g;
+
 	if (empty($params)) {
 		return false;
 	}
 
-	// XXX: Use proper call with fifo to collect statistics
-	$_gc = exec(escapeshellcmd("env ASSUME_ALWAYS_YES=true /usr/sbin/pkg {$params}"), $output, $rc);
+	$env = array(
+		"ASSUME_ALWAYS_YES" => "true"
+	);
 
-	return ($rc == 0);
+	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
+	if (!file_exists($debug_fifo)) {
+		posix_mkfifo($debug_fifo, 0600);
+	}
+
+	if (filetype($debug_fifo) == 'fifo') {
+		$env["EVENT_PIPE"] = $debug_fifo;
+	}
+
+	$descriptorspec = array(
+		1 => array("pipe", "w"), /* stdout */
+		2 => array("pipe", "w")  /* stderr */
+	);
+
+	pkg_debug("pkg_call(): {$params}\n");
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+
+	if (!is_resource($process)) {
+		return false;
+	}
+
+	stream_set_blocking($pipes[1], 0);
+	stream_set_blocking($pipes[2], 0);
+
+	/* XXX: should be a tunnable? */
+	$timeout = 300; // seconds
+	$error_log = '';
+
+	do {
+		$write = array();
+		$read = array($pipes[1], $pipes[2]);
+		$except = array();
+
+		$stream = stream_select($read, $write, $except, null, $timeout);
+		if ($stream !== FALSE && $stream > 0) {
+			foreach ($read as $pipe) {
+				$content = stream_get_contents($pipe);
+				if ($content == '') {
+					continue;
+				}
+				if ($pipe === $pipes[1]) {
+					if (!$mute) {
+						$static_output .= $content;
+						update_output_window($static_output);
+					}
+					flush();
+				} else if ($pipe === $pipes[2]) {
+					$error_log .= $content;
+				}
+			}
+		}
+		$status = proc_get_status($process);
+	} while ($status['running']);
+	fclose($pipes[1]);
+	fclose($pipes[2]);
+	proc_close($process);
+
+	$rc = $status['exitcode'];
+
+	pkg_debug("pkg_call(): rc = {$rc}\n");
+	if ($rc == 0) {
+		return true;
+	}
+
+	pkg_debug("pkg_call(): error_log\n{$error_log}\n");
+	if (!$mute) {
+		$static_output .= "\n\n" . sprintf(gettext("ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"), $rc, $params) . "\n" . $error_log;
+		update_output_window($static_output);
+	}
+	return false;
+}
+
+/* Execute pkg with $params, fill stdout and stderr and return pkg rc */
+function pkg_exec($params, &$stdout, &$stderr) {
+	global $g;
+
+	if (empty($params)) {
+		return -1;
+	}
+
+	$env = array(
+		"ASSUME_ALWAYS_YES" => "true"
+	);
+
+	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
+	if (!file_exists($debug_fifo)) {
+		posix_mkfifo($debug_fifo, 0600);
+	}
+
+	if (filetype($debug_fifo) == 'fifo') {
+		$env["EVENT_PIPE"] = $debug_fifo;
+	}
+
+	$descriptorspec = array(
+		1 => array("pipe", "w"), /* stdout */
+		2 => array("pipe", "w")  /* stderr */
+	);
+
+	pkg_debug("pkg_exec(): {$params}\n");
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+
+	if (!is_resource($process)) {
+		return -1;
+	}
+
+	$stdout = '';
+	while (($l = fgets($pipes[1])) !== FALSE) {
+		$stdout .= $l;
+	}
+	fclose($pipes[1]);
+
+	$stderr = '';
+	while (($l = fgets($pipes[2])) !== FALSE) {
+		$stderr .= $l;
+	}
+	fclose($pipes[2]);
+
+	return proc_close($process);
 }
 
 /* Check if package is installed */

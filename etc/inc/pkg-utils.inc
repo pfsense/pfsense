@@ -220,7 +220,7 @@ function is_pkg_installed($pkg_name) {
 
 	pkg_remove_prefix($pkg_name);
 
-	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name);
+	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */

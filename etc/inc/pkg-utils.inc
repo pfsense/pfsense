@@ -41,23 +41,14 @@
 
 require_once("globals.inc");
 require_once("service-utils.inc");
+
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
 } else {
 	require_once("xmlparse.inc");
 }
-require_once("pfsense-utils.inc");
 
-if (!function_exists("update_status")) {
-	function update_status($status) {
-		echo $status . "\n";
-	}
-}
-if (!function_exists("update_output_window")) {
-	function update_output_window($status) {
-		echo $status . "\n";
-	}
-}
+require_once("pfsense-utils.inc");
 
 if (!function_exists("pkg_debug")) {
 	/* set up logging if needed */

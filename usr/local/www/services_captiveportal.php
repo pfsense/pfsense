@@ -1109,7 +1109,7 @@ function enable_change(enable_change) {
 											$selected = " selected=\"selected\"";
 										}
 								?>
-								<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
+								<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=htmlspecialchars($cert['descr']);?></option>
 								<?php endforeach; ?>
 							</select>
 						<?php else: ?>

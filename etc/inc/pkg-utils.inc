@@ -381,15 +381,20 @@ function resync_all_package_configs($show_message = false) {
 function uninstall_package($package_name) {
 	global $config, $static_output;
 
+	$internal_name = $package_name;
 	$id = get_package_id($package_name);
 	if ($id >= 0) {
 		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
 		stop_service($internal_name);
+	}
+
+	if (is_pkg_installed($internal_name)) {
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
 		pkg_delete($internal_name);
+	} else {
+		delete_package_xml($package_name);
 	}
-	delete_package_xml($package_name);
 
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);

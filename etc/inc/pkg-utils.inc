@@ -226,14 +226,18 @@ function is_pkg_installed($pkg_name) {
 /* Install package, $pkg_name should not contain prefix */
 function pkg_install($pkg_name) {
 	global $g;
+	$result = false;
 
 	pkg_remove_prefix($pkg_name);
 
+	pkg_debug("Installing package {$pkg_name}\n");
 	if (!is_pkg_installed($pkg_name)) {
-		return pkg_call("install -q -y " . $g['pkg_prefix'] . $pkg_name);
+		$result = pkg_call("install -y " . $g['pkg_prefix'] . $pkg_name);
+		/* Cleanup cacke to free disk space */
+		pkg_call("clean -y");
 	}
 
-	return false;
+	return $result;
 }
 
 /* Delete package from FreeBSD, $pkg_name should not contain prefix */

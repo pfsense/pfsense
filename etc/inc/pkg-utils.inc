@@ -246,10 +246,11 @@ function pkg_delete($pkg_name) {
 
 	pkg_remove_prefix($pkg_name);
 
+	pkg_debug("Removing package {$pkg_name}\n");
 	if (is_pkg_installed($pkg_name)) {
-		pkg_call("delete -q -y " . $g['pkg_prefix'] . $pkg_name);
+		pkg_call("delete -y " . $g['pkg_prefix'] . $pkg_name);
 		/* Cleanup unecessary dependencies */
-		pkg_call("autoremove -y -q");
+		pkg_call("autoremove -y");
 	}
 }
 

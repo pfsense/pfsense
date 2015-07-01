@@ -243,7 +243,7 @@ if ($_GET) {
 			break;
 		case 'reinstallpkg':
 			delete_package_xml($pkgid);
-			if (install_package($pkgid) < 0) {
+			if (install_package($pkgid) != 0) {
 				update_status(gettext("Package reinstallation failed."));
 				$static_output .= "\n" . gettext("Package reinstallation failed.");
 				update_output_window($static_output);
@@ -269,7 +269,7 @@ if ($_GET) {
 					if ($pkgtodo['name']) {
 						update_output_window($static_output);
 						uninstall_package($pkgtodo['name']);
-						install_package($pkgtodo['name'], '', true);
+						install_package($pkgtodo['name']);
 					}
 				}
 				update_status(gettext("All packages reinstalled."));
@@ -284,7 +284,7 @@ if ($_GET) {
 		case 'installed':
 		default:
 			$status = install_package($pkgid);
-			if ($status == -1) {
+			if ($status != 0) {
 				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
 				$static_output .= "\n" . gettext("Installation halted.");
 				update_output_window($static_output);

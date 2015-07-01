@@ -357,7 +357,6 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/fdisk_upgrade_log.txt
 
 	# Remove extra stuff
-	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
 	rm -rf /usr/savecore/*
 

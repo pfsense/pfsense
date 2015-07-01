@@ -338,11 +338,6 @@ echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 /etc/rc.d/ldconfig start 2>/dev/null
 
-# Make sure /etc/rc.conf doesn't exist.
-if [ -f /etc/rc.conf ]; then
-	/bin/rm -rf /etc/rc.conf
-fi
-
 if [ ! "$PLATFORM" = "jail" ]; then
 	# Launching kbdmux(4)
 	if [ -f "/dev/kbdmux0" ]; then

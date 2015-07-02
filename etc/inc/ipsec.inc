@@ -44,22 +44,22 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 
 global $my_identifier_list;
 $my_identifier_list = array(
-	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
-	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
-	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
-	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
-	'keyid tag' => array( 'desc' => gettext('KeyID tag'), 'mobile' => true ),
-	'dyn_dns' => array( 'desc' => gettext('Dynamic DNS'), 'mobile' => true ));
+	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),
+	'address' => array('desc' => gettext('IP address'), 'mobile' => true),
+	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
+	'keyid tag' => array('desc' => gettext('KeyID tag'), 'mobile' => true),
+	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true));
 
 global $peer_identifier_list;
 $peer_identifier_list = array(
-	'peeraddress' => array( 'desc' => gettext('Peer IP address'), 'mobile' => false ),
-	'address' => array( 'desc' => gettext('IP address'), 'mobile' => false ),
-	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
-	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
-	'keyid tag' => array( 'desc' =>gettext('KeyID tag'), 'mobile' => true ));
+	'peeraddress' => array('desc' => gettext('Peer IP address'), 'mobile' => false),
+	'address' => array('desc' => gettext('IP address'), 'mobile' => false),
+	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
+	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true));
 
 global $ipsec_idhandling;
 $ipsec_idhandling = array(
@@ -68,22 +68,25 @@ $ipsec_idhandling = array(
 
 global $p1_ealgos;
 $p1_ealgos = array(
-	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'3des' => array( 'name' => '3DES' ),
-	'cast128' => array( 'name' => 'CAST128' ),
-	'des' => array( 'name' => 'DES' ));
+	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'3des' => array('name' => '3DES'),
+	'cast128' => array('name' => 'CAST128'),
+	'des' => array('name' => 'DES'));
 
 global $p2_ealgos;
 $p2_ealgos = array(
-	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'3des' => array( 'name' => '3DES' ),
-	'cast128' => array( 'name' => 'CAST128' ),
-	'des' => array( 'name' => 'DES' ));
+	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'3des' => array('name' => '3DES'),
+	'cast128' => array('name' => 'CAST128'),
+	'des' => array('name' => 'DES'));
 
 global $p1_halgos;
 $p1_halgos = array(
@@ -110,7 +113,10 @@ $p1_dhgroups = array(
 	21 => '21 (nist ecp521)',
 	22 => '22 (1024(sub 160) bit)',
 	23 => '23 (2048(sub 224) bit)',
-	24 => '24 (2048(sub 256) bit)'
+	24 => '24 (2048(sub 256) bit)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 global $p2_halgos;
@@ -125,14 +131,14 @@ $p2_halgos = array(
 
 global $p1_authentication_methods;
 $p1_authentication_methods = array(
-	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
-	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
-	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
-	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
-	'eap-radius' => array( 'name' => 'EAP-RADIUS', 'mobile' => true),
-	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
-	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
-	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+	'hybrid_rsa_server' => array('name' => 'Hybrid RSA + Xauth', 'mobile' => true),
+	'xauth_rsa_server' => array('name' => 'Mutual RSA + Xauth', 'mobile' => true),
+	'xauth_psk_server' => array('name' => 'Mutual PSK + Xauth', 'mobile' => true),
+	'eap-tls' => array('name' => 'EAP-TLS', 'mobile' => true),
+	'eap-radius' => array('name' => 'EAP-RADIUS', 'mobile' => true),
+	'eap-mschapv2' => array('name' => 'EAP-MSChapv2', 'mobile' => true),
+	'rsasig' => array('name' => 'Mutual RSA', 'mobile' => false),
+	'pre_shared_key' => array('name' => 'Mutual PSK', 'mobile' => false));
 
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
@@ -161,7 +167,13 @@ $p2_pfskeygroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)'
+	18 => '18 (8192 bit)',
+	19 => '19 (nist ecp256)',
+	20 => '20 (nist ecp384)',
+	21 => '21 (nist ecp521)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 /*
@@ -171,9 +183,11 @@ $p2_pfskeygroups = array(
 function ipsec_ikeid_used($ikeid) {
 	global $config;
 
-	foreach ($config['ipsec']['phase1'] as $ph1ent)
-		if( $ikeid == $ph1ent['ikeid'] )
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ($ikeid == $ph1ent['ikeid']) {
 			return true;
+		}
+	}
 
 	return false;
 }
@@ -181,8 +195,9 @@ function ipsec_ikeid_used($ikeid) {
 function ipsec_ikeid_next() {
 
 	$ikeid = 1;
-	while(ipsec_ikeid_used($ikeid))
+	while (ipsec_ikeid_used($ikeid)) {
 		$ikeid++;
+	}
 
 	return $ikeid;
 }
@@ -205,14 +220,15 @@ function ipsec_get_phase1_src(& $ph1ent) {
 				$interfaceip = get_interface_ip($if);
 			}
 		} else {
-			$interfaceip=$ph1ent['interface'];
+			$interfaceip = $ph1ent['interface'];
 		}
 	} else {
 		$if = "wan";
-		if ($ph1ent['protocol'] == "inet6")
+		if ($ph1ent['protocol'] == "inet6") {
 			$interfaceip = get_interface_ipv6($if);
-		else
+		} else {
 			$interfaceip = get_interface_ip($if);
+		}
 	}
 
 	return $interfaceip;
@@ -224,15 +240,18 @@ function ipsec_get_phase1_src(& $ph1ent) {
 function ipsec_get_phase1_dst(& $ph1ent) {
 	global $g;
 
-	if (empty($ph1ent['remote-gateway']))
+	if (empty($ph1ent['remote-gateway'])) {
 		return false;
+	}
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if(! platform_booting())
+		if (!platform_booting()) {
 			return resolve_retry($rg);
+		}
 	}
-	if(!is_ipaddr($rg))
+	if (!is_ipaddr($rg)) {
 		return false;
+	}
 
 	return $rg;
 }
@@ -246,12 +265,14 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
-				if ($mode == "tunnel6")
+				if ($mode == "tunnel6") {
 					return $idinfo['address']."/128";
-				else
+				} else {
 					return $idinfo['address']."/32";
-			} else
+				}
+			} else {
 				return $idinfo['address'];
+			}
 			break; /* NOTREACHED */
 		case "network":
 			return "{$idinfo['address']}/{$idinfo['netbits']}";
@@ -261,18 +282,19 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			return '0.0.0.0/0';
 			break; /* NOTREACHED */
 		default:
-			if (empty($mode) && !empty($idinfo['mode']))
+			if (empty($mode) && !empty($idinfo['mode'])) {
 				$mode = $idinfo['mode'];
+			}
 
 			if ($mode == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
-				$address = gen_subnetv6($address,$netbits);
+				$address = gen_subnetv6($address, $netbits);
 				return "{$address}/{$netbits}";
 			} else {
 				$address = get_interface_ip($idinfo['type']);
 				$netbits = get_interface_subnet($idinfo['type']);
-				$address = gen_subnet($address,$netbits);
+				$address = gen_subnet($address, $netbits);
 				return "{$address}/{$netbits}";
 			}
 			break; /* NOTREACHED */
@@ -282,18 +304,20 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 /*
  * Return phase2 idinfo in address/netmask format
  */
-function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
+function ipsec_idinfo_to_subnet(& $idinfo, $addrbits = false) {
 	global $config;
 
 	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
-				if ($idinfo['mode'] == "tunnel6")
+				if ($idinfo['mode'] == "tunnel6") {
 					return $idinfo['address']."/128";
-				else
+				} else {
 					return $idinfo['address']."/255.255.255.255";
-			} else
+				}
+			} else {
 				return $idinfo['address'];
+			}
 			break; /* NOTREACHED */
 		case "none":
 		case "network":
@@ -306,12 +330,12 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 			if ($idinfo['mode'] == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
-				$address = gen_subnetv6($address,$netbits);
+				$address = gen_subnetv6($address, $netbits);
 				return $address."/".$netbits;
 			} else {
 				$address = get_interface_ip($idinfo['type']);
 				$netbits = get_interface_subnet($idinfo['type']);
-				$address = gen_subnet($address,$netbits);
+				$address = gen_subnet($address, $netbits);
 				return $address."/".$netbits;
 			}
 			break; /* NOTREACHED */
@@ -325,45 +349,49 @@ function ipsec_idinfo_to_text(& $idinfo) {
 	global $config;
 
 	switch ($idinfo['type']) {
-        case "address":
-		return $idinfo['address'];
-		break; /* NOTREACHED */
-        case "network":
-		return $idinfo['address']."/".$idinfo['netbits'];
-		break; /* NOTREACHED */
-	case "mobile":
-		return gettext("Mobile Client");
-		break; /* NOTREACHED */
-	case "none":
-		return gettext("None");
-		break; /* NOTREACHED */
-        default:
-		if (!empty($config['interfaces'][$idinfo['type']]))
-			return convert_friendly_interface_to_friendly_descr($idinfo['type']);
-		else
-			return strtoupper($idinfo['type']);
-		break; /* NOTREACHED */
+		case "address":
+			return $idinfo['address'];
+			break; /* NOTREACHED */
+		case "network":
+			return $idinfo['address']."/".$idinfo['netbits'];
+			break; /* NOTREACHED */
+		case "mobile":
+			return gettext("Mobile Client");
+			break; /* NOTREACHED */
+		case "none":
+			return gettext("None");
+			break; /* NOTREACHED */
+		default:
+			if (!empty($config['interfaces'][$idinfo['type']])) {
+				return convert_friendly_interface_to_friendly_descr($idinfo['type']);
+			} else {
+				return strtoupper($idinfo['type']);
+			}
+			break; /* NOTREACHED */
 	}
 }
 
 /*
  * Return phase1 association for phase2
  */
-function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
+function ipsec_lookup_phase1(& $ph2ent, & $ph1ent) {
 	global $config;
 
-	if (!is_array($config['ipsec']))
+	if (!is_array($config['ipsec'])) {
 		return false;
-	if (!is_array($config['ipsec']['phase1']))
+	}
+	if (!is_array($config['ipsec']['phase1'])) {
 		return false;
-	if (empty($config['ipsec']['phase1']))
+	}
+	if (empty($config['ipsec']['phase1'])) {
 		return false;
+	}
 
 	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
-	    if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
-		$ph1ent = $ph1tmp;
-		return $ph1ent;
-	    }
+		if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
+			$ph1ent = $ph1tmp;
+			return $ph1ent;
+		}
 	}
 
 	return false;
@@ -376,8 +404,9 @@ function ipsec_phase1_status(&$ipsec_status, $ikeid) {
 
 	foreach ($ipsec_status as $ike) {
 		if ($ike['id'] == $ikeid) {
-			if ($ike['status'] == 'established')
+			if ($ike['status'] == 'established') {
 				return true;
+			}
 		}
 	}
 
@@ -389,8 +418,9 @@ function ipsec_phase1_status(&$ipsec_status, $ikeid) {
  */
 function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 
-	if (ipsec_lookup_phase1($ph2ent,$ph1ent))
+	if (ipsec_lookup_phase1($ph2ent, $ph1ent)) {
 		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
+	}
 
 	return false;
 }
@@ -419,8 +449,9 @@ function ipsec_smp_dump_status() {
 	$response = "";
 	while (!strstr($sread, "</message>")) {
 		$sread = fgets($fd);
-		if ($sread === false)
+		if ($sread === false) {
 			break;
+		}
 		$response .= $sread;
 	}
 	fclose($fd);
@@ -444,20 +475,22 @@ function ipsec_smp_dump_status() {
 /*
  * Return dump of SPD table
  */
-function ipsec_dump_spd()
-{
+function ipsec_dump_spd() {
 	$fd = @popen("/sbin/setkey -DP", "r");
 	$spd = array();
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = chop(fgets($fd));
-			if (!$line)
+			if (!$line) {
 				continue;
-			if ($line == "No SPD entries.")
+			}
+			if ($line == "No SPD entries.") {
 				break;
+			}
 			if ($line[0] != "\t") {
-				if (is_array($cursp))
+				if (is_array($cursp)) {
 					$spd[] = $cursp;
+				}
 				$cursp = array();
 				$linea = explode(" ", $line);
 				$cursp['srcid'] = substr($linea[0], 0, strpos($linea[0], "["));
@@ -466,26 +499,27 @@ function ipsec_dump_spd()
 			} else if (is_array($cursp)) {
 				$line = trim($line, "\t\r\n ");
 				$linea = explode(" ", $line);
-				switch($i)
-				{
+				switch ($i) {
 					case 1:
-						if ($linea[1] == "none")	/* don't show default anti-lockout rule */
+						if ($linea[1] == "none")	/* don't show default anti-lockout rule */ {
 							unset($cursp);
-						else
+						} else {
 							$cursp['dir'] = $linea[0];
+						}
 						break;
 					case 2:
 						$upperspec = explode("/", $linea[0]);
 						$cursp['proto'] = $upperspec[0];
 						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
-						$cursp['reqid'] =  substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
 						break;
 				}
 			}
 			$i++;
 		}
-		if (is_array($cursp) && count($cursp))
+		if (is_array($cursp) && count($cursp)) {
 			$spd[] = $cursp;
+		}
 		pclose($fd);
 	}
 
@@ -495,36 +529,35 @@ function ipsec_dump_spd()
 /*
  * Return dump of SAD table
  */
-function ipsec_dump_sad()
-{
+function ipsec_dump_sad() {
 	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = chop(fgets($fd));
-			if (!$line || $line[0] == " ")
+			if (!$line || $line[0] == " ") {
 				continue;
-			if ($line == "No SAD entries.")
-				break;
-			if ($line[0] != "\t")
-			{
-				if (is_array($cursa))
-					$sad[] = $cursa;
-				$cursa = array();
-				list($cursa['src'],$cursa['dst']) = explode(" ", $line);
 			}
-			else
-			{
+			if ($line == "No SAD entries.") {
+				break;
+			}
+			if ($line[0] != "\t") {
+				if (is_array($cursa)) {
+					$sad[] = $cursa;
+				}
+				$cursa = array();
+				list($cursa['src'], $cursa['dst']) = explode(" ", $line);
+			} else {
 				$line = trim($line, "\t\n\r ");
 				$linea = explode(" ", $line);
 				foreach ($linea as $idx => $linee) {
-					if ($linee == 'esp' || $linee == 'ah' || $linee[0] == '#')
+					if ($linee == 'esp' || $linee == 'ah' || $linee[0] == '#') {
 						$cursa['proto'] = $linee;
-					else if (substr($linee, 0, 3) == 'spi')
+					} else if (substr($linee, 0, 3) == 'spi') {
 						$cursa['spi'] = substr($linee, strpos($linee, 'x') + 1, -1);
-					else if (substr($linee, 0, 5) == 'reqid')
+					} else if (substr($linee, 0, 5) == 'reqid') {
 						$cursa['reqid'] = substr($linee, strpos($linee, 'x') + 1, -1);
-					else if (substr($linee, 0, 2) == 'E:') {
+					} else if (substr($linee, 0, 2) == 'E:') {
 						$cursa['ealgo'] = $linea[$idx + 1];
 						break;
 					} else if (substr($linee, 0, 2) == 'A:') {
@@ -534,12 +567,12 @@ function ipsec_dump_sad()
 						$cursa['data'] = substr($linea[$idx + 1], 0, strpos($linea[$idx + 1], 'bytes') - 1) . ' B';
 						break;
 					}
-						
 				}
 			}
 		}
-		if (is_array($cursa) && count($cursa))
+		if (is_array($cursa) && count($cursa)) {
 			$sad[] = $cursa;
+		}
 		pclose($fd);
 	}
 
@@ -560,8 +593,9 @@ function ipsec_dump_mobile() {
 	}
 
 	/* This is needed for fixing #4130 */
-	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200)
+	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200) {
 		return array();
+	}
 
 	$custom_listtags = array('lease', 'pool');
 	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
@@ -583,13 +617,13 @@ function ipsec_mobilekey_sort() {
 
 function ipsec_get_number_of_phase2($ikeid) {
 	global $config;
-    	$a_phase2 = $config['ipsec']['phase2'];
+	$a_phase2 = $config['ipsec']['phase2'];
 
-	$nbph2=0;
+	$nbph2 = 0;
 
-    	if (is_array($a_phase2) && count($a_phase2)) {
-        	foreach ($a_phase2 as $ph2tmp) {
-            		if ($ph2tmp['ikeid'] == $ikeid) {
+	if (is_array($a_phase2) && count($a_phase2)) {
+		foreach ($a_phase2 as $ph2tmp) {
+			if ($ph2tmp['ikeid'] == $ikeid) {
 				$nbph2++;
 			}
 		}
@@ -602,8 +636,9 @@ function ipsec_get_descr($ikeid) {
 	global $config;
 
 	if (!isset($config['ipsec']['phase1']) ||
-	    !is_array($config['ipsec']['phase1']))
+	    !is_array($config['ipsec']['phase1'])) {
 		return '';
+	}
 
 	foreach ($config['ipsec']['phase1'] as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
@@ -615,26 +650,28 @@ function ipsec_get_descr($ikeid) {
 }
 
 function ipsec_get_phase1($ikeid) {
-        global $config;
+		global $config;
 
-        if (!isset($config['ipsec']['phase1']) ||
-            !is_array($config['ipsec']['phase1']))
-                return '';
+		if (!isset($config['ipsec']['phase1']) ||
+		    !is_array($config['ipsec']['phase1'])) {
+			return '';
+		}
 
-        $a_phase1 = $config['ipsec']['phase1'];
-        foreach ($a_phase1 as $p1) {
-                if ($p1['ikeid'] == $ikeid) {
-                        return $p1;
-                }
-        }
-        unset($a_phase1);
+		$a_phase1 = $config['ipsec']['phase1'];
+		foreach ($a_phase1 as $p1) {
+			if ($p1['ikeid'] == $ikeid) {
+				return $p1;
+			}
+		}
+		unset($a_phase1);
 }
 
 function ipsec_fixup_ip($ipaddr) {
-	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr))
+	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr)) {
 		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
-	else
+	} else {
 		return $ipaddr;
+	}
 }
 
 function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
@@ -643,65 +680,71 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		$id_data = $ph1ent['myid_data'];
 
 		$addr = ipsec_get_phase1_src($ph1ent);
-		if (!$addr)
+		if (!$addr) {
 			return array();
+		}
 	} elseif ($side == "peer") {
 		$id_type = $ph1ent['peerid_type'];
 		$id_data = $ph1ent['peerid_data'];
 
-		if (isset($ph1ent['mobile']))
+		if (isset($ph1ent['mobile'])) {
 			$addr = "%any";
-		else
+		} else {
 			$addr = $ph1ent['remote-gateway'];
-	} else
+		}
+	} else {
 		return array();
+	}
 
 
 	$thisid_type = $id_type;
 	switch ($thisid_type) {
-	case 'myaddress':
-		$thisid_type = 'address';
-		$thisid_data = $addr;
-		break;
-	case 'dyn_dns':
-		$thisid_type = 'dns';
-		$thisid_data = $id_data;
-		break;
-	case 'peeraddress':
-		$thisid_type = 'address';
-		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
-		break;
-	case 'address':
-		$thisid_data = $id_data;
-		break;
-	case 'fqdn':
-		$thisid_data = "{$id_data}";
-		break;
-	case 'keyid tag':
-		$thisid_type = 'keyid';
-		$thisid_data = "{$id_data}";
-		break;
-	case 'user_fqdn':
-		$thisid_type = 'userfqdn';
-		$thisid_data = "{$id_data}";
-		break;
-	case 'asn1dn':
-		$thisid_data = $id_data;
-		$thisid_data = "{$id_data}";
-		break;
+		case 'myaddress':
+			$thisid_type = 'address';
+			$thisid_data = $addr;
+			break;
+		case 'dyn_dns':
+			$thisid_type = 'dns';
+			$thisid_data = $id_data;
+			break;
+		case 'peeraddress':
+			$thisid_type = 'address';
+			$thisid_data = $rgmap[$ph1ent['remote-gateway']];
+			break;
+		case 'address':
+			$thisid_data = $id_data;
+			break;
+		case 'fqdn':
+			$thisid_data = "{$id_data}";
+			break;
+		case 'keyid tag':
+			$thisid_type = 'keyid';
+			$thisid_data = "{$id_data}";
+			break;
+		case 'user_fqdn':
+			$thisid_type = 'userfqdn';
+			$thisid_data = "{$id_data}";
+			break;
+		case 'asn1dn':
+			$thisid_data = $id_data;
+			if ($thisid_data && $thisid_data[0] != '"') {
+				$thisid_data = "\"{$id_data}\"";
+			}
+			break;
 	}
 	return array($thisid_type, $thisid_data);
 }
 
 function ipsec_fixup_network($network) {
-	if (substr($network, -3) == '|/0')
+	if (substr($network, -3) == '|/0') {
 		$result = substr($network, 0, -3);
-	else {
+	} else {
 		$tmp = explode('|', $network);
-		if (isset($tmp[1]))
+		if (isset($tmp[1])) {
 			$result = $tmp[1];
-		else
+		} else {
 			$result = $tmp[0];
+		}
 		unset($tmp);
 	}
 
@@ -711,14 +754,16 @@ function ipsec_fixup_network($network) {
 function ipsec_new_reqid() {
 	global $config;
 
-	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2'])) {
 		return;
+	}
 
 	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
 	$keyids = array();
 	$keyid = 1;
-	foreach ($config['ipsec']['phase2'] as $ph2)
+	foreach ($config['ipsec']['phase2'] as $ph2) {
 		$keyids[$ph2['reqid']] = $ph2['reqid'];
+	}
 
 	for ($i = 1; $i < 16000; $i++) {
 		if (!isset($keyids[$i])) {

@@ -168,6 +168,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
 	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
+	$pconfig['newloginwins'] = isset($a_cp[$cpzone]['newloginwins']);
 	$pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
@@ -359,6 +360,7 @@ if ($_POST) {
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
+		$newcp['newloginwins'] = $_POST['newloginwins'] ? true : false;
 		$newcp['radius_protocol'] = $_POST['radius_protocol'];
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
@@ -485,6 +487,7 @@ function enable_change(enable_change) {
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.noconcurrentlogins.disabled = endis;
+	document.iform.newloginwins.disabled = endis;
 	document.iform.radiusvendor.disabled = radius_endis;
 	document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.radiussrcip_attribute.disabled = radius_endis;
@@ -629,6 +632,13 @@ function enable_change(enable_change) {
 	<input name="noconcurrentlogins" type="checkbox" class="formfld" id="noconcurrentlogins" value="yes" <?php if ($pconfig['noconcurrentlogins']) echo "checked=\"checked\""; ?> />
 	<strong><?=gettext("Disable concurrent logins"); ?></strong><br />
 	<?=gettext("If this option is set, only the most recent login per username will be active. Subsequent logins will cause machines previously logged in with the same username to be disconnected."); ?></td>
+	</tr>
+	<tr>
+      <td valign="top" class="vncell"><?=gettext("Allow new login on same IP address"); ?></td>
+      <td class="vtable">
+	<input name="newloginwins" type="checkbox" class="formfld" id="newloginwins" value="yes" <?php if ($pconfig['newloginwins']) echo "checked=\"checked\""; ?> />
+	<strong><?=gettext("Allow new user to login on same IP address"); ?></strong><br />
+	<?=gettext("If this option is set, a new user logging in from a computer that already has an existing connection will disconnect the old session and login as themselves.  When this option is unset, the existing session is reused and the username is not changed."); ?></td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("MAC filtering"); ?> </td>

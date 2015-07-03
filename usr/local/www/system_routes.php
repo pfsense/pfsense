@@ -144,11 +144,11 @@ if (isset($_POST['del_x'])) {
 	if ($a_routes[$_GET['id']]) {
 		if (isset($a_routes[$_GET['id']]['disabled'])) {
 			unset($a_routes[$_GET['id']]['disabled']);
-			$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$id]['network'];
+			$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
 		} else {
 			delete_static_route($_GET['id']);
 			$a_routes[$_GET['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$id]['network'];
+			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$_GET['id']]['network'];
 		}
 
 		if (write_config($changedesc)) {

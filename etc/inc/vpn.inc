@@ -638,6 +638,8 @@ EOD;
 				if ($myid_type == 'fqdn' && !empty($myid)) {
 					$myid = "@{$myid}";
 				}
+				
+				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
 
 				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
 
@@ -821,7 +823,7 @@ EOD;
 			}
 
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
-			if ($myid_type != 'address') {
+			if ($myid_type != 'address' && $myid_type != 'keyid') {
 				$myid_data = "{$myid_type}:{$myid_data}";
 			}
 
@@ -829,7 +831,7 @@ EOD;
 			$peerid_spec = '';
 			if (!isset($ph1ent['mobile'])) {
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
-				if ($peerid_type != 'address') {
+				if ($peerid_type != 'address' && $peerid_type != 'keyid') {
 					$peerid_spec = "{$peerid_type}:{$peerid_data}";
 				} else {
 					$peerid_spec = $peerid_data;

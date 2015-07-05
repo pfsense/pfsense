@@ -45,7 +45,11 @@ require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+}
 
 if (!is_array($config['staticroutes']['route'])) {
 	$config['staticroutes']['route'] = array();
@@ -354,6 +358,7 @@ include("head.inc");
 					<?php if (isset($id) && $a_routes[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
+					<input name="referer" type="hidden" value="<?=$referer;?>" />
 				</td>
 			</tr>
 		</table>

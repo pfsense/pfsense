@@ -365,7 +365,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	pfSense_sync();
+	pfSense_fsync($g['cf_path']);
 	mwexec("/sbin/mount -u -r -f -o sync,noatime {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f -o sync,noatime /");
 }
@@ -473,9 +473,7 @@ function safe_write_file($file, $content, $force_binary) {
 	}
 
 	// Sync file before returning
-	pfSense_sync();
-
-	return true;
+	return pfSense_fsync(dirname($file));
 }
 
 /****f* config/write_config

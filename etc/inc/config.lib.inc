@@ -466,7 +466,7 @@ function safe_write_file($file, $content, $force_binary) {
 	fflush($fd);
 	fclose($fd);
 
-	if (!rename($tmp_file, $file)) {
+	if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;

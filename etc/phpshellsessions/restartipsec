@@ -1,5 +1,7 @@
 ! echo "Restarting ipsec..."
 require_once("config.inc");
+require_once("filter.inc");
+require_once("auth.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 vpn_ipsec_configure(true);

@@ -223,7 +223,7 @@ if ($fd) {
 		    preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches) or
 		    preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches) or
 		    preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches) or
-		    preg_match("/^aesni.: (.*?),/", $dmesgl, $matches)) {
+		    preg_match("/^aesni.: <(.*?)>/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}

@@ -57,10 +57,10 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
-//if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-//	header("Location: services_captiveportal_zones.php");
-//	exit;
-//}
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+	header("Location: services_captiveportal_zones.php");
+	exit;
+}
 
 if (!is_array($config['captiveportal']))
 	$config['captiveportal'] = array();

@@ -170,13 +170,15 @@ if (file_exists('/conf/needs_package_sync')) {
 ## If it is the first time webConfigurator has been
 ## accessed since initial install show this stuff.
 if (file_exists('/conf/trigger_initial_wizard')) {
+	$lang_code    = system_get_language_code();
+	$lang_codeset = system_get_language_codeset();
 	echo <<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="<?=system_get_language_code();?>" xml:lang="<?=system_get_language_code();?>">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$lang_code" xml:lang="$lang_code">
 <head>
 	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?=system_get_language_codeset();?>" />
+	<meta http-equiv="Content-Type" content="text/html; charset=$lang_codeset" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 	<script type="text/javascript">var theme = "{$g['theme']}"</script>
 	<script type="text/javascript" src="/themes/{$g['theme']}/loader.js"></script>

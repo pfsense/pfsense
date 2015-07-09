@@ -91,117 +91,6 @@ $a_phase1 = &$config['ipsec']['phase1'];
 
 $status = ipsec_smp_dump_status();
 
-$status = array
-(
-	'query' => array
-		(
-			'ikesalist' => array
-				(
-					'ikesa' => array
-						(
-							0 => array
-								(
-									'id' => 10,
-									'status' => established,
-									'role' => responder,
-									'peerconfig' => con1,
-									'version' => 2,
-									'established' => '3 hours ago',
-									'local' => array
-										(
-											'spi' => '38444fc6374d5907',
-											'identification' => '99.67.48.87',
-											'address' => '99.67.48.87',
-											'port' => 500,
-											'nat' => false
-										),
-
-									'remote' => array
-										(
-											'spi' => 'cfb88b137fa4e2f8',
-											'identification' => '208.123.73.7',
-											'address' => '208.123.73.7',
-											'port' => 500,
-											'nat' => false,
-											'auth' => array
-												(
-													0 => ''
-												)
-
-										),
-
-									'reauth' => '4 hours',
-									'encalg' => 'AES_CBC:256',
-									'intalg' => 'HMAC_SHA1_96:0',
-									'prfalg' => 'PRF_HMAC_SHA1',
-									'dhgroup' => 'MODP_1024',
-									'childsalist' => array
-										(
-											'childsa' => array
-												(
-													0 => array
-														(
-															'reqid' => 2,
-															'childconfig' => 'con1',
-															'state' => 'INSTALLED',
-															'mode' => 'TUNNEL',
-															'protocol' => 'ESP',
-															'encap' => 'no',
-															'ipcomp' => 'none',
-															'encalg' => 'AES_GCM_16:128',
-															'dhgroup' => 'MODP_1024',
-															'esn' => '',
-															'bytesin' => '125854',
-															'packetsin' => '140 : 1322',
-															'bytesout' => '48644',
-															'packetsout' => '125 : 1323',
-															'rekey' => '25 minutes',
-															'lifetime' => '35 minutes',
-															'installtime' => '24 minutes',
-															'local' => array
-																(
-																	'spi' => 'cdd5c8af',
-																	'networks' => array
-																		(
-																			'network' => array
-																				(
-																					0 => '172.21.2.0/24|/0'
-																				)
-
-																		)
-
-																),
-
-															remote => array
-																(
-																	'spi' => 'cbdbd747',
-																	networks => array
-																		(
-																			'network' => array
-																				(
-																					0 => '172.27.0.0/16|/0'
-																				)
-
-																		)
-
-																)
-
-														)
-
-												)
-
-										)
-
-								)
-
-						)
-
-				)
-
-		)
-
-);
-
 $tab_array = array();
 $tab_array[] = array(gettext("Overview"), true, "diag_ipsec.php");
 $tab_array[] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
@@ -442,38 +331,26 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 									</td>
 									<td>
 <?php
-				print(htmlspecialchars($childsa['encalg']));
-				print('<br/>');
-				echo htmlspecialchars($childsa['intalg']);
-				print('<br/>');
+				print(htmlspecialchars($childsa['encalg']) . '<br/>');
+				print(htmlspecialchars($childsa['intalg']) . '<br/>');
 				
-				if (!empty($childsa['prfalg'])) {
-					print(htmlspecialchars($childsa['prfalg']));
-					print('<br/>');
-				}
+				if (!empty($childsa['prfalg']))
+					print(htmlspecialchars($childsa['prfalg']) . '<br/>');
 				
-				if (!empty($childsa['dhgroup'])) {
-					print(htmlspecialchars($childsa['dhgroup']));
-					print('<br/>');
-				}
+				if (!empty($childsa['dhgroup']))
+					print(htmlspecialchars($childsa['dhgroup']) . '<br/>');
 				
-				if (!empty($childsa['esn'])) {
-					print(htmlspecialchars($childsa['esn']));
-					print('<br/>');
-				}
+				if (!empty($childsa['esn']))
 				
 				print(gettext("IPComp: ") . htmlspecialchars($childsa['ipcomp']));
 ?>
 									</td>
 									<td>
 <?php
-				print(gettext("Bytes-In: ") . htmlspecialchars($childsa['bytesin']));
-				print('<br/>');
-				print(gettext("Packets-In: ") . htmlspecialchars($childsa['packetsin']));
-				print('<br/>');
-				print(gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytesout']));
-				print('<br/>');
-				print(gettext("Packets-Out: ") . htmlspecialchars($childsa['packetsout']));
+				print(gettext("Bytes-In: ") . htmlspecialchars($childsa['bytesin']) . '<br/>');
+				print(gettext("Packets-In: ") . htmlspecialchars($childsa['packetsin']) . '<br/>');
+				print(gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytesout']) . '<br/>');
+				print(gettext("Packets-Out: ") . htmlspecialchars($childsa['packetsout']) . '<br/>');
 ?>
 									</td>
 									<td>
@@ -605,6 +482,3 @@ function show_childsa(id, buttonid) {
 unset($status);
 print_info_box(gettext("You can configure IPsec ") . '<a href="vpn_ipsec.php">Here</a>');
 include("foot.inc"); ?>
-
-
-

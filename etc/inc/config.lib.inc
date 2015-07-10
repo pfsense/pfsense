@@ -180,7 +180,7 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	pfSense_fsync($configcache);
+	pfSense_fsync("{$g['tmp_path']}/config.cache");
 	
 	unset($configcache);
 	/* Used for config.extra.xml */

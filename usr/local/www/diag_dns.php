@@ -209,7 +209,7 @@ if (!$input_errors && $type) {
 	if ($resolved):
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading">Results</div>
+	<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 <?
@@ -229,7 +229,7 @@ if (!$input_errors && $type) {
 
 <!-- Second table displays the server resolution times -->
 <div class="panel panel-default">
-	<div class="panel-heading">Timings</div>
+	<div class="panel-heading"><h2 class="panel-title">Timings</h2></div>
 	<div class="panel-body">
 		<table class="table">
 		<thead>
@@ -252,7 +252,7 @@ if (!$input_errors && $type) {
 
 <!-- Third table displays "More information" -->
 <div class="panel panel-default">
-	<div class="panel-heading">More information</div>
+	<div class="panel-heading"><h2 class="panel-title">More information</h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping")?></a></li>

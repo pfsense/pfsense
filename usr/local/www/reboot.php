@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading">Are you sure you want to reboot the system?</div>
+	<div class="panel-heading"><h2 class="panel-title">Are you sure you want to reboot the system?</h2></div>
 	<div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
 		<form action="reboot.php" method="post">
 			<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">

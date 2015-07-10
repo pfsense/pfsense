@@ -87,7 +87,7 @@ if ($input_errors)
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading">Limiter Information</div>
+	<div class="panel-heading"><h2 class="panel-title">Limiter Information</h2></div>
 	<div class="panel-body">
 		<pre id="xhrOutput"><?=gettext("Gathering Limiter information, please wait...")?></pre>
 	</div>

@@ -270,7 +270,7 @@ $chartnum=0;
 foreach(array_keys($fields) as $field) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=$fields[$field]?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=$fields[$field]?></h2></div>
 	<div class="panel-body">
 		<div id="pieChart<?=$chartnum?>" align="center">
 <?php

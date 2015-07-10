@@ -167,7 +167,7 @@ include("head.inc");
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading">Network Time Protocol Status</div>
+	<div class="panel-heading"><h2 class="panel-title">Network Time Protocol Status</h2></div>
 	<div class="panel-body">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -232,7 +232,7 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 	$gps_goo_lnk = 2; ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading">GPS information</div>
+		<div class="panel-heading"><h2 class="panel-title">GPS information</h2></div>
 		<div class="panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>

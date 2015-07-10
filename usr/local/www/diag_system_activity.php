@@ -81,7 +81,7 @@ events.push(function(){
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext('CPU Activity')?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('CPU Activity')?></h2></div>
 	<div class="panel panel-body">
 		<pre id="xhrOutput"><?=gettext("Gathering CPU activity, please wait...")?></pre>
 	</div>

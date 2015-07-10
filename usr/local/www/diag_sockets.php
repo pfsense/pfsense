@@ -57,7 +57,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading">System socket information for both IPv4 and IPv6</div>
+	<div class="panel-heading"><h2 class="panel-title">System socket information for both IPv4 and IPv6</h2></div>
 	<div class="panel-body">
 
 (Click <a href="#about">here </a>for explanation of the information listed for each socket) <br /><br />
@@ -122,7 +122,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 	<a name="about"></a>
 	<div class="alert alert-success" role="alert">
 		<div class="panel panel-default">
-		<div class="panel-heading">Socket information - explanation</div>
+		<div class="panel-heading"><h2 class="panel-title">Socket information - explanation</h2></div>
 			<div class="panel-body">
 	This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br />
 	Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br />

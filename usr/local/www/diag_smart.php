@@ -96,7 +96,7 @@ switch($action) {
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><?=gettext('Test results')?></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test results')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>
@@ -128,7 +128,7 @@ switch($action) {
 		$output = add_colors(shell_exec($smartctl . " -" . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><?=gettext('Information')?></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Information')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>
@@ -153,7 +153,7 @@ switch($action) {
 		$output = add_colors(shell_exec($smartctl . " -l " . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><?=gettext('Logs')?></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Logs')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>
@@ -172,7 +172,7 @@ switch($action) {
 		$output = shell_exec($smartctl . " -X /dev/" . escapeshellarg($targetdev));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><?=gettext('Abort')?></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Abort')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>

@@ -213,7 +213,7 @@ print($form);
 if(file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Previous upgrade log")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous upgrade log")?></h2></div>
 			<!-- No white space between the <pre> and the first output or it will appear on the page! -->
 			<pre><?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
 				<br /><?=gettext("File list:")?>

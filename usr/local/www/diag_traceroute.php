@@ -179,7 +179,7 @@ if (!$input_errors && $do_traceroute) {
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading">Results</div>
+		<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
 		<div class="panel-body">
 <?php
 		if ($result = shell_exec($cmd))

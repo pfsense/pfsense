@@ -188,7 +188,7 @@ if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank
 
 if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
-		<div class="panel-heading">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></div>
+		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
 		<div class="panel-body">
 			<pre>
 <?php
@@ -203,7 +203,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Execute Shell Command')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
 		<div class="panel-body">
 			<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
 			<br /><br />
@@ -216,7 +216,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	</div>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Download file')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
 		<div class="panel-body">
 			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4"/>
 			<br /><br />
@@ -229,7 +229,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Upload a file')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload a file')?></h2></div>
 		<div class="panel-body">
 			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 			<br />
@@ -249,7 +249,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 }
 ?>
 	<div class="panel panel-default responsive">
-		<div class="panel-heading"><?=gettext('Execute PHP Commands')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute PHP Commands')?></h2></div>
 		<div class="panel-body">
 			<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 			<br />

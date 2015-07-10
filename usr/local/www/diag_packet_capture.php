@@ -440,7 +440,7 @@ if ($do_tcpdump) :
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext('Packets Captured')?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packets Captured')?></h2></div>
 	<div class="panel-body">
 
 <?php

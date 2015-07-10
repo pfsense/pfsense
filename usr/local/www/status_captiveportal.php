@@ -143,7 +143,7 @@ if (count($a_cp) >	1) {
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</h2></div>
 	<div class="panel-body table-responsive">
 
 		<table class="table table-striped table-hover table-condensed">

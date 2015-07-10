@@ -137,7 +137,9 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<?=gettext('Last ') . $nentries . gettext(' records. ') . gettext('Pause ')?><input type="checkbox" onclick="javascript:toggle_pause();" />
+		<h2 class="panel-title">
+			<?=gettext('Last ') . $nentries . gettext(' records. ') . gettext('Pause ')?><input type="checkbox" onclick="javascript:toggle_pause();" />
+		</h2>
 	</div>
 	<div class="panel-body">
 		<div class="table-responsive">

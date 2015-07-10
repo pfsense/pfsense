@@ -180,7 +180,7 @@ events.push(function(){
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading">IPv4 Routes</div>
+	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
 	<div class="panel panel-body">
 		<table class="table table-striped table-compact" id="IPv4">
 		<thead>
@@ -196,7 +196,7 @@ events.push(function(){
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading">IPv6 Routes</div>
+	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
 	<div class="panel panel-body">
 		<table class="table table-striped table-compact" id="IPv6">
 		<thead>

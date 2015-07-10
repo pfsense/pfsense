@@ -383,7 +383,7 @@ display_top_tabs($tab_array, true);
 // We draw a simple table first, then present the controls to work with it
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading">Synchronized from <?=$pconfig['vouchersyncdbip']?></div>
+	<div class="panel-heading"><h2 class="panel-title">Synchronized from <?=$pconfig['vouchersyncdbip']?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">

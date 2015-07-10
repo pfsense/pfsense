@@ -307,7 +307,7 @@ if ($_GET['order'])
 if(count($pools) > 0) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext('Pool status')?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>
 	<div class="panel-body">
 		<table class="table">
 		<thead>
@@ -338,7 +338,7 @@ if(count($pools) > 0) {
 }
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext('Leases')?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body">
 		<table class="table">
 		<thead>

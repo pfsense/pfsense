@@ -61,7 +61,7 @@ display_top_tabs($tab_array);
 
 <form action="system_firmware_auto.php" method="post">
 	<div id="statusheading" class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Update progress')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Update progress')?></h2></div>
 		<div class="panel-body" name="output" id="output"></div>
 	</div>
 

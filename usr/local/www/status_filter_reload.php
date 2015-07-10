@@ -70,7 +70,7 @@ include("head.inc");
 
 
 <div class="panel panel-default">
-	<div class="panel-heading">Filter Reload</div>
+	<div class="panel-heading"><h2 class="panel-title">Filter Reload</h2></div>
 	<div class="panel-body">
 		<form action="status_filter_reload.php" method="post" name="filter">
 			<input type="submit" class="btn btn-success" value="Reload Filter" name="reloadfilter" id="reloadfilter" />

@@ -117,7 +117,7 @@ print $form;
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading">Current source tracking entries</div>
+	<div class="panel-heading"><h2 class="panel-title">Current source tracking entries</h2></div>
 	<div class="panel-body">
 		<table class="table table-striped">
 			<thead>

@@ -183,7 +183,7 @@ if ($_GET['act'] == 'add') {
 if (is_array($a_cp[$cpzone]['element'])):
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Installed Files")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Installed Files")?></h2></div>
 		<div class="panel-body">
 			<div class="table-responsive">
 				<table class="table table-striped table-hover table-condensed">
@@ -244,7 +244,7 @@ endif;
 // is provided so that you only see the notes if you ask for them
 ?>
 <div class="help-block panel panel-default">
-	<div class="panel-heading">Notes</div>
+	<div class="panel-heading"><h2 class="panel-title">Notes</h2></div>
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .

@@ -133,7 +133,7 @@ $rowsprinted = 0;
 
 <form action="status_lb_pool.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading">Load Balancer Pools</div>
+		<div class="panel-heading"><h2 class="panel-title">Load Balancer Pools</h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>

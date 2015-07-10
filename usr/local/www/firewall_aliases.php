@@ -258,7 +258,7 @@ display_top_tabs($tab_array);
 
 <br/><br/>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Note:")?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Note:")?></h2></div>
 	<div class="panel-body">
 		<?=gettext("Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.")?>
 	</div>

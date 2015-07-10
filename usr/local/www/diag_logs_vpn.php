@@ -162,7 +162,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 <!-- Raw logs are displayed as preformatted text. vpn logs are displayed as a table-->
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$vpns[$vpntype]?><?=gettext(" log entries")?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$vpns[$vpntype]?><?=gettext(" log entries")?></h2></div>
 	<div class="panel-body">
 <?php
 		if ($mode != "raw") {

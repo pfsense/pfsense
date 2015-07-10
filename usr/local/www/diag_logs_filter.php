@@ -336,6 +336,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 
 <div class="panel panel-default">
 	<div class="panel-heading">
+		<h2 class="panel-title">
 <?php
 	if ( (!$filtertext) && (!$filterfieldsarray) )
 		printf(gettext("Last %s firewall log entries."),count($filterlog));
@@ -344,6 +345,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 
 		printf(gettext(" (Maximum %s)"),$nentries)
 ?>
+		</h2>
 	</div>
 	<div class="panel-body">
 	   <div class="table-responsive">

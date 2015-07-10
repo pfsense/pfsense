@@ -128,7 +128,7 @@ if($logfile == 'dhcpd')
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
 	<pre>
 <?php
 	if(($logfile == 'resolver') || ($logfile == 'system'))

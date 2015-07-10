@@ -45,8 +45,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
-
 if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();
 }
@@ -231,11 +229,6 @@ if ($act != "edit" ): ?>
 
 	$form->add($section);
 
-	$form->addGlobal(new Form_Button(
-		'cancel',
-		'Cancel',
-		$referer
-	));
 	print $form;
 
 endif;

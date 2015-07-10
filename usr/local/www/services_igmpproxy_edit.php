@@ -282,12 +282,6 @@ $section->addInput(new Form_StaticText(
 
 $form->add($section);
 
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-))->removeClass('btn-primary')->addClass('btn-default');
-
 print($form);
 
 include("foot.inc");

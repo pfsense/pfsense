@@ -377,12 +377,6 @@ if (isset($id) && $a_dyndns[$id]) {
 
 $form->add($section);
 
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-))->removeClass('btn-primary')->addClass('btn-default');
-
 print($form);
 
 // Certain input elements are hidden/shown based on the service type in the following script

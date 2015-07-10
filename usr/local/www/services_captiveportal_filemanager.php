@@ -160,16 +160,6 @@ if ($_GET['act'] == 'add') {
 
 	$form->setMultipartEncoding();
 
-	$btncancel = new Form_Button(
-		'cancel',
-		'Cancel',
-		'services_captiveportal_filemanager.php?zone=' . $cpzone
-	);
-
-	$btncancel->removeClass('btn-primary')->addClass('btn-default');
-
-	$form->addGlobal($btncancel);
-
 	$section = new Form_Section('Upload a new file');
 
 	$section->addInput(new Form_Input(

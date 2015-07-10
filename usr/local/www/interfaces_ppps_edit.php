@@ -46,8 +46,6 @@
 require("guiconfig.inc");
 require("functions.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_ppps.php');
-
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
@@ -966,12 +964,6 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 print($form);
 

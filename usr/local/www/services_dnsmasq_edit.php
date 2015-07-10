@@ -55,8 +55,6 @@ function hosts_sort() {
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dnsmasq.php');
-
 if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
 
@@ -303,12 +301,6 @@ $btnaddopt = new Form_Button(
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print($form);

@@ -33,8 +33,6 @@
 require("guiconfig.inc");
 require("unbound.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
-
 if (!is_array($config['unbound']['acls'])) {
 	$config['unbound']['acls'] = array();
 }
@@ -289,13 +287,7 @@ if($act=="new" || $act=="edit") {
     	'text',
     	$pconfig['descr']
     ))->setHelp('You may enter a description here for your reference.');
-    
-    $form->addGlobal(new Form_Button(
-		'cancel',
-		'Cancel',
-		$referer
-	));
-	
+
     $form->add($section);
     print($form);
 }

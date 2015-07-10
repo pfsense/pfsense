@@ -41,8 +41,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gif.php');
-
 if (!is_array($config['gifs']['gif']))
 	$config['gifs']['gif'] = array();
 
@@ -146,13 +144,6 @@ $pgtitle = array(gettext("Interfaces"),gettext("GIF"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require('classes/Form.class.php');
-
-$form = new Form();
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $section = new Form_Section('GIF Configuration');
 

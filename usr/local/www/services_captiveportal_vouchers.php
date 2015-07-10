@@ -49,8 +49,6 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_captiveportal_vouchers.php');
-
 $cpzone = $_GET['zone'];
 
 if (isset($_POST['zone']))
@@ -443,12 +441,6 @@ endif;
 require('classes/Form.class.php');
 
 $form = new Form();
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $section = new Form_Section('Create, generate and activate Rolls with Vouchers');
 

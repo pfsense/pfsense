@@ -44,8 +44,6 @@ require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateway_groups.php');
-
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
@@ -313,12 +311,6 @@ if (isset($id) && $a_gateway_groups[$id]){
 }
 
 $form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 print($form);
 ?>

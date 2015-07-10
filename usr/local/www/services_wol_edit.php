@@ -53,8 +53,6 @@ function wol_sort() {
 require("guiconfig.inc");
 require('classes/Form.class.php');
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_wol.php');
-
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
@@ -153,12 +151,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ))->setHelp(gettext('You may enter a description here for your reference (not parsed).'));
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print $form;

@@ -55,8 +55,6 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_virtual_ip.php');
-
 if (!is_array($config['virtualip']['vip'])) {
 		$config['virtualip']['vip'] = array();
 }
@@ -447,12 +445,6 @@ $section->addInput(new Form_Input(
 	null,
 	'hidden',
 	$pconfig['uniqid']
-));
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
 ));
 
 $form->add($section);

@@ -42,8 +42,6 @@
 ##|*MATCH=services_unbound_host_edit.php*
 ##|-PRIV
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
-
 function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }
@@ -305,12 +303,6 @@ $btnaddopt = new Form_Button(
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print($form);

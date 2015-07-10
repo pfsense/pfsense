@@ -540,12 +540,6 @@ if (isset($pconfig['pppoeid'])) {
 
 $form->add($section);
 
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	'vpn_pppoe.php'
-))->removeClass('btn-primary')->addClass('btn-default');
-
 print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients'));

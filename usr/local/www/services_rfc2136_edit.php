@@ -267,12 +267,6 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	'services_rfc2136.php'
-));
-
 if (isset($id) && $a_rfc2136[$id]){
     	$section->addInput(new Form_Input(
     	'id',

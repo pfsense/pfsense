@@ -60,8 +60,6 @@ if(!$g['services_dhcp_server_enable']) {
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dhcp.php');
-
 $if = $_GET['if'];
 
 if ($_POST['if'])
@@ -620,12 +618,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable. Enter a full hostname or IP for the TFTP server.');
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print($form);

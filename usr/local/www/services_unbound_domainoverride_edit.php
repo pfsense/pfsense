@@ -43,8 +43,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
-
 if (!is_array($config['unbound']['domainoverrides']))
 	$config['unbound']['domainoverrides'] = array();
 
@@ -143,12 +141,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
-
-	$form->addGlobal(new Form_Button(
-		'cancel',
-		'Cancel',
-		$referer
-	));
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$section->addInput(new Form_Input(

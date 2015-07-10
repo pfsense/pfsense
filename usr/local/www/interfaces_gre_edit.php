@@ -42,8 +42,6 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gre.php');
-
 if (!is_array($config['gres']['gre']))
 	$config['gres']['gre'] = array();
 
@@ -141,13 +139,6 @@ $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require('classes/Form.class.php');
-
-$form = new Form();
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $section = new Form_Section('GRE Configuration');
 

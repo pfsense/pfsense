@@ -58,8 +58,6 @@ require_once("interfaces.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_npt.php');
-
 $ifdisp = get_configured_interface_with_descr();
 
 foreach ($ifdisp as $kif => $kdescr) {
@@ -250,12 +248,6 @@ if (isset($id) && $a_npt[$id]) {
 		$id
 	));
 }
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print($form);

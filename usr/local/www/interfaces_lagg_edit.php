@@ -41,8 +41,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_lagg.php');
-
 if (!is_array($config['laggs']['lagg']))
 	$config['laggs']['lagg'] = array();
 
@@ -214,12 +212,6 @@ include("head.inc");
 require('classes/Form.class.php');
 
 $form = new Form();
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $section = new Form_Section('LAGG Configuration');
 

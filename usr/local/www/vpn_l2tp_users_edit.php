@@ -55,8 +55,6 @@ function  l2tp_users_sort()  {
 require("guiconfig.inc");
 require_once("vpn.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/vpn_l2tp_users.php');
-
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
@@ -147,7 +145,10 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<?php if ($input_errors) print_input_errors($input_errors)?>
+<?php 
+if ($input_errors)
+	print_input_errors($input_errors);
+?>
 
 <form class="form-horizontal" action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
 	<div class="panel panel-default">
@@ -188,7 +189,6 @@ include("head.inc");
 	</div>
 
 	<div class="col-sm-10 col-sm-offset-2">
-		<input type="button" class="formbtn btn btn-default" value="<?=gettext("Cancel")?>" onclick="window.location.href='<?=$referer?>'" />
 		<input id="submit" name="Submit" type="submit" class="formbtn btn btn-primary" value="<?=gettext('Save')?>" />
 	</div>
 
@@ -197,4 +197,5 @@ include("head.inc");
 <?php endif?>
 </form>
 
-<?php include("foot.inc")?>
+<?php
+include("foot.inc");

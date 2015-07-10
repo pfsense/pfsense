@@ -41,8 +41,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dnsmasq.php');
-
 if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	   $config['dnsmasq']['domainoverrides'] = array();
 }
@@ -179,12 +177,6 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		$pconfig['id']
 	))->setHelp('You may enter a description here for your reference (not parsed).');
 }
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $form->add($section);
 print($form);

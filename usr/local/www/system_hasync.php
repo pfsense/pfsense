@@ -42,8 +42,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_hasync.php');
-
 if (!is_array($config['hasync']))
 	$config['hasync'] = array();
 
@@ -331,12 +329,6 @@ $group->add(new Form_MultiCheckbox(
 $section->add($group);
 
 $form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 print($form);
 

@@ -41,8 +41,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_bridge.php');
-
 if (!is_array($config['bridges']['bridged']))
 	$config['bridges']['bridged'] = array();
 
@@ -325,12 +323,6 @@ if ($input_errors)
 require('classes/Form.class.php');
 
 $form = new Form();
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 $section = new Form_Section('Bridge Configuration');
 

@@ -42,8 +42,6 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_vlan.php');
-
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
 
@@ -209,14 +207,8 @@ if (isset($id) && $a_vlans[$id]) {
 	));
 }
 
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
-
 $form->add($section);
 print $form;
 
 include("foot.inc");
-?>
+

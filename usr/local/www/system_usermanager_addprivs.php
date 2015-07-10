@@ -48,7 +48,6 @@ function admusercmp($a, $b) {
 require("guiconfig.inc");
 
 $pgtitle = array("System","User manager","Add privileges");
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_usermanager.php');
 
 if (is_numericint($_GET['userid']))
 	$userid = $_GET['userid'];
@@ -166,12 +165,6 @@ if (isset($userid)) {
 }
 
 $form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
-));
 
 print($form);
 ?>

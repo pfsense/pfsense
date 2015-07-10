@@ -56,7 +56,7 @@ $static_status = "";
 $sendto = "output";
 
 if ($_POST) {
-	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
+	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
@@ -129,8 +129,6 @@ display_top_tabs($tab_array);
 		<div class="panel-footer">
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
-			<input type="submit" name="pkgconfirm" class="btn btn-primary" value="Confirm"/>
-			<input type="submit" name="pkgcancel" class="btn" value="Cancel"/>
 		</div>
 	</div>
 <?php endif;?>

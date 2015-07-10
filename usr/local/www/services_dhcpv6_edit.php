@@ -54,8 +54,6 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dhcpv6.php');
-
 if(!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
@@ -263,12 +261,6 @@ $section->addInput(new Form_Input(
 	null,
 	'hidden',
 	$if
-));
-
-$form->addGlobal(new Form_Button(
-	'cancel',
-	'Cancel',
-	$referer
 ));
 
 $form->add($section);

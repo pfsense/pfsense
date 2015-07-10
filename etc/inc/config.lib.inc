@@ -78,6 +78,7 @@ function encrypted_configxml() {
 				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 				echo "\n" . gettext("Config.xml unlocked.") . "\n";
 				fclose($fp);
+				pfSense_fsync("{$g['conf_path']}/config.xml");
 			} else {
 				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 			}
@@ -179,12 +180,15 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	pfSense_fsync($configcache);
+	
 	unset($configcache);
 	/* Used for config.extra.xml */
 	if(file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
-		fclose($configcacheextra);		
+		fclose($configcacheextra);
+		pfSense_fsync($configcacheextra);
 		unset($configcacheextra);
 	}
 }
@@ -475,7 +479,7 @@ function safe_write_file($file, $content, $force_binary) {
 	}
 
 	// Sync file before returning
-	return pfSense_fsync(dirname($file));
+	return pfSense_fsync($file);
 }
 
 /****f* config/write_config
@@ -791,6 +795,7 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
+	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 	conf_mount_ro();
 
 	if (!$lock)
@@ -824,30 +829,31 @@ function backup_config() {
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
-
-    if($config['revision']['time'] == "") {
-            $baktime = 0;
-    } else {
-            $baktime = $config['revision']['time'];
-    }
-    if($config['revision']['description'] == "") {
-            $bakdesc = "Unknown";
-    } else {
-            $bakdesc = $config['revision']['description'];
-    }
+	
+	if($config['revision']['time'] == "") {
+		$baktime = 0;
+	} else {
+		$baktime = $config['revision']['time'];
+	}
+	if($config['revision']['description'] == "") {
+		$bakdesc = "Unknown";
+	} else {
+		$bakdesc = $config['revision']['description'];
+	}
 
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];
 	$bakfilename = $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml';
 	copy($g['cf_conf_path'] . '/config.xml', $bakfilename);
-    if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-            $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-    } else {
-            $backupcache = array();
-    }
+	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		$backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
+	} else {
+		$backupcache = array();
+	}
 	$backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($bakfilename));
-    $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-    fwrite($bakout, serialize($backupcache));
-    fclose($bakout);
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	fwrite($bakout, serialize($backupcache));
+	fclose($bakout);
+	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	conf_mount_ro();
 

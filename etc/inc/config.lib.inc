@@ -211,6 +211,7 @@ function restore_backup($file) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file","/cf/conf/config.xml");
 		pfSense_fsync("/cf/conf/config.xml");
+		pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");

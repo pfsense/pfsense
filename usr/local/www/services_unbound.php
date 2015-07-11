@@ -93,6 +93,11 @@ if (empty($config['unbound']['outgoing_interface'])) {
 } else {
 	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
 }
+if (empty($config['unbound']['system_domain_local_zone_type'])) {
+	$pconfig['system_domain_local_zone_type'] = array("transparent");
+} else {
+	$pconfig['system_domain_local_zone_type'] = explode(",", $config['unbound']['system_domain_local_zone_type']);
+}
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -125,6 +130,10 @@ if ($_POST) {
 			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
 		}
 
+		if (empty($_POST['system_domain_local_zone_type'])) {
+			$input_errors[] = "A System Domain Local-Zone Type must be selected.";
+		}
+		
 		if ($_POST['port']) {
 			if (is_port($_POST['port'])) {
 				$a_unboundcfg['port'] = $_POST['port'];
@@ -173,6 +182,10 @@ if ($_POST) {
 			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
 		}
 
+		if (is_array($_POST['system_domain_local_zone_type']) && !empty($_POST['system_domain_local_zone_type'])) {
+			$a_unboundcfg['system_domain_local_zone_type'] = implode(",", $_POST['system_domain_local_zone_type']);
+		}
+
 		$a_unboundcfg['custom_options'] = base64_encode(str_replace("\r\n", "\n", $_POST['custom_options']));
 
 		if (!$input_errors) {
@@ -214,7 +227,7 @@ include_once("head.inc");
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
-	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#txtsupport,#custom_options").prop('disabled', endis);
+	jQuery("#active_interface,#outgoing_interface,#system_domain_local_zone_type,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#txtsupport,#custom_options").prop('disabled', endis);
 }
 function show_advanced_dns() {
 	jQuery("#showadv").show();
@@ -320,6 +333,33 @@ function show_advanced_dns() {
 											endforeach;
 											unset($interface_addresses);
 										?>
+									</select>
+									<br /><br />
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("System Domain Local-Zone Type"); ?></td>
+								<td width="78%" class="vtable">
+									<?php
+										$unbound_local_zone_types = get_posible_unbound_local_zone_types(false);
+										$size=count($unbound_local_zone_types);
+									?>
+									<?=gettext("Set the pfSense system domain (System | General Setup | Domain) local-zone type.  The pfSense default is transparent.");?>
+									<br />
+									<?=gettext("Local-Zone type descriptions are available in the unbound.conf(5) manual pages.");?>
+									<br /><br />
+									<select id="system_domain_local_zone_type" name="system_domain_local_zone_type[]" required="required" size="<?php echo $size; ?>">
+										<?php
+											foreach ($unbound_local_zone_types as $lztype):
+												$selected = "";
+												if (in_array($lztype['value'], $pconfig['system_domain_local_zone_type'])) {
+													$selected = 'selected="selected"';
+												}
+										?>
+										<option value="<?=$lztype['value'];?>" <?=$selected;?>>
+											<?=htmlspecialchars($lztype['name']);?>
+										</option>
+										<?php endforeach; ?>
 									</select>
 									<br /><br />
 								</td>

@@ -63,7 +63,7 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
-if($_POST['aliasimport'] <> "") {
+if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
 

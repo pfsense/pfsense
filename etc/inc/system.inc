@@ -2270,9 +2270,9 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
-function get_posible_unbound_local_zone_types () {
+function get_possible_unbound_local_zone_types () {
 
-	$unbound_local_zone_types_array = array("deny" => "Deny", "refuse" => "Refuse", "static" => "Static", "transparent" => "Transparent", "typetransparent" => "Type Transparent", "redirect" => "Redirect", "inform" => "Inform", "nodefault" => "Node Fault");
+	$unbound_local_zone_types_array = array("deny" => "Deny", "refuse" => "Refuse", "static" => "Static", "transparent" => "Transparent", "typetransparent" => "Type Transparent", "redirect" => "Redirect", "inform" => "Inform", "nodefault" => "No Default");
 
 	$unbound_local_zone_types = array();
 	foreach ($unbound_local_zone_types_array as $type => $typename) {

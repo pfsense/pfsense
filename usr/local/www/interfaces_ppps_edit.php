@@ -244,17 +244,19 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid PPPoE reset year must be specified. Don't select a year in the past!");
 	}
 	
-	foreach($_POST['interfaces'] as $iface){
-		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
-			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."),$iface);
-		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) 
-			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."),$iface);
-		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) 
-			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."),$iface);
-		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) 
-			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."),$iface);
-		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) 
-			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."),$iface);
+	if (is_array($_POST['interfaces'])) {
+		foreach($_POST['interfaces'] as $iface){
+			if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
+				$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."),$iface);
+			if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) 
+				$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."),$iface);
+			if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) 
+				$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."),$iface);
+			if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) 
+				$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."),$iface);
+			if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) 
+				$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."),$iface);
+		}
 	}
 
 /*

@@ -342,13 +342,12 @@ function show_advanced_dns() {
 								<td width="78%" class="vtable">
 									<?php
 										$unbound_local_zone_types = get_possible_unbound_local_zone_types(false);
-										$size = count($unbound_local_zone_types);
 									?>
 									<?=gettext("Set the pfSense system domain (System | General Setup | Domain) local-zone type.  The pfSense default is transparent.");?>
 									<br />
 									<?=gettext("Local-Zone type descriptions are available in the unbound.conf(5) manual pages.");?>
 									<br /><br />
-									<select id="system_domain_local_zone_type" name="system_domain_local_zone_type[]" required="required" size="<?php echo $size; ?>">
+									<select id="system_domain_local_zone_type" name="system_domain_local_zone_type[]" required="required">
 										<?php
 											foreach ($unbound_local_zone_types as $lztype):
 												$selected = "";

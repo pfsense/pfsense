@@ -43,7 +43,11 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
+}
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
@@ -902,6 +906,7 @@ function enable_change() {
 				<td width="78%">
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()" />
 					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+					<input name="referer" type="hidden" value="<?=$referer;?>" />
 					<?php if (isset($id) && $a_gateways[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>

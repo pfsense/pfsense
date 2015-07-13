@@ -50,7 +50,11 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_captiveportal_vouchers.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_captiveportal_vouchers.php');
+}
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
@@ -683,6 +687,7 @@ function enable_change(enable_change) {
 						<input type="hidden" name="exponent" id="exponent" value="<?=$pconfig['exponent'];?>" />
 						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true); before_save();" />
 						<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+						<input name="referer" type="hidden" value="<?=$referer;?>" />
 					</td>
 				</tr>
 				<tr>

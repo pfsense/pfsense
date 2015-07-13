@@ -46,7 +46,11 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_out.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_out.php');
+}
 
 if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
@@ -865,6 +869,7 @@ function poolopts_change() {
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 <?php
 			if (isset($id) && $a_out[$id]):
 ?>

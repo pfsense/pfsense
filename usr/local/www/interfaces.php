@@ -55,7 +55,11 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces.php');
+}
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr(false, true);
@@ -3696,6 +3700,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<br />
 								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+								<input name="referer" type="hidden" value="<?=$referer;?>" />
 								<input name="if" type="hidden" id="if" value="<?=htmlspecialchars($if);?>" />
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
 								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port']);?>" />

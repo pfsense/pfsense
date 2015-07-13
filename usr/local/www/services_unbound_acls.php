@@ -33,7 +33,11 @@
 require("guiconfig.inc");
 require("unbound.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
+}
 
 if (!is_array($config['unbound']['acls'])) {
 	$config['unbound']['acls'] = array();
@@ -323,6 +327,7 @@ include("head.inc");
 								&nbsp;<br />&nbsp;
 								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 								<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+								<input name="referer" type="hidden" value="<?=$referer;?>" />
 							</td>
 						</tr>
 					</table>

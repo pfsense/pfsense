@@ -607,6 +607,12 @@ function step3_stepsubmitphpaction() {
 		$config['ezshaper']['step3']['address'] = $_POST['upstream_sip_server'];
 	if ($_POST['enable'] == 'on')
 		$config['ezshaper']['step3']['enable'] = 'on';
+	if (!empty($_POST['provider'])) {
+		$VoIPproviders = array("Generic", "VoicePulse", "Asterisk", "Panasonic");
+		if (in_array($_POST['provider'], $VoIPproviders)) {
+			$config['ezshaper']['step3']['provider'] = $_POST['provider'];
+		}
+	}
 	for ($i = 0; $i < $localint; $i++) {
 		$config['ezshaper']['step3']["local{$i}download"] = $_POST["local{$i}download"];
 		$config['ezshaper']['step3']["local{$i}downloadspeed"] = $_POST["local{$i}downloadspeed"];

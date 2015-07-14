@@ -59,7 +59,7 @@ if (isset($id) && $a_vs[$id]) {
   $pconfig = $a_vs[$id];
 } else {
   // Sane defaults
-  $pconfig['mode'] = 'redirect';
+  $pconfig['mode'] = 'redirect_mode';
 }
 
 $changedesc = gettext("Load Balancer: Virtual Server:") . " ";
@@ -71,12 +71,12 @@ if ($_POST) {
 
 	/* input validation */
   switch($pconfig['mode']) {
-    case "redirect": {
+    case "redirect_mode": {
     	$reqdfields = explode(" ", "ipaddr name mode");
     	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Mode"));
     	break;
     }
-    case "relay": {
+    case "relay_mode": {
     	$reqdfields = explode(" ", "ipaddr name mode relay_protocol");
     	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Relay Protocol"));
       break;

@@ -442,7 +442,12 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				if (!is_dir("/var/spool/lock"))
 					mwexec("/bin/mkdir -p /var/spool/lock");
 				// $serialports = pfSense_get_modem_devices();
-				$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+				// Match files in /dev starting with "cua" then:
+				// ? = any single character e.g. like "cuau"
+				// [0-9] = a digit from 0 to 9
+				// {,[0-9]} = nothing (the empty before the comma) or a digit from 0 to 9
+				// This supports up to 100 devices (0 to 99), e.g. cuau0 cuau1 ... cuau10 cuau11 ... cuau99
+				$serialports = glob("/dev/cua?[0-9]{,[0-9]}", GLOB_BRACE);
 				$serport_count = 0;
 				foreach ($serialports as $port) {
 					$serport_count++;

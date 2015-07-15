@@ -277,6 +277,7 @@ if ($_POST) {
 		$wrongaliases = "";
 		$desc_fmt_err_found = false;
 		$alias_address_count = 0;
+		$input_addresses = array();
 
 		// First trim and expand the input data.
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.

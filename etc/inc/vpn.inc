@@ -1650,16 +1650,16 @@ function vpn_pppoe_configure(&$pppoecfg) {
 				$clientip = long2ip32(ip2long($pppoecfg['remoteip']) + $i);
 
 				if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
-					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
+					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
 				} else {
-					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
+					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
 				}
 
 				$mpdconf .=<<<EOD
 
 poes{$pppoecfg['pppoeid']}{$i}:
 	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
-	{$isssue_ip_type}
+	{$issue_ip_type}
 	load pppoe_standard
 
 EOD;
@@ -1877,16 +1877,16 @@ EOD;
 				$clientip = long2ip32(ip2long($l2tpcfg['remoteip']) + $i);
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
-					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
+					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
 				} else {
-					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
+					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
 				}
 
 				$mpdconf .=<<<EOD
 
 l2tp{$i}:
 	new -i l2tp{$i} l2tp{$i} l2tp{$i}
-	{$isssue_ip_type}
+	{$issue_ip_type}
 	load l2tp_standard
 
 EOD;

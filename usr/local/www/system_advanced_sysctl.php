@@ -45,7 +45,11 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
+}
 
 if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();
@@ -283,6 +287,7 @@ include("head.inc");
 								<td width="78%">
 									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 									<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+									<input name="referer" type="hidden" value="<?=$referer;?>" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
 									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 									<?php endif; ?>

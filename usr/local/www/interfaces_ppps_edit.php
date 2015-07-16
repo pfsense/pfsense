@@ -493,9 +493,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				// Match files in /dev starting with "cua" then:
 				// ? = any single character e.g. like "cuau"
 				// [0-9] = a digit from 0 to 9
-				// {,[0-9]} = nothing (the empty before the comma) or a digit from 0 to 9
-				// This supports up to 100 devices (0 to 99), e.g. cuau0 cuau1 ... cuau10 cuau11 ... cuau99
-				$serialports = glob("/dev/cua?[0-9]{,[0-9]}", GLOB_BRACE);
+				// stuff in {} = the various possible digit and dot combinations to allow an optional 2nd digit, dot, followed by 1 or 2 optional digits
+				// This supports up to 100 devices (0 to 99), e.g. cuau0 cuau1 ... cuau10 cuau11 ... cuau99 and also possibilities like cuau1.1 cuau1.11 cuau11.1 cuau11.11
+				$serialports = glob("/dev/cua?[0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 				$serport_count = 0;
 				foreach ($serialports as $port) {
 					$serport_count++;

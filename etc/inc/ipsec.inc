@@ -727,9 +727,6 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			break;
 		case 'asn1dn':
 			$thisid_data = $id_data;
-			if ($thisid_data && $thisid_data[0] != '"') {
-				$thisid_data = "\"{$id_data}\"";
-			}
 			break;
 	}
 	return array($thisid_type, $thisid_data);

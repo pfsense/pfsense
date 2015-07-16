@@ -825,6 +825,10 @@ EOD;
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 			if ($myid_type != 'address' && $myid_type != 'keyid') {
 				$myid_data = "{$myid_type}:{$myid_data}";
+				/* asn1dn needs double quotes */
+				if ($myid_type == "asn1dn") {
+					$myid_data = '"' . $myid_data . '"';
+				}
 			}
 
 			/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
@@ -833,6 +837,10 @@ EOD;
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
 				if ($peerid_type != 'address' && $peerid_type != 'keyid') {
 					$peerid_spec = "{$peerid_type}:{$peerid_data}";
+					/* asn1dn needs double quotes */
+					if ($peerid_type == "asn1dn") {
+						$peerid_spec = '"' . $peerid_spec . '"';
+					}
 				} else {
 					$peerid_spec = $peerid_data;
 				}

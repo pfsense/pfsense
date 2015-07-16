@@ -503,7 +503,9 @@ function myidsel_change() {
 	value = document.iform.myid_type.options[index].value;
 	if (value == 'myaddress') {
 		document.getElementById('myid_data').style.visibility = 'hidden';
-	} else {
+	} else if (value == 'asn1dn') {
+		document.getElementById('myid_data').style.visibility = 'hidden';
+	} else { 
 		document.getElementById('myid_data').style.visibility = 'visible';
 	}
 }
@@ -528,6 +530,8 @@ function peeridsel_change() {
 	index = document.iform.peerid_type.selectedIndex;
 	value = document.iform.peerid_type.options[index].value;
 	if (value == 'peeraddress') {
+		document.getElementById('peerid_data').style.visibility = 'hidden';
+	} else if (value == 'asn1dn') {
 		document.getElementById('peerid_data').style.visibility = 'hidden';
 	} else {
 		document.getElementById('peerid_data').style.visibility = 'visible';

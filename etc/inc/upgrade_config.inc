@@ -3566,4 +3566,25 @@ function upgrade_116_to_117() {
 
 }
 
+function upgrade_117_to_118() {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1'])) {
+		return;
+	}
+
+	$a_phase1 =& $config['ipsec']['phase1'];
+
+	foreach ($a_phase1 as &$ph1_entry) {
+		if (isset($ph1_entry['myid_type']) && $ph1_entry['myid_type'] == 'asn1dn') {
+			$ph1_entry['myid_data'] =
+			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['myid_data']);
+		}
+		if (isset($ph1_entry['peerid_type']) && $ph1_entry['peerid_type'] == 'asn1dn') {
+			$ph1_entry['peerid_data'] =
+			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['peerid_data']);
+		}
+	}
+}
+
 ?>

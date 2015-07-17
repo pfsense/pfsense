@@ -668,8 +668,8 @@ function update_box_type() {
 			typesel_change();
 			add_alias_control(this);
 		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$urltable_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
 		document.getElementById ("threecolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").style.display = 'none';
@@ -681,8 +681,8 @@ function update_box_type() {
 			typesel_change();
 			add_alias_control(this);
 		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_ports_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$urltable_ports_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
 		document.getElementById ("threecolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").style.display = 'none';

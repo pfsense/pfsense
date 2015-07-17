@@ -171,11 +171,11 @@ EOF;
 		$outgoing_interfaces = explode(",", $config['unbound']['outgoing_interface']);
 		foreach ($outgoing_interfaces as $outif) {
 			$outip = get_interface_ip($outif);
-			if (!is_null($outip)) {
+			if (is_ipaddr($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
 			}
 			$outip = get_interface_ipv6($outif);
-			if (!is_null($outip)) {
+			if (is_ipaddrv6($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
 			}
 		}

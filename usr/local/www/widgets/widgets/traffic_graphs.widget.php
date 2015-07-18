@@ -54,8 +54,9 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable']))
+if (isset($config['ipsec']['enable'])) {
 	$ifdescrs['enc0'] = "IPsec";
+}
 
 if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {
@@ -101,12 +102,12 @@ if (isset($a_config["scale_type"])) {
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
 
 <div id="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
-<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="iform" id="iform">
+<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="traffic_graphs_widget_iform" id="traffic_graphs_widget_iform">
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
 	Default AutoScale:
-		<?php 
+		<?php
 			$scale_type_up="checked=\"checked\"";
 			$scale_type_follow="";
 			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
@@ -114,8 +115,7 @@ if (isset($a_config["scale_type"])) {
 				if ($selected_radio == "up") {
 					$scale_type_up = "checked=\"checked\"";
 					$scale_type_follow="";
-				}
-				else if ($selected_radio == "follow") {
+				} else if ($selected_radio == "follow") {
 					$scale_type_up="";
 					$scale_type_follow = "checked=\"checked\"";
 				}
@@ -129,7 +129,7 @@ if (isset($a_config["scale_type"])) {
 			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected=\"selected\"";?>><?= $i ?></option>
 		<?php } ?>
 	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
-	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	<input id="traffic_graphs_widget_submit" name="traffic_graphs_widget_submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
 </div>
 
@@ -167,17 +167,25 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div align="right" style="float:right;width:49%">
 					<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?= $ifname ?>", true);'
 						style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>
-					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", true);'
+					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", "<?= rawurlencode($ifdescr); ?>", "<?= $refreshinterval ?>", true);'
 						style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>
 				</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
+<?php
+		// If the graph is already enabled by the config then put the object inside the div now.
+		// Otherwise the graph object is inserted by trafficshowDiv JS when the user opens it.
+		if ($graphdisplay == "inline") {
+?>
 				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=$graphcounter * 2;?>" height="100%" width="100%">
 					<param name="id" value="graph" />
 					<param name="type" value="image/svg+xml" />
 					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 				</object>
+<?php
+		}
+?>
 			</div>
 		</div>
 	<?php }

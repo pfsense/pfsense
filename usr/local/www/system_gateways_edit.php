@@ -130,6 +130,31 @@ if ($_POST) {
 	}
 	if (!is_validaliasname($_POST['name'])) {
 		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
+	} else if (isset($_POST['disabled'])) {
+		// We have a valid gateway name that the user wants to mark as disabled.
+		// Check if the gateway name is used in any gateway group.
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				foreach ($group['item'] as $item) {
+					$items = explode("|", $item);
+					if ($items[0] == $_POST['name']) {
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $_POST['name'], $group['name']);
+					}
+				}
+			}
+		}
+
+		// Check if the gateway name is used in any enabled Static Route.
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['gateway'] == $_POST['name']) {
+					if (!isset($route['disabled'])) {
+						// There is a static route that uses this gateway and is enabled (not disabled).
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $_POST['name'], $route['network']);
+					}
+				}
+			}
+		}
 	}
 	/* skip system gateways which have been automatically added */
 	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] !== "system")) && ($_POST['gateway'] != "dynamic")) {

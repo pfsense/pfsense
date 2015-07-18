@@ -78,7 +78,7 @@ if ($_POST) {
 	}
 }
 
-function can_delete_gateway_item($id) {
+function can_delete_disable_gateway_item($id, $disable = false) {
 	global $config, $input_errors, $a_gateways;
 
 	if (!isset($a_gateways[$id])) {
@@ -90,8 +90,11 @@ function can_delete_gateway_item($id) {
 			foreach ($group['item'] as $item) {
 				$items = explode("|", $item);
 				if ($items[0] == $a_gateways[$id]['name']) {
-					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
-					break;
+					if (!$disable) {
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+					} else {
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+					}
 				}
 			}
 		}
@@ -100,8 +103,14 @@ function can_delete_gateway_item($id) {
 	if (is_array($config['staticroutes']['route'])) {
 		foreach ($config['staticroutes']['route'] as $route) {
 			if ($route['gateway'] == $a_gateways[$id]['name']) {
-				$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
-				break;
+				if (!$disable) {
+					// The user wants to delete this gateway, but there is a static route (enabled or disabled) that refers to the gateway.
+					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+				} else if (!isset($route['disabled'])) {
+					// The user wants to disable this gateway.
+					// But there is a static route that uses this gateway and is enabled (not disabled).
+					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+				}
 			}
 		}
 	}
@@ -140,7 +149,7 @@ function delete_gateway_item($id) {
 
 unset($input_errors);
 if ($_GET['act'] == "del") {
-	if (can_delete_gateway_item($_GET['id'])) {
+	if (can_delete_disable_gateway_item($_GET['id'])) {
 		$realid = $a_gateways[$_GET['id']]['attribute'];
 		delete_gateway_item($_GET['id']);
 		write_config("Gateways: removed gateway {$realid}");
@@ -154,7 +163,7 @@ if (isset($_POST['del_x'])) {
 	/* delete selected items */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		foreach ($_POST['rule'] as $rulei) {
-			if (!can_delete_gateway_item($rulei)) {
+			if (!can_delete_disable_gateway_item($rulei)) {
 				break;
 			}
 		}
@@ -176,19 +185,28 @@ if (isset($_POST['del_x'])) {
 
 } else if ($_GET['act'] == "toggle" && $a_gateways[$_GET['id']]) {
 	$realid = $a_gateways[$_GET['id']]['attribute'];
-
-	if (isset($a_gateway_item[$realid]['disabled'])) {
-		unset($a_gateway_item[$realid]['disabled']);
+	$disable_gw = !isset($a_gateway_item[$realid]['disabled']);
+	if ($disable_gw) {
+		// The user wants to disable the gateway, so check if that is OK.
+		$ok_to_toggle = can_delete_disable_gateway_item($_GET['id'], $disable_gw);
 	} else {
-		$a_gateway_item[$realid]['disabled'] = true;
+		// The user wants to enable the gateway. That is always OK.
+		$ok_to_toggle = true;
 	}
+	if ($ok_to_toggle) {
+		if ($disable_gw) {
+			$a_gateway_item[$realid]['disabled'] = true;
+		} else {
+			unset($a_gateway_item[$realid]['disabled']);
+		}
 
-	if (write_config("Gateways: enable/disable")) {
-		mark_subsystem_dirty('staticroutes');
+		if (write_config("Gateways: enable/disable")) {
+			mark_subsystem_dirty('staticroutes');
+		}
+
+		header("Location: system_gateways.php");
+		exit;
 	}
-
-	header("Location: system_gateways.php");
-	exit;
 }
 
 $pgtitle = array(gettext("System"), gettext("Gateways"));

@@ -53,6 +53,7 @@ if (!is_array($config['staticroutes']['route'])) {
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true, true);
 $changedesc_prefix = gettext("Static Routes") . ": ";
+unset($input_errors);
 
 if ($_POST) {
 
@@ -142,20 +143,29 @@ if (isset($_POST['del_x'])) {
 
 } else if ($_GET['act'] == "toggle") {
 	if ($a_routes[$_GET['id']]) {
+		$do_update_config = true;
 		if (isset($a_routes[$_GET['id']]['disabled'])) {
-			unset($a_routes[$_GET['id']]['disabled']);
-			$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
+			// Do not enable a route whose gateway is disabled
+			if (isset($a_gateways[$a_routes[$_GET['id']]['gateway']]['disabled'])) {
+				$do_update_config = false;
+				$input_errors[] = $changedesc_prefix . gettext("gateway is disabled, cannot enable route to") . " " . $a_routes[$_GET['id']]['network'];
+			} else {
+				unset($a_routes[$_GET['id']]['disabled']);
+				$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
+			}
 		} else {
 			delete_static_route($_GET['id']);
 			$a_routes[$_GET['id']]['disabled'] = true;
 			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$_GET['id']]['network'];
 		}
 
-		if (write_config($changedesc)) {
-			mark_subsystem_dirty('staticroutes');
+		if ($do_update_config) {
+			if (write_config($changedesc)) {
+				mark_subsystem_dirty('staticroutes');
+			}
+			header("Location: system_routes.php");
+			exit;
 		}
-		header("Location: system_routes.php");
-		exit;
 	}
 } else {
 	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
@@ -225,6 +235,7 @@ include("head.inc");
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
 <?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /></p>
 <?php endif; ?>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system routes">
 	<tr>

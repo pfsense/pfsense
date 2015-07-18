@@ -4,6 +4,7 @@
 /*
     rc.carpmaster
     part of pfSense (https://www.pfsense.org)
+    Copyright (C) 2004-2015 Electric Sheep Fencing LLC 
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -61,6 +62,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'
 			log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
 			openvpn_restart('client', $settings);
 		}
+		// check for gateway groups specifying CARP IPs 
+		$a_groups = return_gateway_groups_array();
+		if (is_array($a_groups[$settings['interface']])) {
+			// interface of this instance is a gateway group, check for CARP VIP
+			if (strstr($a_groups[$settings['interface']][0]['vip'], "_vip")) {
+				log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart('client', $settings);
+			}
+		}
 	}
 }
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
@@ -68,6 +78,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 		if ($settings['interface'] == $carp_iface) {
 			log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
 			openvpn_restart('server', $settings);
+		}
+		// check for gateway groups specifying CARP IPs 
+		$a_groups = return_gateway_groups_array();
+		if (is_array($a_groups[$settings['interface']])) {
+			// interface of this instance is a gateway group, check for CARP VIP
+			if (strstr($a_groups[$settings['interface']][0]['vip'], "_vip")) {
+				log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart('server', $settings);
+			}
 		}
 	}
 }

@@ -2,31 +2,32 @@
 <?php
 /* $Id$ */
 /*
-	rc.carpmaster
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
+    rc.carpmaster
+    part of pfSense (https://www.pfsense.org)
+    Copyright (C) 2004-2015 Electric Sheep Fencing LLC 
+    Copyright (C) 2004 Scott Ullrich
+    All rights reserved.
 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
 
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
 
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
 */
 
 require_once("functions.inc");
@@ -47,23 +48,27 @@ if (!strstr($argument, "@")) {
 list($vhid, $iface) = explode("@", $argument);
 
 $friendly = convert_real_interface_to_friendly_interface_name($iface);
-$friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
-$vips = link_interface_to_vips($friendly, '', $vhid);
-$carp_iface = "{$friendly}_vip{$vhid}";
-foreach ($vips as $vip) {
-	$notificationmsg = sprintf('Carp cluster member "{$friendly_descr)(%2$s): {$vip['subnet']} (%1$s)" has resumed the state "MASTER" for vhid %s', $argument, $vip['descr'], $vhid);
+$carp_iface = "{$friendly}_vip${vhid}";
+$friendly_descr = convert_friendly_interface_to_friendly_descr($carp_iface);
+$notificationmsg = sprintf('Carp cluster member "%2$s (%1$s)" has resumed the state "MASTER" for vhid %s', $argument, $friendly_descr, $vhid);
 
-	notify_via_smtp($notificationmsg);
-	notify_via_growl($notificationmsg);
-	log_error($notificationmsg);
-}
+notify_via_smtp($notificationmsg);
+notify_via_growl($notificationmsg);
+log_error($notificationmsg);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 	foreach ($config['openvpn']['openvpn-client'] as $settings) {
-		foreach ($vips as $vip) {
-			if ($settings['interface'] == "_vip{$vip['uniqid']}") {
+		if ($settings['interface'] == $carp_iface) {
+			log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
+			openvpn_restart('client', $settings);
+		}
+		// check for gateway groups specifying CARP IPs 
+		$a_groups = return_gateway_groups_array();
+		if (is_array($a_groups[$settings['interface']])) {
+			// interface of this instance is a gateway group, check for CARP VIP
+			if (strstr($a_groups[$settings['interface']][0]['vip'], "_vip")) {
 				log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
 				openvpn_restart('client', $settings);
 			}
@@ -75,6 +80,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 		if ($settings['interface'] == $carp_iface) {
 			log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
 			openvpn_restart('server', $settings);
+		}
+		// check for gateway groups specifying CARP IPs 
+		$a_groups = return_gateway_groups_array();
+		if (is_array($a_groups[$settings['interface']])) {
+			// interface of this instance is a gateway group, check for CARP VIP
+			if (strstr($a_groups[$settings['interface']][0]['vip'], "_vip")) {
+				log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart('server', $settings);
+			}
 		}
 	}
 }

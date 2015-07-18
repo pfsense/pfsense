@@ -1098,7 +1098,7 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br />
-		</strong></span><?=gettext("Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work."); ?> </span></td>
+		</strong></span><?=gettext("Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS Forwarder or Resolver needs to be enabled for DNS lookups by unauthenticated clients to work."); ?> </span></td>
 	</tr>
   </table>
   </td>

@@ -667,7 +667,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php if ($g['platform'] == "pfSenseDISABLED"): ?>
+							<?php if ($g['platform'] == "pfSense"): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Hardware Settings"); ?></td>
 							</tr>

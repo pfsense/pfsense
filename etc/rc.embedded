@@ -3,6 +3,9 @@
 # rc.embedded - embedded system specific startup information
 # For pfSense
 
+# Set our operating platform
+PLATFORM=`/bin/cat /etc/platform`
+
 # Size of /tmp
 USE_MFS_TMP_SIZE=`/usr/bin/grep use_mfs_tmp_size /cf/conf/config.xml | /usr/bin/cut -f2 -d'>' | /usr/bin/cut -f1 -d'<'`
 if [ ! -z ${USE_MFS_TMP_SIZE} ] && [ ${USE_MFS_TMP_SIZE} -gt 0 ]; then
@@ -23,13 +26,21 @@ fi
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 
 echo -n "Setting up memory disks..."
-mdmfs -S -M -s ${tmpsize} md /tmp
-mdmfs -S -M -s ${varsize} md /var
+USE_MFS_TMP=`/usr/bin/grep -c use_mfs_tmp /cf/conf/config.xml`
+if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMP} -gt 0 ]; then
+	mdmfs -S -M -s ${tmpsize} md /tmp
+fi
 
-# Create some needed directories
-/bin/mkdir -p /var/db /var/spool/lock
-/usr/sbin/chown uucp:dialer /var/spool/lock
+USE_MFS_VAR=`/usr/bin/grep -c use_mfs_var /cf/conf/config.xml`
+if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_VAR} -gt 0 ]; then
+	mdmfs -S -M -s ${varsize} md /var
 
-# Ensure vi's recover directory is present
-/bin/mkdir -p /var/tmp/vi.recover/
+	# Create some needed directories
+	/bin/mkdir -p /var/db /var/spool/lock
+	/usr/sbin/chown uucp:dialer /var/spool/lock
+
+	# Ensure vi's recover directory is present
+	/bin/mkdir -p /var/tmp/vi.recover/
+fi
+
 echo " done."

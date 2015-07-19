@@ -3787,6 +3787,12 @@ function upgrade_118_to_119() {
 		}
 		unset($miniupnpd["permuser{$i}"]);
 	}
+
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$config['system']['use_mfs_tmp'] = true;
+		$config['system']['use_mfs_var'] = true;
+		unset($config['system']['use_mfs_tmpvar']);
+	}
 }
 
 ?>

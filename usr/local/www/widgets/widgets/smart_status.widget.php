@@ -92,6 +92,8 @@ if (count($devs) > 0)  {
 	}
 }
 ?>
+</table>
+
 <!-- needed to display the widget settings menu -->
 <script type="text/javascript">
 //<![CDATA[
@@ -100,4 +102,3 @@ if (count($devs) > 0)  {
         textlink.style.display = "inline";
 //]]>
 </script>
-</table>

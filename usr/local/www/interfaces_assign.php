@@ -196,11 +196,15 @@ $ovpn_descrs = array();
 if (is_array($config['openvpn'])) {
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $s) {
+			$portname = "ovpns{$s['vpnid']}";
+			$portlist[$portname] = $s;
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
 		}
 	}
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $c) {
+			$portname = "ovpnc{$c['vpnid']}";
+			$portlist[$portname] = $c;
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
 		}
 	}

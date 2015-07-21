@@ -3438,7 +3438,7 @@ function upgrade_104_to_105() {
 	if (is_array($config['captiveportal'])) {
 		$zoneid = 2;
 		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
-			if (empty($cpfg['zoneid'])) {
+			if (empty($cpcfg['zoneid'])) {
 				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
 				$zoneid += 2;
 			} else if ($cpcfg['zoneid'] > 4000) {

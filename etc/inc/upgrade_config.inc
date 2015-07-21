@@ -2924,8 +2924,6 @@ function upgrade_085_to_086() {
 function upgrade_086_to_087() {
 	global $config, $dummynet_pipe_list;
 
-	if (!is_array($config['filter']) || !is_array($config['filter']['rule']))
-		return;
 	if (!is_array($config['dnshaper']) || !is_array($config['dnshaper']['queue']))
 		return;
 
@@ -2944,6 +2942,9 @@ function upgrade_086_to_087() {
 	}
 
 	unset($dnqueue_number, $dnpipe_number, $qidx, $idx, $dnpipe, $dnqueue);
+
+	if (!is_array($config['filter']) || !is_array($config['filter']['rule']))
+		return;
 
 	require_once("shaper.inc");
 	read_dummynet_config();

@@ -2547,9 +2547,11 @@ function upgrade_066_to_067() {
 	global $config;
 	if (isset($config['system']['ca'])) {
 		$config['ca'] = $config['system']['ca'];
+		unset($config['system']['ca']);
 	}
 	if (isset($config['system']['cert'])) {
 		$config['cert'] = $config['system']['cert'];
+		unset($config['system']['cert']);
 	}
 }
 

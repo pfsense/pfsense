@@ -288,7 +288,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 		<tr>
 			<td align="right"><?=gettext("File to download"); ?>:</td>
 			<td>
-				<input name="dlPath" type="text" class="formfld file" id="dlPath" size="50" />
+				<input name="dlPath" type="text" class="formfld file" id="dlPath" size="50" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>" />
 			</td>
 		</tr>
 		<tr>

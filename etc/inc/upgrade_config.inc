@@ -3570,6 +3570,14 @@ function upgrade_116_to_117() {
 function upgrade_117_to_118() {
 	global $config;
 
+	// Unset any old CA and Cert in the system section that might still be there from when upgrade_066_to_067 did not unset them.
+	if (isset($config['system']['ca'])) {
+		unset($config['system']['ca']);
+	}
+	if (isset($config['system']['cert'])) {
+		unset($config['system']['cert']);
+	}
+
 	if (!isset($config['ipsec']['phase1'])) {
 		return;
 	}

@@ -1425,7 +1425,6 @@ function exec_command($command) {
    For background execution, returns PID of background process to allow calling code control */
 function mwexec($command, $nologentry = false, $clearsigmask = false, $background = false) {
 	global $g;
-	$outputarray = array();
 	$retval = 0;
 	
 	if ($g['debug']) {
@@ -1438,9 +1437,12 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
 
-	if ($background)
-		$retval = exec("/usr/bin/nohup $command > /dev/null 2>&1 & echo $!");    // start background process and return PID
-	else {
+	if ($background) {
+		// start background process and return PID
+		$retval = exec("/usr/bin/nohup $command > /dev/null 2>&1 & echo $!");
+	} else {
+		// run in foreground, and (optionally) log if nonzero return
+		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
 		$output = implode(" ", $outputarray);
 		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew'])))

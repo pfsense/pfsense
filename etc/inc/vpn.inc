@@ -727,7 +727,7 @@ EOD;
 					$ipsecconf .= <<<EOD
 
 conn bypasslan
-	leftsubnet = {$lanip}/32
+	leftsubnet = {$lansa}/{$lansn}
 	rightsubnet = {$lansa}/{$lansn}
 	authby = never
 	type = passthrough

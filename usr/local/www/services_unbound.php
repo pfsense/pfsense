@@ -387,15 +387,15 @@ function show_advanced_dns() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Custom options");?></td>
 								<td width="78%" class="vtable">
 									<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-										<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
+										<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Custom options"); ?>" /> - <?=gettext("Show custom options");?>
 									</div>
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
-										<strong><?=gettext("Advanced");?><br /></strong>
+										<strong><?=gettext("Custom options");?><br /></strong>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
-										<?=gettext("Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline"); ?><br />
+										<?=gettext("Enter any additional configuration parameters to add to the DNS Resolver configuration here. Separate options by a newline"); ?><br />
 									</div>
 								</td>
 							</tr>

@@ -46,6 +46,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
@@ -155,6 +156,12 @@ if ($_POST) {
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
+		
+		if ($_POST['strictcrlpolicy'] == "yes") {
+			$config['ipsec']['strictcrlpolicy'] = true;
+		} else {
+			unset($config['ipsec']['strictcrlpolicy']);
 		}
 
 		if($_POST['makebeforebreak'] == "yes") {
@@ -375,6 +382,15 @@ function maxmss_checked(obj) {
 							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
 							<br />
 							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Strict CRL Checking"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="strictcrlpolicy" type="checkbox" id="strictcrlpolicy" value="yes" <?php if ($pconfig['strictcrlpolicy'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable strict Certificate Revocation List checking"); ?></strong>
+							<br />
+							<?=gettext("Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed."); ?>
 						</td>
 					</tr>
 					<tr>

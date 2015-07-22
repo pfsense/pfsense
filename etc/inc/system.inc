@@ -2066,12 +2066,10 @@ function system_set_harddisk_standby() {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
 	}
-
 	if (isset($config['system']['harddiskstandby'])) {
 		if (platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
-
 		$standby = $config['system']['harddiskstandby'];
 		// Check for a numeric value
 		if (is_numeric($standby)) {
@@ -2081,9 +2079,9 @@ function system_set_harddisk_standby() {
 				// Iterate disks and run the camcontrol command for each
 				foreach($harddisks as $harddisk)  {
 					mwexec("/sbin/camcontrol standby {$harddisk} -t {$standby}");
-					if (platform_booting()) {
+				}
+				if (platform_booting()) {
 						echo gettext("done.") . "\n";
-					}
 				}
 			} else if (platform_booting()) {
 				echo gettext("failed!") . "\n";

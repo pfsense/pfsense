@@ -163,7 +163,7 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		/* The wierd logic here is to avoid negative policies when checked #4655 */
+		/* The weird logic here is to avoid negative policies when checked #4655 */
 		if ($_POST['noshuntlaninterfaces'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
 				unset($config['ipsec']['noshuntlaninterfaces']);

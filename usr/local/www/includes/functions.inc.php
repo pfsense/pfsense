@@ -377,7 +377,7 @@ function get_interfacestatus() {
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$ifinfo = get_interface_info($ifdescr);
-		$data .= $ifname . ",";
+		$data .= $ifname . "^";
 		if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
 			$data .= "up";
 		} else if ($ifinfo['status'] == "no carrier") {
@@ -385,15 +385,15 @@ function get_interfacestatus() {
 		} else if ($ifinfo['status'] == "down") {
 			$data .= "block";
 		}
-		$data .= ",";
+		$data .= "^";
 		if ($ifinfo['ipaddr']) {
 			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddr']) . "</strong>";
 		}
-		$data .= ",";
+		$data .= "^";
 		if ($ifinfo['ipaddrv6']) {
 			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddrv6']) . "</strong>";
 		}
-		$data .= ",";
+		$data .= "^";
 		if ($ifinfo['status'] != "down") {
 			$data .= htmlspecialchars($ifinfo['media']);
 		}

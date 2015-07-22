@@ -151,6 +151,7 @@ function vpn_ipsec_configure($restart = false) {
 	$certpath = "{$g['varetc_path']}/ipsec/ipsec.d/certs";
 	$capath = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts";
 	$keypath = "{$g['varetc_path']}/ipsec/ipsec.d/private";
+	$crlpath = "{$g['varetc_path']}/ipsec/ipsec.d/crls";
 
 	mwexec("/sbin/ifconfig enc0 up");
 	set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
@@ -171,8 +172,8 @@ function vpn_ipsec_configure($restart = false) {
 	if (!is_dir($keypath)) {
 		mkdir($keypath);
 	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/crls")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/crls");
+	if (!is_dir($crlpath)) {
+		mkdir($crlpath);
 	}
 	if (!is_dir($certpath)) {
 		mkdir($certpath);
@@ -582,6 +583,21 @@ EOD;
 				continue;
 			}
 			unset($cert);
+		}
+	}
+	
+	/* write out CRL files */
+	if (is_array($config['crl']) && count($config['crl'])) {
+		foreach ($config['crl'] as $crl) {
+			if (!isset($crl['text'])) {
+				log_error(sprintf(gettext("Error: Invalid CRL data for %s"), $crl['descr']));
+				continue;
+			}
+			$fpath = "{$crlpath}/{$crl['refid']}.crl";
+			if (!@file_put_contents($fpath, base64_decode($crl['text']))) {
+				log_error(sprintf(gettext("Error: Cannot write IPsec CRL file for %s"), $crl['descr']));
+				continue;
+			}
 		}
 	}
 

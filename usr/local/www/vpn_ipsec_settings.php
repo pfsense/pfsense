@@ -118,13 +118,13 @@ if ($_POST) {
 	
 	if (!$input_errors) {
 
-		if (is_array($config['ipsec'])) {
-			foreach ($ipsec_loglevels as $lkey => $ldescr) {
-				if (empty($_POST["ipsec_{$lkey}"])) {
-					if (isset($config['ipsec']["ipsec_{$lkey}"]))
-						unset($config['ipsec']["ipsec_{$lkey}"]);
-				} else
-					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		foreach ($ipsec_loglevels as $lkey => $ldescr) {
+			if (empty($_POST["ipsec_{$lkey}"])) {
+				if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+					unset($config['ipsec']["ipsec_{$lkey}"]);
+				}
+			} else {
+				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 			}
 		}
 
@@ -164,8 +164,10 @@ if ($_POST) {
 		}
 
 		/* The wierd logic here is to avoid negative policies when checked #4655 */
-		if($_POST['noshuntlaninterfaces'] == "yes") {
-			unset($config['ipsec']['noshuntlaninterfaces']);
+		if ($_POST['noshuntlaninterfaces'] == "yes") {
+			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
+				unset($config['ipsec']['noshuntlaninterfaces']);
+			}
 		} else {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
@@ -181,7 +183,7 @@ if ($_POST) {
 
 		if(!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
-		} else {
+		} else if (isset($config['ipsec']['uniqueids'])) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
@@ -189,8 +191,12 @@ if ($_POST) {
 			$config['system']['maxmss_enable'] = true;
 			$config['system']['maxmss'] = $_POST['maxmss'];
 		} else {
-			unset($config['system']['maxmss_enable']);
-			unset($config['system']['maxmss']);
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
 		}
 
 		write_config();

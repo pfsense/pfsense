@@ -554,10 +554,10 @@ function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
 
-	if (isset($config['system']['maxmss_enable'])) {
+	if (isset($config['ipsec']['maxmss_enable'])) {
 		$maxmss = 1400;
-		if (!empty($config['system']['maxmss'])) {
-			$maxmss = $config['system']['maxmss'];
+		if (!empty($config['ipsec']['maxmss'])) {
+			$maxmss = $config['ipsec']['maxmss'];
 		}
 
 		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";

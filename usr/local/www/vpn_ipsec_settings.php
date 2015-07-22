@@ -51,8 +51,8 @@ $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces'
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['maxmss_enable'] = isset($config['ipsec']['maxmss_enable']);
+$pconfig['maxmss'] = $config['ipsec']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
@@ -185,11 +185,11 @@ if ($_POST) {
 		}
 
 		if($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
+			$config['ipsec']['maxmss_enable'] = true;
+			$config['ipsec']['maxmss'] = $_POST['maxmss'];
 		} else {
-			unset($config['system']['maxmss_enable']);
-			unset($config['system']['maxmss']);
+			unset($config['ipsec']['maxmss_enable']);
+			unset($config['ipsec']['maxmss']);
 		}
 
 		write_config();

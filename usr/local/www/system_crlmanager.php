@@ -149,7 +149,9 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
+			// refresh IPsec and OpenVPN CRLs 
 			openvpn_refresh_crls();
+			vpn_ipsec_configure();
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
 			exit;
@@ -177,7 +179,9 @@ if ($act == "delcert") {
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
 		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
+		vpn_ipsec_configure();
 		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
 	} else {
 		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
@@ -247,7 +251,9 @@ if ($_POST) {
 			$a_crl[] = $crl;
 
 		write_config("Saved CRL {$crl['descr']}");
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
+		vpn_ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
 	}
 }

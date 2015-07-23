@@ -149,7 +149,7 @@ function updateInterfaces(x){
 	if (widgetActive("interfaces")){
 		interfaces_split = x.split("~");
 		interfaces_split.each(function(iface){
-			details = iface.split(",");
+			details = iface.split("^");
 			if (details[2] == '')
 				ipv4_details = '';
 			else

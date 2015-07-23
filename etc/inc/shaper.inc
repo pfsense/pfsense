@@ -675,25 +675,40 @@ class altq_root_queue {
 		global $g;
 
 		$altq =& $this;
+		
 		if ($altq) {
 			$scheduler = ": " . $altq->GetScheduler();
 		}
-		$form = "<tr><td width=\"20%\" class=\"vtable\">";
-		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&amp;queue=". $this->GetInterface()."&amp;action=show\">". $shaperIFlist[$this->GetInterface()] .": ".$scheduler."</a>";
-		$form .= "</td></tr>";
-		$form .= "<tr>";
-		$form .= "<td width=\"50%\" class=\"vncellreq\">";
-		$form .= "Bandwidth: " . $this->GetBandwidth().$this->GetBwscale();
-		$form .= "</td><td width=\"50%\"></td></tr>";
-		$form .= "<tr><td width=\"20%\" class=\"vncellreq\">";
-		$form .= "<a href=\"firewall_shaper_queues.php?interface=";
-		$form .= $this->GetInterface() . "&amp;queue=";
-		$form .= $this->GetQname() . "&amp;action=delete\">";
-		$form .= "<img src=\"";
-		$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
-		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Disable shaper on interface\" alt=\"disable\" />";
-		$form .= "<span>Disable shaper on interface</span></a></td></tr>";
 
+		$form = '<dl class="dl-horizontal">';
+		$form .= '	<dt>';
+		$form .= '		<a href="firewall_shaper.php?interface=' . $this->GetInterface() . '&amp;queue=' . $this->GetQname() . '&amp;action=show">' . $shaperIFlist[$this->GetInterface()] . '</a>';
+		$form .= '	</dt>';
+		$form .= '	<dd>';
+		$form .= 		$scheduler;
+		$form .= '	</dd>';
+			
+		$form .= '	<dt>';
+		$form .= 		'Bandwidth';
+		$form .= '	</dt>';
+		$form .= '	<dd>';
+		$form .= 		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .= '	</dd>';
+		
+		$form .= '	<dt>';			
+		$form .= 'Disable';
+		$form .= '	<dt>';
+		$form .= '	<dd>';
+
+		$form .= '<a class="btn btn-default btn-xs" href="firewall_shaper_queues.php?interface=';
+		$form .= $this->GetInterface() . '&amp;queue=';
+		$form .= $this->GetQname() . '&amp;action=delete">';
+		$form .= gettext("Disable shaper on interface") . '</a>';
+
+		$form .= '	</dd>';	
+		
+		$form .= '</dl>';	
+		
 		return $form;
 
 	}
@@ -1365,36 +1380,59 @@ class priq_queue {
 		global $shaperIFlist;
 
 		$altq =& $altq_list_queues[$this->GetInterface()];
+		
 		if ($altq) {
-			$scheduler = ": " . $altq->GetScheduler();
+			$scheduler = $altq->GetScheduler();
 		}
-		$form = "<tr><td width=\"20%\" class=\"vtable\">";
-		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&amp;queue=" . $this->GetQname()."&amp;action=show\">". $shaperIFlist[$this->GetInterface()] .$scheduler."</a>";
-		$form .= "</td></tr>";
-		/*
-		 * XXX: Hack in sight maybe fix with a class that wraps all
-		 * of this layer violations
-		 */
-		$form .= "<tr>";
-		$form .= "<td width=\"50%\" class=\"vncellreq\">";
-		$form .= gettext("Bandwidth:") . " " . $this->GetBandwidth().$this->GetBwscale();
-		$form .= "</td><td width=\"50%\"></td></tr>";
+		
+		$form = '<dl class="dl-horizontal">';
+		$form .= '	<dt>';
+		$form .= '		<a href="firewall_shaper.php?interface=' . $this->GetInterface() . '&amp;queue=' . $this->GetQname() . '&amp;action=show">' . $shaperIFlist[$this->GetInterface()] . '</a>';
+		$form .= '	</dt>';
+		$form .= '	<dd>';
+		$form .= 		$scheduler;
+		$form .= '	</dd>';
+			
+		$form .= '	<dt>';
+		$form .= 		'Bandwidth';
+		$form .= '	</dt>';
+		$form .= '	<dd>';
+		$form .= 		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .= '	</dd>';
+						
 		$tmpvalue = $this->GetQpriority();
 		if (!empty($tmpvalue)) {
-			$form .= "<tr><td width=\"20%\" class=\"vncellreq\">" .gettext("Priority: on") . " </td></tr>";
+			$form .= '	<dt>';			
+			$form .= 		'Priority';
+			$form .= '	<dt>';
+			$form .= '	<dd>';
+			$form .= 		'On';
+			$form .= '	</dd>';
 		}
+				
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
-			$form .= "<tr><td class=\"vncellreq\">" . gettext("Default: on") . " </td></tr>";
+			$form .= '	<dt>';			
+			$form .= 		'Default';
+			$form .= '	<dt>';
+			$form .= '	<dd>';
+			$form .= 		'On';
+			$form .= '	</dd>';
 		}
-		$form .= "<tr><td width=\"20%\" class=\"vncellreq\">";
-		$form .= "<a href=\"firewall_shaper_queues.php?interface=";
-		$form .= $this->GetInterface() . "&amp;queue=";
-		$form .= $this->GetQname() . "&amp;action=delete\">";
-		$form .= "<img src=\"";
-		$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
-		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("Delete queue from interface") . "\" alt=\"delete\" />";
-		$form .= "<span>" . gettext("Delete queue from interface") . "</span></a></td></tr>";
+		
+			$form .= '	<dt>';			
+			$form .= 'Delete';
+			$form .= '	<dt>';
+			$form .= '	<dd>';
+
+			$form .= '<a class="btn btn-danger btn-xs" href="firewall_shaper_queues.php?interface=';
+			$form .= $this->GetInterface() . '&amp;queue=';
+			$form .= $this->GetQname() . '&amp;action=delete">';
+			$form .= gettext("Delete queue from interface") . '</a>';
+
+			$form .= '	</dd>';	
+			
+			$form .= '</dl>';	
 
 		return $form;
 
@@ -4943,20 +4981,32 @@ function build_iface_without_this_queue($iface, $qname) {
 	global $shaperIFlist;
 
 	$altq =& $altq_list_queues[$iface];
+	
 	if ($altq) {
-		$scheduler = ": " . $altq->GetScheduler();
+		$scheduler = $altq->GetScheduler();
 	}
-	$form = "<tr><td width=\"20%\" >";
-	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&amp;queue=" . $iface."&amp;action=show\">". $shaperIFlist[$iface] . $scheduler."</a>";
-	$form .= "</td></tr>";
-	$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
-	$form .= "<a href=\"firewall_shaper_queues.php?interface=";
-	$form .= $iface . "&amp;queue=". $qname . "&amp;action=add\">";
-	$form .= "<img src=\"";
-	$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-	$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Clone shaper/queue on this interface\" alt=\"clone\" />";
-	$form .= gettext(" Clone shaper/queue on this interface") . "</a></td></tr>";
+	
+	$form = '<dl class="dl-horizontal">';
+	
+	$form .= '	<dt>';
+	$form .= '		<a href="firewall_shaper.php?interface=' . $iface . '&amp;queue=' . $iface . '&amp;action=show">' . $shaperIFlist[$iface] . '</a>';
+	$form .= '	</dt>';
+	$form .= '	<dd>';
+	$form .= 		$scheduler;
+	$form .= '	</dd>';
+		
+	$form .= '	<dt>';			
+	$form .= 'Clone';
+	$form .= '	</dt>';
+	$form .= '	<dd>';
+	$form .= '<a class="btn btn-info btn-xs" href="firewall_shaper_queues.php?interface=';
+	$form .= $iface . '&amp;queue=';
+	$form .= $qname . '&amp;action=add">';
+	$form .= gettext("Clone shaper on the I/F") . '</a>';
+	$form .= '	</dd>';	
 
+	$form .= '</dl>';
+	
 	return $form;
 
 }

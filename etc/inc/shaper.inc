@@ -675,7 +675,7 @@ class altq_root_queue {
 		global $g;
 
 		$altq =& $this;
-		
+
 		if ($altq) {
 			$scheduler = ": " . $altq->GetScheduler();
 		}
@@ -685,17 +685,17 @@ class altq_root_queue {
 		$form .= '		<a href="firewall_shaper.php?interface=' . $this->GetInterface() . '&amp;queue=' . $this->GetQname() . '&amp;action=show">' . $shaperIFlist[$this->GetInterface()] . '</a>';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .= 		$scheduler;
+		$form .=		$scheduler;
 		$form .= '	</dd>';
-			
+
 		$form .= '	<dt>';
-		$form .= 		'Bandwidth';
+		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .= 		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
 		$form .= '	</dd>';
-		
-		$form .= '	<dt>';			
+
+		$form .= '	<dt>';
 		$form .= 'Disable';
 		$form .= '	<dt>';
 		$form .= '	<dd>';
@@ -705,10 +705,10 @@ class altq_root_queue {
 		$form .= $this->GetQname() . '&amp;action=delete">';
 		$form .= gettext("Disable shaper on interface") . '</a>';
 
-		$form .= '	</dd>';	
-		
-		$form .= '</dl>';	
-		
+		$form .= '	</dd>';
+
+		$form .= '</dl>';
+
 		return $form;
 
 	}
@@ -1380,47 +1380,47 @@ class priq_queue {
 		global $shaperIFlist;
 
 		$altq =& $altq_list_queues[$this->GetInterface()];
-		
+
 		if ($altq) {
 			$scheduler = $altq->GetScheduler();
 		}
-		
+
 		$form = '<dl class="dl-horizontal">';
 		$form .= '	<dt>';
 		$form .= '		<a href="firewall_shaper.php?interface=' . $this->GetInterface() . '&amp;queue=' . $this->GetQname() . '&amp;action=show">' . $shaperIFlist[$this->GetInterface()] . '</a>';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .= 		$scheduler;
+		$form .=		$scheduler;
 		$form .= '	</dd>';
-			
+
 		$form .= '	<dt>';
-		$form .= 		'Bandwidth';
+		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .= 		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
 		$form .= '	</dd>';
-						
+
 		$tmpvalue = $this->GetQpriority();
 		if (!empty($tmpvalue)) {
-			$form .= '	<dt>';			
-			$form .= 		'Priority';
+			$form .= '	<dt>';
+			$form .=		'Priority';
 			$form .= '	<dt>';
 			$form .= '	<dd>';
-			$form .= 		'On';
+			$form .=		'On';
 			$form .= '	</dd>';
 		}
-				
+
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
-			$form .= '	<dt>';			
-			$form .= 		'Default';
+			$form .= '	<dt>';
+			$form .=		'Default';
 			$form .= '	<dt>';
 			$form .= '	<dd>';
-			$form .= 		'On';
+			$form .=		'On';
 			$form .= '	</dd>';
 		}
-		
-			$form .= '	<dt>';			
+
+			$form .= '	<dt>';
 			$form .= 'Delete';
 			$form .= '	<dt>';
 			$form .= '	<dd>';
@@ -1430,9 +1430,9 @@ class priq_queue {
 			$form .= $this->GetQname() . '&amp;action=delete">';
 			$form .= gettext("Delete queue from interface") . '</a>';
 
-			$form .= '	</dd>';	
-			
-			$form .= '</dl>';	
+			$form .= '	</dd>';
+
+			$form .= '</dl>';
 
 		return $form;
 
@@ -4981,21 +4981,21 @@ function build_iface_without_this_queue($iface, $qname) {
 	global $shaperIFlist;
 
 	$altq =& $altq_list_queues[$iface];
-	
+
 	if ($altq) {
 		$scheduler = $altq->GetScheduler();
 	}
-	
+
 	$form = '<dl class="dl-horizontal">';
-	
+
 	$form .= '	<dt>';
 	$form .= '		<a href="firewall_shaper.php?interface=' . $iface . '&amp;queue=' . $iface . '&amp;action=show">' . $shaperIFlist[$iface] . '</a>';
 	$form .= '	</dt>';
 	$form .= '	<dd>';
-	$form .= 		$scheduler;
+	$form .=		$scheduler;
 	$form .= '	</dd>';
-		
-	$form .= '	<dt>';			
+
+	$form .= '	<dt>';
 	$form .= 'Clone';
 	$form .= '	</dt>';
 	$form .= '	<dd>';
@@ -5003,10 +5003,10 @@ function build_iface_without_this_queue($iface, $qname) {
 	$form .= $iface . '&amp;queue=';
 	$form .= $qname . '&amp;action=add">';
 	$form .= gettext("Clone shaper on the I/F") . '</a>';
-	$form .= '	</dd>';	
+	$form .= '	</dd>';
 
 	$form .= '</dl>';
-	
+
 	return $form;
 
 }

@@ -3585,6 +3585,7 @@ function upgrade_117_to_118() {
 	$a_phase1 =& $config['ipsec']['phase1'];
 
 	foreach ($a_phase1 as &$ph1_entry) {
+		// update asn1dn strings from racoon's format to strongswan's 
 		if (isset($ph1_entry['myid_type']) && $ph1_entry['myid_type'] == 'asn1dn') {
 			$ph1_entry['myid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['myid_data']);
@@ -3592,6 +3593,10 @@ function upgrade_117_to_118() {
 		if (isset($ph1_entry['peerid_type']) && $ph1_entry['peerid_type'] == 'asn1dn') {
 			$ph1_entry['peerid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['peerid_data']);
+		}
+		// iketype 'auto' was removed and is really v2, update accordingly
+		if ($ph1_entry['iketype'] == "auto") {
+			$ph1_entry['iketype'] = "ikev2";
 		}
 	}
 }

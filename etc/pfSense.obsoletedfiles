@@ -186,6 +186,7 @@
 /etc/rc.d/timed
 /etc/rc.d/ugidfw
 /etc/rc.d/usbd
+/etc/rc.d/uzip
 /etc/rc.d/var
 /etc/rc.d/virecover
 /etc/rc.d/watchdogd

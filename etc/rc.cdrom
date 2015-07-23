@@ -6,9 +6,6 @@
 # Size of memory file system /conf /home partitions
 partsize="6m"
 
-# Run some initialization routines
-/etc/rc.d/uzip start
-
 export VARMFS_COPYDBPKG=yes
 
 for i in tmp varmfs etcmfs; do

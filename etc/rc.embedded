@@ -19,9 +19,6 @@ else
 	varsize="60m"
 fi
 
-# Run some initialization routines
-[ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
-
 echo -n "Setting up memory disks..."
 mdmfs -S -M -s ${tmpsize} md /tmp
 mdmfs -S -M -s ${varsize} md /var

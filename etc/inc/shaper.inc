@@ -25,8 +25,8 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/bin/kill	/sbin/kldload	/bin/rm	/bin/ps
-	pfSense_MODULE:	shaper
+	pfSense_BUILDER_BINARIES:	/bin/kill	/sbin/kldload	/bin/rm /bin/ps
+	pfSense_MODULE: shaper
 */
 
 /* XXX: needs some reducing on include. */
@@ -208,7 +208,7 @@ function get_interface_bandwidth($object) {
 	$altq =& $altq_list_queues[$int];
 	if ($altq) {
 		$bw_3 = $altq->GetBandwidth();
-		$bw_3 = $bw_3 *  get_bandwidthtype_scale($altq->GetBwscale());
+		$bw_3 = $bw_3 *	 get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
 	} else {
 		return 0;
@@ -576,15 +576,15 @@ class altq_root_queue {
 	/*
 	 * First it spits:
 	 * altq on $interface ..............
-	 *      then it goes like
-	 *      foreach ($queues as $qkey => $queue) {
-	 *              this->queues[$qkey]->build_rule();
-	 *      }
+	 *		then it goes like
+	 *		foreach ($queues as $qkey => $queue) {
+	 *				this->queues[$qkey]->build_rule();
+	 *		}
 	 */
 	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
 			$default = false;
-			$rules = " altq on  " . get_real_interface($this->GetInterface());
+			$rules = " altq on	" . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
 				$rules .= " ".strtolower($this->GetScheduler());
 			}
@@ -625,7 +625,7 @@ class altq_root_queue {
 			}
 			$frule .= $rules;
 		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
-			$rules = " altq on  " . get_real_interface($this->GetInterface());
+			$rules = " altq on	" . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
 				$rules .= " ".strtolower($this->GetScheduler());
 			}
@@ -701,16 +701,16 @@ class altq_root_queue {
 	/*
 	 * For requesting the parameters of the root queues
 	 * to the user like the traffic wizard does.
-	 */	
+	 */
 	function build_form() {
-		
+
 		$sform = new Form(new Form_Button(
 			'Submit',
 			'Save'
 		));
-		
+
 		$section = new Form_Section(null);
-		
+
 		$section->addInput(new Form_Checkbox(
 			'enabled',
 			'Enable/Disable',
@@ -718,32 +718,32 @@ class altq_root_queue {
 			($this->GetEnabled() == "on"),
 			'on'
 		));
-		
+
 		$section->addInput(new Form_StaticText(
 			'Name',
 			$this->GetQname()
 		));
-		
+
 		$section->addInput(new Form_Select(
 			'scheduler',
 			'Scheduler Type',
 			$this->GetScheduler(),
-			array('HFSC' => 'HFSC', 
+			array('HFSC' => 'HFSC',
 				  'CBQ' => 'CBQ',
 				  'FAIRQ' => 'FAIRQ',
 				  'CODELQ' => 'CODELQ',
 				  'PRIQ' => 'PRIQ')
 		))->setHelp('Changing this changes all child queues! Beware you can lose information.');
-				
+
 		$group = new Form_group('Bandwidth');
-		
+
 		$group->add(new Form_Input(
 			'bandwidth',
 			null,
 			'number',
 			$this->GetBandwidth()
 		));
-	
+
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
@@ -753,40 +753,40 @@ class altq_root_queue {
 				  'Gb' => 'Gb',
 				  'b' => 'b')
 		));
-		
+
 		$section->add($group);
-		
+
 		$section->addInput(new Form_Input(
 			'qlimit',
 			'Queue Limit',
 			'number',
 			$this->GetQlimit()
 		));
-		
+
 		$section->addInput(new Form_Input(
 			'tbrconfig',
 			'TRB Size',
 			'number',
 			$this->GetTbrConfig()
 		))->setHelp('Adjusts the size, in bytes, of the token bucket regulator. If not specified, heuristics based on the interface ' .
-			  		'bandwidth are used to determine the size.');
-				
+					'bandwidth are used to determine the size.');
+
 		$section->addInput(new Form_Input(
 			'interface',
 			null,
 			'hidden',
 			$this->GetInterface()
 		));
-		
+
 		$section->addInput(new Form_Input(
 			'name',
 			null,
 			'hidden',
 			$this->GetQname()
 		));
-								
+
 		$sform->add($section);
-		
+
 		return($sform);
 	}
 
@@ -1085,7 +1085,7 @@ class priq_queue {
 			$input_errors[] = "Bandwidth cannot be negative.";
 		}
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
-		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
+			($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
@@ -1262,13 +1262,13 @@ class priq_queue {
 	 * object is created and later when we may
 	 * need to update it. (2)
 	 */
-	 
+
 	function build_form() {
-		
+
 		$sform = new Form();
-		
+
 		$section = new Form_Section(null);
-		
+
 		$section->addInput(new Form_Checkbox(
 			'enabled',
 			'Enable/Disable',
@@ -1276,12 +1276,12 @@ class priq_queue {
 			($this->GetEnabled() == "on"),
 			'on'
 		));
-		
+
 		$section->addInput(new Form_StaticText(
 			'Name',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
-		
+
 		$section->addInput(new Form_Input(
 			'priority',
 			'Priority',
@@ -1296,39 +1296,39 @@ class priq_queue {
 			'number',
 			$this->GetQlimit()
 		))->setHelp('Queue limit in packets.');
-		
+
 		$group = new Form_Group('Scheduler options');
-		
+
 		if (empty($this->subqueues)) {
 			$group->add(new Form_Checkbox(
 				'default',
 				null,
 				null,
 				$this->GetDefault()
-			))->setHelp('Default Queue');			
+			))->setHelp('Default Queue');
 		}
-		
+
 		$group->add(new Form_Checkbox(
 			'red',
 			null,
 			null,
 			!empty($this->GetRed())
 		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
-		
+
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
 		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
-		
+
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
 		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
-		
+
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
@@ -1337,27 +1337,27 @@ class priq_queue {
 		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
 
 		$group->setHelp('Select options for this queue');
-		
-		$section->add($group);	
-		
+
+		$section->add($group);
+
 		$section->addInput(new Form_Input(
 			'description',
 			'Description',
 			'text',
 			$this->GetDescription()
 		));
-		
+
 		$section->addInput(new Form_Input(
 			'interface',
 			null,
 			'hidden',
 			$this->GetInterface()
-		));		
-			
+		));
+
 		$sform->add($section);
-		
+
 		return($sform);
-	}	 
+	}
 
 	function build_shortform() {
 		/* XXX: Hacks in sight. Mostly layer violations!  */
@@ -1820,10 +1820,10 @@ class hfsc_queue extends priq_queue {
 		if ($data['linkshare3'] <> "" && !is_valid_shaperbw($data['linkshare3'])) {
 			$input_errors[] = gettext("linkshare m2 value needs to be Kb, Mb, Gb, or %");
 		}
-		if ($data['realtime1'] <> "" &&  $data['realtime2'] == "") {
+		if ($data['realtime1'] <> "" &&	 $data['realtime2'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing (d) value");
 		}
-		if ($data['realtime2'] <> "" &&  $data['realtime1'] == "") {
+		if ($data['realtime2'] <> "" &&	 $data['realtime1'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing initial bandwidth (m1) value");
 		}
 
@@ -1997,13 +1997,13 @@ class hfsc_queue extends priq_queue {
 				$default = true;
 			}
 
-			if ($this->GetRealtime() <> "")  {
+			if ($this->GetRealtime() <> "")	 {
 				if ($comma) {
 					$pfq_rule .= " , ";
 				}
 				if ($this->GetR_m1()  <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime (".$this->GetR_m1() . ", " . $this->GetR_d().", ". $this->GetR_m2() .") ";
-				} else  if ($this->GetR_m2() <> "") {
+				} else	if ($this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime " . $this->GetR_m2();
 				}
 				$comma = 1;
@@ -2054,118 +2054,78 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_javascript() {
-		
+
 		$javascript = <<<EOJS
 <script type="text/javascript">
-//<![CDATA[   
+//<![CDATA[
 	events.push(function(){
-		
-	    // Disables the specified input element
-	    function disableInput(id, disable) {
-	        $('#' + id).prop("disabled", disable);    
-	    }
-	    
-	    // Upperlimit
-	    function enable_upperlimit() {
-	    	disableInput('upperlimit1', !$('#upperlimit').prop('checked'));
-	    	disableInput('upperlimit2', !$('#upperlimit').prop('checked'));
-	    	disableInput('upperlimit3', !$('#upperlimit').prop('checked'));
-	    }
-	    
-	    $('#upperlimit').click(function () {
-	        enable_upperlimit();
-	    });
-	    
-	    enable_upperlimit();
 
-	    // realtime
-	    function enable_realtime() {
-	    	disableInput('realtime1', !$('#realtime').prop('checked'));
-	    	disableInput('realtime2', !$('#realtime').prop('checked'));
-	    	disableInput('realtime3', !$('#realtime').prop('checked'));
-	    }
-	    
-	    $('#realtime').click(function () {
-	        enable_realtime();
-	    });
-	    
-	    enable_realtime();
-	    	    
-	    // linkshare
-	    function enable_linkshare() {
-	    	disableInput('linkshare1', !$('#linkshare').prop('checked'));
-	    	disableInput('linkshare2', !$('#linkshare').prop('checked'));
-	    	disableInput('linkshare3', !$('#linkshare').prop('checked'));
-	    }
-	    
-	    $('#linkshare').click(function () {
-	        enable_linkshare();
-	    });
-	    
-	    enable_linkshare();
+		// Disables the specified input element
+		function disableInput(id, disable) {
+			$('#' + id).prop("disabled", disable);
+		}
+
+		// Upperlimit
+		function enable_upperlimit() {
+			disableInput('upperlimit1', !$('#upperlimit').prop('checked'));
+			disableInput('upperlimit2', !$('#upperlimit').prop('checked'));
+			disableInput('upperlimit3', !$('#upperlimit').prop('checked'));
+		}
+
+		$('#upperlimit').click(function () {
+			enable_upperlimit();
+		});
+
+		enable_upperlimit();
+
+		// realtime
+		function enable_realtime() {
+			disableInput('realtime1', !$('#realtime').prop('checked'));
+			disableInput('realtime2', !$('#realtime').prop('checked'));
+			disableInput('realtime3', !$('#realtime').prop('checked'));
+		}
+
+		$('#realtime').click(function () {
+			enable_realtime();
+		});
+
+		enable_realtime();
+
+		// linkshare
+		function enable_linkshare() {
+			disableInput('linkshare1', !$('#linkshare').prop('checked'));
+			disableInput('linkshare2', !$('#linkshare').prop('checked'));
+			disableInput('linkshare3', !$('#linkshare').prop('checked'));
+		}
+
+		$('#linkshare').click(function () {
+			enable_linkshare();
+		});
+
+		enable_linkshare();
 	});
-//]]>  
-</script>		
+//]]>
+</script>
 EOJS;
-/*
-		$javascript = parent::build_javascript();
-		$javascript .= "<script type=\"text/javascript\">";
-		$javascript .= "//<![CDATA[\n";
-		$javascript .= "function enable_realtime(enable_over) { \n";
-		$javascript .= "if (document.iform.realtime.checked || enable_over) { \n";
-		$javascript .= "document.iform.realtime1.disabled = 0;\n";
-		$javascript .= "document.iform.realtime2.disabled = 0;\n";
-		$javascript .= "document.iform.realtime3.disabled = 0;\n";
-		$javascript .= " } else { \n";
-		$javascript .= "document.iform.realtime1.disabled = 1;\n";
-		$javascript .= "document.iform.realtime2.disabled = 1;\n";
-		$javascript .= "document.iform.realtime3.disabled = 1;\n";
-		$javascript .= " } \n";
-		$javascript .= " } \n";
-		$javascript .= "function enable_linkshare(enable_over) { \n";
-		$javascript .= "if (document.iform.linkshare.checked || enable_over) { \n";
-		$javascript .= "document.iform.linkshare1.disabled = 0;\n";
-		$javascript .= "document.iform.linkshare2.disabled = 0;\n";
-		$javascript .= "document.iform.linkshare3.disabled = 0;\n";
-		$javascript .= " } else { \n";
-		$javascript .= "document.iform.linkshare1.disabled = 1;\n";
-		$javascript .= "document.iform.linkshare2.disabled = 1;\n";
-		$javascript .= "document.iform.linkshare3.disabled = 1;\n";
-		$javascript .= " } \n";
-		$javascript .= " } \n";
-		$javascript .= "function enable_upperlimit(enable_over) { \n";
-		$javascript .= "if (document.iform.upperlimit.checked || enable_over) { \n";
-		$javascript .= "document.iform.upperlimit1.disabled = 0;\n";
-		$javascript .= "document.iform.upperlimit2.disabled = 0;\n";
-		$javascript .= "document.iform.upperlimit3.disabled = 0;\n";
-		$javascript .= " } else { \n";
-		$javascript .= "document.iform.upperlimit1.disabled = 1;\n";
-		$javascript .= "document.iform.upperlimit2.disabled = 1;\n";
-		$javascript .= "document.iform.upperlimit3.disabled = 1;\n";
-		$javascript .= " } \n";
-
-		$javascript .= "} \n";
-		$javascript .= "//]]>";
-		$javascript .= "</script>";*/
 
 		return $javascript;
 	}
 
 	function build_form() {
-		
+
 		$sform = parent::build_form();
-		
+
 		$section = new Form_Section('Service Curve (sc)');
 
 		$group = new Form_Group('Bandwidth');
-		
+
 		$group->add(new Form_Input(
 			'bandwidth',
 			null,
 			'number',
 			$this->GetBandwidth()
 		));
-	
+
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
@@ -2175,27 +2135,27 @@ EOJS;
 				  'Gb' => 'Gb',
 				  'b' => 'b')
 		));
-		
+
 		$group->setHelp('Choose the amount of bandwidth for this queue');
-		
+
 		$section->add($group);
-				
+
 		$group = new Form_Group('Max bandwidth for queue.');
-		
+
 		$group->add(new Form_Checkbox(
 			'upperlimit',
 			null,
 			'Upper Limit',
 			($this->GetUpperlimit()<> "")
-		));	
-		
+		));
+
 		$group->add(new Form_Input(
 			'upperlimit1',
 			null,
 			'text',
 			$this->GetU_m1()
 		));
-		
+
 		$group->add(new Form_Input(
 			'upperlimit2',
 			null,
@@ -2208,26 +2168,26 @@ EOJS;
 			'text',
 			$this->GetU_m2()
 		));
-						
-				
-		$section->add($group);	
-		
+
+
+		$section->add($group);
+
 		$group = new Form_Group('Min bandwidth for queue.');
-		
+
 		$group->add(new Form_Checkbox(
 			'realtime',
 			null,
 			'Real Time',
 			($this->GetRealtime()<> "")
-		));	
-		
+		));
+
 		$group->add(new Form_Input(
 			'realtime1',
 			null,
 			'text',
 			$this->GetR_m1()
 		));
-		
+
 		$group->add(new Form_Input(
 			'realtime2',
 			null,
@@ -2240,25 +2200,25 @@ EOJS;
 			'text',
 			$this->GetR_m2()
 		));
-					
+
 		$section->add($group);
-		
+
 		$group = new Form_Group('B/W share of a backlogged queue.');
-		
+
 		$group->add(new Form_Checkbox(
 			'linkshare',
 			null,
 			'Link Share',
 			($this->GetLinkshare()<> "")
-		));	
-		
+		));
+
 		$group->add(new Form_Input(
 			'linkshare1',
 			null,
 			'text',
 			$this->GetL_m1()
 		));
-		
+
 		$group->add(new Form_Input(
 			'linkshare2',
 			null,
@@ -2271,17 +2231,17 @@ EOJS;
 			'text',
 			$this->GetL_m2()
 		));
-					
+
 		$group->sethelp('Bandwidth share overrides priority.' . '<br />' .
 						'The format for service curve specifications is (m1, d, m2). m2 controls the bandwidth assigned to the queue. ' .
 						'm1 and d are optional and can be used to control the initial bandwidth assignment. ' .
 						'For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value given in m2.');
-							
+
 		$section->add($group);
-				
+
 		$sform->add($section);
-		
-		return($sform);		
+
+		return($sform);
 	}
 
 	function update_altq_queue_data(&$data) {
@@ -2708,18 +2668,18 @@ class cbq_queue extends priq_queue {
 
 	function build_form() {
 		$sform = parent::build_form();
-		
+
 		$section = new Form_Section('');
 
 		$group = new Form_Group('Bandwidth');
-		
+
 		$group->add(new Form_Input(
 			'bandwidth',
 			null,
 			'number',
 			$this->GetBandwidth()
 		));
-	
+
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
@@ -2729,18 +2689,18 @@ class cbq_queue extends priq_queue {
 				  'Gb' => 'Gb',
 				  'b' => 'b')
 		));
-		
+
 		$group->setHelp('Choose the amount of bandwidth for this queue');
 
 		$section->add($group);
-		
+
 		$section->addInput(new Form_Checkbox(
 			'borrow',
 			'Scheduler option',
 			'Borrow from other queues when available',
 			($this->GetBorrow() == "on")
-		));	
-		
+		));
+
 		return $sform;
 	}
 
@@ -2948,7 +2908,7 @@ class fairq_queue extends priq_queue {
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
 		}
 		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() ||
-		    $this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
+			$this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
 			$pfq_rule .= " fairq ( ";
 			$tmpvalue = trim($this->GetRed());
 			if (!empty($tmpvalue)) {
@@ -3008,18 +2968,18 @@ class fairq_queue extends priq_queue {
 
 	function build_form() {
 		$form = parent::build_form();
-		
+
 		$section = new Form_Section('');
 
 		$group = new Form_Group('Bandwidth');
-		
+
 		$group->add(new Form_Input(
 			'bandwidth',
 			null,
 			'number',
 			$this->GetBandwidth()
 		));
-	
+
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
@@ -3029,11 +2989,11 @@ class fairq_queue extends priq_queue {
 				  'Gb' => 'Gb',
 				  'b' => 'b')
 		));
-		
+
 		$group->setHelp('Choose the amount of bandwidth for this queue');
 
 		$section->add($group);
-		
+
 
 		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
 		$form .= "<td class=\"vtable\"><table><tr><td>";
@@ -3248,11 +3208,11 @@ class dummynet_class {
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
-		    ($data['plr'] < 0) || ($data['plr'] > 1))) {
+			($data['plr'] < 0) || ($data['plr'] > 1))) {
 				$input_errors[] = gettext("Plr must be a value between 0 and 1.");
 		}
 		if ($data['buckets'] && (!is_numeric($data['buckets']) ||
-		    ($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
+			($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
 				$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
@@ -3791,10 +3751,10 @@ EOD;
 		$form .= "</select>";
 		$form .= "&nbsp;<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
-			  .  "be created for each source/destination IP address encountered, \n"
-			  .  "respectively. This makes it possible to easily specify bandwidth \n"
-			  .  "limits per host.") . "</span><br />";
+			  .	 "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
+			  .	 "be created for each source/destination IP address encountered, \n"
+			  .	 "respectively. This makes it possible to easily specify bandwidth \n"
+			  .	 "limits per host.") . "</span><br />";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none") {
 			$form .= $mask['bits'];
@@ -3816,9 +3776,9 @@ EOD;
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
-			  .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
-			  .  "per pipe.") . "</span>";
+			  .	 "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+			  .	 "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+			  .	 "per pipe.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3841,7 +3801,7 @@ EOD;
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\" />";
 		$form .= "&nbsp;ms<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty)") . "</span><br />";
+			  .	 "should specify 0 here (or leave the field empty)") . "</span><br />";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
@@ -3849,8 +3809,8 @@ EOD;
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty). "
-			  .  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
+			  .	 "should specify 0 here (or leave the field empty). "
+			  .	 "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
@@ -3859,9 +3819,9 @@ EOD;
 		$form .= $this->GetQlimit() . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-			  .  "then they are delayed by value specified in the Delay field, and then they "
-			  .  "are delivered to their destination.") . "</span>";
+			  .	 "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
+			  .	 "then they are delayed by value specified in the Delay field, and then they "
+			  .	 "are delivered to their destination.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
@@ -3940,7 +3900,7 @@ class dnqueue_class extends dummynet_class {
 		parent::validate_input($data, $input_errors);
 
 		if ($data['weight'] && ((!is_numeric($data['weight'])) ||
-		    ($data['weight'] < 1 && $data['weight'] > 100))) {
+			($data['weight'] < 1 && $data['weight'] > 100))) {
 			$input_errors[] = gettext("Weight must be an integer between 1 and 100.");
 		}
 	}
@@ -4054,7 +4014,6 @@ class dnqueue_class extends dummynet_class {
 	function build_javascript() {
 		return parent::build_javascript();
 	}
-
 
 	function build_formX() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
@@ -4831,7 +4790,7 @@ function read_dummynet_config() {
 	$dummynet_pipe_list = array();
 
 	if (!is_array($config['dnshaper']['queue']) ||
-	    !count($config['dnshaper']['queue'])) {
+		!count($config['dnshaper']['queue'])) {
 		return;
 	}
 
@@ -4867,7 +4826,7 @@ function get_interface_list_to_show() {
 	foreach ($shaperIFlist as $shif => $shDescr) {
 		if ($altq_list_queues[$shif]) {
 			continue;
-		} else  {
+		} else	{
 			if (!is_altq_capable(get_real_interface($shif))) {
 				continue;
 			}
@@ -5002,19 +4961,10 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
+$default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
+	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 
-$default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
-$default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
-$default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
-	. "buttons at the bottom represent queue actions and are activated accordingly.");
-$default_shaper_msg .= "</strong></span>";
-$default_shaper_msg .= "</td></tr>";
-
-$dn_default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
-$dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
-$dn_default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
-	. "buttons at the bottom represent queue actions and are activated accordingly.");
-$dn_default_shaper_msg .= "</strong></span>";
-$dn_default_shaper_msg .= "</td></tr>";
+$dn_default_shaper_msg = $default_shaper_msg;
 
 ?>

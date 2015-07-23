@@ -4,6 +4,7 @@
 /.profile
 /RELENG_1_2
 /bin/rcp
+/boot/device.hints_wrap
 /dist
 /etc/auth.conf
 /etc/current-supfile

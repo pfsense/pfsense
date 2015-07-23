@@ -332,8 +332,8 @@ if ($_POST) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 	}
 
-	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
-		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2")
+		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2");
                 
         if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
             if ($config['system']['crypto_hardware'] == "glxsb") {
@@ -622,7 +622,7 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<select name="iketype" class="formselect" onchange='iketype_change()'>
 							<?php
-								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2", "auto" => "Auto");
+								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2");
 								foreach ($keyexchange as $kidx => $name):
 							?>
 								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected=\"selected\""; ?>>

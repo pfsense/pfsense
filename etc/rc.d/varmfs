@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# Copyright (c) 2005 Dario Freni
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+# $FreeBSD$
+# $Id: varmfs.rc,v 1.1.1.1 2008/03/25 19:58:16 sullrich Exp $
+#
+
+# PROVIDE: varmfs
+# REQUIRE: mountcritlocal
+# BEFORE: var
+
+. /etc/rc.subr
+
+name="varmfs"
+kenvvarsize=`kenv -q freesbie.varsize`
+varsize=${kenvvarsize:-"32m"}
+
+load_rc_config $name
+
+tempdir=/tmp
+
+echo "Generating MFS /var partition"
+
+device=$(mdconfig -a -t malloc -o compress -s ${varsize})
+bsdlabel -w ${device} auto
+newfs -n -m 2 /dev/${device} > /dev/null 2>&1
+mount -o noatime /dev/${device} ${tempdir}
+
+back=$PWD
+
+cd /var
+if [ -z "${VARMFS_COPYDBPKG:-}" ]; then
+	find . -not -path "*/db/pkg*" -print -depth | cpio -dump --quiet ${tempdir}
+else
+	find . -print -depth | cpio -dump --quiet ${tempdir}
+fi
+
+cd $back
+
+mtree -PUer -q -p ${tempdir} < /etc/mtree/var.dist > /dev/null 2>&1
+
+umount ${tempdir}
+mount -o noatime /dev/${device} /var

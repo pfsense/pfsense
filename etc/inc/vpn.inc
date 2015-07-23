@@ -857,9 +857,10 @@ EOD;
 				$leftid = "leftid = {$myid_data}";
 			}
 
-			/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
 			$peerid_spec = '';
-			if (!isset($ph1ent['mobile'])) {
+			if (isset($ph1ent['mobile']) && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) {
+				// Only specify peer ID if we are not dealing with mobile PSK
+			} else {
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
 				if ($peerid_type != 'address' && $peerid_type != 'keyid' && $peerid_type != 'asn1dn') {
 					$peerid_spec = "{$peerid_type}:{$peerid_data}";

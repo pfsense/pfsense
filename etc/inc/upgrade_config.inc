@@ -3767,5 +3767,17 @@ function upgrade_117_to_118() {
 		unset($miniupnpd["permuser{$i}"]);
 	}
 }
+
+function upgrade_118_to_119() {
+	global $config;
+
+	if (isset($config['system']['maxmss_enable']) && isset($config['system']['maxmss'])) {
+		$config['ipsec']['maxmss_enable'] = $config['system']['maxmss_enable'];
+		$config['ipsec']['maxmss'] = $config['system']['maxmss'];
+		unset($config['system']['maxmss_enable']);
+		unset($config['system']['maxmss']);
+	}
+}
+
 ?>
 

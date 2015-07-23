@@ -41,6 +41,7 @@
 */
 
 require_once("ipsec.inc");
+require_once("filter.inc");
 
 function vpn_ipsec_configure_loglevels($forconfig = false) {
 	global $config, $ipsec_loglevels;

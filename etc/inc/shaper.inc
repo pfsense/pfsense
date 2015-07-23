@@ -697,107 +697,97 @@ class altq_root_queue {
 		return $form;
 
 	}
+
 	/*
 	 * For requesting the parameters of the root queues
 	 * to the user like the traffic wizard does.
-	 */
+	 */	
 	function build_form() {
-		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
-		$form .= gettext("Enable/Disable");
-		$form .= "<br /></td><td class=\"vncellreq\">";
-		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/disable discipline and its children") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<strong>".$this->GetQname()."</strong>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Scheduler Type ");
-		$form .= "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<select id=\"scheduler\" name=\"scheduler\" class=\"formselect\">";
-		$form .= "<option value=\"HFSC\"";
-		if ($this->GetScheduler() == "HFSC") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">HFSC</option>";
-		$form .= "<option value=\"CBQ\"";
-		if ($this->GetScheduler() == "CBQ") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">CBQ</option>";
-		$form .= "<option value=\"FAIRQ\"";
-		if ($this->GetScheduler() == "FAIRQ") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">FAIRQ</option>";
-		$form .= "<option value=\"CODELQ\"";
-		if ($this->GetScheduler() == "CODELQ") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">CODELQ</option>";
-		$form .= "<option value=\"PRIQ\"";
-		if ($this->GetScheduler() == "PRIQ") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">PRIQ</option>";
-		$form .= "</select>";
-		$form .= "<br /> <span class=\"vexpl\">";
-		$form .= gettext("NOTE: Changing this changes all child queues!");
-		$form .= gettext(" Beware you can lose information.");
-		$form .= "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth");
-		$form .= "</td><td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"bandwidth\" name=\"bandwidth\" value=\"";
-		$form .= $this->GetBandwidth() . "\" />";
-		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
-		$form .= "<option value=\"Kb\"";
-		if ($this->GetBwscale() == "Kb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">Kbit/s</option>";
-		$form .= "<option value=\"Mb\"";
-		if ($this->GetBwscale() == "Mb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">Mbit/s</option>";
-		$form .= "<option value=\"Gb\"";
-		if ($this->GetBwscale() == "Gb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">Gbit/s</option>";
-		$form .= "<option value=\"b\"";
-		if ($this->GetBwscale() == "b") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">Bit/s</option>";
-		$form .= "</select>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">Queue Limit</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-		$form .= $this->GetQlimit();
-		$form .= "\" />";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">TBR Size</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<br /><input type=\"text\" id=\"tbrconfig\" name=\"tbrconfig\" value=\"";
-		$form .= $this->GetTbrConfig();
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">";
-		$form .= gettext("Adjusts the size, in bytes, of the token bucket regulator. "
-			  .  "If not specified, heuristics based on the interface "
-			  .  "bandwidth are used to determine the size.");
-		$form .= "</span></td></tr>";
-		$form .= "<input type=\"hidden\" id=\"interface\" name=\"interface\"";
-		$form .= " value=\"" . $this->GetInterface() . "\" />";
-		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"".$this->GetQname()."\" />";
-
-		return $form;
+		
+		$sform = new Form(new Form_Button(
+			'Submit',
+			'Save'
+		));
+		
+		$section = new Form_Section(null);
+		
+		$section->addInput(new Form_Checkbox(
+			'enabled',
+			'Enable/Disable',
+			'Enable/disable discipline and its children',
+			($this->GetEnabled() == "on"),
+			'on'
+		));
+		
+		$section->addInput(new Form_StaticText(
+			'Name',
+			$this->GetQname()
+		));
+		
+		$section->addInput(new Form_Select(
+			'scheduler',
+			'Scheduler Type',
+			$this->GetScheduler(),
+			array('HFSC' => 'HFSC', 
+				  'CBQ' => 'CBQ',
+				  'FAIRQ' => 'FAIRQ',
+				  'CODELQ' => 'CODELQ',
+				  'PRIQ' => 'PRIQ')
+		))->setHelp('Changing this changes all child queues! Beware you can lose information.');
+				
+		$group = new Form_group('Bandwidth');
+		
+		$group->add(new Form_Input(
+			'bandwidth',
+			null,
+			'number',
+			$this->GetBandwidth()
+		));
+	
+		$group->add(new Form_Select(
+			'bandwidthtype',
+			null,
+			$this->GetBwscale(),
+			array('Kb' => 'Kb',
+				  'Mb' => 'Mb',
+				  'Gb' => 'Gb',
+				  'b' => 'b')
+		));
+		
+		$section->add($group);
+		
+		$section->addInput(new Form_Input(
+			'qlimit',
+			'Queue Limit',
+			'number',
+			$this->GetQlimit()
+		));
+		
+		$section->addInput(new Form_Input(
+			'tbrconfig',
+			'TRB Size',
+			'number',
+			$this->GetTbrConfig()
+		))->setHelp('Adjusts the size, in bytes, of the token bucket regulator. If not specified, heuristics based on the interface ' .
+			  		'bandwidth are used to determine the size.');
+				
+		$section->addInput(new Form_Input(
+			'interface',
+			null,
+			'hidden',
+			$this->GetInterface()
+		));
+		
+		$section->addInput(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
+								
+		$sform->add($section);
+		
+		return($sform);
 	}
 
 	function update_altq_queue_data(&$data) {
@@ -1270,90 +1260,104 @@ class priq_queue {
 	 * for getting the parameters.
 	 * Should do even for first time when the
 	 * object is created and later when we may
-	 * need to update it.
+	 * need to update it. (2)
 	 */
+	 
 	function build_form() {
-		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
-		$form .= gettext("Enable/Disable");
-		$form .= "<br /></td><td class=\"vncellreq\">";
-		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr>";
-		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">";
-		$form .= gettext("Queue Name") . "</td><td width=\"78%\" class=\"vtable\">";
-		$form .= "<input name=\"newname\" type=\"text\" id=\"newname\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
-		$form .= htmlspecialchars($this->GetQname());
-		$form .= "\" />";
-		$form .= "<input name=\"name\" type=\"hidden\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
-		$form .= htmlspecialchars($this->GetQname());
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">" . gettext("Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.");
-		$form .= "</span><br /></td>";
-		$form .= "</tr><tr>";
-		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">" . gettext("Priority") . "</td>";
-		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
-		$form .= htmlspecialchars($this->GetQpriority());
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">" . gettext("For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.") . "</span></td>";
-		$form .= "</tr>";
-		$form .= "<tr>";
-		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">" . gettext("Queue limit") . "</td>";
-		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"8\" value=\"";
-		$form .= htmlspecialchars($this->GetQlimit());
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">" . gettext("Queue limit in packets.");
-		$form .= "</span></td></tr>";
-		$form .= "<tr>";
-		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncell\">" . gettext("Scheduler options") . "</td>";
-		$form .= "<td width=\"78%\" class=\"vtable\">";
-		if (empty($this->subqueues)) {
-			if ($this->GetDefault()) {
-				$form .= "<input type=\"checkbox\" id=\"default\" checked=\"checked\" name=\"default\" value=\"default\"";
-				$form .= " /> " . gettext("Default queue") . "<br />";
-			} else {
-				$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
-				$form .= " /> " . gettext("Default queue") . "<br />";
-			}
-		}
-		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
-		$tmpvalue = $this->GetRed();
-		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#red\">" . gettext("Random Early Detection") . "</a><br />";
-		$form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\" value=\"rio\"";
-		$tmpvalue = $this->GetRio();
-		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#rio\">" . gettext("Random Early Detection In and Out") . "</a><br />";
-		$form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\" value=\"ecn\"";
-		$tmpvalue = $this->GetEcn();
-		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">" . gettext("Explicit Congestion Notification") . "</a><br />";
-		$form .= "<input type=\"checkbox\" id=\"codel\" name=\"codel\" value=\"codel\"";
-		$tmpvalue = $this->GetCodel();
-		if (!empty($tmpvalue)) {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /> <a target=\"_new\" href=\"http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br />";
-		$form .= "<span class=\"vexpl\"><br />" . gettext("Select options for this queue");
-		$form .= "</span></td></tr><tr>";
-		$form .= "<td width=\"22%\" class=\"vncellreq\">" . gettext("Description") . "</td>";
-		$form .= "<td width=\"78%\" class=\"vtable\">";
-		$form .= "<input type=\"text\" name=\"description\" size=\"40\" class=\"formfld unknown\" value=\"" . $this->GetDescription() . "\" />";
-		$form .= "</td></tr>";
-		$form .= "<input type=\"hidden\" name=\"interface\" id=\"interface\"";
-		$form .= " value=\"".$this->GetInterface()."\" />";
+		
+		$sform = new Form();
+		
+		$section = new Form_Section(null);
+		
+		$section->addInput(new Form_Checkbox(
+			'enabled',
+			'Enable/Disable',
+			'Enable/disable discipline and its children',
+			($this->GetEnabled() == "on"),
+			'on'
+		));
+		
+		$section->addInput(new Form_StaticText(
+			'Name',
+			$this->GetQname()
+		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
+		
+		$section->addInput(new Form_Input(
+			'priority',
+			'Priority',
+			'number',
+			$this->GetQpriority(),
+			['min' => '0', 'max'=> '7']
+		))->setHelp('For hfsc, the range is 0 to 7. The default is 1. Hfsc queues with a higher priority are preferred in the case of overload.');
 
-		return $form;
-	}
+		$section->addInput(new Form_Input(
+			'qlimit',
+			'Queue Limit',
+			'number',
+			$this->GetQlimit()
+		))->setHelp('Queue limit in packets.');
+		
+		$group = new Form_Group('Scheduler options');
+		
+		if (empty($this->subqueues)) {
+			$group->add(new Form_Checkbox(
+				'default',
+				null,
+				null,
+				$this->GetDefault()
+			))->setHelp('Default Queue');			
+		}
+		
+		$group->add(new Form_Checkbox(
+			'red',
+			null,
+			null,
+			!empty($this->GetRed())
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
+		
+		$group->add(new Form_Checkbox(
+			'rio',
+			null,
+			null,
+			!empty($this->GetRio())
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
+		
+		$group->add(new Form_Checkbox(
+			'ecn',
+			null,
+			null,
+			!empty($this->GetEcn())
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		
+		$group->add(new Form_Checkbox(
+			'codel',
+			null,
+			null,
+			!empty($this->GetCodel())
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+
+		$group->setHelp('Select options for this queue');
+		
+		$section->add($group);	
+		
+		$section->addInput(new Form_Input(
+			'description',
+			'Description',
+			'text',
+			$this->GetDescription()
+		));
+		
+		$section->addInput(new Form_Input(
+			'interface',
+			null,
+			'hidden',
+			$this->GetInterface()
+		));		
+			
+		$sform->add($section);
+		
+		return($sform);
+	}	 
 
 	function build_shortform() {
 		/* XXX: Hacks in sight. Mostly layer violations!  */
@@ -2094,124 +2098,136 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_form() {
-		$form = parent::build_form();
-		$form .= "<tr>";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
-		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-		$form .= htmlspecialchars($this->GetBandwidth());
-		$form .= "\" />";
-		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
-		$form .= "<option value=\"Gb\"";
-		if ($this->GetBwscale() == "Gb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Gbit/s") . "</option>";
-		$form .= "<option value=\"Mb\"";
-		if ($this->GetBwscale() == "Mb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Mbit/s") . "</option>";
-		$form .= "<option value=\"Kb\"";
-		if ($this->GetBwscale() == "Kb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"b\"";
-		if ($this->GetBwscale() == "b") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Bit/s") . "</option>";
-		$form .= "<option value=\"%\"";
-		if ($this->GetBwscale() == "%") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">%</option>";
-		$form .= "</select> <br />";
-		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
-		$form .= "</span></td></tr>";
-		$form .= "<tr>";
-		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">" . gettext("Service Curve (sc)") . "</td>";
-		$form .= "<td width=\"78%\" class=\"vtable\">";
-		$form .= "<table>";
-		$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
-		$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
-		if ($this->GetUpperlimit()<> "") {
-			$form .=  " checked=\"checked\" ";
-		}
-		$form .= "onchange=\"enable_upperlimit()\" /> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_m1());
-		$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
-		if ($this->GetUpperlimit() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_d());
-		$form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
-		if ($this->GetUpperlimit() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_m2());
-		$form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
-		if ($this->GetUpperlimit() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td>" . gettext("The maximum allowed bandwidth for the queue.") . "</td></tr>";
-		$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
-		if ($this->GetRealtime() <> "") {
-			$form .=  " checked=\"checked\" ";
-		}
-		$form .= "onchange=\"enable_realtime()\" /> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_m1());
-		$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
-		if ($this->GetRealtime() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_d());
-		$form .= "\" id=\"realtime2\" name=\"realtime2\" ";
-		if ($this->GetRealtime() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_m2());
-		$form .= "\" id=\"realtime3\" name=\"realtime3\" ";
-		if ($this->GetRealtime() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td>" . gettext("The minimum required bandwidth for the queue.") . "</td></tr>";
-		$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" name=\"linkshare\"";
-		if ($this->GetLinkshare() <> "") {
-			$form .=  " checked=\"checked\" ";
-		}
-		$form .= "onchange=\"enable_linkshare()\" /> " . gettext("Link share:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_m1());
-		$form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
-		if ($this->GetLinkshare() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_d());
-		$form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
-		if ($this->GetLinkshare() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_m2());
-		$form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
-		if ($this->GetLinkshare() == "") {
-			$form .= " disabled=\"disabled\"";
-		}
-		$form .= " /></td><td>" . gettext("The bandwidth share of a backlogged queue - this overrides priority.") . "</td></tr>";
-		$form .= "</table><br />";
-		$form .= gettext("The format for service curve specifications is (m1, d, m2).  m2 controls "
-			  .  "the bandwidth assigned to the queue.  m1 and d are optional and can be "
-			  .  "used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value "
-			  .  "given in m2.");
-		$form .= "</td>";
-		$form .= "</tr>";
+		
+		$sform = parent::build_form();
+		
+		$section = new Form_Section('Service Curve (sc)');
 
-		return $form;
+		$group = new Form_Group('Bandwidth');
+		
+		$group->add(new Form_Input(
+			'bandwidth',
+			null,
+			'number',
+			$this->GetBandwidth()
+		));
+	
+		$group->add(new Form_Select(
+			'bandwidthtype',
+			null,
+			$this->GetBwscale(),
+			array('Kb' => 'Kb',
+				  'Mb' => 'Mb',
+				  'Gb' => 'Gb',
+				  'b' => 'b')
+		));
+		
+		$group->setHelp('Choose the amount of bandwidth for this queue');
+		
+		$section->add($group);
+				
+		$group = new Form_Group('Max bandwidth for queue.');
+		
+		$group->add(new Form_Checkbox(
+			'upperlimit',
+			null,
+			'Upper Limit',
+			($this->GetUpperlimit()<> "")
+		));	
+		
+		$group->add(new Form_Input(
+			'upperlimit1',
+			null,
+			'text',
+			$this->GetU_m1()
+		));
+		
+		$group->add(new Form_Input(
+			'upperlimit2',
+			null,
+			'text',
+			$this->GetU_d()
+		));
+		$group->add(new Form_Input(
+			'upperlimit3',
+			null,
+			'text',
+			$this->GetU_m2()
+		));
+						
+				
+		$section->add($group);	
+		
+		$group = new Form_Group('Min bandwidth for queue.');
+		
+		$group->add(new Form_Checkbox(
+			'realtime',
+			null,
+			'Reat Time',
+			($this->GetRealtime()<> "")
+		));	
+		
+		$group->add(new Form_Input(
+			'realtime1',
+			null,
+			'text',
+			$this->GetR_m1()
+		));
+		
+		$group->add(new Form_Input(
+			'realtime2',
+			null,
+			'text',
+			$this->GetR_d()
+		));
+		$group->add(new Form_Input(
+			'realtime3',
+			null,
+			'text',
+			$this->GetR_m2()
+		));
+					
+		$section->add($group);
+		
+		$group = new Form_Group('B/W share of a backlogged queue.');
+		
+		$group->add(new Form_Checkbox(
+			'linkshare',
+			null,
+			'Link Share',
+			($this->GetLinkshare()<> "")
+		));	
+		
+		$group->add(new Form_Input(
+			'linkshare1',
+			null,
+			'text',
+			$this->GetL_m1()
+		));
+		
+		$group->add(new Form_Input(
+			'linkshare2',
+			null,
+			'text',
+			$this->GetL_d()
+		));
+		$group->add(new Form_Input(
+			'linkshare3',
+			null,
+			'text',
+			$this->GetL_m2()
+		));
+					
+		$group->sethelp('Bandwidth share overrides priority.' . '<br />' .
+						'The format for service curve specifications is (m1, d, m2). m2 controls the bandwidth assigned to the queue. ' .
+						'm1 and d are optional and can be used to control the initial bandwidth assignment. ' .
+						'For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value given in m2.');
+							
+		$section->add($group);
+				
+		$sform->add($section);
+		
+		return($sform);		
 	}
 
 	function update_altq_queue_data(&$data) {
@@ -2637,51 +2653,41 @@ class cbq_queue extends priq_queue {
 	}
 
 	function build_form() {
-		$form = parent::build_form();
-		$form .= "<tr>";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
-		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-		if ($this->GetBandwidth() > 0) {
-			$form .= htmlspecialchars($this->GetBandwidth());
-		}
-		$form .= "\" />";
-		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
-		$form .= "<option value=\"Gb\"";
-		if ($this->GetBwscale() == "Gb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Gbit/s") . "</option>";
-		$form .= "<option value=\"Mb\"";
-		if ($this->GetBwscale() == "Mb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Mbit/s") . "</option>";
-		$form .= "<option value=\"Kb\"";
-		if ($this->GetBwscale() == "Kb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"b\"";
-		if ($this->GetBwscale() == "b") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Bit/s") . "</option>";
-		$form .= "<option value=\"%\"";
-		if ($this->GetBwscale() == "%") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">%</option>";
-		$form .= "</select> <br />";
-		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
-		$form .= "</span></td></tr>";
-		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
-		$form .= "<td class=\"vtable\"><input type=\"checkbox\" id=\"borrow\" name=\"borrow\"";
-		if ($this->GetBorrow() == "on") {
-			$form .=  " checked=\"checked\" ";
-		}
-		$form .= " /> " . gettext("Borrow from other queues when available") . "<br /></td></tr>";
+		$sform = parent::build_form();
+		
+		$section = new Form_Section('');
 
-		return $form;
+		$group = new Form_Group('Bandwidth');
+		
+		$group->add(new Form_Input(
+			'bandwidth',
+			null,
+			'number',
+			$this->GetBandwidth()
+		));
+	
+		$group->add(new Form_Select(
+			'bandwidthtype',
+			null,
+			$this->GetBwscale(),
+			array('Kb' => 'Kb',
+				  'Mb' => 'Mb',
+				  'Gb' => 'Gb',
+				  'b' => 'b')
+		));
+		
+		$group->setHelp('Choose the amount of bandwidth for this queue');
+
+		$section->add($group);
+		
+		$section->addInput(new Form_Checkbox(
+			'borrow',
+			Scheduler option',
+			'Borrow from other queues when available',
+			($this->GetBorrow() == "on")
+		));	
+		
+		return $sform;
 	}
 
 	function update_altq_queue_data(&$data) {
@@ -2948,42 +2954,33 @@ class fairq_queue extends priq_queue {
 
 	function build_form() {
 		$form = parent::build_form();
-		$form .= "<tr>";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
-		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-		if ($this->GetBandwidth() > 0) {
-			$form .= htmlspecialchars($this->GetBandwidth());
-		}
-		$form .= "\" />";
-		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
-		$form .= "<option value=\"Gb\"";
-		if ($this->GetBwscale() == "Gb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Gbit/s") . "</option>";
-		$form .= "<option value=\"Mb\"";
-		if ($this->GetBwscale() == "Mb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Mbit/s") . "</option>";
-		$form .= "<option value=\"Kb\"";
-		if ($this->GetBwscale() == "Kb") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"b\"";
-		if ($this->GetBwscale() == "b") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Bit/s") . "</option>";
-		$form .= "<option value=\"%\"";
-		if ($this->GetBwscale() == "%") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">%</option>";
-		$form .= "</select> <br />";
-		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
-		$form .= "</span></td></tr>";
+		
+		$section = new Form_Section('');
+
+		$group = new Form_Group('Bandwidth');
+		
+		$group->add(new Form_Input(
+			'bandwidth',
+			null,
+			'number',
+			$this->GetBandwidth()
+		));
+	
+		$group->add(new Form_Select(
+			'bandwidthtype',
+			null,
+			$this->GetBwscale(),
+			array('Kb' => 'Kb',
+				  'Mb' => 'Mb',
+				  'Gb' => 'Gb',
+				  'b' => 'b')
+		));
+		
+		$group->setHelp('Choose the amount of bandwidth for this queue');
+
+		$section->add($group);
+		
+
 		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
 		$form .= "<td class=\"vtable\"><table><tr><td>";
 		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
@@ -3636,7 +3633,7 @@ EOD;
 		return $javasr;
 	}
 
-	function build_form() {
+	function build_formX() {
 		global $g, $config;
 
 		//build list of schedules
@@ -4005,7 +4002,7 @@ class dnqueue_class extends dummynet_class {
 	}
 
 
-	function build_form() {
+	function build_formX() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
 		$form .= gettext("Enable/Disable");
 		$form .= "</td><td class=\"vncellreq\">";
@@ -4262,7 +4259,7 @@ class layer7 {
 		return $tree;
 	}
 
-	function build_form() {
+	function build_formX() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
 		$form .= gettext("Enable/Disable");
 		$form .= "</td><td class=\"vncellreq\">";

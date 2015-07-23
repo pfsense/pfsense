@@ -160,7 +160,7 @@ if ($_POST) {
 		
 		if ($_POST['strictcrlpolicy'] == "yes") {
 			$config['ipsec']['strictcrlpolicy'] = true;
-		} else {
+		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
 			unset($config['ipsec']['strictcrlpolicy']);
 		}
 

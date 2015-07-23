@@ -2054,6 +2054,60 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_javascript() {
+		
+		$javascript = <<<EOJS
+<script type="text/javascript">
+//<![CDATA[   
+	events.push(function(){
+		
+	    // Disables the specified input element
+	    function disableInput(id, disable) {
+	        $('#' + id).prop("disabled", disable);    
+	    }
+	    
+	    // Upperlimit
+	    function enable_upperlimit() {
+	    	disableInput('upperlimit1', !$('#upperlimit').prop('checked'));
+	    	disableInput('upperlimit2', !$('#upperlimit').prop('checked'));
+	    	disableInput('upperlimit3', !$('#upperlimit').prop('checked'));
+	    }
+	    
+	    $('#upperlimit').click(function () {
+	        enable_upperlimit();
+	    });
+	    
+	    enable_upperlimit();
+
+	    // realtime
+	    function enable_realtime() {
+	    	disableInput('realtime1', !$('#realtime').prop('checked'));
+	    	disableInput('realtime2', !$('#realtime').prop('checked'));
+	    	disableInput('realtime3', !$('#realtime').prop('checked'));
+	    }
+	    
+	    $('#realtime').click(function () {
+	        enable_realtime();
+	    });
+	    
+	    enable_realtime();
+	    	    
+	    // linkshare
+	    function enable_linkshare() {
+	    	disableInput('linkshare1', !$('#linkshare').prop('checked'));
+	    	disableInput('linkshare2', !$('#linkshare').prop('checked'));
+	    	disableInput('linkshare3', !$('#linkshare').prop('checked'));
+	    }
+	    
+	    $('#linkshare').click(function () {
+	        enable_linkshare();
+	    });
+	    
+	    enable_linkshare();
+	});
+//]]>  
+</script>		
+EOJS;
+/*
 		$javascript = parent::build_javascript();
 		$javascript .= "<script type=\"text/javascript\">";
 		$javascript .= "//<![CDATA[\n";
@@ -2092,7 +2146,7 @@ class hfsc_queue extends priq_queue {
 
 		$javascript .= "} \n";
 		$javascript .= "//]]>";
-		$javascript .= "</script>";
+		$javascript .= "</script>";*/
 
 		return $javascript;
 	}
@@ -2163,7 +2217,7 @@ class hfsc_queue extends priq_queue {
 		$group->add(new Form_Checkbox(
 			'realtime',
 			null,
-			'Reat Time',
+			'Real Time',
 			($this->GetRealtime()<> "")
 		));	
 		
@@ -2682,7 +2736,7 @@ class cbq_queue extends priq_queue {
 		
 		$section->addInput(new Form_Checkbox(
 			'borrow',
-			Scheduler option',
+			'Scheduler option',
 			'Borrow from other queues when available',
 			($this->GetBorrow() == "on")
 		));	

@@ -762,9 +762,7 @@ EOD;
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
 					//$passive = "start";
-				} else if ($ph1ent['iketype'] == "auto") {
-					$keyexchange = "ike";
-				}
+				} 
 			}
 
 			if (isset($ph1ent['mobile'])) {

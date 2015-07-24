@@ -729,6 +729,14 @@ EOPP;
 
 		// Setup pool options
 		foreach ($all_pools as $poolconf) {
+			if (!(ip_in_subnet($poolconf['range']['from'], "{$subnet}/{$ifcfgsn}") && ip_in_subnet($poolconf['range']['to'], "{$subnet}/{$ifcfgsn}"))) {
+				// If the user has changed the subnet from the interfaces page and applied,
+				// but has not updated the DHCP range, then the range to/from of the pool can be outside the subnet.
+				// In that case, ignore the pool and post an error.
+				$error_msg = sprintf(gettext("Invalid DHCP pool %s - %s for %s subnet %s/%s detected. Please correct the settings in Services, DHCP Server"), $poolconf['range']['from'], $poolconf['range']['to'], convert_real_interface_to_friendly_descr($dhcpif), $subnet, $ifcfgsn);
+				file_notice("DHCP", $error_msg);
+				continue;
+			}
 			$dhcpdconf .= "	pool {\n";
 			/* is failover dns setup? */
 			if (is_array($poolconf['dnsserver']) && $poolconf['dnsserver'][0] <> "") {

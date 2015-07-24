@@ -126,6 +126,7 @@
 	$sshconf .= "Port $sshport\n";
 	/* Hide FreeBSD version */
 	$sshconf .= "VersionAddendum none\n";
+	$sshconf .= "LoginGraceTime 30s\n";
 
 	/* Apply package SSHDCond settings if config file exists */
 	if (file_exists("/etc/sshd_extra")) {

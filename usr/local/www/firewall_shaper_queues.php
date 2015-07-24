@@ -225,7 +225,8 @@ display_top_tabs($tab_array);
 			</div>
 		</div>
 	</div>
-		
+</form>
+	
 <?php
 
 include("foot.inc");

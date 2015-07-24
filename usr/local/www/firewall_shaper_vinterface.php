@@ -17,7 +17,6 @@
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
 
-
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -41,18 +40,20 @@
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
+require('classes/Form.class.php');
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if($_GET['reset'] <> "") {
+if($_GET['reset'] != "") {
 	mwexec("/usr/bin/killall -9 pfctl");
 	exit;
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Limiter"));
 $shortcut_section = "trafficshaper-limiters";
+$dfltmsg = false;
 
 read_dummynet_config();
 /* 
@@ -62,21 +63,26 @@ read_dummynet_config();
 
 if ($_GET) {
 	if ($_GET['queue'])
-        	$qname = htmlspecialchars(trim($_GET['queue']));
-        if ($_GET['pipe'])
-                $pipe = htmlspecialchars(trim($_GET['pipe']));
-        if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+		$qname = htmlspecialchars(trim($_GET['queue']));
+			
+	if ($_GET['pipe'])
+		$pipe = htmlspecialchars(trim($_GET['pipe']));
+			
+	if ($_GET['action'])
+		$action = htmlspecialchars($_GET['action']);
 }
+
 if ($_POST) {
 	if ($_POST['name'])
-        	$qname = htmlspecialchars(trim($_POST['name']));
+		$qname = htmlspecialchars(trim($_POST['name']));
 	else if ($_POST['newname'])
-        	$qname = htmlspecialchars(trim($_POST['newname']));
-        if ($_POST['pipe'])
-        	$pipe = htmlspecialchars(trim($_POST['pipe']));
+		$qname = htmlspecialchars(trim($_POST['newname']));
+		
+	if ($_POST['pipe'])
+		$pipe = htmlspecialchars(trim($_POST['pipe']));
 	else
 		$pipe = htmlspecialchars(trim($qname));
+		
 	if ($_POST['parentqueue'])
 		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
 }
@@ -94,31 +100,33 @@ $output_form = "";
 
 if ($_GET) {
 	switch ($action) {
-	case "delete":
-		if ($queue) {
-			if (is_array($config['filter']['rule'])) {
-				foreach ($config['filter']['rule'] as $rule) {
-					if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname())
-						$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
+		case "delete":
+			if ($queue) {
+				if (is_array($config['filter']['rule'])) {
+					foreach ($config['filter']['rule'] as $rule) {
+						if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname())
+							$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
+					}
 				}
+				if (!$input_errors) {
+					$queue->delete_queue();
+					if (write_config())
+						mark_subsystem_dirty('shaper');
+					header("Location: firewall_shaper_vinterface.php");
+					exit;
+				}
+				$sform = $queue->build_form();
+			} else {
+				$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
+	
+				$dfltmsg = true;
+				$dontshow = true;
 			}
-			if (!$input_errors) {
-				$queue->delete_queue();
-				if (write_config())
-					mark_subsystem_dirty('shaper');
-				header("Location: firewall_shaper_vinterface.php");
-				exit;
-			}
-			$output_form .= $queue->build_form();
-		} else {
-			$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
-			$output_form .= $dn_default_shaper_msg;
-			$dontshow = true;
-		}
 		break;
 	case "resetall":
 		foreach ($dummynet_pipe_list as $dn)
 			$dn->delete_queue();
+			
 		unset($dummynet_pipe_list);
 		$dummynet_pipe_list = array();
 		unset($config['dnshaper']['queue']);
@@ -127,24 +135,29 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
+		
 		foreach ($config['filter']['rule'] as $key => $rule) {
 			if (isset($rule['dnpipe']))
 				unset($config['filter']['rule'][$key]['dnpipe']);
+				
 			if (isset($rule['pdnpipe']))
 				unset($config['filter']['rule'][$key]['pdnpipe']);
 		}
+		
 		if (write_config()) {
 			$retval = 0;
 			$retval = filter_configure();
 			$savemsg = get_std_save_message($retval);
 
-			if (stristr($retval, "error") <> true)
+			if (stristr($retval, "error") != true)
 				$savemsg = get_std_save_message($retval);
 			else
 				$savemsg = $retval;
+				
 		} else
 			$savemsg = gettext("Unable to write config.xml (Access Denied?)");
-		$output_form = $dn_default_shaper_message;
+			
+		$dfltmsg = true;
 
 		break;
 	case "add":
@@ -160,7 +173,7 @@ if ($_GET) {
 			$input_errors[] = gettext("Could not create new queue/discipline!");
 
 		if ($q) {
-			$output_form .= $q->build_form();
+			$sform = $q->build_form();
 			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
@@ -168,14 +181,14 @@ if ($_GET) {
 		break;
 	case "show":
 		if ($queue)  
-                       $output_form .= $queue->build_form();
+			$sform = $queue->build_form();
 		else
 			$input_errors[] = gettext("Queue not found!");
 		break;
 	case "enable":
 		if ($queue) {
 			$queue->SetEnabled("on");
-			$output_form .= $queue->build_form();
+			$sform = $queue->build_form();
 			$queue->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
@@ -185,7 +198,7 @@ if ($_GET) {
 	case "disable":
 		if ($queue) {
 			$queue->SetEnabled("");
-			$output_form .= $queue->build_form();
+			$sform = $queue->build_form();
 			$queue->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
@@ -193,11 +206,13 @@ if ($_GET) {
 			$input_errors[] = gettext("Queue not found!");
 		break;
 	default:
-		$output_form .= $dn_default_shaper_msg;
+		$dfltmsg = true;
 		$dontshow = true;
 		break;
 	}
-} else if ($_POST) {
+}
+
+if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewpipe) {
@@ -222,7 +237,7 @@ if ($_GET) {
 			}
 
 			read_dummynet_config();
-			$output_form .= $dnpipe->build_form();
+			$sform = $dnpipe->build_form();
 			$newjavascript = $dnpipe->build_javascript();
 		}
 	} else if ($parentqueue) { /* Add a new queue */
@@ -242,7 +257,7 @@ if ($_GET) {
 				}
 			}
 			read_dummynet_config();
-			$output_form .= $tmp->build_form();
+			$sform = $tmp->build_form();
 		} else
 			$input_errors[] = gettext("Could not add new queue.");
 	} else if ($_POST['apply']) {
@@ -252,7 +267,7 @@ if ($_GET) {
 			$retval = filter_configure();
 			$savemsg = get_std_save_message($retval);
 			
-			if (stristr($retval, "error") <> true)
+			if (stristr($retval, "error") != true)
 					$savemsg = get_std_save_message($retval);
 			else
 					$savemsg = $retval;
@@ -263,7 +278,7 @@ if ($_GET) {
 			clear_subsystem_dirty('shaper');
 			
 			if ($queue) {
-				$output_form .= $queue->build_form();
+				$sform = $queue->build_form();
 				$dontshow = false;
 			}
 			else {
@@ -272,78 +287,45 @@ if ($_GET) {
 			}
 
 	} else if ($queue) {
-                $queue->validate_input($_POST, $input_errors);
-                if (!$input_errors) {
+				$queue->validate_input($_POST, $input_errors);
+				if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
 			$dontshow = false;
-                } 
+				} 
 		read_dummynet_config();
-		$output_form .= $queue->build_form();
+		$sform = $queue->build_form();
 	} else  {
-		$output_form .= $dn_default_shaper_msg;
+		$dfltmsg = true;
 		$dontshow = true;
 	}
-} else {
-	$output_form .= $dn_default_shaper_msg;
+} 
+
+if(!$_POST && !$_GET) {
+	$dfltmsg = true;
 	$dontshow = true;
 }
 
 if ($queue) {
-                        if ($queue->GetEnabled())
-                                $can_enable = true;
-                        else
-                                $can_enable = false;
-                        if ($queue->CanHaveChildren()) { 
-                       		$can_add = true;
-                        } else
-                                $can_add = false;
+	if ($queue->GetEnabled())
+			$can_enable = true;
+	else
+			$can_enable = false;
+	if ($queue->CanHaveChildren()) { 
+   		$can_add = true;
+	} else
+			$can_add = false;
 }
 
 $tree = "<ul class=\"tree\" >";
 if (is_array($dummynet_pipe_list)) {
-        foreach ($dummynet_pipe_list as $tmpdn) {
-                $tree .= $tmpdn->build_tree();
-        }
+		foreach ($dummynet_pipe_list as $tmpdn) {
+				$tree .= $tmpdn->build_tree();
+		}
 }
 $tree .= "</ul>";
-
-if (!$dontshow || $newqueue) {
-
-$output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
-$output_form .= gettext("Queue Actions");
-$output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
-
-$output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
-if ($can_add || $addnewaltq) {
-	$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-	$output_form .= $pipe; 
-	if ($queue) {
-		$output_form .= "&amp;queue=" . $queue->GetQname();
-	}
-	$output_form .= "&amp;action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\" />";
-	$output_form .= "</a>";
-}
-$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-$output_form .= $pipe;
-if ($queue) {
-	$output_form .= "&amp;queue=" . $queue->GetQname();
-}
-$output_form .= "&amp;action=delete\">";
-$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
-if ($queue)
-	$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
-else
-	$output_form .= " value=\"" . gettext("Delete Limiter") ."\" />";
-$output_form .= "</a>";  
-$output_form .= "</td></tr>";
-$output_form .= "</table>";
-} 
-else 
-	$output_form .= "</table>";
 
 $output = "<table summary=\"output form\">";
 $output .= $output_form;
@@ -352,10 +334,11 @@ include("head.inc");
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
+
 <script type="text/javascript">
 //<![CDATA[
 function show_source_port_range() {
-        document.getElementById("sprtable").style.display = '';
+	document.getElementById("sprtable").style.display = '';
 	document.getElementById("sprtable1").style.display = '';
 	document.getElementById("sprtable2").style.display = '';
 	document.getElementById("sprtable5").style.display = '';
@@ -364,9 +347,6 @@ function show_source_port_range() {
 }
 //]]>
 </script>
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php
 if ($queue)
@@ -374,71 +354,77 @@ if ($queue)
 else
 	echo $newjavascript;
 
-include("fbegin.inc"); 
+if ($input_errors) 
+	print_input_errors($input_errors);
+
+if ($savemsg) 
+	print_info_box($savemsg, 'success');
+	
+if (is_subsystem_dirty('shaper'))
+	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+
+$tab_array = array();
+$tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
+$tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+$tab_array[] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+$tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
+display_top_tabs($tab_array);
 ?>
-<div id="inputerrors"></div>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
 
-<form action="firewall_shaper_vinterface.php" method="post" id="iform" name="iform">
-
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper limiter">
-  <tr><td>
+<div class="table-responsive">
+	<table class="table">
+		<tbody>
+			<tr class="tabcont">
+				<td class="col-md-1">
+					<?=$tree?>	  
+					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success"/>
+						<?=gettext('New Limiter')?>
+					</a>
+				</td>
+				<td>
 <?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
-	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-	$tab_array[2] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
-	display_top_tabs($tab_array);
-?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-<?php if (count($dummynet_pipe_list) > 0): ?>
-                        <tr class="tabcont"><td width="25%" align="left">
-                        </td><td width="75%"> </td></tr>
-<?php endif; ?>
-			<tr>
-			<td width="25%" valign="top" align="left">
-			<?php
-				echo $tree; 
-			?>
-			<br /><br />
-			<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add">
-			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0" alt="add" />&nbsp;<?=gettext("Create new limiter");?>
-			</a><br />
-			</td>
-			<td width="75%" valign="top" align="center">
-			<div id="shaperarea" style="position:relative">
-			<?php
-				echo $output;
-			?>	
-			</div>
 
-		      </td></tr>
-                    </table>
-		</div>
-	  </td>
-	</tr>
-</table>
-</form>
-<script type='text/javascript'>
-//<![CDATA[
-<?php
-	$totalrows = 0;
-	if (is_array($config['dnshaper']) && is_array($config['dnshaper']['queue'])) 
-		$totalrows = count($config['dnshaper']['queue']);
-	echo "totalrows = {$totalrows}";
+if($dfltmsg)
+	print_info_box($dn_default_shaper_msg);
+else {
+	// Add global buttons
+	if (!$dontshow || $newqueue) {
+		if ($can_add || $addnewaltq) {
+			if($queue)
+				$url = 'href="firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
+			else
+				$url = 'firewall_shaper.php?pipe='. $pipe . '&action=add';
+
+			$sform->addGlobal(new Form_Button(
+				'add',
+				'Add new Queue',
+				$url
+			))->removeClass('btn-default')->addClass('btn-success');
+		}
+
+		if($queue)
+			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
+		else
+			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
+
+		$sform->addGlobal(new Form_Button(
+			'delete',
+			$queue ? 'Delete this queue':'Disable limiter',
+			$url
+		))->removeClass('btn-default')->addClass('btn-danger');
+	}
+
+	// Print the form
+	print($sform);
+
+}
 ?>
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<?php 
+include("foot.inc");

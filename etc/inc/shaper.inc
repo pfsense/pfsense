@@ -3685,8 +3685,8 @@ EOD;
 		return $javasr;
 	}
 
-	function build_formX() {
-		global $g, $config;
+	function build_form() {
+		global $g, $config, $pipe, $action, $qname;
 
 		//build list of schedules
 		$schedules = array();
@@ -3699,180 +3699,184 @@ EOD;
 			}
 		}
 
-		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
-		$form .= gettext("Enable");
-		$form .= "</td><td class=\"vncellreq\">";
-		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-		if ($this->GetEnabled() == "on") {
-			$form .=  " checked=\"checked\"";
-		}
-		$form .= " /><span class=\"vexpl\"> " . gettext("Enable limiter and its children") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
-		$form .= $this->GetQname()."\" />";
-		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
-		$form .= $this->GetQname()."\" />";
+
+		$sform = new Form();
+
+		$section = new Form_Section('Limiters');
+
+		$section->addInput(new Form_Checkbox(
+			'enabled',
+			'Enable',
+			'Enable limiter and its children',
+			($this->GetEnabled() == "on"),
+			'on'
+		));
+
+		$section->addInput(new Form_Input(
+			'newname',
+			'Name',
+			'text',
+			$this->GetQname()
+		));
+		
+		$section->addInput(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
+	
 		if ($this->GetNumber() > 0) {
-			$form .= "<input type=\"hidden\" id=\"number\" name=\"number\" value=\"";
-			$form .= $this->GetNumber()."\" />";
+			$section->addInput(new Form_Input(
+				'number',
+				null,
+				'hidden',
+				$this->GetNumber()
+			));
 		}
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth");
-		$bandwidth = $this->GetBandwidth();
-		$form .= "</td><td class=\"vncellreq\">";
-		$form .= "<table id='maintable'>";
-		$form .= "<tbody><tr>";
-		$form .= "<td width='35%'><div id='onecolumn'>Bandwidth</div></td>";
-		//$form .= "<td width='35%'><div id='fifthcolumn'>Burst</div></td>";
-		$form .= "<td width='20%'><div id='twocolumn'>Bw type</div></td>";
-		$form .= "<td width='35%' ><div id='thirdcolumn'>Schedule</div></td>";
-		$form .= "<td width='5%'><div id='fourthcolumn'></div></td>";
-		$form .= "</tr>";
+			
+		$bandwidth = $this->GetBandwidth();	
+
+		// Delete a row
+		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
+			unset($bandwidth[$_GET['delbwrow']]);
+		
+		// Add a row
+		if($_GET['newbwrow']) {
+			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
+ 
+		}
+		
 		if (is_array($bandwidth)) {
-			foreach ($bandwidth as $bwidx => $bw) {
-				$form .= "\n<tr><td width='40%'>";
-				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
-				//$form .= "</td><td width='20%'>";
-				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
-				$form .= "</td><td width='20%'>";
-				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"formselect\">";
-				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
-					$form .= "<option value=\"{$bwsidx}\"";
-					if ($bw['bwscale'] == $bwsidx) {
-						$form .= " selected=\"selected\"";
-					}
-					$form .= ">{$bwscale}</option>";
+			$row = 0;
+			$numrows = count($bandwidth) - 1;
+			
+			if($numrows >= 0) {
+				foreach ($bandwidth as $bwidx => $bw) {
+					$group = new Form_Group($row == 0 ? 'Bandwidth':null);
+					
+					$group->add(new Form_Input(
+						'bandwidth' . $bwidx,
+						null,
+						'text',
+						$bw['bw']
+					))->setHelp($row == $numrows ? 'Bandwidth':null);
+					
+					$group->add(new Form_Select(
+						'bwtype' . $bwidx,
+						null,
+						$bw['bwscale'],
+						array('Kb' => 'Kbit/s', 'Mb' => 'Mbit/s', 'Gb' => 'Gbit/s', 'b' => 'Bit/s')
+					))->setHelp($row == $numrows ? 'Bw Type':null);;
+					
+					$group->add(new Form_Select(
+						'bwsched' . $bwidx,
+						null,
+						$bw['bwsched'],
+						$schedules
+					))->setHelp($row == $numrows ? 'Schedule':null);;
+		
+					$group->add(new Form_Button(
+						'delete' + $bwidx,
+						'Delete',
+						'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&delbwrow=' . $bwidx
+					))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+				 
+					if($row == $numrows)
+						$group->setHelp('Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.');
+	
+					$section->add($group);
+					$row++;
 				}
-				$form .= "</select>";
-				$form .= "</td><td width='35%' >";
-				$form .= "<select id=\"bwsched{$bwidx}\" name=\"bwsched{$bwidx}\" class=\"formselect\">";
-				foreach ($schedules as $schd) {
-					$selected = "";
-					if ($bw['bwsched'] == $schd) {
-						$selected = "selected=\"selected\"";
-					}
-					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
-				}
-				$form .= "</select>";
-				$form .= "</td><td width='5%' >";
-				$form .= "<a onclick=\"removeBwRow(this); return false;\" href='#'><img border='0' src='/themes/{$g['theme']}/images/icons/icon_x.gif' alt='remove' /></a>";
-				$form .= "</td></tr>";
-			}
+			}	
+		else { // The $bandwidth array exists, but is empty
+			$section->addInput(new Form_StaticText(
+				'Bandwidth',
+				'No schedules configured for this limiter.'
+			));			
 		}
-		$form .= "</tbody></table>";
-		$form .= "<a onclick=\"javascript:addBwRowTo('maintable'); return false;\" href='#'>";
-		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='add' title='" . gettext("add another schedule") . "' /></a>";
-		//$form .= "<br /><span class=\"vexpl\">" . gettext("Bandwidth is a rate (e.g. Mbit/s), burst is a total amount of data that will be transferred at full speed after an idle period.") . "</span><br />";
-		$form .= "<br /><span class=\"vexpl\">" . gettext("Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.") . "</span><br />";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<select name=\"mask\" id=\"mask\" class=\"formselect\" onchange=\"enable_maskbits();\" >";
-		$form .= "<option value=\"none\"";
+			
+		$section->addInput(new Form_Button(
+			'addsched',
+			'Add new schedule',
+			'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&newbwrow=yes'
+			))->removeClass('btn-primary')->addClass('btn-success btn-sm');			
+		}
+
 		$mask = $this->GetMask();
-		if ($mask['type'] == "none") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">none</option>";
-		$form .= "<option value=\"srcaddress\"";
-		if ($mask['type'] == "srcaddress") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Source addresses") . "</option>";
-		$form .= "<option value=\"dstaddress\"";
-		if ($mask['type'] == "dstaddress") {
-			$form .= " selected=\"selected\"";
-		}
-		$form .= ">" . gettext("Destination addresses") . "</option>";
-		$form .= "</select>";
-		$form .= "&nbsp;<br />";
-		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .	 "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
-			  .	 "be created for each source/destination IP address encountered, \n"
-			  .	 "respectively. This makes it possible to easily specify bandwidth \n"
-			  .	 "limits per host.") . "</span><br />";
-		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
-		if ($mask['type'] <> "none") {
-			$form .= $mask['bits'];
-		}
-		$form .= "\"";
-		if ($mask['type'] == "none") {
-			$form .= " disabled";
-		}
-		$form .= " />";
-		$form .= "&nbsp; IPV4 mask bits (1-32)<br />";
-		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
-		if ($mask['type'] <> "none") {
-			$form .= $mask['bitsv6'];
-		}
-		$form .= "\"";
-		if ($mask['type'] == "none") {
-			$form .= " disabled";
-		}
-		$form .= " />";
-		$form .= "&nbsp; IPV6 mask bits (1-128)<br />";
-		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-			  .	 "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
-			  .	 "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
-			  .	 "per pipe.") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
-		$form .= $this->GetDescription();
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">";
-		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr id=\"sprtable4\">";
-		$form .= "<td></td>";
-		$form .= "<td><div id=\"showadvancedboxspr\">";
-		$form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
-		$form .= " value=\"" . gettext("Show advanced options") . "\" />";
-		$form .= "</p></div></td></tr>";
-		$form .= "<tr style=\"display:none\" id=\"sprtable\">";
+		
+		$section->addInput(new Form_Select(
+			'scheduler',
+			'Mask',
+			$mask['type'],
+			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')
+		))->setHelp('If "source" or "destination" slots is chosen a dynamic pipe with the bandwidth, delay, packet loss ' .
+					'and queue size given above will be created for each source/destination IP address encountered, respectively. ' .
+					'This makes it possible to easily specify bandwidth limits per host.');
+					
+		$group = new Form_Group(null);
+		
+		$group->add(new Form_Select(
+			'maskbits',
+			null,
+			$mask['bits'],
+			array_combine(range(32, 1, -1), range(32, 1, -1))
+		))->setHelp('IPV4 mask bits' . '<br />' . '255.255.255.255/?');
+		
+		$group->add(new Form_Select(
+			'maskbitsv6',
+			null,
+			$mask['bitsv6'],
+			array_combine(range(128, 1, -1), range(128, 1, -1))
+		))->setHelp('IPV6 mask bits' . '<br />' . '<font face="consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</font>');
+		
+		$section->add($group);
 
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Delay") . "</td>";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
-		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
-		$form .= $this->GetDelay() . "\" />";
-		$form .= "&nbsp;ms<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .	 "should specify 0 here (or leave the field empty)") . "</span><br />";
-		$form .= "</td></tr>";
-		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
-		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
-		$form .= $this->GetPlr() . "\" />";
-		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .	 "should specify 0 here (or leave the field empty). "
-			  .	 "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-		$form .= $this->GetQlimit() . "\" />";
-		$form .= "&nbsp;slots<br />";
-		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .	 "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-			  .	 "then they are delayed by value specified in the Delay field, and then they "
-			  .	 "are delivered to their destination.") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
-		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
-		$form .= $this->GetBuckets() . "\" />";
-		$form .= "&nbsp;slots<br />";
-		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			.  "should leave the field empty. It increases the hash size set.");
-		$form .= "</span></td></tr>";
+		$section->addInput(new Form_Input(
+			'description',
+			'Description',
+			'text',
+			$this->GetDescription()
+		))->setHelp('You may enter a description here for your reference (not parsed).');
+				
+		$sform->add($section);
+		
+		$section = new Form_Section('Advanced options');
+		
+		$section->addInput(new Form_Input(
+			'delay',
+			'Delay (mS)',
+			'number',
+			$this->GetDelay()
+		))->setHelp('In most cases, you should specify 0 here (or leave the field empty)');
+		
+		$section->addInput(new Form_Input(
+			'plr',
+			'Packet Loss Rate',
+			'number',
+			$this->GetPlr(),
+			['step' => '0.001', 'min' => '0.000']
+		))->setHelp('In most cases, you should specify 0 here (or leave the field empty). ' .
+					'A value of 0.001 means one packet in 1000 gets dropped');
+		
+		$section->addInput(new Form_Input(
+			'qlimit',
+			'Queue size (slots)',
+			'number',
+			$this->GetQlimit()
+		))->setHelp('In most cases, you should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ' .
+					'then they are delayed by value specified in the Delay field, and then they are delivered to their destination.');
+		
+		$section->addInput(new Form_Input(
+			'buckets',
+			'Bucket size (slots)',
+			'number',
+			$this->GetBuckets()
+		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
 
-		return $form;
-
+		$sform->add($section);
+		
+		return($sform);
 		}
 
 	function wconfig() {

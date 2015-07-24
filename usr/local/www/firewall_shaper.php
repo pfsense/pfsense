@@ -151,24 +151,24 @@ if ($_GET) {
 	case "add":
 			/* XXX: Find better way because we shouldn't know about this */
 		if ($altq) {
-					switch ($altq->GetScheduler()) {
-					case "PRIQ":
-							$q = new priq_queue();
-							break;
-			case "FAIRQ":
-				$q = new fairq_queue();
+			switch ($altq->GetScheduler()) {
+				case "PRIQ":
+					$q = new priq_queue();
 				break;
-						case "HFSC":
-							$q = new hfsc_queue();
-							break;
-						case "CBQ":
-								$q = new cbq_queue();
-							break;
-						default:
-								/* XXX: Happens when sched==NONE?! */
-				$q = new altq_root_queue();
-							break;
-				}
+				case "FAIRQ":
+					$q = new fairq_queue();
+				break;
+				case "HFSC":
+					$q = new hfsc_queue();
+				break;
+				case "CBQ":
+						$q = new cbq_queue();
+				break;
+				default:
+					/* XXX: Happens when sched==NONE?! */
+					$q = new altq_root_queue();
+				break;
+			}
 		} else if ($addnewaltq) {
 			$q = new altq_root_queue();
 		} else
@@ -419,7 +419,7 @@ if (count($altq_list_queues) > 0) {
 
 if($dfltmsg)
 	print_info_box($default_shaper_msg);
-else{
+else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
@@ -447,7 +447,7 @@ else{
 		))->addClass('btn-danger');
 	}
 
-	// Print hte form
+	// Print the form
 	print($sform);
 }
 ?>

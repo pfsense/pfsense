@@ -73,7 +73,7 @@ if ($_POST['xml']) {
 $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false ||
-    substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+	substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	print_info_box_np(gettext("ERROR: No valid package defined."));
 	die;
 } else {
@@ -117,7 +117,7 @@ if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_s
 
 // If the first entry in the array is an empty <config/> tag, kill it.
 if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0)
-    && ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
+	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 }
 

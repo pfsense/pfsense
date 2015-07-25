@@ -54,6 +54,7 @@ $my_identifier_list = array(
 
 global $peer_identifier_list;
 $peer_identifier_list = array(
+	'any' => array('desc' => gettext('Any'), 'mobile' => true),
 	'peeraddress' => array('desc' => gettext('Peer IP address'), 'mobile' => false),
 	'address' => array('desc' => gettext('IP address'), 'mobile' => false),
 	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),

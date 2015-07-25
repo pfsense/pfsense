@@ -529,7 +529,9 @@ function peeridsel_change() {
 	value = document.iform.peerid_type.options[index].value;
 	if (value == 'peeraddress') {
 		document.getElementById('peerid_data').style.visibility = 'hidden';
-	} else {
+	} else if (value == 'any') {
+		document.getElementById('peerid_data').style.visibility = 'hidden';
+	} else { 
 		document.getElementById('peerid_data').style.visibility = 'visible';
 	}
 }

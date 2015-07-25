@@ -862,7 +862,9 @@ EOD;
 				// Only specify peer ID if we are not dealing with mobile PSK
 			} else {
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
-				if ($peerid_type != 'address' && $peerid_type != 'keyid' && $peerid_type != 'asn1dn') {
+				if ($peerid_type == 'any') {
+					$peerid_spec = '';
+				} elseif ($peerid_type != 'address' && $peerid_type != 'keyid' && $peerid_type != 'asn1dn') {
 					$peerid_spec = "{$peerid_type}:{$peerid_data}";
 				} elseif ($peerid_type == "asn1dn") {
 					/* asn1dn needs double quotes */

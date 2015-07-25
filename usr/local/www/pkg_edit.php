@@ -90,13 +90,6 @@ if (!isset($pkg['adddeleteeditpagefields'])) {
 	$only_edit = false;
 }
 
-$package_name = $pkg['menu'][0]['name'];
-$section      = $pkg['menu'][0]['section'];
-$config_path  = $pkg['configpath'];
-$name         = $pkg['name'];
-$title        = $pkg['title'];
-$pgtitle      = $title;
-
 $id = $_GET['id'];
 if (isset($_POST['id'])) {
 	$id = htmlspecialchars($_POST['id']);
@@ -139,7 +132,6 @@ if ($pkg['custom_php_command_before_form'] <> "") {
 }
 
 if ($_POST) {
-	$firstfield = "";
 	$rows = 0;
 
 	$input_errors = array();
@@ -285,12 +277,10 @@ if ($_POST) {
 
 if ($pkg['title'] <> "") {
 	$edit = ($only_edit ? '' : ": " . gettext("Edit"));
-	$title = $pkg['title'] . $edit;
+	$pgtitle = $pkg['title'] . $edit;
 } else {
-	$title = gettext("Package Editor");
+	$pgtitle = gettext("Package Editor");
 }
-
-$pgtitle = $title;
 
 if ($pkg['custom_php_after_head_command']) {
 	$closehead = false;
@@ -963,13 +953,8 @@ if ($pkg['tabs'] <> "") {
 							if (isset($id) && $a_pkg[$id]) {
 								$value = $row[$fieldname];
 							}
-							$options = "";
 							$type = $rowhelper['type'];
-							$description = $rowhelper['description'];
 							$fieldname = $rowhelper['fieldname'];
-							if ($type == "option") {
-								$options = &$rowhelper['options']['option'];
-							}
 							if ($rowhelper['size']) {
 								$size = $rowhelper['size'];
 							} else if ($pkga['size']) {
@@ -1101,7 +1086,7 @@ if ($pkg['tabs'] <> "") {
  * ROW Helpers function
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
-	global $text, $config;
+	global $text;
 	echo "<td>\n";
 	switch ($type) {
 		case "input":
@@ -1202,13 +1187,11 @@ function fixup_string($string) {
  *  Parse templates if they are defined
  */
 function parse_package_templates() {
-	global $pkg, $config;
-	$rows = 0;
+	global $pkg;
 	if ($pkg['templates']['template'] <> "") {
 		foreach ($pkg['templates']['template'] as $pkg_template_row) {
 			$filename = $pkg_template_row['filename'];
 			$template_text = $pkg_template_row['templatecontents'];
-			$firstfield = "";
 			/* calculate total row helpers count and */
 			/* change fields defined as fieldname_fieldvalue to their value */
 			foreach ($pkg['fields']['field'] as $fields) {

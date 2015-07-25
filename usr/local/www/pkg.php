@@ -73,11 +73,6 @@ if ($pkg['include_file'] != "") {
 	require_once($pkg['include_file']);
 }
 
-$package_name = $pkg['menu'][0]['name'];
-$section      = $pkg['menu'][0]['section'];
-$config_path  = $pkg['configpath'];
-$title	      = $pkg['title'];
-
 if ($_REQUEST['startdisplayingat']) {
 	$startdisplayingat = $_REQUEST['startdisplayingat'];
 }
@@ -154,7 +149,7 @@ if ($pkg['custom_php_command_before_form'] <> "") {
 	eval($pkg['custom_php_command_before_form']);
 }
 
-$pgtitle = array($title);
+$pgtitle = array($pkg['title']);
 include("head.inc");
 
 ?>
@@ -378,7 +373,6 @@ include("head.inc");
 				</tr>
 <?php
 	$i = 0;
-	$pagination_startingrow = 0;
 	$pagination_counter = 0;
 	if ($evaledvar) {
 		foreach ($evaledvar as $ip) {

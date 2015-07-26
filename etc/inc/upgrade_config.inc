@@ -3601,4 +3601,17 @@ function upgrade_117_to_118() {
 	}
 }
 
+function upgrade_118_to_119() {
+	global $config;
+
+	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
+	$a_phase1 =& $config['ipsec']['phase1'];
+
+	foreach ($a_phase1 as &$ph1_entry) {
+		if (strstr($ph1_entry['authentication_method'], 'eap')) {
+			$ph1_entry['peerid_type'] = "any";	
+		}
+	}
+}
+
 ?>

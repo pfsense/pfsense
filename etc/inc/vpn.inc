@@ -591,7 +591,7 @@ EOD;
 	if (is_array($config['crl']) && count($config['crl'])) {
 		foreach ($config['crl'] as $crl) {
 			if (!isset($crl['text'])) {
-				log_error(sprintf(gettext("Error: Invalid CRL data for %s"), $crl['descr']));
+				log_error(sprintf(gettext("Warning: Missing CRL data for %s"), $crl['descr']));
 				continue;
 			}
 			$fpath = "{$crlpath}/{$crl['refid']}.crl";

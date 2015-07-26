@@ -202,6 +202,7 @@ if ($_POST) {
 						$rowhelpername="row";
 						foreach ($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
 							foreach ($_POST as $key => $value) {
+								$matches = array();
 								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/", $key, $matches)) {
 									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
 								}
@@ -471,6 +472,7 @@ if ($pkg['tabs'] <> "") {
 		$advanced = "<td>&nbsp;</td>";
 		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br /></td></tr>\n";
 	}
+	$js_array = array();
 	foreach ($pkg['fields']['field'] as $pkga) {
 		if ($pkga['type'] == "sorting") {
 			continue;

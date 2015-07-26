@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# /etc/rc.firmware_auto
+# Copyright (C) 2005-2015 Electric Sheep Fencing LLC
+# Part of pfSense
+
 # $Id$
 
 FMBASEURL=$1
@@ -20,31 +24,33 @@ if [ $# -gt 3 ]; then
 HTTP_AUTH="basic:*:$3:$4"
 fi
 
-#echo "Downloading $FMFILENAME from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
-#/usr/bin/fetch -o /tmp/latest.tgz $FETCHFILENAME | logger -p daemon.info -i -t AutoUpgrade
-#echo "Downloading $FMFILENAME.md5 from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
-#/usr/bin/fetch -o /tmp/latest.tgz.md5 $FETCHFILENAME.md5 | logger -p daemon.info -i -t AutoUpgrade
+if [ $# -gt 1 ]; then
+	echo "Downloading $FMFILENAME from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
+	/usr/bin/fetch -o /tmp/latest.tgz $FETCHFILENAME | logger -p daemon.info -i -t AutoUpgrade
+	echo "Downloading $FMFILENAME.sha256 from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
+	/usr/bin/fetch -o /tmp/latest.tgz.sha256 $FETCHFILENAME.sha256 | logger -p daemon.info -i -t AutoUpgrade
+fi
 
-PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `
-MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`
+DLHASH=`/bin/cat /tmp/latest.tgz.sha256 | cut -d" " -f4 `
+FILEHASH=`/sbin/sha256 /tmp/latest.tgz | cut -d" " -f4`
 
 PLATFORM=`cat /etc/platform`
 
-echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
-echo "Downloaded MD5: ${MD}" | logger -p daemon.info -i -t AutoUpgrade
+echo "   Package sha256: ${DLHASH}" | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloaded sha256: ${FILEHASH}" | logger -p daemon.info -i -t AutoUpgrade
 
-if [ "$PMD" = "" ]; then
-	echo "Package MD5 is null md5. Require proxy auth?" | logger -p daemon.info -i -t AutoUpgrade
+if [ "$DLHASH" = "" ]; then
+	echo "Downloaded sha256 is null. Require proxy auth?" | logger -p daemon.info -i -t AutoUpgrade
 	exit 1
 fi
 
-if [ "$MD" = "" ]; then
-	echo "Downloaded MD5 is null md5. Require proxy auth?" | logger -p daemon.info -i -t AutoUpgrade
+if [ "$FILEHASH" = "" ]; then
+	echo "Downloaded file's sha256 is null." | logger -p daemon.info -i -t AutoUpgrade
 	exit 1
 fi
 
-if [ "$PMD" = "$MD" ]; then
-	echo "MD5's match." | logger -p daemon.info -i -t AutoUpgrade
+if [ "$DLHASH" = "$FILEHASH" ]; then
+	echo "sha256 hashes match." | logger -p daemon.info -i -t AutoUpgrade
 	echo "Beginning ${product} upgrade." | wall
 	if [ "$PLATFORM" = "net45xx" ]; then
 		/usr/local/bin/php /etc/rc.conf_mount_rw
@@ -83,6 +89,6 @@ if [ "$PMD" = "$MD" ]; then
 	exit 0
 fi
 
-echo "MD5's do not match.  Upgrade aborted." | logger -p daemon.info -i -t AutoUpgrade
+echo "sha256 hashes do not match. Upgrade aborted." | logger -p daemon.info -i -t AutoUpgrade
 rm /tmp/latest*
 exit 1

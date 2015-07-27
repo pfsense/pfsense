@@ -601,7 +601,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !(($alias_type == 'port') && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_port')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"])) {
 					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";

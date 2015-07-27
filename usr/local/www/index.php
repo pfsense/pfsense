@@ -536,12 +536,12 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				//echo widget title
 				?>
 				<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
-				<u><?php echo $$widgettitle; ?></u></span><br />
+				<u><?php echo gettext($$widgettitle); ?></u></span><br />
 				<?php
 			} else {
 				?>
 				<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
-				<u><?php echo $nicename; ?></u></span><br /><?php
+				<u><?php echo gettext($nicename); ?></u></span><br /><?php
 			}
 		}
 		?>

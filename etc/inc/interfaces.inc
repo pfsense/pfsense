@@ -5532,7 +5532,7 @@ function is_altq_capable($int) {
 			"nge", "npe", "nve", "re", "rl", "sf", "sge", "sis", "sk",
 			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vmx", "vr", "vte", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
-			"l2tp", "ppp", "vtnet");
+			"l2tp", "ppp", "ue", "vtnet");
 
 	$int_family = remove_ifindex($int);
 

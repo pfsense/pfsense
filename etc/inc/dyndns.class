@@ -698,7 +698,7 @@
 					$host = trim($this->_dnsHost);
 					$hostnames = explode(".", $host);
 					$hostnames_count = count($hostnames);
-					if ($hostnames_count > 1)
+					if ($hostnames_count > 2)
 						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
 					else
 						$domain = $host;

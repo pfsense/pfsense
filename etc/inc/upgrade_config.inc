@@ -3789,6 +3789,10 @@ function upgrade_117_to_118() {
 function upgrade_118_to_119() {
 	global $config;
 
+        if (!isset($config['ipsec']['phase1'])) {
+                return;
+        }
+
 	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
 	$a_phase1 =& $config['ipsec']['phase1'];
 

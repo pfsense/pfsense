@@ -63,7 +63,9 @@ $show_proto_form = false;
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Layer7"));
 $shortcut_section = "trafficshaper";
 
-$default_layer7shaper_msg = '<br />' . gettext('You can add new layer7 protocol patterns by simply uploading the file') . ' <a href="diag_patterns.php">' . gettext('here') . '</a>';
+$default_layer7shaper_msg = '<br />' .
+							gettext('You can add new layer7 protocol patterns by simply uploading the file') .
+							' <a href="diag_patterns.php">' . gettext('here') . '</a>';
 
 read_layer7_config();
 
@@ -119,11 +121,12 @@ if ($_GET) {
 }
 
 //add a new l7rules container
-else if ($_POST) {
+if ($_POST) {
 	$show_proto_form = true;
 	unset($input_errors);
 
-	if($_POST['submit']) {
+	if($_POST['Submit']) {
+
 		if (isset($layer7_rules_list[$name])) {
 			$l7r = $layer7_rules_list[$name];
 			$_POST['divert_port'] = $l7r->GetRPort();
@@ -217,7 +220,8 @@ else if ($_POST) {
 		$show_proto_form = false;
 	}
 }
-else {
+
+if(!$_GET && !$_POST) {
 	$show_proto_form = false;
 	$dfltmsg = true;
 }
@@ -231,7 +235,6 @@ if (is_array($layer7_rules_list)) {
 
 $tree .= "</ul>";
 
-$closehead = false;
 include("head.inc");
 ?>
 
@@ -242,7 +245,6 @@ include("head.inc");
 //<![CDATA[
 var initial_count = new Array();
 var rows_limit = 0; // Set to 0 to disable limitation
-
 
 /* Build the behaviours arrays in javascript */
 var js_behaviours_action = ['block']; //static
@@ -327,7 +329,7 @@ function fillBehaviour() {
 /* Change the values on behaviours select when changing the structure row */
 function changeBehaviourValues(row) {
 
-	var selectedRow = row.rowIndex - 1; // The header is counted as row 0
+	var selectedRow = row.rowIndex - 1; // The header is counted as the first row
 	var structureSelected = document.getElementsByName("structure[]")[selectedRow].value;
 
 	//Select the behaviours values to array a_behav
@@ -402,14 +404,15 @@ function removeRow(tbl,row) {
 </script>
 
 <?php
-// This function create a table of rule selectors which are then inserted into the form
-// using a StaticText class
+// This function creates a table of rule selectors which are then inserted into the form
+// using a StaticText class. While not pretty this maintains compatibility with all of
+// the above javascript
 
 function build_l7table() {
 	global $container, $avail_protos, $avail_structures, $avail_behaviours_altq, $avail_behaviours_limiter,
 		   $avail_behaviours_action;
 
-	$tbl = '<table id="newtbl" name="netbl" class="table table-hover table-condensed">';
+	$tbl = '<table id="newtbl" class="table table-hover table-condensed">'; // No stripes for this table
 	$tbl .= '<thead><tr><th>Protocol</th><th>Structure</th><th>Behavior</th></tr></thead>';
 	$tbl .= '<tbody>';
 
@@ -566,7 +569,7 @@ if(!$dfltmsg) {
 					<?=$tree?>
 					<br />
 					<a href="firewall_shaper_layer7.php?action=add" class="btn btn-sm btn-success">
-						<?=gettext("Create new rule group")?>
+						<?=gettext("Create new L7<br />rule group")?>
 					</a>
 				</div>
 				<div class="col-sm-10">

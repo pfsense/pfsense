@@ -406,9 +406,11 @@ function long2ip32($ip) {
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
-/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms.
+   Returns '' (not numeric) if not valid IPv4. */
 function ip2long32($ip) {
-	return (ip2long($ip) & 0xFFFFFFFF);
+	$a = ip2long($ip);
+	return ($a === False ? '' : $a & 0xFFFFFFFF);
 }
 
 /* Convert IP address to unsigned long int. */
@@ -621,9 +623,27 @@ function is_ipaddrv4($ipaddr) {
 	return true;
 }
 
-/* returns true if $ipaddr is a valid IPv6 linklocal address */
+/* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
+   returns '' if not a valid linklocal address
+   TODO: does not attempt to validate any IPv6 %scope (if present) other than to check [0-9a-z] and non-pathological max length 64 */
 function is_linklocal($ipaddr) {
-	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
+	if (!is_string($ipaddr))
+		return '';
+	$ip4 = ip2long32($ipaddr);
+	if ($ip4 !== false) {
+		// IPv4: test whether 169.254.1.0 - 169.254.254.255 per rfc3927 2.1
+		list($local4lo, $local4hi) = array(ip2long32('169.254.1.0'), ip2long32('169.254.254.255');)
+		if ($ip4 >= $local4lo && $ip4 <= $local4hi)
+			return 4;
+	} elseif (preg_match('/^([0-9a-f:]{2,39})(%([0-9a-z]{1,64}))?$/i', $ipaddr, $ip6)) {
+		// IPv6: test whether valid IPv6 and first 64 bits are '1111111010' + 54 zero bits (fe80::) per rfc4291 2.5.6
+		// we don't attempt any validation on scope data captured in $ip6[3] (if any) so long as plausible
+		// Net_IPv6::_Ip2Bin() can return a shorter binary string for non-IPv6 or other bad data so also test we got 128 bits returned
+		$ipbin = Net_IPv6::_Ip2Bin($ip6[1]);
+		if (strlen($ipbin) == 128 && substr($ipbin,0,64) == '1111111010' . str_repeat('0',54))
+			return 6;
+	}
+	return '';
 }
 
 /* returns scope of a linklocal address */

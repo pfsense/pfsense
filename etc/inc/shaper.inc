@@ -4314,29 +4314,38 @@ class layer7 {
 		return $tree;
 	}
 
-	function build_formX() {
-		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br />";
-		$form .= gettext("Enable/Disable");
-		$form .= "</td><td class=\"vncellreq\">";
-		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
-		if ($this->GetREnabled() == "on") {
-			$form .=  "checked=\"checked\"";
-		}
-		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable layer7 Container") . "</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"container\" name=\"container\" value=\"";
-		$form .= $this->GetRName()."\" />";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
-		$form .= $this->GetRDescription();
-		$form .= "\" />";
-		$form .= "<br /> <span class=\"vexpl\">";
-		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
-		$form .= "</td></tr>";
+	function build_form() {
+		
+		$form = new Form(new Form_Button(
+			'Submit',
+			'Save'
+		));
+		
+		$section = new Form_Section('Limiter');
+		
+		$section->addInput(new Form_Checkbox(
+			'enabled',
+			'Enable/Disable',
+			'Enable/disable discipline and its children',
+			($this->GetREnabled() == "on"),
+			'on'
+		));
+		
+		$section->addInput(new Form_Input(
+			'container',
+			'Name',
+			'text',
+			$this->GetRName()
+		));
+
+		$section->addInput(new Form_Input(
+			'description',
+			'Description',
+			'text',
+			$this->GetRDescription()
+		))->setHelp('You may enter a description here for your reference (not parsed).');
+		
+		$form->add($section);
 
 		return $form;
 	}

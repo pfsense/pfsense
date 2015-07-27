@@ -574,10 +574,12 @@ if ($pkg['tabs'] <> "") {
 				$value = implode(',', $value);
 			}
 		} else {
-			if (isset($id) && $a_pkg[$id]) {
+			if (isset($id) && isset($a_pkg[$id][$fieldname])) {
 				$value = $a_pkg[$id][$fieldname];
 			} else {
-				$value = $pkga['default_value'];
+				if (isset($pkga['default_value'])) {
+					$value = $pkga['default_value'];
+				}
 			}
 		}
 		switch ($pkga['type']) {

@@ -87,6 +87,11 @@ if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	conf_mount_ro();
 }
 
+// Use a longer (30 second) connect timeout when trying to download each package file.
+// Package installs are not holding up general boot and routing/firewall functionality,
+// so it is nicer to wait a while if necessary rather than abort.
+define('PKG_FILE_DOWNLOAD_CONNECT_TIMEOUT', '30');
+
 /****f* pkg-utils/remove_package
  * NAME
  *   remove_package - Removes package from FreeBSD if it exists
@@ -497,8 +502,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			$base_url = substr($base_url, 0, -1);
 		$fetchto = "{$fetchdir}/apkg_{$filename}";
 		$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
-		if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
-			if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
+		if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto, "read_body", PKG_FILE_DOWNLOAD_CONNECT_TIMEOUT) !== true) {
+			if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto, "read_body", PKG_FILE_DOWNLOAD_CONNECT_TIMEOUT) !== true) {
 				$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
 				update_output_window($static_output);
 				return false;
@@ -770,7 +775,9 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 
-		pkg_fetch_additional_files($pkg, $pkg_info);
+		if (!pkg_fetch_additional_files($pkg, $pkg_info)) {
+			return false;
+		}
 
 		/*   if a require exists, include it.  this will
 		 *   show us where an error exists in a package
@@ -1448,8 +1455,7 @@ function pkg_fetch_config_file($package, $pkg_info = "") {
 		update_output_window($static_output);
 		pkg_debug(gettext("Downloading package configuration file...") . "\n");
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
-		download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto);
-		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
+		if (download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto, "read_body", PKG_FILE_DOWNLOAD_CONNECT_TIMEOUT) !== true) {
 			pkg_debug(gettext("ERROR! Unable to fetch package configuration file. Aborting installation.") . "\n");
 			if($pkg_interface == "console")
 				print "\n" . gettext("ERROR! Unable to fetch package configuration file. Aborting package installation.") . "\n";
@@ -1510,7 +1516,7 @@ function pkg_fetch_additional_files($package, $pkg_info = "") {
 					safe_mkdir($prefix);
 				$static_output .= $filename . " ";
 				update_output_window($static_output);
-				if (download_file_with_progress_bar($afn['item'][0], $prefix . $filename) !== true) {
+				if (download_file_with_progress_bar($afn['item'][0], $prefix . $filename, "read_body", PKG_FILE_DOWNLOAD_CONNECT_TIMEOUT) !== true) {
 					$static_output .= "failed.\n";
 					@unlink($prefix . $filename);
 					update_output_window($static_output);

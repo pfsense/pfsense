@@ -2307,7 +2307,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
 			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
-				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = explode("\n", str_replace("\r", "", file_get_contents($urltable_filename)));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			}

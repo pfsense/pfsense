@@ -11,7 +11,7 @@
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-
+ne
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -622,7 +622,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		if (is_alias($address)) {
 			if (alias_get_type($address) == 'urltable') {
 				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
-				$urltable_netsting = alias_expand_urltable($address);
+				$urltable_nesting = alias_expand_urltable($address);
 				if (!empty($urltable_nesting)) {
 					$urlfile_as_arr = file($urltable_nesting);
 					foreach ($urlfile_as_arr as $line) {

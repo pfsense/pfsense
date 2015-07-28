@@ -372,7 +372,7 @@ function addRow(table_id) {
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<a class="btn btn-sm btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#">Delete row<\/a>';
+  var remove = '<a class="btn  btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#">Delete row<\/a>';
 
   try {
 	var newRow = tbl.insertRow(rows_count);
@@ -515,7 +515,7 @@ function build_l7table() {
 	endif;
 
 				$tbl .= '</td><td>';
-				$tbl .= '<a type="button" class="btn btn-sm btn-default" onclick="removeRow(\'newtbl\',this.parentNode.parentNode); return false;" href="#">';
+				$tbl .= '<a type="button" class="btn  btn-default" onclick="removeRow(\'newtbl\',this.parentNode.parentNode); return false;" href="#">';
 				$tbl .= gettext('Delete row') . '</a>';
 				$tbl .= '</td></tr>';
 
@@ -562,7 +562,7 @@ if(!$dfltmsg) {
 ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading" align="center"><h2 class="panel-title">Layer 7 container</h2></div>
+		<div class="panel-heading" align="center"><h2 class="panel-title">Layer 7</h2></div>
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="col-sm-2 ">

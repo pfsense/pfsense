@@ -18,10 +18,13 @@ $thermal_sensors_widget_title = "Thermal Sensors";
 //returns core temp data (from coretemp.ko or amdtemp.ko driver) as "|"-delimited string.
 //NOTE: depends on proper config in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 function getThermalSensorsData() {
-
 	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
-	$thermalSensorsData = join("|", $dfout);
+        $dfout_filtered = array_filter($dfout, 'filterNegatives');
+        $thermalSensorsData = join("|", $dfout_filtered);
 	return $thermalSensorsData;
+}
 
+function filterNegatives($negsign) {
+        return strpos($negsign, ' -') === false;
 }
 ?>

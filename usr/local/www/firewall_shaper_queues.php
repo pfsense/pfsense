@@ -30,7 +30,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -55,7 +55,7 @@ $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();
 $qlist =& get_unique_queue_list();
 
-if (!is_array($qlist)) 
+if (!is_array($qlist))
 	$qlist = array();
 
 $tree = "<ul class=\"tree\" >";
@@ -63,7 +63,7 @@ foreach ($qlist as $queue => $qkey) {
 	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&amp;action=show\" >";
 	if (isset($shaperIFlist[$queue]))
 		$tree .= $shaperIFlist[$queue] . "</a></li>";
-	else	
+	else
 		$tree .= $queue . "</a></li>";
 }
 $tree .= "</ul>";
@@ -71,10 +71,10 @@ $tree .= "</ul>";
 if ($_GET) {
 	if ($_GET['queue'])
 		$qname = htmlspecialchars(trim($_GET['queue']));
-			
+
 	if ($_GET['interface'])
 		$interface = htmlspecialchars(trim($_GET['interface']));
-				
+
 	if ($_GET['action'])
 		$action = htmlspecialchars($_GET['action']);
 
@@ -83,7 +83,7 @@ if ($_GET) {
 			$altq =& $altq_list_queues[$interface];
 			$qtmp =& $altq->find_queue("", $qname);
 			if ($qtmp) {
-				$qtmp->delete_queue(); 
+				$qtmp->delete_queue();
 				if (write_config())
 					mark_subsystem_dirty('shaper');
 			}
@@ -91,23 +91,23 @@ if ($_GET) {
 			exit;
 		break;
 		case "add":
-			/* 
+			/*
 			 * XXX: WARNING: This returns the first it finds.
 			 * Maybe the user expects something else?!
 			 */
 			foreach ($altq_list_queues as $altq) {
 				$qtmp =& $altq->find_queue("", $qname);
-				
+
 				if ($qtmp) {
 					$copycfg = array();
 					$qtmp->copy_queue($interface, $copycfg);
 					$aq =& $altq_list_queues[$interface];
-					
+
 					if ($qname == $qtmp->GetInterface()) {
 						$config['shaper']['queue'][] = $copycfg;
 					} else if ($aq) {
 						$tmp1 =& $qtmp->find_parentqueue($interface, $qname);
-						if ($tmp1) 
+						if ($tmp1)
 								$tmp =& $aq->find_queue($interface, $tmp1->GetQname());
 
 						if ($tmp)
@@ -124,36 +124,36 @@ if ($_GET) {
 						$newroot['queue'][] = $copycfg;
 						$config['shaper']['queue'][] = $newroot;
 					}
-					
+
 					if (write_config())
 						mark_subsystem_dirty('shaper');
-						
+
 					break;
 					}
 				}
-	
+
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
 		break;
 		case "show":
 			foreach ($config['interfaces'] as $if => $ifdesc) {
 				$altq = $altq_list_queues[$if];
-				
+
 				if ($altq) {
 					$qtmp =& $altq->find_queue("", $qname);
-					
+
 					if ($qtmp)
 						$output .= $qtmp->build_shortform();
 					else
 						$output .= build_iface_without_this_queue($if, $qname);
-						
+
 				} else {
 					if (!is_altq_capable($ifdesc['if']))
 						continue;
-						
+
 					if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
 						continue;
-						
+
 					$output .= build_iface_without_this_queue($if, $qname);
 				}
 			}
@@ -191,16 +191,16 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
-<?php 
-if ($input_errors) 
+<?php
+if ($input_errors)
 	print_input_errors($input_errors);
 
 if ($savemsg)
 	print_info_box($savemsg);
-	
+
 if (is_subsystem_dirty('shaper'))
 	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
-	
+
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), true, "firewall_shaper_queues.php");
@@ -226,7 +226,7 @@ display_top_tabs($tab_array);
 		</div>
 	</div>
 </form>
-	
+
 <?php
 
 include("foot.inc");

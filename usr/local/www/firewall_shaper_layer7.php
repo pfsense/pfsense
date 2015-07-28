@@ -45,6 +45,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+print('POST: '); print_r($_POST); print('<br />');
+print('GET: '); print_r($_GET); print('<br />');
+
 $dfltmsg = false;
 
 // Variables protocols (dynamic) and structures (static)
@@ -68,6 +71,8 @@ $default_layer7shaper_msg = '<br />' .
 							' <a href="diag_patterns.php">' . gettext('here') . '</a>';
 
 read_layer7_config();
+
+$sform = new Form(false);
 
 if($_GET['reset'] != "") {
 	// kill all ipfw-classifyd processes
@@ -99,7 +104,7 @@ if ($_GET) {
 		case "add":
 			$show_proto_form = true;
 			$container = new layer7();
-			$sform .= $container->build_form(); //constructs the graphical interface on the right side
+			$sform = $container->build_form(); //constructs the graphical interface on the right side
 			unset($container);
 		break;
 		case "show":
@@ -372,7 +377,7 @@ function addRow(table_id) {
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<a class="btn  btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#">Delete row<\/a>';
+  var remove = '<a class="btn  btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)">Remove<\/a>';
 
   try {
 	var newRow = tbl.insertRow(rows_count);
@@ -516,7 +521,7 @@ function build_l7table() {
 
 				$tbl .= '</td><td>';
 				$tbl .= '<a type="button" class="btn  btn-default" onclick="removeRow(\'newtbl\',this.parentNode.parentNode); return false;" href="#">';
-				$tbl .= gettext('Delete row') . '</a>';
+				$tbl .= gettext('Remove') . '</a>';
 				$tbl .= '</td></tr>';
 
 

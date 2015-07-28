@@ -108,9 +108,11 @@ if ($_GET) {
 				if (write_config())
 					mark_subsystem_dirty('shaper');
 			}
+
 			header("Location: firewall_shaper.php");
 			exit;
 		break;
+
 	case "resetall":
 			foreach ($altq_list_queues as $altq)
 				$altq->delete_all();
@@ -148,9 +150,11 @@ if ($_GET) {
 
 
 		break;
+
 	case "add":
 			/* XXX: Find better way because we shouldn't know about this */
 		if ($altq) {
+
 			switch ($altq->GetScheduler()) {
 				case "PRIQ":
 					$q = new priq_queue();
@@ -176,9 +180,7 @@ if ($_GET) {
 
 			if ($q) {
 				$q->SetInterface($interface);
-				$output_form .= $q->build_form();
-				$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-				$output_form .= " value=\"".htmlspecialchars($qname)."\" />";
+				$sform = $q->build_form();
 				$newjavascript = $q->build_javascript();
 				unset($q);
 				$newqueue = true;
@@ -253,6 +255,7 @@ if ($_POST) {
 			$altq->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
+
 			$can_enable = true;
 			$can_add = true;
 		}
@@ -272,9 +275,9 @@ if ($_POST) {
 				$can_enable = true;
 				if ($tmp->CanHaveChildren() && $can_enable) {
 					if ($tmp->GetDefault() != "")
-										$can_add = false;
-								else
-										$can_add = true;
+						$can_add = false;
+					else
+						$can_add = true;
 				} else
 					$can_add = false;
 				if (write_config())
@@ -282,9 +285,9 @@ if ($_POST) {
 				$can_enable = true;
 				if ($altq->GetScheduler() != "PRIQ") /* XXX */
 					if ($tmp->GetDefault() != "")
-												$can_add = false;
-										else
-												$can_add = true;
+						$can_add = false;
+					else
+						$can_add = true;
 			}
 			read_altq_config();
 			$output_form .= $tmp->build_form();
@@ -321,12 +324,15 @@ if ($_POST) {
 	} else if ($queue) {
 				$queue->validate_input($_POST, $input_errors);
 				if (!$input_errors) {
-							$queue->update_altq_queue_data($_POST);
-							$queue->wconfig();
-				if (write_config())
-					mark_subsystem_dirty('shaper');
+					$queue->update_altq_queue_data($_POST);
+					$queue->wconfig();
+
+					if (write_config())
+						mark_subsystem_dirty('shaper');
+
 				$dontshow = false;
 				}
+
 		read_altq_config();
 		$output_form .= $queue->build_form();
 	} else	{
@@ -362,10 +368,11 @@ include("head.inc");
 
 $tree = '<ul class="tree" >';
 if (is_array($altq_list_queues)) {
-		foreach ($altq_list_queues as $tmpaltq) {
-				$tree .= $tmpaltq->build_tree();
-		}
-$tree .=  get_interface_list_to_show();
+	foreach ($altq_list_queues as $tmpaltq) {
+			$tree .= $tmpaltq->build_tree();
+	}
+
+	$tree .=  get_interface_list_to_show();
 }
 
 $tree .= "</ul>";
@@ -432,7 +439,7 @@ else {
 				'add',
 				'Add new Queue',
 				$url
-			))->addClass('btn-success');
+			))->removeClass('btn-default')->addClass('btn-success');
 		}
 
 		if($queue)
@@ -444,7 +451,7 @@ else {
 			'delete',
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url
-		))->addClass('btn-danger');
+		))->removeClass('btn-default')->addClass('btn-danger');
 	}
 
 	// Print the form

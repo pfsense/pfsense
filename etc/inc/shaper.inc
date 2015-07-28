@@ -3641,12 +3641,12 @@ class dnpipe_class extends dummynet_class {
 <script type='text/javascript'>
 //<![CDATA[
 var addBwRowTo = (function() {
-	
+
 	return (function (tableId) {
-	
+
 	var table = document.getElementById(tableId);
 	var totalrows = table.rows.length -1;
-	
+
 	var row = table.insertRow(totalrows + 1);
 	var cell1 = row.insertCell(0);
 	var cell2 = row.insertCell(1);
@@ -3663,7 +3663,7 @@ var addBwRowTo = (function() {
 
 function removeBwRow(el) {
 	var d = el.parentNode.parentNode.rowIndex;
-    document.getElementById('maintable').deleteRow(d);
+	document.getElementById('maintable').deleteRow(d);
 }
 //]]>
 </script>
@@ -3678,7 +3678,7 @@ EOD;
 	// with the javascript in this class
 	function build_bwtable() {
 		global $config;
-		
+
 		$bandwidth = $this->GetBandwidth();
 				//build list of schedules
 		$schedules = array();
@@ -3690,7 +3690,7 @@ EOD;
 				}
 			}
 		}
-		
+
 		$form = '<table id="maintable" class="table table-hover table-condensed">';
 		$form .= "<thead><tr>";
 		$form .= "<th><div id='onecolumn'>Bandwidth</div></th>";
@@ -3700,7 +3700,7 @@ EOD;
 		$form .= "<th><div id='fourthcolumn'></div></th>";
 		$form .= "</tr></thead>";
 		$form .= "<tbody>";
-		
+
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= '<tr><td>';
@@ -3733,13 +3733,13 @@ EOD;
 			}
 		}
 		$form .= "</tbody></table>";
-		
+
 		$form .= '<a type="button" class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
 		$form .= gettext("Add another schedule") . "</a>";
-		
+
 		return($form);
 	}
-	
+
 	function build_form() {
 		global $g, $config, $pipe, $action, $qname;
 
@@ -3806,7 +3806,7 @@ EOD;
 			$section->addInput(new Form_StaticText(
 				'Bandwidth',
 				$this->build_bwtable()
-			));			
+			));
 		}
 
 		$mask = $this->GetMask();
@@ -4227,7 +4227,7 @@ class dnqueue_class extends dummynet_class {
 			'number',
 			$this->GetWeight(),
 			['min' => '1', 'max' => '100']
-		))->setHelp('For queues under the same parent this specifies the share that a queue gets(values range from 1 to 100),' . 
+		))->setHelp('For queues under the same parent this specifies the share that a queue gets(values range from 1 to 100),' .
 					' you can leave it blank otherwise');
 
 		$section->addInput(new Form_Input(
@@ -4254,13 +4254,13 @@ class dnqueue_class extends dummynet_class {
 			$this->GetBuckets()
 		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
 
-        $section->addInput(new Form_Input(
-        	'pipe',
-        	null,
-        	'hidden',
-        	$this->GetPipe()
-        ));
-        
+		$section->addInput(new Form_Input(
+			'pipe',
+			null,
+			'hidden',
+			$this->GetPipe()
+		));
+
 		$sform->add($section);
 
 		return($sform);

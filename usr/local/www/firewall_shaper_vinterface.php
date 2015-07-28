@@ -30,7 +30,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -56,7 +56,7 @@ $shortcut_section = "trafficshaper-limiters";
 $dfltmsg = false;
 
 read_dummynet_config();
-/* 
+/*
  * The whole logic in these code maybe can be specified.
  * If you find a better way contact me :).
  */
@@ -64,10 +64,10 @@ read_dummynet_config();
 if ($_GET) {
 	if ($_GET['queue'])
 		$qname = htmlspecialchars(trim($_GET['queue']));
-			
+
 	if ($_GET['pipe'])
 		$pipe = htmlspecialchars(trim($_GET['pipe']));
-			
+
 	if ($_GET['action'])
 		$action = htmlspecialchars($_GET['action']);
 }
@@ -77,12 +77,12 @@ if ($_POST) {
 		$qname = htmlspecialchars(trim($_POST['name']));
 	else if ($_POST['newname'])
 		$qname = htmlspecialchars(trim($_POST['newname']));
-		
+
 	if ($_POST['pipe'])
 		$pipe = htmlspecialchars(trim($_POST['pipe']));
 	else
 		$pipe = htmlspecialchars(trim($qname));
-		
+
 	if ($_POST['parentqueue'])
 		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
 }
@@ -118,7 +118,7 @@ if ($_GET) {
 				$sform = $queue->build_form();
 			} else {
 				$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
-	
+
 				$dfltmsg = true;
 				$dontshow = true;
 			}
@@ -126,7 +126,7 @@ if ($_GET) {
 	case "resetall":
 		foreach ($dummynet_pipe_list as $dn)
 			$dn->delete_queue();
-			
+
 		unset($dummynet_pipe_list);
 		$dummynet_pipe_list = array();
 		unset($config['dnshaper']['queue']);
@@ -135,15 +135,15 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		
+
 		foreach ($config['filter']['rule'] as $key => $rule) {
 			if (isset($rule['dnpipe']))
 				unset($config['filter']['rule'][$key]['dnpipe']);
-				
+
 			if (isset($rule['pdnpipe']))
 				unset($config['filter']['rule'][$key]['pdnpipe']);
 		}
-		
+
 		if (write_config()) {
 			$retval = 0;
 			$retval = filter_configure();
@@ -153,10 +153,10 @@ if ($_GET) {
 				$savemsg = get_std_save_message($retval);
 			else
 				$savemsg = $retval;
-				
+
 		} else
 			$savemsg = gettext("Unable to write config.xml (Access Denied?)");
-			
+
 		$dfltmsg = true;
 
 		break;
@@ -169,7 +169,7 @@ if ($_GET) {
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
-		} else 
+		} else
 			$input_errors[] = gettext("Could not create new queue/discipline!");
 
 		if ($q) {
@@ -180,7 +180,7 @@ if ($_GET) {
 		}
 		break;
 	case "show":
-		if ($queue)  
+		if ($queue)
 			$sform = $queue->build_form();
 		else
 			$input_errors[] = gettext("Queue not found!");
@@ -220,7 +220,7 @@ if ($_POST) {
 			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
 		else {
 			$dnpipe =& new dnpipe_class();
-			
+
 			$dnpipe->ReadConfig($_POST);
 			$dnpipe->validate_input($_POST, $input_errors);
 			if (!$input_errors) {
@@ -228,7 +228,7 @@ if ($_POST) {
 				$dnpipe->SetNumber($number);
 				unset($tmppath);
 				$tmppath[] = $dnpipe->GetQname();
-				$dnpipe->SetLink($tmppath);	
+				$dnpipe->SetLink($tmppath);
 				$dnpipe->wconfig();
 				if (write_config())
 					mark_subsystem_dirty('shaper');
@@ -266,17 +266,17 @@ if ($_POST) {
 			$retval = 0;
 			$retval = filter_configure();
 			$savemsg = get_std_save_message($retval);
-			
+
 			if (stristr($retval, "error") != true)
 					$savemsg = get_std_save_message($retval);
 			else
 					$savemsg = $retval;
 
- 		/* XXX: TODO Make dummynet pretty graphs */ 
+		/* XXX: TODO Make dummynet pretty graphs */
 		//	enable_rrd_graphing();
 
 			clear_subsystem_dirty('shaper');
-			
+
 			if ($queue) {
 				$sform = $queue->build_form();
 				$dontshow = false;
@@ -294,14 +294,14 @@ if ($_POST) {
 			if (write_config())
 				mark_subsystem_dirty('shaper');
 			$dontshow = false;
-				} 
+				}
 		read_dummynet_config();
 		$sform = $queue->build_form();
-	} else  {
+	} else	{
 		$dfltmsg = true;
 		$dontshow = true;
 	}
-} 
+}
 
 if(!$_POST && !$_GET) {
 	$dfltmsg = true;
@@ -313,8 +313,8 @@ if ($queue) {
 			$can_enable = true;
 	else
 			$can_enable = false;
-	if ($queue->CanHaveChildren()) { 
-   		$can_add = true;
+	if ($queue->CanHaveChildren()) {
+		$can_add = true;
 	} else
 			$can_add = false;
 }
@@ -354,12 +354,12 @@ if ($queue)
 else
 	echo $newjavascript;
 
-if ($input_errors) 
+if ($input_errors)
 	print_input_errors($input_errors);
 
-if ($savemsg) 
+if ($savemsg)
 	print_info_box($savemsg, 'success');
-	
+
 if (is_subsystem_dirty('shaper'))
 	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
 
@@ -377,7 +377,7 @@ display_top_tabs($tab_array);
 		<tbody>
 			<tr class="tabcont">
 				<td class="col-md-1">
-					<?=$tree?>	  
+					<?=$tree?>
 					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success"/>
 						<?=gettext('New Limiter')?>
 					</a>
@@ -426,5 +426,5 @@ else {
 	</table>
 </div>
 
-<?php 
+<?php
 include("foot.inc");

@@ -229,7 +229,7 @@ function get_mbuf($percent=false) {
 
 function get_temp() {
 	$temp_out = get_single_sysctl("dev.cpu.0.temperature");
-	if ($temp_out == "") {
+	if (($temp_out == "") || (strpos($temp_out, "-") !== false)) {
 		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
 	}
 

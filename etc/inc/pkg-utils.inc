@@ -854,7 +854,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
 		$static_output .= "Syslog entries... ";
 		update_output_window($static_output);
-		remove_text_from_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);
+		unset($config['installedpackages']['package'][$pkgid]['logging']);
 		system_syslogd_start();
 		@unlink("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		$static_output .= "done.\n";

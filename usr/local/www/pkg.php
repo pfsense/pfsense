@@ -489,7 +489,7 @@ include("head.inc");
 			// Handle pagination and display_maximum_rows
 			if ($display_maximum_rows) {
 				if ($pagination_counter == ($display_maximum_rows-1) or
-					$i == (count($evaledvar)-1)) {
+				    $i == (count($evaledvar)-1)) {
 					$colcount = count($pkg['adddeleteeditpagefields']['columnitem']);
 					$final_footer = "";
 					$final_footer .= "<tr><td colspan='$colcount'>";

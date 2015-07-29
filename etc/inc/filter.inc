@@ -3240,18 +3240,15 @@ EOD;
 					$cpiflist[] = "{$tmpif}";
 					$cpipm = get_interface_ip($cpifgrp);
 					if (is_ipaddr($cpipm)) {
-						$carpif = link_ip_to_carp_interface($cpipm);
-						if (!empty($carpif)) {
-							$cpiflist[] = $carpif;
-							$carpsif = explode(" ", $carpif);
-							foreach ($carpsif as $cpcarp) {
-								$carpip = find_interface_ip($cpcarp);
-								if (is_ipaddr($carpip)) {
-									$cpiplist[] = $carpip;
-								}
+						$cpiplist[] = $cpipm;
+						if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
+							continue;
+						}
+						foreach ($config['virtualip']['vip'] as $vip) {
+							if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+								$cpiplist[] = $vip['subnet'];
 							}
 						}
-						$cpiplist[] = $cpipm;
 					}
 				}
 			}

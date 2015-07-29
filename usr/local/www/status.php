@@ -161,6 +161,7 @@ defCmdT("Free Disk Space", "/bin/df -hi");
 defCmdT("Routing tables", "/usr/bin/netstat -nWr");
 defCmdT("Mbuf Usage", "/usr/bin/netstat -mb");
 defCmdT("VMStat", "/usr/bin/vmstat -afimsz");
+defCmdT("Sockets", "/usr/bin/sockstat");
 
 /* Firewall rules and info */
 defCmdT("Generated Ruleset", "/bin/cat {$g['tmp_path']}/rules.debug");

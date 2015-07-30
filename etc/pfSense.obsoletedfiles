@@ -535,7 +535,6 @@
 /usr/libexec/lint2
 /usr/libexec/make_index
 /usr/local/bin/3gstat
-/usr/local/bin/after_installation_routines.sh
 /usr/local/bin/atareinit
 /usr/local/bin/bsdiff
 /usr/local/bin/bspatch

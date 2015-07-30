@@ -1427,7 +1427,6 @@ function captiveportal_opendb() {
 		}
 	}
 
-	$DB = new SQLite3($db_path);
 	if (!$DB) {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");
 		unlink_if_exists($db_path);

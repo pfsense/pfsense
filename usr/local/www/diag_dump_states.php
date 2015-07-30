@@ -197,15 +197,15 @@ while ($line = chop(fgets($fd))) {
 	$ends = preg_split("/\<?-\>?/", $info);
 	$parts = explode(":", $ends[0]);
 	if (strstr($info, "->")) {
-	    $srcip = trim($parts[0]);    
+		$srcip = trim($parts[0]);    
 	} else {
-	    $dstip = trim($parts[0]);
+		$dstip = trim($parts[0]);
 	}
 	$parts = explode(":", $ends[count($ends) - 1]);
 	if (strstr($info, "->")) {
-	    $dstip = trim($parts[0]);    
+		$dstip = trim($parts[0]);    
 	} else {
-	    $srcip = trim($parts[0]);
+		$srcip = trim($parts[0]);
 	}
 
 ?>

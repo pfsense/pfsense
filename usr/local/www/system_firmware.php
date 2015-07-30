@@ -188,8 +188,6 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 					$savemsg = gettext("The firmware is now being updated. The firewall will reboot automatically.");
 					if (stristr($_FILES['ulfile']['name'], "nanobsd") or $_POST['isnano'] == "yes") {
 						mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
-					} else if (stristr($_FILES['ulfile']['name'], "bdiff")) {
-						mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
 					} else {
 						if ($g['platform'] == "nanobsd") {
 							$whichone = "pfSenseNanoBSDupgrade";

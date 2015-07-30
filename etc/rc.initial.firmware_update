@@ -109,10 +109,7 @@ switch ($command) {
 				echo "\nsha256 checksum matches.\n";
 				unlink_if_exists("/root/firmware.tgz.sha256");
 			}
-			if (strstr($url, "bdiff")) {
-				echo "Binary DIFF upgrade file detected...\n";
-				$type = "bdiff";
-			} elseif (strstr($url, "nanobsd")) {
+			if (strstr($url, "nanobsd")) {
 				echo "NanoBSD upgrade file detected...\n";
 				$type = "nanobsd";
 			} else {
@@ -128,9 +125,6 @@ switch ($command) {
 		if (!$path) {
 			fclose($fp);
 			die;
-		}
-		if (stristr($path, "bdiff")) {
-			$type = "bdiff";
 		}
 		if (stristr($path, "nanobsd")) {
 			$type = "nanobsd";
@@ -175,9 +169,7 @@ function do_upgrade($path, $type) {
 	}
 	mark_subsystem_dirty('firmwarelock');
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
-	if ($type == "bdiff") {
-		mwexec_bg("/etc/rc.firmware delta_update $path");
-	} elseif ($type == "nanobsd") {
+	if ($type == "nanobsd") {
 		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
 	} else {
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");

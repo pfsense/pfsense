@@ -78,46 +78,6 @@ remove_chflags() {
 	done
 }
 
-binary_update() {
-	TGZ=$1
-	ERR_F="/tmp/bdiff.log"
-	rm ${ERR_F} 2>/dev/null
-	/bin/mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
-	# Save the old shutdown binary. If we switch from i386 to amd64 (or back) the reboot binary won't run at the end since it doesn't match up.
-	/bin/cp -p /sbin/shutdown /sbin/shutdown.old
-	backup_chflags
-	remove_chflags
-	cd /tmp/patches
-	for i in `/usr/bin/tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
-	do
-		FILE=`basename ${i}`
-		echo "Working on ${i}"
-		# Untar patch file and md5 files
-		/usr/bin/tar xzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5 2>>${ERR_F}
-
-		# Apply patch - oldfile newfile patchfile
-		/usr/local/bin/bspatch /${i} /tmp/patched/${FILE} /tmp/patches/${i} 2>>${ERR_F}
-
-		OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5 2>/dev/null`
-		NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5 2>/dev/null`
-		NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5 2>/dev/null`
-		PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE} 2>/dev/null`
-
-		if [ "$PATCHED_MD5" = "$NEW_PATCH_MD5" ]; then
-			/usr/bin/install -S /tmp/patched/${FILE} /${i}
-		else
-			#echo "${i} file does not match intended final md5."
-			echo "${i} file does not match intended final md5." >> ${ERR_F}
-		fi
-
-		/bin/rm /tmp/patched/${FILE} >> ${ERR_F}
-		/bin/rm /tmp/patches/${i} >> ${ERR_F}
-		/bin/rm /tmp/patches/${i}.* >> ${ERR_F}
-	done
-	/bin/rm -rf /tmp/patched /tmp/patches >> ${ERR_F}
-	restore_chflags
-}
-
 case $ACTION in
 enable)
 	touch /conf/upgrade_log.txt
@@ -513,25 +473,6 @@ pfSenseupgrade)
 		rm /tmp/no_upgrade_reboot_required
 	else
 		. /etc/rc.reboot
-	fi
-
-	;;
-delta_update)
-	touch /var/run/firmwarelock.dirty
-	backup_chflags
-	remove_chflags
-	binary_update $IMG
-	restore_chflags
-	rm -rf /etc/rc.conf
-	find / -name CVS -type d -exec rm {} \;
-	rm -rf /usr/savecore/*
-	/etc/rc.conf_mount_ro
-	/sbin/umount -f /cf 2>/dev/null
-	/sbin/mount -r /cf 2>/dev/null
-	/sbin/umount -f / 2>/dev/null
-	/sbin/mount -r / 2>/dev/null
-	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh
 	fi
 
 	;;

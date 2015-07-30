@@ -246,9 +246,6 @@ $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
 $wlan_modes = array("bss" => "Infrastructure (BSS)", "adhoc" => "Ad-hoc (IBSS)",
 	"hostap" => "Access Point");
 
-/* platforms that support firmware updating */
-$fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
-
 function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
 	/* check for bad control characters */

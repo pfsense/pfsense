@@ -52,9 +52,6 @@ fi
 if [ "$DLHASH" = "$FILEHASH" ]; then
 	echo "sha256 hashes match." | logger -p daemon.info -i -t AutoUpgrade
 	echo "Beginning ${product} upgrade." | wall
-	if [ "$PLATFORM" = "net45xx" ]; then
-		/usr/local/bin/php /etc/rc.conf_mount_rw
-	fi
 	if [ "$PLATFORM" = "nanobsd" ]; then
 		/usr/local/bin/php /etc/rc.conf_mount_rw
 	fi

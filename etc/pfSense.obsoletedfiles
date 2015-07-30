@@ -272,7 +272,6 @@
 /lib/libz.so.3
 /lib/libz.so.4
 /lib/libz.so.5
-/license.txt
 /root/latest.tgz.sha256
 /sbin/atacontrol
 /sbin/idmapd
@@ -430,11 +429,8 @@
 /usr/lib/libpanel.so.4
 /usr/lib/libpanelw.so.4
 /usr/lib/libpcap.so.4
-/usr/lib/libpmc.a
-/usr/lib/libpmc.so
 /usr/lib/libpmc.so.3
 /usr/lib/libpmc.so.4
-/usr/lib/libpmc.so.5
 /usr/lib/libproc.so.1
 /usr/lib/libpthread.so.2
 /usr/lib/libradius.so.2
@@ -555,9 +551,6 @@
 /usr/local/bin/ntptime
 /usr/local/bin/ntptrace
 /usr/local/bin/openssl
-/usr/local/bin/pcre-config
-/usr/local/bin/pcregrep
-/usr/local/bin/pcretest
 /usr/local/bin/safestats
 /usr/local/bin/sntp
 /usr/local/bin/spawn-fcgi
@@ -616,17 +609,10 @@
 /usr/local/lib/liblualib.so.5
 /usr/local/lib/libmcrypt.so.8
 /usr/local/lib/libmhash.so.2
-/usr/local/lib/libpcre.a
 /usr/local/lib/libpcre.la
 /usr/local/lib/libpcre.so.0
-/usr/local/lib/libpcrecpp.a
 /usr/local/lib/libpcrecpp.la
-/usr/local/lib/libpcrecpp.so
-/usr/local/lib/libpcrecpp.so.0
-/usr/local/lib/libpcreposix.a
 /usr/local/lib/libpcreposix.la
-/usr/local/lib/libpcreposix.so
-/usr/local/lib/libpcreposix.so.0
 /usr/local/lib/libpng.so.5
 /usr/local/lib/libpng.so.6
 /usr/local/lib/libpng15.so.15
@@ -1147,7 +1133,6 @@
 /usr/sbin/pkg_sign
 /usr/sbin/pkg_updating
 /usr/sbin/pkg_version
-/usr/sbin/pmcannotate
 /usr/sbin/pppd
 /usr/sbin/pppstats
 /usr/sbin/praudit

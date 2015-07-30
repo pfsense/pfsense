@@ -1,7 +1,5 @@
-/.cshrc
 /.cvsignore
 /.history
-/.profile
 /RELENG_1_2
 /bin/rcp
 /boot/device.hints_wrap
@@ -364,8 +362,6 @@
 /usr/lib/libc_r.so.6
 /usr/lib/libcalendar.so.3
 /usr/lib/libcalendar.so.4
-/usr/lib/libcom_err.a
-/usr/lib/libcom_err.so
 /usr/lib/libcom_err.so.3
 /usr/lib/libcom_err.so.4
 /usr/lib/libdevinfo.so.3
@@ -536,8 +532,6 @@
 /usr/local/bin/c_rehash
 /usr/local/bin/checkreload.sh
 /usr/local/bin/ez-ipupdate
-/usr/local/bin/hifnstats
-/usr/local/bin/ipsecstats
 /usr/local/bin/kill_ghosts.sh
 /usr/local/bin/l2tpd
 /usr/local/bin/lua
@@ -551,11 +545,9 @@
 /usr/local/bin/ntptime
 /usr/local/bin/ntptrace
 /usr/local/bin/openssl
-/usr/local/bin/safestats
 /usr/local/bin/sntp
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
-/usr/local/bin/ubsecstats
 /usr/local/bin/verifysig
 /usr/local/include
 /usr/local/info

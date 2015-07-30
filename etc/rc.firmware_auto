@@ -55,9 +55,6 @@ if [ "$DLHASH" = "$FILEHASH" ]; then
 	if [ "$PLATFORM" = "net45xx" ]; then
 		/usr/local/bin/php /etc/rc.conf_mount_rw
 	fi
-	if [ "$PLATFORM" = "wrap" ]; then
-		/usr/local/bin/php /etc/rc.conf_mount_rw
-	fi
 	if [ "$PLATFORM" = "nanobsd" ]; then
 		/usr/local/bin/php /etc/rc.conf_mount_rw
 	fi
@@ -68,22 +65,6 @@ if [ "$DLHASH" = "$FILEHASH" ]; then
 			sh /etc/rc.firmware pfSenseNanoBSDupgrade /tmp/latest.tgz
 		else
 			sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
-		fi
-	fi
-	if [ "$PLATFORM" = "wrap" ]; then
-		/bin/sync
-		sleep 5
-		/usr/local/bin/php /etc/rc.conf_mount_ro
-		if [ -e /etc/init_bootloader.sh ]; then
-			sh /etc/init_bootloader.sh
-		fi
-	fi
-	if [ "$PLATFORM" = "net45xx" ]; then
-		/bin/sync
-		sleep 5
-		/usr/local/bin/php /etc/rc.conf_mount_ro
-		if [ -e /etc/init_bootloader.sh ]; then
-			sh /etc/init_bootloader.sh
 		fi
 	fi
 	exit 0

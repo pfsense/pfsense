@@ -79,7 +79,6 @@ $g = array(
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
-	"nopccard_platforms" => array("wrap", "net48xx"),
 	"xmlrpcbaseurl" => "https://packages.pfsense.org",
 	"captiveportal_path" => "/usr/local/captiveportal",
 	"captiveportal_element_path" => "/var/db/cpelements",

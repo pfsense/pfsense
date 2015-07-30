@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	nat
+	pfSense_MODULE: nat
 */
 
 ##|+PRIV
@@ -50,6 +50,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 
 $specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
+
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
@@ -58,15 +59,18 @@ foreach ($ifdisp as $kif => $kdescr) {
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
 }
+
 $a_nat = &$config['nat']['rule'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (is_numericint($_GET['after']) || $_GET['after'] == "-1")
 	$after = $_GET['after'];
+
 if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1"))
 	$after = $_POST['after'];
 
@@ -84,6 +88,7 @@ if (isset($id) && $a_nat[$id]) {
 
 	$pconfig['disabled'] = isset($a_nat[$id]['disabled']);
 	$pconfig['nordr'] = isset($a_nat[$id]['nordr']);
+
 	address_to_pconfig($a_nat[$id]['source'], $pconfig['src'],
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
@@ -103,18 +108,18 @@ if (isset($id) && $a_nat[$id]) {
 
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
-} else {
-	$pconfig['interface'] = "wan";
-	$pconfig['src'] = "any";
-	$pconfig['srcbeginport'] = "any";
-	$pconfig['srcendport'] = "any";
-}
+	} else {
+		$pconfig['interface'] = "wan";
+		$pconfig['src'] = "any";
+		$pconfig['srcbeginport'] = "any";
+		$pconfig['srcendport'] = "any";
+	}
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
-/*  run through $_POST items encoding HTML entties so that the user
- *  cannot think he is slick and perform a XSS attack on the unwilling
+/*	run through $_POST items encoding HTML entties so that the user
+ *	cannot think he is slick and perform a XSS attack on the unwilling
  */
 unset($input_errors);
 
@@ -126,10 +131,10 @@ foreach ($_POST as $key => $value) {
 }
 
 if ($_POST) {
-
 	if(strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
 			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
+
 		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
 			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
 
@@ -140,11 +145,13 @@ if ($_POST) {
 			if (!$_POST['srcendport'])
 				$_POST['srcendport'] = $_POST['srcbeginport'];
 		}
+
 		if ($_POST['srcendport'] == "any")
 			$_POST['srcendport'] = $_POST['srcbeginport'];
 
 		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
 			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
+
 		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
 			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
 
@@ -155,6 +162,7 @@ if ($_POST) {
 			if (!$_POST['dstendport'])
 				$_POST['dstendport'] = $_POST['dstbeginport'];
 		}
+
 		if ($_POST['dstendport'] == "any")
 			$_POST['dstendport'] = $_POST['dstbeginport'];
 
@@ -164,6 +172,7 @@ if ($_POST) {
 		/* Make beginning port end port if not defined and endport is */
 		if (!$_POST['srcbeginport'] && $_POST['srcendport'])
 			$_POST['srcbeginport'] = $_POST['srcendport'];
+
 		if (!$_POST['dstbeginport'] && $_POST['dstendport'])
 			$_POST['dstbeginport'] = $_POST['dstendport'];
 	} else {
@@ -179,6 +188,7 @@ if ($_POST) {
 	} else if ($_POST['srctype'] == "single") {
 		$_POST['srcmask'] = 32;
 	}
+
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
@@ -205,12 +215,12 @@ if ($_POST) {
 		$reqdfields[] = "src";
 		$reqdfieldsn[] = gettext("Source address");
 	}
-	
+
 	if ($_POST['dsttype'] == "single" || $_POST['dsttype'] == "network") {
 		$reqdfields[] = "dst";
 		$reqdfieldsn[] = gettext("Destination address");
 	}
-	
+
 	if (!isset($_POST['nordr'])) {
 		$reqdfields[] = "localip";
 		$reqdfieldsn[] = gettext("Redirect target IP");
@@ -222,7 +232,7 @@ if ($_POST) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
 	}
-	
+
 	if (!$_POST['dstbeginport']) {
 		$_POST['dstbeginport'] = 0;
 		$_POST['dstendport'] = 0;
@@ -253,7 +263,7 @@ if ($_POST) {
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
-	if( ($_POST['srctype'] == "network" && is_alias($_POST['src']) ) 
+	if( ($_POST['srctype'] == "network" && is_alias($_POST['src']) )
 	 || ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) ) ) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
@@ -266,7 +276,7 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
-	
+
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
@@ -282,7 +292,7 @@ if ($_POST) {
 		$_POST['srcendport'] = $_POST['srcbeginport'];
 		$_POST['srcbeginport'] = $tmp;
 	}
-	
+
 	if ($_POST['dstbeginport'] > $_POST['dstendport']) {
 		/* swap */
 		$tmp = $_POST['dstendport'];
@@ -310,7 +320,7 @@ if ($_POST) {
 		if (!$endp)
 			$endp = $begp;
 
-		if (!(   (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
+		if (!(	 (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
 			  || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
 
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
@@ -343,6 +353,7 @@ if ($_POST) {
 			$natent['target'] = $_POST['localip'];
 			$natent['local-port'] = $_POST['localbeginport'];
 		}
+
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['associated-rule-id'] = $_POST['associated-rule-id'];
@@ -371,6 +382,7 @@ if ($_POST) {
 		// Updating a rule with a filter rule associated
 		if (!empty($natent['associated-rule-id']))
 			$need_filter_rule = true;
+
 		// Create a rule or if we want to create a new one
 		if( $natent['associated-rule-id']=='new' ) {
 			$need_filter_rule = true;
@@ -384,7 +396,6 @@ if ($_POST) {
 			$need_filter_rule = true;
 
 		if ($need_filter_rule == true) {
-
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
@@ -396,7 +407,7 @@ if ($_POST) {
 				else
 					$filterent =& $config['filter']['rule'][$filterentid];
 			}
-			
+
 			pconfig_to_address($filterent['source'], $_POST['src'],
 				$_POST['srcmask'], $_POST['srcnot'],
 				$_POST['srcbeginport'], $_POST['srcendport']);
@@ -435,7 +446,7 @@ if ($_POST) {
 
 		$natent['updated'] = make_config_revision_entry();
 
-		// Allow extending of the firewall edit page and include custom input validation 
+		// Allow extending of the firewall edit page and include custom input validation
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
 
 		// Update the NAT entry now
@@ -459,9 +470,9 @@ if ($_POST) {
 
 function build_srctype_list() {
 	global $pconfig, $ifdisp;
-	
+
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
-	
+
 	$sel = is_specialnet($pconfig['src']);
 
 	if(have_ruleint_access("pptp"))
@@ -469,7 +480,7 @@ function build_srctype_list() {
 
 	if(have_ruleint_access("pppoe"))
 		$list['pppoe'] = 'PPPoE clients';
-		
+
 	if(have_ruleint_access("l2tp"))
 		$list['l2tp'] = 'L2TP clients';
 
@@ -479,7 +490,7 @@ function build_srctype_list() {
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
-	
+
 	return($list);
 }
 
@@ -491,81 +502,81 @@ function build_dsttype_list() {
 
 	if(have_ruleint_access("pptp"))
 		$list['pptp'] = 'PPTP clients';
-		
+
 	if(have_ruleint_access("pppoe"))
-		$list['pppoe'] = 'PPPoE clients'; 
-		
+		$list['pppoe'] = 'PPPoE clients';
+
 	if(have_ruleint_access("l2tp"))
 		$list['l2tp'] = 'L2TP clients';
-		
+
 	foreach ($ifdisp as $if => $ifdesc) {
 		if(have_ruleint_access($if)) {
 			$list[$if] = $ifdesc;
 			$list[$if . 'ip'] = $ifdesc . ' address';
 		}
 	}
-		
+
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (isset($sn['noexpand']))
 				continue;
-				
+
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
-				
+
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
-					
+
 					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-				
+
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
-	
-	return($list);							
+
+	return($list);
 }
 
 function dsttype_selected() {
 	global $pconfig;
 
 	$sel = is_specialnet($pconfig['dst']);
-	
+
 	if(!$sel) {
 		if($pconfig['dstmask'] == 32)
 			return('single');
-		
+
 		return('network');
 	}
-	
-	return($pconfig['dst']);	
+
+	return($pconfig['dst']);
 }
 
 function srctype_selected() {
 	global $pconfig;
 
 	$sel = is_specialnet($pconfig['src']);
-	
+
 	if(!$sel) {
 		if($pconfig['srcmask'] == 32)
 			return('single');
-		
+
 		return('network');
 	}
-	
-	return($pconfig['src']);	
+
+	return($pconfig['src']);
 }
 
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gettext("Edit"));
 include("head.inc");
 
-if ($input_errors) 
-	print_input_errors($input_errors); 
-	
+if ($input_errors)
+	print_input_errors($input_errors);
+
 require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
@@ -686,9 +697,9 @@ $group->add(new Form_Input(
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 
-$group->setHelp('Specify the source port or port range for this rule. This is usually random and almost never ' . 
+$group->setHelp('Specify the source port or port range for this rule. This is usually random and almost never ' .
 				'equal to the destination port range (and should usually be \'any\'). You can leave the \'to\' field ' .
-				'empty if you only want to filter a single port.'); 
+				'empty if you only want to filter a single port.');
 
 $section->add($group);
 
@@ -743,7 +754,7 @@ $group->add(new Form_Input(
 ))->setHelp('Custom');
 
 $group->setHelp('Specify the port or port range for the destination of the packet for this mapping. ' .
-				'You can leave the \'to\' field empty if you only want to map a single port '); 
+				'You can leave the \'to\' field empty if you only want to map a single port ');
 
 $section->add($group);
 
@@ -811,7 +822,7 @@ $section->addInput(new Form_Select(
 		'enable'  => 'Enable (NAT + Proxy)',
 		'purenat' => 'Enable (Pure NAT)',
 		'disable' => 'Disable'
-		)
+	)
 ));
 
 if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
@@ -823,23 +834,23 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
 				$rulelist[$filter_rule['associated-rule-id']] = 'Rule ' . $filter_rule['descr'];
-				
+
 				if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
 					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
 				}
 			}
 		}
 	}
-	
+
 	if (isset($pconfig['associated-rule-id']))
 	$rulelist['new'] = 'Create new associated filter rule';
-	
+
 	$section->addInput(new Form_Select(
 		'associated-rule-id',
 		'Filter rule association',
 		'add-associated',
 		$rulelist
-	))->setHelp($hlpstr);	
+	))->setHelp($hlpstr);
 } else {
 	$section->addInput(new Form_Select(
 		'associated-rule-id',
@@ -850,7 +861,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 			'add-associated'  => 'Add associated filter rule',
 			'add-unassociated' => 'Add unassociated filter rule',
 			'pass' => 'Pass'
-			)
+		)
 	))->setHelp('The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.');
 }
 
@@ -894,7 +905,7 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	$after
 ));
-					
+
 print($form);
 ?>
 
@@ -905,109 +916,89 @@ events.push(function(){
 	var dstenabled = 1;
 	var showsource = 0;
 	var iface_old = '';
-	
-    // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-    function hideInput(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent('div').removeClass('hidden');            
-    }
 
-    // Hides the <div> in which the specified group input element lives so that the input,
-    // its label and help text are hidden
-    function hideGroupInput(id, hide) {
-        if(hide)
-            $('#' + id).parent('div').addClass('hidden');
-        else
-            $('#' + id).parent('div').removeClass('hidden');
-    }
+	// ---------- "Library" functions ---------------------------------------------------------------------------------
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
+	}
 
-    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-    function hideCheckbox(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent().parent('div').removeClass('hidden');            
-    }
+	// Disables the specified input element
+	function disableInput(id, disable) {
+		$('#' + id).prop("disabled", disable);
+	}
 
-    // Disables the specified input element
-    function disableInput(id, disable) {
-        $('#' + id).prop("disabled", disable);    
-    }
-    
-    // Hides all elements of the specified class. This will usually be a section  
-    function hideClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).hide();
-        else
-            $('.' + s_class).show();  
-    }
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
 
-    // Hides all elements of the specified class assigned to a group. This will usually be a group   
-    function hideGroupClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).parent().parent().parent().hide();
-        else
-            $('.' + s_class).parent().parent().parent().show();  
-    }
-    
-/*
+	// ---------- jQuery functions, lovingly converted from the original javascript------------------------------------------
 	function ext_change() {
-		if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
-			document.iform.srcbeginport_cust.disabled = 0;
+
+		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled) {
+			disableInput('srcbeginport_cust', false);
 		} else {
-			document.iform.srcbeginport_cust.value = "";
-			document.iform.srcbeginport_cust.disabled = 1;
+			$('#srcbeginport_cust').val('');
+			disableInput('srcbeginport_cust', true);
 		}
-		if ((document.iform.srcendport.selectedIndex == 0) && portsenabled) {
-			document.iform.srcendport_cust.disabled = 0;
+
+		if (($('#srcendport').find(":selected").index() == 0) && portsenabled) {
+			disableInput('srcendport_cust', false);
 		} else {
-			document.iform.srcendport_cust.value = "";
-			document.iform.srcendport_cust.disabled = 1;
+			$('#srcendport_cust').val('');
+			disableInput('srcendport_cust', true);
 		}
-		if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled && dstenabled) {
-			document.iform.dstbeginport_cust.disabled = 0;
+
+		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+			disableInput('dstbeginport_cust', false);
 		} else {
-			document.iform.dstbeginport_cust.value = "";
-			document.iform.dstbeginport_cust.disabled = 1;
+			$('#dstbeginport_cust').val('');
+			disableInput('dstbeginport_cust', true);
 		}
-		if ((document.iform.dstendport.selectedIndex == 0) && portsenabled && dstenabled) {
-			document.iform.dstendport_cust.disabled = 0;
+
+		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+			disableInput('dstendport_cust', false);
 		} else {
-			document.iform.dstendport_cust.value = "";
-			document.iform.dstendport_cust.disabled = 1;
+			$('#dstendport_cust').val('');
+			disableInput('dstendport_cust', true);
 		}
-	
-		if ((document.iform.localbeginport.selectedIndex == 0) && portsenabled) {
-			document.iform.localbeginport_cust.disabled = 0;
+
+		if (($('#localbeginport').find(":selected").index() == 0) && portsenabled) {
+			disableInput('localbeginport_cust', false);
 		} else {
-			document.iform.localbeginport_cust.value = "";
-			document.iform.localbeginport_cust.disabled = 1;
+			$('#localbeginport_cust').val('');
+			disableInput('localbeginport_cust', true);
 		}
-	
+
 		if (!portsenabled) {
-			document.iform.srcbeginport.disabled = 1;
-			document.iform.srcendport.disabled = 1;
-			document.iform.dstbeginport.disabled = 1;
-			document.iform.dstendport.disabled = 1;
-			document.iform.localbeginport_cust.disabled = 1;
+			disableInput('srcbeginport', true);
+			disableInput('srcendport', true);
+			disableInput('dstbeginport', true);
+			disableInput('dstendport', true);
+			disableInput('localbeginport_cust', true);
 		} else {
-			document.iform.srcbeginport.disabled = 0;
-			document.iform.srcendport.disabled = 0;
-			document.iform.localbeginport_cust.disabled = 0;
+			disableInput('srcbeginport', false);
+			disableInput('srcendport', false);
+			disableInput('localbeginport_cust', false);
 			if( dstenabled ) {
-				document.iform.dstbeginport.disabled = 0;
-				document.iform.dstendport.disabled = 0;
+				disableInput('dstbeginport', false);
+				disableInput('dstendport', false);
 			}
 		}
 	}
-*/	
+
 	function nordr_change() {
 		if( $('#nordr').prop('checked') ) {
 			hideInput('localip', true);
 			hideClass('lclportrange', true);
-			hideInput('associated-rule-id', true);			
+			hideInput('associated-rule-id', true);
 		} else {
 			hideInput('localip', false);
 			hideClass('lclportrange', !portsenabled);
@@ -1015,63 +1006,64 @@ events.push(function(){
 		}
 	}
 
-/*	
+	var customarray	 = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+
 	function check_for_aliases() {
-		//  if External port range is an alias, then disallow
-		//  entry of Local port
+		//	if External port range is an alias, then disallow
+		//	entry of Local port
 		//
 		for(i=0; i<customarray.length; i++) {
-			if(document.iform.dstbeginport_cust.value == customarray[i]) {
-				document.iform.dstendport_cust.value = customarray[i];
-				document.iform.localbeginport_cust.value = customarray[i];
-				document.iform.dstendport_cust.disabled = 1;
-				document.iform.localbeginport.disabled = 1;
-				document.iform.localbeginport_cust.disabled = 1;
-				document.iform.dstendport_cust.disabled = 0;
-				document.iform.localbeginport.disabled = 0;
-				document.iform.localbeginport_cust.disabled = 0;
+			if($('#dstbeginport_cust').val() == customarray[i]) {
+				$('#dstendport_cust').val(customarray[i]);
+				$('#localbeginport_cust').val(customarray[i]);
+				disableInput('dstendport_cust', true);
+				disableInput('localbeginport', true);
+				disableInput('localbeginport_cust', true);
+				disableInput('dstendport_cust', false);
+				disableInput('localbeginport', false);
+				disableInput('localbeginport_cust', false);
 			}
-			if(document.iform.dstbeginport.value == customarray[i]) {
-				document.iform.dstendport_cust.value = customarray[i];
-				document.iform.localbeginport_cust.value = customarray[i];
-				document.iform.dstendport_cust.disabled = 1;
-				document.iform.localbeginport.disabled = 1;
-				document.iform.localbeginport_cust.disabled = 1;
-				document.iform.dstendport_cust.disabled = 0;
-				document.iform.localbeginport.disabled = 0;
-				document.iform.localbeginport_cust.disabled = 0;
+			if($('#dstbeginport').val() == customarray[i]) {
+				$('#dstendport_cust').val(customarray[i]);
+				$('#localbeginport_cust').val(customarray[i]);
+				disableInput('dstendport_cust', true);
+				disableInput('localbeginport', true);
+				disableInput('localbeginport_cust', true);
+				disableInput('dstendport_cust', false);
+				disableInput('localbeginport', false);
+				disableInput('localbeginport_cust', false);
 			}
-			if(document.iform.dstendport_cust.value == customarray[i]) {
-				document.iform.dstendport_cust.value = customarray[i];
-				document.iform.localbeginport_cust.value = customarray[i];
-				document.iform.dstendport_cust.disabled = 1;
-				document.iform.localbeginport.disabled = 1;
-				document.iform.localbeginport_cust.disabled = 1;
-				document.iform.dstendport_cust.disabled = 0;
-				document.iform.localbeginport.disabled = 0;
-				document.iform.localbeginport_cust.disabled = 0;
+			if($('#dstendport_cust').val() == customarray[i]) {
+				$('#dstendport_cust').val(customarray[i]);
+				$('#localbeginport_cust').val(customarray[i]);
+				disableInput('dstendport_cust', true);
+				disableInput('localbeginport', true);
+				disableInput('localbeginport_cust', true);
+				disableInput('dstendport_cust', false);
+				disableInput('localbeginport', false);
+				disableInput('localbeginport_cust', false);
 			}
-			if(document.iform.dstendport.value == customarray[i]) {
-				document.iform.dstendport_cust.value = customarray[i];
-				document.iform.localbeginport_cust.value = customarray[i];
-				document.iform.dstendport_cust.disabled = 1;
-				document.iform.localbeginport.disabled = 1;
-				document.iform.localbeginport_cust.disabled = 1;
-				document.iform.dstendport_cust.disabled = 0;
-				document.iform.localbeginport.disabled = 0;
-				document.iform.localbeginport_cust.disabled = 0;
+			if($('#dstendport').val() == customarray[i]) {
+				$('#dstendport_cust').val(customarray[i]);
+				$('#localbeginport_cust').val(customarray[i]);
+				disableInput('dstendport_cust', true);
+				disableInput('localbeginport', true);
+				disableInput('localbeginport_cust', true);
+				disableInput('dstendport_cust', false);
+				ddisableInput('localbeginport', false);
+				disableInput('localbeginport_cust', false);
 			}
-	
+
 		}
 	}
-*/	
+
 	function proto_change() {
 		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
 			portsenabled = 1;
 		} else {
 			portsenabled = 0;
 		}
-	
+
 		if (portsenabled) {
 			hideClass('srcportrange', showsource == 1);
 			hideClass('dstportrange', false);
@@ -1085,18 +1077,18 @@ events.push(function(){
 			$('#dstendport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#dstendport_cust').val('');
 			$('#localbeginport').prop("selectedIndex", 0).selectmenu('refresh');
-			$('#localbeginport_cust').val('');			
+			$('#localbeginport_cust').val('');
 		}
 	}
-	
+
 	function typesel_change() {
 		switch ($('#srctype').find(":selected").index()) {
-			case 1:	// single 
+			case 1: // single
 				disableInput('src', false);
 				$('#srcmask').val('');
 				disableInput('srcmask', true);
 				break;
-			case 2:	// network 
+			case 2: // network
 				disableInput('src', false);
 				disableInput('srcmask', false);
 				break;
@@ -1107,15 +1099,15 @@ events.push(function(){
 				disableInput('srcmask', true);
 				break;
 		}
-		
+
 		if(dstenabled) {
 			switch ($('#dsttype').find(":selected").index()) {
-				case 1:	// single
+				case 1: // single
 					disableInput('dst', false);
 					$('#dstmask').val('');
 					disableInput('dstmask', true);;
 					break;
-				case 2:	// network /
+				case 2: // network /
 					disableInput('dst', false);
 					disableInput('dstmask', false);
 					break;
@@ -1130,65 +1122,77 @@ events.push(function(){
 	}
 
 	function src_rep_change() {
-		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index()).selectmenu('refresh');
+		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
 	}
-	
+
 	function dst_rep_change() {
-		$('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index()).selectmenu('refresh');
+		$('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
 	}
-	
+
 	function dst_change( iface, old_iface, old_dst ) {
 		if ( ( old_dst == "" ) || ( old_iface.concat("ip") == old_dst ) ) {
 			$('#dsttype').val($('#dsttype').val() + "ip");
 		}
 	}
-	
-	// On clicking . . 
-    $('#srcbeginport').on('change', function() {
-    	src_rep_change();
-    });
-    
-    $('#dstbeginport').on('change', function() {
-    	dst_rep_change();
-    });
-    
-    $('#proto').on('change', function() {
-    	proto_change();
-    	check_for_aliases()
-    });
-    
-    $('#nordr').click(function () {
-        nordr_change();
-    });
-    
-    $('#interface').click(function () {
-    	dst_change($('#interface').val(), iface_old, $('#dsttype').val());
-    	iface_old = $('#interface').val();
-        typesel_change();
-    });
-    
-    $('#srctype').click(function () {
-        typesel_change();
-    });
-    
-    $('#dsttype').click(function () {
-        typesel_change();
-    });
-    
-	// On initial page load
-/*	
+
+	// ---------- "onclick" functions ---------------------------------------------------------------------------------
+	$('#srcbeginport').on('change', function() {
+		src_rep_change();
+		ext_change();
+	});
+
+	$('#srcendport').on('change', function() {
+		ext_change();
+	});
+
+	$('#dstbeginport').on('change', function() {
+		dst_rep_change();
+		ext_change();
+	});
+
+	$('#dstendport').on('change', function() {
+		ext_change();
+	});
+
+	$('#localbeginport').on('change', function() {
+		ext_change();
+		check_for_aliases();
+	});
+
+	$('#proto').on('change', function() {
+		proto_change();
+		check_for_aliases()
+	});
+
+	$('#nordr').click(function () {
+		nordr_change();
+	});
+
+	$('#interface').click(function () {
+		dst_change($('#interface').val(), iface_old, $('#dsttype').val());
+		iface_old = $('#interface').val();
+		typesel_change();
+	});
+
+	$('#srctype').click(function () {
+		typesel_change();
+	});
+
+	$('#dsttype').click(function () {
+		typesel_change();
+	});
+
+	// ---------- On initial page load --------------------------------------------------------------------------------
+
 	ext_change();
-*/
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
-
 	iface_old = $('#interface').val();
-
 	typesel_change();
 	proto_change();
 	nordr_change();
-	
+
 });
 //]]>
 </script>
 
-<?php include("foot.inc"); 
+<?php include("foot.inc");

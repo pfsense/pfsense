@@ -1334,16 +1334,31 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 function captiveportal_opendb() {
 	global $g, $cpzone;
 
-	$DB = new SQLite3("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-	if (! $DB->exec("CREATE TABLE IF NOT EXISTS captiveportal (" .
+	$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
+	$createquery = "CREATE TABLE IF NOT EXISTS captiveportal (" .
 				"allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, " .
 				"sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, " .
 				"session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT); " .
 			"CREATE UNIQUE INDEX IF NOT EXISTS idx_active ON captiveportal (sessionid, username); " .
 			"CREATE INDEX IF NOT EXISTS user ON captiveportal (username); " .
 			"CREATE INDEX IF NOT EXISTS ip ON captiveportal (ip); " .
-			"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)"))
-		captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$DB->lastErrorMsg()}");
+			"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)";
+
+	$DB = new SQLite3($db_path);
+	if (! $DB->exec($createquery)) {
+		captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$DB->lastErrorMsg()}. Resetting and trying again.");
+
+		/* If unable to initialize the database, reset and try again. */
+		$DB->close();
+		unset($DB);
+		unlink_if_exists($db_path);
+		$DB = new SQLite3($db_path);
+		if ($DB->exec($createquery)) {
+			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
+		} else {
+			captiveportal_syslog("Still unable to create tables for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and try again.");
+		}
+	}
 
 	return $DB;
 }

@@ -1414,6 +1414,19 @@ function captiveportal_opendb() {
 			"CREATE INDEX IF NOT EXISTS ip ON captiveportal (ip); " .
 			"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)";
 
+	try {
+		$DB = new SQLite3($db_path);
+	} catch (Exception $e) {
+		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Trying again.");
+		unlink_if_exists($db_path);
+		try {
+			$DB = new SQLite3($db_path);
+		} catch (Exception $e) {
+			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Remove the database file manually and ensure there is enough free space.");
+			return;
+		}
+	}
+
 	$DB = new SQLite3($db_path);
 	if (!$DB) {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");

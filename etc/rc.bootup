@@ -70,12 +70,6 @@ function rescue_detect_keypress() {
 			passthru("/etc/rc.reboot");
 			exit;
 		}
-	} elseif (in_array($key, array("!", "~"))) {
-		putenv("TERM=cons25");
-		echo "\n\nRecovery shell selected...\n";
-		echo "\n";
-		touch("/tmp/donotbootup");
-		exit;
 	} else {
 		echo "\n\n";
 	}

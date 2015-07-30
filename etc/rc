@@ -404,13 +404,6 @@ if [ -f $varrunpath/booting ]; then
 	/bin/rm $varrunpath/booting
 fi
 
-# If a shell was selected from recovery
-# console then just drop to the shell now.
-if [ -f "/tmp/donotbootup" ]; then
-	echo "Dropping to recovery shell."
-	exit 0
-fi
-
 echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."

@@ -13,16 +13,6 @@
 #trap : 3
 #trap : 4
 
-# If recovery console shell option has been specified
-if [ -f "/tmp/donotbootup" ]; then
-	/usr/bin/env prompt="%B[%n@%m]%b%/(%h)||RecoveryConsoleShell: " /bin/tcsh
-	rm "/tmp/donotbootup"
-	echo "Rebooting in 5 seconds... CTRL-C to abort..."
-	sleep 5
-	/etc/rc.reboot
-	exit
-fi
-
 if [ -f /etc/rc.local ]; then
 	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`
 	if [ "$RCLOCALPWD" = "" ]; then

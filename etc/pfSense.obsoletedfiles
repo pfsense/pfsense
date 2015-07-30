@@ -1183,11 +1183,6 @@
 /usr/share/syscons
 /usr/share/zoneinfo/GMT
 /var/db/dhclient.leases.sis1
-/var/db/pkg/bsdinstaller-2.0.2006.0728
-/var/db/pkg/cpdup-1.05
-/var/db/pkg/lighttpd-1.4.13
-/var/db/pkg/lua-5.0.2_1
-/var/db/pkg/pcre-6.7
 /var/db/rrd/71
 /var/db/rrd/index.html
 /var/dhcpd/lib/libc.so.6

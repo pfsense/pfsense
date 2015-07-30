@@ -160,6 +160,10 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
+if (file_exists("/conf/trigger_initial_wizard")) {
+	check_for_alternate_interfaces();
+}
+
 if ($g['platform'] == "jail") {
 	/* We must determine what network settings have been configured for us */
 	$wanif = "lo0";	/* defaults, if the jail admin hasn't set us up */

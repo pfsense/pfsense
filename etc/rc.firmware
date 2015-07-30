@@ -22,10 +22,6 @@ if [ $# -eq 3 ]; then
 	export CUSTOMIMG=$3
 fi
 
-if [ $ACTION != "upgrade" ]; then
-	/sbin/umount -f /ftmp > /dev/null 2>&1
-fi
-
 file_notice() {
 	/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 	<?php

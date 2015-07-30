@@ -285,7 +285,6 @@
 /sbin/mount_procfs
 /sbin/ppp-script
 /scripts/dev_bootstrap.sh
-/scripts/pfi
 /touch
 /usr/X11R6
 /usr/bin/addftinfo
@@ -546,7 +545,6 @@
 /usr/local/bin/kill_ghosts.sh
 /usr/local/bin/l2tpd
 /usr/local/bin/lua
-/usr/local/bin/lua50c
 /usr/local/bin/luac
 /usr/local/bin/msntp
 /usr/local/bin/ntp-wait
@@ -584,9 +582,6 @@
 /usr/local/lib/event2
 /usr/local/lib/event2/libevent_core-2.0.so.6
 /usr/local/lib/event2/libevent_pthreads-2.0.so.6
-/usr/local/lib/libaura.a
-/usr/local/lib/libaura.so
-/usr/local/lib/libaura.so.3
 /usr/local/lib/libcrypto.a
 /usr/local/lib/libcrypto.so
 /usr/local/lib/libcrypto.so.8
@@ -595,9 +590,6 @@
 /usr/local/lib/libcurl.so.6
 /usr/local/lib/libczmq.so.0
 /usr/local/lib/libczmq.so.1
-/usr/local/lib/libdfui.a
-/usr/local/lib/libdfui.so
-/usr/local/lib/libdfui.so.4
 /usr/local/lib/libdns_sd.so.1
 /usr/local/lib/libevent-1.2.so
 /usr/local/lib/libevent-1.3e.so.1
@@ -620,10 +612,8 @@
 /usr/local/lib/libldap-2.4.so.8
 /usr/local/lib/liblua.so
 /usr/local/lib/liblua.so.5
-/usr/local/lib/liblua50.so
 /usr/local/lib/liblualib.so
 /usr/local/lib/liblualib.so.5
-/usr/local/lib/liblualib50.so
 /usr/local/lib/libmcrypt.so.8
 /usr/local/lib/libmhash.so.2
 /usr/local/lib/libpcre.a
@@ -728,10 +718,6 @@
 /usr/local/lib/lighttpd/mod_webdav.a
 /usr/local/lib/lighttpd/mod_webdav.la
 /usr/local/lib/lighttpd/mod_webdav.so
-/usr/local/lib/lua
-/usr/local/lib/lua/5.0/lcurses.so
-/usr/local/lib/lua/5.0/ldfui.so
-/usr/local/lib/lua/5.0/lpty.so
 /usr/local/lib/mysql/libmysqlclient.so.15
 /usr/local/lib/mysql/libmysqlclient.so.18
 /usr/local/lib/olsrd_dot_draw.so.0.3
@@ -783,7 +769,6 @@
 /usr/local/sbin/atareinit
 /usr/local/sbin/bpalogin
 /usr/local/sbin/cvs_sync.sh
-/usr/local/sbin/dfuife_curses
 /usr/local/sbin/dnsextd
 /usr/local/sbin/dnswatch
 /usr/local/sbin/env4801

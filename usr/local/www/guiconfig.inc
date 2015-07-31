@@ -391,7 +391,7 @@ function get_std_save_message($ok) {
 		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
 			$filter_related = true;
 	if($filter_related)
-		$to_return .= "<br />" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
+		$to_return .= gettext(" You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
 	return $to_return;
 }
 

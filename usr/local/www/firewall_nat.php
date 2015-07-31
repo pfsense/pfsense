@@ -2,6 +2,9 @@
 /* $Id$ */
 /*
 	firewall_nat.php
+	Copyright© 2015 Rubicon Communications, LLC (Netgate)
+	This file is a part of pfSense (C)
+
 	Copyright (C) 2004 Scott Ullrich
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
@@ -32,7 +35,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	nat
+	pfSense_MODULE: nat
 */
 
 ##|+PRIV
@@ -92,15 +95,16 @@ if ($_GET['act'] == "del") {
 			if ($want_dirty_filter)
 				mark_subsystem_dirty('filter');
 		}
+
 		header("Location: firewall_nat.php");
 		exit;
 	}
 }
 
 if (isset($_POST['del_x'])) {
-    /* delete selected rules */
-    if (is_array($_POST['rule']) && count($_POST['rule'])) {
-	    foreach ($_POST['rule'] as $rulei) {
+	/* delete selected rules */
+	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		foreach ($_POST['rule'] as $rulei) {
 		$target = $rule['target'];
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])){
@@ -108,274 +112,332 @@ if (isset($_POST['del_x'])) {
 
 				mark_subsystem_dirty('filter');
 			}
-	        unset($a_nat[$rulei]);
-	    }
+			unset($a_nat[$rulei]);
+		}
+
 		if (write_config())
 			mark_subsystem_dirty('natconf');
+
 		header("Location: firewall_nat.php");
 		exit;
 	}
 
 } else {
-        /* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
-        unset($movebtn);
-        foreach ($_POST as $pn => $pd) {
-                if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
-                        $movebtn = $matches[1];
-                        break;
-                }
-        }
-        /* move selected rules before this rule */
-        if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
-                $a_nat_new = array();
+	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
+	unset($movebtn);
+	foreach ($_POST as $pn => $pd) {
+		if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
+				$movebtn = $matches[1];
+				break;
+		}
+	}
+	/* move selected rules before this rule */
+	if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
+		$a_nat_new = array();
 
-                /* copy all rules < $movebtn and not selected */
-                for ($i = 0; $i < $movebtn; $i++) {
-                        if (!in_array($i, $_POST['rule']))
-                                $a_nat_new[] = $a_nat[$i];
-                }
+		/* copy all rules < $movebtn and not selected */
+		for ($i = 0; $i < $movebtn; $i++) {
+				if (!in_array($i, $_POST['rule']))
+						$a_nat_new[] = $a_nat[$i];
+		}
 
-                /* copy all selected rules */
-                for ($i = 0; $i < count($a_nat); $i++) {
-                        if ($i == $movebtn)
-                                continue;
-                        if (in_array($i, $_POST['rule']))
-                                $a_nat_new[] = $a_nat[$i];
-                }
+		/* copy all selected rules */
+		for ($i = 0; $i < count($a_nat); $i++) {
+				if ($i == $movebtn)
+						continue;
+				if (in_array($i, $_POST['rule']))
+						$a_nat_new[] = $a_nat[$i];
+		}
 
-                /* copy $movebtn rule */
-                if ($movebtn < count($a_nat))
-                        $a_nat_new[] = $a_nat[$movebtn];
+		/* copy $movebtn rule */
+		if ($movebtn < count($a_nat))
+				$a_nat_new[] = $a_nat[$movebtn];
 
-                /* copy all rules > $movebtn and not selected */
-                for ($i = $movebtn+1; $i < count($a_nat); $i++) {
-                        if (!in_array($i, $_POST['rule']))
-                                $a_nat_new[] = $a_nat[$i];
-                }
-                $a_nat = $a_nat_new;
-		if (write_config())
-			mark_subsystem_dirty('natconf');
-                header("Location: firewall_nat.php");
-                exit;
-        }
+		/* copy all rules > $movebtn and not selected */
+		for ($i = $movebtn+1; $i < count($a_nat); $i++) {
+				if (!in_array($i, $_POST['rule']))
+						$a_nat_new[] = $a_nat[$i];
+		}
+
+	$a_nat = $a_nat_new;
+
+	if (write_config())
+		mark_subsystem_dirty('natconf');
+		header("Location: firewall_nat.php");
+		exit;
+	}
 }
+
+function rule_popup($src,$srcport,$dst,$dstport){
+	global $config,$g;
+	$aliases_array = array();
+	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
+		$descriptions = array ();
+		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
+			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
+
+			switch ($alias_name['type']){
+				case "port":
+					$width="250";
+					break;
+				case "urltable":
+					$width="500";
+					break;
+				default:
+					$width="350";
+
+					break;
+			}
+			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g['theme']}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
+			$span_end = "</u></span>";
+
+			if ($alias_name['name'] == $src) {
+				$descriptions['src'] = $span_begin;
+				$descriptions['src_end'] = $span_end;
+			}
+
+			if ($alias_name['name'] == $srcport) {
+				$descriptions['srcport'] = $span_begin;
+				$descriptions['srcport_end'] = $span_end;
+			}
+
+			if ($alias_name['name'] == $dst ) {
+				$descriptions['dst'] = $span_begin;
+				$descriptions['dst_end'] = $span_end;
+			}
+
+			if ($alias_name['name'] == $dstport) {
+				$descriptions['dstport'] = $span_begin;
+				$descriptions['dstport_end'] = $span_end;
+			}
+		}
+
+		return $descriptions;
+	}
+}
+
+?>
+<script>
+// Check the checkbox, and change the background color when clicking on a row
+function fr_toggle(id, prefix) {
+
+	if (!prefix)
+		prefix = 'fr';
+
+	var checkbox = document.getElementById(prefix + 'c' + id);
+
+	checkbox.checked = !checkbox.checked;
+	fr_bgcolor(id, prefix);
+}
+
+function fr_bgcolor(id, prefix) {
+	if (!prefix)
+		prefix = 'fr';
+
+	var row = document.getElementById(prefix + id);
+	var checkbox = document.getElementById(prefix + 'c' + id);
+	var cells = row.getElementsByTagName('td');
+	var cellcnt = cells.length;
+
+	for (i = 0; i < cellcnt; i++) {
+		// Check for cells with frd id only
+		if (cells[i].id == prefix + 'd' + id)
+			cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
+	}
+}
+</script>
+<?php
 
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
 include("head.inc");
 
-echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
-echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
-echo "<script type=\"text/javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
-echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
-//FIXME This largely matches firewall_rules.php
+if (is_subsystem_dirty('natconf'))
+	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
+					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+
+$tab_array = array();
+$tab_array[] = array(gettext("Port Forward"), true, "firewall_nat.php");
+$tab_array[] = array(gettext("1:1"), false, "firewall_nat_1to1.php");
+$tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
+$tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
+display_top_tabs($tab_array);
 ?>
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('natconf')): ?>
-<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat">
-  <tr><td>
+	<div id="mainarea" class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><!-- Checkbox --></th>
+					<th><!-- Rule type --></th>
+					<th><?=gettext("If")?></th>
+					<th><?=gettext("Proto")?></th>
+					<th><?=gettext("Src. addr")?></th>
+					<th><?=gettext("Src. ports")?></th>
+					<th><?=gettext("Dest. addr")?></th>
+					<th><?=gettext("Dest. ports")?></th>
+					<th><?=gettext("NAT IP")?></th>
+					<th><?=gettext("NAT Ports")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
+
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Port Forward"), true, "firewall_nat.php");
-	$tab_array[] = array(gettext("1:1"), false, "firewall_nat_1to1.php");
-	$tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
-	$tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
-	display_top_tabs($tab_array);
+$nnats = $i = 0;
+
+foreach ($a_nat as $natent):
+
+//build Alias popup box
+$span_end = "</U></span>";
+
+$alias_popup = rule_popup($natent['source']['address'], pprint_port($natent['source']['port']), $natent['destination']['address'], pprint_port($natent['destination']['port']));
+
+$alias_src_span_begin	  = $alias_popup["src"];
+$alias_src_port_span_begin = $alias_popup["srcport"];
+$alias_dst_span_begin	  = $alias_popup["dst"];
+$alias_dst_port_span_begin = $alias_popup["dstport"];
+
+$alias_src_span_end		= $alias_popup["src_end"];
+$alias_src_port_span_end   = $alias_popup["srcport_end"];
+$alias_dst_span_end		= $alias_popup["dst_end"];
+$alias_dst_port_span_end   = $alias_popup["dstport_end"];
+
+$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
+
+$alias_target_span_begin	 = $alias_popup["dst"];
+$alias_local_port_span_begin = $alias_popup["dstport"];
+
+$alias_target_span_end	   = $alias_popup["dst_end"];
+$alias_local_port_span_end	 = $alias_popup["dstport_end"];
+
+if (isset($natent['disabled']))
+	$textss = "<span class=\"gray\">";
+else
+	$textss = "<span>";
+
+$textse = "</span>";
+
+/* if user does not have access to edit an interface skip on to the next record */
+if(!have_natpfruleint_access($natent['interface']))
+	continue;
 ?>
- </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-                <tr id="frheader">
-		  <td width="3%" class="list">&nbsp;</td>
-                  <td width="3%" class="list">&nbsp;</td>
-		  <td width="5%" class="listhdrr"><?=gettext("If");?></td>
-		  <td width="5%" class="listhdrr"><?=gettext("Proto");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("Src. addr");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("Src. ports");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("Dest. addr");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("Dest. ports");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("NAT IP");?></td>
-		  <td width="11%" class="listhdrr nowrap"><?=gettext("NAT Ports");?></td>
-		  <td width="11%" class="listhdr"><?=gettext("Description");?></td>
-                  <td width="5%" class="list">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="list">
-                      <tr>
-			<td width="17">
-			<?php if (count($a_nat) == 0): ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
-			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
-			<?php endif; ?>
-			</td>
-                        <td><a href="firewall_nat_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-                      </tr>
-                    </table>
-		  </td>
-		</tr>
-	<?php $nnats = $i = 0; foreach ($a_nat as $natent): ?>
-	<?php
-
-		//build Alias popup box
-		$span_end = "</U></span>";
-
-		$alias_popup = rule_popup($natent['source']['address'], pprint_port($natent['source']['port']), $natent['destination']['address'], pprint_port($natent['destination']['port']));
-
-		$alias_src_span_begin      = $alias_popup["src"];
-		$alias_src_port_span_begin = $alias_popup["srcport"];
-		$alias_dst_span_begin      = $alias_popup["dst"];
-		$alias_dst_port_span_begin = $alias_popup["dstport"];
-
-		$alias_src_span_end        = $alias_popup["src_end"];
-		$alias_src_port_span_end   = $alias_popup["srcport_end"];
-		$alias_dst_span_end        = $alias_popup["dst_end"];
-		$alias_dst_port_span_end   = $alias_popup["dstport_end"];
-
-		$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
-
-		$alias_target_span_begin     = $alias_popup["dst"];
-		$alias_local_port_span_begin = $alias_popup["dstport"];
-
-		$alias_target_span_end       = $alias_popup["dst_end"];
-		$alias_local_port_span_end   = $alias_popup["dstport_end"];
-
-		if (isset($natent['disabled']))
-			$textss = "<span class=\"gray\">";
-		else
-			$textss = "<span>";
-
-		$textse = "</span>";
-
-		/* if user does not have access to edit an interface skip on to the next record */
-		if(!have_natpfruleint_access($natent['interface']))
-			continue;
-	?>
-                <tr valign="top" id="fr<?=$nnats;?>">
-                  <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
-                  <td class="listt" align="center">
-					<?php if($natent['associated-rule-id'] == "pass"): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
-					<?php elseif (!empty($natent['associated-rule-id'])): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="<?=gettext("Firewall rule ID"); ?> <?=htmlspecialchars($nnatid); ?> <?=gettext("is managed with this rule"); ?>" border="0" alt="change" />
-					<?php endif; ?>
-				  </td>
-                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?=$textss;?>
-		    <?php
-			if (!$natent['interface'])
-				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
-			else
-				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
-		    ?>
-                    <?=$textse;?>
-                  </td>
-
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-					<?=$textss;?><?=strtoupper($natent['protocol']);?><?=$textse;?>
-                  </td>
-
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
-                  </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['source']['port']));?><?php echo $alias_src_port_span_end;?><?=$textse;?>
-                  </td>
-
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['destination']));?><?php echo $alias_dst_span_end;?><?=$textse;?>
-                  </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['destination']['port']));?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
-                  </td>
-
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo htmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
-                  </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-					<?php
-						$localport = $natent['local-port'];
-
-						list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
-
-						if ($dstendport) {
-							$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
-							$localport   .= '-' . $localendport;
-						}
-					?>
-				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
-                  </td>
-
-                  <td class="listbg" onclick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				  <?=$textss;?><?=htmlspecialchars($natent['descr']);?>&nbsp;<?=$textse;?>
-                  </td>
-                  <td valign="middle" class="list nowrap">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="move">
-                      <tr>
-			<td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" height="17" type="image" width="17" border="0" /></td>
-                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
-                      </tr>
-                      <tr>
-					    <td align="center" valign="middle"><a href="firewall_nat.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>" alt="delete" /></a></td>
-			<td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new NAT based on this one");?>" width="17" height="17" border="0" alt="add" /></a></td>
-                      </tr>
-                    </table>
-		</tr>
-  	     <?php $i++; $nnats++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="8"></td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td class="list nowrap" valign="middle">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="move">
-                      <tr>
-			<td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end"); ?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected rules to end");?>" /><?php endif; ?></td>
-                      </tr>
-                      <tr>
-			<td width="17">
-			<?php if (count($a_nat) == 0): ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
-			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
-			<?php endif; ?>
-			</td>
-                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-                      </tr>
-                    </table>
-		  </td>
-		</tr>
-		<tr><td>&nbsp;</td></tr>
-          <tr>
-            <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" alt="pass" /></td>
-            <td colspan="3"><?=gettext("pass"); ?></td>
-			</tr>
-		   <tr>
-            <td width="14"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="11" height="11" alt="chain" /></td>
-	    <td colspan="3"><?=gettext("linked rule");?></td>
-          </tr>
-    </table>
-	</div>
-	</td>
-  </tr>
-</table>
-
+				<tr id="fr<?=$nnats?>">
+					<td>
+						<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
+					<td>
 <?php
-if ($pkg['tabs'] <> "") {
-    echo "</td></tr></table>";
+if($natent['associated-rule-id'] == "pass"):
+?>
+						<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
+<?php
+elseif (!empty($natent['associated-rule-id'])):
+?>
+						<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-random" title="<?=gettext("Firewall rule ID"); ?><?=htmlspecialchars($nnatid); ?><?=gettext("is managed with this rule"); ?>" alt="change" />
+<?php
+endif;
+?>
+					</td>
+					<td onClick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?>
+<?php
+if (!$natent['interface'])
+	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
+else
+	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+?>
+						<?=$textse?>
+					</td>
+
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
+					</td>
+
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<?=$textss?><?=$alias_src_span_begin?><?=htmlspecialchars(pprint_address($natent['source']))?><?=$alias_src_span_end?><?=$textse?>
+					</td>
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?><?=$alias_src_port_span_begin?><?=htmlspecialchars(pprint_port($natent['source']['port']))?><?=$alias_src_port_span_end?><?=$textse?>
+					</td>
+
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?><?=$alias_dst_span_begin?><?=htmlspecialchars(pprint_address($natent['destination']))?><?=$alias_dst_span_end?><?=$textse?>
+					</td>
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?><?=$alias_dst_port_span_begin?><?=htmlspecialchars(pprint_port($natent['destination']['port']))?><?=$alias_dst_port_span_end?><?=$textse?>
+					</td>
+
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<?=$textss?><?=$alias_target_span_begin?><?=htmlspecialchars($natent['target'])?><?=$alias_target_span_end?><?=$textse?>
+					</td>
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+<?php
+$localport = $natent['local-port'];
+
+list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
+
+if ($dstendport) {
+	$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
+	$localport	 .= '-' . $localendport;
 }
 ?>
+						<?=$textss?><?=$alias_local_port_span_begin?><?=htmlspecialchars(pprint_port($localport))?><?=$alias_local_port_span_end?><?=$textse?>
+					</td>
 
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<?=$textss?><?=htmlspecialchars($natent['descr'])?>&nbsp;<?=$textse?>
+					</td>
+					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected rules before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
+						<a class="icon icon-pencil"		  title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
+						<a class="icon icon-remove-sign"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?")?>')""></a>
+						<a class="icon icon-share-alt"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+					</td>
+				</tr>
+<?php
+	$i++;
+	$nnats++;
+endforeach;
+?>
+			</tbody>
+		</table>
+	</div>
+	<div class="pull-right">
+		<a href="firewall_nat_edit.php?after=-1" class="icon icon-plus-sign" title="<?=gettext('Add new rule')?>"></a>&nbsp;
+<?php
+if ($nnats == 0)
+	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" title="' . gettext("Move selected rules to end") . '" alt="move" />&nbsp;');
+else
+	print('<input name="move_' . $i . '" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="' . gettext("Move selected rules to end") . '" />&nbsp;');
+
+if (count($a_nat) == 0)
+	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected rules") . '" border="0" alt="delete" />');
+else
+	print('<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected rules") . '" onclick="return confirm(\'' . gettext("Do you really want to delete the selected rules?"). '\')" />');
+?>
+		&nbsp;
+	</div>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+
+if(count($a_nat) > 0) {
+?>
+<!-- Legend -->
+<div>
+	<dl class="dl-horizontal responsive">
+		<dt><?=gettext('Legend')?></dt>					<dd></dd>
+		<dt><i class="icon icon-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
+		<dt><i class="icon icon-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
+	</dl>
+</div>
+
+<?php
+}
+
+include("foot.inc");

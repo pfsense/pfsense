@@ -149,57 +149,29 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
-if ($g['platform'] == "jail") {
-	/* We must determine what network settings have been configured for us */
-	$wanif = "lo0";	/* defaults, if the jail admin hasn't set us up */
-	$ipaddr = "127.0.0.1";
-	$iflist = get_interface_list();
-	foreach ($iflist as $iface => $ifa) {
-		if (isset($ifa['ipaddr'])) {
-			$wanif = $iface;
-			$ipaddr = $ifa['ipaddr'];
-			break;
+/*
+ *	Determine if we need to throw a interface exception
+ *	and ask the user to reassign interfaces.  This will
+ *	avoid a reboot and that is a good thing.
+ */
+while (is_interface_mismatch() == true) {
+	led_assigninterfaces();
+	if (isset($config['revision'])) {
+		if (file_exists("{$g['tmp_path']}/missing_interfaces")) {
+			echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
+		}
+		echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+	} else {
+		echo "\nDefault interfaces not found -- Running interface assignment option.\n";
+	}
+	$ifaces = get_interface_list();
+	if (is_array($ifaces)) {
+		foreach ($ifaces as $iface => $ifdata) {
+			interfaces_bring_up($iface);
 		}
 	}
-	$config['interfaces'] = array();
-	$config['interfaces']['lan'] = array();
-	$config['interfaces']['lan']['enable'] = false;
-	$config['interfaces']['wan'] = array();
-	/* XXX, todo */
-	$config['interfaces']['wan']['if'] = $wanif;
-	$config['interfaces']['wan']['ipaddr'] = $ipaddr;
-	$config['interfaces']['wan']['subnet'] = "32";	/* XXX right? */
-	$config['interfaces']['wan']['enable'] = true;
-	if ($config['dhcpd']['lan']) {
-		unset($config['dhcpd']['lan']['enable']);
-	}
-	unlink_if_exists('/conf/trigger_initial_wizard');
-	write_config();
-} else {
-	/*
-	 *	Determine if we need to throw a interface exception
-	 *	and ask the user to reassign interfaces.  This will
-	 *	avoid a reboot and that is a good thing.
-	 */
-	while (is_interface_mismatch() == true) {
-		led_assigninterfaces();
-		if (isset($config['revision'])) {
-			if (file_exists("{$g['tmp_path']}/missing_interfaces")) {
-				echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
-			}
-			echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
-		} else {
-			echo "\nDefault interfaces not found -- Running interface assignment option.\n";
-		}
-		$ifaces = get_interface_list();
-		if (is_array($ifaces)) {
-			foreach ($ifaces as $iface => $ifdata) {
-				interfaces_bring_up($iface);
-			}
-		}
-		set_networking_interfaces_ports();
-		led_kitt();
-	}
+	set_networking_interfaces_ports();
+	led_kitt();
 }
 
 /* convert config and clean backups */

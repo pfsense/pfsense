@@ -157,10 +157,7 @@ echo
 echo "Welcome to ${product} ${version} ${platformbanner} ..."
 echo
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Enable console output if its muted.
-	/sbin/conscontrol mute off >/dev/null
-fi
+/sbin/conscontrol mute off >/dev/null
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
@@ -173,8 +170,6 @@ elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	/bin/mkdir -p /root/var/db/pbi
 	/bin/rm -rf /var/db/pbi
 	/bin/ln -s /root/var/db/pbi/ /var/db/pbi
-elif [ "$PLATFORM" = "jail" ]; then
-	# do nothing for jail platform
 else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
@@ -324,11 +319,9 @@ done
 /bin/chmod 0600 /var/log/*.log
 
 echo -n "."
-if [ ! "$PLATFORM" = "jail" ]; then
-	DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
-	if [ "$DEVFS" = "0" ]; then
-		mount_devfs devfs /dev
-	fi
+DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
+if [ "$DEVFS" = "0" ]; then
+	mount_devfs devfs /dev
 fi
 
 # Create an initial utmp file
@@ -338,20 +331,18 @@ echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 /etc/rc.d/ldconfig start 2>/dev/null
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Launching kbdmux(4)
-	if [ -f "/dev/kbdmux0" ]; then
-		echo -n "."
-		/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
-		[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
-		[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
-	fi
+# Launching kbdmux(4)
+if [ -f "/dev/kbdmux0" ]; then
+	echo -n "."
+	/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
+	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
+	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
+fi
 
-	# Fire up unionfs if mount points exist.
-	if [ -f /dist/uniondirs ]; then
-		echo -n "."
-		/etc/rc.d/unionfs start
-	fi
+# Fire up unionfs if mount points exist.
+if [ -f /dist/uniondirs ]; then
+	echo -n "."
+	/etc/rc.d/unionfs start
 fi
 
 echo "done."

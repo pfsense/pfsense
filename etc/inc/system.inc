@@ -41,9 +41,7 @@
 
 function activate_powerd() {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (is_process_running("powerd")) {
 		exec("/usr/bin/killall powerd");
 	}
@@ -118,10 +116,6 @@ function system_get_sysctls() {
 
 function activate_sysctls() {
 	global $config, $g, $sysctls;
-
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 
 	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach ($config['sysctl']['item'] as $tunable) {
@@ -454,9 +448,6 @@ function system_hosts_generate() {
 function system_dhcpleases_configure() {
 	global $config, $g;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if ((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
 	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) {
@@ -519,9 +510,7 @@ function system_hostname_configure() {
 
 function system_routing_configure($interface = "") {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
@@ -1637,10 +1626,6 @@ function system_ntp_configure($start_ntpd=true) {
 	$driftfile = "/var/db/ntpd.drift";
 	$statsdir = "/var/log/ntp";
 	$gps_device = '/dev/gps0';
-
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 
 	safe_mkdir($statsdir);
 

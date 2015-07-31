@@ -162,9 +162,7 @@ function is_bogonsv6_used() {
 
 function filter_pflog_start($kill_first = false) {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";

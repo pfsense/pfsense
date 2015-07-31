@@ -45,10 +45,6 @@ define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v
 function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
-
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_radvd_configure() being called $mt\n";
@@ -1567,9 +1563,7 @@ EOD;
 
 function services_dhcrelay_configure() {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcrelay_configure() being called $mt\n";
@@ -1634,9 +1628,7 @@ function services_dhcrelay_configure() {
 
 function services_dhcrelay6_configure() {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcrelay6_configure() being called $mt\n";

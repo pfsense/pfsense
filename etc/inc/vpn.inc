@@ -116,10 +116,6 @@ function vpn_ipsec_convert_to_modp($index) {
 function vpn_ipsec_configure($restart = false) {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos, $ipsec_idhandling;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
-
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
@@ -1365,12 +1361,6 @@ function vpn_ipsec_force_reload($interface = "") {
 
 /* master setup for vpn (mpd) */
 function vpn_setup() {
-	global $g;
-
-	if ($g['platform'] == 'jail') {
-		return;
-	}
-
 	/* start pptpd */
 	vpn_pptpd_configure();
 

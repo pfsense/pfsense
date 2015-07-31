@@ -84,14 +84,19 @@ function pkg_remove_prefix(&$pkg_name) {
 
 /* Execute a pkg call */
 function pkg_call($params, $mute = false) {
-	global $static_output, $g;
+	global $static_output, $g, $config;
 
 	if (empty($params)) {
 		return false;
 	}
 
+	$user_agent = $g['product_name'] . '/' . $g['product_version'];
+	if (!isset($config['system']['host_uuid'])) {
+		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid'));
+	}
+
 	$env = array(
-		"HTTP_USER_AGENT" => $g['product_name'] . '/' . $g['product_version'],
+		"HTTP_USER_AGENT" => $user_agent,
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 
@@ -169,14 +174,19 @@ function pkg_call($params, $mute = false) {
 
 /* Execute pkg with $params, fill stdout and stderr and return pkg rc */
 function pkg_exec($params, &$stdout, &$stderr) {
-	global $g;
+	global $g, $config;
 
 	if (empty($params)) {
 		return -1;
 	}
 
+	$user_agent = $g['product_name'] . '/' . $g['product_version'];
+	if (!isset($config['system']['host_uuid'])) {
+		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid'));
+	}
+
 	$env = array(
-		"HTTP_USER_AGENT" => $g['product_name'] . '/' . $g['product_version'],
+		"HTTP_USER_AGENT" => $user_agent,
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 

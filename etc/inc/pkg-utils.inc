@@ -91,6 +91,7 @@ function pkg_call($params, $mute = false) {
 	}
 
 	$env = array(
+		"HTTP_USER_AGENT" => $g['product_name'] . '/' . $g['product_version'],
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 
@@ -175,6 +176,7 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	}
 
 	$env = array(
+		"HTTP_USER_AGENT" => $g['product_name'] . '/' . $g['product_version'],
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 

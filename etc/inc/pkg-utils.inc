@@ -92,7 +92,7 @@ function pkg_call($params, $mute = false) {
 
 	$user_agent = $g['product_name'] . '/' . $g['product_version'];
 	if (!isset($config['system']['host_uuid'])) {
-		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid'));
+		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
 	$env = array(
@@ -182,7 +182,7 @@ function pkg_exec($params, &$stdout, &$stderr) {
 
 	$user_agent = $g['product_name'] . '/' . $g['product_version'];
 	if (!isset($config['system']['host_uuid'])) {
-		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid'));
+		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
 	$env = array(

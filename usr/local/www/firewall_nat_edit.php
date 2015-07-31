@@ -780,7 +780,7 @@ $group->add(new Form_Select(
 	'localbeginport',
 	null,
 	$pconfig['localbeginport'],
-	array_merge(array("" => 'Other'), $wkports)
+	array('' => 'Other') + $wkports
 ))->setHelp('Port');
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .

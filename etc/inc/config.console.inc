@@ -86,8 +86,9 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
+			$ifsmallist = trim($ifsmallist . " " . $iface);
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "  (up)" : "(down)", $ifa['dmesg']);
+				$ifa['up'] ? "  (up)" : "(down)", substr($ifa['dmesg'], 0, 48));
 		}
 	}
 
@@ -190,6 +191,7 @@ EOD;
 					"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
 				$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
+				$ifsmallist = trim($ifsmallist . " " . $vlan['if'] . '_vlan' . $vlan['tag']);
 			}
 		}
 
@@ -202,7 +204,8 @@ hitting 'a' to initiate auto detection.
 EOD;
 
 		do {
-			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection:") . " ";
+			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
+			echo "\n" . gettext("(") . $ifsmallist . gettext(" or a): ");
 			$wanif = chop(fgets($fp));
 			if ($wanif === "") {
 				return;
@@ -219,7 +222,7 @@ EOD;
 		do {
 			printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
 				"NOTE: this enables full Firewalling/NAT mode.%s" .
-				"(or nothing if finished):%s"), "\n", "\n", "\n", " ");
+				"(") . $ifsmallist . gettext(" a or nothing if finished):%s"), "\n", "\n", "\n", " ");
 
 			$lanif = chop(fgets($fp));
 
@@ -257,7 +260,7 @@ EOD;
 				}
 
 				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-					"(or nothing if finished):%s"), "\n", $io, "\n", " ");
+					"(") . $ifsmallist . gettext(" a or nothing if finished):%s"), "\n", $io, "\n", " ");
 
 				$optif[$i] = chop(fgets($fp));
 

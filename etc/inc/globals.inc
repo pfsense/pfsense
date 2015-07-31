@@ -58,6 +58,7 @@ $g = array(
 	"xml_rootobj" => "pfsense",
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
+	"product_version" => trim(file_get_contents("{$g['etc_path']}/version"), " \n"),
 	"product_copyright" => "Electric Sheep Fencing LLC",
 	"product_copyright_url" => "http://www.electricsheepfencing.com",
 	"product_copyright_years" => "2004 - ".date("Y"),
@@ -98,9 +99,8 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
 if (file_exists("/etc/platform")) {
 	$arch = php_uname("m");
-	$current_version = trim(file_get_contents("{$g['etc_path']}/version"));
 
-	if (strstr($current_version, "-RELEASE")) {
+	if (strstr($g['product_version'], "-RELEASE")) {
 		/* This is only necessary for RELEASE */
 		$arch = ($arch == "i386") ? "" : '/' . $arch;
 		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */

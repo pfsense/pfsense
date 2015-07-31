@@ -163,7 +163,6 @@ if (!$latest_version) {
 	exit;
 } else {
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-	$current_installed_version = trim(file_get_contents("/etc/version"));
 	$latest_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
 	if (!$latest_version) {
@@ -171,7 +170,7 @@ if (!$latest_version) {
 		require("fend.inc");
 		exit;
 	} else {
-		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
+		if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $latest_version) == -1) {
 			update_status(gettext("Downloading updates") . "...");
 			conf_mount_rw();
 			if ($g['platform'] == "nanobsd") {
@@ -265,7 +264,7 @@ if ($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 */
 
 function read_body_firmware($ch, $string) {
-	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_version;
+	global $g, $fout, $file_size, $downloaded, $counter, $version, $latest_version;
 	$length = strlen($string);
 	$downloaded += intval($length);
 	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
@@ -275,7 +274,7 @@ function read_body_firmware($ch, $string) {
 	$c = $downloadProgress;
 	$text  = "  " . gettext("Auto Update Download Status") . "\\n";
 	$text .= "----------------------------------------------------\\n";
-	$text .= "  " . gettext("Current Version") . " : {$current_installed_version}\\n";
+	$text .= "  " . gettext("Current Version") . " : {$g['product_version']}\\n";
 	$text .= "  " . gettext("Latest Version") . "  : {$latest_version}\\n";
 	$text .= "  " . gettext("File size") . "       : {$a}\\n";
 	$text .= "  " . gettext("Downloaded") . "      : {$b}\\n";

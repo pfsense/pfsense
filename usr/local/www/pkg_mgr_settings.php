@@ -99,9 +99,8 @@ function enable_altpkgrepourl(enable_over) {
 	<tr>
 		<td>
 <?php
-	$version = file_get_contents("/etc/version");
 	$tab_array = array();
-	$tab_array[] = array(sprintf(gettext("%s packages"), $version), false, "pkg_mgr.php");
+	$tab_array[] = array(sprintf(gettext("%s packages"), $g['product_version']), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Settings"), true, "pkg_mgr_settings.php");
 	display_top_tabs($tab_array);

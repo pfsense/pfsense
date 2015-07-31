@@ -3,7 +3,7 @@
 # rc.cdrom - livedisc specific routines
 # For pfSense
 
-# Size of memory file system /conf /home partitions
+# Size of memory file system /cf/conf partition
 partsize="6m"
 
 export VARMFS_COPYDBPKG=yes
@@ -18,15 +18,14 @@ done
 /bin/sh /scripts/pfi start
 
 # If PFI did not find a config, we should create
-# a tiny mfs under /conf and populate with stock
+# a tiny mfs under /cf/conf and populate with stock
 # configuration.
 if [ ! -f /conf/config.xml ]; then
 	echo -n "Generating a MFS /conf partition... "
 	device=$(mdconfig -a -t malloc -s ${partsize})
 	newfs /dev/${device} > /dev/null 2>&1
-	mount /dev/${device} /conf
-	cp /conf.default/* /conf
-	mount_nullfs /conf /cf/conf
+	mount /dev/${device} /cf/conf
+	cp /conf.default/* /cf/conf
 	echo "done."
 fi
 
@@ -37,5 +36,4 @@ mount /dev/${device} /home
 echo "done."
 
 # Create some needed directories
-/bin/mkdir -p /var/db/pkg/
 /bin/mkdir -p /var/tmp/vi.recover/

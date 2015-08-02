@@ -211,7 +211,7 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 					print(" NAT-T");
 			}
 ?>
-				<	/td>
+					</td>
 					<td>
 						IKEv<?=htmlspecialchars($ikesa['version'])?>
 						<br/>
@@ -244,7 +244,7 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 <?php
 				if ($icon != "pass"):
 ?>
-					<a	 href="diag_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
+					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
 							<?=gettext("Connect VPN")?>
 						</a>
 <?php

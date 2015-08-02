@@ -29,7 +29,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -40,9 +40,15 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require('classes/Form.class.php');
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+
+print('POST: '); print_r($_POST); print('<br />');
+print('GET: '); print_r($_GET); print('<br />');
+
+$dfltmsg = false;
 
 // Variables protocols (dynamic) and structures (static)
 $avail_protos =& generate_protocols_array();
@@ -60,17 +66,15 @@ $show_proto_form = false;
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Layer7"));
 $shortcut_section = "trafficshaper";
 
-$output_form = "";
-
-$default_layer7shaper_msg = "<tr><td colspan=\"4\">";
-$default_layer7shaper_msg .= "<span class=\"vexpl\"><span class=\"red\"><strong>" . gettext("Note") . ":<br />";
-$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a></span><br />";
-$default_layer7shaper_msg .= "</td></tr>";
-
+$default_layer7shaper_msg = '<br />' .
+							gettext('You can add new layer7 protocol patterns by simply uploading the file') .
+							' <a href="diag_patterns.php">' . gettext('here') . '</a>';
 
 read_layer7_config();
 
-if($_GET['reset'] <> "") {
+$sform = new Form(false);
+
+if($_GET['reset'] != "") {
 	// kill all ipfw-classifyd processes
 	mwexec("killall -9 ipfw-classifyd");
 	exit;
@@ -79,8 +83,9 @@ if($_GET['reset'] <> "") {
 if ($_GET) {
 	if ($_GET['container'])
 		$name = htmlspecialchars(trim($_GET['container']));
-        if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+
+	if ($_GET['action'])
+		$action = htmlspecialchars($_GET['action']);
 }
 
 if($_POST) {
@@ -99,33 +104,34 @@ if ($_GET) {
 		case "add":
 			$show_proto_form = true;
 			$container = new layer7();
-			$output_form .= $container->build_form(); //constructs the graphical interface on the right side
+			$sform = $container->build_form(); //constructs the graphical interface on the right side
 			unset($container);
-			break;
+		break;
 		case "show":
 			$show_proto_form = true;
 			if($container) {
-				$output_form .= $container->build_form();
+				$sform = $container->build_form();
 			}
 			else {
 				$show_proto_form = false;
 				$input_errors[] = gettext("Layer7 Rules Container not found!");
 			}
-			break;
+		break;
 		default:
 			echo log_error("Get default");
 			$show_proto_form = false;
-			$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
-			break;
+			$dfltmsg = true;
+		break;
 	}
 }
 
 //add a new l7rules container
-else if ($_POST) {
+if ($_POST) {
 	$show_proto_form = true;
 	unset($input_errors);
 
-	if($_POST['submit']) {
+	if($_POST['Submit']) {
+
 		if (isset($layer7_rules_list[$name])) {
 			$l7r = $layer7_rules_list[$name];
 			$_POST['divert_port'] = $l7r->GetRPort();
@@ -133,23 +139,28 @@ else if ($_POST) {
 			$l7r =& new layer7();
 			$_POST['divert_port'] = $l7r->gen_divert_port();
 		}
-		for($i=0; $_POST['protocol'][$i] <> ""; $i++) {
+
+		for($i=0; $_POST['protocol'][$i] != ""; $i++) {
 			$_POST['l7rules'][$i]['protocol'] = $_POST['protocol'][$i];
 			$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];
 			$_POST['l7rules'][$i]['behaviour'] = $_POST['behaviour'][$i];
 		}
+
 		$l7r->validate_input($_POST,$input_errors);
 		$l7r->ReadConfig($_POST['container'], $_POST);
 		//Before writing the results, we need to test for repeated protocols
 		$non_dupes = array();
 		$dupes = array();
+
 		for($j=0; $j<$i; $j++) {
 			if(!$non_dupes[$_POST['protocol'][$j]])
 				$non_dupes[$_POST['protocol'][$j]] = true;
 			else
 				$dupes[] = $_POST['protocol'][$j];
 		}
+
 		unset($non_dupes);
+
 		if(sizeof($dupes) == 0 && !$input_errors) {
 			$l7r->wconfig();
 			if (write_config())
@@ -160,20 +171,25 @@ else if ($_POST) {
 		else {
 			if(sizeof($dupes) > 0) {
 				$dupe_error = gettext("Found the following repeated protocol definitions") . ": ";
+
 				foreach($dupes as $dupe)
 					$dupe_error .= "$dupe ";
+
 				$input_errors[] .= $dupe_error;
 			}
 		}
+
 		unset($dupes);
 		unset($dupe_error);
 		//Even if there are repeated protocols, we won't lose any previous values
 		//The user will be able to solve the situation
-		$output_form .= $l7r->build_form();
+		$sform = $l7r->build_form();
 		//Necessary to correctly build the proto form
 		$container = $layer7_rules_list[$name];
+
 		if($input_errors)
 			$container =& $l7r;
+
 	} else if($_POST['apply']) {
 		write_config();
 
@@ -181,7 +197,7 @@ else if ($_POST) {
 		$retval = filter_configure();
 		$savemsg = get_std_save_message($retval);
 
-		if(stristr($retval, "error") <> true)
+		if(stristr($retval, "error") != true)
 			$savemsg = get_std_save_message($retval);
 		else
 			$savemsg = $retval;
@@ -189,15 +205,17 @@ else if ($_POST) {
 		clear_subsystem_dirty('shaper');
 
 		if($container) {
-			$output_form .= $container->build_form();
+			$sform = $container->build_form();
 		} else {
 			$show_proto_form = false;
-			$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
+			$dfltmsg = true;
 		}
 	} else if ($_POST['delete']) {
 		$container->delete_l7c();
+
 		if (write_config())
 			mark_subsystem_dirty('shaper');
+
 		unset($container);
 
 		header("Location: firewall_shaper_layer7.php");
@@ -207,25 +225,24 @@ else if ($_POST) {
 		$show_proto_form = false;
 	}
 }
-else {
+
+if(!$_GET && !$_POST) {
 	$show_proto_form = false;
-	$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
+	$dfltmsg = true;
 }
 
 // Builds the left tree
 $tree = "<ul class=\"tree\" >";
 if (is_array($layer7_rules_list)) {
-        foreach ($layer7_rules_list as $tmpl7) {
-                $tree .= $tmpl7->build_tree();
-        }
+	foreach ($layer7_rules_list as $tmpl7)
+		$tree .= $tmpl7->build_tree();
 }
+
 $tree .= "</ul>";
 
-$output = "<table summary=\"output form\">";
-$output .= $output_form;
-$closehead = false;
 include("head.inc");
 ?>
+
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
@@ -233,7 +250,6 @@ include("head.inc");
 //<![CDATA[
 var initial_count = new Array();
 var rows_limit = 0; // Set to 0 to disable limitation
-
 
 /* Build the behaviours arrays in javascript */
 var js_behaviours_action = ['block']; //static
@@ -248,9 +264,9 @@ function array_altq(a_behav) {
 	var index;
 	<?php if (!empty($avail_behaviours_altq)) {
 	  foreach ($avail_behaviours_altq as $key => $queue) { ?>
-	    name = "<?= $queue; ?>";
-	    index = <?= $key; ?>;
-	    a_behav[index] = name;
+		name = "<?= $queue; ?>";
+		index = <?= $key; ?>;
+		a_behav[index] = name;
 	<?php }
 	} ?>
 	return a_behav;
@@ -270,7 +286,7 @@ function array_limiter(a_behav) {
 
 /* Fill the variables with available protocols, structures and behaviours */
 function fillProtocol() {
-	var protocol = '<select name="protocol[]" style="font-size:8pt">';
+	var protocol = '<select class="form-control" name="protocol[]">';
 	var name;
 
 	<?php foreach ($avail_protos as $key => $proto) { ?>
@@ -283,7 +299,7 @@ function fillProtocol() {
 }
 
 function fillStructure() {
-	var structure = '<select name="structure[]" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
+	var structure = '<select class="form-control" name="structure[]" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
 	var name;
 	<?php foreach ($avail_structures as $key => $struct) { ?>
 		name = "<?= $struct; ?>";
@@ -292,7 +308,7 @@ function fillStructure() {
 		}
 		else {
 		  if(name == "limiter") {
-		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
+			if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
 		  }
 		  else structure += "<option value=" + name + ">" + name + "<\/option>"; //action
 		}
@@ -304,7 +320,7 @@ function fillStructure() {
 
 //Used by default to fill the values when inserting a new row.
 function fillBehaviour() {
-	var behaviour = '<select name="behaviour[]" style="width:80px; font-size:8pt">';
+	var behaviour = '<select class="form-control" name="behaviour[]">';
 	var name;
 	<?php foreach ($avail_behaviours_action as $key => $behav) { ?>
 		name = "<?= $behav; ?>";
@@ -317,11 +333,13 @@ function fillBehaviour() {
 
 /* Change the values on behaviours select when changing the structure row */
 function changeBehaviourValues(row) {
-	var selectedRow = row.rowIndex - 2; //because row.rowIndex returns 2, not 0
+
+	var selectedRow = row.rowIndex - 1; // The header is counted as the first row
 	var structureSelected = document.getElementsByName("structure[]")[selectedRow].value;
 
 	//Select the behaviours values to array a_behav
 	var a_behav = new Array();
+
 	if (structureSelected == "action") {
 		a_behav = js_behaviours_action; //static
 	}
@@ -333,6 +351,7 @@ function changeBehaviourValues(row) {
 			a_behav = js_behaviours_limiter;
 		}
 	}
+
 
 	//Build the html statement with the array values previously selected
 	var new_behav;
@@ -347,32 +366,33 @@ function changeBehaviourValues(row) {
 /* Add row to the table */
 function addRow(table_id) {
   var tbl = document.getElementById(table_id);
+
   // counting rows in table
   var rows_count = tbl.rows.length;
   if (initial_count[table_id] == undefined) {
-    // if it is first adding in this table setting initial rows count
-    initial_count[table_id] = rows_count;
+	// if it is first adding in this table setting initial rows count
+	initial_count[table_id] = rows_count;
   }
   // determining real count of added fields
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /><\/a>';
+  var remove = '<a class="btn  btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)">Remove<\/a>';
 
   try {
-    var newRow = tbl.insertRow(rows_count);
-    var newCell = newRow.insertCell(0);
-    newCell.innerHTML = fillProtocol();
-    var newCell = newRow.insertCell(1);
-    newCell.innerHTML = fillStructure();
-    var newCell = newRow.insertCell(2);
-    newCell.innerHTML = fillBehaviour();
-    var newCell = newRow.insertCell(3);
-    newCell.innerHTML = remove;
+	var newRow = tbl.insertRow(rows_count);
+	var newCell = newRow.insertCell(0);
+	newCell.innerHTML = fillProtocol();
+	var newCell = newRow.insertCell(1);
+	newCell.innerHTML = fillStructure();
+	var newCell = newRow.insertCell(2);
+	newCell.innerHTML = fillBehaviour();
+	var newCell = newRow.insertCell(3);
+	newCell.innerHTML = remove;
   }
   catch (ex) {
-    //if exception occurs
-    alert(ex);
+	//if exception occurs
+	alert(ex);
   }
 }
 
@@ -380,213 +400,195 @@ function addRow(table_id) {
 function removeRow(tbl,row) {
   var table = document.getElementById(tbl);
   try {
-    table.deleteRow(row.rowIndex);
+	table.deleteRow(row.rowIndex);
   } catch (ex) {
-    alert(ex);
+	alert(ex);
   }
 }
 //]]>
 </script>
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-<div id="inputerrors"></div>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-
-<form action="firewall_shaper_layer7.php" method="post" id="iform" name="iform">
-
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed")  .  ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper layer7">
-  <tr><td>
 <?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
-	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array(gettext("Layer7"), true, "firewall_shaper_layer7.php");
-	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
-	display_top_tabs($tab_array);
+// This function creates a table of rule selectors which are then inserted into the form
+// using a StaticText class. While not pretty this maintains compatibility with all of
+// the above javascript
+
+function build_l7table() {
+	global $container, $avail_protos, $avail_structures, $avail_behaviours_altq, $avail_behaviours_limiter,
+		   $avail_behaviours_action;
+
+	$tbl = '<table id="newtbl" class="table table-hover table-condensed">'; // No stripes for this table
+	$tbl .= '<thead><tr><th>Protocol</th><th>Structure</th><th>Behavior</th></tr></thead>';
+	$tbl .= '<tbody>';
+
+	if($container) {
+		foreach($container->rsets as $l7rule) {
+
+			$tbl .= '<tr><td>';
+			$tbl .= '<select name="protocol[]" class="form-control">';
+
+			foreach($avail_protos as $proto):
+				$tbl .= '<option value="' . $proto . '"';
+
+				if ($proto == $l7rule->GetRProtocol())
+					$tbl .= ' selected="selected"';
+
+				$tbl .= '>' . $proto . '</option>';
+
+			endforeach;
+
+			$tbl .= '</select></td><td>';
+			$tbl .= '<select name="structure[]" class="form-control" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
+
+			foreach($avail_structures as $struct) {
+				if($struct == "queue") {
+					if(!empty($avail_behaviours_altq)) {
+						$tbl .= '<option value="' . $struct . '"';
+						if ($struct == $l7rule->GetRStructure())
+							$tbl .= ' selected="selected"';
+
+						$tbl .= '>' . $struct . '</option>';
+						}
+					}
+					else {
+						if($struct == "limiter") {
+							if(!empty($avail_behaviours_limiter)) {
+								$tbl .= '<option value="' . $struct . '"';
+								if ($struct == $l7rule->GetRStructure())
+									$tbl .= ' selected="selected"';
+
+								$tbl .= '>' . $struct . '</option>';
+							}
+						}
+						else {
+							if($struct == "action") {
+								$tbl .= '<option value="' . $struct . '"';
+								if ($struct == $l7rule->GetRStructure())
+									$tbl .= ' selected="selected"';
+
+								$tbl .= '>' . $struct . '</option>';
+							}
+						}
+					}
+				}
+
+			$tbl .= '</select></td><td>';
+
+			$tbl .= '<select name="behaviour[]" class="form-control">';
+
+			if($l7rule->GetRStructure() == "action"):
+				foreach($avail_behaviours_action as $behaviour):
+					$tbl .= '<option value="' . $behaviour . '"';
+					if ($behaviour == $l7rule->GetRBehaviour())
+						$tbl .= ' selected="selected"';
+
+					$tbl .= '>' . $behaviour . '</option>';
+
+				endforeach;
+
+				$tbl .= '</select>';
+
+			endif;
+
+			if($l7rule->GetRStructure() == "queue"):
+				foreach($avail_behaviours_altq as $behaviour):
+
+					$tbl .= '<option value="' . $behaviour	. '"';
+					if ($behaviour == $l7rule->GetRBehaviour())
+						$tbl .= ' selected="selected"';
+
+					$tbl .= '>' . $behaviour . '</option>';
+
+				endforeach;
+
+				$tbl .= '</select>';
+
+			endif;
+
+			if($l7rule->GetRStructure() == "limiter"):
+				foreach($avail_behaviours_limiter as $behaviour):
+					$tbl .= '<option value="' . $behaviour . '"';
+					if ($behaviour == $l7rule->GetRBehaviour())
+						$tbl .= ' selected="selected"';
+
+					$tbl .= '>' . $behaviour . '</option>';
+
+				endforeach;
+
+				$tbl .= '</select>';
+
+	endif;
+
+				$tbl .= '</td><td>';
+				$tbl .= '<a type="button" class="btn  btn-default" onclick="removeRow(\'newtbl\',this.parentNode.parentNode); return false;" href="#">';
+				$tbl .= gettext('Remove') . '</a>';
+				$tbl .= '</td></tr>';
+
+
+			} //end foreach
+		} //end if
+
+	$tbl .= '</tbody></table>';
+
+	$tbl .= '<a id="addrow" type="button" onclick="javascript:addRow(\'newtbl\'); return false;" href="#" class="btn btn-sm btn-success">' . gettext('Add row') .
+			'</a>';
+
+	return($tbl);
+}
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('shaper'))
+	print_info_box_np(gettext("The traffic shaper configuration has been changed")	.  ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+
+$tab_array = array();
+$tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
+$tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+$tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Layer7"), true, "firewall_shaper_layer7.php");
+$tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
+display_top_tabs($tab_array);
+
+// Create a StaticText control and populate it with the rules table
+if(!$dfltmsg) {
+	$section = new Form_Section('Add one (or more) rules');
+
+	$section->addInput(new Form_StaticText(
+		'Rule(s)',
+		build_l7table()
+	));
+
+	$sform->add($section);
+}
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 
-		<?php if (count($layer7_rules_list) > 0): ?>
-                        <tr class="tabcont"><td width="25%" align="left">
-                        </td><td width="75%"> </td></tr>
-
-		<?php endif; ?>
-			<tr>
-			<td width="25%" valign="top" align="left">
-			<?php
-				echo $tree;
-			?>
-			<br /><br />
-			<a href="firewall_shaper_layer7.php?action=add">
-			<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new l7 rules group"); ?>" width="17" height="17" border="0" alt="add" />  <?=gettext("Create new l7 rules group"); ?>
-			</a><br />
-			</td>
-			<td width="75%" valign="top" align="center">
-			<div id="shaperarea" style="position:relative">
-			<?php
-				echo $output;
-			?>
-
-			<!-- Layer 7 rules form -->
-			<?php if($show_proto_form): ?>
-			<tr><td width="22%" valign="top" class="vncellreq">
-                                <div id="addressnetworkport">
-                                        <?=gettext("Rule(s)"); ?>
-                                </div>
-                        </td>
-
-                        <td width="78%" class="vtable">
-                                <table width="236" id="maintable" summary="main table">
-					<tbody>
-
-						<tr>
-                                                        <td colspan="4">
-                                                            <div style="font-size: 8pt; padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066;"
-                                                                id="itemhelp">
-                                                                <?=gettext("Add one or more rules"); ?>
-                                                            </div>
-                                                        </td>
-                                                </tr>
-
-                                                <tr>
-                                                        <td>
-                                                            <div style="font-size: 8pt; padding:5px;"
-                                                                id="onecolumn">
-                                                                <?=gettext("Protocol"); ?>
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <div style="font-size: 8pt; padding:5px;"
-                                                                id="twocolumn">
-                                                                <?=gettext("Structure"); ?>
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <div style="font-size: 8pt; padding:5px;"
-                                                                id="threecolumn">
-                                                                <?=gettext("Behaviour"); ?>
-                                                            </div>
-                                                        </td>
-                                                </tr>
-                                                <!-- PHP Code to generate the existing rules -->
-						<?php
-						if($container) {
-							foreach($container->rsets as $l7rule) {
-						?>
-						<tr>
-							<td>
-							<select name="protocol[]" class="formselect" style="font-size:8pt">
-							<?php foreach($avail_protos as $proto): ?>
-							<option value="<?=$proto;?>" <?php if ($proto == $l7rule->GetRProtocol()) echo "selected=\"selected\""; ?>><?=$proto;?></option>
-							<?php endforeach; ?>
-							</select>
-						</td>
-						<td>
-							<select name="structure[]" class="formselect" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">
-							<?php foreach($avail_structures as $struct) {
-							  if($struct == "queue") {
-							    if(!empty($avail_behaviours_altq)) { ?>
-							      <option value="<?=$struct ?>" <?php if ($struct == $l7rule->GetRStructure()) echo "selected=\"selected\""; ?>><?=$struct;?></option>
-							    <?php }
-							  }
-							  else {
-							    if($struct == "limiter") {
-								if(!empty($avail_behaviours_limiter)) { ?>
-								  <option value="<?=$struct ?>" <?php if ($struct == $l7rule->GetRStructure()) echo "selected=\"selected\""; ?>><?=$struct;?></option>
-								<?php }
-							    }
-							    else {
-							      if($struct == "action") { ?>
-								  <option value="<?=$struct ?>" <?php if ($struct == $l7rule->GetRStructure()) echo "selected=\"selected\""; ?>><?=$struct;?></option>
-							      <?php }
-							    }
-							  }
-							} ?>
-							</select>
-						</td>
-						<td>
-							<select name="behaviour[]" class="formselect" style="width:80px; font-size:8pt">
-							<?php if($l7rule->GetRStructure() == "action"): ?>
-								<?php foreach($avail_behaviours_action as $behaviour): ?>
-								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
-								<?php endforeach; ?>
-								</select>
-							<?php endif; ?>
-							<?php if($l7rule->GetRStructure() == "queue"): ?>
-								<?php foreach($avail_behaviours_altq as $behaviour): ?>
-								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
-								<?php endforeach; ?>
-								</select>
-							<?php endif; ?>
-							<?php if($l7rule->GetRStructure() == "limiter"): ?>
-								<?php foreach($avail_behaviours_limiter as $behaviour): ?>
-								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
-								<?php endforeach; ?>
-								</select>
-							<?php endif; ?>
-						</td>
-						<td>
-							<a onclick="removeRow('maintable',this.parentNode.parentNode); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>
-						</td>
-						</tr>
-
-						<?php
-							} //end foreach
-						} //end if
-						?>
-                                        </tbody>
-                                </table>
-
-                                        <a onclick="javascript:addRow('maintable'); return false;" href="#"> <img border="0"
-                                                src="/themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif"
-                                                alt="" title="<?=gettext("add another entry"); ?>" /> </a>
-                        </td>
-			</tr>
-
-                        <tr>
-                        <td width="22%" valign="top">
-                                &nbsp;
-                        </td>
-
-                        <td width="78%">
-                                <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-
-				<a href="firewall_shaper_layer7.php">
-                                <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" />
-
-				<?php if($container): ?>
-						<input id="delete" type="submit" class="formbtn" name="delete" value="<?=gettext("Delete"); ?>" />
-				<?php endif ?>
-				</a>
-                        </td>
-                        </tr>
-			<?php endif; ?>
-			<!-- End of layer7 rules form -->
-			</table>
-			</div><!-- end of div:shape area -->
-
-		      </td></tr>
-                    </table>
+	<div class="panel panel-default">
+		<div class="panel-heading" align="center"><h2 class="panel-title">Layer 7</h2></div>
+		<div class="panel-body">
+			<div class="form-group">
+				<div class="col-sm-2 ">
+					<?=$tree?>
+					<br />
+					<a href="firewall_shaper_layer7.php?action=add" class="btn btn-sm btn-success">
+						<?=gettext("Create new L7<br />rule group")?>
+					</a>
+				</div>
+				<div class="col-sm-10">
+<?php
+if($dfltmsg)
+	print_info_box($output_form = $dn_default_shaper_msg . $default_layer7shaper_msg);
+else
+	print($sform);
+?>
+				</div>
+			</div>
 		</div>
-	  </td>
-	</tr>
-</table>
-</form>
+	</div>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+include("foot.inc");

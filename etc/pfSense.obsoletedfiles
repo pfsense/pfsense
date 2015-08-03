@@ -924,6 +924,10 @@
 /usr/local/www/javascript/scriptaculous/MIT-LICENSE
 /usr/local/www/javascript/system_advanced
 /usr/local/www/javascript/system_advanced/system_advanced.js
+/usr/local/www/load_balancer_relay_action.php
+/usr/local/www/load_balancer_relay_action_edit.php
+/usr/local/www/load_balancer_relay_protocol.php
+/usr/local/www/load_balancer_relay_protocol_edit.php
 /usr/local/www/m0n0
 /usr/local/www/niftyjsCode.js
 /usr/local/www/pool.js

@@ -49,7 +49,8 @@ if (!is_array($config['captiveportal']))
 $a_cp = &$config['captiveportal'];
 
 if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
-	$cpzone = $_GET['zone'];
+	$cpzone = htmlspecialchars($_GET['zone']);
+
 	if ($a_cp[$cpzone]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		unset($a_cp[$cpzone]['enable']);
@@ -58,9 +59,10 @@ if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 		if (isset($config['voucher'][$cpzone]))
 			unset($config['voucher'][$cpzone]);
 		write_config();
-		header("Location: services_captiveportal_zones.php");
-		exit;
 	}
+	
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 $pgtitle = array(gettext("Captive Portal"),gettext("Zones"));

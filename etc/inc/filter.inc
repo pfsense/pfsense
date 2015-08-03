@@ -736,11 +736,15 @@ function filter_generate_aliases() {
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
 	$aliases .= "table <virusprot>\n";
-	if (!file_exists("/etc/bogons")) {
-		@file_put_contents("/etc/bogons", "");
-	}
-	if (!file_exists("/etc/bogonsv6")) {
-		@file_put_contents("/etc/bogonsv6", "");
+	if (!file_exists("/etc/bogons") || !file_exists("/etc/bogonsv6")) {
+		conf_mount_rw();
+		if (!file_exists("/etc/bogons")) {
+			@file_put_contents("/etc/bogons", "");
+		}
+		if (!file_exists("/etc/bogonsv6")) {
+			@file_put_contents("/etc/bogonsv6", "");
+		}
+		conf_mount_ro();
 	}
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
 	if (is_bogonsv6_used()) {

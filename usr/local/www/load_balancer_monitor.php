@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -41,10 +41,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("util.inc");
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
@@ -91,48 +87,74 @@ $shortcut_section = "relayd";
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('loadbalancer'))
+	print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+
+/* active tabs */
+$tab_array = array();
+$tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
+$tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
+$tab_array[] = array(gettext("Monitors"), true, "load_balancer_monitor.php");
+$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
+display_top_tabs($tab_array);
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
 <form action="load_balancer_monitor.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
-<?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer monitor">
-  <tr><td class="tabnavtbl">
-  <?php
-        /* active tabs */
-        $tab_array = array();
-        $tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
-        $tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
-        $tab_array[] = array(gettext("Monitors"), true, "load_balancer_monitor.php");
-        $tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
-        display_top_tabs($tab_array);
-  ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Monitor')?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext('Name')?></th>
+						<th><?=gettext('Type')?></th>
+						<th><?=gettext('Description')?></th>
+						<th><?=gettext('Action')?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
-			$t = new MainTable();
-			$t->edit_uri('load_balancer_monitor_edit.php');
-			$t->my_uri('load_balancer_monitor.php');
-			$t->add_column(gettext('Name'),'name',20);
-			$t->add_column(gettext('Type'),'type',10);
-			$t->add_column(gettext('Description'),'descr',30);
-			$t->add_button('edit');
-			$t->add_button('dup');
-			$t->add_button('del');
-			$t->add_content_array($a_monitor);
-			$t->display();
+$idx = 0;
+foreach($a_monitor as $monitor) {
 ?>
+					<tr>
+						<td>
+							<?=$monitor['name']?>
+						</td>
+						<td>
+							<?=$monitor['type']?>
+						</td>
+						<td>
+							<?=$monitor['descr']?>
+						</td>
+						<td>
+							<a href="load_balancer_monitor_edit.php?id=<?=$idx?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+							<a href="load_balancer_monitor.php?act=del&id=<?=$idx?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+							<a href="load_balancer_monitor_edit.php?act=dup&id=<?=$idx?>" class="btn btn-xs btn-default"><?=gettext('Duplicate')?></a>
+						</td>
+					</tr>
+<?php
+	$idx++;
+}
+?>
+				</tbody>
+			</table>
+		</div>
+
+		<nav class="action-buttons">
+			<a href="load_balancer_monitor_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
+		</nav>
+
 	</div>
-    </td>
-  </tr>
-</table>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+
+<?php
+
+include("foot.inc");

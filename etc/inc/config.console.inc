@@ -217,6 +217,7 @@ EOD;
 				unset($wanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($wanif, "", $ifsmallist)));
 		} while (!$wanif);
 
 		do {
@@ -242,6 +243,7 @@ EOD;
 				unset($lanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($lanif, "", $ifsmallist)));
 		} while (!$lanif);
 
 		/* optional interfaces */
@@ -277,6 +279,7 @@ EOD;
 						unset($optif[$i]);
 						continue;
 					}
+					$ifsmallist = trim(str_replace("  ", " ", str_replace($optif[$i], "", $ifsmallist)));
 				} else {
 					unset($optif[$i]);
 					break;

@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	nat
+	pfSense_MODULE: nat
 */
 
 ##|+PRIV
@@ -50,6 +50,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
+
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
@@ -62,6 +63,7 @@ $a_1to1 = &$config['nat']['onetoone'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
@@ -86,6 +88,7 @@ if (isset($id) && $a_1to1[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['interface'] = $a_1to1[$id]['interface'];
+
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
 
@@ -102,23 +105,26 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	/*  run through $_POST items encoding HTML entties so that the user
-	 *  cannot think he is slick and perform a XSS attack on the unwilling
+	/*	run through $_POST items encoding HTML entties so that the user
+	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
-		if($newpost <> $temp)
+
+		if($newpost != $temp)
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
 	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface external");
 	$reqdfieldsn = array(gettext("Interface"), gettext("External subnet"));
+
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
 		$reqdfields[] = "src";
 		$reqdfieldsn[] = gettext("Source address");
 	}
+
 	if ($_POST['dsttype'] == "single" || $_POST['dsttype'] == "network") {
 		$reqdfields[] = "dst";
 		$reqdfieldsn[] = gettext("Destination address");
@@ -128,8 +134,10 @@ if ($_POST) {
 
 	if ($_POST['external'])
 		$_POST['external'] = trim($_POST['external']);
+
 	if ($_POST['src'])
 		$_POST['src'] = trim($_POST['src']);
+
 	if ($_POST['dst'])
 		$_POST['dst'] = trim($_POST['dst']);
 
@@ -139,6 +147,7 @@ if ($_POST) {
 	} else if ($_POST['srctype'] == "single") {
 		$_POST['srcmask'] = 32;
 	}
+
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
@@ -163,6 +172,7 @@ if ($_POST) {
 		if (($_POST['src'] && !is_ipaddr($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
 		}
+
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid internal bit count must be specified.");
 		}
@@ -173,6 +183,7 @@ if ($_POST) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
 		}
+
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
@@ -219,6 +230,7 @@ if ($_POST) {
 
 		if (write_config())
 			mark_subsystem_dirty('natconf');
+
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
@@ -227,332 +239,304 @@ if ($_POST) {
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
 include("head.inc");
 
-?>
+function build_srctype_list() {
+	global $pconfig, $ifdisp;
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
-<script type="text/javascript">
-//<![CDATA[
-function typesel_change() {
-	switch (document.iform.srctype.selectedIndex) {
-		case 1: /* single */
-			document.iform.src.disabled = 0;
-			document.iform.srcmask.value = "";
-			document.iform.srcmask.disabled = 1;
-			break;
-		case 2: /* network */
-			document.iform.src.disabled = 0;
-			document.iform.srcmask.disabled = 0;
-			break;
-		default:
-			document.iform.src.value = "";
-			document.iform.src.disabled = 1;
-			document.iform.srcmask.value = "";
-			document.iform.srcmask.disabled = 1;
-			break;
+	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
+
+	$sel = is_specialnet($pconfig['src']);
+
+	if(have_ruleint_access("pptp"))
+		$list['pptp'] = 'PPTP clients';
+
+	if(have_ruleint_access("pppoe"))
+		$list['pppoe'] = 'PPPoE clients';
+
+	if(have_ruleint_access("l2tp"))
+		$list['l2tp'] = 'L2TP clients';
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if(have_ruleint_access($ifent)) {
+			$list[$ifent] = $ifdesc . ' net';
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
 	}
-	switch (document.iform.dsttype.selectedIndex) {
-		case 1: /* single */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
-		case 2: /* network */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.disabled = 0;
-			break;
-		default:
-			document.iform.dst.value = "";
-			document.iform.dst.disabled = 1;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
-	}
+
+	return($list);
 }
-//]]>
-</script>
 
-<?php
-include("fbegin.inc");
+function srctype_selected() {
+	global $pconfig;
+	
+	$sel = is_specialnet($pconfig['src']);
+	
+	if(!$sel) {
+		if($pconfig['srcmask'] == 32)
+			return('single');
+
+		return('network');
+	}
+
+	return($pconfig['src']);
+}
+
+function build_dsttype_list() {
+	global $pconfig, $config, $ifdisp;
+
+	$sel = is_specialnet($pconfig['dst']);
+	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
+
+	if(have_ruleint_access("pptp"))
+		$list['pptp'] = 'PPTP clients';
+
+	if(have_ruleint_access("pppoe"))
+		$list['pppoe'] = 'PPPoE clients';
+
+	if(have_ruleint_access("l2tp"))
+		$list['l2tp'] = 'L2TP clients';
+
+	foreach ($ifdisp as $if => $ifdesc) {
+		if(have_ruleint_access($if)) {
+			$list[$if] = $ifdesc;
+			$list[$if . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $sn) {
+			if (isset($sn['noexpand']))
+				continue;
+
+			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+				$len = $end - $start;
+
+				for ($i = 0; $i <= $len; $i++) {
+					$snip = long2ip32($start+$i);
+
+					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+				}
+
+				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+			}
+		}
+	}
+
+	return($list);
+}
+
+function dsttype_selected() {
+	global $pconfig;
+
+	$sel = is_specialnet($pconfig['dst']);
+
+	if(!$sel) {
+		if($pconfig['dstmask'] == 32)
+			return('single');
+
+		return('network');
+	}
+
+	return($pconfig['dst']);
+}
+
 if ($input_errors)
 	print_input_errors($input_errors);
-?>
-<form action="firewall_nat_1to1_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall nat 1to1 edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit NAT 1:1 entry"); ?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Disable this rule"); ?></strong><br />
-				<span class="vexpl"><?=gettext("Set this option to disable this rule without removing it from the list."); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="interface" class="formselect">
-<?php
-					foreach ($ifdisp as $if => $ifdesc)
-						if(have_ruleint_access($if))
-							$interfaces[$if] = $ifdesc;
 
-					if ($config['l2tp']['mode'] == "server")
-						if(have_ruleint_access("l2tp"))
-							$interfaces['l2tp'] = "L2TP VPN";
+require('classes/Form.class.php');
 
-					if ($config['pptpd']['mode'] == "server")
-						if(have_ruleint_access("pptp"))
-							$interfaces['pptp'] = "PPTP VPN";
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
 
-					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-						$interfaces['pppoe'] = "PPPoE Server";
+$section = new Form_Section('Edit NAT 1 to 1 entry');
 
-					/* add ipsec interfaces */
-					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-						if(have_ruleint_access("enc0"))
-							$interfaces["enc0"] = "IPsec";
+$section->addInput(new Form_Checkbox(
+	'nordr',
+	'No RDR (NOT)',
+	'Disable redirection for traffic matching this rule',
+	$pconfig['nordr']
+))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
 
-					/* add openvpn/tun interfaces */
-					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-						$interfaces["openvpn"] = "OpenVPN";
+$iflist = get_configured_interface_with_descr(false, true);
 
-					foreach ($interfaces as $iface => $ifacename):
-?>
-						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($ifacename);?>
-						</option>
-<?php
-					endforeach;
-?>
-				</select><br />
-			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br />
-			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  " .
-						"The subnet mask from the internal address below will be applied to this IP address."); ?><br />
-					<?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Internal IP"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("not"); ?></strong>
-				<br />
-				<?=gettext("Use this option to invert the sense of the match."); ?>
-				<br />
-				<br />
-				<table border="0" cellspacing="0" cellpadding="0" summary="source">
-					<tr>
-						<td><?=gettext("Type:"); ?>&nbsp;&nbsp;</td>
-						<td>
-							<select name="srctype" class="formselect" onchange="typesel_change()">
-<?php
-							$sel = is_specialnet($pconfig['src']);
-?>
-								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-								<option value="single"  <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>>
-									<?=gettext("Single host"); ?>
-								</option>
-								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
-<?php
-							if(have_ruleint_access("pptp")):
-?>
-								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
-<?php
-							endif;
-							if(have_ruleint_access("pppoe")):
-?>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
-<?php
-							endif;
-							if(have_ruleint_access("l2tp")):
-?>
-								<option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
-<?php
-							endif;
-							foreach ($ifdisp as $ifent => $ifdesc):
-								if(have_ruleint_access($ifent)):
-?>
-									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>>
-										<?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?>
-									</option>
-									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
-										<?=$ifdesc?> <?=gettext("address");?>
-									</option>
-<?php
-								endif;
-							endforeach;
-?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
-						<td>
-							<input name="src" type="text" class="formfld" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
-							<select name="srcmask" class="formselect" id="srcmask">
-<?php
-							for ($i = 31; $i > 0; $i--):
-?>
-                                                	        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
-<?php
-							endfor;
-?>
-							</select>
-						</td>
-					</tr>
-				</table>
-				<br />
-				<span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet will be applied to the external subnet."); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("not"); ?></strong>
-				<br />
-				<?=gettext("Use this option to invert the sense of the match."); ?>
-				<br />
-				<br />
-				<table border="0" cellspacing="0" cellpadding="0" summary="destination">
-					<tr>
-						<td><?=gettext("Type:"); ?>&nbsp;&nbsp;</td>
-						<td>
-							<select name="dsttype" class="formselect" onchange="typesel_change()">
-<?php
-							$sel = is_specialnet($pconfig['dst']); ?>
-								<option value="any" <?php if (empty($pconfig['dst']) || $pconfig['dst'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>>
-									<?=gettext("Single host or alias"); ?>
-								</option>
-								<option value="network" <?php if (!$sel && !empty($pconfig['dst'])) echo "selected=\"selected\""; ?>>
-									<?=gettext("Network"); ?>
-								</option>
-<?php
-							if(have_ruleint_access("pptp")):
-?>
-								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected=\"selected\""; } ?>>
-									<?=gettext("PPTP clients"); ?>
-								</option>
-<?php
-							endif;
-							if(have_ruleint_access("pppoe")):
-?>
-								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected=\"selected\""; } ?>>
-									<?=gettext("PPPoE clients"); ?>
-								</option>
-<?php
-							endif;
-							if(have_ruleint_access("l2tp")):
-?>
-								<option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected=\"selected\""; } ?>>
-									<?=gettext("L2TP clients"); ?>
-								</option>
-<?php
-							endif;
+foreach ($iflist as $if => $ifdesc)
+	if(have_ruleint_access($if))
+		$interfaces[$if] = $ifdesc;
 
-							foreach ($ifdisp as $if => $ifdesc):
-								if(have_ruleint_access($if)):
+if ($config['l2tp']['mode'] == "server")
+	if(have_ruleint_access("l2tp"))
+		$interfaces['l2tp'] = "L2TP VPN";
+
+if ($config['pptpd']['mode'] == "server")
+	if(have_ruleint_access("pptp"))
+		$interfaces['pptp'] = "PPTP VPN";
+
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+	$interfaces['pppoe'] = "PPPoE Server";
+
+/* add ipsec interfaces */
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+	if(have_ruleint_access("enc0"))
+		$interfaces["enc0"] = "IPsec";
+
+/* add openvpn/tun interfaces */
+if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	$interfaces["openvpn"] = "OpenVPN";
+
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface',
+	$pconfig['interface'],
+	$interfaces
+))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+
+$section->addInput(new Form_IpAddress(
+	'external',
+	'External subnet IP',
+	$pconfig['external']
+))->setHelp('Enter the external (usually on a WAN) subnet\'s starting address for the 1:1 mapping. ' .
+			'The subnet mask from the internal address below will be applied to this IP address.');
+
+$group = new Form_Group('Internal IP');
+
+$group->add(new Form_Checkbox(
+	'srcnot',
+	null,
+	'Not',
+	$pconfig['srcnot']
+))->setHelp('Invert the sense of the match.');
+
+$group->add(new Form_Select(
+	'srctype',
+	null,
+	srctype_selected(),
+	build_srctype_list()
+))->setHelp('Type');
+
+$group->add(new Form_IpAddress(
+	'src',
+	null,
+	is_specialnet($pconfig['src']) ? '': $pconfig['src']
+))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
+
+$group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
+				'The subnet size specified for the internal subnet will be applied to the external subnet.');
+
+$section->add($group);
+
+$group = new Form_Group('Destination');
+
+$group->add(new Form_Checkbox(
+	'dstnot',
+	null,
+	'Not',
+	$pconfig['srcnot']
+))->setHelp('Invert the sense of the match.');
+
+$group->add(new Form_Select(
+	'dsttype',
+	null,
+	dsttype_selected(),
+	build_dsttype_list()
+))->setHelp('Type');
+
+$group->add(new Form_IpAddress(
+	'dst',
+	null,
+	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
+
+$group->setHelp('The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".');
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$section->addInput(new Form_Select(
+	'natreflection',
+	'NAT reflection',
+	$pconfig['natreflection'],
+	array(
+		'default' => 'Use system default',
+		'enable'  => 'Enable',
+		'disable' => 'Disable'
+	)
+));
+
+$form->add($section);
+
+print($form);
 ?>
-									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?>
-										<?=gettext("net"); ?>
-									</option>
-									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
-										<?=$ifdesc;?> <?=gettext("address");?>
-									</option>
-<?php
-								endif;
-							endforeach;
-?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
-						<td>
-							<input name="dst" type="text" autocomplete="off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
-							/
-							<select name="dstmask" class="formselect" id="dstmask">
-<?php
-							for ($i = 31; $i > 0; $i--):
-?>
-								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
-<?php
-							endfor;
-?>
-							</select>
-						</td>
-					</tr>
-				</table>
-				<br />
-				<span class="vexpl">
-					<?=gettext("The 1:1 mapping will only be used for connections to or from the specified destination."); ?><br />
-					<?=gettext("Hint: this is usually 'any'."); ?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("NAT reflection"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="natreflection" class="formselect">
-					<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected=\"selected\""; ?>>
-						<?=gettext("use system default"); ?>
-					</option>
-					<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected=\"selected\""; ?>>
-						<?=gettext("enable"); ?>
-					</option>
-					<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected=\"selected\""; ?>>
-						<?=gettext("disable"); ?>
-					</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<?php if (isset($id) && $a_1to1[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
+
 <script type="text/javascript">
 //<![CDATA[
+events.push(function(){
+
+	// Disables the specified input element
+	function disableInput(id, disable) {
+		$('#' + id).prop("disabled", disable);
+	}
+
+	function typesel_change() {
+		switch ($('#srctype').find(":selected").index()) {
+			case 1: // single
+				disableInput('src', false);
+				$('#srcmask').val('');
+				disableInput('srcmask', true);
+				break;
+			case 2: // network
+				disableInput('src', false);
+				disableInput('srcmask', false);
+				break;
+			default:
+				$('#src').val('');
+				disableInput('src', true);
+				$('#srcmask').val('');
+				disableInput('srcmask', true);
+				break;
+		}
+
+		switch ($('#dsttype').find(":selected").index()) {
+			case 1: // single
+				disableInput('dst', false);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);;
+				break;
+			case 2: // network /
+				disableInput('dst', false);
+				disableInput('dstmask', false);
+				break;
+			default:
+				$('#dst').val('');
+				disableInput('dst', true);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);
+				break;
+		}
+	}
+
+	// On-click . .
+
+	$('#srctype').click(function () {
+		typesel_change();
+	});
+
+	$('#dsttype').click(function () {
+		typesel_change();
+	});
+
+	// Initial page load
 	typesel_change();
+});
 //]]>
 </script>
-<script type="text/javascript">
-//<![CDATA[
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php include("foot.inc");

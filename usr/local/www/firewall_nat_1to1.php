@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	nat
+	pfSense_MODULE: nat
 */
 
 ##|+PRIV
@@ -172,22 +172,19 @@ function fr_bgcolor(id, prefix) {
 	var cells = row.getElementsByTagName('td');
 	var cellcnt = cells.length;
 
-	for (i = 0; i < cellcnt; i++) {
-		// Check for cells with frd id only
-		if (cells[i].id == prefix + 'd' + id)
-			cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
-	}
+	for (i = 0; i < cellcnt; i++)
+		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
 }
 </script>
 
 <?php
 if ($savemsg)
 	print_info_box($savemsg, 'success');
-	
+
 if (is_subsystem_dirty('natconf'))
 	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
 					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
-					  
+
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
 $tab_array[] = array(gettext("1:1"), true, "firewall_nat_1to1.php");
@@ -196,21 +193,23 @@ $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
-	<div id="mainarea" class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
-			<thead>
-				<tr>
-					<th></th>
-					<th></th>
-					<th><?=gettext("Interface"); ?></th>
-					<th><?=gettext("External IP"); ?></th>
-					<th><?=gettext("Internal IP"); ?></th>
-					<th><?=gettext("Destination IP"); ?></th>
-					<th><?=gettext("Description"); ?></th>
-					<th><?=gettext('Actions')?></th>
-				</tr>
-			</thead>
-			<tbody>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=gettext("NAT 1 to 1 mappings")?></div>
+		<div id="mainarea" class="table-responsive panel-body">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th></th>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("External IP"); ?></th>
+						<th><?=gettext("Internal IP"); ?></th>
+						<th><?=gettext("Destination IP"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext('Actions')?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 		$textse = "</span>";
 		$i = 0;
@@ -223,95 +222,91 @@ display_top_tabs($tab_array);
 				$iconfn = "pass";
 			}
 ?>
-				<tr id="fr<?=$i?>">
-					<td>
-						<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
-					</td>
-					
-					<td>
-						<a href="?act=toggle&amp;id=<?=$i?>">
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" 
-								title="<?=gettext("click to toggle enabled/disabled status")?>" alt="icon" />
-						</a>
-					</td>
-					<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+					<tr id="fr<?=$i?>">
+						<td>
+							<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
+						</td>
+
+						<td>
+							<a href="?act=toggle&amp;id=<?=$i?>">
+								<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"
+									title="<?=gettext("click to toggle enabled/disabled status")?>" alt="icon" />
+							</a>
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
 					echo $textss;
 					if (!$natent['interface'])
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
-						
+
 					echo $textse;
 ?>
-					</td>
-					<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
 <?php
 					$source_net = pprint_address($natent['source']);
 					$source_cidr = strstr($source_net, '/');
 					echo $textss . $natent['external'] . $source_cidr . $textse;
 ?>
-					</td>
-					<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
 <?php
 					echo $textss . $source_net . $textse;
 ?>
-					</td>
-					<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
 <?php
 					echo $textss . pprint_address($natent['destination']) . $textse;
 ?>
-					</td>
-					<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
 					echo $textss . htmlspecialchars($natent['descr']) . '&nbsp;' . $textse;
 ?>
-					</td>
-				
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-						<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected rules before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
-						<a class="icon icon-pencil"		  title="<?=gettext("Edit rule"); ?>" href="firewall_nat_1to1.php?id=<?=$i?>"></a>
-						<a class="icon icon-remove-sign"  title="<?=gettext("Delete rule")?>" href="firewall_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?")?>')""></a>
-						<a class="icon icon-share-alt"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
-					</td>
+						</td>
 
-				</tr>
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+							<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected rules before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
+							<a class="icon icon-pencil"		  title="<?=gettext("Edit rule"); ?>" href="firewall_nat_1to1.php?id=<?=$i?>"></a>
+							<a class="icon icon-remove-sign"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?")?>')""></a>
+							<a class="icon icon-share-alt"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+						</td>
+
+					</tr>
 <?php
 			$i++;
 		endforeach;
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
-		
-	<div class="pull-right">
+
+	<nav class="action-buttons">
 		<a href="firewall_nat_1to1_edit.php?after=-1" class="icon icon-plus-sign" title="<?=gettext('Add new mapping')?>"></a>&nbsp;
 <?php
-if ($i == 0)
-	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" title="' . gettext("Move selected mappings to end") . '" alt="move" />&nbsp;');
-else
-	print('<input name="move_' . $i . '" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="' . gettext("Move selected mappings to end") . '" />&nbsp;');
-
-if (count($i) == 0)
-	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected mapping") . '" border="0" alt="delete" />');
-else
-	print('<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected mappings") . '" onclick="return confirm(\'' . gettext("Do you really want to delete the selected mappings?"). '\')" />');
+if ($i > 0) {
 ?>
-		&nbsp;
-	</div>
+		<input name="move_<?=$i?>" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="<?=gettext("Move selected mappings to end")?>" />
+		<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="<?=gettext("Delete selected mappings")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?")?>')" />
+<?php
+}
+?>
+	</nav>
 </form>
-<br />
+
+
 <div>
-	<p>
 <?php
 
-print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' . 
-			   gettext("Virtual IP.") . '</a><br />' .
+print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
+			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
 					   'using the WAN IP address will no longer function.'));
 ?>
-	</p>
 </div>
 <?php include("foot.inc"); ?>

@@ -127,20 +127,24 @@ function get_tmp_file() {
 
 /****f* pfsense-utils/get_dns_servers
  * NAME
- *   get_dns_servres - get system dns servers
+ *   get_dns_servers - get system dns servers
  * INPUTS
- *   $dns_servers - an array of the dns servers
+ *   none
  * RESULT
- *   null
+ *   $dns_servers - an array of the dns servers
  ******/
 function get_dns_servers() {
 	$dns_servers = array();
-	$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	foreach ($dns_s as $dns) {
-		$matches = "";
-		if (preg_match("/nameserver (.*)/", $dns, $matches)) {
-			$dns_servers[] = $matches[1];
-		}
+	if (file_exists("/etc/resolv.conf")) {
+		$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	}
+	if (is_array($dns_s)) {
+		foreach ($dns_s as $dns) {
+			$matches = "";
+			if (preg_match("/nameserver (.*)/", $dns, $matches)) {
+				$dns_servers[] = $matches[1];
+			}
+		}	
 	}
 	return array_unique($dns_servers);
 }

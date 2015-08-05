@@ -6,7 +6,7 @@
 	rc.banner
 	part of pfSense
 	Copyright (C) 2005 Scott Ullrich and Colin Smith
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	All rights reserved
 
 	Redistribution and use in source and binary forms, with or without
@@ -119,5 +119,5 @@
 			);
 		}
 	}
-
+	printf("\n");
 ?>

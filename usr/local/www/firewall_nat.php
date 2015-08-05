@@ -240,9 +240,7 @@ function fr_bgcolor(id, prefix) {
 	var cellcnt = cells.length;
 
 	for (i = 0; i < cellcnt; i++) {
-		// Check for cells with frd id only
-		if (cells[i].id == prefix + 'd' + id)
-			cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
+		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
 	}
 }
 </script>

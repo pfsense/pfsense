@@ -239,11 +239,8 @@ function fr_bgcolor(id, prefix) {
 	var cells = row.getElementsByTagName('td');
 	var cellcnt = cells.length;
 
-	for (i = 0; i < cellcnt; i++) {
-		// Check for cells with frd id only
-		if (cells[i].id == prefix + 'd' + id)
-			cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
-	}
+	for (i = 0; i < cellcnt; i++)
+		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
 }
 </script>
 <?php
@@ -286,7 +283,7 @@ display_top_tabs($tab_array);
 					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class='user-entries'>
 
 <?php
 $nnats = $i = 0;
@@ -393,10 +390,9 @@ if ($dstendport) {
 						<?=$textss?><?=htmlspecialchars($natent['descr'])?>&nbsp;<?=$textse?>
 					</td>
 					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-						<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected rules before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
-						<a class="icon icon-pencil"		  title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
-						<a class="icon icon-remove-sign"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?")?>')""></a>
-						<a class="icon icon-share-alt"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+						<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
+						<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
+						<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
 					</td>
 				</tr>
 <?php
@@ -408,22 +404,21 @@ endforeach;
 		</table>
 	</div>
 	<div class="pull-right">
-		<a href="firewall_nat_edit.php?after=-1" class="icon icon-plus-sign" title="<?=gettext('Add new rule')?>"></a>&nbsp;
-<?php
-if ($nnats == 0)
-	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" title="' . gettext("Move selected rules to end") . '" alt="move" />&nbsp;');
-else
-	print('<input name="move_' . $i . '" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="' . gettext("Move selected rules to end") . '" />&nbsp;');
-
-if (count($a_nat) == 0)
-	print('<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected rules") . '" border="0" alt="delete" />');
-else
-	print('<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="' . gettext("Delete selected rules") . '" onclick="return confirm(\'' . gettext("Do you really want to delete the selected rules?"). '\')" />');
-?>
-		&nbsp;
+		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
 	</div>
 </form>
 
+<script>
+events.push(function() {
+	// Make rules draggable/sortable
+	$('table tbody.user-entries').sortable({
+		cursor: 'grabbing',
+		update: function(event, ui) {
+			$('#order-store').removeAttr('disabled');
+		}
+	});
+});
+</script>
 <?php
 
 if(count($a_nat) > 0) {

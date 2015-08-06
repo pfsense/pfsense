@@ -49,6 +49,10 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("util.inc");
+
+print('Post: '); print_r($_POST); print('<br />');
+print('GET: '); print_r($_GET); print('<br />');
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
@@ -68,12 +72,25 @@ $max_alias_addresses = 5000;
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
+
 $a_aliases = &$config['aliases']['alias'];
 
 $tab = $_REQUEST['tab'];
 
-if($_POST)
+if($_POST) {
 	$origname = $_POST['origname'];
+	
+// Zap any blank addresses in the array
+$idx = count($_POST['address']);
+
+$adrs = count($_POST['address']);
+
+for($idx=0; $idx<$adrs; $idx++) {
+	if($_POST['address'][$idx] == "")
+		unset($_POST['address'][$idx]);
+}
+
+}
 
 // Debugging
 if($debug)
@@ -98,6 +115,7 @@ function alias_same_type($name, $type) {
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+	
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
@@ -111,8 +129,10 @@ if (isset($id) && $a_aliases[$id]) {
 
 	if(preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
+
 		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];
 	}
+
 	if($a_aliases[$id]['aliasurl'] != "") {
 		if(is_array($a_aliases[$id]['aliasurl']))
 			$pconfig['address'] = implode(" ", $a_aliases[$id]['aliasurl']);
@@ -259,6 +279,7 @@ if ($_POST) {
 		// This loop expands out that stuff so it can easily be validated.
 			foreach ($_POST['address'] as $idx => $post_address) {
 				if ($post_address != "") {
+
 					if ((strpos($post_address, "||") === false) && (substr($post_address, 0, 1) != "|") && (substr($post_address, -1, 1) != "|")) {
 						$detail_text = $post_address;
 					} else {
@@ -273,9 +294,11 @@ if ($_POST) {
 				} else {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
+				
 				$address_items = explode(" ", trim($post_address));
 				foreach ($address_items as $address_item) {
 					$iprange_type = is_iprange($address_item);
+
 					if ($iprange_type == 4) {
 						list($startip, $endip) = explode('-', $address_item);
 						if ($_POST['type'] == "network") {
@@ -360,6 +383,7 @@ if ($_POST) {
 								$input_addresses[] = $address_part;
 								$input_address_subnet[] = $_POST["address_subnet"][$idx];
 							}
+							
 							$final_address_details[] = $detail_text;
 							$alias_address_count++;
 						}
@@ -373,6 +397,7 @@ if ($_POST) {
 
 		// Validate the input data expanded above.
 		foreach($input_addresses as $idx => $input_address) {
+			print('Input address: ' . $input_address . '<br />');
 			if (is_alias($input_address)) {
 				if (!alias_same_type($input_address, $_POST['type']))
 					// But alias type network can include alias type urltable. Feature#1603.
@@ -447,15 +472,18 @@ if ($_POST) {
 		if (isset($id) && $a_aliases[$id]) {
 			if ($a_aliases[$id]['name'] != $alias['name']) {
 				foreach ($a_aliases as $aliasid => $aliasd) {
+
 					if ($aliasd['address'] != "") {
 						$tmpdirty = false;
 						$tmpaddr = explode(" ", $aliasd['address']);
+						
 						foreach ($tmpaddr as $tmpidx => $tmpalias) {
 							if ($tmpalias == $a_aliases[$id]['name']) {
 								$tmpaddr[$tmpidx] = $alias['name'];
 								$tmpdirty = true;
 							}
 						}
+						
 						if ($tmpdirty == true)
 							$a_aliases[$aliasid]['address'] = implode(" ", $tmpaddr);
 					}
@@ -548,6 +576,14 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	$tab
 ));
+
+$form->addGlobal(new Form_Input(
+	'tab',
+	null,
+	'hidden',
+	$tab
+));
+
 $form->addGlobal(new Form_Input(
 	'origname',
 	null,
@@ -566,6 +602,7 @@ if (isset($id) && $a_aliases[$id])
 }
 
 $section = new Form_Section('Properties');
+
 $section->addInput(new Form_Input(
 	'name',
 	'Name',
@@ -643,12 +680,21 @@ foreach ($types as $type => $typeName)
 		{
 			$group = new Form_Group('IP or FQDN');
 
-			$group->add(new Form_IpAddress(
+			// Can't use a Form_IpAddress here because the user might enter an FQDN
+			$group->add(new Form_Input(
 				'address',
 				'IP or FQDN',
+				'text',
 				$address
-			))->addMask('address_subnet', $address_subnet);
+			));
 
+			$group->add( new Form_Select(
+				'address_subnet',
+				null,
+				$address_subnet,
+				array_combine(range(128, 1, -1), range(128, 1, -1))
+			))->setHelp('Mask');
+			
 			$group->add(new Form_Input(
 				'detail',
 				'Description (not parsed)',

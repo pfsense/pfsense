@@ -209,7 +209,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Actions')?></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="user-entries">
 <?php
 		$textse = "</span>";
 		$i = 0;
@@ -268,10 +268,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected rules before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
-							<a class="icon icon-pencil"		  title="<?=gettext("Edit rule"); ?>" href="firewall_nat_1to1.php?id=<?=$i?>"></a>
-							<a class="icon icon-remove-sign"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?")?>')""></a>
-							<a class="icon icon-share-alt"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="btn btn-xs btn-info"		  title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"><?=gettext("Edit")?></a>
+							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
+							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
 						</td>
 
 					</tr>
@@ -285,15 +284,7 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="icon icon-plus-sign" title="<?=gettext('Add new mapping')?>"></a>&nbsp;
-<?php
-if ($i > 0) {
-?>
-		<input name="move_<?=$i?>" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="<?=gettext("Move selected mappings to end")?>" />
-		<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="<?=gettext("Delete selected mappings")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?")?>')" />
-<?php
-}
-?>
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>
 	</nav>
 </form>
 
@@ -309,4 +300,16 @@ print_info_box(gettext('Depending on the way your WAN connection is setup, you m
 					   'using the WAN IP address will no longer function.'));
 ?>
 </div>
+
+<script>
+events.push(function() {
+	// Make rules draggable/sortable
+	$('table tbody.user-entries').sortable({
+		cursor: 'grabbing',
+		update: function(event, ui) {
+			$('#order-store').removeAttr('disabled');
+		}
+	});
+});
+</script>
 <?php include("foot.inc"); ?>

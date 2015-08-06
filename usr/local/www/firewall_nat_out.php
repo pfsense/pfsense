@@ -375,7 +375,7 @@ function fr_bgcolor(id, prefix) {
 						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="user-entries">
 <?php
 			$i = 0;
 			foreach ($a_out as $natent):
@@ -507,10 +507,9 @@ function fr_bgcolor(id, prefix) {
 
 						<!-- Action	 icons -->
 						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<input name="move_<?=$i;?>"		  title="<?=gettext("Move selected mapping(s) before this rule");?>" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-eject" type="image"  />
-							<a class="icon icon-pencil"		  title="<?=gettext("Edit mapping"); ?>" href="firewall_nat_out.php?id=<?=$i?>"></a>
-							<a class="icon icon-remove-sign"  title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?")?>')"></a>
-							<a class="icon icon-share-alt"	  title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
+							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out.php?id=<?=$i?>"><?=gettext("Edit")?></a>
+							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
+							<a class="btn btn-xs btn-success" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
 						</td>
 <?php
 				$i++;
@@ -523,21 +522,14 @@ function fr_bgcolor(id, prefix) {
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_out_edit.php?after=-1" class="icon icon-plus-sign" title="<?=gettext('Add new mapping')?>"></a>&nbsp;
-<?php
-if ($i > 0) {
-?>
-		<input name="move_<?=$i?>" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-fast-forward" title="<?=gettext("Move selected mappings to end")?>" />
-		<input name="del" type="image" src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-remove-sign" title="<?=gettext("Delete selected mappings")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?")?>')" />
-<?php
-}
-?>
+		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>&nbsp;
 	</nav>
 
 <?php
 if ($mode == "automatic" || $mode == "hybrid"):
 	if(empty($FilterIflist))
 		filter_generate_optcfg_array();
+
 	if(empty($GatewaysList))
 		filter_generate_gateways();
 
@@ -661,5 +653,17 @@ endif;
 				   );
 ?>
 </div>
+
+<script>
+events.push(function() {
+	// Make rules draggable/sortable
+	$('table tbody.user-entries').sortable({
+		cursor: 'grabbing',
+		update: function(event, ui) {
+			$('#order-store').removeAttr('disabled');
+		}
+	});
+});
+</script>
 
 <?php include("foot.inc");

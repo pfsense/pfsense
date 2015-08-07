@@ -342,34 +342,6 @@ $section->add($group);
 $form->add($section);
 print($form);
 ?>
-<script>
-
-// Todo: Move script to external file ?
-// Check the checkbox, and change the background color when clicking on a row
-function fr_toggle(id, prefix) {
-
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt; i++)
-		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF"; // #B9DEF0 = Bootstrap "info"
-}
-</script>
 
 <form action="firewall_nat_out.php" method="post" name="iform">
 	<div class="panel panel-default">
@@ -378,7 +350,6 @@ function fr_bgcolor(id, prefix) {
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox --></th>
 						<th><!-- status	  --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
@@ -401,42 +372,25 @@ function fr_bgcolor(id, prefix) {
 				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled']))
 					$iconfn .= "_d";
 
-				//build Alias popup box
-				$alias_src_span_begin = "";
-				$alias_src_port_span_begin = "";
-				$alias_dst_span_begin = "";
-				$alias_dst_port_span_begin = "";
 
-				$alias_popup = rule_popup($natent['source']['network'],pprint_port($natent['sourceport']),$natent['destination']['address'],pprint_port($natent['dstport']));
-
-				$alias_src_span_begin = $alias_popup["src"];
-				$alias_src_port_span_begin = $alias_popup["srcport"];
-				$alias_dst_span_begin = $alias_popup["dst"];
-				$alias_dst_port_span_begin = $alias_popup["dstport"];
-
-				$alias_src_span_end = $alias_popup["src_end"];
-				$alias_src_port_span_end = $alias_popup["srcport_end"];
-				$alias_dst_span_end = $alias_popup["dst_end"];
-				$alias_dst_port_span_end = $alias_popup["dstport_end"];
+				$alias = rule_columns_with_alias(
+				$natent['source']['address'],
+				pprint_port($natent['source']['port']),
+				$natent['destination']['address'],
+				pprint_port($natent['destination']['port'])
+	);
 ?>
 					<tr id="fr<?=$i?>">
-						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
-							<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
-						</td>
-
 						<td>
 <?php
 					if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"
-								title="<?=gettext("Click to toggle enabled/disabled status")?>" alt="icon" />
+							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 <?php
 					else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"
-									title="<?=gettext("Click to toggle enabled/disabled status")?>" alt="icon" />
+								<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
@@ -444,51 +398,108 @@ function fr_bgcolor(id, prefix) {
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']))?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
-	$natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network'];
+						$natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network'];
 ?>
-							<?=$alias_src_span_begin . $natent['source']['network'] . $alias_src_span_end?>
+<?php
+						if (isset($alias['src'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+<?php
+						endif;
+?>
+							<?=htmlspecialchars($natent['source']['network'])?>
+<?php
+						if (isset($alias['src'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['sourceport'])
 							echo "*";
-						else
-							echo $alias_src_port_span_begin . $natent['sourceport'] . $alias_src_port_span_end;
+						else {
+						
+							if (isset($alias['srcport'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['sourceport'])?>
+<?php
+							if (isset($alias['srcport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;
+						}
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						if (isset($natent['destination']['any']))
 							echo "*";
 						else {
 							if (isset($natent['destination']['not']))
 								echo "!&nbsp;";
-							echo $alias_dst_span_begin . $natent['destination']['address'] . $alias_dst_span_end;
+								
+
+							if (isset($alias['dst'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['destination']['address'])?>
+<?php
+							if (isset($alias['dst'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;								
 						}
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 
 						if (!$natent['dstport'])
 							echo "*";
-						else
-							echo $alias_dst_port_span_begin . $natent['dstport'] . $alias_dst_port_span_end;
+						else {
+							if (isset($alias['dstport'])):
 ?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['dstport'])?>
+<?php
+							if (isset($alias['dstport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;
+						}
+?>
+
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						if (isset($natent['nonat']))
 							echo '<I>NO NAT</I>';
@@ -501,7 +512,7 @@ function fr_bgcolor(id, prefix) {
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						if (!$natent['natport'])
 							echo "*";
@@ -510,7 +521,7 @@ function fr_bgcolor(id, prefix) {
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 						if(isset($natent['staticnatport']))
 							echo gettext("YES");
@@ -519,13 +530,13 @@ function fr_bgcolor(id, prefix) {
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$i?>)">
+						<td>
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 
 						<!-- Action	 icons -->
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out.php?id=<?=$i?>"><?=gettext("Edit")?></a>
+						<td>
+							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"><?=gettext("Edit")?></a>
 							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
 							<a class="btn btn-xs btn-success" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
 						</td>
@@ -578,7 +589,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-ok" title="<?=gettext("automatic outbound nat")?>" alt="icon" />
+							<i class="icon-ok" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>

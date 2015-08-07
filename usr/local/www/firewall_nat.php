@@ -240,7 +240,6 @@ display_top_tabs($tab_array);
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- Checkbox --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("If")?></th>
 						<th><?=gettext("Proto")?></th>
@@ -272,19 +271,17 @@ foreach ($a_nat as $natent):
 	if(!have_natpfruleint_access($natent['interface']))
 		continue;
 ?>
+					
 					<tr id="fr<?=$nnats?>">
-						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
-							<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
 						<td>
 <?php
 	if($natent['associated-rule-id'] == "pass"):
 ?>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
+							<i class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-random" title="<?=gettext("Firewall rule ID"); ?><?=htmlspecialchars($nnatid); ?><?=gettext("is managed with this rule"); ?>" alt="change" />
+							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
 <?php
 	endif;
 ?>
@@ -301,6 +298,7 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
 						</td>
 

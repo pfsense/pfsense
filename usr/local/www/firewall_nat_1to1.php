@@ -51,6 +51,23 @@ if (!is_array($config['nat']['onetoone']))
 
 $a_1to1 = &$config['nat']['onetoone'];
 
+/* update rule order, POST[rule] is an array of ordered IDs */
+if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+	$a_1to1_new = array();
+
+	// if a rule is not in POST[rule], it has been deleted by the user
+	foreach ($_POST['rule'] as $id)
+		$a_1to1_new[] = $a_1to1[$id];
+
+	$a_1to1 = $a_1to1_new;
+	
+	if (write_config())
+		mark_subsystem_dirty('filter');
+		
+	header("Location: firewall_nat_1to1.php");
+	exit;
+}
+
 if ($_POST) {
 	$pconfig = $_POST;
 
@@ -224,6 +241,7 @@ display_top_tabs($tab_array);
 ?>
 					<tr id="fr<?=$i?>">
 						<td>
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 						</td>
 
@@ -285,6 +303,7 @@ display_top_tabs($tab_array);
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>
+		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
 	</nav>
 </form>
 

@@ -401,23 +401,13 @@ function fr_bgcolor(id, prefix) {
 				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled']))
 					$iconfn .= "_d";
 
-				//build Alias popup box
-				$alias_src_span_begin = "";
-				$alias_src_port_span_begin = "";
-				$alias_dst_span_begin = "";
-				$alias_dst_port_span_begin = "";
 
-				$alias_popup = rule_popup($natent['source']['network'],pprint_port($natent['sourceport']),$natent['destination']['address'],pprint_port($natent['dstport']));
-
-				$alias_src_span_begin = $alias_popup["src"];
-				$alias_src_port_span_begin = $alias_popup["srcport"];
-				$alias_dst_span_begin = $alias_popup["dst"];
-				$alias_dst_port_span_begin = $alias_popup["dstport"];
-
-				$alias_src_span_end = $alias_popup["src_end"];
-				$alias_src_port_span_end = $alias_popup["srcport_end"];
-				$alias_dst_span_end = $alias_popup["dst_end"];
-				$alias_dst_port_span_end = $alias_popup["dstport_end"];
+				$alias = rule_columns_with_alias(
+				$natent['source']['address'],
+				pprint_port($natent['source']['port']),
+				$natent['destination']['address'],
+				pprint_port($natent['destination']['port'])
+	);
 ?>
 					<tr id="fr<?=$i?>">
 						<td>
@@ -450,9 +440,23 @@ function fr_bgcolor(id, prefix) {
 
 						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
-	$natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network'];
+						$natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network'];
 ?>
-							<?=$alias_src_span_begin . $natent['source']['network'] . $alias_src_span_end?>
+<?php
+						if (isset($alias['src'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+<?php
+						endif;
+?>
+							<?=htmlspecialchars($natent['source']['network'])?>
+<?php
+						if (isset($alias['src'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
 						</td>
 
 						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
@@ -460,8 +464,22 @@ function fr_bgcolor(id, prefix) {
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['sourceport'])
 							echo "*";
-						else
-							echo $alias_src_port_span_begin . $natent['sourceport'] . $alias_src_port_span_end;
+						else {
+						
+							if (isset($alias['srcport'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['sourceport'])?>
+<?php
+							if (isset($alias['srcport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;
+						}
 ?>
 						</td>
 
@@ -472,7 +490,21 @@ function fr_bgcolor(id, prefix) {
 						else {
 							if (isset($natent['destination']['not']))
 								echo "!&nbsp;";
-							echo $alias_dst_span_begin . $natent['destination']['address'] . $alias_dst_span_end;
+								
+
+							if (isset($alias['dst'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['destination']['address'])?>
+<?php
+							if (isset($alias['dst'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;								
 						}
 ?>
 						</td>
@@ -483,9 +515,23 @@ function fr_bgcolor(id, prefix) {
 
 						if (!$natent['dstport'])
 							echo "*";
-						else
-							echo $alias_dst_port_span_begin . $natent['dstport'] . $alias_dst_port_span_end;
+						else {
+							if (isset($alias['dstport'])):
 ?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=htmlspecialchars($natent['dstport'])?>
+<?php
+							if (isset($alias['dstport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+							endif;
+						}
+?>
+
 						</td>
 
 						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
@@ -525,7 +571,7 @@ function fr_bgcolor(id, prefix) {
 
 						<!-- Action	 icons -->
 						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out.php?id=<?=$i?>"><?=gettext("Edit")?></a>
+							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"><?=gettext("Edit")?></a>
 							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
 							<a class="btn btn-xs btn-success" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
 						</td>

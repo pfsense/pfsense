@@ -182,7 +182,8 @@ include("head.inc");
 $nrules = 0;
 
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
+
 if (is_subsystem_dirty('filter'))
 	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
 

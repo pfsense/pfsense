@@ -165,36 +165,6 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"));
 include("head.inc");
 
-?>
-
-<script>
-// Check the checkbox, and change the background color when clicking on a row
-function fr_toggle(id, prefix) {
-
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt; i++)
-		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
-}
-</script>
-
-<?php
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -216,8 +186,7 @@ display_top_tabs($tab_array);
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th></th>
-						<th></th>
+						<th><!-- icon --></th>
 						<th><?=gettext("Interface"); ?></th>
 						<th><?=gettext("External IP"); ?></th>
 						<th><?=gettext("Internal IP"); ?></th>
@@ -241,17 +210,11 @@ display_top_tabs($tab_array);
 ?>
 					<tr id="fr<?=$i?>">
 						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
-							<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
-						</td>
-
-						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"
-									title="<?=gettext("click to toggle enabled/disabled status")?>" alt="icon" />
+								<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 					echo $textss;
 					if (!$natent['interface'])
@@ -262,30 +225,31 @@ display_top_tabs($tab_array);
 					echo $textse;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						<td>
+						<input type="hidden" name="rule[]" value="<?=$i?>" />
 <?php
 					$source_net = pprint_address($natent['source']);
 					$source_cidr = strstr($source_net, '/');
 					echo $textss . $natent['external'] . $source_cidr . $textse;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						<td>
 <?php
 					echo $textss . $source_net . $textse;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" >
+						<td>
 <?php
 					echo $textss . pprint_address($natent['destination']) . $textse;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 					echo $textss . htmlspecialchars($natent['descr']) . '&nbsp;' . $textse;
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<td>
 							<a class="btn btn-xs btn-info"		  title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"><?=gettext("Edit")?></a>
 							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
 							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
@@ -306,7 +270,6 @@ display_top_tabs($tab_array);
 		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
 	</nav>
 </form>
-
 
 <div>
 <?php

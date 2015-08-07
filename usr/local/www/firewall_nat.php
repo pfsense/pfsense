@@ -65,10 +65,10 @@ if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new[] = $a_nat[$id];
 
 	$a_nat = $a_nat_new;
-	
+
 	if (write_config())
 		mark_subsystem_dirty('filter');
-		
+
 	header("Location: firewall_nat.php");
 	exit;
 }
@@ -185,83 +185,6 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-function rule_popup($src,$srcport,$dst,$dstport){
-	global $config,$g;
-	$aliases_array = array();
-	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
-		$descriptions = array ();
-		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
-			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
-
-			switch ($alias_name['type']){
-				case "port":
-					$width="250";
-					break;
-				case "urltable":
-					$width="500";
-					break;
-				default:
-					$width="350";
-
-					break;
-			}
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g['theme']}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-			$span_end = "</u></span>";
-
-			if ($alias_name['name'] == $src) {
-				$descriptions['src'] = $span_begin;
-				$descriptions['src_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $srcport) {
-				$descriptions['srcport'] = $span_begin;
-				$descriptions['srcport_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $dst ) {
-				$descriptions['dst'] = $span_begin;
-				$descriptions['dst_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $dstport) {
-				$descriptions['dstport'] = $span_begin;
-				$descriptions['dstport_end'] = $span_end;
-			}
-		}
-
-		return $descriptions;
-	}
-}
-
-?>
-<script>
-// Check the checkbox, and change the background color when clicking on a row
-function fr_toggle(id, prefix) {
-
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt; i++)
-		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
-}
-</script>
-<?php
-
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
 include("head.inc");
@@ -288,7 +211,6 @@ display_top_tabs($tab_array);
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- Checkbox --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("If")?></th>
 						<th><?=gettext("Proto")?></th>
@@ -303,113 +225,147 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody class='user-entries'>
-
 <?php
+
 $nnats = $i = 0;
 
 foreach ($a_nat as $natent):
 
-//build Alias popup box
-$span_end = "</U></span>";
+	$alias = rule_columns_with_alias(
+		$natent['source']['address'],
+		pprint_port($natent['source']['port']),
+		$natent['destination']['address'],
+		pprint_port($natent['destination']['port'])
+	);
 
-$alias_popup = rule_popup($natent['source']['address'], pprint_port($natent['source']['port']), $natent['destination']['address'], pprint_port($natent['destination']['port']));
-
-$alias_src_span_begin	  = $alias_popup["src"];
-$alias_src_port_span_begin = $alias_popup["srcport"];
-$alias_dst_span_begin	  = $alias_popup["dst"];
-$alias_dst_port_span_begin = $alias_popup["dstport"];
-
-$alias_src_span_end		= $alias_popup["src_end"];
-$alias_src_port_span_end   = $alias_popup["srcport_end"];
-$alias_dst_span_end		= $alias_popup["dst_end"];
-$alias_dst_port_span_end   = $alias_popup["dstport_end"];
-
-$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
-
-$alias_target_span_begin	 = $alias_popup["dst"];
-$alias_local_port_span_begin = $alias_popup["dstport"];
-
-$alias_target_span_end	   = $alias_popup["dst_end"];
-$alias_local_port_span_end	 = $alias_popup["dstport_end"];
-
-if (isset($natent['disabled']))
-	$textss = "<span class=\"gray\">";
-else
-	$textss = "<span>";
-
-$textse = "</span>";
-
-/* if user does not have access to edit an interface skip on to the next record */
-if(!have_natpfruleint_access($natent['interface']))
-	continue;
+	/* if user does not have access to edit an interface skip on to the next record */
+	if(!have_natpfruleint_access($natent['interface']))
+		continue;
 ?>
+					
 					<tr id="fr<?=$nnats?>">
 						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
-							<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
-						<td>
 <?php
-if($natent['associated-rule-id'] == "pass"):
+	if($natent['associated-rule-id'] == "pass"):
 ?>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
+							<i class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
-elseif (!empty($natent['associated-rule-id'])):
+	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-random" title="<?=gettext("Firewall rule ID"); ?><?=htmlspecialchars($nnatid); ?><?=gettext("is managed with this rule"); ?>" alt="change" />
+							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
 <?php
-endif;
+	endif;
 ?>
 						</td>
-						<td onClick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 							<?=$textss?>
 <?php
-if (!$natent['interface'])
-	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
-else
-	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+	if (!$natent['interface'])
+		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
+	else
+		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 ?>
 							<?=$textse?>
 						</td>
-	
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+
+						<td>
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
 						</td>
-	
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<?=$textss?><?=$alias_src_span_begin?><?=htmlspecialchars(pprint_address($natent['source']))?><?=$alias_src_span_end?><?=$textse?>
-						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-							<?=$textss?><?=$alias_src_port_span_begin?><?=htmlspecialchars(pprint_port($natent['source']['port']))?><?=$alias_src_port_span_end?><?=$textse?>
-						</td>
-	
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-							<?=$textss?><?=$alias_dst_span_begin?><?=htmlspecialchars(pprint_address($natent['destination']))?><?=$alias_dst_span_end?><?=$textse?>
-						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-							<?=$textss?><?=$alias_dst_port_span_begin?><?=htmlspecialchars(pprint_port($natent['destination']['port']))?><?=$alias_dst_port_span_end?><?=$textse?>
-						</td>
-	
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-							<?=$textss?><?=$alias_target_span_begin?><?=htmlspecialchars($natent['target'])?><?=$alias_target_span_end?><?=$textse?>
-						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+
+						<td>
+
+
 <?php
-$localport = $natent['local-port'];
-
-list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
-
-if ($dstendport) {
-	$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
-	$localport	 .= '-' . $localendport;
-}
+	if (isset($alias['src'])):
 ?>
-							<?=$textss?><?=$alias_local_port_span_begin?><?=htmlspecialchars(pprint_port($localport))?><?=$alias_local_port_span_end?><?=$textse?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+<?php
+	endif;
+?>
+							<?=htmlspecialchars(pprint_address($natent['source']))?>
+<?php
+	if (isset($alias['src'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
 						</td>
-	
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-							<?=$textss?><?=htmlspecialchars($natent['descr'])?>&nbsp;<?=$textse?>
+						<td>
+<?php
+	if (isset($alias['srcport'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+<?php
+	endif;
+?>
+							<?=htmlspecialchars(pprint_port($natent['source']['port']))?>
+<?php
+	if (isset($alias['srcport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
 						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+
+						<td>
+<?php
+	if (isset($alias['dst'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+<?php
+	endif;
+?>
+							<?=htmlspecialchars(pprint_address($natent['destination']))?>
+<?php
+	if (isset($alias['dst'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
+						</td>
+						<td>
+<?php
+	if (isset($alias['dstport'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+<?php
+	endif;
+?>
+							<?=htmlspecialchars(pprint_port($natent['destination']['port']))?>
+<?php
+	if (isset($alias['dstport'])):
+?>
+							<i class='icon icon-pencil'></i></a>
+<?php
+	endif;
+?>
+						</td>
+
+						<td >
+							<?=htmlspecialchars($natent['target'])?>
+						</td>
+						<td>
+<?php
+	$localport = $natent['local-port'];
+
+	list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
+
+	if ($dstendport) {
+		$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
+		$localport	 .= '-' . $localendport;
+	}
+?>
+							<?=htmlspecialchars(pprint_port($localport))?>
+						</td>
+
+						<td>
+							<?=htmlspecialchars($natent['descr'])?>
+						</td>
+						<td>
 							<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
 							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
 							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
@@ -424,7 +380,7 @@ endforeach;
 			</table>
 		</div>
 	</div>
-	
+
 	<div class="pull-right">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
 		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />

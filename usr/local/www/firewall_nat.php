@@ -56,6 +56,23 @@ if (!is_array($config['nat']['rule']))
 
 $a_nat = &$config['nat']['rule'];
 
+/* update rule order, POST[rule] is an array of ordered IDs */
+if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+	$a_nat_new = array();
+
+	// if a rule is not in POST[rule], it has been deleted by the user
+	foreach ($_POST['rule'] as $id)
+		$a_nat_new[] = $a_nat[$id];
+
+	$a_nat = $a_nat_new;
+	
+	if (write_config())
+		mark_subsystem_dirty('filter');
+		
+	header("Location: firewall_nat.php");
+	exit;
+}
+
 /* if a custom message has been passed along, lets process it */
 if ($_GET['savemsg'])
 	$savemsg = $_GET['savemsg'];
@@ -265,25 +282,27 @@ display_top_tabs($tab_array);
 ?>
 
 <form action="firewall_nat.php" method="post" name="iform">
-	<div id="mainarea" class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
-			<thead>
-				<tr>
-					<th><!-- Checkbox --></th>
-					<th><!-- Rule type --></th>
-					<th><?=gettext("If")?></th>
-					<th><?=gettext("Proto")?></th>
-					<th><?=gettext("Src. addr")?></th>
-					<th><?=gettext("Src. ports")?></th>
-					<th><?=gettext("Dest. addr")?></th>
-					<th><?=gettext("Dest. ports")?></th>
-					<th><?=gettext("NAT IP")?></th>
-					<th><?=gettext("NAT Ports")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><?=gettext("Actions")?></th>
-				</tr>
-			</thead>
-			<tbody class='user-entries'>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?=gettext('Rules')?></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><!-- Checkbox --></th>
+						<th><!-- Rule type --></th>
+						<th><?=gettext("If")?></th>
+						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Src. addr")?></th>
+						<th><?=gettext("Src. ports")?></th>
+						<th><?=gettext("Dest. addr")?></th>
+						<th><?=gettext("Dest. ports")?></th>
+						<th><?=gettext("NAT IP")?></th>
+						<th><?=gettext("NAT Ports")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody class='user-entries'>
 
 <?php
 $nnats = $i = 0;
@@ -324,55 +343,56 @@ $textse = "</span>";
 if(!have_natpfruleint_access($natent['interface']))
 	continue;
 ?>
-				<tr id="fr<?=$nnats?>">
-					<td>
-						<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
-					<td>
+					<tr id="fr<?=$nnats?>">
+						<td>
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
+							<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
+						<td>
 <?php
 if($natent['associated-rule-id'] == "pass"):
 ?>
-						<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
+							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
 <?php
 elseif (!empty($natent['associated-rule-id'])):
 ?>
-						<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-random" title="<?=gettext("Firewall rule ID"); ?><?=htmlspecialchars($nnatid); ?><?=gettext("is managed with this rule"); ?>" alt="change" />
+							<img src="/bootstrap/glyphicons/glyphicons-halflings.png" class="icon-random" title="<?=gettext("Firewall rule ID"); ?><?=htmlspecialchars($nnatid); ?><?=gettext("is managed with this rule"); ?>" alt="change" />
 <?php
 endif;
 ?>
-					</td>
-					<td onClick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?>
+						</td>
+						<td onClick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?>
 <?php
 if (!$natent['interface'])
 	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 else
 	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 ?>
-						<?=$textse?>
-					</td>
-
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
-					</td>
-
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-						<?=$textss?><?=$alias_src_span_begin?><?=htmlspecialchars(pprint_address($natent['source']))?><?=$alias_src_span_end?><?=$textse?>
-					</td>
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?><?=$alias_src_port_span_begin?><?=htmlspecialchars(pprint_port($natent['source']['port']))?><?=$alias_src_port_span_end?><?=$textse?>
-					</td>
-
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?><?=$alias_dst_span_begin?><?=htmlspecialchars(pprint_address($natent['destination']))?><?=$alias_dst_span_end?><?=$textse?>
-					</td>
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?><?=$alias_dst_port_span_begin?><?=htmlspecialchars(pprint_port($natent['destination']['port']))?><?=$alias_dst_port_span_end?><?=$textse?>
-					</td>
-
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
-						<?=$textss?><?=$alias_target_span_begin?><?=htmlspecialchars($natent['target'])?><?=$alias_target_span_end?><?=$textse?>
-					</td>
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textse?>
+						</td>
+	
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
+						</td>
+	
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+							<?=$textss?><?=$alias_src_span_begin?><?=htmlspecialchars(pprint_address($natent['source']))?><?=$alias_src_span_end?><?=$textse?>
+						</td>
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?><?=$alias_src_port_span_begin?><?=htmlspecialchars(pprint_port($natent['source']['port']))?><?=$alias_src_port_span_end?><?=$textse?>
+						</td>
+	
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?><?=$alias_dst_span_begin?><?=htmlspecialchars(pprint_address($natent['destination']))?><?=$alias_dst_span_end?><?=$textse?>
+						</td>
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?><?=$alias_dst_port_span_begin?><?=htmlspecialchars(pprint_port($natent['destination']['port']))?><?=$alias_dst_port_span_end?><?=$textse?>
+						</td>
+	
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+							<?=$textss?><?=$alias_target_span_begin?><?=htmlspecialchars($natent['target'])?><?=$alias_target_span_end?><?=$textse?>
+						</td>
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
 <?php
 $localport = $natent['local-port'];
 
@@ -383,28 +403,31 @@ if ($dstendport) {
 	$localport	 .= '-' . $localendport;
 }
 ?>
-						<?=$textss?><?=$alias_local_port_span_begin?><?=htmlspecialchars(pprint_port($localport))?><?=$alias_local_port_span_end?><?=$textse?>
-					</td>
-
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-						<?=$textss?><?=htmlspecialchars($natent['descr'])?>&nbsp;<?=$textse?>
-					</td>
-					<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
-						<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
-						<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-						<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
-					</td>
-				</tr>
+							<?=$textss?><?=$alias_local_port_span_begin?><?=htmlspecialchars(pprint_port($localport))?><?=$alias_local_port_span_end?><?=$textse?>
+						</td>
+	
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+							<?=$textss?><?=htmlspecialchars($natent['descr'])?>&nbsp;<?=$textse?>
+						</td>
+						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+							<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
+							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
+							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+						</td>
+					</tr>
 <?php
 	$i++;
 	$nnats++;
 endforeach;
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
+	
 	<div class="pull-right">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
+		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
 	</div>
 </form>
 

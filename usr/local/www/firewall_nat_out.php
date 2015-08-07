@@ -58,6 +58,23 @@ if (!is_array($config['nat']['outbound']['rule']))
 
 $a_out = &$config['nat']['outbound']['rule'];
 
+/* update rule order, POST[rule] is an array of ordered IDs */
+if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+	$a_out_new = array();
+
+	// if a rule is not in POST[rule], it has been deleted by the user
+	foreach ($_POST['rule'] as $id)
+		$a_out_new[] = $a_out[$id];
+
+	$a_out = $a_out_new;
+	
+	if (write_config())
+		mark_subsystem_dirty('filter');
+		
+	header("Location: firewall_nat_out.php");
+	exit;
+}
+
 if (!isset($config['nat']['outbound']['mode']))
 	$config['nat']['outbound']['mode'] = "automatic";
 
@@ -404,6 +421,7 @@ function fr_bgcolor(id, prefix) {
 ?>
 					<tr id="fr<?=$i?>">
 						<td>
+							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 						</td>
 
@@ -523,6 +541,7 @@ function fr_bgcolor(id, prefix) {
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>&nbsp;
+		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
 	</nav>
 
 <?php

@@ -185,35 +185,6 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-?>
-<script>
-// Check the checkbox, and change the background color when clicking on a row
-function fr_toggle(id, prefix) {
-
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt; i++)
-		cells[i].style.backgroundColor = checkbox.checked ? "#B9DEF0" : "#FFFFFF";
-}
-</script>
-<?php
-
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
 include("head.inc");
@@ -286,7 +257,7 @@ foreach ($a_nat as $natent):
 	endif;
 ?>
 						</td>
-						<td onClick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 							<?=$textss?>
 <?php
 	if (!$natent['interface'])
@@ -297,12 +268,12 @@ foreach ($a_nat as $natent):
 							<?=$textse?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<td>
 
 
 <?php
@@ -321,7 +292,7 @@ foreach ($a_nat as $natent):
 	endif;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 <?php
 	if (isset($alias['srcport'])):
 ?>
@@ -339,7 +310,7 @@ foreach ($a_nat as $natent):
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 <?php
 	if (isset($alias['dst'])):
 ?>
@@ -356,7 +327,7 @@ foreach ($a_nat as $natent):
 	endif;
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 <?php
 	if (isset($alias['dstport'])):
 ?>
@@ -374,10 +345,10 @@ foreach ($a_nat as $natent):
 ?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td >
 							<?=htmlspecialchars($natent['target'])?>
 						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>" >
+						<td>
 <?php
 	$localport = $natent['local-port'];
 
@@ -391,10 +362,10 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars(pprint_port($localport))?>
 						</td>
 
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<td>
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
-						<td onclick="fr_toggle(<?=$nnats?>)" id="frd<?=$nnats?>">
+						<td>
 							<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
 							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
 							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>

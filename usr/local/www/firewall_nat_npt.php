@@ -79,6 +79,23 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+/* update rule order, POST[rule] is an array of ordered IDs */
+if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+	$a_npt_new = array();
+
+	// if a rule is not in POST[rule], it has been deleted by the user
+	foreach ($_POST['rule'] as $id)
+		$a_npt_new[] = $a_npt[$id];
+
+	$a_npt = $a_npt_new;
+	
+	if (write_config())
+		mark_subsystem_dirty('filter');
+		
+	header("Location: firewall_nat_npt.php");
+	exit;
+}
+	
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"));
 include("head.inc");
 
@@ -97,6 +114,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel-body table responsive">
+	<form method="post">
 	<table class="table table-striped table-hover table-condensed">
 		<thead>
 			<tr>
@@ -107,7 +125,7 @@ display_top_tabs($tab_array);
 				<th><!-- Buttons --></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="user-entries">
 <?php
 
 $i = 0;
@@ -115,6 +133,7 @@ foreach ($a_npt as $natent):
 ?>
 			<tr<?=isset($natent['disabled'])? ' class="disabled"' : ''?>>
 				<td>
+					<input type="hidden" name="rule[]" value="<?=$i?>" />
 <?php
 	if (!$natent['interface'])
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan")));
@@ -152,7 +171,21 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success"><?=gettext("Add rule")?></a>
+	<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
 </nav>
+
+</form>
+<script>
+events.push(function() {
+	// Make rules draggable/sortable
+	$('table tbody.user-entries').sortable({
+		cursor: 'grabbing',
+		update: function(event, ui) {
+			$('#order-store').removeAttr('disabled');
+		}
+	});
+});
+</script>
 
 <?php
 

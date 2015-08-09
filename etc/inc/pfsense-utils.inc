@@ -2239,8 +2239,8 @@ function version_compare_string($a, $b) {
 	}
 }
 function version_compare_numeric($a, $b) {
-	$a_arr = explode('.', rtrim($a, '.0'));
-	$b_arr = explode('.', rtrim($b, '.0'));
+	$a_arr = explode('.', rtrim($a, '.'));
+	$b_arr = explode('.', rtrim($b, '.'));
 
 	foreach ($a_arr as $n => $val) {
 		if (array_key_exists($n, $b_arr)) {

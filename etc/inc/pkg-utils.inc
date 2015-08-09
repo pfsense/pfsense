@@ -237,9 +237,9 @@ function compare_pkg_versions($installed_pkg_ver, $available_pkg_ver) {
 			$val2_as_int = filter_var($available_arr[$n], FILTER_VALIDATE_INT);
 			if (($val1_as_int === false) || ($val2_as_int === false)) {
 				// One of them does not look like a genuine integer so use string comparison.
-				if (strcmp($val, $available_arr[$n]) > 0) {
+				if (strcasecmp($val, $available_arr[$n]) > 0) {
 					return 1;
-				} elseif (strcmp($val, $available_arr[$n]) < 0) {
+				} elseif (strcasecmp($val, $available_arr[$n]) < 0) {
 					return -1;
 				}
 			} else {

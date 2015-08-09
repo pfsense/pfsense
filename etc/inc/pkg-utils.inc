@@ -209,6 +209,66 @@ function get_pkg_sizes($pkgs = 'all') {
 	return array();
 }
 
+/****f* pkg-utils/compare_pkg_versions
+ * NAME
+ *   compare_pkg_versions - Decide if the installed package is newer, the same or older than the available package.
+ * INPUTS
+ *   $installed_pkg_ver - the package version installed on the system.
+ *   $available_pkg_ver - the package version available from the package server.
+ * RESULT
+ *   -1 - the installed package is older (an upgrade is available)
+ *   0 - the package versions are the same
+ *   1 - the installed package is newer (somebody has installed a newer version than is officially available)
+ ******/
+function compare_pkg_versions($installed_pkg_ver, $available_pkg_ver) {
+	// If the strings are the same then short-cut all the processing.
+	if (strcmp($installed_pkg_ver, $available_pkg_ver) == 0) {
+		return 0;
+	}
+
+	// Split into pieces that are groups of digits and groups of non-digits.
+	$installed_arr = preg_split( '/([0-9]+)/', $installed_pkg_ver, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$available_arr = preg_split( '/([0-9]+)/', $available_pkg_ver, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	foreach ($installed_arr as $n => $val) {
+		if (array_key_exists($n, $available_arr)) {
+			// Check if this piece looks like a genuine integer like "123", "0" rather than "05", "005", "1a", "abc".
+			// Note: At this point the pieces cannot be like "-1", "+1" so we do not need to worry about those possibilities that filter_var() will see as "genuine integers".
+			$val1_as_int = filter_var($val, FILTER_VALIDATE_INT);
+			$val2_as_int = filter_var($available_arr[$n], FILTER_VALIDATE_INT);
+			if (($val1_as_int === false) || ($val2_as_int === false)) {
+				// One of them does not look like a genuine integer so use string comparison.
+				if (strcmp($val, $available_arr[$n]) > 0) {
+					return 1;
+				} elseif (strcmp($val, $available_arr[$n]) < 0) {
+					return -1;
+				}
+			} else {
+				// Both look like genuine integers so compare as numbers.
+				if ($val1_as_int > $val2_as_int) {
+					return 1;
+				} elseif ($val1_as_int < $val2_as_int) {
+					return -1;
+				}
+			}
+		} else {
+			// The installed package version is greater, since all components have matched up to this point
+			// and available_arr doesn't have any more data.
+			return 1;
+		}
+	}
+
+	if (count($available_arr) > count($installed_arr)) {
+		// All the installed package components matched the corresponding available package components.
+		// The available package is longer than the installed package, so the installed package is old.
+		return -1;
+	} else {
+		// Both versions are of equal length and value.
+		return 0;
+	}
+
+	return $resp ? $resp : array();
+}
+
 /*
  * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
  * This function may also print output to the terminal indicating progress.

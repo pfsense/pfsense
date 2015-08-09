@@ -147,8 +147,10 @@ include("head.inc");
 									#check package version
 									$latest_package = $currentvers[$pkg['name']]['version'];
 									if ($latest_package) {
+										$pkg_compare_result = compare_pkg_versions($pkg['version'], $latest_package);
+
 										// we're running a newer version of the package
-										if(strcmp($pkg['version'], $latest_package) > 0) {
+										if ($pkg_compare_result > 0) {
 											$tdclass = "listbggrey";
 											if ($g['disablepackagehistory'])
 												$pkgver  = "<a>".gettext("Available") .": ". $latest_package . "<br />";
@@ -157,7 +159,7 @@ include("head.inc");
 											$pkgver .= gettext("Installed") .": ". $pkg['version']. "</a>";
 										}
 										// we're running an older version of the package
-										if(strcmp($pkg['version'], $latest_package) < 0) {
+										if ($pkg_compare_result < 0) {
 											$tdclass = "listbg";
 											if ($g['disablepackagehistory'])
 												$pkgver  = "<a><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "</font><br />";
@@ -166,7 +168,7 @@ include("head.inc");
 											$pkgver .= gettext("Installed") .": ". $pkg['version']."</font></a>";
 										}
 										// we're running the current version
-										if(!strcmp($pkg['version'], $latest_package)) {
+										if ($pkg_compare_result == 0) {
 											$tdclass = "listr";
 											if ($g['disablepackagehistory'])
 												$pkgver = "<a>{$pkg['version']}</a>";

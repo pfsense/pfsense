@@ -32,6 +32,38 @@ $(function() {
 		selects.trigger('change');
 	})();
 
+
+	// Add +/- buttons to certain Groups; to allow adding multiple entries
+	// This time making the buttons col-2 wide so they can fit on the same line as the
+	// rest of the group (providing the total width of the group is col-8 or less)
+	(function()
+	{
+		var groups = $('div.form-group.user-duplication-horiz');
+		var controlsContainer = $('<div class="col-sm-2"></div>');
+		var plus = $('<a class="btn btn-sm btn-success">Duplicate</a>');
+		var minus = $('<a class="btn btn-sm btn-danger">Delete</a>');
+
+		minus.on('click', function(){
+			$(this).parents('div.form-group').remove();
+		});
+
+		plus.on('click', function(){
+			var group = $(this).parents('div.form-group');
+
+			var clone = group.clone(true);
+			clone.find('*').removeAttr('value');
+			clone.appendTo(group.parent());
+		});
+
+		groups.each(function(idx, group){
+			var controlsClone = controlsContainer.clone(true).appendTo(group);
+			minus.clone(true).appendTo(controlsClone);
+
+			if (group == group.parentNode.lastElementChild)
+				plus.clone(true).appendTo(controlsClone);
+		});
+	})();
+
 	// Add +/- buttons to certain Groups; to allow adding multiple entries
 	(function()
 	{

@@ -28,8 +28,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl	
-	pfSense_MODULE:	interfaces
+	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -44,8 +44,6 @@ $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
 
-print('POST: '); print_r($_POST); print('<br />');
-
 if (!is_array($config['qinqs']['qinqentry']))
 	$config['qinqs']['qinqentry'] = array();
 
@@ -55,8 +53,8 @@ $portlist = get_interface_list();
 
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-		foreach ($config['laggs']['lagg'] as $lagg)
-				$portlist[$lagg['laggif']] = $lagg;
+	foreach ($config['laggs']['lagg'] as $lagg)
+			$portlist[$lagg['laggif']] = $lagg;
 }
 
 if (count($portlist) < 1) {
@@ -66,7 +64,7 @@ if (count($portlist) < 1) {
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
-	
+
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
@@ -75,10 +73,6 @@ if (isset($id) && $a_qinqs[$id]) {
 	$pconfig['tag'] = $a_qinqs[$id]['tag'];
 	$pconfig['members'] = $a_qinqs[$id]['members'];
 	$pconfig['descr'] = html_entity_decode($a_qinqs[$id]['descr']);
-/*
-	$pconfig['autoassign'] = isset($a_qinqs[$id]['autoassign']);
-	$pconfig['autoenable'] = isset($a_qinqs[$id]['autoenable']);
-*/
 	$pconfig['autogroup'] = isset($a_qinqs[$id]['autogroup']);
 	$pconfig['autoadjustmtu'] = isset($a_qinqs[$id]['autoadjustmtu']);
 }
@@ -94,9 +88,11 @@ if ($_POST) {
 	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if'])
 		$input_errors[] = gettext("You are editing an existing entry and modifying the interface is not allowed.");
 	if (!isset($id)) {
-		foreach ($a_qinqs as $qinqentry)
+		foreach ($a_qinqs as $qinqentry) {
 			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if'])
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
+			}
+
 		if (is_array($config['vlans']['vlan'])) {
 			foreach ($config['vlans']['vlan'] as $vlan)
 				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if'])
@@ -107,41 +103,33 @@ if ($_POST) {
 	$qinqentry = array();
 	$qinqentry['if'] = $_POST['if'];
 	$qinqentry['tag'] = $_POST['tag'];
-/*
-	if ($_POST['autoassign'] == "yes") {
-		$qinqentry['autoassign'] = true;
-	if ($_POST['autoenable'] == "yes")
-		$qinqentry['autoenable'] = true;
-	if ($_POST['autoadjust'] == "yes")
-		$qinqentry['autoadjustmtu'] = true;
-*/
+
 	if ($_POST['autogroup'] == "yes")
 		$qinqentry['autogroup'] = true;
 
 	$members = "";
 	$isfirst = 0;
-	/* item is a normal qinqentry type */
-	for($x=0; $x<9999; $x++) {
-		if($_POST["members{$x}"] != "") {
-			$member = explode("-", $_POST["members{$x}"]);
-			if (count($member) > 1) {
-				if (preg_match("/([^0-9])+/", $member[0], $match)  ||
-					preg_match("/([^0-9])+/", $member[1], $match))
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
 
-				for ($i = $member[0]; $i <= $member[1]; $i++) {
-					if ($isfirst > 0)
-						$members .= " ";
-					$members .= $i;
-					$isfirst++;
-				}
-			} else {
-				if (preg_match("/([^0-9])+/", $_POST["members{$x}"], $match))
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+	// Read the POSTed member array into a space separated list translating any ranges
+	// into their included values
+	foreach ($_POST['members'] as $memb) {
+		// Might be a range
+		$member = explode("-", $memb);
 
-				if ($isfirst > 0)
-					$members .= " ";
-				$members .= $_POST["members{$x}"];
+		if (count($member) > 1) {
+			if (preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match))
+				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+
+			for ($i = $member[0]; $i <= $member[1]; $i++) {
+				$members .= ($isfirst == 0 ? '':' ') . $i;
+				$isfirst++;
+			}
+		}
+		else { // Just a single number
+			if (preg_match("/([^0-9])+/", $memb, $match))
+				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+			else {
+				$members .= ($isfirst == 0 ? '':' ') . $memb;
 				$isfirst++;
 			}
 		}
@@ -218,19 +206,21 @@ if ($_POST) {
 
 function build_parent_list() {
 	global $portlist;
-	
+
 	$list = array();
-	
+
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (is_jumbo_capable($ifn))
 			$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 	}
-			
-	return($list);	
+
+	return($list);
 }
 
 include("head.inc");
 
+if ($input_errors) 
+	print_input_errors($input_errors);
 
 require('classes/Form.class.php');
 
@@ -242,12 +232,12 @@ $form = new Form(new Form_Button(
 $section = new Form_Section('Interface QinQ Edit');
 
 $section->addInput(new Form_Select(
-	'filterdescriptions',
+	'if',
 	'Parent interface',
 	$pconfig['if'],
 	build_parent_list()
 ))->setHelp('Only QinQ capable interfaces will be shown.');
-	
+
 $section->addInput(new Form_Input(
 	'tag',
 	'First level tag',
@@ -255,7 +245,7 @@ $section->addInput(new Form_Input(
 	$pconfig['tag'],
 	['max' => '4094', 'min' => '1']
 ))->setHelp('This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.');
-	
+
 $section->addInput(new Form_Checkbox(
 	'autogroup',
 	'Option(s)',
@@ -276,45 +266,42 @@ $section->addInput(new Form_StaticText(
 	'Click "Duplicate" as many times as needed to add new inputs'
 ));
 
-$counter = 0;
-$members = $pconfig['members'];
-
-// DEBUG
-//$members = "666 55555";
-//$members = "";
-
-if ($members != "") 
-	$item = explode(" ", $members);
-else
-	$item = array('');
-	
-foreach($item as $ww) {
-	$member = $item[$counter];
-
-	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
-	
-	$group->add(new Form_Input(
-		'members',
-		null,
-		'text',
-		$ww
-	));
-	
-$counter++;
-
-$group->enableDuplication();	
-$section->add($group);
-}
-
 if (isset($id) && $a_qinqs[$id]) {
 	$section->addInput(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$id
-	));	
+	));
 }
-	
+
+$counter = 0;
+$members = $pconfig['members'];
+
+// List each of the member tags from the space-separated list
+if ($members != "")
+	$item = explode(" ", $members);
+else
+	$item = array('');
+
+foreach($item as $ww) {
+	$member = $item[$counter];
+
+	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
+
+	$group->add(new Form_Input(
+		'members',
+		null,
+		'text',
+		$ww
+	))->setWidth(6); // Width must be <= 8 to make room for the duplication buttons
+
+$counter++;
+
+$group->enableDuplication(null, true); // Buttons are in-line with the input
+$section->add($group);
+}
+
 $form->add($section);
 
 print($form);

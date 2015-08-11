@@ -68,9 +68,12 @@ class Form_Group extends Form_Element
 		return $this;
 	}
 
-	public function enableDuplication($max = null)
+	public function enableDuplication($max = null, $horiz = false)
 	{
-		$this->addClass('user-duplication');
+		if($horiz)
+			$this->addClass('user-duplication-horiz');	// added buttons are 2 cols wide with no offset
+		else
+			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset
 
 		if (isset($max))
 			$this->_attributes('data-duplicate-max', $max);

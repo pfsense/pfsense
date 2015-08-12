@@ -77,6 +77,7 @@
 /etc/rc.d/pcvt
 /etc/rc.d/ramdisk
 /etc/rc.d/ramdisk-own
+/etc/rc.d/rootmfs
 /etc/rc.d/rwho
 /etc/rc.d/sendmail
 /etc/rc.d/swap1

@@ -1236,6 +1236,24 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	return $ret;
 }
 
+/*
+	$attributes must contain a "class" key containing the groups and local
+	groups must exist to match.
+*/
+function radius_get_groups($attributes) {
+	$groups = array();
+	if (!empty($attributes) && is_array($attributes) && !empty($attributes['class'])) {
+		$groups = explode(";", $attributes['class']);
+		foreach ($groups as & $grp) {
+			$grp = strtolower(trim($grp));
+			if (substr($grp, 0, 3) == "ou=") {
+				$grp = substr($grp, 3);
+			}
+		}
+	}
+	return $groups;
+}
+
 function get_user_expiration_date($username) {
 	$user = getUserEntry($username);
 	if ($user['expires']) 
@@ -1289,7 +1307,7 @@ function auth_get_authserver_list() {
 	return $list;
 }
 
-function getUserGroups($username, $authcfg) {
+function getUserGroups($username, $authcfg, &$attributes = array()) {
 	global $config;
 
 	$allowed_groups = array();
@@ -1299,6 +1317,7 @@ function getUserGroups($username, $authcfg) {
 		$allowed_groups = @ldap_get_groups($username, $authcfg);
 		break;
 	case 'radius':
+		$allowed_groups = @radius_get_groups($attributes);
 		break;
 	default:
 		$user = getUserEntry($username);
@@ -1363,14 +1382,16 @@ function session_auth() {
 		return false;
 
 	/* Validate incoming login request */
+	$attributes = array();
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
-		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes) ||
+			authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			// Generate a new id to avoid session fixation
 			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
+			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
 			if(! isset($config['system']['webgui']['quietlogin'])) {

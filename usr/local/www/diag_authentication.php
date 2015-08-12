@@ -55,9 +55,10 @@ if ($_POST) {
 		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
-		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
+		$attributes = array();
+		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg, $attributes)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
-			$groups = getUserGroups($_POST['username'], $authcfg);
+			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
 			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
 			foreach ($groups as $group)
 				$savemsg .= "{$group} ";

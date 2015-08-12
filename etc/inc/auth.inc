@@ -1245,8 +1245,8 @@ function radius_get_groups($attributes) {
 	if (!empty($attributes) && is_array($attributes) && !empty($attributes['class'])) {
 		$groups = explode(";", $attributes['class']);
 		foreach ($groups as & $grp) {
-			$grp = strtolower(trim($grp));
-			if (substr($grp, 0, 3) == "ou=") {
+			$grp = trim($grp);
+			if (strtolower(substr($grp, 0, 3)) == "ou=") {
 				$grp = substr($grp, 3);
 			}
 		}

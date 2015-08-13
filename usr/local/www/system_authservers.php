@@ -97,6 +97,7 @@ if ($act == "edit") {
 			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
 			$pconfig['ldap_host'] = $a_server[$id]['host'];
 			$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
+			$pconfig['ldap_timeout'] = $a_server[$id]['ldap_timeout'];
 			$pconfig['ldap_urltype'] = $a_server[$id]['ldap_urltype'];
 			$pconfig['ldap_protver'] = $a_server[$id]['ldap_protver'];
 			$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
@@ -217,8 +218,12 @@ if ($_POST) {
 	if (auth_get_authserver($pconfig['name']) && !isset($id))
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 
-	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && !empty($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
-		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
+	if (($pconfig['type'] == "ldap") || ($pconfig['type'] == "radius")) {
+		$to_field = "{$pconfig['type']}_timeout";
+		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {
+			$input_errors[] = sprintf(gettext("%s Timeout value must be numeric and positive."), strtoupper($pconfig['type']));
+		}
+	}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -268,6 +273,13 @@ if ($_POST) {
 				unset($server['ldap_binddn']);
 				unset($server['ldap_bindpw']);
 			}
+
+			if ($pconfig['ldap_timeout']) {
+				$server['ldap_timeout'] = $pconfig['ldap_timeout'];
+			} else {
+				$server['ldap_timeout'] = 25;
+			}
+
 		}
 
 		if ($server['type'] == "radius") {
@@ -398,6 +410,7 @@ function radius_srvcschange(){
 
 function select_clicked() {
 	if (document.getElementById("ldap_port").value == '' ||
+	    document.getElementById("ldap_timeout").value == '' ||
 	    document.getElementById("ldap_host").value == '' ||
 	    document.getElementById("ldap_scope").value == '' ||
 	    document.getElementById("ldap_basedn").value == '' ||
@@ -563,6 +576,13 @@ function select_clicked() {
 									<option value="<?=$version;?>" <?=$selected;?>><?=$version;?></option>
 								<?php endforeach; ?>
 								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Server Timeout");?></td>
+							<td width="78%" class="vtable">
+								<input name="ldap_timeout" type="text" class="formfld unknown" id="ldap_timeout" size="5" value="<?=htmlspecialchars($pconfig['ldap_timeout']);?>"/>
+								<br /><?= gettext("Timeout for LDAP operations (seconds). Default: 25"); ?>
 							</td>
 						</tr>
 						<tr>

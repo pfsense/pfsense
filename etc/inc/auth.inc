@@ -929,6 +929,7 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapname           = $authcfg['name'];
                 $ldapfallback       = false;
 		$ldapscope          = $authcfg['ldap_scope'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 	} else
 		return false;
 
@@ -954,6 +955,8 @@ function ldap_get_groups($username, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	/* bind as user that has rights to read group attributes */
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
@@ -1060,6 +1063,7 @@ function ldap_backed($username, $passwd, $authcfg) {
                 $ldapver            = $authcfg['ldap_protver'];
 		$ldapname	    = $authcfg['name'];
 		$ldapscope	    = $authcfg['ldap_scope'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 	} else
 		return false;
 
@@ -1080,6 +1084,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	/* Make sure we can connect to LDAP */
 	$error = false;

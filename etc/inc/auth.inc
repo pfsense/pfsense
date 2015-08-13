@@ -919,7 +919,11 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapauthcont       = $authcfg['ldap_authcn'];
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
                 $ldapgroupattribute  = strtolower($authcfg['ldap_attr_member']);
-                $ldapfilter         = "({$ldapnameattribute}={$username})";
+		if (isset($authcfg['ldap_rfc2307'])) {
+			$ldapfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
+		} else {
+			$ldapfilter         = "({$ldapnameattribute}={$username})";
+		}
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
 		if (empty($ldapbindun) || empty($ldapbindpw))
@@ -933,7 +937,11 @@ function ldap_get_groups($username, $authcfg) {
 	} else
 		return false;
 
-	$ldapdn             = $_SESSION['ldapdn'];
+	if (isset($authcfg['ldap_rfc2307'])) {
+		$ldapdn = $ldapbasedn;
+	} else {
+		$ldapdn = $_SESSION['ldapdn'];
+	}
 
 	/*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
 	$ldapgroupattribute = strtolower($ldapgroupattribute);
@@ -985,14 +993,15 @@ function ldap_get_groups($username, $authcfg) {
 	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
 	$info      = @ldap_get_entries($ldap, $search);
 
-	$countem = $info["count"];	
-	
-	if(is_array($info[0][$ldapgroupattribute])) {
+	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
+
+	if(is_array($gresults)) {
 		/* Iterate through the groups and throw them into an array */
-		foreach ($info[0][$ldapgroupattribute] as $member) {
-			if (stristr($member, "CN=") !== false) {
-				$membersplit = explode(",", $member);
-				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
+		foreach ($gresults as $grp) {
+			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false))
+				|| ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
+				$grpsplit = isset($authcfg['ldap_rfc2307']) ? explode(",", $grp["dn"]) : explode(",", $grp);
+				$memberof[] = preg_replace("/CN=/i", "", $grpsplit[0]);
 			}
 		}
 	}

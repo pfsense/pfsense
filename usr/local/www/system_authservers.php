@@ -110,8 +110,10 @@ if ($act == "edit") {
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
 			$pconfig['ldap_attr_group'] = $a_server[$id]['ldap_attr_group'];
 			$pconfig['ldap_attr_member'] = $a_server[$id]['ldap_attr_member'];
+			$pconfig['ldap_attr_groupobj'] = $a_server[$id]['ldap_attr_groupobj'];
 			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
 			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
+			$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
 
 			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw'])
 				$pconfig['ldap_anon'] = true;
@@ -256,6 +258,9 @@ if ($_POST) {
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
+
+			$server['ldap_attr_groupobj'] = empty($pconfig['ldap_attr_groupobj']) ? "posixGroup" : $pconfig['ldap_attr_groupobj'];
+
 			if ($pconfig['ldap_utf8'] == "yes")
 				$server['ldap_utf8'] = true;
 			else
@@ -265,6 +270,11 @@ if ($_POST) {
 			else
 				unset($server['ldap_nostrip_at']);
 
+			if ($pconfig['ldap_rfc2307'] == "yes") {
+				$server['ldap_rfc2307'] = true;
+			} else {
+				unset($server['ldap_rfc2307']);
+			}
 
 			if (!$pconfig['ldap_anon']) {
 				$server['ldap_binddn'] = $pconfig['ldap_binddn'];
@@ -713,6 +723,28 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group member attribute");?></td>
 							<td width="78%" class="vtable">
 								<input name="ldap_attr_member" type="text" class="formfld unknown" id="ldap_attr_member" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_member']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("RFC2307 Groups");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2" summary="rfc2307 groups">
+									<tr>
+										<td>
+											<input name="ldap_rfc2307" type="checkbox" id="ldap_rfc2307" value="yes" <?php if ($pconfig['ldap_rfc2307']) echo "checked=\"checked\""; ?> />
+										</td>
+										<td>
+											<?=gettext("Check if the LDAP server uses RFC 2307 style group membership where members are listed on the group object rather than using groups listed on user object. Leave unchecked for Active Directory style group membership (RFC 2307bis).");?>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Group Object Class");?></td>
+							<td width="78%" class="vtable">
+								<input name="ldap_attr_groupobj" type="text" class="formfld unknown" id="ldap_attr_groupobj" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_groupobj']);?>"/>
+								<br /><?= gettext("Object class used for groups in RFC2307 mode. Typically 'posixGroup' or 'group'. Default: posixGroup"); ?>
 							</td>
 						</tr>
 						<tr>

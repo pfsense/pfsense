@@ -24,6 +24,8 @@ $filterent["descr"] = "Allow all ipv6 via pfSsh.php";
 $config["filter"]["rule"][] = $filterent;
 echo "Turning off block private networks (if on)...\n";
 unset($config["interfaces"]["wan"]["blockpriv"]);
+echo "Turning off block bogon networks (if on)...\n";
+unset($config["interfaces"]["wan"]["blockbogons"]);
 unlink_if_exists("/tmp/config.cache");
 write_config("pfSsh.php added allow all wan rule");
 unlink_if_exists("/tmp/config.cache");

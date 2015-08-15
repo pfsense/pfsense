@@ -957,7 +957,7 @@ function create_gateway_quality_rrd($rrd_file) {
 	if (!file_exists("$rrd_file")) {
 		$rrdcreate = "$rrdtool create $rrd_file --step $rrdinterval ";
 		$rrdcreate .= "DS:loss:GAUGE:$valid:0:100 ";
-		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100000 ";
+		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";

@@ -20,10 +20,10 @@ else
 fi
 
 # Now turn on or off serial console as needed
-echo "Checking for ${ROOT}tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
-if [ -x ${ROOT}tmp/post_upgrade_command.php ]; then
-	echo "Running ${ROOT}tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
-	${ROOT}tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
+echo "Checking for ${ROOT}usr/local/share/pfSense/post_upgrade_command.php... " >> /conf/upgrade_log.txt
+if [ -x ${ROOT}usr/local/share/pfSense/post_upgrade_command.php ]; then
+	echo "Running ${ROOT}usr/local/share/pfSense/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
+	${ROOT}usr/local/share/pfSense/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
 fi
 
 # Remove any previous MD5 sum files

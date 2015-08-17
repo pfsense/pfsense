@@ -253,12 +253,12 @@ pfSenseNanoBSDupgrade)
 		cp /boot/loader.conf.local /tmp/$GLABEL_SLICE/boot/loader.conf.local
 	fi
 
-	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists
+	# If /tmp/$GLABEL_SLICE/usr/local/share/pfSense/post_upgrade_command exists
 	# after update then execute the command.
 	echo "Checking for post_upgrade_command..." >> /conf/upgrade_log.txt
-	if [ -f /tmp/$GLABEL_SLICE/tmp/post_upgrade_command ]; then
+	if [ -f /tmp/$GLABEL_SLICE/usr/local/share/pfSense/post_upgrade_command ]; then
 		echo "Found post_upgrade_command, executing ($GLABEL_SLICE)..." >> /conf/upgrade_log.txt
-		sh /tmp/$GLABEL_SLICE/tmp/post_upgrade_command $GLABEL_SLICE >> /conf/upgrade_log.txt 2>&1
+		sh /tmp/$GLABEL_SLICE/usr/local/share/pfSense/post_upgrade_command $GLABEL_SLICE >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# Update fstab
@@ -371,10 +371,10 @@ pfSenseupgrade)
 	remove_chflags
 
 	# Do we have a pre-upgrade hook in the update file?
-	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then
-		tar xzvf $IMG -C / ./tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
-		chmod a+rx /tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
-		sh /tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
+	if [ `tar tvzf $IMG | grep /usr/local/share/pfSense/pre_upgrade_command | wc -l` -gt 0 ]; then
+		tar xzvf $IMG -C / ./usr/local/share/pfSense/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		chmod a+rx /usr/local/share/pfSense/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		sh /usr/local/share/pfSense/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	echo "Firmware upgrade in progress..." >> /conf/upgrade_log.txt 2>&1
@@ -431,13 +431,13 @@ pfSenseupgrade)
 	# Remove saved commit ID for gitsync
 	rm -f /etc/version.gitsync
 
-	# If /tmp/post_upgrade_command exists after update
+	# If /usr/local/share/pfSense/post_upgrade_command exists after update
 	# then execute the command.
-	if [ -f /tmp/post_upgrade_command ]; then
-		if [ ! -x /tmp/post_upgrade_command ]; then
-			chmod ug+x /tmp/post_upgrade_command
+	if [ -f /usr/local/share/pfSense/post_upgrade_command ]; then
+		if [ ! -x /usr/local/share/pfSense/post_upgrade_command ]; then
+			chmod ug+x /usr/local/share/pfSense/post_upgrade_command
 		fi
-		/tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		/usr/local/share/pfSense/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# remove unused files

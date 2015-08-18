@@ -371,8 +371,12 @@ function voucher_auth($voucher_received, $test = 0) {
 	// Roll# and Ticket# using the external readvoucher binary
 	foreach ($a_vouchers_received as $voucher) {
 		$v = escapeshellarg($voucher);
-		if (strlen($voucher) < 3)
+		if (strlen($voucher) < 3) {
+			$test_result[] = "{$voucher} invalid: Too short!";
+			captiveportal_syslog("{$voucher} invalid: Too short!");
+			$error++;
 			continue;   // seems too short to be a voucher!
+		}
 
 		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -k {$g['varetc_path']}/voucher_{$cpzone}.public -- $v");
 		list($status, $roll, $nr) = explode(" ", $result);

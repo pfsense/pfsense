@@ -956,6 +956,8 @@ $closehead = false;
 $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
+print_r($firewall_rules_dscp_types);
+
 if ($input_errors)
 	print_input_errors($input_errors);
 
@@ -1324,11 +1326,12 @@ $section->addInput(new Form_Select(
 	['' => 'any'] + $ostypes
 ))->setHelp('Note: this only works for TCP rules. General OS choice matches all subtypes.');
 
+$dscp_array = array('' => '') + $firewall_rules_dscp_types; // Add a "nothing" selection
 $section->addInput(new Form_Select(
 	'dscp',
 	'Diffserv Code Point',
 	$pconfig['dscp'],
-	array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
+	$dscp_array
 ));
 
 $section->addInput(new Form_Checkbox(

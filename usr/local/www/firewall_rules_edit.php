@@ -1189,9 +1189,8 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 // Source and destination share a lot of logic. Loop over the two
-foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
-{
-	$section = new Form_Section($name .' details');
+foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
+	$section = new Form_Section($name);
 
 	$group = new Form_Group($name);
 	$group->add(new Form_Checkbox(
@@ -1247,51 +1246,54 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 
 	$section->add($group);
 
-	$portValues = ['any' => 'any'];
+	$portValues = ['' => '(other)', 'any' => 'any'];
+	
 	foreach ($wkports as $port => $portName)
 		$portValues[$port] = $portName.' ('. $port .')';
 
 	$group = new Form_Group($name .' port range');
-	$group->add($input = new Form_Select(
+	$group->add(new Form_Select(
 		$type .'beginport',
 		$name .' port begin',
 		$pconfig[$type .'beginport'],
 		$portValues
-	));
-
-	if ($type == 'src')
-		$input->setHelp('Specify the source port or port range for this rule. This is '.
-			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b><br />Hint: you can leave the <i>to</i> field '.
-			'empty if you only want to filter a single port.');
-	else
-		$input->setHelp('Specify the destination port or port range for this rule. <br />'.
-			'Hint: you can leave the <i>to</i> field empty if you only want to filter a '.
-			'single port.');
+	))->setHelp('From');
 
 	$group->add(new Form_Input(
 		$type .'beginport_cust',
-		$name .' port begin custom',
+		null,//$name .' port begin custom',
 		'number',
 		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport']),
 		['min' => 1, 'max' => 65535]
-	));
+	))->setHelp('Custom');;
 
 	$group->add(new Form_Select(
 		$type .'endport',
 		$name .' port end',
 		$pconfig[$type .'endport'],
 		$portValues
-	));
+	))->setHelp('To');
 
 	$group->add(new Form_Input(
 		$type .'endport_cust',
-		$name .' port end custom',
+		null,//$name .' port end custom',
 		'number',
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport']),
 		['min' => 1, 'max' => 65535]
-	));
+	))->setHelp('Custom');
 
+
+	if ($type == 'src')
+		$group->setHelp('Specify the source port or port range for this rule. This is '.
+			'usually random and almost never equal to the destination port range (and '.
+			'should usually be <b>any.</b> You can leave the "To" field '.
+			'empty if you only want to filter a single port.');
+	else
+		$group->setHelp('Specify the destination port or port range for this rule. ' .
+			'You can leave the "To" field empty if you only want to filter a '.
+			'single port.');
+			
+	$group->addClass( ($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
 	$form->add($section);
 }
@@ -1415,6 +1417,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 $section = new Form_Section('TCP Flags');
+$section->addClass('tcpflags');
 
 $setflags = explode(',', $pconfig['tcpflags1']);
 $outofflags = explode(',', $pconfig['tcpflags2']);
@@ -1620,5 +1623,263 @@ if ($has_created_time || $has_updated_time)
 
 $form->add($section);
 echo $form;
+?>
 
+<script>
+//<![CDATA[   
+events.push(function(){
+	
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+    function hideInput(id, hide) {
+        if(hide)
+            $('#' + id).parent().parent('div').addClass('hidden');
+        else
+            $('#' + id).parent().parent('div').removeClass('hidden');            
+    }
+
+    // Hides the <div> in which the specified group input element lives so that the input,
+    // its label and help text are hidden
+    function hideGroupInput(id, hide) {
+        if(hide)
+            $('#' + id).parent('div').addClass('hidden');
+        else
+            $('#' + id).parent('div').removeClass('hidden');
+    }
+
+    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
+    function hideCheckbox(id, hide) {
+        if(hide)
+            $('#' + id).parent().parent().parent('div').addClass('hidden');
+        else
+            $('#' + id).parent().parent().parent('div').removeClass('hidden');            
+    }
+
+    // Disables the specified input element
+    function disableInput(id, disable) {
+        $('#' + id).prop("disabled", disable);    
+    }
+    
+    // Hides all elements of the specified class. This will usually be a section  
+    function hideClass(s_class, hide) {
+        if(hide)
+            $('.' + s_class).hide();
+        else
+            $('.' + s_class).show();  
+    }
+
+    // Hides all elements of the specified class assigned to a group. This will usually be a group   
+    function hideGroupClass(s_class, hide) {
+        if(hide)
+            $('.' + s_class).parent().parent().parent().hide();
+        else
+            $('.' + s_class).parent().parent().parent().show();  
+    }
+    
+	var portsenabled = 1;
+	var editenabled = 1;
+	
+	function ext_change() {
+		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
+			disableInput('srcbeginport_cust', false);
+		} else {
+			if (editenabled)
+				$('#srcbeginport_cust').val("");
+				
+			disableInput('srcbeginport_cust', true);
+		}
+		
+		if (($('#srcendport').find(":selected").index() == 0) && portsenabled && editenabled) {
+			disableInput('srcendport_cust', false);
+		} else {
+			if (editenabled)
+				$('#srcendport_cust').val("");
+				
+			disableInput('srcendport_cust', true);
+		}
+		
+		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
+			disableInput('dstbeginport_cust', false);
+		} else {
+			if (editenabled)
+				$('#dstbeginport_cust').val("");
+				
+			disableInput('dstbeginport_cust', true);
+		}
+		
+		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && editenabled) {
+			disableInput('dstendport_cust', false);
+		} else {
+			if (editenabled)
+				$('#dstendport_cust').val("");
+				
+			disableInput('dstendport_cust', true);
+		}
+	
+		if (!portsenabled) {
+			disableInput('srcbeginport', true);
+			disableInput('srcendport', true);
+			disableInput('dstbeginport', true);
+			disableInput('dstendport', true);
+		} else {
+			if( editenabled ) {
+				disableInput('srcbeginport', false);
+				disableInput('srcendport', false);
+				disableInput('dstbeginport', false);
+				disableInput('dstendport', false);
+			}
+		}
+	}
+	
+	function show_source_port_range() {
+		if (portsenabled) {
+			hideClass('srcprtr', false);
+		}
+	}
+	
+	function typesel_change() {
+		if( editenabled ) {
+			switch ($('#srctype').find(":selected").index()) {
+				case 1:	// single 
+					disableInput('src', false);
+					$('#srcmask').val("");
+					disableInput('srcmask', true);
+					break;
+				case 2:	// network 
+					disableInput('src', false);
+					disableInput('srcmask', false);
+					break;
+				default:
+					$('#src').val("");
+					disableInput('src', true);
+					$('#srcmask').val("");
+					disableInput('srcmask', true);
+					break;
+			}
+			switch ($('#dsttype').find(":selected").index()) {
+				case 1:	// single 
+					disableInput('dst', false);
+					$('#dstmask').val("");
+					disableInput('dstmask', true);
+					break;
+				case 2:	// network 
+					disableInput('dst', false);
+					disableInput('dstmask', false);
+					break;
+				default:
+					$('#dst').val("");
+					disableInput('dst', true);
+					$('#dstmask').val("");
+					disableInput('dstmask', true);
+					break;
+			}
+		}
+	}
+
+	function proto_change() {
+		if ($('#proto').find(":selected").index() < 3) {
+			portsenabled = 1;
+			hideClass('tcpflags', false);
+		} else {
+			portsenabled = 0;
+			hideClass('tcpflags', true);
+		}
+	
+		// Disable OS knob if the proto is not TCP. 
+		if ($('#proto').find(":selected").index() < 1) {
+			disableInput('os', false);
+		} else {
+			disableInput('os', true);
+		}
+	
+		if ($('#proto').find(":selected").index() == 3) {
+			disableInput('icmptype', false);
+			disableInput('icmp6type', false);
+		} else {
+			disableInput('icmptype', true);
+			disableInput('icmp6type', true);
+		}
+	
+		ext_change();
+	
+		if($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
+			if($('#ipprotocol').find(":selected").index() == 0) { // IPv4
+				hideInput('icmptype', false);
+				hideInput('icmp6type', true);
+			} else if($('#ipprotocol').find(":selected").index() == 1) { // IPv6
+				hideInput('icmptype', true);
+				hideInput('icmp6type', false);
+			} else { // IPv4 + IPv6
+				hideInput('icmptype', true);
+				hideInput('icmp6type', true);
+			}
+		} else {
+			hideInput('icmptype', true);
+			hideInput('icmp6type', true);
+		}
+	
+		if($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
+			hideClass('dstprtr', false);
+			hideClass('srcprtr', false);
+		} else {
+			hideClass('srcprtr', true);
+			hideClass('dstprtr', true);
+		}
+	}
+
+    function src_rep_change() {
+        $('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
+    }
+	
+    function dst_rep_change() {
+        $('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
+    }
+
+	// On initial page load
+	ext_change();
+	typesel_change();
+	proto_change();
+
+	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
+	show_source_port_range();
+	<?php endif; ?>
+
+	// on click . . 
+    $('#srcbeginport').on('change', function() {
+        src_rep_change();
+        ext_change();
+    });	
+    
+    $('#srcendport').on('change', function() {
+        ext_change();
+    });
+  
+    $('#dstbeginport').on('change', function() {
+        dst_rep_change();
+        ext_change();
+    });
+    
+    $('#dstendport').on('change', function() {
+        ext_change();
+    });
+    
+    $('#srctype').on('change', function() {
+        typesel_change();
+    });
+    
+    $('#dsttype').on('change', function() {
+        typesel_change();
+    });
+    
+    $('#proto').on('change', function() {
+        proto_change();
+    });
+    
+    $('#ipprotocol').on('change', function() {
+        proto_change();
+    });
+});
+//]]>  
+</script>
+
+<?php
 include("foot.inc");

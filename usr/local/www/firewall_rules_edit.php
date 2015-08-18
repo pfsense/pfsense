@@ -210,7 +210,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
 
-	if ($a_filter[$id]['os'] <> "") {
+	if ($a_filter[$id]['os'] != "") {
 		$pconfig['os'] = $a_filter[$id]['os'];
 	}
 
@@ -1322,16 +1322,15 @@ $section = new Form_Section('Advanced options');
 $section->addInput(new Form_Select(
 	'os',
 	'Source OS',
-	$pconfig['os'],
-	['' => 'any'] + $ostypes
+	(empty($pconfig['os']) ? '':$pconfig['os']),
+	['' => 'Any'] + array_combine($ostypes, $ostypes)
 ))->setHelp('Note: this only works for TCP rules. General OS choice matches all subtypes.');
 
-$dscp_array = array("" => '') + $firewall_rules_dscp_types; // Add a "nothing" selection
 $section->addInput(new Form_Select(
 	'dscp',
 	'Diffserv Code Point',
 	$pconfig['dscp'],
-	$dscp_array
+	["" => ''] + $firewall_rules_dscp_types
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -1840,7 +1839,7 @@ events.push(function(){
 	proto_change();
 
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
-	show_source_port_range();
+		show_source_port_range();
 	<?php endif; ?>
 
 	// on click . . 

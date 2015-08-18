@@ -108,10 +108,10 @@ if ($_POST) {
         foreach ($test_results as $result) {
             if (strpos($result, " good ") || strpos($result, " granted ")) {
                 echo "<tr><td bgcolor=\"#D9DEE8\"><img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" alt=\"pass\" /></td>";
-                echo "<td bgcolor=\"#D9DEE8\">$result</td></tr>";
+                echo "<td bgcolor=\"#D9DEE8\">" . htmlspecialchars($result) . "</td></tr>";
             } else {
                 echo "<tr><td bgcolor=\"#FFD9D1\"><img src=\"/themes/{$g['theme']}/images/icons/icon_block.gif\" alt=\"block\" /></td>";
-                echo "<td bgcolor=\"#FFD9D1\">$result</td></tr>";
+                echo "<td bgcolor=\"#FFD9D1\">" . htmlspecialchars($result) . "</td></tr>";
             }
         }
         echo "</table>";

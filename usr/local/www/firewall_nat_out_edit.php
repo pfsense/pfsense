@@ -458,7 +458,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'nonat',
 	'Do not NAT',
-	'Disable this rule without removing it from the list.',
+	'Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules',
 	$pconfig['nonat']
 ))->setHelp('In most cases this option is not required');
 
@@ -517,7 +517,7 @@ $group->add(new Form_IpAddress(
 	'source',
 	null,
 	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'], 32)->setHelp('Source network for the outbound NAT mapping.');
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'sourceport',
@@ -542,7 +542,7 @@ $group->add(new Form_IpAddress(
 	'destination',
 	null,
 	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'], 32)->setHelp('Destination network for the outbound NAT mapping.');
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'dstport',
@@ -577,7 +577,7 @@ $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
-))->addMask('targetip_subnet', $pconfig['targetip_subnet'], 32)->addClass('othersubnet')->setHelp(
+))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
 		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
 		'If you want this rule to apply to another IP address rather than the IP address of the interface chosen above, ' .
 		'select it here (you will need to define ' .

@@ -603,11 +603,12 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	$group->addClass('encalg');
 
 	$group->add(new Form_Checkbox(
-		'ealgos',
+		'ealgos[]',
 		null,
 		$algodata['name'],
-		(is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos']))
-	));
+		(is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos'])),
+		$algo
+	))->addClass('multi');
 
 
 
@@ -640,11 +641,12 @@ $group = new Form_Group('Hash Algorithms');
 
 foreach ($p2_halgos as $algo => $algoname) {
 	$group->add(new Form_Checkbox(
-		$algo,
+		'halgos[]',
 		null,
 		$algoname,
-		(in_array($algo, $pconfig['halgos']))
-	));
+		(in_array($algo, $pconfig['halgos'])),
+		$algo
+	))->addClass('multi');
 }
 
 $section->add($group);

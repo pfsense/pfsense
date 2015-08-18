@@ -246,8 +246,9 @@ include("head.inc");
 
 <?php
 	if ($savemsg) {
-		print_info_box($savemsg);
+		print_info_box($savemsg, 'success');
 	}
+
 	if ($pconfig['enable'] && is_subsystem_dirty('ipsec')) {
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 	}
@@ -260,15 +261,15 @@ include("head.inc");
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th class="list">&nbsp;</th>
-				<th class="list">&nbsp;</th>
-				<th class="listhdrr"><?=gettext("IKE"); ?></th>
-				<th class="listhdrr"><?=gettext("Remote Gateway"); ?></th>
-				<th class="listhdrr"><?=gettext("Mode"); ?></th>
-				<th class="listhdrr"><?=gettext("P1 Protocol"); ?></th>
-				<th class="listhdrr"><?=gettext("P1 Transforms"); ?></th>
-				<th class="listhdrr"><?=gettext("P1 Description"); ?></th>
-				<th class="list"></th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th><?=gettext("IKE"); ?></th>
+				<th><?=gettext("Remote Gateway"); ?></th>
+				<th><?=gettext("Mode"); ?></th>
+				<th><?=gettext("P1 Protocol"); ?></th>
+				<th><?=gettext("P1 Transforms"); ?></th>
+				<th><?=gettext("P1 Description"); ?></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -377,6 +378,7 @@ include("head.inc");
 					<div id="shph2but-<?=$i?>" <?=($tdph2_visible == '1' ? 'style="display:none"' : '')?>>
 <?php
 				$phase2count=0;
+
 				foreach ($a_phase2 as $ph2ent) {
 					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
 						continue;

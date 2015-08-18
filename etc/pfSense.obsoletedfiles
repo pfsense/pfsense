@@ -94,10 +94,7 @@
 /etc/usbd.conf
 /etc/version_base
 /etc/version_kernel
-/kernels/kernel_Dev.gz
-/kernels/kernel_uniprocessor.gz
-/kernels/kernel_wrap.gz
-/kernels/kernel_wrap_Dev.gz
+/kernels
 /lib/libalias.so.5
 /lib/libalias.so.6
 /lib/libbegemot.so.2

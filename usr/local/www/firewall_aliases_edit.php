@@ -675,17 +675,15 @@ foreach ($types as $type => $typeName)
 	$section->addClass('toggle-'.$type.' collapse');
 
 	// Texts are rather long; don't repeat for every input
-	$section->addInput(new Form_StaticText('Help', $help[$type]));
+	$section->addInput(new Form_StaticText('', $help[$type]));
 
 	// Only include values for the correct type
-	if (isset($pconfig['type']) && $type == $pconfig['type'])
-	{
+	if (isset($pconfig['type']) && $type == $pconfig['type']) {
 		$addresses = explode(' ', $pconfig['address']);
 		$details = explode('||', $pconfig['detail']);
 	}
-	else
-	{
-		// When creating a new entry show at lease one input
+	else {
+		// When creating a new entry show at least one input
 		$addresses = array('');
 		$details = array();
 	}
@@ -696,8 +694,7 @@ foreach ($types as $type => $typeName)
 		if (($pconfig['type'] != 'host') && is_subnet($address))
 			list($address, $address_subnet) = explode('/', $address);
 
-		if (substr($type, 0, 3) == 'url')
-		{
+		if (substr($type, 0, 3) == 'url') {
 			$group = new Form_Group('URL to download');
 
 			$group->add(new Form_Input(
@@ -718,11 +715,24 @@ foreach ($types as $type => $typeName)
 				));
 			}
 		}
-		else
-		{
+		elseif ($type == 'port') {
+			$group = new Form_Group('Port(s)');
+			$group->add(new Form_Input(
+				'address',
+				'Port',
+				$address
+			));
+			
+			$group->add(new Form_Input(
+				'detail',
+				'Description (not parsed)',
+				'text',
+				$details[$idx]
+			));
+		}
+		else {
 			$group = new Form_Group('IP or FQDN');
 
-			// Can't use a Form_IpAddress here because the user might enter an FQDN
 			$group->add(new Form_IpAddress(
 				'address',
 				'IP or FQDN',

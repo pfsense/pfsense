@@ -327,6 +327,7 @@ display_top_tabs($tab_array);
 			<tbody class="user-entries">
 <?php for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
+	
 	if ($filterent['interface'] != $if && !isset($filterent['floating']))
 		continue;
 	if (isset($filterent['floating']) && "FloatingRules" != $if)
@@ -553,7 +554,7 @@ display_top_tabs($tab_array);
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 							<?php endif; ?>
-							<?=htmlspecialchars(pprint_address($filterent['destination']['address']))?>
+							<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 							<?php if (isset($alias['dst'])): ?>
 								<i class='icon icon-pencil'></i></a>
 							<?php endif; ?>

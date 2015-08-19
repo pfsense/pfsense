@@ -1275,7 +1275,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Select(
 		$type . 'type',
 		$name .' Type',
-		$ruleType,
+		$type == 'src' ? $pconfig['src']:$pconfig['dst'],
 		$ruleValues
 	));
 

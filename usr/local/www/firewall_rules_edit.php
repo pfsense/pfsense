@@ -948,6 +948,47 @@ if ($_POST) {
 	}
 }
 
+function build_flag_table() {
+	global $pconfig, $tcpflags;
+	
+	$flagtable = '<table class="table table-condensed table-flags" style="width: auto;">';
+
+	$setflags = explode(",", $pconfig['tcpflags1']);
+	$outofflags = explode(",", $pconfig['tcpflags2']);
+	$header = "<td></td>";
+	$tcpflags1 = "<td>set</td>";
+	$tcpflags2 = "<td>out of</td>";
+	
+	foreach ($tcpflags as $tcpflag) {
+		$header .= "<td><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
+		$tcpflags1 .= "<td> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
+		
+		if (array_search($tcpflag, $setflags) !== false) {
+			$tcpflags1 .= "checked=\"checked\"";
+		}
+		
+		$tcpflags1 .= " /></td>\n";
+		$tcpflags2 .= "<td> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
+		
+		if (array_search($tcpflag, $outofflags) !== false) {
+			$tcpflags2 .= "checked=\"checked\"";
+		}
+		
+		$tcpflags2 .= " /></td>\n";
+	}
+	
+	$flagtable .= "<tr id='tcpheader'>{$header}</tr>\n";							
+	$flagtable .=  "<tr id='tcpflags1'>{$tcpflags1}</tr>\n";						
+	$flagtable .=  "<tr id='tcpflags2'>{$tcpflags2}</tr>\n";
+	$flagtable .=  "</table>";
+	
+	$flagtable .= '<input type="checkbox" name="tcpflags_any" id="tcpflags_any" value="on"';
+	$flagtable .= $pconfig['tcpflags_any'] ? 'checked="checked"':'' . '/>'; 
+	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
+
+	return($flagtable);
+}
+
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
 $shortcut_section = "firewall";
 
@@ -1316,8 +1357,21 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference.');
 
+$btnadvanced = new Form_Button(
+	'toggle-advanced',
+	'Advanced options'
+);
+
+$btnadvanced->removeClass('btn-primary')->addClass('btn-info');
+
+$section->addInput(new Form_StaticText(
+	null,
+	$btnadvanced
+));
+
 $form->add($section);
 $section = new Form_Section('Advanced options');
+$section->addClass('advanced-options');
 
 $section->addInput(new Form_Select(
 	'os',
@@ -1330,7 +1384,7 @@ $section->addInput(new Form_Select(
 	'dscp',
 	'Diffserv Code Point',
 	$pconfig['dscp'],
-	["" => ''] + $firewall_rules_dscp_types
+	["" => ''] + array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -1414,42 +1468,17 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 3600]
 ))->setHelp('State Timeout in seconds (TCP only)');
 
-$form->add($section);
-$section = new Form_Section('TCP Flags');
-$section->addClass('tcpflags');
+//$form->add($section);
+//$section = new Form_Section('TCP Flags');
+//$section->addClass('tcpflags');
 
-$setflags = explode(',', $pconfig['tcpflags1']);
-$outofflags = explode(',', $pconfig['tcpflags2']);
-
-foreach ($tcpflags as $tcpflag)
-{
-	$section->addInput(new Form_Checkbox(
-		'tcpflags1_'. $tcpflag,
-		'Set '. strtoupper($tcpflag),
-		null,
-		(array_search($tcpflag, $setflags) !== false),
-		'on'
-	));
-
-	$section->addInput(new Form_Checkbox(
-		'tcpflags2_'. $tcpflag,
-		'Out of '. strtoupper($tcpflag),
-		null,
-		(array_search($tcpflag, $setflags) !== false),
-		'on'
-	));
-}
-
-$section->addInput(new Form_Checkbox(
-	'tcpflags_any',
-	'Any',
-	'Any flags',
-	$pconfig['tcpflags_any'],
-	'on'
+$section->addInput(new Form_StaticText(
+	'TCP Flags',
+	build_flag_table()
 ))->setHelp('Use this to choose TCP flags that must be set or cleared for this rule to match.');
 
-$form->add($section);
-$section = new Form_Section('State Type');
+// $form->add($section);
+// $section = new Form_Section('State Type');
 
 $section->addInput(new Form_Checkbox(
 	'nopfsync',
@@ -1676,6 +1705,7 @@ events.push(function(){
     
 	var portsenabled = 1;
 	var editenabled = 1;
+	var optionsvisible = 0;
 	
 	function ext_change() {
 		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
@@ -1837,6 +1867,7 @@ events.push(function(){
 	ext_change();
 	typesel_change();
 	proto_change();
+	hideClass('advanced-options', true);
 
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		show_source_port_range();
@@ -1876,6 +1907,22 @@ events.push(function(){
     $('#ipprotocol').on('change', function() {
         proto_change();
     });
+    
+    $('#toggle-advanced').prop('type','button');
+    
+    $('#toggle-advanced').click(function() {
+        optionsvisible = 1;
+        hideClass('advanced-options', false);
+        if($('#tcpflags_any').prop('checked'))
+       	    $('.table-flags').addClass('hidden');
+    });
+    
+    $('#tcpflags_any').click(function () {
+        if(this.checked)
+            $('.table-flags').addClass('hidden');
+        else
+            $('.table-flags').removeClass('hidden');
+    });    
 });
 //]]>  
 </script>

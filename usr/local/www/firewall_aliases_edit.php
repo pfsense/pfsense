@@ -723,19 +723,11 @@ foreach ($types as $type => $typeName)
 			$group = new Form_Group('IP or FQDN');
 
 			// Can't use a Form_IpAddress here because the user might enter an FQDN
-			$group->add(new Form_Input(
+			$group->add(new Form_IpAddress(
 				'address',
 				'IP or FQDN',
-				'text',
 				$address
-			));
-
-			$group->add( new Form_Select(
-				'address_subnet',
-				null,
-				$address_subnet,
-				array_combine(range(128, 1, -1), range(128, 1, -1))
-			))->setHelp('Mask');
+			))->addMask(address_subnet, $pconfig['address_subnet']);
 			
 			$group->add(new Form_Input(
 				'detail',

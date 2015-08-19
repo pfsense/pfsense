@@ -781,7 +781,7 @@ events.push(function(){
 	}
 
 	function proto_change() {
-		if( ($('#protocol').find(":selected").index() >= 0) && ($('#protocol').find(":selected").index() <= 3) ) {
+		if( ($('#protocol').find(":selected").index() > 0) && ($('#protocol').find(":selected").index() <= 3) ) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);

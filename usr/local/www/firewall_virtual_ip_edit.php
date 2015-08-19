@@ -510,6 +510,7 @@ events.push(function(){
 		disableInput('advskew', true);
 		disableInput('subnet_bits', true);
 		disableInput('type', true);
+		disableInput('password', true);
 		hideCheckbox('noexpand', true);
 
 		if(mode == 'ipalias') {
@@ -524,6 +525,7 @@ events.push(function(){
 			disableInput('advbase', false);
 			disableInput('advskew', false);
 			disableInput('subnet_bits', false);
+			disableInput('password', false);
 			$('#type').val('single');
 		}
 		else if(mode == 'proxyarp') {

@@ -70,7 +70,7 @@ $(function() {
 		var groups = $('div.form-group.user-duplication');
 		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
 		var plus = $('<a class="btn btn-xs btn-success">Duplicate</a>');
-		var minus = $('<a class="btn btn-xs btn-danger">Delete</a>');
+		var minus = $('<a class="btn btn-xs btn-warning">Delete</a>');
 
 		minus.on('click', function(){
 			$(this).parents('div.form-group').remove();
@@ -148,7 +148,7 @@ $(function() {
 	// Hide advanced inputs by default
 	if ($('.advanced').length > 0)
 	{
-		var advButt = $('<a class="btn btn-default">toggle advanced options</a>');
+		var advButt = $('<a id="toggle-advanced" class="btn btn-default">toggle advanced options</a>');
 		advButt.on('click', function() {
 			$('.advanced').parents('.form-group').collapse('toggle');
 		});

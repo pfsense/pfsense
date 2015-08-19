@@ -443,7 +443,7 @@ else {
 
 		$sform->addGlobal(new Form_Button(
 			'delete',
-			$queue ? 'Delete this queue':'Disable limiter',
+			$queue ? 'Delete this queue':'Delete',
 			$url
 		))->removeClass('btn-default')->addClass('btn-danger');
 	}
@@ -459,5 +459,31 @@ else {
 	</table>
 </div>
 
+<script>
+//<![CDATA[   
+events.push(function(){
+	
+    // Disables the specified input element
+    function disableInput(id, disable) {
+        $('#' + id).prop("disabled", disable);    
+    }	
+
+	function change_masks() {
+		disableInput('maskbits', ($('#scheduler').val() == 'none'));
+		disableInput('maskbitsv6', ($('#scheduler').val() == 'none'));
+	}
+	
+	// On page load . . 
+	change_masks();
+	
+	// On click . . 
+    $('#scheduler').on('change', function() {
+        change_masks();
+    });	
+});
+//]]>  
+</script>
+	
+	
 <?php
 include("foot.inc");

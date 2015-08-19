@@ -3699,7 +3699,7 @@ EOD;
 	}
 
 	// Compose a table of bandwidths that can then be inserted into the form using a Form_StaticText
-	// THe table has been "Bootstrapped" to match the we b design while maintaining compatibility with
+	// The table has been "Bootstrapped" to match the web design while maintaining compatibility with
 	// with the javascript in this class
 	function build_bwtable() {
 		global $config;
@@ -3710,54 +3710,70 @@ EOD;
 		$schedules[] = "none";//leave none to leave rule enabled all the time
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
 			foreach ($config['schedules']['schedule'] as $schedule) {
-				if ($schedule['name'] <> "") {
+				if ($schedule['name'] != "") {
 					$schedules[] = $schedule['name'];
 				}
 			}
 		}
 
-		$form = '<table id="maintable" class="table table-hover table-condensed">';
+		$form = '<div class="table-responsive">';
+		$form .= '<table id="maintable" class="table table-hover table-striped">';
 		$form .= "<thead><tr>";
-		$form .= "<th><div id='onecolumn'>Bandwidth</div></th>";
+		$form .= "<th>Bandwidth</th>";
 		//$form .= "<td width='35%'><div id='fifthcolumn'>Burst</div></td>";
-		$form .= "<th><div id='twocolumn'>Bw type</div></th>";
-		$form .= "<th><div id='thirdcolumn'>Schedule</div></th>";
-		$form .= "<th><div id='fourthcolumn'></div></th>";
+		$form .= "<th>Bw type</th>";
+		$form .= "<th>Schedule</th>";
+		$form .= "<th></th>";
 		$form .= "</tr></thead>";
 		$form .= "<tbody>";
 
+		// If there are no bandwidths defined, make a blank one for convenience
+		if(empty($bandwidth))
+			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
+			
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
-				$form .= '<tr><td>';
-				$form .= "<input class='form-control' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
+				$form .= '<tr>';
+				$form .= '<td class="col-xs-4">';
+				$form .= "<input class='form-control' type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
 				//$form .= "</td><td width='20%'>";
 				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
-				$form .= "</td><td>";
+				$form .= "</td>";
+				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"form-control\">";
+				
 				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
 					$form .= "<option value=\"{$bwsidx}\"";
+					
 					if ($bw['bwscale'] == $bwsidx) {
 						$form .= " selected=\"selected\"";
 					}
+					
 					$form .= ">{$bwscale}</option>";
 				}
+				
 				$form .= "</select>";
-				$form .= "</td><td>";
+				$form .= "</td>";
+				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwsched{$bwidx}\" name=\"bwsched{$bwidx}\" class=\"form-control\">";
+				
 				foreach ($schedules as $schd) {
 					$selected = "";
 					if ($bw['bwsched'] == $schd) {
 						$selected = "selected=\"selected\"";
 					}
+					
 					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
 				}
+				
 				$form .= "</select>";
-				$form .= "</td><td>";
+				$form .= "</td>";
+				$form .= '<td>';
 				$form .= '<a type="button" class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
 				$form .= "</td></tr>";
 			}
 		}
-		$form .= "</tbody></table>";
+		$form .= "</tbody></table></div><br />";
 
 		$form .= '<a type="button" class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
 		$form .= gettext("Add another schedule") . "</a>";
@@ -3818,17 +3834,16 @@ EOD;
 		$bandwidth = $this->GetBandwidth();
 
 		// Delete a row
-		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
-			unset($bandwidth[$_GET['delbwrow']]);
+//		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
+//			unset($bandwidth[$_GET['delbwrow']]);
 
 		// Add a row
-		if($_GET['newbwrow']) {
-			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
-
-		}
-
+//		if($_GET['newbwrow']) {
+//			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
+//		}
+		
 		if (is_array($bandwidth)) {
-			$section->addInput(new Form_StaticText(
+				$section->addInput(new Form_StaticText(
 				'Bandwidth',
 				$this->build_bwtable()
 			));
@@ -3876,9 +3891,9 @@ EOD;
 
 		$section->addInput(new Form_Input(
 			'delay',
-			'Delay (mS)',
-			'number',
-			$this->GetDelay()
+			'Delay (ms)',
+			'text',
+			$this->GetDelay() > 0 ? $this->GetDelay():null
 		))->setHelp('In most cases, you should specify 0 here (or leave the field empty)');
 
 		$section->addInput(new Form_Input(

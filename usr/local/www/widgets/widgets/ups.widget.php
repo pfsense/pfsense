@@ -1,16 +1,20 @@
 <?php
 /*
-	$Id$
-	Copyright 2008 Seth Mos
-	Part of pfSense widgets (www.pfsense.com)
-	originally based on m0n0wall (http://m0n0.ch/wall)
+	ups.widget.php
+	part of pfSense (https://www.pfSense.org/)
+	Copyright (C) 2014-2015 SunStroke74 <andrey.b.nikitin@gmail.com>
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -21,7 +25,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-	v. 2.01
 */
 $nocsrf = true;
 require_once("guiconfig.inc");
@@ -34,9 +37,9 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 ?>
 	<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
 		<tr>
-			<td class="widgetsubheader" align="center"><b><?php echo gettext("Monitoring"); ?></b></td>
-			<td class="widgetsubheader" align="center"><b><?php echo gettext("Model"); ?></b></td>
-			<td class="widgetsubheader" align="center"><b><?php echo gettext("Status"); ?></b></td>
+			<td class="widgetsubheader" align="center"><strong><?php echo gettext("Monitoring"); ?></strong></td>
+			<td class="widgetsubheader" align="center"><strong><?php echo gettext("Model"); ?></strong></td>
+			<td class="widgetsubheader" align="center"><strong><?php echo gettext("Status"); ?></strong></td>
 		</tr>
 		<tr>
 			<td class="listlr" align="center" id="monitoring"></td>
@@ -49,9 +52,9 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 } ?>
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="UPS status">
 	<tr>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Monitoring"); ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Model"); ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Status"); ?></b></td>
+		<td class="widgetsubheader" align="center"><strong><?php echo gettext("Monitoring"); ?></strong></td>
+		<td class="widgetsubheader" align="center"><strong><?php echo gettext("Model"); ?></strong></td>
+		<td class="widgetsubheader" align="center"><strong><?php echo gettext("Status"); ?></strong></td>
 	</tr>
 	<tr>
 		<td class="listlr" align="center" id="monitoring">
@@ -70,15 +73,14 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 		</td>
 		<td class="listr" align="center" id="model">
 		<?php
-			$running = ((int)exec("pgrep upsmon | wc -l") > 0) ? true : false;
-			if ($running) {
+			if (is_process_running('upsmon')) {
 				$handle = popen($cmd, 'r');
 				if ($handle) {
 					$read = fread($handle, 4096);
 					pclose($handle);
 					$lines = explode("\n", $read);
 					if (count($lines) == 1) {
-						$condition = gettext("ERROR:Data stale!");
+						$condition = gettext("ERROR: Data stale!");
 					} else {
 						$ups = array();
 						foreach ($lines as $line) {
@@ -153,7 +155,7 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 				}
 			}
 			echo $disp_status;
-			//  Battery Temp or Battery Voltage
+			// Battery Temp or Battery Voltage
 			if ($ups['battery.voltage'] > 0) {
 				$cell23 = array("Battery Voltage" , $ups['battery.voltage']."&nbsp;V");
 			} elseif ($ups['ups.temperature'] > 0) {
@@ -171,7 +173,7 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 	</tr>
 	<tr>
 		<td class="listlr" align="center" id="charge">
-			<img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="batwidtha" id="batwidtha" width="<?php echo round($ups['battery.charge']); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="batwidthb" id="batwidthb" width="<?php echo (100 - $ups['battery.charge']); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><br/>
+			<img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="batwidtha" id="batwidtha" width="<?php echo round($ups['battery.charge']); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="batwidthb" id="batwidthb" width="<?php echo (100 - $ups['battery.charge']); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><br />
 			<span id="batmeter"><?php echo $ups['battery.charge']."%"; ?></span>
 		</td>
 		<td class="listr" align="center" id="runtime">
@@ -180,8 +182,8 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 			if ($secs < 0 || $secs == "") {
 				echo "n/a";
 			} else {
-				$m = (int)($secs / 60); 
-				$h = (int)($m / 60) % 24; 
+				$m = (int)($secs / 60);
+				$h = (int)($m / 60) % 24;
 				$m = $m % 60;
 				$s = $secs % 60;
 				echo $h."h " . $m."m " . $s."s";
@@ -197,7 +199,7 @@ if (isset($config['installedpackages']['nut']['config'][0])) {
 	</tr>
 	<tr>
 		<td class="listlr" align="center" id="Load">
-			<img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="loadwidtha" id="loadwidtha" width="<?php echo round($ups['ups.load']); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="loadwidthb" id="loadwidthb" width="<?php echo (100 - $ups['ups.load']); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><br/>
+			<img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="loadwidtha" id="loadwidtha" width="<?php echo round($ups['ups.load']); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="loadwidthb" id="loadwidthb" width="<?php echo (100 - $ups['ups.load']); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?php echo $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><br />
 			<span id="loadmeter"><?php echo $ups['ups.load'].'%'; ?></span>
 		</td>
 		<td class="listr" align="center" id="InputV"><?php echo $ups['input.voltage']."&nbsp;V"; ?></td>

@@ -307,7 +307,7 @@ function srctype_selected() {
 	$sel = is_specialnet($pconfig['src']);
 	
 	if(!$sel) {
-		if($pconfig['srcmask'] == 32)
+		if(($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask'])))
 			return('single');
 
 		return('network');
@@ -367,6 +367,9 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
+	if(empty($pconfig['dst'] || $pconfig['dst'] == "any"))
+		return('any');
+		
 	if(!$sel) {
 		if($pconfig['dstmask'] == 32)
 			return('single');

@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php-cgi /usr/bin/netstat
 	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
 	pfSense_BUILDER_BINARIES:	/sbin/kldload
 	pfSense_MODULE:	utils
@@ -676,7 +676,7 @@ if (!function_exists('php_check_syntax')) {
 		fwrite($fout, $code_to_check);
 		fwrite($fout, "\n\n?>\n");
 		fclose($fout);
-		$command = "/usr/local/bin/php -l {$g['tmp_path']}/codetocheck.php";
+		$command = "/usr/local/bin/php-cgi -l {$g['tmp_path']}/codetocheck.php";
 		$output = exec_command($command);
 		if (stristr($output, "Errors parsing") == false) {
 			echo "false\n";
@@ -695,7 +695,7 @@ if (!function_exists('php_check_syntax')) {
 if (!function_exists('php_check_syntax')) {
 	function php_check_syntax($code_to_check, &$errormessage) {
 		return false;
-		$command = "/usr/local/bin/php -l " . escapeshellarg($code_to_check);
+		$command = "/usr/local/bin/php-cgi -l " . escapeshellarg($code_to_check);
 		$output = exec_command($command);
 		if (stristr($output, "Errors parsing") == false) {
 			echo "false\n";

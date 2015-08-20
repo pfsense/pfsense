@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -q
+#!/usr/local/bin/php-cgi -q
 <?php
 /* $Id$ */
 /*

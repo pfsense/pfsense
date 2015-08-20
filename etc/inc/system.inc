@@ -1232,7 +1232,7 @@ fastcgi.server = ( ".php" =>
 				"PHP_FCGI_CHILDREN" => "{$max_php_children}",
 				"PHP_FCGI_MAX_REQUESTS" => "500"
 			),
-			"bin-path" => "/usr/local/bin/php"
+			"bin-path" => "/usr/local/bin/php-cgi"
 		)
 	)
 )

@@ -164,7 +164,7 @@ fi
 if [ -f /usr/local/lib/php.ini ]; then
 	/bin/rm /usr/local/lib/php.ini
 fi
-LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\["`
 
 # Fetch the timezone from the XML and set it here. We set it later too in the running scripts
 TIMEZONE=`cat /conf/config.xml | egrep -E '<timezone>(.*?)</timezone>' | awk -F'>' '{print $2}'|awk -F'<' '{print $1}'`
@@ -386,7 +386,7 @@ for EXT in $PHPMODULES; do
 done
 
 # Check loaded modules and remove anything that did not load correctly
-LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\["`
 for EXT in $PHPMODULESLC; do
 	SHOULDREMOVE="true"
 	for LM in $LOADED_MODULES; do

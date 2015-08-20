@@ -23,7 +23,7 @@ if [ $# -eq 3 ]; then
 fi
 
 file_notice() {
-	/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
+	/usr/local/bin/php-cgi -q -d auto_prepend_file=config.inc <<ENDOFF
 	<?php
 		require_once("globals.inc");
 		require_once("functions.inc");

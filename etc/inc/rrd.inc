@@ -236,7 +236,7 @@ function enable_rrd_graphing() {
 	$tar = "/usr/bin/tar";
 	$pfctl = "/sbin/pfctl";
 	$sysctl = "/sbin/sysctl";
-	$php = "/usr/local/bin/php";
+	$php = "/usr/local/bin/php-cgi";
 	$cpustats = "/usr/local/sbin/cpustats";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";

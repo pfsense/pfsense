@@ -533,14 +533,14 @@ $section->addInput(new Form_Select(
 	'keylen',
 	'Key length (bits)',
 	$pconfig['keylen'],
-	$ca_keylens
+	array_combine($ca_keylens, $ca_keylens)
 ));
 
 $section->addInput(new Form_Select(
 	'digest_alg',
 	'Digest Algorithm',
 	$pconfig['digest_alg'],
-	$openssl_digest_algs
+	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than SHA1 '.
 	'when possible.');
 

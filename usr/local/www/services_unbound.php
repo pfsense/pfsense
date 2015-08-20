@@ -207,9 +207,9 @@ function build_if_list() {
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 
-	$iflist['options'][""]	= "All";
+	$iflist['options']['all']	= "All";
 	if (empty($pconfig['interface']) || empty($pconfig['interface'][0]))
-		array_push($iflist['selected'], "");
+		array_push($iflist['selected'], "all");
 
 	foreach ($interface_addresses as $laddr => $ldescr) {
 		$iflist['options'][$laddr] = htmlspecialchars($ldescr);

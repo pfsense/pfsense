@@ -41,7 +41,11 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gif.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gif.php');
+}
 
 if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
@@ -77,8 +81,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = array(gettext("Parent interface,Local address, Remote tunnel address, Remote tunnel network, Local tunnel address"));
+	$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("gif remote address"), gettext("gif tunnel local address"), gettext("gif tunnel remote address"), gettext("gif tunnel remote netmask"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -255,6 +259,7 @@ include("head.inc");
 				<input type="hidden" name="gifif" value="<?=htmlspecialchars($pconfig['gifif']); ?>" />
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 				<?php if (isset($id) && $a_gifs[$id]): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>

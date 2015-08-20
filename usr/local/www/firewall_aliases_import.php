@@ -49,7 +49,11 @@ require("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+}
 
 // Add all Load balance names to reserved_keywords
 if (is_array($config['load_balancer']['lbpool'])) {
@@ -66,7 +70,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST['aliasimport'] <> "") {
+if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
 
@@ -220,6 +224,7 @@ include("head.inc");
 		<td width="78%">
 			<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+			<input name="referer" type="hidden" value="<?=$referer;?>" />
 		</td>
 	</tr>
 </table>

@@ -499,18 +499,15 @@ function captiveportal_init_rules($reinit = false) {
 		if (!empty($tmpif)) {
 			$cpipm = get_interface_ip($cpifgrp);
 			if (is_ipaddr($cpipm)) {
-				$carpif = link_ip_to_carp_interface($cpipm);
-				if (!empty($carpif)) {
-					$carpsif = explode(" ", $carpif);
-					foreach ($carpsif as $cpcarp) {
-						mwexec("/sbin/ipfw zone {$cpzoneid} madd {$cpcarp}", true);
-						$carpip = find_interface_ip($cpcarp);
-						if (is_ipaddr($carpip)) {
-							$cpips[] = $carpip;
-						}
+				$cpips[] = $cpipm;
+				if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
+					continue;
+				}
+				foreach ($config['virtualip']['vip'] as $vip) {
+					if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+						$cpips[] = $vip['subnet'];
 					}
 				}
-				$cpips[] = $cpipm;
 			}
 			mwexec("/sbin/ipfw zone {$cpzoneid} madd {$tmpif}", true);
 		}
@@ -1407,16 +1404,52 @@ function radius($username, $password, $clientip, $clientmac, $type, $radiusctx =
 function captiveportal_opendb() {
 	global $g, $cpzone;
 
-	$DB = new SQLite3("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-	if (! $DB->exec("CREATE TABLE IF NOT EXISTS captiveportal (" .
-						"allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, " .
-						"sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, " .
-						"session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT); " .
-					"CREATE UNIQUE INDEX IF NOT EXISTS idx_active ON captiveportal (sessionid, username); " .
-					"CREATE INDEX IF NOT EXISTS user ON captiveportal (username); " .
-					"CREATE INDEX IF NOT EXISTS ip ON captiveportal (ip); " .
-					"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)")) {
-		captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$DB->lastErrorMsg()}");
+	$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
+	$createquery = "CREATE TABLE IF NOT EXISTS captiveportal (" .
+				"allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, " .
+				"sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, " .
+				"session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT); " .
+			"CREATE UNIQUE INDEX IF NOT EXISTS idx_active ON captiveportal (sessionid, username); " .
+			"CREATE INDEX IF NOT EXISTS user ON captiveportal (username); " .
+			"CREATE INDEX IF NOT EXISTS ip ON captiveportal (ip); " .
+			"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)";
+
+	try {
+		$DB = new SQLite3($db_path);
+	} catch (Exception $e) {
+		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Trying again.");
+		unlink_if_exists($db_path);
+		try {
+			$DB = new SQLite3($db_path);
+		} catch (Exception $e) {
+			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Remove the database file manually and ensure there is enough free space.");
+			return;
+		}
+	}
+
+	if (!$DB) {
+		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");
+		unlink_if_exists($db_path);
+		$DB = new SQLite3($db_path);
+		if (!$DB) {
+			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and ensure there is enough free space.");
+			return;
+		}
+	}
+
+	if (! $DB->exec($createquery)) {
+		captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$DB->lastErrorMsg()}. Resetting and trying again.");
+
+		/* If unable to initialize the database, reset and try again. */
+		$DB->close();
+		unset($DB);
+		unlink_if_exists($db_path);
+		$DB = new SQLite3($db_path);
+		if ($DB->exec($createquery)) {
+			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
+		} else {
+			captiveportal_syslog("Still unable to create tables for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and try again.");
+		}
 	}
 
 	return $DB;

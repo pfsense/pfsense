@@ -54,6 +54,7 @@ $my_identifier_list = array(
 
 global $peer_identifier_list;
 $peer_identifier_list = array(
+	'any' => array('desc' => gettext('Any'), 'mobile' => true),
 	'peeraddress' => array('desc' => gettext('Peer IP address'), 'mobile' => false),
 	'address' => array('desc' => gettext('IP address'), 'mobile' => false),
 	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
@@ -727,9 +728,6 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			break;
 		case 'asn1dn':
 			$thisid_data = $id_data;
-			if ($thisid_data && $thisid_data[0] != '"') {
-				$thisid_data = "\"{$id_data}\"";
-			}
 			break;
 	}
 	return array($thisid_type, $thisid_data);

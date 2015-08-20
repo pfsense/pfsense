@@ -2547,9 +2547,11 @@ function upgrade_066_to_067() {
 	global $config;
 	if (isset($config['system']['ca'])) {
 		$config['ca'] = $config['system']['ca'];
+		unset($config['system']['ca']);
 	}
 	if (isset($config['system']['cert'])) {
 		$config['cert'] = $config['system']['cert'];
+		unset($config['system']['cert']);
 	}
 }
 
@@ -3053,9 +3055,6 @@ function upgrade_085_to_086() {
 function upgrade_086_to_087() {
 	global $config, $dummynet_pipe_list;
 
-	if (!is_array($config['filter']) || !is_array($config['filter']['rule'])) {
-		return;
-	}
 	if (!is_array($config['dnshaper']) || !is_array($config['dnshaper']['queue'])) {
 		return;
 	}
@@ -3075,6 +3074,10 @@ function upgrade_086_to_087() {
 	}
 
 	unset($dnqueue_number, $dnpipe_number, $qidx, $idx, $dnpipe, $dnqueue);
+
+	if (!is_array($config['filter']) || !is_array($config['filter']['rule'])) {
+		return;
+	}
 
 	require_once("shaper.inc");
 	read_dummynet_config();
@@ -3438,7 +3441,7 @@ function upgrade_104_to_105() {
 	if (is_array($config['captiveportal'])) {
 		$zoneid = 2;
 		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
-			if (empty($cpfg['zoneid'])) {
+			if (empty($cpcfg['zoneid'])) {
 				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
 				$zoneid += 2;
 			} else if ($cpcfg['zoneid'] > 4000) {
@@ -3752,6 +3755,57 @@ function upgrade_116_to_117() {
 function upgrade_117_to_118() {
 	global $config;
 
+	// Unset any old CA and Cert in the system section that might still be there from when upgrade_066_to_067 did not unset them.
+	if (isset($config['system']['ca'])) {
+		unset($config['system']['ca']);
+	}
+	if (isset($config['system']['cert'])) {
+		unset($config['system']['cert']);
+	}
+
+	if (!isset($config['ipsec']['phase1'])) {
+		return;
+	}
+
+	$a_phase1 =& $config['ipsec']['phase1'];
+
+	foreach ($a_phase1 as &$ph1_entry) {
+		// update asn1dn strings from racoon's format to strongswan's 
+		if (isset($ph1_entry['myid_type']) && $ph1_entry['myid_type'] == 'asn1dn') {
+			$ph1_entry['myid_data'] =
+			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['myid_data']);
+		}
+		if (isset($ph1_entry['peerid_type']) && $ph1_entry['peerid_type'] == 'asn1dn') {
+			$ph1_entry['peerid_data'] =
+			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['peerid_data']);
+		}
+		// iketype 'auto' was removed and is really v2, update accordingly
+		if ($ph1_entry['iketype'] == "auto") {
+			$ph1_entry['iketype'] = "ikev2";
+		}
+	}
+}
+
+function upgrade_118_to_119() {
+	global $config;
+
+        if (!isset($config['ipsec']['phase1'])) {
+                return;
+        }
+
+	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
+	$a_phase1 =& $config['ipsec']['phase1'];
+
+	foreach ($a_phase1 as &$ph1_entry) {
+		if (strstr($ph1_entry['authentication_method'], 'eap')) {
+			$ph1_entry['peerid_type'] = "any";	
+		}
+	}
+}
+
+function upgrade_119_to_120() {
+	global $config;
+
 	if (!isset($config['installedpackages']['miniupnpd']['config'][0])) {
 		return;
 	}
@@ -3767,5 +3821,5 @@ function upgrade_117_to_118() {
 		unset($miniupnpd["permuser{$i}"]);
 	}
 }
-?>
 
+?>

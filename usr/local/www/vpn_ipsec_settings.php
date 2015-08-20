@@ -47,6 +47,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	}
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
@@ -120,15 +121,13 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if (is_array($config['ipsec'])) {
-			foreach ($ipsec_loglevels as $lkey => $ldescr) {
-				if (empty($_POST["ipsec_{$lkey}"])) {
-					if (isset($config['ipsec']["ipsec_{$lkey}"])) {
-						unset($config['ipsec']["ipsec_{$lkey}"]);
-					}
-				} else {
-					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		foreach ($ipsec_loglevels as $lkey => $ldescr) {
+			if (empty($_POST["ipsec_{$lkey}"])) {
+				if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+					unset($config['ipsec']["ipsec_{$lkey}"]);
 				}
+			} else {
+				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 			}
 		}
 
@@ -163,6 +162,12 @@ if ($_POST) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
 		}
+		
+		if ($_POST['strictcrlpolicy'] == "yes") {
+			$config['ipsec']['strictcrlpolicy'] = true;
+		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
+			unset($config['ipsec']['strictcrlpolicy']);
+		}
 
 		if ($_POST['makebeforebreak'] == "yes") {
 			$config['ipsec']['makebeforebreak'] = true;
@@ -171,7 +176,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['noshuntlaninterfaces'] == "yes") {
-			unset($config['ipsec']['noshuntlaninterfaces']);
+			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
+				unset($config['ipsec']['noshuntlaninterfaces']);
+			}
 		} else {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
@@ -188,7 +195,7 @@ if ($_POST) {
 
 		if (!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
-		} else {
+		} else if (isset($config['ipsec']['uniqueids'])) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
@@ -196,8 +203,12 @@ if ($_POST) {
 			$config['system']['maxmss_enable'] = true;
 			$config['system']['maxmss'] = $_POST['maxmss'];
 		} else {
-			unset($config['system']['maxmss_enable']);
-			unset($config['system']['maxmss']);
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
 		}
 
 		write_config();
@@ -386,6 +397,15 @@ function maxmss_checked(obj) {
 							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
 							<br />
 							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Strict CRL Checking"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="strictcrlpolicy" type="checkbox" id="strictcrlpolicy" value="yes" <?php if ($pconfig['strictcrlpolicy'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable strict Certificate Revocation List checking"); ?></strong>
+							<br />
+							<?=gettext("Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed."); ?>
 						</td>
 					</tr>
 					<tr>

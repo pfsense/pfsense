@@ -52,7 +52,11 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+}
 
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
@@ -273,6 +277,7 @@ if ($_POST) {
 		$wrongaliases = "";
 		$desc_fmt_err_found = false;
 		$alias_address_count = 0;
+		$input_addresses = array();
 
 		// First trim and expand the input data.
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
@@ -663,8 +668,8 @@ function update_box_type() {
 			typesel_change();
 			add_alias_control(this);
 		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$urltable_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
 		document.getElementById ("threecolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").style.display = 'none';
@@ -676,8 +681,8 @@ function update_box_type() {
 			typesel_change();
 			add_alias_control(this);
 		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_ports_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$urltable_ports_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
 		document.getElementById ("threecolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").style.display = 'none';
@@ -851,6 +856,7 @@ if (empty($tab)) {
 		<td width="78%">
 			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+			<input name="referer" type="hidden" value="<?=$referer;?>" />
 		</td>
 	</tr>
 </table>

@@ -392,6 +392,9 @@ function voucher_auth($voucher_received, $test = 0) {
 	foreach ($a_vouchers_received as $voucher) {
 		$v = escapeshellarg($voucher);
 		if (strlen($voucher) < 3) {
+			$test_result[] = "{$voucher} invalid: Too short!";
+			captiveportal_syslog("{$voucher} invalid: Too short!");
+			$error++;
 			continue;   // seems too short to be a voucher!
 		}
 

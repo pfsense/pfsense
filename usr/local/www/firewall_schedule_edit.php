@@ -62,7 +62,11 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"), gettext("Edit"));
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
+}
 
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
@@ -1131,6 +1135,7 @@ EOD;
 						<td width="85%">
 							<input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+							<input name="referer" type="hidden" value="<?=$referer;?>" />
 							<?php if (isset($id) && $a_schedules[$id]): ?>
 							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 							<?php endif; ?>

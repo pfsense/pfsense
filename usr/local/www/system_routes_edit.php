@@ -45,7 +45,11 @@ require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+}
 
 if (!is_array($config['staticroutes']['route'])) {
 	$config['staticroutes']['route'] = array();
@@ -102,9 +106,13 @@ if ($_POST) {
 	if (($_POST['gateway']) && is_ipaddr($_POST['network'])) {
 		if (!isset($a_gateways[$_POST['gateway']])) {
 			$input_errors[] = gettext("A valid gateway must be specified.");
-		}
-		if (!validate_address_family($_POST['network'], $_POST['gateway'])) {
-			$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family as network '{$_POST['network']}'.");
+		} else if (isset($a_gateways[$_POST['gateway']]['disabled']) && !$_POST['disabled']) {
+			$input_errors[] = gettext("The gateway is disabled but the route is not. You must disable the route in order to choose a disabled gateway.");
+		} else {
+			// Note that the 3rd parameter "disabled" must be passed as explicitly true or false.
+			if (!validate_address_family($_POST['network'], $_POST['gateway'], $_POST['disabled'] ? true : false)) {
+				$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family than network '{$_POST['network']}'.");
+			}
 		}
 	}
 
@@ -354,6 +362,7 @@ include("head.inc");
 					<?php if (isset($id) && $a_routes[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
+					<input name="referer" type="hidden" value="<?=$referer;?>" />
 				</td>
 			</tr>
 		</table>

@@ -40,7 +40,8 @@
 
 require("guiconfig.inc");
 require_once("certs.inc");
-require_once('openvpn.inc');
+require_once("openvpn.inc");
+require_once("vpn.inc");
 
 global $openssl_crl_status;
 
@@ -98,7 +99,7 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 }
 
 if ($act == "del") {
-	$name = $thiscrl['descr'];
+	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br />";
 	} else {
@@ -160,7 +161,9 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
+			// refresh IPsec and OpenVPN CRLs 
 			openvpn_refresh_crls();
+			vpn_ipsec_configure();
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
 			exit;
@@ -184,19 +187,22 @@ if ($act == "delcert") {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
-	$name = $thiscert['descr'];
+	$certname = htmlspecialchars($thiscert['descr']);
+	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
+		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
-		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
+		vpn_ipsec_configure();
+		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
+		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
 	}
 	$act="edit";
 }
 
 if ($_POST) {
-	unset($input_errors);
+	$input_errors = array();
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -214,6 +220,10 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
+		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+	}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -253,7 +263,9 @@ if ($_POST) {
 		}
 
 		write_config("Saved CRL {$crl['descr']}");
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
+		vpn_ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
 	}
 }
@@ -361,7 +373,7 @@ function method_change() {
 										}
 										$rowIndex++;
 								?>
-									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
 								<?php
 									endforeach;
 									if ($rowIndex == 0) {
@@ -470,7 +482,7 @@ function method_change() {
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="revoke">
 					<thead>
 					<tr>
-						<th width="90%" class="listhdrr" colspan="3"><b><?php echo gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']; ?></b></th>
+						<th width="90%" class="listhdrr" colspan="3"><b><?php echo gettext("Currently Revoked Certificates for CRL") . ': ' . htmlspecialchars($crl['descr']); ?></b></th>
 						<th width="10%" class="list"></th>
 					</tr>
 					<tr>
@@ -633,11 +645,11 @@ function method_change() {
 						<td class="list">
 						<?php if ($cainternal == "YES"): ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?php echo $ca['refid']; ?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Add or Import CRL for %s"), $ca['descr']);?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Add or Import CRL for %s"), htmlspecialchars($ca['descr']));?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
 						<?php else: ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?php echo $ca['refid']; ?>&amp;importonly=yes">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Import CRL for %s"), $ca['descr']);?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Import CRL for %s"), htmlspecialchars($ca['descr']));?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
 						<?php endif; ?>
 						</td>
@@ -650,7 +662,7 @@ function method_change() {
 								$inuse = crl_in_use($tmpcrl['refid']);
 						?>
 					<tr>
-						<td class="listlr"><?php echo $tmpcrl['descr']; ?></td>
+						<td class="listlr"><?php echo htmlspecialchars($tmpcrl['descr']); ?></td>
 						<td class="listr"><?php echo ($internal) ? "YES" : "NO"; ?></td>
 						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>

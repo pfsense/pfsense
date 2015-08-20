@@ -57,7 +57,6 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
 
@@ -110,12 +109,6 @@ if ($_POST) {
 		} else {
 			unset($config['system']['polling']);
 			setup_polling();
-		}
-
-		if ($_POST['flowtable'] == "yes") {
-			$config['system']['flowtable'] = $_POST['flowtable'];
-		} else {
-			unset($config['system']['flowtable']);
 		}
 
 		if ($_POST['disablechecksumoffloading'] == "yes") {
@@ -303,29 +296,6 @@ function enable_change(enable_over) {
 									<?=gettext("This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain"); ?>
 								</td>
 							</tr>
-<?php
-/*
-	$version = get_freebsd_version();
-	if ($version == "8"):
-
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="2" valign="top" class="listtopic">Flowtable support</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell">Enable Flowtable</td>
-								<td width="78%" class="vtable">
-									<input name="flowtable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['flowtable']) echo "checked=\"checked\""; ?> />
-									<strong>Enable flowtable support</strong><br />
-									Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups
-									as well as providing stateful load balancing when used with RADIX_MPATH.<br />
-								</td>
-							</tr>
-<?php endif; ?>
-*/
-?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>

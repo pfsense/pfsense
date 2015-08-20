@@ -198,6 +198,10 @@ function step7_submitphpaction() {
 		}
 	}
 
+	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+		$input_errors[] = "The field 'Descriptive Name' contains invalid characters.";
+	}
+
 	if (empty($_POST['descr']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email'])) {
@@ -295,6 +299,10 @@ function step9_submitphpaction() {
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
 		}	
+	}
+
+	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+		$input_errors[] = "The field 'Descriptive Name' contains invalid characters.";
 	}
 
 	if (empty($_POST['descr']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||

@@ -145,7 +145,7 @@
 	}
 
 	function sync_package_miniupnpd() {
-		global $config;
+		global $g, $config;
 		global $input_errors;
 
 		$upnp_config = $config['installedpackages']['miniupnpd']['config'][0];
@@ -238,7 +238,7 @@
 				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
 
 				/* set model number */
-				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
+				$config_text .= "model_number=" . $g['product_version'] . "\n";
 
 				/* upnp access restrictions */
 				foreach ($upnp_config['row'] as $row) {

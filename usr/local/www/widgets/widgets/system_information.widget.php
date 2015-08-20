@@ -66,13 +66,12 @@ if ($_REQUEST['getupdatestatus']) {
 		echo "<br /><br />Unable to check for updates.";
 	} else {
 		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-		$current_installed_version = trim(file_get_contents("/etc/version"));
 
 		if (!$remote_version) {
 			echo "<br /><br />Unable to check for updates.";
 		} else {
 			$needs_system_upgrade = false;
-			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
+			if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version) == -1) {
 				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "\n<script type=\"text/javascript\">\n";
 				echo "//<![CDATA[\n";
@@ -124,7 +123,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<td width="25%" valign="top" class="vncellt"><?=gettext("Version");?></td>
 			<td width="75%" class="listr">
-				<strong><?php readfile("/etc/version"); ?></strong>
+				<strong><?=$g['product_version']?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>

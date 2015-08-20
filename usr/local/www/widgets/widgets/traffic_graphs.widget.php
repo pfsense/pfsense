@@ -167,17 +167,25 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div align="right" style="float:right;width:49%">
 					<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?= $ifname ?>", true);'
 						style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>
-					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", true);'
+					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", "<?= rawurlencode($ifdescr); ?>", "<?= $refreshinterval ?>", true);'
 						style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>
 				</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
+<?php
+		// If the graph is already enabled by the config then put the object inside the div now.
+		// Otherwise the graph object is inserted by trafficshowDiv JS when the user opens it.
+		if ($graphdisplay == "inline") {
+?>
 				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=$graphcounter * 2;?>" height="100%" width="100%">
 					<param name="id" value="graph" />
 					<param name="type" value="image/svg+xml" />
 					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 				</object>
+<?php
+		}
+?>
 			</div>
 		</div>
 	<?php }

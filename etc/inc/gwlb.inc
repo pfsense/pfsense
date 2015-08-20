@@ -1033,9 +1033,9 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 	}
 }
 
-function lookup_gateway_ip_by_name($name) {
+function lookup_gateway_ip_by_name($name, $disabled = false) {
 
-	$gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = return_gateways_array($disabled, true);
 	foreach ($gateways_arr as $gname => $gw) {
 		if ($gw['name'] === $name || $gname === $name) {
 			return $gw['gateway'];
@@ -1141,7 +1141,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 
 /* Check a IP address against a gateway IP or name
  * to verify it's address family */
-function validate_address_family($ipaddr, $gwname) {
+function validate_address_family($ipaddr, $gwname, $disabled = false) {
 	$v4ip = false;
 	$v6ip = false;
 	$v4gw = false;
@@ -1168,10 +1168,10 @@ function validate_address_family($ipaddr, $gwname) {
 	}
 
 	/* still no match, carry on, lookup gateways */
-	if (is_ipaddrv4(lookup_gateway_ip_by_name($gwname))) {
+	if (is_ipaddrv4(lookup_gateway_ip_by_name($gwname, $disabled))) {
 		$v4gw = true;
 	}
-	if (is_ipaddrv6(lookup_gateway_ip_by_name($gwname))) {
+	if (is_ipaddrv6(lookup_gateway_ip_by_name($gwname, $disabled))) {
 		$v6gw = true;
 	}
 

@@ -42,7 +42,11 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gre.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gre.php');
+}
 
 if (!is_array($config['gres']['gre'])) {
 	$config['gres']['gre'] = array();
@@ -76,8 +80,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = array(gettext("Parent interface"), gettext("Local address"), gettext("Remote tunnel address"), gettext("Remote tunnel network"), gettext("Local tunnel address"));
+	$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IP address"), gettext("Local tunnel IP address"), gettext("Remote tunnel IP address"), gettext("Remote tunnel network"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -245,6 +249,7 @@ include("head.inc");
 				<input type="hidden" name="greif" value="<?=htmlspecialchars($pconfig['greif']); ?>" />
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 			<?php if (isset($id) && $a_gres[$id]): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 			<?php endif; ?>

@@ -45,10 +45,6 @@ define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v
 function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
-
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_radvd_configure() being called $mt\n";
@@ -1567,9 +1563,7 @@ EOD;
 
 function services_dhcrelay_configure() {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcrelay_configure() being called $mt\n";
@@ -1604,82 +1598,13 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
-
-	/*
-	 * In order for the relay to work, it needs to be active
-	 * on the interface in which the destination server sits.
-	 */
-	$srvips = explode(",", $dhcrelaycfg['server']);
+	
+	$srvips = explode(",", $dhcrelaycfg['server']);	
 	if (!is_array($srvips)) {
-		log_error("No destination ip has been configured!");
+		log_error("No destination IP has been configured!");
 		return;
 	}
 
-	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ip($ifname);
-			if (!is_ipaddr($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnet($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			foreach (get_staticroutes() as $rtent) {
-				if (ip_in_subnet($srvip, $rtent['network'])) {
-					$a_gateways = return_gateways_array(true);
-					$destif = $a_gateways[$rtent['gateway']]['interface'];
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (is_subnetv4($items[0])) {
-					$subnet = $items[0];
-				} elseif (is_ipaddrv4($items[0])) {
-					$subnet = "{$items[0]}/32";
-				} else {
-					// Not a subnet or IP address, skip to the next line.
-					continue;
-				}
-				if (ip_in_subnet($srvip, $subnet)) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
-		if (!empty($destif)) {
-			$dhcrelayifs[] = $destif;
-		}
-	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/* fire up dhcrelay */
@@ -1703,9 +1628,7 @@ function services_dhcrelay_configure() {
 
 function services_dhcrelay6_configure() {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcrelay6_configure() being called $mt\n";
@@ -1742,70 +1665,10 @@ function services_dhcrelay6_configure() {
 	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
-	/*
-	 * In order for the relay to work, it needs to be active
-	 * on the interface in which the destination server sits.
-	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
-	$srvifaces = array();
-	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ipv6($ifname);
-			if (!is_ipaddrv6($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnetv6($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			if (is_array($config['staticroutes']['route'])) {
-				foreach ($config['staticroutes']['route'] as $rtent) {
-					if (ip_in_subnet($srvip, $rtent['network'])) {
-						$a_gateways = return_gateways_array(true);
-						$destif = $a_gateways[$rtent['gateway']]['interface'];
-						break;
-					}
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet6", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (ip_in_subnet($srvip, $items[0])) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
-		if (!empty($destif)) {
-			$srvifaces[] = "{$srvip}%{$destif}";
-		}
+	if (!is_array($srvips)) {
+		log_error("No destination IP has been configured!");
+		return;
 	}
 
 	/* fire up dhcrelay */
@@ -2213,13 +2076,12 @@ trap := "{$config['snmpd']['trapstring']}"
 EOD;
 		}
 
-		$version = trim(file_get_contents('/etc/version'));
 		$platform = trim(file_get_contents('/etc/platform'));
 		if (($platform == "pfSense") && ($g['product_name'] != "pfSense")) {
 			$platform = $g['product_name'];
 		}
 		$sysDescr = "{$g['product_name']} " . php_uname("n") .
-			" {$version} {$platform} " . php_uname("s") .
+			" {$g['product_version']} {$platform} " . php_uname("s") .
 			" " . php_uname("r") . " " . php_uname("m");
 
 		$snmpdconf .= <<<EOD

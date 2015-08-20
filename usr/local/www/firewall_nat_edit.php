@@ -46,7 +46,11 @@ require_once("itemid.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
+}
 
 $specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
@@ -970,6 +974,7 @@ include("fbegin.inc"); ?>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 				<?php if (isset($id) && $a_nat[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>

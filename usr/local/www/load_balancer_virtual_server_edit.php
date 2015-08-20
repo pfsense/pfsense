@@ -43,7 +43,11 @@
 
 require("guiconfig.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_virtual_server.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_virtual_server.php');
+}
 
 if (!is_array($config['load_balancer']['virtual_server'])) {
 	$config['load_balancer']['virtual_server'] = array();
@@ -61,7 +65,7 @@ if (isset($id) && $a_vs[$id]) {
   $pconfig = $a_vs[$id];
 } else {
   // Sane defaults
-  $pconfig['mode'] = 'redirect';
+  $pconfig['mode'] = 'redirect_mode';
 }
 
 $changedesc = gettext("Load Balancer: Virtual Server:") . " ";
@@ -73,14 +77,14 @@ if ($_POST) {
 
 	/* input validation */
 	switch ($pconfig['mode']) {
-		case "redirect": {
+		case "redirect_mode": {
 			$reqdfields = explode(" ", "ipaddr name mode");
 			$reqdfieldsn = array(gettext("IP Address"), gettext("Name"), gettext("Mode"));
 			break;
 		}
-		case "relay": {
+		case "relay_mode": {
 			$reqdfields = explode(" ", "ipaddr name mode relay_protocol");
-			$reqdfieldsn = array(gettext("IP Address"), gettext("Name"), gettext("Relay Protocol"));
+			$reqdfieldsn = array(gettext("IP Address"), gettext("Name"), gettext("Mode"), gettext("Relay Protocol"));
 			break;
 		}
 	}
@@ -296,6 +300,7 @@ include("head.inc");
 			<td align="left" valign="bottom" width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 				<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>

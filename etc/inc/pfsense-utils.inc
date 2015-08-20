@@ -127,20 +127,24 @@ function get_tmp_file() {
 
 /****f* pfsense-utils/get_dns_servers
  * NAME
- *   get_dns_servres - get system dns servers
+ *   get_dns_servers - get system dns servers
  * INPUTS
- *   $dns_servers - an array of the dns servers
+ *   none
  * RESULT
- *   null
+ *   $dns_servers - an array of the dns servers
  ******/
 function get_dns_servers() {
 	$dns_servers = array();
-	$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	foreach ($dns_s as $dns) {
-		$matches = "";
-		if (preg_match("/nameserver (.*)/", $dns, $matches)) {
-			$dns_servers[] = $matches[1];
-		}
+	if (file_exists("/etc/resolv.conf")) {
+		$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	}
+	if (is_array($dns_s)) {
+		foreach ($dns_s as $dns) {
+			$matches = "";
+			if (preg_match("/nameserver (.*)/", $dns, $matches)) {
+				$dns_servers[] = $matches[1];
+			}
+		}	
 	}
 	return array_unique($dns_servers);
 }
@@ -802,7 +806,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	}
 	$version = php_uname('r');
 	$version = explode('-', $version);
-	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
+	$rawparams = array("firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $version[0]),
 		"base"     => array("version" => $version[0]),
 		"platform" => trim(file_get_contents('/etc/platform')),
@@ -841,7 +845,7 @@ function host_firmware_version($tocheck = "") {
 	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
 
 	return array(
-		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
+		"firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
 		"platform" => trim(file_get_contents('/etc/platform', " \n")),
@@ -1773,9 +1777,9 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	if (!isset($config['system']['host_uuid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
 	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}
 
 	if (!empty($config['system']['proxyurl'])) {
@@ -1819,9 +1823,9 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	if (!isset($config['system']['host_uuid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version") . ' : ' . get_single_sysctl('kern.hostuuid')));
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
 	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}
 
 	if (!empty($config['system']['proxyurl'])) {
@@ -2307,7 +2311,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
 			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
-				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = explode("\n", str_replace("\r", "", file_get_contents($urltable_filename)));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			}

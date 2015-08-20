@@ -1052,7 +1052,7 @@ if ($savemsg) {
 										$selected = "selected=\"selected\"";
 									}
 							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
 							<?php endforeach; ?>
 							</select>
 							<?php else: ?>
@@ -1072,13 +1072,13 @@ if ($savemsg) {
 									$caname = "";
 									$ca = lookup_ca($crl['caref']);
 									if ($ca) {
-										$caname = " (CA: {$ca['descr']})";
+										$caname = " (CA: " . htmlspecialchars($ca['descr']) . ")";
 										if ($pconfig['crlref'] == $crl['refid']) {
 											$selected = "selected=\"selected\"";
 										}
 									}
 							?>
-								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'] . $caname;?></option>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=htmlspecialchars($crl['descr']) . $caname;?></option>
 							<?php endforeach; ?>
 							</select>
 							<?php else: ?>
@@ -1099,7 +1099,7 @@ if ($savemsg) {
 									$revoked = "";
 									$ca = lookup_ca($cert['caref']);
 									if ($ca) {
-										$caname = " (CA: {$ca['descr']})";
+										$caname = " (CA: " . htmlspecialchars($ca['descr']) . ")";
 									}
 									if ($pconfig['certref'] == $cert['refid']) {
 										$selected = "selected=\"selected\"";
@@ -1111,7 +1111,7 @@ if ($savemsg) {
 										$revoked = " *Revoked";
 									}
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=htmlspecialchars($cert['descr']) . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
 							</select>
 							<?php else: ?>

@@ -6,11 +6,11 @@
 PRIOR_VERSION=`uname -r | cut -d'.' -f1`
 echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 
-# Activate sync on root filesystem. See ticket #4523
+# De-activate sync on root filesystem. See ticket #4523
 # Back up original fstab
 /bin/cp /etc/fstab /etc/fstab.orig
-# Activate sync on the root slice only. This will not match NanoBSD since it already has sync,noatime
-/usr/bin/sed -i '' 's/^\(\/.*[[:space:]]*\/[[:space:]]*ufs[[:space:]]*\)rw\([[:space:]]*[[:digit:]][[:space:]]*[[:digit:]]\)$/\1rw,sync\2/' /etc/fstab
+# De-activate sync on the root slice only. This will not match NanoBSD since it already has sync,noatime
+/usr/bin/sed -i '' 's/^\(\/.*[[:space:]]*\/[[:space:]]*ufs[[:space:]]*\)rw,sync\([[:space:]]*[[:digit:]][[:space:]]*[[:digit:]]\)$/\1rw\2/' /etc/fstab
 
 # Hack to workaround ticket #3749
 if [ ${PRIOR_VERSION} -le 8 ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware; then

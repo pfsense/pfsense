@@ -46,7 +46,11 @@
 require("guiconfig.inc");
 require("functions.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_ppps.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_ppps.php');
+}
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
@@ -266,21 +270,23 @@ if ($_POST) {
 		}
 	}
 
-	foreach ($_POST['interfaces'] as $iface) {
-		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface])) {
-			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."), $iface);
-		}
-		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) {
-			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."), $iface);
-		}
-		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) {
-			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."), $iface);
-		}
-		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) {
-			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."), $iface);
-		}
-		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) {
-			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."), $iface);
+	if (is_array($_POST['interfaces'])) {
+		foreach ($_POST['interfaces'] as $iface) {
+			if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface])) {
+				$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."), $iface);
+			}
+			if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) {
+				$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."), $iface);
+			}
+			if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) {
+				$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."), $iface);
+			}
+			if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) {
+				$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."), $iface);
+			}
+			if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) {
+				$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."), $iface);
+			}
 		}
 	}
 
@@ -484,7 +490,12 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					mwexec("/bin/mkdir -p /var/spool/lock");
 				}
 				// $serialports = pfSense_get_modem_devices();
-				$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+				// Match files in /dev starting with "cua" then:
+				// [a-zA-Z] = any single alpha character e.g. like "cuau"
+				// [0-9] = a digit from 0 to 9
+				// stuff in {} = the various possible digit and dot combinations to allow an optional 2nd digit, dot, followed by 1 or 2 optional digits
+				// This supports up to 100 device numbers (0 to 99), e.g. cuau0 cuau1 ... cuau10 cuau11 ... cuau99 and also possibilities like cuau1.1 cuau1.11 cuau11.1 cuau11.11
+				$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 				$serport_count = 0;
 				foreach ($serialports as $port) {
 					$serport_count++;
@@ -878,6 +889,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>" />
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />

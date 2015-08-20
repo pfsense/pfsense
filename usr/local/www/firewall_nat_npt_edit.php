@@ -59,7 +59,11 @@ require_once("interfaces.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_npt.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_npt.php');
+}
 
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
@@ -294,6 +298,7 @@ include("head.inc");
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+				<input name="referer" type="hidden" value="<?=$referer;?>" />
 				<?php if (isset($id) && $a_npt[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>

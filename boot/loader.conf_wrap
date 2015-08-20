@@ -1,6 +1,0 @@
-loader_color="NO"
-console=comconsole
-autoboot_delay="5"
-beastie_disable="YES"
-vm.kmem_size="435544320"
-vm.kmem_size_max="535544320"

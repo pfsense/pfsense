@@ -190,9 +190,6 @@ function interface_netgraph_needed($interface = "wan") {
 function interfaces_loopback_configure() {
 	global $g;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 	if (platform_booting()) {
 		echo gettext("Configuring loopback interface...");
 	}
@@ -1001,10 +998,6 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 
 function interfaces_configure() {
 	global $config, $g;
-
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 
 	/* Set up our loopback interface */
 	interfaces_loopback_configure();

@@ -5,13 +5,12 @@ require_once("pkg-utils.inc");
 global $g, $config, $argv, $command_split;
 
 if (is_array($command_split)) {
-	$args = array_slice($command_split, 2);
+	$args = array_slice($command_split, 1);
 } else {
-	$args = array_slice($argv, 3);
+	$args = array_slice($argv, 2);
 }
 
 $pkg_name = $args[0];
-$install_type = empty($args[1]) ? "normal" : $args[1];
 
 echo "Installing package \"{$pkg_name}\"...\n";
 
@@ -20,8 +19,7 @@ $pkg_info = get_pkg_info();
 if ($pkg_info) {
 	echo " Done.\n";
 } else {
-	$xmlrpc_base_url = get_active_xml_rpc_base_url();
-	echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+	echo "\n" . gettext(' >>> Unable to get pkg info.') . "\n";
 	return;
 }
 
@@ -30,12 +28,9 @@ $pkg_interface = "console";
 
 if (empty($pkg_info[$pkg_name])) {
 	echo "\nPackage not found.\n";
-} elseif ($install_type == "normal") {
-	install_package($pkg_name, $pkg_info[$pkg_name], true);
-} elseif ($install_type == "xmlonly") {
-	install_package_xml($pkg_name);
-} else {
-	echo "Invalid install type. Valid values are: normal, xmlonly.\n";
+	return;
 }
+
+install_package($pkg_name);
 
 echo "\nDone.\n";

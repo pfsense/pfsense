@@ -162,9 +162,7 @@ function is_bogonsv6_used() {
 
 function filter_pflog_start($kill_first = false) {
 	global $config, $g;
-	if ($g['platform'] == 'jail') {
-		return;
-	}
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
@@ -612,6 +610,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	$builtlist = "";
 	$urltable_nesting = "";
 	$aliasnesting[$name] = $name;
+	$alias_type = alias_get_type($name);
 	foreach ($addresses as $address) {
 		if (empty($address)) {
 			continue;
@@ -621,7 +620,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		if (is_alias($address)) {
 			if (alias_get_type($address) == 'urltable') {
 				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
-				$urltable_netsting = alias_expand_urltable($address);
+				$urltable_nesting = alias_expand_urltable($address);
 				if (!empty($urltable_nesting)) {
 					$urlfile_as_arr = file($urltable_nesting);
 					foreach ($urlfile_as_arr as $line) {
@@ -639,7 +638,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && !is_portrange($address) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"])) {
 					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
@@ -737,11 +736,15 @@ function filter_generate_aliases() {
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
 	$aliases .= "table <virusprot>\n";
-	if (!file_exists("/etc/bogons")) {
-		@file_put_contents("/etc/bogons", "");
-	}
-	if (!file_exists("/etc/bogonsv6")) {
-		@file_put_contents("/etc/bogonsv6", "");
+	if (!file_exists("/etc/bogons") || !file_exists("/etc/bogonsv6")) {
+		conf_mount_rw();
+		if (!file_exists("/etc/bogons")) {
+			@file_put_contents("/etc/bogons", "");
+		}
+		if (!file_exists("/etc/bogonsv6")) {
+			@file_put_contents("/etc/bogonsv6", "");
+		}
+		conf_mount_ro();
 	}
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
 	if (is_bogonsv6_used()) {
@@ -3155,10 +3158,10 @@ pass in {$log['pass']} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 i
 pass in {$log['pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 
 # We use the mighty pf, we cannot be fooled.
-block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
-block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
-block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
-block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
+block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
+block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
+block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
 
 # Snort package
 block {$log['block']} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
@@ -3239,18 +3242,15 @@ EOD;
 					$cpiflist[] = "{$tmpif}";
 					$cpipm = get_interface_ip($cpifgrp);
 					if (is_ipaddr($cpipm)) {
-						$carpif = link_ip_to_carp_interface($cpipm);
-						if (!empty($carpif)) {
-							$cpiflist[] = $carpif;
-							$carpsif = explode(" ", $carpif);
-							foreach ($carpsif as $cpcarp) {
-								$carpip = find_interface_ip($cpcarp);
-								if (is_ipaddr($carpip)) {
-									$cpiplist[] = $carpip;
-								}
+						$cpiplist[] = $cpipm;
+						if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
+							continue;
+						}
+						foreach ($config['virtualip']['vip'] as $vip) {
+							if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+								$cpiplist[] = $vip['subnet'];
 							}
 						}
-						$cpiplist[] = $cpipm;
 					}
 				}
 			}

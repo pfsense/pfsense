@@ -1107,9 +1107,6 @@ function openvpn_resync($mode, $settings) {
 function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 	openvpn_create_dirs();
 
 	if (!is_array($config['openvpn'])) {

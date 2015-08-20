@@ -157,12 +157,11 @@ if (!$remote_version) {
 	update_output_window($static_text);
 
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-	$current_installed_version = trim(file_get_contents("/etc/version"));
 
 	$static_text .= "done\\n";
 	update_output_window($static_text);
 
-	if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
+	if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version) == -1) {
 		$needs_system_upgrade = true;
 	} else {
 		$static_text .= "\\n" . gettext("You are on the latest version.") . "\\n";
@@ -191,7 +190,7 @@ echo "//]]>\n";
 echo "</script>\n";
 
 $txt  = gettext("A new version is now available") . "\\n\\n";
-$txt .= gettext("Current version") . ": " . $current_installed_version . "\\n";
+$txt .= gettext("Current version") . ": " . $g['product_version'] . "\\n";
 if ($g['platform'] == "nanobsd") {
 	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
 }

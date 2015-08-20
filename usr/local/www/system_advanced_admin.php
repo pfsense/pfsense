@@ -70,8 +70,8 @@ $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 
 $a_cert =& $config['cert'];
-
 $certs_available = false;
+
 if (is_array($a_cert) && count($a_cert)) {
 	$certs_available = true;
 }
@@ -123,7 +123,6 @@ if ($_POST) {
 	flush();
 
 	if (!$input_errors) {
-
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}
@@ -286,10 +285,14 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
 include("head.inc");
 
+
+print('WebGUIProto = ' . $pconfig['webguiproto']);
+
 if ($input_errors)
 	print_input_errors($input_errors);
+	
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
@@ -308,44 +311,37 @@ $section = new Form_Section('WebConfigurator');
 $group = new Form_Group('Protocol');
 
 $group->add(new Form_Checkbox(
-	'protocol',
+	'webguiproto',
 	'Protocol',
 	'HTTP',
 	($pconfig['webguiproto']=='http'),
 	'http'
-))->displayAsRadio()->toggles('#ssl-certificate');
+))->displayAsRadio();
 
-$group->add($input = new Form_Checkbox(
-	'protocol',
+$group->add(new Form_Checkbox(
+	'webguiproto',
 	'Protocol',
 	'HTTPS',
 	($pconfig['webguiproto']=='https'),
 	'https'
-))->displayAsRadio()->toggles('#ssl-certificate');
+))->displayAsRadio();
 
-$section->add($group);
-
-if (!$certs_available)
-{
-	$input->setDisabled();
-	$input->setHelp('No Certificates have been defined. You must '.
+$group->setHelp($certs_available ? '':'No Certificates have been defined. You must '.
 	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.
 	'a Certificate before SSL can be enabled.');
-} else {
-	$values = array();
-	foreach($a_cert as $cert)
-		$values[ $cert['refid'] ] = $cert['descr'];
+	
+$section->add($group);
 
-	$section->addInput($input = new Form_Select(
-		'ssl-certificate',
-		'SSL Certificate',
-		$pconfig['ssl-certref'],
-		$values
-	));
+$values = array();
+foreach($a_cert as $cert)
+	$values[ $cert['refid'] ] = $cert['descr'];
 
-	if ($pconfig['webguiproto'] == 'http')
-		$input->addClass('collapse');
-}
+$section->addInput($input = new Form_Select(
+	'ssl-certificate',
+	'SSL Certificate',
+	$pconfig['ssl-certref'],
+	$values
+));
 
 $section->addInput(new Form_Input(
 	'tcp-port',
@@ -529,6 +525,31 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 print $form;
 
+?>
+<script>
+//<![CDATA[   
+events.push(function(){
+    
+    // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+    function hideInput(id, hide) {
+        if(hide)
+            $('#' + id).parent().parent('div').addClass('hidden');
+        else
+            $('#' + id).parent().parent('div').removeClass('hidden');            
+    }
+    
+    // On page load . . 
+	hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+	
+	// On click . .
+     $('[id=webguiproto]').click(function () {
+        hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+    });       
+});
+//]]>  
+</script>
+    
+<?php
 include("foot.inc");
 
 if ($restart_webgui)

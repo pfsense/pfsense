@@ -185,7 +185,7 @@ defCmdT("pftop Speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
 		if (isset($cpdata['enable']))
-			defCmdT("IPFW rules for {$cpdata['zoneid']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
+			defCmdT("IPFW rules for {$cpdata['zone']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
 	}
 }
 
@@ -198,6 +198,7 @@ defCmdT("DHCP Configuration","/bin/cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("DHCPv6 Configuration","/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
 defCmdT("strongSwan config","/bin/cat /var/etc/ipsec/strongswan.conf");
 defCmdT("IPsec config","/bin/cat /var/etc/ipsec/ipsec.conf");
+defCmdT("IPsec Status","/usr/local/sbin/ipsec statusall");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
@@ -219,11 +220,13 @@ if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
 }
 if(isset($config['system']['usefifolog']))  {
-	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 500 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 500");
 	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 100 IPsec log entries","/usr/sbin/fifolog_reader /var/log/ipsec.log 2>&1 | tail -n 100");
 } else {
-	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 500 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 500");
 	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 100 IPsec log entries","/usr/local/sbin/clog /var/log/ipsec.log 2>&1 | tail -n 100");
 }
 if (file_exists("/tmp/PHP_errors.log")) {
 	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");

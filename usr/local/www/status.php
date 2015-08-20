@@ -190,8 +190,8 @@ if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 }
 
 /* Configuration Files */
-defCmdT("Contents of /var/run", "/bin/ls /var/run");
-defCmdT("Contents of /conf", "/bin/ls /conf");
+defCmdT("Contents of var run", "/bin/ls /var/run");
+defCmdT("Contents of conf", "/bin/ls /conf");
 defCmdT("config.xml","dumpconfigxml");
 defCmdT("resolv.conf","/bin/cat /etc/resolv.conf");
 defCmdT("DHCP Configuration","/bin/cat /var/dhcpd/etc/dhcpd.conf");

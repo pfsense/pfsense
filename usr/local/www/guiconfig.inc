@@ -871,7 +871,9 @@ function display_widget_tabs(& $tab_array) {
 function outputJavaScriptFileInline($javascript) {
 	if (file_exists($javascript)) {
 		echo "\n<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		include($javascript);
+		echo "\n//]]>";
 		echo "\n</script>\n";
 	} else {
 		echo "\n\n<!-- Could not locate file:  {$javascript} -->\n\n";
@@ -883,7 +885,9 @@ function outputJavaScriptFileInline($javascript) {
 function outputCSSPrintFileInline($css) {
 	if (file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
+		echo "/*<![CDATA[*/\n";
 		include($css);
+		echo "\n/*]]>*/";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not locate file:  {$css} -->\n\n";
@@ -894,7 +898,9 @@ function outputCSSPrintFileInline($css) {
 function outputCSSFileInline($css) {
 	if (file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";
+		echo "/*<![CDATA[*/\n";
 		include($css);
+		echo "\n/*]]>*/";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not locate file:  {$css} -->\n\n";

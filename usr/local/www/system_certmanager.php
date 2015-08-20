@@ -100,6 +100,7 @@ foreach ($a_ca as $ca) {
 }
 
 $act = $_GET['act'];
+
 if ($_POST['act']) {
 	$act = $_POST['act'];
 }
@@ -117,6 +118,7 @@ if ($act == "del") {
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
+
 
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
@@ -751,8 +753,8 @@ if (!$internal_ca_count)
 {
 	$section->addInput(new Form_StaticText(
 		'Certificate authority',
-		gettext('No internal Certificate Authorities have been defined. You must').
-		'<a href="system_camanager.php?act=new&amp;method=internal">'. gettext("create") .'</a>'.
+		gettext('No internal Certificate Authorities have been defined. You must ').
+		'<a href="system_camanager.php?act=new&amp;method=internal">'. gettext(" create") .'</a>'.
 		gettext('an internal CA before creating an internal certificate.')
 	));
 }
@@ -775,18 +777,20 @@ else
 	));
 }
 
+print('<br />keylen = ' . $pconfig['keylen'] . '<br />');
+
 $section->addInput(new Form_Select(
 	'keylen',
 	'Key length',
 	$pconfig['keylen'],
-	$cert_keylens
+	array_combine($cert_keylens, $cert_keylens)
 ));
 
 $section->addInput(new Form_Select(
 	'digest_alg',
 	'Digest Algorithm',
 	$pconfig['digest_alg'],
-	$openssl_digest_algs
+	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
 	'SHA1 when possible.") ?>');
 

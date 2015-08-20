@@ -123,10 +123,12 @@ if ($_POST) {
 				if (!is_ipaddr($srv[0]))
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
 					
-				if(!empty($svrlist))
-					$svrlist .= ',';
-										
-				$svrlist .= $srv[0];
+				if(!empty($srv[0])) { // Filter out any empties
+					if(!empty($svrlist))
+						$svrlist .= ',';
+											
+					$svrlist .= $srv[0];
+				}
 			}
 		}
 	}
@@ -163,8 +165,8 @@ if ($dhcpd_enabled) {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-if ($savemsg, 'success')
-	print_info_box($savemsg);
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
 $form = new Form;
 

@@ -754,8 +754,8 @@ if (!$internal_ca_count)
 	$section->addInput(new Form_StaticText(
 		'Certificate authority',
 		gettext('No internal Certificate Authorities have been defined. You must ').
-		'<a href="system_camanager.php?act=new&amp;method=internal">'. gettext(" create") .'</a>'.
-		gettext('an internal CA before creating an internal certificate.')
+		'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext(" create") .'</a>'.
+		gettext(' an internal CA before creating an internal certificate.')
 	));
 }
 else
@@ -792,7 +792,7 @@ $section->addInput(new Form_Select(
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
-	'SHA1 when possible.") ?>');
+	'SHA1 when possible.');
 
 $section->addInput(new Form_Select(
 	'type',
@@ -989,11 +989,4 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
-?>
-<nav class="action-buttons">
-	<a href="system_certmanager.php?act=new">
-		<?=gettext("add or import certificate")?>
-	</a>
-</nav>
-
-<?php include('foot.inc');
+include('foot.inc');

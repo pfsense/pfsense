@@ -551,9 +551,11 @@ function build_cert_list() {
 
 	$list = array();
 
-	foreach ($config['cert'] as $cert)
-		$list[$cert['refid']] = $cert['descr'];
-
+	if(is_array($config['cert'])) {
+		foreach ($config['cert'] as $cert)
+			$list[$cert['refid']] = $cert['descr'];
+	}
+	
 	return($list);
 }
 
@@ -562,9 +564,11 @@ function build_ca_list() {
 
 	$list = array();
 
-	foreach ($config['ca'] as $ca)
-		$list[$ca['refid']] =  $ca['descr'];
-
+	if(is_array($config['ca'])) {
+		foreach ($config['ca'] as $ca)
+			$list[$ca['refid']] =  $ca['descr'];
+	}
+	
 	return($list);
 }
 
@@ -573,9 +577,11 @@ function build_eal_list() {
 
 	$list = array();
 
-	foreach ($p1_ealgos as $algo => $algodata)
-		$list[$algo] = htmlspecialchars($algodata['name']);
-
+	if(is_array($p1_ealgos)) {
+		foreach ($p1_ealgos as $algo => $algodata)
+			$list[$algo] = htmlspecialchars($algodata['name']);
+	}
+	
 	return($list);
 }
 
@@ -584,15 +590,16 @@ if ($pconfig['mobile']) {
 } else {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 1"));
 }
+
 $shortcut_section = "ipsec";
 
 include("head.inc");
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
-$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+$tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
 require('classes/Form.class.php');
@@ -894,7 +901,7 @@ events.push(function(){
 	}
 
 	function peeridsel_change() {
-		hideGroupInput('peerid_data', ($('#peerid_type').val() == 'peeraddress'));
+		hideGroupInput('peerid_data', ($('#peerid_type').val() == 'peeraddress') || ($('#peerid_type').val() == 'any'));
 	}
 
 	function methodsel_change() {

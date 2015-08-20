@@ -543,11 +543,14 @@ $subnetarray = get_configured_interface_with_descr();
 foreach($subnetarray as $ifname => $ifdescr)
 	$subnetarray[$ifname] = $ifdescr . ' subnet';
 
+// Tack none, address & network on the beginning
+$subnetarray = array('none' => gettext('None'), 'address' => 'Address', 'network' => 'Network') + $subnetarray;
+
 $group->add(new Form_Select(
 	'natlocalid_type',
 	null,
 	$pconfig['natlocalid_type'],
-	array_merge(array('address' => 'Address', 'network' => 'Network'), array_merge($subnetarray, array('none' => gettext('None'))))
+	$subnetarray
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(

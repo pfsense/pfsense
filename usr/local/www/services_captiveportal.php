@@ -196,6 +196,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
+	$pconfig['passthrumacaddlimituser'] = $a_cp[$cpzone]['passthrumacaddlimituser'];
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
@@ -422,6 +423,7 @@ if ($_POST) {
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
+		$newcp['passthrumacaddlimituser'] = $_POST['passthrumacaddlimituser'];
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
@@ -706,6 +708,13 @@ function enable_change(enable_change) {
 						<strong><?=gettext("Enable Pass-through MAC automatic addition with username"); ?></strong><br />
 						<?=gettext("If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved."); ?>
 						<?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
+						
+						<br /><br />
+ 						<input name="passthrumacaddlimituser" type="text" size="75" autocomplete="off" class="formfld unknown" id="passthrumacaddlimituser" value="<?=htmlspecialchars($pconfig['passthrumacaddlimituser']); ?>" /><br />
+        					<strong><?=gettext("Only add Pass-through MAC for users listed"); ?></strong><br />
+    						<?=gettext("Comma separated list of usernames (no spaces). Leave blank to add all usernames (default)."); ?>
+    						<?=gettext("Only usernames listed will have an MAC passthrough added."); ?>
+
 					</td>
 				</tr>
 				<tr>

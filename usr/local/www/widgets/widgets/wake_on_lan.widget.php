@@ -55,10 +55,14 @@ if (count($wolcomputers) > 0) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
-		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-		if ($is_active == 1) {
+		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/awk '{print $7;}'");
+		if ($is_active == 'expires') {
 			echo '<td class="listr" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\" alt=\"pass\" /> " . gettext("Online") . "</td>\n";
+		} else
+		if ($is_active == 'permanent') {
+			echo '<td class="listr" align="center">' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass_d.gif\" alt=\"pass\" /> " . gettext("Static ARP") . "</td>\n";
 		} else {
 			echo '<td class="listbg" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\" alt=\"block\" />&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";

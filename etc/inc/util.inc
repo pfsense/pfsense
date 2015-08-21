@@ -401,19 +401,24 @@ function gen_subnet_mask($bits) {
 	return long2ip(gen_subnet_mask_long($bits));
 }
 
-/* Convert long int to IP address, truncating to 32-bits. */
+/* Convert long int to IP address
+   Returns '' if not valid IPv4 (including if any bits >32 are non-zero) */
 function long2ip32($ip) {
-	return long2ip($ip & 0xFFFFFFFF);
+	return ((is_int($ip) && ($ip >> 32) == 0) ? long2ip($ip & 0xFFFFFFFF) : '');
 }
 
-/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms.
+   Returns '' if not valid IPv4. */
 function ip2long32($ip) {
-	return (ip2long($ip) & 0xFFFFFFFF);
+	$a = ip2long($ip);
+	return ($a === False ? '' : $a & 0xFFFFFFFF);
 }
 
-/* Convert IP address to unsigned long int. */
+/* Convert IP address to unsigned long int.
+   Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
-	return sprintf("%u", ip2long32($ip));
+	$a = ip2long($ip);
+	return ($a === False ? '' : sprintf("%u", $a & 0xFFFFFFFF));
 }
 
 /* Find out how many IPs are contained within a given IP range

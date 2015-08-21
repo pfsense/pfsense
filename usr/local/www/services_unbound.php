@@ -173,7 +173,23 @@ if ($_POST) {
 			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
 		}
 
+		// FIXME: ugly code - currently the only way to test proposed unbound.conf custom options is to save them first.
+		// There isn't a method in the codebase to test proposed custom options and only save to $config if error-free.
+		// It's also assumed here, that all other options processed and this is the last config before resync => can test entire config at this point.
+		
+		$old_custom_options = $a_unboundcfg['custom_options'];
 		$a_unboundcfg['custom_options'] = base64_encode(str_replace("\r\n", "\n", $_POST['custom_options']));
+		if(unbound_generate_config(true)) {
+			// 1 = errors found.  unbound-checkconf doesn't specify the errors, so we try to be at least somewhat helpful.
+			$a_unboundcfg['custom_options'] = $old_custom_options;
+			if(unbound_generate_config(true)) {
+				// errors of some kind would still exist even with old custom options
+				$input_errors[] = gettext("The configuration contains errors. Please check all options carefully.");
+			} else {
+				// reverting to old custom config cleared the errors
+				$input_errors[] = gettext("The custom options are causing errors. Please check custom options carefully.");
+			}
+		}
 
 		if (!$input_errors) {
 			write_config("DNS Resolver configured.");
@@ -387,15 +403,15 @@ function show_advanced_dns() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Custom options");?></td>
 								<td width="78%" class="vtable">
 									<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-										<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
+										<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Custom options"); ?>" /> - <?=gettext("Show custom options");?>
 									</div>
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
-										<strong><?=gettext("Advanced");?><br /></strong>
+										<strong><?=gettext("Custom options");?><br /></strong>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
-										<?=gettext("Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline"); ?><br />
+										<?=gettext("Enter any additional configuration parameters to add to the DNS Resolver configuration here. Separate options by a newline"); ?><br />
 									</div>
 								</td>
 							</tr>

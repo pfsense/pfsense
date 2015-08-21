@@ -258,8 +258,8 @@ function upgrade_014_to_015() {
 		if ($config['interfaces']['wan']['gateway'] <> "") {
 			$config['system']['gateway'] = $config['interfaces']['wan']['gateway'];
 		}
+		unset($config['interfaces']['wan']['gateway']);
 	}
-	unset($config['interfaces']['wan']['gateway']);
 
 	/* Queues are no longer interface specific */
 	if (isset($config['interfaces']['lan']['schedulertype'])) {
@@ -285,9 +285,12 @@ function upgrade_015_to_016() {
 		$config['system']['alt_firmware_url']['enabled'] = "";
 		$config['system']['alt_firmware_url']['firmware_base_url'] = $config['system']['firmwareurl'];
 		$config['system']['alt_firmware_url']['firmware_filename'] = $config['system']['firmwarename'];
-		unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
-	} else {
-		unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
+	}
+	if (isset($config['system']['firmwareurl'])) {
+		unset($config['system']['firmwareurl']);
+	}
+	if (isset($config['system']['firmwarename'])) {
+		unset($config['system']['firmwarename']);
 	}
 }
 
@@ -295,12 +298,24 @@ function upgrade_015_to_016() {
 function upgrade_016_to_017() {
 	global $config;
 	/* wipe previous shaper configuration */
-	unset($config['shaper']['queue']);
-	unset($config['shaper']['rule']);
-	unset($config['interfaces']['wan']['bandwidth']);
-	unset($config['interfaces']['wan']['bandwidthtype']);
-	unset($config['interfaces']['lan']['bandwidth']);
-	unset($config['interfaces']['lan']['bandwidthtype']);
+	if (isset($config['shaper']['queue'])) {
+		unset($config['shaper']['queue']);
+	}
+	if (isset($config['shaper']['rule'])) {
+		unset($config['shaper']['rule']);
+	}
+	if (isset($config['interfaces']['wan']['bandwidth'])) {
+		unset($config['interfaces']['wan']['bandwidth']);
+	}
+	if (isset($config['interfaces']['wan']['bandwidthtype'])) {
+		unset($config['interfaces']['wan']['bandwidthtype']);
+	}
+	if (isset($config['interfaces']['lan']['bandwidth'])) {
+		unset($config['interfaces']['lan']['bandwidth']);
+	}
+	if (isset($config['interfaces']['lan']['bandwidthtype'])) {
+		unset($config['interfaces']['lan']['bandwidthtype']);
+	}
 	$config['shaper']['enable'] = FALSE;
 }
 
@@ -350,7 +365,9 @@ function upgrade_017_to_018() {
 		unset($config['installedpackages']['carp']);
 	}
 	/* Server NAT is no longer needed */
-	unset($config['nat']['servernat']);
+	if (isset($config['nat']['servernat'])) {
+		unset($config['nat']['servernat']);
+	}
 
 	/* enable SSH */
 	if ($config['version'] == "1.8") {
@@ -361,7 +378,7 @@ function upgrade_017_to_018() {
 
 function upgrade_018_to_019() {
 	global $config;
-	$config['theme']="metallic";
+	$config['theme'] = "metallic";
 }
 
 
@@ -412,7 +429,9 @@ function upgrade_023_to_024() {
 function upgrade_024_to_025() {
 	global $config;
 	$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
-	unset($config['system']['use_rrd_gateway']);
+	if (isset($config['system']['use_rrd_gateway'])) {
+		unset($config['system']['use_rrd_gateway']);
+	}
 }
 
 
@@ -587,7 +606,7 @@ function upgrade_039_to_040() {
 	$config['system']['webgui']['auth_method'] = "session";
 	$config['system']['webgui']['backing_method'] = "htpasswd";
 
-	if (isset ($config['system']['username'])) {
+	if (isset($config['system']['username'])) {
 		$config['system']['group'] = array();
 		$config['system']['group'][0]['name'] = "admins";
 		$config['system']['group'][0]['description'] = gettext("System Administrators");
@@ -627,8 +646,10 @@ function upgrade_039_to_040() {
 		$config['system']['nextgid'] = "111";
 
 		/* wipe previous auth configuration */
-		unset ($config['system']['username']);
-		unset ($config['system']['password']);
+		unset($config['system']['username']);
+		if (isset($config['system']['password'])) {
+			unset($config['system']['password']);
+		}
 	}
 }
 
@@ -1495,7 +1516,9 @@ function upgrade_050_to_051() {
 	$pconfig['value'] = "0";
 	$config['sysctl']['item'][] = $pconfig;
 
-	unset($config['bridge']);
+	if (isset($config['bridge'])) {
+		unset($config['bridge']);
+	}
 
 	$convert_bridges = false;
 	foreach ($config['interfaces'] as $intf) {
@@ -2025,7 +2048,9 @@ function upgrade_053_to_054() {
 		if (empty($config['load_balancer'])) {
 			unset($config['load_balancer']);
 		} else {
-			unset($config['load_balancer']['lbpool']);
+			if (isset($config['load_balancer']['lbpool'])) {
+				unset($config['load_balancer']['lbpool']);
+			}
 		}
 	} else {
 		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
@@ -2978,10 +3003,10 @@ function upgrade_083_to_084() {
 			$config['hasync'] = $config['installedpackages']['carpsettings']['config'][0];
 			unset($config['installedpackages']['carpsettings']);
 		}
-		if (empty($config['installedpackages']['carpsettings'])) {
+		if (empty($config['installedpackages']['carpsettings']) && isset($config['installedpackages']['carpsettings'])) {
 			unset($config['installedpackages']['carpsettings']);
 		}
-		if (empty($config['installedpackages'])) {
+		if (empty($config['installedpackages']) && isset($config['installedpackages'])) {
 			unset($config['installedpackages']);
 		}
 	}
@@ -3393,8 +3418,12 @@ function upgrade_102_to_103() {
 
 	$config['nat']['outbound'] = $config['nat']['advancedoutbound'];
 
-	unset($config['nat']['ipsecpassthru']);
-	unset($config['nat']['advancedoutbound']);
+	if (isset($config['nat']['ipsecpassthru'])) {
+		unset($config['nat']['ipsecpassthru']);
+	}
+	if (isset($config['nat']['advancedoutbound'])) {
+		unset($config['nat']['advancedoutbound']);
+	}
 }
 
 function upgrade_103_to_104() {
@@ -3686,18 +3715,20 @@ function upgrade_111_to_112() {
 function upgrade_112_to_113() {
 	global $config;
 
-	if (isset($config['notifications']['smtp']['ssl']) &&
-	    $config['notifications']['smtp']['ssl'] == "checked") {
-		$config['notifications']['smtp']['ssl'] = true;
-	} else {
-		unset($config['notifications']['smtp']['ssl']);
+	if (isset($config['notifications']['smtp']['ssl'])) {
+		if ($config['notifications']['smtp']['ssl'] == "checked") {
+			$config['notifications']['smtp']['ssl'] = true;
+		} else {
+			unset($config['notifications']['smtp']['ssl']);
+		}
 	}
 
-	if (isset($config['notifications']['smtp']['tls']) &&
-	    $config['notifications']['smtp']['tls'] == "checked") {
-		$config['notifications']['smtp']['tls'] = true;
-	} else {
-		unset($config['notifications']['smtp']['tls']);
+	if (isset($config['notifications']['smtp']['tls'])) {
+		if ($config['notifications']['smtp']['tls'] == "checked") {
+			$config['notifications']['smtp']['tls'] = true;
+		} else {
+			unset($config['notifications']['smtp']['tls']);
+		}
 	}
 }
 

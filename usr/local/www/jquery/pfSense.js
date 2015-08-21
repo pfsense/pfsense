@@ -40,7 +40,7 @@ $(function() {
 	{
 		var groups = $('div.form-group.user-duplication-horiz');
 		var controlsContainer = $('<div class="col-sm-2"></div>');
-		var plus = $('<a class="btn btn-sm btn-success">Duplicate</a>');
+		var plus = $('<a class="btn btn-sm btn-success">Add</a>');
 		var minus = $('<a class="btn btn-sm btn-warning">Delete</a>');
 
 		minus.on('click', function(){
@@ -51,7 +51,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').removeAttr('value');
+			clone.find('*').val(''); //removeAttr('value');
 			clone.appendTo(group.parent());
 		});
 
@@ -69,7 +69,7 @@ $(function() {
 	{
 		var groups = $('div.form-group.user-duplication');
 		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
-		var plus = $('<a class="btn btn-xs btn-success">Duplicate</a>');
+		var plus = $('<a class="btn btn-xs btn-success">Add</a>');
 		var minus = $('<a class="btn btn-xs btn-warning">Delete</a>');
 
 		minus.on('click', function(){
@@ -80,7 +80,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').removeAttr('value');
+			clone.find('*').val(''); //removeAttr('value');
 			clone.appendTo(group.parent());
 		});
 

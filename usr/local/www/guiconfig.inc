@@ -1112,7 +1112,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 function add_package_tabs($pkgname, &$tab_array) {
 	global $config, $g;
 
-	$pkg = get_pkg_data($pkgname);
+//	$pkg = get_pkg_data($pkgname);
 
 	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
 		return;

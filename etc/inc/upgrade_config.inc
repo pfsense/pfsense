@@ -3820,6 +3820,12 @@ function upgrade_119_to_120() {
 		}
 		unset($miniupnpd["permuser{$i}"]);
 	}
+
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$config['system']['use_mfs_tmp'] = true;
+		$config['system']['use_mfs_var'] = true;
+		unset($config['system']['use_mfs_tmpvar']);
+	}
 }
 
 ?>

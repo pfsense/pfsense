@@ -91,8 +91,9 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		fi
 	fi
 
-	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+	USE_MFS_TMP=`/usr/bin/grep -c use_mfs_tmp /cf/conf/config.xml`
+	USE_MFS_VAR=`/usr/bin/grep -c use_mfs_var /cf/conf/config.xml`
+	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMP} -gt 0 ] || [ ${USE_MFS_VAR} -gt 0 ]; then
 		/etc/rc.embedded
 	fi
 fi
@@ -140,7 +141,7 @@ product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
 varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 
-if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
+if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_VAR} -eq 0 ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
@@ -161,7 +162,7 @@ echo
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
-elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_VAR} -gt 0 ]; then
 	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg

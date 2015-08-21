@@ -271,7 +271,9 @@ if ($local_ip == false) {
 				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
 			if (document.cookie.indexOf("cookie_test") == -1)
-				document.getElementById("no_cookies").className = '';
+				document.getElementById("no_cookies").style.display="";
+			else
+				document.getElementById("no_cookies").style.display="none";
 
 			// Delete it
 			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";

@@ -99,7 +99,7 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
+		if ($retval == 0)
 			clear_subsystem_dirty('unbound');
 	} else if(!$deleting) {
 

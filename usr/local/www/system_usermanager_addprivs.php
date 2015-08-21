@@ -52,6 +52,7 @@ $pgtitle = array("System", "User manager", "Add privileges");
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
 }
+
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
 }
@@ -186,16 +187,18 @@ events.push(function(){
 	if (is_array($priv_list)) {
 		$id = 0;
 
-	$jdescs = "var descs = new Array();\n";
-	foreach ($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_user['priv'])) {
-			continue;
+		$jdescs = "var descs = new Array();\n";
+		foreach ($priv_list as $pname => $pdata) {
+			if (in_array($pname, $a_user['priv'])) {
+				continue;
+			}
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
+			$jdescs .= "descs[{$id}] = '{$desc}';\n";
+			$id++;
 		}
-		$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
-		$jdescs .= "descs[{$id}] = '{$desc}';\n";
-		$id++;
-	}
 
+		echo $jdescs;
+	}
 ?>
 	// Set the number of options to display
 	$('.multiselect').attr("size","20");

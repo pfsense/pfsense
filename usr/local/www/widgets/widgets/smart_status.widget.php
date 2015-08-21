@@ -74,6 +74,9 @@ if (count($devs) > 0)  {
 			<td><?=$dev_ident?></td>
 			<td><?=ucfirst($dev_state)?></td>
 		</tr>
-<?php endforeach; ?>
+<?php
+	} 
+}
+?>
 	</tbody>
 </table>

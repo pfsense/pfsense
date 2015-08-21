@@ -90,9 +90,10 @@ session_commit();
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
 }
+
 if ($savemsg) {
 	print_info_box($savemsg);
 }
@@ -124,4 +125,4 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print($form);
 
-include("fend.inc");
+include("foot.inc");

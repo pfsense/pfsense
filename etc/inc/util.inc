@@ -637,16 +637,14 @@ function get_ll_scope($addr) {
 
 /* returns true if $ipaddr is a valid literal IPv6 address */
 function is_literalipaddrv6($ipaddr) {
-	if (preg_match("/\[([0-9a-f:]+)\]/i", $ipaddr, $match)) {
-		$ipaddr = $match[1];
-	} else {
-		return false;
+	if (substr($ipaddr,0,1) == '[' && substr($ipaddr,-1,1) == ']') {
+		// if it's data wrapped in "[ ... ]" then test if middle part is valid IPv6
+		return is_ipaddrv6(substr($ipaddr,1,-1));
 	}
-
-	return is_ipaddrv6($ipaddr);
+	return false;
 }
 
-/* returns true if $iport is a valid IPv4/IPv6 address + port
+/* returns true if $iport is a valid IPv4:port or [Literal IPv6]:port
 	false - not valid
 	true (numeric 4 or 6) - if valid, gives type of address */
 function is_ipaddrwithport($ipport) {
@@ -671,12 +669,11 @@ function is_ipaddrwithport($ipport) {
 
 function is_hostnamewithport($hostport) {
 	$parts = explode(":", $hostport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_hostname($parts[0]) && is_port($port);
-	} else {
-		return false;
+	// no need to validate with is_string(); if it's not a string then explode won't return 2 parts anyway
+	if (count($parts) == 2) {
+		return is_hostname($parts[0]) && is_port($parts[1]);
 	}
+	return false;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */

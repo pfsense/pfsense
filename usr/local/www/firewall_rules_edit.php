@@ -1237,9 +1237,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Checkbox(
 		$type .'not',
 		$name .' not',
-		'Invert the sense of the match.',
+		'Invert match.',
 		$pconfig[$type.'not']
-	));
+	))->setWidth(2);
 
 	$ruleType = $pconfig[$type];
 	if (is_specialnet($pconfig[$type]))

@@ -1233,7 +1233,7 @@ class priq_queue {
 		$form .= "</span></td></tr><tr>";
 		$form .= "<td width=\"22%\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
-		$form .= "<input type=\"text\" name=\"description\" size=\"40\" class=\"formfld unknown\" value=\"" . $this->GetDescription() . "\" />";
+		$form .= "<input type=\"text\" name=\"description\" size=\"40\" class=\"formfld unknown\" value=\"" . htmlspecialchars($this->GetDescription()) . "\" />";
 		$form .= "</td></tr>";
 		$form .= "<input type=\"hidden\" name=\"interface\" id=\"interface\"";
 		$form .= " value=\"".$this->GetInterface()."\" />";
@@ -3414,7 +3414,7 @@ EOD;
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
-		$form .= $this->GetDescription();
+		$form .= htmlspecialchars($this->GetDescription());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">";
 		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
@@ -3695,7 +3695,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"description\" class=\"formfld unknown\" size=\"40\" name=\"description\" value=\"";
-		$form .= $this->GetDescription();
+		$form .= htmlspecialchars($this->GetDescription());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">";
 		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
@@ -3893,7 +3893,7 @@ class layer7 {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
-		$form .= $this->GetRDescription();
+		$form .= htmlspecialchars($this->GetRDescription());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">";
 		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";

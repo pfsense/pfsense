@@ -80,8 +80,8 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && !is_linklocal($oc['ipaddrv6'])) && $oc['ipaddrv6'] != 'track6') ||
+		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && !is_linklocal($oc['ipaddrv6'])) && $oc['ipaddrv6'] != 'track6')) {
 			continue;
 		}
 		$if = $ifent;
@@ -111,6 +111,11 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
+	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
+	if (empty($pconfig['ddnsclientupdates'])) {
+		$pconfig['ddnsclientupdates'] = 'allow';
+	}
+	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
@@ -126,8 +131,13 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-$ifcfgip = get_interface_ipv6($if);
-$ifcfgsn = get_interface_subnetv6($if);
+if ($config['interfaces'][$if]['ipaddrv6'] != 'track6') {
+	$ifcfgip = get_interface_ipv6($if);
+	$ifcfgsn = get_interface_subnetv6($if);
+} else {
+	$ifcfgip = '::';
+	$ifcfgsn = 64;
+}
 
 /*   set the enabled flag which will tell us if DHCP relay is enabled
  *   on any interface. We will use this to disable DHCP server since
@@ -181,11 +191,21 @@ if ($_POST) {
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to']))) {
 			$input_errors[] = gettext("A valid prefix range must be specified.");
 		}
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+		if ($_POST['range_from']) {
+			if (!is_ipaddrv6($_POST['range_from'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			}
+			if ($config['interfaces'][$if]['ipaddrv6'] == 'track6' && !Net_IPv6::isInNetmask($_POST['range_from'], '::', 64)) {
+				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			}
 		}
-		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+		if ($_POST['range_to']) {
+			if (!is_ipaddrv6($_POST['range_to'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			}
+			if ($config['interfaces'][$if]['ipaddrv6'] == 'track6' && !Net_IPv6::isInNetmask($_POST['range_to'], '::', 64)) {
+				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			}
 		}
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway']))) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
@@ -341,6 +361,8 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
+		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
+		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
@@ -537,8 +559,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && !is_linklocal($oc['ipaddrv6'])) && $oc['ipaddrv6'] != 'track6') ||
+		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && !is_linklocal($oc['ipaddrv6'])) && $oc['ipaddrv6'] != 'track6')) {
 			continue;
 		}
 		if ($ifent == $if) {
@@ -767,7 +789,13 @@ include("head.inc");
 									<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>" /><br />
 									<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?><br />
 									<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>" /><br />
-									<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
+									<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?><br />
+									<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="allow" <?php if ($pconfig['ddnsclientupdates'] == 'allow') echo " checked=\"checked\""; ?> >Allow</input>
+									<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="deny" <?php if ($pconfig['ddnsclientupdates'] == 'deny') echo " checked=\"checked\""; ?> >Deny</input>
+									<input name="ddnsclientupdates" type="radio" class="formfld unknown" id="ddnsclientupdates" size="20" value="ignore" <?php if ($pconfig['ddnsclientupdates'] == 'ignore') echo " checked=\"checked\""; ?> >Ignore</input><br />
+									<?=gettext("How Forward entries are handled when client indicates they wish to update DNS.  Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will do the updates and the client should not, Ignore specifies that DHCP will do the update and the client can also attempt the update usually using a different domain name.");?><br />
+									<input style="vertical-align:middle" type="checkbox" name="ddnsreverse" id="ddnsreverse" <?php if ($pconfig['ddnsreverse']) echo " checked=\"checked\""; ?> />&nbsp;
+									<?=gettext("Add reverse DNS entries.");?>
 								</p>
 							</div>
 						</td>
@@ -901,7 +929,7 @@ include("head.inc");
 											<?=gettext("Note:");?><br />
 										</strong>
 									</span>
-									<?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: General setup"); ?></a>\
+									<?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: General setup"); ?></a>
 									<?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS forwarder"); ?></a>, <?=gettext("if enabled)"); ?>
 								</span>
 								<span class="vexpl">

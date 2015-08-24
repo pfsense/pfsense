@@ -46,6 +46,7 @@ function stats(x) {
         updateMbuf(values[11]);
         updateMbufMeter(values[12]);
         updateStateMeter(values[13]);
+        updateNutStats(values[14]);
 }
 
 function updateMemory(x) {
@@ -179,6 +180,27 @@ function updateInterfaces(x){
 			}
 		});
 	}
+}
+
+function updateNutStats(x) {
+	if (widgetActive("ups")){
+		upsdata_array = x.split(":");
+		if(upsdata_array.length > 1) {
+			if(jQuery('#monitoring')) jQuery("#monitoring").html(upsdata_array[0]);
+			if(jQuery('#model')) jQuery("#model").html(upsdata_array[1]);
+			if(jQuery('#status')) jQuery("#status").html(upsdata_array[2]);
+			if(jQuery('#batwidtha')) jQuery("#batwidtha").css('width', upsdata_array[3] + 'px');
+			if(jQuery('#batwidthb')) jQuery("#batwidthb").css('width', upsdata_array[4] + 'px');
+			if(jQuery('#batmeter')) jQuery("#batmeter").html(upsdata_array[5]);
+			if(jQuery('#runtime')) jQuery("#runtime").html(upsdata_array[6]);
+			if(jQuery('#bvoltage')) jQuery("#bvoltage").html(upsdata_array[7]);
+			if(jQuery('#loadwidtha')) jQuery("#loadwidtha").css('width', upsdata_array[8] + 'px');
+			if(jQuery('#loadwidthb')) jQuery("#loadwidthb").css('width', upsdata_array[9] + 'px');
+			if(jQuery('#loadmeter')) jQuery("#loadmeter").html(upsdata_array[10]);
+			if(jQuery('#InputV')) jQuery("#InputV").html(upsdata_array[11]);
+			if(jQuery('#OutputV')) jQuery("#OutputV").html(upsdata_array[12]);			
+		}
+	}	
 }
 
 function widgetActive(x) {

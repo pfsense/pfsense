@@ -27,6 +27,7 @@ function get_stats() {
 	$stats['mbuf'] = get_mbuf();
 	$stats['mbufpercent'] = get_mbuf(true);
 	$stats['statepercent'] = get_pfstate(true);
+	$stats['nut'] = get_nutstats(true);
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -401,6 +402,140 @@ function get_interfacestatus() {
 		$data .= "~";
 
 	}
+	return $data;
+}
+
+function get_nutstats() {
+	global $config;
+	$data = "";
+	$cmd = "";
+	if (isset($config['installedpackages']['nut']['config'][0])) {
+		$nut_config = $config['installedpackages']['nut']['config'][0];
+	} else {
+		// No NUT package installed, return
+		return gettext("No NUT installed!");
+	}
+	// "Monitoring" field and get command to fetch ups data - upsdata_array[0]
+	if ($nut_config['monitor'] == "local") {
+		$data = gettext("Local UPS");
+		$cmd  = "upsc {$nut_config['name']}@localhost";
+	} elseif ($nut_config['monitor'] == "remote") {
+		$data = gettext("Remote UPS");
+		$cmd  = "upsc {$nut_config['remotename']}@{$nut_config['remoteaddr']}";
+	} elseif ($nut_config['monitor'] == "snmp") {
+		$data = gettext("SNMP UPS");
+		$cmd  = "upsc {$nut_config['snmpname']}@localhost";
+	}
+	// Find upsmon process
+	$running = ((int)exec('pgrep upsmon | wc -l') > 0) ? true : false;
+	if ($running) {
+		// Fetch ups data
+		$handle = popen($cmd, 'r');
+		// Parse ups data
+		if ($handle) {
+			$read = fread($handle, 4096);
+			pclose($handle);
+			$lines = explode("\n", $read);
+			if (count($lines) == 1) {
+				$condition = gettext("ERROR:Data stale!");
+			} else {
+				$ups = array();
+				foreach ($lines as $line) {
+					$line = explode(':', $line);
+					$ups[$line[0]] = trim($line[1]);
+				}
+			}
+		}
+	} else {
+		// No service running
+		if ($nut_config['monitor'] == "snmp") {
+			$condition = gettext("NUT enabled but service not running!\nSNMP UPS may be unreachable.");
+		} else {
+			$condition = gettext("NUT enabled but service not running!");
+		}
+	}
+	if (isset($condition)) {
+		// Return error description
+		return $condition;
+	}
+	// "Model" field - upsdata_array[1]
+	$data .= ":" . (($ups['ups.model'] != "") ? $ups['ups.model'] : gettext("n/a"));
+	// "Status" field - upsdata_array[2]
+	$status = explode(" ", $ups['ups.status']);
+	foreach($status as $condition) {
+		if($disp_status) $disp_status .= ", ";
+		switch ($condition) {
+			case "WAIT":
+				$disp_status .= gettext("Waiting");
+				break;
+			case "OFF":
+				$disp_status .= gettext("Off Line");
+				break;
+			case "OL":
+				$disp_status .= gettext("On Line");
+				break;
+			case "OB":
+				$disp_status .= gettext("On Battery");
+				break;
+			case "TRIM":
+				$disp_status .= gettext("SmartTrim");
+				break;
+			case "BOOST":
+				$disp_status .= gettext("SmartBoost");
+				break;
+			case "OVER":
+				$disp_status .= gettext("Overload");
+				break;
+			case "LB":
+				$disp_status .= gettext("Battery Low");
+				break;
+			case "RB":
+				$disp_status .= gettext("Replace Battery");
+				break;
+			case "CAL":
+				$disp_status .= gettext("Calibration");
+				break;
+			case "CHRG":
+				$disp_status .= gettext("Charging");
+				break;
+			default:
+				$disp_status .= $condition;
+				break;
+		}
+	}
+	$data .= ":" . $disp_status;
+	// "Battery Charge" bars and field - upsdata_array[3],[4],[5]
+	$data .= ":" . round($ups['battery.charge']);
+	$data .= ":" . (100 - round($ups['battery.charge']));
+	$data .= ":" . $ups['battery.charge'] . "%";
+	// "Time Remaning" field - upsdata_array[6]
+	$secs = $ups['battery.runtime'];
+	if ($secs < 0 || $secs == "") {
+		$data .= ":" . gettext("n/a");
+	} else {
+		$m = (int)($secs / 60); 
+		$h = (int)($m / 60) % 24; 
+		$m = $m % 60;
+		$s = $secs % 60;
+		$data .= ":" . $h."h " . $m."m " . $s."s";
+	}	
+	// "Battery Voltage or Battery Temp" field - upsdata_array[7]
+	if($ups['battery.voltage'] > 0) {
+		$data .= ":" . $ups['battery.voltage'] . "&nbsp;V";
+	} elseif ($ups['ups.temperature'] > 0) {
+		$data .= ":" . $ups['ups.temperature'] . "&#38;#176;C";
+	} else {
+		$data .= ":" . "";
+	}
+	// "Load" bars and field - upsdata_array[8],[9],[10]
+	$data .= ":" . round($ups['ups.load']);
+	$data .= ":" . (100 - round($ups['ups.load']));
+	$data .= ":" . $ups['ups.load'] . "%";
+	// "Input Voltage" field - upsdata_array[11]
+	$data .= ":" . $ups['input.voltage'] . "&nbsp;V";
+	// "Output Voltage" field - upsdata_array[12]
+	$data .= ":" . $ups['output.voltage'] . "&nbsp;V";
+
 	return $data;
 }
 

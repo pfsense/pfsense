@@ -13,7 +13,7 @@ if ($options['s'] <> "") {
 
 
 $in = file("php://stdin");
-foreach ($in as $line){
+foreach ($in as $line) {
 	$message .= "$line";
 }
 

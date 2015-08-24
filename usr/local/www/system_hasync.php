@@ -139,8 +139,8 @@ include("head.inc");
 						</select>
 						<br />
 						If Synchronize States is enabled, it will utilize this interface for communication.<br />
-						<b>NOTE:</b>  We recommend setting this to a interface other than LAN!  A dedicated interface works the best.<br />
-						<b>NOTE:</b>  You must define a IP on each machine participating in this failover group.<br />
+						<b>NOTE:</b>  We recommend setting this to an interface other than LAN!  A dedicated interface works the best.<br />
+						<b>NOTE:</b>  You must define an IP on each machine participating in this failover group.<br />
 						<b>NOTE:</b>  You must have an IP assigned to the interface on any participating sync nodes.
 					</td>
 				</tr>

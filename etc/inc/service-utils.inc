@@ -344,13 +344,6 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['installedpackages']['routed']) && $config['installedpackages']['routed']['config'][0]['enable']) {
-		$pconfig = array();
-		$pconfig['name'] = "routed";
-		$pconfig['description'] = gettext("RIP Daemon");
-		$services[] = $pconfig;
-	}
-
 	if (isset($config['ipsec']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";

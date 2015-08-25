@@ -95,6 +95,7 @@ fi
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
+export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"pfSense"}
@@ -149,8 +150,6 @@ export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
 # iso staging area.
 export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"${SCRATCHDIR}/final-dir"}
 
-export SRCDIR=${SRCDIR:-"/usr/${PRODUCT_NAME}src/src.${GIT_REPO_BRANCH_OR_TAG}"}
-
 # 400M is not enough for amd64
 export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 
@@ -176,8 +175,8 @@ export OVA_DISKSECTIONALLOCATIONUNITS=${OVA_DISKSECTIONALLOCATIONUNITS:-"1073725
 # end of OVF
 
 # Leave this alone.
-export SRC_CONF=${SRC_CONF:-"${SRCDIR}/release/conf/${PRODUCT_NAME}_src.conf"}
-export MAKE_CONF=${MAKE_CONF:-"${SRCDIR}/release/conf/${PRODUCT_NAME}_make.conf"}
+export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export MAKE_CONF=${MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
 # Extra tools to be added to ITOOLS
 export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}

@@ -57,16 +57,22 @@
 # beginning of this file                  #
 ###########################################
 
-BUILD_CONF="$(realpath $(dirname ${0}))/build.conf"
+# Detect if this file is being sourced by a script from root or from tools
+local _curdir=$(basename $(dirname ${0}))
+
+if [ "${_curdir}" = "tools" ]; then
+	export BUILDER_SCRIPTS=$(realpath ${_curdir})
+	export BUILDER_TOOLS=$(realpath "${_curdir}/..")
+else
+	export BUILDER_SCRIPTS=$(realpath "${_curdir}/tools")
+	export BUILDER_TOOLS=$(realpath "${_curdir}")
+fi
+
+BUILD_CONF="${BUILDER_TOOLS}/build.conf"
 
 # Ensure file exists
 if [ -f ${BUILD_CONF} ]; then
 	. ${BUILD_CONF}
-else
-	echo
-	echo "You must first run ./set_version.sh !"
-	echo
-	exit 2
 fi
 
 # Make sure pkg will not be interactive
@@ -108,8 +114,6 @@ export SCRATCHDIR=${SCRATCHDIR:-/tmp}
 # Area that the final image will appear in
 export MAKEOBJDIRPREFIXFINAL=${MAKEOBJDIRPREFIXFINAL:-${SCRATCHDIR}/${PRODUCT_NAME}/}
 
-export BUILDER_SCRIPTS=${BUILDER_SCRIPTS:-$(realpath $(dirname ${0}))}
-export BUILDER_TOOLS=${BUILDER_TOOLS:-$(realpath ${BUILDER_SCRIPTS}/..)}
 export TOOLS_DIR=${TOOLS_DIR:-$(basename ${BUILDER_TOOLS})}
 export BASE_DIR=${BASE_DIR:-$(realpath ${BUILDER_TOOLS}/..)}
 

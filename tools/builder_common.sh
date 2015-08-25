@@ -136,7 +136,7 @@ print_error_pfS() {
 	if [ "$1" != "" ]; then
 		echo $1
 	fi
-	[ -n "${LOGFILE:-}" ] && \
+	[ -n "${LOGFILE:-}" -a -f "${LOGFILE}" ] && \
 		echo "Log saved on ${LOGFILE}" && \
 		tail -n20 ${LOGFILE} >&2
 	echo

@@ -561,7 +561,7 @@ function local_user_del($user) {
 	local_group_del_user($user);
 }
 
-function local_user_set_password(& $user, $password) {
+function local_user_set_password(&$user, $password) {
 
 	$user['password'] = crypt($password);
 	$user['md5-hash'] = md5($password);
@@ -574,8 +574,6 @@ function local_user_set_password(& $user, $password) {
 		$ustr .= sprintf("%X", $a);
 	}
 
-	// Generate the NT-HASH from the unicode string
-	$user['nt-hash'] = bin2hex(hash("md4", $ustr));
 }
 
 function local_user_get_groups($user, $all = false) {

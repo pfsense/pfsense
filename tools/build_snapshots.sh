@@ -56,17 +56,23 @@ done
 echo ">>> Execing build.conf"
 . ${BUILDER_TOOLS}/builder_defaults.sh
 
+if [ -z "${RSYNCIP}" -a -z "${NO_UPLOAD}" ]; then
+	echo ">>> ERROR: RSYNCIP is not defined"
+	exit 1
+fi
+
 # Keeps track of how many time builder has looped
 BUILDCOUNTER=0
 
 # Local variables that are used by builder scripts
 STAGINGAREA=${SCRATCHDIR}/staging
-RSYNCIP="snapshots.pfsense.org"
 RSYNCKBYTELIMIT="248000"
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"$SCRATCHDIR/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"$SCRATCHDIR/snapshots-lastupdate.log"}
-export MASTER_BUILDER_SSH_LOG_DEST=${MASTER_BUILDER_SSH_LOG_DEST:-snapshots@${RSYNCIP}:/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}/build.log}
+if [ -n "${RSYNCIP}" -a -z "${NO_UPLOAD}" ]; then
+	export MASTER_BUILDER_SSH_LOG_DEST=${MASTER_BUILDER_SSH_LOG_DEST:-snapshots@${RSYNCIP}:/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}/build.log}
+fi
 
 # Ensure directories exist
 mkdir -p $STAGINGAREA
@@ -207,10 +213,7 @@ scp_files() {
 		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60 --bwlimit=${RSYNCKBYTELIMIT}" #--bwlimit=50
 	fi
 	update_status ">>> Copying files to ${RSYNCIP}"
-	if [ ! -f /usr/local/bin/rsync ]; then
-		update_status ">>> Could not find rsync, installing from ports..."
-		(cd /usr/ports/net/rsync && make install clean)
-	fi
+
 	rm -f $SCRATCHDIR/ssh-snapshots*
 
 	# Ensure directory(s) are available

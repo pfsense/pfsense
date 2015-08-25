@@ -78,9 +78,6 @@ fi
 # Make sure pkg will not be interactive
 export ASSUME_ALWAYS_YES=true
 
-OIFS=$IFS
-IFS=%
-
 # Architecture, supported ARCH values are: 
 #  Tier 1: i386, AMD64, and PC98
 #  Tier 2: ARM, PowerPC, ia64, Sparc64 and sun4v
@@ -308,6 +305,3 @@ if [ "${TARGET}" = "i386" ]; then
 else
 	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
 fi
-
-# This needs to be at the very end of the file.
-IFS=$OIFS

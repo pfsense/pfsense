@@ -125,7 +125,7 @@ if [ -z "${PRODUCT_VERSION}" ]; then
 fi
 
 # Product repository tag to build
-local _cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)
+_cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)
 if [ "${_cur_git_repo_branch_or_tag}" = "HEAD" ]; then
 	# We are on a tag, lets find out its name
 	export GIT_REPO_BRANCH_OR_TAG=$(git -C ${BUILDER_ROOT} describe --tags)
@@ -156,7 +156,7 @@ export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 
 # Controls how many concurrent make processes are run for each stage
-local _CPUS=""
+_CPUS=""
 if [ -z "${NO_MAKEJ}" ]; then
 	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
 	if [ -n "${_CPUS}" ]; then
@@ -233,7 +233,7 @@ export NANO_BOOT0CFG="-o packet -s 1 -m 3"
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
-local _BUILDER_EPOCH=$(date +"%s")
+_BUILDER_EPOCH=$(date +"%s")
 export DATESTRINGFILE=${DATESTRINGFILE:-"$SCRATCHDIR/version.snapshots"}
 if [ "${DATESTRING}" = "" ]; then
 	if [ -f $DATESTRINGFILE ]; then

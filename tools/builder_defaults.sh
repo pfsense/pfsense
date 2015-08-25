@@ -81,6 +81,13 @@ if [ -f ${BUILD_CONF} ]; then
 	. ${BUILD_CONF}
 fi
 
+if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != yes ]; then
+	echo ">>>ERROR: According the following license, only Electric Sheep Fencing can build genuine pfSense® software"
+	echo ""
+	cat ${BUILDER_ROOT}/license.txt
+	exit 1
+fi
+
 # Make sure pkg will not be interactive
 export ASSUME_ALWAYS_YES=true
 

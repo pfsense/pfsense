@@ -60,7 +60,7 @@ echo ">>> Execing build.conf"
 BUILDCOUNTER=0
 
 # Local variables that are used by builder scripts
-STAGINGAREA=/tmp/staging
+STAGINGAREA=${SCRATCHDIR}/staging
 RSYNCIP="snapshots.pfsense.org"
 RSYNCKBYTELIMIT="248000"
 

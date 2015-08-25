@@ -236,7 +236,7 @@ case $BUILDACTION in
 		# It will be handled below
 	;;
 	updatesources)
-		ensure_source_directories_present
+		update_freebsd_sources
 	;;
 	enablememorydisk)
 		prestage_on_ram_setup
@@ -301,7 +301,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	clean_builder
 
 	# Make sure source directories are present.
-	ensure_source_directories_present
+	update_freebsd_sources
 	git_last_commit
 
 	# Ensure binaries are present that builder system requires

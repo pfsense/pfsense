@@ -1060,12 +1060,6 @@ clean_builder() {
 	echo ">>> Cleaning of builder environment has finished."
 }
 
-# This routine ensures that the $FREEBSD_SRC_DIR has sources
-# and is ready for action / building.
-ensure_source_directories_present() {
-	update_freebsd_sources
-}
-
 clone_directory_contents() {
 	if [ ! -d "$1" -o ! -d "$2" ]; then
 		if [ -z "${LOGFILE}" ]; then

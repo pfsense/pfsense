@@ -306,3 +306,8 @@ export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-m
 
 # set full-update update filename
 export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}
+
+# Rsync data to send snapshots
+export RSYNCUSER=${RSYNCUSER:-"snapshots"}
+export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+export RSYNCLOGS=${RSYNCLOGS:-"/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}"}

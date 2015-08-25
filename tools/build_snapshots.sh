@@ -61,6 +61,21 @@ if [ -z "${RSYNCIP}" -a -z "${NO_UPLOAD}" ]; then
 	exit 1
 fi
 
+if [ -z "${RSYNCUSER}" -a -z "${NO_UPLOAD}" ]; then
+	echo ">>> ERROR: RSYNCUSER is not defined"
+	exit 1
+fi
+
+if [ -z "${RSYNCPATH}" -a -z "${NO_UPLOAD}" ]; then
+	echo ">>> ERROR: RSYNCPATH is not defined"
+	exit 1
+fi
+
+if [ -z "${RSYNCLOGS}" -a -z "${NO_UPLOAD}" ]; then
+	echo ">>> ERROR: RSYNCLOGS is not defined"
+	exit 1
+fi
+
 # Keeps track of how many time builder has looped
 BUILDCOUNTER=0
 
@@ -70,9 +85,6 @@ RSYNCKBYTELIMIT="248000"
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"$SCRATCHDIR/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"$SCRATCHDIR/snapshots-lastupdate.log"}
-if [ -n "${RSYNCIP}" -a -z "${NO_UPLOAD}" ]; then
-	export MASTER_BUILDER_SSH_LOG_DEST=${MASTER_BUILDER_SSH_LOG_DEST:-snapshots@${RSYNCIP}:/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}/build.log}
-fi
 
 # Ensure directories exist
 mkdir -p $STAGINGAREA
@@ -119,12 +131,13 @@ update_status() {
 	fi
 	echo $1
 	echo "`date` -|- $1" >> $SNAPSHOTSLOGFILE
-	if [ -n "$MASTER_BUILDER_SSH_LOG_DEST" -a -z "${NO_UPLOAD}" ]; then
+	if [ -z "${NO_UPLOAD}" ]; then
 		LU=`cat $SNAPSHOTSLASTUPDATE`
 		CT=`date "+%H%M%S"`
 		# Only update every minute
 		if [ "$LU" != "$CT" ]; then 
-			scp -q $SNAPSHOTSLOGFILE $MASTER_BUILDER_SSH_LOG_DEST
+			ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCLOGS}"
+			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNC_LOGS}/build.log
 			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
 		fi
 	fi
@@ -134,7 +147,7 @@ update_status() {
 # the snapshot www server (real time logs)
 rotate_logfile() {
 	if [ -n "$MASTER_BUILDER_SSH_LOG_DEST" -a -z "${NO_UPLOAD}" ]; then
-		scp -q $SNAPSHOTSLOGFILE $MASTER_BUILDER_SSH_LOG_DEST.old
+		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNC_LOGS}/build.log.old
 	fi
 
 	# Cleanup log file
@@ -217,66 +230,66 @@ scp_files() {
 	rm -f $SCRATCHDIR/ssh-snapshots*
 
 	# Ensure directory(s) are available
-	ssh snapshots@${RSYNCIP} "mkdir -p /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/livecd_installer"
-	ssh snapshots@${RSYNCIP} "mkdir -p /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates"
-	ssh snapshots@${RSYNCIP} "mkdir -p /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/nanobsd"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/livecd_installer"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
 	if [ -d $STAGINGAREA/virtualization ]; then
-		ssh snapshots@${RSYNCIP} "mkdir -p /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/virtualization"
+		ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/virtualization"
 	fi
-	ssh snapshots@${RSYNCIP} "mkdir -p /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/.updaters"
 	# ensure permissions are correct for r+w
-	ssh snapshots@${RSYNCIP} "chmod -R ug+rw /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/."
-	ssh snapshots@${RSYNCIP} "chmod -R ug+rw /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/."
-	ssh snapshots@${RSYNCIP} "chmod -R ug+rw /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/*/."
+	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/."
+	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/."
+	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/*/."
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*iso* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/livecd_installer/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-memstick* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/livecd_installer/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*Update* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/nanobsd/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/nanobsd/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
 	if [ -d $STAGINGAREA/virtualization ]; then
 		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
-			snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/virtualization/
+			${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/virtualization/
 	fi
 
 	# Rather than copy these twice, use ln to link to the latest one.
 
-	ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest.tgz"
-	ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest.tgz.sha256"
+	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
+	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
 	LATESTFILENAME="`ls $UPDATESDIR/*.tgz | grep Full | grep -v md5 | grep -v sha256 | tail -n1`"
 	LATESTFILENAME=`basename ${LATESTFILENAME}`
-	ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${LATESTFILENAME} \
-		/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest.tgz"
-	ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${LATESTFILENAME}.sha256 \
-		/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest.tgz.sha256"
+	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
+		${RSYNCPATH}/.updaters/latest.tgz"
+	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
+		${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
 	for i in 1g 2g 4g
 	do
-		ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
-		ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh snapshots@${RSYNCIP} "rm -f /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 
 		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-upgrade-${DATESTRING}.img.gz"
-		ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${FILENAMEUPGRADE} \
-			/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${FILENAMEUPGRADE}.sha256 \
-			/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
 
 		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-vga-upgrade-${DATESTRING}.img.gz"
-		ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${FILENAMEUPGRADE} \
-			/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh snapshots@${RSYNCIP} "ln -s /usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/updates/${FILENAMEUPGRADE}.sha256 \
-			/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 	done
 
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \
-		snapshots@${RSYNCIP}:/usr/local/www/snapshots/FreeBSD_${FREEBSD_PARENT_BRANCH}/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/.updaters
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/.updaters
 	update_status ">>> Finished copying files."
 }
 

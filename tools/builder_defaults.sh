@@ -102,9 +102,17 @@ export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-pfSense}
-export PRODUCT_VERSION=${PRODUCT_VERSION:-2.3-DEVELOPMENT}
 export PRODUCT_URL=${PRODUCT_VERSION:-"https://www.pfsense.org/"}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
+
+if [ -z "${PRODUCT_VERSION}" ]; then
+	if [ ! -f ${PRODUCT_SRC}/etc/version ]; then
+		echo ">>> ERROR: PRODUCT_VERSION is not defined and ${PRODUCT_SRC}/etc/version was not found"
+		print_error_pfS
+	fi
+
+	export PRODUCT_VERSION=$(head -n 1 ${PRODUCT_SRC}/etc/version)
+fi
 
 # Product repository tag to build
 export GIT_REPO_BRANCH_OR_TAG=${GIT_REPO_BRANCH_OR_TAG:-master}

@@ -49,6 +49,7 @@
 # Name of the product you are building, only ESF can build and distribute
 # pfSense® software
 export PRODUCT_NAME="nonSense"
+export PRODUCT_URL="https://PRODUCT_URL/"
 
 # Define FreeBSD repository, branch and specific commit
 #export FREEBSD_REPO_BASE=https://github.com/freebsd/freebsd.git

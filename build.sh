@@ -78,7 +78,8 @@ usage() {
 	exit 1
 }
 
-export BUILDER_SCRIPTS=$(realpath $(dirname ${0}))
+export BUILDER_ROOT=$(realpath $(dirname ${0}))
+export BUILDER_TOOLS="${BUILDER_ROOT}/tools"
 
 unset _SKIP_REBUILD_PRESTAGE
 unset _USE_OLD_DATESTRING
@@ -200,10 +201,10 @@ while test "$1" != ""; do
 done
 
 # Suck in local vars
-. ${BUILDER_SCRIPTS}/builder_defaults.sh
+. ${BUILDER_TOOLS}/builder_defaults.sh
 
 # Suck in script helper functions
-. ${BUILDER_SCRIPTS}/builder_common.sh
+. ${BUILDER_TOOLS}/builder_common.sh
 
 # Print var required with -V and exit
 if [ -n "${var_to_print}"  ]; then

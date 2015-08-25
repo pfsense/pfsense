@@ -138,18 +138,14 @@ rotate_logfile() {
 }
 
 dobuilds() {
-
-	cd $BUILDER_SCRIPTS
 	# Build images
-	./build.sh --flash-size '1g 2g 4g' "iso memstick memstickserial memstickadi fullupdate nanobsd nanobsd-vga"
+	(cd ${BUILDER_ROOT} && ./build.sh --flash-size '1g 2g 4g' "iso memstick memstickserial memstickadi fullupdate nanobsd nanobsd-vga")
 	# Copy files
 	copy_to_staging_iso_updates
 	copy_to_staging_nanobsd '1g 2g 4g'
 }
 
 copy_to_staging_nanobsd() {
-	cd $BUILDER_SCRIPTS
-
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
 			FILENAMEFULL="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-${DATESTRING}.img.gz"
@@ -182,8 +178,6 @@ copy_to_staging_nanobsd() {
 }
 
 copy_to_staging_iso_updates() {
-	cd $BUILDER_SCRIPTS
-
 	# Copy ISOs
 	md5 ${ISOPATH}.gz > ${ISOPATH}.md5
 	sha256 ${ISOPATH}.gz > ${ISOPATH}.sha256
@@ -211,7 +205,6 @@ copy_to_staging_iso_updates() {
 }
 
 scp_files() {
-	cd $BUILDER_SCRIPTS
 	if [ -z "${RSYNC_COPY_ARGUMENTS:-}" ]; then
 		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60 --bwlimit=${RSYNCKBYTELIMIT}" #--bwlimit=50
 	fi
@@ -287,17 +280,15 @@ scp_files() {
 }
 
 cleanup_builds() {
-	cd $BUILDER_SCRIPTS
 	# Remove prior builds
 	update_status ">>> Cleaning up after prior builds..."
 	rm -rf $STAGINGAREA/*
 	rm -f $UPDATESDIR/*  # Keep updates dir slimmed down
 	rm -rf $MAKEOBJDIRPREFIXFINAL/*
-	./build.sh --clean-builder
+	(cd ${BUILDER_ROOT} && ./build.sh --clean-builder)
 }
 
 build_loop_operations() {
-	cd $BUILDER_SCRIPTS
 	update_status ">>> Starting build loop operations"
 	# --- Items we need to run for a complete build run ---
 	# Cleanup prior builds

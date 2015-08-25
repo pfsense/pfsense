@@ -71,7 +71,7 @@ core_pkg_create() {
 	[ -d "${CORE_PKG_TMP}" ] \
 		&& rm -rf ${CORE_PKG_TMP}
 
-	local _templates_path=${BUILDER_SCRIPTS}/templates/core_pkg/${_template}
+	local _templates_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 	local _template_metadir=${_templates_path}/metadir
 	local _metadir=${CORE_PKG_TMP}/${_template}_metadir
 
@@ -881,7 +881,7 @@ ova_setup_ovf_file() {
 	fi
 
 	if [ ! -f ${OVFPATH}/${PRODUCT_NAME}.ovf ]; then
-		cp ${BUILDER_SCRIPTS}/conf/ovf/${PRODUCT_NAME}.ovf ${OVFPATH}/${PRODUCT_NAME}.ovf
+		cp ${BUILDER_TOOLS}/conf/ovf/${PRODUCT_NAME}.ovf ${OVFPATH}/${PRODUCT_NAME}.ovf
 		file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${OVFPATH}/${PRODUCT_NAME}.ovf
 		file_search_replace PRODUCT_URL $PRODUCT_URL ${OVFPATH}/${PRODUCT_NAME}.ovf
 	fi
@@ -1111,7 +1111,7 @@ clone_to_staging_area() {
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%FLAVOR%%,${_flavor},g" \
 		-e "s,%%VERSION%%,${_version},g" \
-		${BUILDER_SCRIPTS}/templates/core_pkg/base/exclude_files \
+		${BUILDER_TOOLS}/templates/core_pkg/base/exclude_files \
 		> ${_exclude_files}
 
 	mkdir -p ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME} >/dev/null 2>&1
@@ -1938,8 +1938,8 @@ poudriere_bulk() {
 
 	if [ "${CUR_BRANCH}" != "${GIT_REPO_BRANCH_OR_TAG}" ] && git show "${GIT_REPO_BRANCH_OR_TAG}:builder_scripts/conf/pfPorts/make.conf" >/dev/null 2>&1; then
 		git show "origin/${GIT_REPO_BRANCH_OR_TAG}:builder_scripts/conf/pfPorts/make.conf" > /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
-	elif [ -f "${BUILDER_SCRIPTS}/conf/pfPorts/make.conf" ]; then
-		cp -f "${BUILDER_SCRIPTS}/conf/pfPorts/make.conf" /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+	elif [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
+		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	fi
 
 	for jail_arch in ${_archs}; do

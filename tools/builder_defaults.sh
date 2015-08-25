@@ -61,10 +61,10 @@
 local _curdir=$(basename $(dirname ${0}))
 
 if [ "${_curdir}" = "tools" ]; then
-	export BUILDER_SCRIPTS=$(realpath ${_curdir})
+	export BUILDER_TOOLS=$(realpath ${_curdir})
 	export BUILDER_ROOT=$(realpath "${_curdir}/..")
 else
-	export BUILDER_SCRIPTS=$(realpath "${_curdir}/tools")
+	export BUILDER_TOOLS=$(realpath "${_curdir}/tools")
 	export BUILDER_ROOT=$(realpath "${_curdir}")
 fi
 
@@ -127,7 +127,7 @@ export ZFS_TANK=${ZFS_TANK:-"tank"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
 export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}}
 
-export POUDRIERE_BULK=${POUDRIERE_BULK:-${BUILDER_SCRIPTS}/conf/pfPorts/poudriere_bulk}
+export POUDRIERE_BULK=${POUDRIERE_BULK:-${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.com:pfsense/freebsd-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 

@@ -91,11 +91,11 @@ if [ "$TARGET_ARCH" = "" ]; then
         export TARGET_ARCH=`uname -p`
 fi
 
-# This is used for using svn for retrieving src
-export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
-export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
-export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
-export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
+# Directory to be used for writing temporary information
+export SCRATCHDIR=${SCRATCHDIR:-"${BUILDER_ROOT}/tmp"}
+if [ ! -d ${SCRATCHDIR} ]; then
+	mkdir -p ${SCRATCHDIR}
+fi
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"pfSense"}
@@ -120,10 +120,44 @@ else
 	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
 fi
 
-# Directory to be used for writing temporary information
-export SCRATCHDIR=${SCRATCHDIR:-"${BUILDER_ROOT}/tmp"}
-if [ ! -d ${SCRATCHDIR} ]; then
-	mkdir -p ${SCRATCHDIR}
+# This is used for using svn for retrieving src
+export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
+export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
+export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
+export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
+
+if [ "${TARGET}" = "i386" ]; then
+	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME} ${PRODUCT_NAME}_WRAP ${PRODUCT_NAME}_WRAP_VGA"}
+else
+	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
+fi
+
+# Leave this alone.
+export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export MAKE_CONF=${MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
+
+# Extra tools to be added to ITOOLS
+export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
+
+# Path to kernel files being built
+export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
+
+# Controls how many concurrent make processes are run for each stage
+local _CPUS=""
+if [ -z "${NO_MAKEJ}" ]; then
+	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
+	if [ -n "${_CPUS}" ]; then
+		_CPUS="-j${_CPUS}"
+	fi
+fi
+
+export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
+export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
+
+if [ "${TARGET}" = "i386" ]; then
+	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
+else
+	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc"}
 fi
 
 # Area that the final image will appear in
@@ -133,15 +167,6 @@ export BUILDER_LOGS=${BUILDER_LOGS:-"${BUILDER_ROOT}/logs"}
 if [ ! -d ${BUILDER_LOGS} ]; then
 	mkdir -p ${BUILDER_LOGS}
 fi
-
-# Poudriere
-export ZFS_TANK=${ZFS_TANK:-"tank"}
-export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
-export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
-
-export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
-export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.com:pfsense/freebsd-ports.git"}
-export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 
 # This is where files will be staged
 export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
@@ -174,34 +199,6 @@ export OVA_SWAP_PART_SIZE=${OVA_SWAP_PART_SIZE:-"4193725"}
 export OVA_DISKSECTIONALLOCATIONUNITS=${OVA_DISKSECTIONALLOCATIONUNITS:-"10737254400"}
 # end of OVF
 
-# Leave this alone.
-export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
-export MAKE_CONF=${MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
-
-# Extra tools to be added to ITOOLS
-export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
-
-# Path to kernel files being built
-export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
-
-# Controls how many concurrent make processes are run for each stage
-local _CPUS=""
-if [ -z "${NO_MAKEJ}" ]; then
-	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
-	if [ -n "${_CPUS}" ]; then
-		_CPUS="-j${_CPUS}"
-	fi
-fi
-
-export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
-export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
-
-if [ "${TARGET}" = "i386" ]; then
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
-else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc"}
-fi
-
 # Number of code images on media (1 or 2)
 export NANO_IMAGES=2
 # 0 -> Leave second image all zeroes so it compresses better.
@@ -220,25 +217,6 @@ export NANO_DATASIZE=0
 export NANO_CONFSIZE=102400
 # packet is OK for 90% of embedded
 export NANO_BOOT0CFG="-o packet -s 1 -m 3"
-
-# " - UNBREAK TEXTMATE FORMATTING - PLEASE LEAVE.
-
-# Host to rsync pkg repos from poudriere
-export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-"beta.pfsense.org"}
-export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
-export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
-export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
-export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
-export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
-
-# Package overlay. This gives people a chance to build product
-# installable image that already contains certain extra packages.
-#
-# Needs to contain comma separated package names. Of course
-# package names must be valid. Using non existent
-# package name would yield an error.
-#
-#export custom_package_list=""
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
@@ -279,6 +257,23 @@ if [ "${BUILTDATESTRING}" = "" ]; then
 	echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 fi
 
+# Poudriere
+export ZFS_TANK=${ZFS_TANK:-"tank"}
+export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
+export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+
+export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
+export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.com:pfsense/freebsd-ports.git"}
+export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
+
+# Host to rsync pkg repos from poudriere
+export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-"beta.pfsense.org"}
+export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
+export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
+export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
+export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
+export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
+
 # Define base package version, based on date for snaps
 CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
 if echo "${PRODUCT_VERSION}" | grep -qv -- '-RELEASE'; then
@@ -286,6 +281,15 @@ if echo "${PRODUCT_VERSION}" | grep -qv -- '-RELEASE'; then
 fi
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/core_pkg"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
+
+# Package overlay. This gives people a chance to build product
+# installable image that already contains certain extra packages.
+#
+# Needs to contain comma separated package names. Of course
+# package names must be valid. Using non existent
+# package name would yield an error.
+#
+#export custom_package_list=""
 
 # General builder output filenames
 export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}
@@ -296,9 +300,3 @@ export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-m
 
 # set full-update update filename
 export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}
-
-if [ "${TARGET}" = "i386" ]; then
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME} ${PRODUCT_NAME}_WRAP ${PRODUCT_NAME}_WRAP_VGA"}
-else
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
-fi

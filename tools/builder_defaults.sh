@@ -104,6 +104,7 @@ export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 export PRODUCT_NAME=${PRODUCT_NAME:-pfSense}
 export PRODUCT_VERSION=${PRODUCT_VERSION:-2.3-DEVELOPMENT}
 export PRODUCT_URL=${PRODUCT_VERSION:-"https://www.pfsense.org/"}
+export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 
 # Product repository tag to build
 export GIT_REPO_BRANCH_OR_TAG=${GIT_REPO_BRANCH_OR_TAG:-master}

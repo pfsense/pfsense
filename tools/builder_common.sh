@@ -1084,7 +1084,7 @@ clone_to_staging_area() {
 	echo -n ">>> Cloning everything to ${STAGE_CHROOT_DIR} staging area..."
 	LOGFILE=${BUILDER_LOGS}/cloning.${TARGET}.log
 
-	tar -C ${TOOLS_ROOT}/src -c -f - . | \
+	tar -C ${PRODUCT_SRC} -c -f - . | \
 		tar -C ${STAGE_CHROOT_DIR} -x -p -f -
 
 	if [ -f ${STAGE_CHROOT_DIR}/etc/master.passwd ]; then

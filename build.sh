@@ -95,8 +95,8 @@ while test "$1" != ""; do
 			export NO_BUILDKERNEL=YES
 			;;
 		--no-cleanobjdir|--no-cleanrepos|-d)
-			export NO_CLEANFREEBSDOBJDIR=YES
-			export NO_CLEANREPOS=YES
+			export NO_CLEAN_FREEBSD_OBJ=YES
+			export NO_CLEAN_FREEBSD_SRC=YES
 			;;
 		--flash-size|-f)
 			shift
@@ -110,8 +110,8 @@ while test "$1" != ""; do
 		--resume-image-build|-r)
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
-			export NO_CLEANFREEBSDOBJDIR=YES
-			export NO_CLEANREPOS=YES
+			export NO_CLEAN_FREEBSD_OBJ=YES
+			export NO_CLEAN_FREEBSD_SRC=YES
 			_SKIP_REBUILD_PRESTAGE=YES
 			_USE_OLD_DATESTRING=YES
 			;;

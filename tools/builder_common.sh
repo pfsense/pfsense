@@ -1019,7 +1019,7 @@ clean_builder() {
 		echo "Done."
 	fi
 
-	if [ -z "${NO_CLEANFREEBSDOBJDIR}" -a -d "${FREEBSD_SRC_DIR}" ]; then
+	if [ -z "${NO_CLEAN_FREEBSD_OBJ}" -a -d "${FREEBSD_SRC_DIR}" ]; then
 		OBJTREE=$(env TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
 		if [ -d "${OBJTREE}" ]; then
 			echo -n ">>> Cleaning FreeBSD objects dir staging..."
@@ -1041,7 +1041,7 @@ clean_builder() {
 	rm -rf $IMAGES_FINAL_DIR/*
 	echo "Done!"
 
-	if [ -z "${NO_CLEANREPOS}" ]; then
+	if [ -z "${NO_CLEAN_FREEBSD_SRC}" ]; then
 		if [ -d "$FREEBSD_SRC_DIR" ]; then
 			echo -n ">>> Ensuring $FREEBSD_SRC_DIR is clean..."
 			rm -rf ${FREEBSD_SRC_DIR}

@@ -240,7 +240,7 @@ export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-/usr/local/final-dir}
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
-export _BUILDER_EPOCH=$(date +"%s")
+local _BUILDER_EPOCH=$(date +"%s")
 export DATESTRINGFILE=${DATESTRINGFILE:-$SCRATCHDIR/version.snapshots}
 if [ "${DATESTRING}" = "" ]; then
 	if [ -f $DATESTRINGFILE ]; then

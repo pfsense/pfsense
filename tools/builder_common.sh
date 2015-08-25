@@ -147,6 +147,11 @@ print_error_pfS() {
 }
 
 prestage_on_ram_setup() {
+	[ -d "${STAGE_CHROOT_DIR}" ] \
+		|| mkdir -p ${STAGE_CHROOT_DIR}
+	[ -d "${FINAL_CHROOT_DIR}" ] \
+		|| mkdir -p ${FINAL_CHROOT_DIR}
+
 	_AVAIL_MEM=$(($(sysctl -n hw.usermem) / 1024 / 1024))
 	if [ $_AVAIL_MEM -lt 2000 ]; then
 		echo ">>> Builder has less than 2GiB RAM skipping memory disks"
@@ -164,7 +169,6 @@ prestage_on_ram_setup() {
 		echo ">>> Detected preexisting memory disk enabled for ${STAGE_CHROOT_DIR}."
 	else
 		mdconfig -a -t swap -u 10001 -s ${MEMORYDISK_SIZE}
-		mkdir -p ${STAGE_CHROOT_DIR}
 		newfs -L prestagebacking -U /dev/md10001
 		mount /dev/ufs/prestagebacking ${STAGE_CHROOT_DIR}
 	fi
@@ -173,7 +177,6 @@ prestage_on_ram_setup() {
 		echo ">>> Detected preexisting memory disk enabled for ${FINAL_CHROOT_DIR}."
 	else
 		mdconfig -a -t swap -u 10002 -s ${MEMORYDISK_SIZE}
-		mkdir -p ${FINAL_CHROOT_DIR}
 		newfs -L finalstagebacking -U /dev/md10002
 		mount /dev/ufs/finalstagebacking ${FINAL_CHROOT_DIR}
 	fi
@@ -429,7 +432,6 @@ make_world() {
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	# Create if cleaned up
-	mkdir -p ${STAGE_CHROOT_DIR}
 	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} installworld" | tee -a ${LOGFILE}
@@ -1013,10 +1015,9 @@ clean_obj_dir() {
 		BASENAME=$(basename ${STAGE_CHROOT_DIR})
 		echo -n ">>> Cleaning ${STAGE_CHROOT_DIR} ..."
 		chflags -R noschg ${STAGE_CHROOT_DIR} 2>&1 >/dev/null
-		rm -rf ${STAGE_CHROOT_DIR} 2>/dev/null
+		rm -rf ${STAGE_CHROOT_DIR}/* 2>/dev/null
 		echo "Done."
 	fi
-	mkdir -p ${STAGE_CHROOT_DIR}
 
 	if [ -z "${NO_CLEANFREEBSDOBJDIR}" -a -d "${FREEBSD_SRC_DIR}" ]; then
 		OBJTREE=$(env TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
@@ -1164,7 +1165,6 @@ create_final_staging_area() {
 		rm -rf ${FINAL_CHROOT_DIR}/* 2>&1 1>/dev/null
 		echo "Done." | tee -a ${LOGFILE}
 	fi
-	mkdir -p ${FINAL_CHROOT_DIR}
 
 	echo ">>> Preparing Final image staging area: $(LC_ALL=C date)" 2>&1 | tee -a ${LOGFILE}
 	echo ">>> Cloning ${STAGE_CHROOT_DIR} to ${FINAL_CHROOT_DIR}" 2>&1 | tee -a ${LOGFILE}
@@ -1593,7 +1593,7 @@ staginareas_clean_each_run() {
 		BASENAME=$(basename ${FINAL_CHROOT_DIR})
 		echo -n "$BASENAME "
 		chflags -R noschg ${FINAL_CHROOT_DIR} 2>&1 >/dev/null
-		rm -rf ${FINAL_CHROOT_DIR} 2>/dev/null
+		rm -rf ${FINAL_CHROOT_DIR}/* 2>/dev/null
 	fi
 	echo "Done!"
 }

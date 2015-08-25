@@ -78,9 +78,8 @@ echo "" > $SNAPSHOTSLASTUPDATE
 
 git_last_commit() {
 	if [ -d "${1}/.git" ]; then
-		(cd ${1} && git fetch origin && git rebase) >/dev/null
-		CURRENT_COMMIT=$(cd ${1} && git log -1 --format='%H')
-		echo "$CURRENT_COMMIT"
+		git -C "${1}" pull -q
+		git -C "${1}" log -1 --format='%H'
 	fi
 }
 
@@ -91,17 +90,11 @@ sleep_between_runs() {
 	COUNTER=0
 	while [ $COUNTER -lt $maxsleepvalue ]; do
 		sleep 60
-		PRODUCT_CURRENT_COMMIT=$(git_last_commit "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}")
-		if [ "${PRODUCT_LAST_COMMIT}" != "${PRODUCT_CURRENT_COMMIT}" ]; then
-			update_status ">>> New commit: $CURRENT_AUTHOR - $PRODUCT_CURRENT_COMMIT .. No longer sleepy."
+		CURRENT_COMMIT=$(git_last_commit "${BUILDER_ROOT}")
+		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
+			update_status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
 			COUNTER=$(($maxsleepvalue + 60))
-			export PRODUCT_LAST_COMMIT="${PRODUCT_CURRENT_COMMIT}"
-		fi
-		TOOLS_CURRENT_COMMIT=$(git_last_commit "${BUILDER_TOOLS}")
-		if [ "${TOOLS_LAST_COMMIT}" != "${TOOLS_CURRENT_COMMIT}" ]; then
-			update_status ">>> New commit: $CURRENT_AUTHOR - $TOOLS_CURRENT_COMMIT .. No longer sleepy."
-			COUNTER=$(($maxsleepvalue + 60))
-			export TOOLS_LAST_COMMIT="${TOOLS_CURRENT_COMMIT}"
+			export LAST_COMMIT="${CURRENT_COMMIT}"
 		fi
 		COUNTER=$(($COUNTER + 60))
 	done
@@ -345,12 +338,10 @@ else
 		export maxsleepvalue=86400
 
 		# Initialize variables that keep track of last commit
-		[ -z "${PRODUCT_LAST_COMMIT}" ] \
-			&& export PRODUCT_LAST_COMMIT="$(cd "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}" && git log | head -n1 | cut -d' ' -f2)"
-		[ -z "${TOOLS_LAST_COMMIT}" ] \
-			&& export TOOLS_LAST_COMMIT="$(cd "${BUILDER_SCRIPTS}" && git log | head -n1 | cut -d' ' -f2)"
+		[ -z "${LAST_COMMIT}" ] \
+			&& export LAST_COMMIT="$(git -C ${BUILDER_ROOT} log | head -n1 | cut -d' ' -f2)"
 
-		update_status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs.  Last known commit ${PRODUCT_LAST_COMMIT}/${TOOLS_LAST_COMMIT}"
+		update_status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs.  Last known commit ${LAST_COMMIT}"
 		update_status ">>> Freezing build process at `date`."
 		sleep $minsleepvalue
 		update_status ">>> Thawing build process and resuming checks for pending commits at `date`."

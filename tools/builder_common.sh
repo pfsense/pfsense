@@ -55,14 +55,10 @@ lc() {
 }
 
 git_last_commit() {
-	if [ -d "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}/.git" ]; then
-		CURRENT_COMMIT=$(cd ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} && git log -1 --format='%H')
-		CURRENT_AUTHOR=$(cd ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} && git log -1 --format='%an')
-		echo ">>> Last known commit $CURRENT_AUTHOR - $CURRENT_COMMIT"
-		echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
-	else
-		echo ">>> WARNING: git repo is not cloned! Previous commit functions disabled."
-	fi
+	CURRENT_COMMIT=$(git -C ${TOOLS_ROOT} log -1 --format='%H')
+	CURRENT_AUTHOR=$(git -C ${TOOLS_ROOT} log -1 --format='%an')
+	echo ">>> Last known commit $CURRENT_AUTHOR - $CURRENT_COMMIT"
+	echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
 }
 
 # Create core pkg (base, kernel)
@@ -374,7 +370,6 @@ print_flags() {
 
 	echo
 	printf "             Product version: %s\n" $PRODUCT_VERSION
-	printf "                    BASE_DIR: %s\n" $BASE_DIR
 	printf "                   Stage DIR: %s\n" $STAGE_CHROOT_DIR
 	printf "                 Updates dir: %s\n" $UPDATESDIR
 	printf " Image Preparation Stage DIR: %s\n" $FINAL_CHROOT_DIR
@@ -383,7 +378,6 @@ print_flags() {
 	printf "          FreeBSD-src branch: %s\n" $FREEBSD_BRANCH
 	printf "     FreeBSD original branch: %s\n" $FREEBSD_PARENT_BRANCH
 	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
-	printf "              Git Repository: %s\n" $GIT_REPO_URL
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "                 OVADISKSIZE: %s\n" $OVADISKSIZE
@@ -403,58 +397,6 @@ if [ -n "$SHOW_ENV" ]; then
 	done
 fi
 	echo
-}
-
-# This updates the product sources
-update_product_repository() {
-	if [ ! -d "${GIT_REPO_DIR}" ]; then
-		echo ">>> Creating ${GIT_REPO_DIR}"
-		mkdir -p ${GIT_REPO_DIR}
-	fi
-
-	echo ">>> Using GIT to checkout ${GIT_REPO_BRANCH_OR_TAG}"
-
-	# There is already a cloned repo, test if branch is correct
-	if [ -d "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}/.git" ]; then
-		if ! (cd ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} && git rev-parse --verify ${GIT_REPO_BRANCH_OR_TAG} >/dev/null 2>&1); then
-			echo -n ">>> ${PRODUCT_NAME} git repo is at wrong branch, removing it... "
-			rm -rf ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}
-			echo "Done!"
-		fi
-	fi
-
-	if [ ! -d "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}/.git" ]; then
-		echo -n ">>> Cloning ${GIT_REPO_URL} (${GIT_REPO_BRANCH_OR_TAG})... "
-		(git clone --depth 1 --single-branch --branch ${GIT_REPO_BRANCH_OR_TAG} ${GIT_REPO_URL} ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}) 2>&1 | \
-			egrep -B3 -A3 -wi -E '(error)|fatal'
-		if [ ! -d "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}/conf.default" ]; then
-			echo "Failed!"
-			echo
-			echo "!!!! An error occurred while checking out ${PRODUCT_NAME}"
-			echo "     Could not locate ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}/conf.default"
-			echo
-			print_error_pfS
-		fi
-		echo "Done!"
-	else
-		# It is necessary for the case when a tag has moved
-		local TAG=$(cd ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} && git tag)
-		if [ "${TAG}" = "${GIT_REPO_BRANCH_OR_TAG}" ]; then
-			RESET_TARGET="${GIT_REPO_BRANCH_OR_TAG}"
-		else
-			RESET_TARGET="origin/${GIT_REPO_BRANCH_OR_TAG}"
-		fi
-
-		# Fetch an update of the repository
-		if ! (cd ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} && \
-			git fetch origin; \
-			git reset --hard ${RESET_TARGET}; \
-			git clean -fxd ) >/dev/null 2>&1
-		then
-			echo ">>> ERROR: Something went wrong while checking out GIT."
-			print_error_pfS
-		fi
-	fi
 }
 
 # This builds FreeBSD (make buildworld)
@@ -1099,13 +1041,6 @@ clean_obj_dir() {
 	echo "Done!"
 
 	if [ -z "${NO_CLEANREPOS}" ]; then
-		if [ -d "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}" ]; then
-			echo -n ">>> Cleaning ${PRODUCT_NAME} repo checkout..."
-			echo -n "."
-			rm -rf "${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG}"
-			echo "Done!"
-		fi
-
 		if [ -d "$SRCDIR" ]; then
 			echo -n ">>> Ensuring $SRCDIR is clean..."
 			rm -rf ${SRCDIR}
@@ -1128,8 +1063,6 @@ clean_obj_dir() {
 # and is ready for action / building.
 ensure_source_directories_present() {
 	update_freebsd_sources
-
-	update_product_repository
 }
 
 clone_directory_contents() {
@@ -1151,13 +1084,7 @@ clone_to_staging_area() {
 	echo -n ">>> Cloning everything to ${STAGE_CHROOT_DIR} staging area..."
 	LOGFILE=${BUILDER_LOGS}/cloning.${TARGET}.log
 
-	if [ ! -d ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} ]; then
-		echo "ERROR!"
-		echo ">>> ERROR: ${PRODUCT_NAME} repository does not seem to be there please fix...STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-
-	tar --exclude=\.git -C ${GIT_REPO_DIR}/${GIT_REPO_BRANCH_OR_TAG} -c -f - . | \
+	tar -C ${TOOLS_ROOT}/src -c -f - . | \
 		tar -C ${STAGE_CHROOT_DIR} -x -p -f -
 
 	if [ -f ${STAGE_CHROOT_DIR}/etc/master.passwd ]; then
@@ -2004,7 +1931,7 @@ poudriere_bulk() {
 
 	poudriere_create_ports_tree
 
-	local CUR_BRANCH=$(cd ${BUILDER_TOOLS} && git branch | grep '^\*' | cut -d' ' -f2)
+	local CUR_BRANCH=$(cd ${BUILDER_ROOT} && git branch | grep '^\*' | cut -d' ' -f2)
 
 	[ -d /usr/local/etc/poudriere.d ] || \
 		mkdir -p /usr/local/etc/poudriere.d

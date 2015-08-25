@@ -62,13 +62,13 @@ local _curdir=$(basename $(dirname ${0}))
 
 if [ "${_curdir}" = "tools" ]; then
 	export BUILDER_SCRIPTS=$(realpath ${_curdir})
-	export BUILDER_TOOLS=$(realpath "${_curdir}/..")
+	export BUILDER_ROOT=$(realpath "${_curdir}/..")
 else
 	export BUILDER_SCRIPTS=$(realpath "${_curdir}/tools")
-	export BUILDER_TOOLS=$(realpath "${_curdir}")
+	export BUILDER_ROOT=$(realpath "${_curdir}")
 fi
 
-BUILD_CONF="${BUILDER_TOOLS}/build.conf"
+BUILD_CONF="${BUILDER_ROOT}/build.conf"
 
 # Ensure file exists
 if [ -f ${BUILD_CONF} ]; then
@@ -109,15 +109,15 @@ export PRODUCT_URL=${PRODUCT_VERSION:-"https://www.pfsense.org/"}
 export GIT_REPO_BRANCH_OR_TAG=${GIT_REPO_BRANCH_OR_TAG:-master}
 
 # Directory to be used for writing temporary information
-export SCRATCHDIR=${SCRATCHDIR:-/tmp}
+export SCRATCHDIR=${SCRATCHDIR:-"${BUILDER_ROOT}/tmp"}
+if [ ! -d ${SCRATCHDIR} ]; then
+	mkdir -p ${SCRATCHDIR}
+fi
 
 # Area that the final image will appear in
 export MAKEOBJDIRPREFIXFINAL=${MAKEOBJDIRPREFIXFINAL:-${SCRATCHDIR}/${PRODUCT_NAME}/}
 
-export TOOLS_DIR=${TOOLS_DIR:-$(basename ${BUILDER_TOOLS})}
-export BASE_DIR=${BASE_DIR:-$(realpath ${BUILDER_TOOLS}/..)}
-
-export BUILDER_LOGS=${BUILDER_LOGS:-${BUILDER_TOOLS}/logs}
+export BUILDER_LOGS=${BUILDER_LOGS:-${BUILDER_ROOT}/logs}
 if [ ! -d ${BUILDER_LOGS} ]; then
 	mkdir -p ${BUILDER_LOGS}
 fi
@@ -207,11 +207,6 @@ export NANO_CONFSIZE=102400
 export NANO_BOOT0CFG="-o packet -s 1 -m 3"
 
 # " - UNBREAK TEXTMATE FORMATTING - PLEASE LEAVE.
-
-# GIT repositories settings
-export GIT_REPO_URL=${GIT_REPO_URL:-"git@git.pfmechanics.com:pfsense/pfsense.git"}
-export GIT_REPO_DIR="${BASE_DIR}/${PRODUCT_NAME}_GIT_REPO"
-export GIT_REPO_TOOLS=${GIT_REPO_TOOLS:-"git@git.pfmechanics.com:pfsense/pfsense-tools.git"}
 
 # Host to rsync pkg repos from poudriere
 export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-"beta.pfsense.org"}

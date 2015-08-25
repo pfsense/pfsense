@@ -216,6 +216,7 @@ launch
 
 case $BUILDACTION in
 	builder_setup)
+		update_freebsd_sources
 		builder_setup
 	;;
 	buildkernels)

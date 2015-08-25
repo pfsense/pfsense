@@ -30,10 +30,8 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-if [ ! -f ./build.conf ]; then
-	echo "You must first run ./set_version.sh !"
-	exit 1
-fi
+export BUILDER_TOOLS=$(realpath $(dirname ${0}))
+export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
 NO_UPLOAD=""
 LOOPED_SNAPSHOTS=""
@@ -56,7 +54,7 @@ done
 # *** SOME UNKNOWN LAYERING REASON.
 # *** 04/07/2008, 11/04/2009                      
 echo ">>> Execing build.conf"
-. ./builder_defaults.sh
+. ${BUILDER_TOOLS}/builder_defaults.sh
 
 # Keeps track of how many time builder has looped
 BUILDCOUNTER=0

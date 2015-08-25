@@ -57,15 +57,21 @@
 # beginning of this file                  #
 ###########################################
 
-# Detect if this file is being sourced by a script from root or from tools
-local _curdir=$(basename $(dirname ${0}))
+if [ -z "${BUILDER_ROOT}" ]; then
+	echo ">>> ERROR: BUILDER_ROOT must be defined by script that includes builder_defaults.sh"
+	exit 1
+fi
 
-if [ "${_curdir}" = "tools" ]; then
-	export BUILDER_TOOLS=$(realpath ${_curdir})
-	export BUILDER_ROOT=$(realpath "${_curdir}/..")
-else
-	export BUILDER_TOOLS=$(realpath "${_curdir}/tools")
-	export BUILDER_ROOT=$(realpath "${_curdir}")
+if [ -d "${BUILDER_ROOT}" ]; then
+	echo ">>> ERROR: BUILDER_ROOT is invalid"
+	exit 1
+fi
+
+export BUILDER_TOOLS=${BUILDER_TOOLS:-"${BUILDER_ROOT}/tools"}
+
+if [ -d "${BUILDER_TOOLS}" ]; then
+	echo ">>> ERROR: BUILDER_TOOLS is invalid"
+	exit 1
 fi
 
 BUILD_CONF="${BUILDER_ROOT}/build.conf"

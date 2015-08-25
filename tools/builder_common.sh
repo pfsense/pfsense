@@ -43,10 +43,10 @@
 # modification, are permitted provided that the following conditions are met:
 #
 
-if [ "$MAKEOBJDIRPREFIXFINAL" != "" ]; then
-	mkdir -p $MAKEOBJDIRPREFIXFINAL
+if [ -n "${IMAGES_FINAL_DIR}" -a "${IMAGES_FINAL_DIR}" != "/" ]; then
+	mkdir -p ${IMAGES_FINAL_DIR}
 else
-	echo "MAKEOBJDIRPREFIXFINAL is not defined"
+	echo "IMAGES_FINAL_DIR is not defined"
 	print_error_pfS
 fi
 
@@ -552,8 +552,8 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${MAKEOBJDIRPREFIXFINAL}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-${DATESTRING}.img"
-		IMGUPDATE="${MAKEOBJDIRPREFIXFINAL}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade-${DATESTRING}.img"
+		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-${DATESTRING}.img"
+		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade-${DATESTRING}.img"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -628,9 +628,9 @@ awk '
 	# for booting the image from a USB device to work.
 	print "a 1"
 }
-	' > ${MAKEOBJDIRPREFIXFINAL}/_.fdisk
+	' > ${IMAGES_FINAL_DIR}/_.fdisk
 
-		MNT=${MAKEOBJDIRPREFIXFINAL}/_.mnt
+		MNT=${IMAGES_FINAL_DIR}/_.mnt
 		mkdir -p ${MNT}
 
 		dd if=/dev/zero of=${IMG} bs=${NANO_SECTS}b \
@@ -639,7 +639,7 @@ awk '
 		MD=$(mdconfig -a -t vnode -f ${IMG} -x ${NANO_SECTS} -y ${NANO_HEADS})
 		trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
-		fdisk -i -f ${MAKEOBJDIRPREFIXFINAL}/_.fdisk ${MD} 2>&1 >> ${LOGFILE}
+		fdisk -i -f ${IMAGES_FINAL_DIR}/_.fdisk ${MD} 2>&1 >> ${LOGFILE}
 		fdisk ${MD} 2>&1 >> ${LOGFILE}
 
 		boot0cfg -B -b ${FINAL_CHROOT_DIR}/${NANO_BOOTLOADER} ${NANO_BOOT0CFG} ${MD} 2>&1 >> ${LOGFILE}
@@ -766,7 +766,7 @@ awk '
 	unset IMGUPDATESIZE
 	unset IMGSIZE
 
-	ls -lah $MAKEOBJDIRPREFIXFINAL
+	ls -lah $IMAGES_FINAL_DIR
 }
 
 # This routine creates a ova image that contains
@@ -1037,7 +1037,7 @@ clean_obj_dir() {
 	mkdir -p $KERNEL_BUILD_PATH
 
 	echo -n ">>> Cleaning previously built images..."
-	rm -rf $MAKEOBJDIRPREFIXFINAL/*
+	rm -rf $IMAGES_FINAL_DIR/*
 	echo "Done!"
 
 	if [ -z "${NO_CLEANREPOS}" ]; then

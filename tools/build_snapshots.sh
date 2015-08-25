@@ -153,8 +153,8 @@ copy_to_staging_nanobsd() {
 			mkdir -p $STAGINGAREA/nanobsd
 			mkdir -p $STAGINGAREA/nanobsdupdates
 
-			cp $MAKEOBJDIRPREFIXFINAL/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
-			cp $MAKEOBJDIRPREFIXFINAL/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
+			cp $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
+			cp $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
 				md5 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.md5 2>/dev/null
@@ -283,8 +283,7 @@ cleanup_builds() {
 	# Remove prior builds
 	update_status ">>> Cleaning up after prior builds..."
 	rm -rf $STAGINGAREA/*
-	rm -f $UPDATESDIR/*  # Keep updates dir slimmed down
-	rm -rf $MAKEOBJDIRPREFIXFINAL/*
+	rm -rf $IMAGES_FINAL_DIR/*
 	(cd ${BUILDER_ROOT} && ./build.sh --clean-builder)
 }
 

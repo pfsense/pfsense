@@ -365,8 +365,8 @@ done
 echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
 wait
 
-echo ">>> $MAKEOBJDIRPREFIXFINAL now contains:"
-ls -lah $MAKEOBJDIRPREFIXFINAL
+echo ">>> ${IMAGES_FINAL_DIR} now contains:"
+ls -lah ${IMAGES_FINAL_DIR}
 
 set -e
 # Run final finish routines

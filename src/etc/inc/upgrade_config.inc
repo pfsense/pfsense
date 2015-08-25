@@ -3822,4 +3822,13 @@ function upgrade_119_to_120() {
 	}
 }
 
+function upgrade_120_to_121() {
+	global $config;
+	foreach ($config['system']['user'] as &$user) {
+		if (isset($user['nt-hash'])) {
+			unset($user['nt-hash']);
+		}
+	}
+}
+
 ?>

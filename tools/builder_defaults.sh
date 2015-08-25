@@ -101,7 +101,7 @@ export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 
 # Product details
-export PRODUCT_NAME=${PRODUCT_NAME:-pfSense}
+export PRODUCT_NAME=${PRODUCT_NAME:-"pfSense"}
 export PRODUCT_URL=${PRODUCT_VERSION:-"https://www.pfsense.org/"}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 
@@ -130,9 +130,9 @@ if [ ! -d ${SCRATCHDIR} ]; then
 fi
 
 # Area that the final image will appear in
-export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-${SCRATCHDIR}/${PRODUCT_NAME}/}
+export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
 
-export BUILDER_LOGS=${BUILDER_LOGS:-${BUILDER_ROOT}/logs}
+export BUILDER_LOGS=${BUILDER_LOGS:-"${BUILDER_ROOT}/logs"}
 if [ ! -d ${BUILDER_LOGS} ]; then
 	mkdir -p ${BUILDER_LOGS}
 fi
@@ -140,26 +140,26 @@ fi
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"tank"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
-export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}}
+export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 
-export POUDRIERE_BULK=${POUDRIERE_BULK:-${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk}
+export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.com:pfsense/freebsd-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 
 # This is where files will be staged
-export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-/usr/local/stage-dir}
+export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"/usr/local/stage-dir"}
 
-export SRCDIR=${SRCDIR:-/usr/${PRODUCT_NAME}src/src.${GIT_REPO_BRANCH_OR_TAG}}
+export SRCDIR=${SRCDIR:-"/usr/${PRODUCT_NAME}src/src.${GIT_REPO_BRANCH_OR_TAG}"}
 
 # 400M is not enough for amd64
 export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 
 # OVF/vmdk parms
-export OVFPATH=${OVFPATH:-${IMAGES_FINAL_DIR}}
+export OVFPATH=${OVFPATH:-"${IMAGES_FINAL_DIR}"}
 # Name of ovf file included inside OVA archive
-export OVFFILE=${OVFFILE:-${PRODUCT_NAME}.ovf}
+export OVFFILE=${OVFFILE:-"${PRODUCT_NAME}.ovf"}
 # On disk name of VMDK file included in OVA
-export OVFVMDK=${OVFVMDK:-${PRODUCT_NAME}.vmdk}
+export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}.vmdk"}
 # optional
 export OVFCERT=${OVFCERT:-""}
 # 10 gigabyte on disk VMDK size
@@ -242,12 +242,12 @@ export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
 # Directory that will clone to in order to create
 # iso staging area.
-export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-/usr/local/final-dir}
+export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"/usr/local/final-dir"}
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
 local _BUILDER_EPOCH=$(date +"%s")
-export DATESTRINGFILE=${DATESTRINGFILE:-$SCRATCHDIR/version.snapshots}
+export DATESTRINGFILE=${DATESTRINGFILE:-"$SCRATCHDIR/version.snapshots"}
 if [ "${DATESTRING}" = "" ]; then
 	if [ -f $DATESTRINGFILE ]; then
 		# If the file is more than 30 minutes old regenerate it
@@ -266,7 +266,7 @@ fi
 
 # NOTE: Date string is placed on the final image etc folder to help detect new updates
 #       The file is used for sharing the same value with build_snapshots.sh
-export BUILTDATESTRINGFILE=${BUILTDATESTRINGFILE:-$SCRATCHDIR/version.buildtime}
+export BUILTDATESTRINGFILE=${BUILTDATESTRINGFILE:-"$SCRATCHDIR/version.buildtime"}
 if [ "${BUILTDATESTRING}" = "" ]; then
 	if [ -f $BUILTDATESTRINGFILE ]; then
 		# If the file is more than 30 minutes old regenerate it
@@ -292,11 +292,11 @@ export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/core_pkg"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 # General builder output filenames
-export UPDATESDIR=${UPDATESDIR:-${IMAGES_FINAL_DIR}/updates}
-export ISOPATH=${ISOPATH:-${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.iso}
-export MEMSTICKPATH=${MEMSTICKPATH:-${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img}
-export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-serial-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img}
-export MEMSTICKADIPATH=${MEMSTICKADIPATH:-${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img}
+export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}
+export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.iso"}
+export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
+export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-serial-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
+export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
 
 # set full-update update filename
 export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}

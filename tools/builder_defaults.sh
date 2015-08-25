@@ -280,7 +280,6 @@ export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.c
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 
 # Host to rsync pkg repos from poudriere
-export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-"beta.pfsense.org"}
 export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
 export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}

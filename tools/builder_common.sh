@@ -1922,6 +1922,11 @@ poudriere_bulk() {
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
+	if [ -z "${DO_NOT_UPLOAD}" -a -z "${PKG_RSYNC_HOSTNAME}" ]; then
+		echo ">>> ERROR: PKG_RSYNC_HOSTNAME is not set"
+		print_error_pfS
+	fi
+
 	poudriere_create_ports_tree
 
 	[ -d /usr/local/etc/poudriere.d ] || \

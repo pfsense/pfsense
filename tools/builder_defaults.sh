@@ -207,7 +207,6 @@ export NANO_IMAGES=2
 # 0 -> Leave second image all zeroes so it compresses better.
 # 1 -> Initialize second image with a copy of the first
 export NANO_INIT_IMG2=1
-export NANO_WITH_VGA=${NANO_WITH_VGA:-""}
 export NANO_NEWFS="-b 4096 -f 512 -i 8192 -O1"
 export FLASH_SIZE=${FLASH_SIZE:-"1g"}
 # Size of code file system in 512 bytes sectors
@@ -297,8 +296,6 @@ export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-m
 
 # set full-update update filename
 export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}
-
-# " - UNBREAK TEXTMATE FORMATTING - PLEASE LEAVE.
 
 if [ "${TARGET}" = "i386" ]; then
 	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME} ${PRODUCT_NAME}_WRAP ${PRODUCT_NAME}_WRAP_VGA"}

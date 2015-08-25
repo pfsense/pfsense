@@ -2533,7 +2533,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'pppoe_password',
-	'Username',
+	'Password',
 	'password',
 	$pconfig['pppoe_password']
 ));
@@ -2562,176 +2562,167 @@ $section->addInput(new Form_Input(
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
 
+$section->addInput(new Form_Select(
+	'pppoe-reset-type',
+	'Periodic reset',
+	$pconfig['pppoe-reset-type'],
+	['' => 'Disabled', 'custom' => 'Custom', 'preset' => 'Pre-set']
+))->setHelp('Select a reset timing type');
+
+$group = new Form_Group('Custom reest');
+
+$group->add(new Form_Input(
+	'pppoe_resethour',
+	null,
+	'number',
+	$pconfig['pppoe_resethour'],
+	[min => 0, max => 23]
+))->setHelp('Hour (0-23)');
+
+$group->add(new Form_Input(
+	'pppoe_resetminute',
+	null,
+	'number',
+	$pconfig['pppoe_resetminute'],
+	[min => 0, max => 59]
+))->setHelp('Minutes (0-59)');
+
+// ToDo: Need a date-picker here
+$group->add(new Form_Input(
+	'pppoe_resetdate',
+	null,
+	'text',
+	$pconfig['pppoe_resetdate']
+))->setHelp('Specific date (mm/dd/yyyy)');
+
+$group->setHelp('If you leave the date field empty, the reset will be executed each day at the time you specified using the minutes and hour field');
+
+$section->add($group);
+
+$group = new Form_MultiCheckboxGroup('cron based reset');
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each month ("0 0 1 * *")',
+	$pconfig['pppoe_monthly'],
+	'monthly'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each month ("0 0 * * 0")',
+	$pconfig['pppoe_weekly'],
+	'weekly'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each month ("0 0 * * *")',
+	$pconfig['pppoe_daily'],
+	'daily'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each month ("0 * * * *")',
+	$pconfig['pppoe_hourly'],
+	'hourly'
+))->displayAsRadio();
+
+$section->add($group);
+
+if (isset($pconfig['pppid'])) {
+	$section->addInput(new Form_StaticText(
+		'Advanced and MLPPP',
+		'<a href="/interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) . '" class="navlnk">Click here for additional PPPoE configuration options. Save first if you made changes.</a>'
+	));
+} else {
+	$section->addInput(new Form_StaticText(
+		'Advanced and MLPPP',
+		'<a href="/interfaces_ppps_edit.php" class="navlnk">Click here for additional PPPoE configuration options and for MLPPP configuration.</a>'
+	));	
+}
+
 $form->add($section);
+
+// PPTP & L2TP Configuration section
+$section = new Form_Section('PPTP/L2TP Configuraion');
+
+$section->addInput(new Form_Input(
+	'pptp_username',
+	'Username',
+	'text',
+	$pconfig['pptp_username']
+));
+
+$section->addInput(new Form_Input(
+	'pptp_password',
+	'Password',
+	'password',
+	$pconfig['pptp_password']
+));
+
+$section->addInput(new Form_IpAddress(
+	'pptp_local',
+	'Local IP address',
+	$pconfig['pptp_local']
+))->addMask('pptp_subnet', $pconfig['pptp_subnet'][0]);
+
+$section->addInput(new Form_IpAddress(
+	'pptp_remote',
+	'Remote IP address',
+	$pconfig['pptp_remote']
+));
+
+$section->addInput(new Form_Checkbox(
+	'pptp_dialondemand',
+	'Dial on demand',
+	'Enable Dial-On-Demand mode ',
+	$pconfig['pptp_dialondemand'],
+	'enable'
+))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. ' . 
+			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
+
+$section->addInput(new Form_Input(
+	'pptp_idletimeout',
+	'Idle timeout (seconds)',
+	'number',
+	$pconfig['pptp_idletimeout'],
+	[min => 0]
+))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
+			'An idle timeout of zero disables this feature.');
+			
+if (isset($pconfig['pppid'])) {
+	$section->addInput(new Form_StaticText(
+		'Advanced and MLPPP',
+		'<a href="/interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) . '" class="navlnk">Click here for additional PPTP and L2TP configuration options. Save first if you made changes.</a>'
+	));
+} else {
+	$section->addInput(new Form_StaticText(
+		'Advanced and MLPPP',
+		'<a href="/interfaces_ppps_edit.php" class="navlnk">Click here for additional PPTP and L2TP configuration options.</a>'
+	));	
+}
+
+$form->add($section);
+
+// Wireless interface
+if (true || isset($wancfg['wireless'])) { // DEBUG
+
+$section = new Form_Section('Common wireless configuration - Settings apply to all wireless networks on ' . $wlanbaseif . '.');
+
+$form->add($section);
+}
+
 print($form);
 ?>
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabs">
 
-						<tr style="display:none;" id="pppoe">
-							<td colspan="2" style="padding:0px;">
-								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="pppoe">
-									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPPoE configuration"); ?></td>
-									</tr>
-
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked=\"checked\""; ?> />
-											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br />
-											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i><?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout'])?>" /><?=gettext("seconds"); ?><br /><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset")?></td>
-										<td width="78%" class="vtable">
-											<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%" summary="periodic reset">
-												<tr>
-													<td align="left" valign="top">
-														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
-														<select style="vertical-align:top" id="reset_type" name="pppoe-reset-type" class="formselect" onchange="show_reset_settings(this.value);">
-															<option value=""><?=gettext("Disabled"); ?></option>
-															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected=\"selected\""; ?>><?=gettext("Custom"); ?></option>
-															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected=\"selected\""; ?>><?=gettext("Pre-Set"); ?></option>
-														</select><?=gettext("Select a reset timing type"); ?>
-														</p>
-														<?php if ($pconfig['pppoe_pr_custom']): ?>
-															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoecustomwrap">
-														<?php else: ?>
-															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
-														<?php endif; ?>
-														<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= htmlspecialchars($pconfig['pppoe_resethour']); ?>" size="3" />
-														<?=gettext("hour (0-23)"); ?><br />
-														<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= htmlspecialchars($pconfig['pppoe_resetminute']); ?>" size="3" />
-														<?=gettext("minute (0-59)"); ?><br />
-														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate'])?>" />
-														<?=gettext("reset at a specific date (mm/dd/yyyy)"); ?>
-														<br />&nbsp;<br />
-														<span class="red"><strong><?=gettext("Note:"); ?></strong></span>
-														<?=gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
-														</p>
-														<?php if ($pconfig['pppoe_pr_preset']): ?>
-															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoepresetwrap">
-														<?php else: ?>
-															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoepresetwrap">
-														<?php endif; ?>
-														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_monthly" value="monthly" <?php if ($pconfig['pppoe_monthly']) echo "checked=\"checked\""; ?> />
-														<?=gettext("reset at each month ('0 0 1 * *')"); ?>
-														<br />
-														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_weekly" value="weekly" <?php if ($pconfig['pppoe_weekly']) echo "checked=\"checked\""; ?> />
-														<?=gettext("reset at each week ('0 0 * * 0')"); ?>
-														<br />
-														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_daily" value="daily" <?php if ($pconfig['pppoe_daily']) echo "checked=\"checked\""; ?> />
-														<?=gettext("reset at each day ('0 0 * * *')"); ?>
-														<br />
-														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_hourly" value="hourly" <?php if ($pconfig['pppoe_hourly']) echo "checked=\"checked\""; ?> />
-														<?=gettext("reset at each hour ('0 * * * *')"); ?>
-														</p>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced and MLPPP"); ?></td>
-										<?php if (isset($pconfig['pppid'])): ?>
-											<td width="78%" class="vtable">
-												<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid'])?>" class="navlnk"><?=gettext("Click here"); ?></a>
-												<?=gettext("for additional PPPoE configuration options. Save first if you made changes."); ?>
-											</td>
-										<?php else: ?>
-											<td width="78%" class="vtable">
-												<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?></a>
-												<?=gettext("for advanced PPPoE configuration options and MLPPP configuration."); ?>
-											</td>
-										<?php endif; ?>
-									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-						<tr style="display:none;" id="pptp">
-							<td colspan="2" style="padding:0px;">
-								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="pptp">
-									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPTP/L2TP configuration"); ?></td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username'])?>" />
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password'])?>" />
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Local IP address"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20" value="<?=htmlspecialchars($pconfig['pptp_local'][0])?>" />
-											/
-											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
-												<?php for ($i = 31; $i > 0; $i--): ?>
-													<option value="<?=$i?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected=\"selected\""; ?>>
-														<?=$i?>
-													</option>
-												<?php endfor; ?>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote IP address"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0])?>" />
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked=\"checked\""; ?> />
-											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br />
-											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?><i><?=gettext("virtual full time"); ?></i><?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout'])?>" /><?=gettext("seconds"); ?><br /><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
-										<?php if (isset($pconfig['pppid'])): ?>
-											<td width="78%" class="vtable">
-												<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid'])?>" class="navlnk"><?=gettext("Click here")?></a>
-												<?=gettext("for additional PPTP and L2TP configuration options. Save first if you made changes.")?>
-											</td>
-										<?php else: ?>
-											<td width="78%" class="vtable">
-												<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here")?></a>
-												<?=gettext("for advanced PPTP and L2TP configuration options")?>.
-											</td>
-										<?php endif; ?>
-									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
-									</tr>
-								</table>
-							</td>
-						</tr>
 						<?php
 							/* Wireless interface? */
 							if (isset($wancfg['wireless'])):

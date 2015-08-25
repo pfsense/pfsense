@@ -130,19 +130,21 @@ $(function() {
 			e.preventDefault();
 	});
 
-	// Add toggle-all when there are multiple checkboxes
+	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons
 	$('.control-label + .checkbox.multi').each(function() {
 		var a = $('<a class="btn btn-xs btn-default">toggle all</a>');
-
-		a.on('click', function() {
-			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
-				all = wrap.find('input[type=checkbox]'),
-				checked = wrap.find('input[type=checkbox]:checked');
-
-			all.prop('checked', (all.length != checked.length));
-		});
-
-		a.appendTo($(this));
+		
+		if(($(this).html().indexOf("type=\"radio\"") == -1)) {
+			a.on('click', function() {
+				var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
+					all = wrap.find('input[type=checkbox]'),
+					checked = wrap.find('input[type=checkbox]:checked');
+	
+				all.prop('checked', (all.length != checked.length));
+			});
+	
+			a.appendTo($(this));
+		}
 	});
 
 	// Hide advanced inputs by default

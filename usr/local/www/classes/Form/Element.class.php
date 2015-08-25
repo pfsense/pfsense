@@ -56,6 +56,12 @@ class Form_Element
 		return $this;
 	}
 
+	public function setAttribute($key, $value = null)
+	{
+		$this->_attributes[ $key ] = $value;
+		return $this;
+	}
+	
 	public function __toString()
 	{
 		$attributes = '';

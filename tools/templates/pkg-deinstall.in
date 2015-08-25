@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/local/sbin/fcgicli -f /etc/rc.packages -d "pkg=%%PORTNAME%%&when=${2}"

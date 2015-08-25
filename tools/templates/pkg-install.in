@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+/usr/local/sbin/fcgicli -f /etc/rc.packages -d "pkg=%%PORTNAME%%&when=${2}"

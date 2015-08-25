@@ -63,7 +63,19 @@ export PRODUCT_URL="https://PRODUCT_URL/"
 #export NO_CLEAN_FREEBSD_SRC=YES
 
 # rsync data to upload snapshots
-#RSYNCIP="your.snapshot.server"
-#RSYNCUSER="username"
-#RSYNCPATH="/usr/local/www/snapshots"
-#RSYNCLOGS="/usr/local/www/snapshots/logs"
+#export RSYNCIP="your.snapshot.server"
+#export RSYNCUSER="username"
+#export RSYNCPATH="/usr/local/www/snapshots"
+#export RSYNCLOGS="/usr/local/www/snapshots/logs"
+
+# rsync data to upload pkg repo
+#export PKG_RSYNC_HOSTNAME="pkg_repo_hostname"
+#export PKG_RSYNC_USERNAME="username"
+#export PKG_RSYNC_SSH_PORT="22"
+#export PKG_RSYNC_DESTDIR="/usr/local/www/beta/packages"
+
+# pkg repo URL
+#export PKG_REPO_SERVER="pkg+http://beta.pfsense.org/packages"
+
+# Branch to replace pkg.conf template, defaults to $GIT_REPO_BRANCH_OR_TAG
+#export PKG_REPO_CONF_BRANCH="BRANCH"

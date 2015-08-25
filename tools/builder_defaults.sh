@@ -115,7 +115,13 @@ if [ -z "${PRODUCT_VERSION}" ]; then
 fi
 
 # Product repository tag to build
-export GIT_REPO_BRANCH_OR_TAG=${GIT_REPO_BRANCH_OR_TAG:-master}
+local _cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)
+if [ "${_cur_git_repo_branch_or_tag}" = "HEAD" ]; then
+	# We are on a tag, lets find out its name
+	export GIT_REPO_BRANCH_OR_TAG=$(git -C ${BUILDER_ROOT} describe --tags)
+else
+	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
+fi
 
 # Directory to be used for writing temporary information
 export SCRATCHDIR=${SCRATCHDIR:-"${BUILDER_ROOT}/tmp"}

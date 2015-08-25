@@ -1931,14 +1931,10 @@ poudriere_bulk() {
 
 	poudriere_create_ports_tree
 
-	local CUR_BRANCH=$(cd ${BUILDER_ROOT} && git branch | grep '^\*' | cut -d' ' -f2)
-
 	[ -d /usr/local/etc/poudriere.d ] || \
 		mkdir -p /usr/local/etc/poudriere.d
 
-	if [ "${CUR_BRANCH}" != "${GIT_REPO_BRANCH_OR_TAG}" ] && git show "${GIT_REPO_BRANCH_OR_TAG}:builder_scripts/conf/pfPorts/make.conf" >/dev/null 2>&1; then
-		git show "origin/${GIT_REPO_BRANCH_OR_TAG}:builder_scripts/conf/pfPorts/make.conf" > /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
-	elif [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
+	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
 		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	fi
 

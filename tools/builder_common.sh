@@ -1301,7 +1301,7 @@ create_memstick_serial_image() {
 	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
 	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
 
-	echo ">>>   Activating serial console..." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
 	# Activate serial console in boot.config
 	if [ -f ${BOOTCONF} ]; then
 		sed -i "" '/-D$/d' ${BOOTCONF}
@@ -1362,7 +1362,7 @@ create_memstick_adi_image() {
 	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
 	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
 
-	echo ">>>   Activating serial console..." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
 	# Activate serial console in boot.config
 	if [ -f ${BOOTCONF} ]; then
 		sed -i "" '/-[Dh]$/d' ${BOOTCONF}

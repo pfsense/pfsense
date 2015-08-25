@@ -185,15 +185,17 @@ export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 
 # Controls how many concurrent make processes are run for each stage
-if [ "${NO_MAKEJ}" = "" ]; then
-	CPUS=`sysctl -n kern.smp.cpus`
-	CPUS=`expr $CPUS '*' 2`
-	export MAKEJ_WORLD=${MAKEJ_WORLD:-"-j$CPUS"}
-	export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"-j$CPUS"}
-else
-	export MAKEJ_WORLD=${MAKEJ_WORLD:-""}
-	export MAKEJ_KERNEL=${MAKEJ_KERNEL:-""}
+local _CPUS=""
+if [ -z "${NO_MAKEJ}" ]; then
+	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
+	if [ -n "${_CPUS}" ]; then
+		_CPUS="-j${_CPUS}"
+	fi
 fi
+
+export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
+export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
+
 if [ "${TARGET}" = "i386" ]; then
 	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
 else

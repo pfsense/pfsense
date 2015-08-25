@@ -51,20 +51,12 @@
 
 $opts  = "x:"; // Path to XML file
 $opts .= "p:"; // Package name to build (optional)
-$opts .= "s:"; // Product version to pass to set_version.sh
-$opts .= "U";  // Skip update sources
 $opts .= "t:"; // Path to ports tree repo
 
 $options = getopt($opts);
 
 if(!isset($options['x']))
 	usage();
-
-// Safety check
-if (!is_dir("/usr/ports") || !file_exists("/usr/ports/COPYRIGHT")) {
-	echo "!!! /usr/ports/ not found.   Please run portsnap fetch extract\n";
-	exit;
-}
 
 // Set the XML filename that we are processing
 $xml_filename = $options['x'];
@@ -73,29 +65,21 @@ if (!file_exists($xml_filename))
 	die("Package XML file not found");
 
 $scripts_dir = realpath(dirname($argv[0]));
-$builder_dir = realpath($scripts_dir . '/..');
-$tools_dir = realpath($builder_dir . '/..');
+$tools_dir = realpath($scripts_dir . '/..');
+$builder_dir = realpath($tools_dir . '/..');
+$src_dir = realpath($builder_dir . '/src');
 $packages_dir = dirname(realpath($xml_filename));
 $ports_dir = $options['t'];
-
-if (isset($options['s']) && !empty($options['s'])) {
-	exec("cd {$builder_dir} && ./set_version.sh {$options['s']}");
-}
-
-if (!isset($options['U']))
-	exec("cd {$builder_dir} && ./build.sh --update-sources");
 
 if (!file_exists($ports_dir) || !is_dir($ports_dir))
 	die("Ports tree {$ports_dir} not found!\n");
 
-$git_repo_dir = trim(shell_exec("cd {$builder_dir} && ./build.sh -V GIT_REPO_DIR"));
-$git_repo_branch_or_tag = trim(shell_exec("cd {$builder_dir} && ./build.sh -V GIT_REPO_BRANCH_OR_TAG"));
 $product_name = trim(shell_exec("cd {$builder_dir} && ./build.sh -V PRODUCT_NAME"));
 
-if (is_dir("{$git_repo_dir}/{$git_repo_branch_or_tag}/etc/inc")) {
-	require_once("{$git_repo_dir}/{$git_repo_branch_or_tag}/etc/inc/util.inc");
-	require_once("{$git_repo_dir}/{$git_repo_branch_or_tag}/etc/inc/pfsense-utils.inc");
-	require_once("{$git_repo_dir}/{$git_repo_branch_or_tag}/etc/inc/xmlparse.inc");
+if (is_dir("{$src_dir}/etc/inc")) {
+	require_once("{$src_dir}/etc/inc/util.inc");
+	require_once("{$src_dir}/etc/inc/pfsense-utils.inc");
+	require_once("{$src_dir}/etc/inc/xmlparse.inc");
 } else {
 	die("Missing include directories\n");
 }
@@ -115,7 +99,7 @@ if (isset($options['p'])) {
 		$pkg_list = array_map('strtolower', $options['p']);
 }
 
-$pfs_version = trim(file_get_contents("{$git_repo_dir}/{$git_repo_branch_or_tag}/etc/version"));
+$pfs_version = trim(file_get_contents("{$src_dir}/etc/version"));
 
 foreach($pkgs['packages']['package'] as $pkg) {
 	if (isset($pkg_list) && !in_array(strtolower($pkg['name']), $pkg_list))
@@ -154,7 +138,7 @@ function fix_php_calls($file) {
 }
 
 function create_port($pkg) {
-	global $ports_dir, $tools_dir, $builder_dir, $packages_dir, $product_name;
+	global $ports_dir, $tools_dir, $packages_dir, $product_name;
 
 	if (isset($pkg['internal_name'])) {
 		$pkg_name = $pkg['internal_name'];
@@ -209,11 +193,11 @@ function create_port($pkg) {
 		file_put_contents($port_path . "/pkg-message", $pkg['after_install_info'] . "\n");
 	}
 
-	$pkg_install = file_get_contents($builder_dir . "/templates/pkg-install.in");
+	$pkg_install = file_get_contents($tools_dir . "/templates/pkg-install.in");
 	file_put_contents($port_path . "/files/pkg-install.in", $pkg_install);
 	unset($pkg_install);
 
-	$pkg_deinstall = file_get_contents($builder_dir . "/templates/pkg-deinstall.in");
+	$pkg_deinstall = file_get_contents($tools_dir . "/templates/pkg-deinstall.in");
 	file_put_contents($port_path . "/files/pkg-deinstall.in", $pkg_deinstall);
 	unset($pkg_deinstall);
 

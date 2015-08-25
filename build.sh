@@ -227,7 +227,7 @@ case $BUILDACTION in
 		build_all_kernels
 	;;
 	cleanbuilder)
-		clean_obj_dir
+		clean_builder
 	;;
 	printflags)
 		print_flags
@@ -298,7 +298,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 		&& rm -rf ${CORE_PKG_PATH}
 
 	# Cleanup environment before start
-	clean_obj_dir
+	clean_builder
 
 	# Make sure source directories are present.
 	ensure_source_directories_present

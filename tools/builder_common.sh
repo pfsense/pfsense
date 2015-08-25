@@ -1005,7 +1005,7 @@ file_search_replace() {
 }
 
 # Cleans up previous builds
-clean_obj_dir() {
+clean_builder() {
 	# Clean out directories
 	echo ">>> Cleaning up previous build environment...Please wait!"
 
@@ -1029,7 +1029,7 @@ clean_obj_dir() {
 			rm -rf ${OBJTREE}/*
 			echo "Done!"
 		fi
-		if [ -n "${KERNEL_DESTDIR}" -a -d "${KERNEL_BUILD_PATH}" ]; then
+		if [ -d "${KERNEL_BUILD_PATH}" ]; then
 			echo -n ">>> Cleaning previously built kernel stage area..."
 			rm -rf $KERNEL_BUILD_PATH/*
 			echo "Done!"

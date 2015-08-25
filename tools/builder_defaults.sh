@@ -143,7 +143,11 @@ export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.c
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 
 # This is where files will be staged
-export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"/usr/local/stage-dir"}
+export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
+
+# Directory that will clone to in order to create
+# iso staging area.
+export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"${SCRATCHDIR}/final-dir"}
 
 export SRCDIR=${SRCDIR:-"/usr/${PRODUCT_NAME}src/src.${GIT_REPO_BRANCH_OR_TAG}"}
 
@@ -235,10 +239,6 @@ export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 # package name would yield an error.
 #
 #export custom_package_list=""
-
-# Directory that will clone to in order to create
-# iso staging area.
-export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"/usr/local/final-dir"}
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh

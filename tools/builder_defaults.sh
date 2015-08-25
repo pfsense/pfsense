@@ -62,14 +62,14 @@ if [ -z "${BUILDER_ROOT}" ]; then
 	exit 1
 fi
 
-if [ -d "${BUILDER_ROOT}" ]; then
+if [ ! -d "${BUILDER_ROOT}" ]; then
 	echo ">>> ERROR: BUILDER_ROOT is invalid"
 	exit 1
 fi
 
 export BUILDER_TOOLS=${BUILDER_TOOLS:-"${BUILDER_ROOT}/tools"}
 
-if [ -d "${BUILDER_TOOLS}" ]; then
+if [ ! -d "${BUILDER_TOOLS}" ]; then
 	echo ">>> ERROR: BUILDER_TOOLS is invalid"
 	exit 1
 fi

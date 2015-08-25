@@ -1641,12 +1641,6 @@ installkernel() {
 # Launch is ran first to setup a few variables that we need
 # Imported from FreeSBIE
 launch() {
-	if [ ! -f $SCRATCHDIR/${PRODUCT_NAME}_builder_set_time ]; then
-		echo ">>> Updating system clock..."
-		ntpdate 0.freebsd.pool.ntp.org
-		touch $SCRATCHDIR/${PRODUCT_NAME}_builder_set_time
-	fi
-
 	if [ "$(id -u)" != "0" ]; then
 		echo "Sorry, this must be done as root."
 	fi

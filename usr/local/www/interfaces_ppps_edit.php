@@ -644,7 +644,7 @@ $section->addInput(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
-	$pconfig['descr']
+	$pconfig['passwordfld']
 ));
 
 // These elements arehidden by default, and un-hidden in Javascript

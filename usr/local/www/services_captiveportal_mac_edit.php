@@ -185,7 +185,7 @@ if ($_POST) {
 
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
+$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
 $mymac = str_replace("\n","",$mymac);
 
 include("head.inc");

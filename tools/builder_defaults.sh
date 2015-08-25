@@ -90,7 +90,6 @@ export TARGET_ARCH=${TARGET_ARCH:-${TARGET}}
 if [ "$TARGET_ARCH" = "" ]; then
         export TARGET_ARCH=`uname -p`
 fi
-export BUILDER_HOST_TARGET=`uname -m`
 
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}

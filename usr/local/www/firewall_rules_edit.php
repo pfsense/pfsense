@@ -1544,7 +1544,7 @@ $section->addInput(new Form_Select(
 	$schedules
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
 
-$gateways = array('default' => 'default');
+$gateways = array("" => 'default');
 foreach (return_gateways_array() as $gwname => $gw)
 {
 	if (($pconfig['ipprotocol'] == "inet46"))

@@ -4,60 +4,60 @@
 	diag_backup.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/shutdown
-	pfSense_MODULE:	backup
+	pfSense_MODULE: backup
 */
 
 ##|+PRIV
@@ -278,7 +278,7 @@ if ($_POST) {
 				//unlock($lockbckp);
 
 				/*
-				 *  Backup RRD Data
+				 *	Backup RRD Data
 				 */
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
@@ -565,7 +565,8 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 function build_area_list($showall) {
 	global $config;
 
-	$areas = array("aliases" => gettext("Aliases"),
+	$areas = array(
+		"aliases" => gettext("Aliases"),
 		"captiveportal" => gettext("Captive Portal"),
 		"voucher" => gettext("Captive Portal Vouchers"),
 		"dnsmasq" => gettext("DNS Forwarder"),
@@ -590,68 +591,20 @@ function build_area_list($showall) {
 		"vlans" => gettext("VLANS"),
 		"wol" => gettext("Wake on LAN")
 		);
-		
+
+	$list = array("" => gettext("All"));
+
 	if($showall)
-		return($areas);	
+		return($list + $areas);
 	else {
-		$list = array();
 		foreach ($areas as $area => $areaname) {
 			if ($area === "rrddata" || check_and_returnif_section_exists($area) == true) {
 				$list[$area] = $areaname;
 			}
 		}
-		
+
 		return($list);
 	}
-}
-
-function spit_out_select_items($name, $showall) {
-	global $config;
-
-	$areas = array("aliases" => gettext("Aliases"),
-		"captiveportal" => gettext("Captive Portal"),
-		"voucher" => gettext("Captive Portal Vouchers"),
-		"dnsmasq" => gettext("DNS Forwarder"),
-		"unbound" => gettext("DNS Resolver"),
-		"dhcpd" => gettext("DHCP Server"),
-		"dhcpdv6" => gettext("DHCPv6 Server"),
-		"filter" => gettext("Firewall Rules"),
-		"interfaces" => gettext("Interfaces"),
-		"ipsec" => gettext("IPSEC"),
-		"nat" => gettext("NAT"),
-		"openvpn" => gettext("OpenVPN"),
-		"installedpackages" => gettext("Package Manager"),
-		"pptpd" => gettext("PPTP Server"),
-		"rrddata" => gettext("RRD Data"),
-		"cron" => gettext("Scheduled Tasks"),
-		"syslog" => gettext("Syslog"),
-		"system" => gettext("System"),
-		"staticroutes" => gettext("Static routes"),
-		"sysctl" => gettext("System tunables"),
-		"snmpd" => gettext("SNMP Server"),
-		"shaper" => gettext("Traffic Shaper"),
-		"vlans" => gettext("VLANS"),
-		"wol" => gettext("Wake on LAN")
-		);
-
-	$select = "<select name=\"{$name}\" id=\"{$name}\">";
-	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
-
-	if ($showall == true) {
-		foreach ($areas as $area => $areaname) {
-			$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
-		}
-	} else {
-		foreach ($areas as $area => $areaname) {
-			if ($area === "rrddata" || check_and_returnif_section_exists($area) == true) {
-				$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
-			}
-		}
-	}
-
-	$select .= "</select>\n";
-
-	echo $select;
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
@@ -659,10 +612,10 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
 	print_info_box($savemsg, 'success');
-	
+
 if (is_subsystem_dirty('restore')):
 ?>
 	<br/>
@@ -671,7 +624,7 @@ if (is_subsystem_dirty('restore')):
 		<?=print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?>
 		<br />
 	</form>
-<?php 
+<?php
 endif;
 
 $tab_array = array();
@@ -794,27 +747,27 @@ $form->add($section);
 
 if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
 	$section = new Form_Section('Package functions');
-	
+
 	if ($config['installedpackages']['package'] != "") {
 		$group = new Form_Group('');
 		$group->add(new Form_Button(
 			'Submit',
 			'Reinstall packages'
 		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-warning');
-	
+
 		$section->add($group);
 	}
-	
+
 	if (is_subsystem_dirty("packagelock")) {
 		$group = new Form_Group('');
 		$group->add(new Form_Button(
 			'Submit',
 			'Clear Package Lock'
 		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning');
-	
+
 		$section->add($group);
 	}
-	
+
 	$form->add($section);
 }
 

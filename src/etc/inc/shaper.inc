@@ -2217,20 +2217,21 @@ EOJS;
 			null,
 			'text',
 			$this->GetU_m1()
-		));
+		))->setHelp('m1');
 
 		$group->add(new Form_Input(
 			'upperlimit2',
 			null,
 			'text',
 			$this->GetU_d()
-		));
+		))->setHelp('d');
+		
 		$group->add(new Form_Input(
 			'upperlimit3',
 			null,
 			'text',
 			$this->GetU_m2()
-		));
+		))->setHelp('m2');
 
 
 		$section->add($group);
@@ -2249,20 +2250,21 @@ EOJS;
 			null,
 			'text',
 			$this->GetR_m1()
-		));
+		))->setHelp('m1');
 
 		$group->add(new Form_Input(
 			'realtime2',
 			null,
 			'text',
 			$this->GetR_d()
-		));
+		))->setHelp('d');
+		
 		$group->add(new Form_Input(
 			'realtime3',
 			null,
 			'text',
 			$this->GetR_m2()
-		));
+		))->setHelp('m2');
 
 		$section->add($group);
 
@@ -2280,20 +2282,21 @@ EOJS;
 			null,
 			'text',
 			$this->GetL_m1()
-		));
+		))->setHelp('m1');
 
 		$group->add(new Form_Input(
 			'linkshare2',
 			null,
 			'text',
 			$this->GetL_d()
-		));
+		))->setHelp('d');
+		
 		$group->add(new Form_Input(
 			'linkshare3',
 			null,
 			'text',
 			$this->GetL_m2()
-		));
+		))->setHelp('m2');
 
 		$group->sethelp('Bandwidth share overrides priority.' . '<br />' .
 						'The format for service curve specifications is (m1, d, m2). m2 controls the bandwidth assigned to the queue. ' .

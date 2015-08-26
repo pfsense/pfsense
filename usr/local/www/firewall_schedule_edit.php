@@ -45,14 +45,13 @@ function schedulecmp($a, $b) {
 	return strcmp($a['name'], $b['name']);
 }
 
-function schedule_sort() {
-	global $g, $config;
+function schedule_sort(){
+		global $g, $config;
 
-	if (!is_array($config['schedules']['schedule'])) {
-		return;
-	}
+		if (!is_array($config['schedules']['schedule']))
+				return;
 
-	usort($config['schedules']['schedule'], "schedulecmp");
+		usort($config['schedules']['schedule'], "schedulecmp");
 }
 
 require("guiconfig.inc");
@@ -60,29 +59,22 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"), gettext("Schedules"), gettext("Edit"));
+$pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
-}
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
 
-$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
-$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
+$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
+$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
 
-if (!is_array($config['schedules']['schedule'])) {
+if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();
-}
 
 $a_schedules = &$config['schedules']['schedule'];
 
-if (is_numericint($_GET['id'])) {
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
-}
 
 if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
@@ -93,31 +85,26 @@ if (isset($id) && $a_schedules[$id]) {
 }
 
 if ($_POST) {
-
-	if (strtolower($_POST['name']) == "lan") {
+	
+	if(strtolower($_POST['name']) == "lan")
 		$input_errors[] = gettext("Schedule may not be named LAN.");
-	}
-	if (strtolower($_POST['name']) == "wan") {
+	if(strtolower($_POST['name']) == "wan")
 		$input_errors[] = gettext("Schedule may not be named WAN.");
-	}
-	if (strtolower($_POST['name']) == "") {
+	if(strtolower($_POST['name']) == "")
 		$input_errors[] = gettext("Schedule name cannot be blank.");
-	}
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
 		$input_errors[] = gettext("Reserved word used for schedule name.");
 	} else {
-		if (is_validaliasname($_POST['name']) == false) {
+		if (is_validaliasname($_POST['name']) == false)
 			$input_errors[] = gettext("The schedule name may only consist of the characters a-z, A-Z, 0-9");
-		}
 	}
-
+	
 	/* check for name conflicts */
 	foreach ($a_schedules as $schedule) {
-		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule)) {
+		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule))
 			continue;
-		}
 
 		if ($schedule['name'] == $_POST['name']) {
 			$input_errors[] = gettext("A Schedule with this name already exists.");
@@ -126,13 +113,14 @@ if ($_POST) {
 	}
 	
 	$schedule = array();
-
+	
 	$schedule['name'] = $_POST['name'];
-	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
-
+	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');	
+	
 	$timerangeFound = false;
-	for ($x = 0; $x < 99; $x++) {
-		if ($_POST['schedule' . $x]) {
+	
+	for ($x=0; $x<99; $x++){
+		if($_POST['schedule' . $x]) {
 			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['starttime' . $x])) {
 				$input_errors[] = sprintf(gettext("Invalid start time - '%s'"), $_POST['starttime' . $x]);
 				continue;
@@ -150,26 +138,32 @@ if ($_POST) {
 			$timehourstr = $_POST['starttime' . $x];
 			$timehourstr .= "-";
 			$timehourstr .= $_POST['stoptime' . $x];
-			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8');
+			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8'); 
 			$dashpos = strpos($timestr, '-');
-			if ($dashpos === false) {
+			
+			if ($dashpos === false)
+			{
 				$timeparts['position'] = $timestr;
-			} else {
+			}
+			else
+			{
 				$tempindarray = array();
 				$monthstr = "";
 				$daystr = "";
 				$tempindarray = explode(",", $timestr);
-				foreach ($tempindarray as $currentselection) {
-					if ($currentselection) {
-						if ($firstprint) {
+				foreach ($tempindarray as $currentselection)
+				{
+					if ($currentselection){
+						if ($firstprint)
+						{
 							$monthstr .= ",";
-							$daystr .= ",";
+							$daystr .= ",";						
 						}
 						$tempstr = "";
 						$monthpos = strpos($currentselection, "m");
 						$daypos = strpos($currentselection, "d");
 						$monthstr .= substr($currentselection, $monthpos+1, $daypos-$monthpos-1);
-						$daystr .= substr($currentselection, $daypos+1);
+						$daystr .=  substr($currentselection, $daypos+1);			
 						$firstprint = true;
 					}
 				}
@@ -177,51 +171,55 @@ if ($_POST) {
 				$timeparts['month'] = $monthstr;
 				$timeparts['day'] = $daystr;
 			}
+						
 			$timeparts['hour'] = $timehourstr;
 			$timeparts['rangedescr'] = $timedescrstr;
 			$schedule['timerange'][$x] = $timeparts;
 		}
 	}
-
-	if (!$timerangeFound) {
+	
+	if (!$timerangeFound)
 		$input_errors[] = gettext("The schedule must have at least one time range configured.");
-	}
-
-	if (!$input_errors) {
-
-		if (!empty($pconfig['schedlabel'])) {
+		
+	if (!$input_errors) {		
+		
+		if (!empty($pconfig['schedlabel']))
 			$schedule['schedlabel'] = $pconfig['schedlabel'];
-		} else {
+		else
 			$schedule['schedlabel'] = uniqid();
-		}
 
-		if (isset($id) && $a_schedules[$id]) {
+		if (isset($id) && $a_schedules[$id]){
 			$a_schedules[$id] = $schedule;
-		} else {
+		}
+		else{
 			$a_schedules[] = $schedule;
 		}
 		
 		schedule_sort();
-		if (write_config()) {
+		
+		if (write_config())
 			filter_configure();
-		}
 
 		header("Location: firewall_schedule.php");
 		exit;
-	} else {
-		//we received input errors, copy data to prevent retype
-		if (!$_POST['schedule0']) {
+		
+	}
+	//we received input errors, copy data to prevent retype
+	else
+	{
+		if (!$_POST['schedule0'])
 			$getSchedule = false;
-		} else {
+		else
 			$getSchedule = true;
-		}
+			
 		$pconfig['name'] = $schedule['name'];
 		$pconfig['descr'] = $schedule['descr'];
 		$pconfig['timerange'] = $schedule['timerange'];
-	}
+	}	
 
 }
 include("head.inc");
+
 
 // Returns a string containg the HTML to display a calendar table
 function build_date_table() {

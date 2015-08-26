@@ -50,7 +50,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Factory defaults"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Factory defaults"));
 include("head.inc");
 ?>
 
@@ -76,8 +76,8 @@ include("head.inc");
 	</ul>
 	<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
 	<p>
-		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes")?> " />
-		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No")?> " />
+		<input name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("Yes")?> " />
+		<input name="Submit" type="submit" class="btn btn-sm btn-default" value=" <?=gettext("No")?> " />
 	</p>
 </form>
 <?php endif?>

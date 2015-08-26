@@ -34,8 +34,8 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
-if($_GET['action']) {
-	if($_GET['action'] == "kill") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];
 		$remipp = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
@@ -111,7 +111,7 @@ $clients = openvpn_get_active_clients();
 
 	function killComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
@@ -138,8 +138,7 @@ $clients = openvpn_get_active_clients();
 				<th>Name/Time</td>
 				<th>Real/Virtual IP</td>
 			</tr>
-		<?php
-		$rowIndex = 0;
+			<?php $rowIndex = 0;
 			foreach ($server['conns'] as $conn):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;
@@ -167,13 +166,13 @@ $clients = openvpn_get_active_clients();
 				</td>
 			</tr>
 
-			<?php endforeach; ?>
-			<tfoot>
-			<tr>
-				<td colspan="6" class="list" height="12"></td>
-			</tr>
-			</tfoot>
-		</table>
+		<?php endforeach; ?>
+				<tfoot>
+					<tr>
+						<td colspan="6" class="list" height="12"></td>
+					</tr>
+				</tfoot>
+			</table>
 		</td>
 	</tr>
 </table>
@@ -243,36 +242,36 @@ $clients = openvpn_get_active_clients();
 			<th>Remote/Virtual IP</td>
 		</tr>
 
-<?php foreach ($clients as $client): ?>
-		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
-			<td class="listlr">
-				<?=$client['name'];?>
-			</td>
-			<td class="listr">
-				<?=$client['remote_host'];?>
-			</td>
-			<td rowspan="2" align="center">
-			<?php
-			if ($client['status'] == "up") {
-				/* tunnel is up */
-				$iconfn = "interface_up";
-			} else {
-				/* tunnel is down */
-				$iconfn = "interface_down";
-			}
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
-			?>
-			</td>
-		</tr>
-		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
-			<td class="listlr">
-				<?=$client['connect_time'];?>
-			</td>
-			<td class="listr">
-				<?=$client['virtual_addr'];?>
-			</td>
-		</tr>
-<?php endforeach; ?>
+	<?php foreach ($clients as $client): ?>
+			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$client['name'];?>
+				</td>
+				<td class="listr">
+					<?=$client['remote_host'];?>
+				</td>
+				<td rowspan="2" align="center">
+				<?php
+				if ($client['status'] == "up") {
+					/* tunnel is up */
+					$iconfn = "interface_up";
+				} else {
+					/* tunnel is down */
+					$iconfn = "interface_down";
+				}
+				echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
+				?>
+				</td>
+			</tr>
+			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$client['connect_time'];?>
+				</td>
+				<td class="listr">
+					<?=$client['virtual_addr'];?>
+				</td>
+			</tr>
+	<?php endforeach; ?>
 		</table>
 	</tr>
 </table>

@@ -49,23 +49,24 @@ $devs = array();
 ## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
 $devs = get_smart_drive_list();
 
-foreach($devs as $dev):
-	$dev_ident = exec("diskinfo -v /dev/$dev | grep ident	| awk '{print $1}'"); ## get identifier from drive
-	$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+if (count($devs) > 0)  {
+	foreach ($devs as $dev)  { ## for each found drive do
+		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
+		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
-	switch ($dev_state) {
-		case "PASSED":
-		case "OK":
-			$icon = 'ok';
-			break;
-		case "":
-			$dev_state = "Unknown";
-			$icon = 'question';
-			break;
-		default:
-			$icon = 'remove';
-			break;
-	}
+		switch ($dev_state) {
+			case "PASSED":
+			case "OK":
+				$color = "#90EE90";
+				break;
+			case "":
+				$dev_state = "Unknown";
+				$color = "#C0B788";
+				break;
+			default:
+				$color = "#F08080";
+				break;
+		}
 ?>
 		<tr>
 			<td><i class="icon icon-<?=$icon?>-sign"></i></td>

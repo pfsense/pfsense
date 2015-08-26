@@ -38,7 +38,7 @@
 ##|-PRIV
 
 // Set DEBUG to true to prevent the system_reboot() function from being called
-define("DEBUG", true);
+define("DEBUG", false);
 
 require("guiconfig.inc");
 require("functions.inc");

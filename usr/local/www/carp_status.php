@@ -52,39 +52,39 @@ unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
 $status = intval($status);
-if($_POST['carp_maintenancemode'] <> "") {
+if ($_POST['carp_maintenancemode'] <> "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
-if($_POST['disablecarp'] <> "") {
-	if($status > 0) {
+if ($_POST['disablecarp'] <> "") {
+	if ($status > 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
-		if(is_array($config['virtualip']['vip'])) {
+		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			$found_dhcpdv6 = false;
 			foreach ($viparr as $vip) {
 				$carp_iface = "{$vip['interface']}_vip{$vip['vhid']}";
 				switch ($vip['mode']) {
-				case "carp":
-					interface_vip_bring_down($vip);
-					interface_ipalias_cleanup($carp_iface);
+					case "carp":
+						interface_vip_bring_down($vip);
+						interface_ipalias_cleanup($carp_iface);
 
-					/*
-					 * Reconfigure radvd when necessary
-					 * XXX: Is it the best way to do it?
-					 */
-					if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-						foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+						/*
+						 * Reconfigure radvd when necessary
+						 * XXX: Is it the best way to do it?
+						 */
+						if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+							foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
 								if ($dhcpv6ifconf['rainterface'] != $carp_iface) {
-								continue;
+									continue;
 								}
 
-							services_radvd_configure();
-							break;
+								services_radvd_configure();
+								break;
+							}
 						}
-					}
 
-					sleep(1);
-					break;
+						sleep(1);
+						break;
 				}
 			}
 		}
@@ -92,19 +92,19 @@ if($_POST['disablecarp'] <> "") {
 		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
-		if(is_array($config['virtualip']['vip'])) {
+		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			foreach ($viparr as $vip) {
 				switch ($vip['mode']) {
-				case "carp":
-					interface_carp_configure($vip);
-					sleep(1);
-					break;
-				case 'ipalias':
+					case "carp":
+						interface_carp_configure($vip);
+						sleep(1);
+						break;
+					case 'ipalias':
 						if (strpos($vip['interface'], '_vip')) {
-						interface_ipalias_configure($vip);
+							interface_ipalias_configure($vip);
 						}
-					break;
+						break;
 				}
 			}
 		}
@@ -122,7 +122,7 @@ if (!empty($_POST['resetdemotion'])) {
 	$carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
 }
 
-$pgtitle = array(gettext("Status"),gettext("CARP"));
+$pgtitle = array(gettext("Status"), gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
 ?>
@@ -176,9 +176,8 @@ if ($carpcount > 0):
 	</tr>
 <?php
 	foreach($config['virtualip']['vip'] as $carp) {
-						if ($carp['mode'] != "carp") {
+		if ($carp['mode'] != "carp")
 			continue;
-						}
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");

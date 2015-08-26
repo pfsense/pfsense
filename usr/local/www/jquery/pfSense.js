@@ -41,7 +41,7 @@ $(function() {
 		var groups = $('div.form-group.user-duplication-horiz');
 		var controlsContainer = $('<div class="col-sm-2"></div>');
 		var plus = $('<a class="btn btn-sm btn-success">Duplicate</a>');
-		var minus = $('<a class="btn btn-sm btn-danger">Delete</a>');
+		var minus = $('<a class="btn btn-sm btn-warning">Delete</a>');
 
 		minus.on('click', function(){
 			$(this).parents('div.form-group').remove();

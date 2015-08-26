@@ -42,9 +42,9 @@ $carp_enabled = get_carp_status();
 ?>
 <table>
 <?php
-	if(is_array($config['virtualip']['vip'])) {
+	if (is_array($config['virtualip']['vip'])) {
 		$carpint=0;
-		foreach($config['virtualip']['vip'] as $carp) {
+		foreach ($config['virtualip']['vip'] as $carp) {
 			if ($carp['mode'] != "carp") {
 				continue;
 			}
@@ -64,21 +64,21 @@ $carp_enabled = get_carp_status();
 	</td>
 	<td>
 <?php
-	if($carp_enabled == false) {
-		$status = "DISABLED";
-		echo '<i class="icon icon-ban-circle" title="disabled"></i>';
-	} else {
-		if($status == "MASTER") {
-			echo '<i class="icon icon-random" title="master"></i>';
-		} else if($status == "BACKUP") {
-			echo '<i class="icon icon-retweet" title="backup"></i>';
-		} else if($status == "INIT") {
-			echo '<i class="icon icon-refresh" title="initializing"></i>';
-		}
-	}
-	if ($ipaddress){ ?>
-		<?=htmlspecialchars($status);?>
-		<?=htmlspecialchars($ipaddress);}?>
+			if ($carp_enabled == false) {
+				$status = "DISABLED";
+				echo "<img src='/themes/".$g['theme']."/images/icons/icon_block.gif' title=\"$status\" alt=\"$status\" />";
+			} else {
+				if($status == "MASTER") {
+					echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass.gif' title=\"$status\" alt=\"$status\" />";
+				} else if($status == "BACKUP") {
+					echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif' title=\"$status\" alt=\"$status\" />";
+				} else if($status == "INIT") {
+					echo "<img src='/themes/".$g['theme']."/images/icons/icon_log.gif' title=\"$status\" alt=\"$status\" />";
+				}
+			}
+			if ($ipaddress){ ?> &nbsp;
+				<?=htmlspecialchars($status);?> &nbsp;
+				<?=htmlspecialchars($ipaddress);}?>
 </td></tr><?php	}
 	} else { ?>
 		<tr><td>No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>

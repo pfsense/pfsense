@@ -1,6 +1,8 @@
 <?php
 /*
-	bandwidth_by_ip.php
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ *
  */
 
 /*
@@ -109,8 +111,8 @@ for ($x=2; $x<12; $x++) {
 	if ($bandwidthinfo != "") {
 		$infoarray = explode (":", $bandwidthinfo);
 		if (($filter == "all") ||
-		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
-		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
+			(($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
+			(($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
 			if ($hostipformat == "") {
 				// pass back just the raw IP address
 				$addrdata = $infoarray[0];
@@ -144,7 +146,7 @@ unset($bandwidthinfo, $_grb);
 unset($listedIPs);
 
 //no bandwidth usage found
-if ($someinfo == false) {
+if ($someinfo == false)
 	echo gettext("no info");
-}
+
 ?>

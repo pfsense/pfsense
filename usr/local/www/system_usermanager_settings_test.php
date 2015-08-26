@@ -43,7 +43,7 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-if(isset($config['system']['authserver'][0]['host'])){
+if (isset($config['system']['authserver'][0]['host'])) {
 	$auth_server = $config['system']['authserver'][0]['host'];
 	$authserver = $_GET['authserver'];
 	$authcfg = auth_get_authserver($authserver);
@@ -70,24 +70,24 @@ if (!$authcfg) {
 	echo "<table>";
 
 	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>$auth_server</b></center></td>";
-	if(ldap_test_connection($authcfg)) {
+	if (ldap_test_connection($authcfg)) {
 		echo "<td><center><font color=green>OK</center></td></tr>";
 
 		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>";
-		if(ldap_test_bind($authcfg)) {
+		if (ldap_test_bind($authcfg)) {
 			echo "<td><center><font color=green>OK</center></td></tr>";
 
 			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>$auth_server</b></center></td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
-			if(count($ous)>1) {
+			if (count($ous)>1) {
 				echo "<td><center><font color=green>OK</center></td></tr>";
 				echo "</table>";
-				if(is_array($ous)) {
+				if (is_array($ous)) {
 					echo "<br/>";
 					echo "<b>" . gettext("Organization units found") . "</b>";
-					echo "<table>";
-					foreach($ous as $ou) {
-						echo "<tr><td>" . $ou . "</td></tr>";
+					echo "<table width='100%'>";
+					foreach ($ous as $ou) {
+						echo "<tr><td onmouseover=\"this.style.backgroundColor='#ffffff';\" onmouseout=\"this.style.backgroundColor='#dddddd';\">" . $ou . "</td></tr>";
 					}
 				}
 			} else {

@@ -44,7 +44,7 @@
 ##|-PRIV
 
 // Set DEBUG to true to prevent the system_halt() function from being called
-define("DEBUG", true);
+define("DEBUG", false);
 
 require("guiconfig.inc");
 require("functions.inc");
@@ -55,7 +55,7 @@ if ($_POST['save'] == 'No') {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Halt system"));
 include('head.inc');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

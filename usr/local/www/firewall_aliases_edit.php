@@ -733,11 +733,15 @@ foreach ($types as $type => $typeName)
 		else {
 			$group = new Form_Group('IP or FQDN');
 
-			$group->add(new Form_IpAddress(
+			$grpaddress = new Form_IpAddress(
 				'address',
 				'IP or FQDN',
 				$address
-			))->addMask(address_subnet, $pconfig['address_subnet']);
+			);
+			
+			$grpaddress->addMask(address_subnet, $pconfig['address_subnet']);
+				
+			$group->add($grpaddress);
 			
 			$group->add(new Form_Input(
 				'detail',
@@ -755,5 +759,23 @@ foreach ($types as $type => $typeName)
 }
 
 print $form;
+?>
 
+<script>
+//<![CDATA[   
+events.push(function(){   
+    
+    // Disable address_subnet if type == 'host'
+    
+    $("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
+   
+    $('#type').on('change', function() {
+    	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
+    });
+
+});
+//]]>  
+</script>
+
+<?php
 include("foot.inc");

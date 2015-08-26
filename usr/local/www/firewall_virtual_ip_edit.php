@@ -531,6 +531,7 @@ events.push(function(){
 		else if(mode == 'proxyarp') {
 			$('#address_note').html("<?=$proxyarphelp?>");
 			disableInput('type', false);
+			disableInput('subnet_bits', $('#type').val() == 'single');
 		}
 		else {
 			$('#address_note').html('');
@@ -543,8 +544,9 @@ events.push(function(){
 		check_mode();
 	});
 
-	// On clicking hte address type selector
+	// On clicking the address type selector
 	$('#type').on('change', function() {
+		check_mode();
 		hideCheckbox('noexpand', (this.value == 'single'));
 	});
 

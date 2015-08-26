@@ -1211,7 +1211,7 @@ $section->addInput(new Form_Select(
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
-))->setHelp('Select the Internet Protocol version this rule applies to');
+))->setHelp('Choose which IP protocol this rule should match. In most cases, you should specify TCP  here.');
 
 $section->addInput(new Form_Select(
 	'icmptype',
@@ -1259,7 +1259,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if (have_ruleint_access("pptp"))
 		$ruleValues['pptp'] = 'PPTP clients';
 	if (have_ruleint_access("pppoe"))
-		$ruleValues['pppoe'] = 'PPoE clients';
+		$ruleValues['pppoe'] = 'PPPoE clients';
 	if (have_ruleint_access("l2tp"))
 		$ruleValues['l2tp'] = 'L2TP clients';
 
@@ -1354,7 +1354,7 @@ $section->addInput(new Form_Checkbox(
 	'Log',
 	'Log packets that are handled by this rule',
 	$pconfig['log']
-))->setHelp('Hint: the firewall has limited local log space. Don"t turn on logging '.
+))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If you want to do a lot of logging, consider using a remote '.
 	'syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: '.
 	'Settings</a> page).');
@@ -1645,7 +1645,7 @@ if ($has_created_time || $has_updated_time)
 	{
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext('by') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
+			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
 		));
 	}
 
@@ -1653,7 +1653,7 @@ if ($has_created_time || $has_updated_time)
 	{
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext('by') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
+			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
 		));
 	}
 }

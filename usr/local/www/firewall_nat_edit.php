@@ -737,7 +737,7 @@ $group->add(new Form_Input(
 	'srcbeginport_cust',
 	null,
 	'number',
-	$pconfig['srcbeginport_cust'],
+	$pconfig['srcbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 
@@ -752,7 +752,7 @@ $group->add(new Form_Input(
 	'srcendport_cust',
 	null,
 	'number',
-	$pconfig['srcendport_cust'],
+	$pconfig['srcendport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 
@@ -793,7 +793,7 @@ $group->add(new Form_Input(
 	'dstbeginport_cust',
 	null,
 	'number',
-	$pconfig['dstbeginport_cust'],
+	$pconfig['dstbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 
@@ -808,7 +808,7 @@ $group->add(new Form_Input(
 	'dstendport_cust',
 	null,
 	'number',
-	$pconfig['dstendport_cust'],
+	$pconfig['dstendport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 
@@ -1190,7 +1190,7 @@ events.push(function(){
 
 	function dst_change( iface, old_iface, old_dst ) {
 		if ( ( old_dst == "" ) || ( old_iface.concat("ip") == old_dst ) ) {
-			$('#dsttype').val($('#dsttype').val() + "ip");
+			$('#dsttype').val(iface + "ip");
 		}
 	}
 
@@ -1227,7 +1227,7 @@ events.push(function(){
 		nordr_change();
 	});
 
-	$('#interface').click(function () {
+	$('#interface').click(function () {		
 		dst_change($('#interface').val(), iface_old, $('#dsttype').val());
 		iface_old = $('#interface').val();
 		typesel_change();

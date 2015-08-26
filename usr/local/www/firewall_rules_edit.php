@@ -1287,12 +1287,21 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	$section->add($group);
 
-	$portValues = ['' => '(other)', 'any' => 'any'];
+	if($type == 'src') {
+		$section->addInput(new Form_Button(
+			'btnsrcadv',
+			'Show advanced'
+		))->removeClass('btn-primary');
+	}
+	
+	$portValues = ['any' => 'any', '' => '(other)'];
 	
 	foreach ($wkports as $port => $portName)
 		$portValues[$port] = $portName.' ('. $port .')';
 
 	$group = new Form_Group($name .' port range');
+	$group->addClass('srcportrange');
+	
 	$group->add(new Form_Select(
 		$type .'beginport',
 		$name .' port begin',
@@ -1868,17 +1877,27 @@ events.push(function(){
 	typesel_change();
 	proto_change();
 	hideClass('advanced-options', true);
+	hideClass('srcportrange', true);
 
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		show_source_port_range();
 	<?php endif; ?>
 
+	// Make it a regular button, not a submit
+    $('#toggle-advanced').prop('type','button');
+	$("#btnsrcadv").prop('type','button');
+	
 	// on click . . 
     $('#srcbeginport').on('change', function() {
         src_rep_change();
         ext_change();
     });	
     
+    $('#btnsrcadv').click(function() {
+        hideClass('srcportrange', false);
+        hideInput('btnsrcadv', true);
+    });
+        
     $('#srcendport').on('change', function() {
         ext_change();
     });
@@ -1907,8 +1926,7 @@ events.push(function(){
     $('#ipprotocol').on('change', function() {
         proto_change();
     });
-    
-    $('#toggle-advanced').prop('type','button');
+   
     
     $('#toggle-advanced').click(function() {
         optionsvisible = 1;

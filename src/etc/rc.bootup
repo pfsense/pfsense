@@ -149,6 +149,10 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
+if (file_exists("/conf/trigger_initial_wizard")) {
+	check_for_alternate_interfaces();
+}
+
 /*
  *	Determine if we need to throw a interface exception
  *	and ask the user to reassign interfaces.  This will

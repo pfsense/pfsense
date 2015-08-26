@@ -2406,4 +2406,15 @@ function captiveportal_send_server_accounting($off = false) {
 	$racct->close();
 	return $retvalue;
 }
+
+function captiveportal_isip_logged($clientip) {
+	global $g, $cpzone;
+
+	/* read in client database */
+	$query = "WHERE ip = '{$clientip}'";
+	$cpdb = captiveportal_read_db($query);
+	foreach ($cpdb as $cpentry) {
+		return $cpentry;
+	}
+}
 ?>

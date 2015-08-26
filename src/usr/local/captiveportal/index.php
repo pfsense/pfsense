@@ -71,8 +71,25 @@ if (!$clientip) {
 	return;
 }
 
+$cpsession = captiveportal_isip_logged($clientip);
 $ourhostname = portal_hostname_from_client_ip($clientip);
-if ($orig_host != $ourhostname) {
+/* Automatically switching to the logout page requires a custom logout page to be present. */
+if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['logouttext']))) {
+	/* if client already logged in so show logout page */
+	$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
+	$logouturl = "{$protocol}{$ourhostname}/";
+
+	$sessionid = $cpsession['sessionid'];
+	$attributes = array();
+	if (!empty($cpsession['session_timeout']))
+		$attributes['session_timeout'] = $cpsession['session_timeout'];
+	if (!empty($cpsession['session_terminate_time']))
+		$attributes['session_terminate_time'] = $cpsession['session_terminate_time'];
+
+	include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+	ob_flush();
+	return;
+} else if ($orig_host != $ourhostname) {
 	/* the client thinks it's connected to the desired web server, but instead
 	   it's connected to us. Issue a redirect... */
 	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';

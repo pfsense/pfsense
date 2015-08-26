@@ -4,60 +4,60 @@
 	firewall_rules_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004 Scott Ullrich
- *  Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004 Scott Ullrich
+ *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
  *	Originally part of pfSense (https://www.pfsense.org)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 /*
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -86,16 +86,16 @@ function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
-	    (isset($rule_config['disablereplyto'])) ||
-	    ($rule_config['tag'] != "") ||
-	    ($rule_config['tagged'] != "") ||
-	    ($rule_config['max'] != "") ||
-	    ($rule_config['max-src-nodes'] != "") ||
-	    ($rule_config['max-src-conn'] != "") ||
-	    ($rule_config['max-src-states'] != "") ||
-	    ($rule_config['max-src-conn-rate'] != "") ||
-	    ($rule_config['max-src-conn-rates'] != "") ||
-	    ($rule_config['statetimeout'] != "")) {
+		(isset($rule_config['disablereplyto'])) ||
+		($rule_config['tag'] != "") ||
+		($rule_config['tagged'] != "") ||
+		($rule_config['max'] != "") ||
+		($rule_config['max-src-nodes'] != "") ||
+		($rule_config['max-src-conn'] != "") ||
+		($rule_config['max-src-states'] != "") ||
+		($rule_config['max-src-conn-rate'] != "") ||
+		($rule_config['max-src-conn-rates'] != "") ||
+		($rule_config['statetimeout'] != "")) {
 		return true;
 	}
 	return false;
@@ -450,12 +450,12 @@ if ($_POST) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+		(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+		(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -493,7 +493,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
-		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
+			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 		}
 	}
@@ -507,7 +507,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
-		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
+			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 		}
 	}
@@ -702,7 +702,7 @@ if ($_POST) {
 	}
 
 	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) ||
-	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
+		(($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
 		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 	}
 
@@ -950,7 +950,7 @@ if ($_POST) {
 
 function build_flag_table() {
 	global $pconfig, $tcpflags;
-	
+
 	$flagtable = '<table class="table table-condensed table-flags" style="width: auto;">';
 
 	$setflags = explode(",", $pconfig['tcpflags1']);
@@ -958,32 +958,32 @@ function build_flag_table() {
 	$header = "<td></td>";
 	$tcpflags1 = "<td>set</td>";
 	$tcpflags2 = "<td>out of</td>";
-	
+
 	foreach ($tcpflags as $tcpflag) {
 		$header .= "<td><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
 		$tcpflags1 .= "<td> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
-		
+
 		if (array_search($tcpflag, $setflags) !== false) {
 			$tcpflags1 .= "checked=\"checked\"";
 		}
-		
+
 		$tcpflags1 .= " /></td>\n";
 		$tcpflags2 .= "<td> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
-		
+
 		if (array_search($tcpflag, $outofflags) !== false) {
 			$tcpflags2 .= "checked=\"checked\"";
 		}
-		
+
 		$tcpflags2 .= " /></td>\n";
 	}
-	
-	$flagtable .= "<tr id='tcpheader'>{$header}</tr>\n";							
-	$flagtable .=  "<tr id='tcpflags1'>{$tcpflags1}</tr>\n";						
+
+	$flagtable .= "<tr id='tcpheader'>{$header}</tr>\n";
+	$flagtable .=  "<tr id='tcpflags1'>{$tcpflags1}</tr>\n";
 	$flagtable .=  "<tr id='tcpflags2'>{$tcpflags2}</tr>\n";
 	$flagtable .=  "</table>";
-	
+
 	$flagtable .= '<input type="checkbox" name="tcpflags_any" id="tcpflags_any" value="on"';
-	$flagtable .= $pconfig['tcpflags_any'] ? 'checked="checked"':'' . '/>'; 
+	$flagtable .= $pconfig['tcpflags_any'] ? 'checked="checked"':'' . '/>';
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);
@@ -1143,7 +1143,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
-if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 	$interfaces["openvpn"] = "OpenVPN";
 
 $section->addInput($input = new Form_Select(
@@ -1211,7 +1211,7 @@ $section->addInput(new Form_Select(
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
-))->setHelp('Choose which IP protocol this rule should match. In most cases, you should specify TCP  here.');
+))->setHelp('Choose which IP protocol this rule should match. In most cases, you should specify TCP	 here.');
 
 $section->addInput(new Form_Select(
 	'icmptype',
@@ -1293,15 +1293,15 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 			'Show advanced'
 		))->removeClass('btn-primary');
 	}
-	
+
 	$portValues = ['any' => 'any', '' => '(other)'];
-	
+
 	foreach ($wkports as $port => $portName)
 		$portValues[$port] = $portName.' ('. $port .')';
 
 	$group = new Form_Group($name .' port range');
 	$group->addClass('srcportrange');
-	
+
 	$group->add(new Form_Select(
 		$type .'beginport',
 		$name .' port begin',
@@ -1342,7 +1342,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$group->setHelp('Specify the destination port or port range for this rule. ' .
 			'You can leave the "To" field empty if you only want to filter a '.
 			'single port.');
-			
+
 	$group->addClass( ($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
 	$form->add($section);
@@ -1664,96 +1664,96 @@ echo $form;
 ?>
 
 <script>
-//<![CDATA[   
+//<![CDATA[
 events.push(function(){
-	
+
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-    function hideInput(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent('div').removeClass('hidden');            
-    }
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
+	}
 
-    // Hides the <div> in which the specified group input element lives so that the input,
-    // its label and help text are hidden
-    function hideGroupInput(id, hide) {
-        if(hide)
-            $('#' + id).parent('div').addClass('hidden');
-        else
-            $('#' + id).parent('div').removeClass('hidden');
-    }
+	// Hides the <div> in which the specified group input element lives so that the input,
+	// its label and help text are hidden
+	function hideGroupInput(id, hide) {
+		if(hide)
+			$('#' + id).parent('div').addClass('hidden');
+		else
+			$('#' + id).parent('div').removeClass('hidden');
+	}
 
-    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-    function hideCheckbox(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent().parent('div').removeClass('hidden');            
-    }
+	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
+	function hideCheckbox(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent().parent('div').removeClass('hidden');
+	}
 
-    // Disables the specified input element
-    function disableInput(id, disable) {
-        $('#' + id).prop("disabled", disable);    
-    }
-    
-    // Hides all elements of the specified class. This will usually be a section  
-    function hideClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).hide();
-        else
-            $('.' + s_class).show();  
-    }
+	// Disables the specified input element
+	function disableInput(id, disable) {
+		$('#' + id).prop("disabled", disable);
+	}
 
-    // Hides all elements of the specified class assigned to a group. This will usually be a group   
-    function hideGroupClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).parent().parent().parent().hide();
-        else
-            $('.' + s_class).parent().parent().parent().show();  
-    }
-    
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
+	// Hides all elements of the specified class assigned to a group. This will usually be a group
+	function hideGroupClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).parent().parent().parent().hide();
+		else
+			$('.' + s_class).parent().parent().parent().show();
+	}
+
 	var portsenabled = 1;
 	var editenabled = 1;
 	var optionsvisible = 0;
-	
+
 	function ext_change() {
 		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('srcbeginport_cust', false);
 		} else {
 			if (editenabled)
 				$('#srcbeginport_cust').val("");
-				
+
 			disableInput('srcbeginport_cust', true);
 		}
-		
+
 		if (($('#srcendport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('srcendport_cust', false);
 		} else {
 			if (editenabled)
 				$('#srcendport_cust').val("");
-				
+
 			disableInput('srcendport_cust', true);
 		}
-		
+
 		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('dstbeginport_cust', false);
 		} else {
 			if (editenabled)
 				$('#dstbeginport_cust').val("");
-				
+
 			disableInput('dstbeginport_cust', true);
 		}
-		
+
 		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('dstendport_cust', false);
 		} else {
 			if (editenabled)
 				$('#dstendport_cust').val("");
-				
+
 			disableInput('dstendport_cust', true);
 		}
-	
+
 		if (!portsenabled) {
 			disableInput('srcbeginport', true);
 			disableInput('srcendport', true);
@@ -1768,22 +1768,22 @@ events.push(function(){
 			}
 		}
 	}
-	
+
 	function show_source_port_range() {
 		if (portsenabled) {
 			hideClass('srcprtr', false);
 		}
 	}
-	
+
 	function typesel_change() {
 		if( editenabled ) {
 			switch ($('#srctype').find(":selected").index()) {
-				case 1:	// single 
+				case 1: // single
 					disableInput('src', false);
 					$('#srcmask').val("");
 					disableInput('srcmask', true);
 					break;
-				case 2:	// network 
+				case 2: // network
 					disableInput('src', false);
 					disableInput('srcmask', false);
 					break;
@@ -1795,12 +1795,12 @@ events.push(function(){
 					break;
 			}
 			switch ($('#dsttype').find(":selected").index()) {
-				case 1:	// single 
+				case 1: // single
 					disableInput('dst', false);
 					$('#dstmask').val("");
 					disableInput('dstmask', true);
 					break;
-				case 2:	// network 
+				case 2: // network
 					disableInput('dst', false);
 					disableInput('dstmask', false);
 					break;
@@ -1822,14 +1822,14 @@ events.push(function(){
 			portsenabled = 0;
 			hideClass('tcpflags', true);
 		}
-	
-		// Disable OS knob if the proto is not TCP. 
+
+		// Disable OS knob if the proto is not TCP.
 		if ($('#proto').find(":selected").index() < 1) {
 			disableInput('os', false);
 		} else {
 			disableInput('os', true);
 		}
-	
+
 		if ($('#proto').find(":selected").index() == 3) {
 			disableInput('icmptype', false);
 			disableInput('icmp6type', false);
@@ -1837,9 +1837,9 @@ events.push(function(){
 			disableInput('icmptype', true);
 			disableInput('icmp6type', true);
 		}
-	
+
 		ext_change();
-	
+
 		if($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
 			if($('#ipprotocol').find(":selected").index() == 0) { // IPv4
 				hideInput('icmptype', false);
@@ -1855,7 +1855,7 @@ events.push(function(){
 			hideInput('icmptype', true);
 			hideInput('icmp6type', true);
 		}
-	
+
 		if($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
 			hideClass('srcprtr', false);
@@ -1865,13 +1865,13 @@ events.push(function(){
 		}
 	}
 
-    function src_rep_change() {
-        $('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
-    }
-	
-    function dst_rep_change() {
-        $('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
-    }
+	function src_rep_change() {
+		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
+	}
+
+	function dst_rep_change() {
+		$('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
+	}
 
 	// On initial page load
 	ext_change();
@@ -1885,94 +1885,94 @@ events.push(function(){
 	<?php endif; ?>
 
 	// Make it a regular button, not a submit
-    $('#toggle-advanced').prop('type','button');
+	$('#toggle-advanced').prop('type','button');
 	$("#btnsrcadv").prop('type','button');
-	
-	// on click . . 
-    $('#srcbeginport').on('change', function() {
-        src_rep_change();
-        ext_change();
-    });	
-    
-    $('#btnsrcadv').click(function() {
-        hideClass('srcportrange', false);
-        hideInput('btnsrcadv', true);
-    });
-        
-    $('#srcendport').on('change', function() {
-        ext_change();
-    });
-  
-    $('#dstbeginport').on('change', function() {
-        dst_rep_change();
-        ext_change();
-    });
-    
-    $('#dstendport').on('change', function() {
-        ext_change();
-    });
-    
-    $('#srctype').on('change', function() {
-        typesel_change();
-    });
-    
-    $('#dsttype').on('change', function() {
-        typesel_change();
-    });
-    
-    $('#proto').on('change', function() {
-        proto_change();
-    });
-    
-    $('#ipprotocol').on('change', function() {
-        proto_change();
-    });
-   
-    
-    $('#toggle-advanced').click(function() {
-        optionsvisible = 1;
-        hideClass('advanced-options', false);
-        if($('#tcpflags_any').prop('checked'))
-       	    $('.table-flags').addClass('hidden');
-    });
-    
-    $('#tcpflags_any').click(function () {
-        if(this.checked)
-            $('.table-flags').addClass('hidden');
-        else
-            $('.table-flags').removeClass('hidden');
-    });
-    
+
+	// on click . .
+	$('#srcbeginport').on('change', function() {
+		src_rep_change();
+		ext_change();
+	});
+
+	$('#btnsrcadv').click(function() {
+		hideClass('srcportrange', false);
+		hideInput('btnsrcadv', true);
+	});
+
+	$('#srcendport').on('change', function() {
+		ext_change();
+	});
+
+	$('#dstbeginport').on('change', function() {
+		dst_rep_change();
+		ext_change();
+	});
+
+	$('#dstendport').on('change', function() {
+		ext_change();
+	});
+
+	$('#srctype').on('change', function() {
+		typesel_change();
+	});
+
+	$('#dsttype').on('change', function() {
+		typesel_change();
+	});
+
+	$('#proto').on('change', function() {
+		proto_change();
+	});
+
+	$('#ipprotocol').on('change', function() {
+		proto_change();
+	});
+
+
+	$('#toggle-advanced').click(function() {
+		optionsvisible = 1;
+		hideClass('advanced-options', false);
+		if($('#tcpflags_any').prop('checked'))
+			$('.table-flags').addClass('hidden');
+	});
+
+	$('#tcpflags_any').click(function () {
+		if(this.checked)
+			$('.table-flags').addClass('hidden');
+		else
+			$('.table-flags').removeClass('hidden');
+	});
+
 	// Change help text based on the selector value
 	function setHelpText(id, text) {
 		$('#' + id).parent().parent('div').find('span').find('span').html(text);
 	}
-	
+
 	function setOptText(target, val) {
 		var dispstr = '<font color="green">';
-		
-        if(val == 'keep state')
-        	dispstr += 'Keep: works with all IP protocols</font>';	
-        else if (val == 'sloppy state')
-        	dispstr += 'Sloppy: works with all IP protocols';
-        else if (val == 'synproxy state')
-        	dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
-        else if (val == 'none')
-        	dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';		
+
+		if(val == 'keep state')
+			dispstr += 'Keep: works with all IP protocols</font>';
+		else if (val == 'sloppy state')
+			dispstr += 'Sloppy: works with all IP protocols';
+		else if (val == 'synproxy state')
+			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
+		else if (val == 'none')
+			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';
 
 		dispstr += '</font>';
 		setHelpText(target, dispstr);
 	}
-	
-	// On click . . 
-    $('#statetype').on('change', function() {
-        setOptText('statetype', this.value);
-    });
-    	
-    // At page load . . 
-	setOptText('statetype', $('#statetype').val())  
+
+	// On click . .
+	$('#statetype').on('change', function() {
+		setOptText('statetype', this.value);
+	});
+
+	// At page load . .
+	setOptText('statetype', $('#statetype').val())
 });
-//]]>  
+//]]>
 </script>
 
 <?php

@@ -30,7 +30,7 @@ class Modal extends Form_Section
 			))->setAttribute('data-dismiss', 'modal');
 
 		if (false !== $submit)
-			$this->addGlobal($submit);
+			array_push($this->_global, $submit);
 	}
 
 	public function __toString()

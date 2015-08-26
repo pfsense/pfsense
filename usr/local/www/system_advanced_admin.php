@@ -337,7 +337,7 @@ foreach($a_cert as $cert)
 	$values[ $cert['refid'] ] = $cert['descr'];
 
 $section->addInput($input = new Form_Select(
-	'ssl-certificate',
+	'ssl-certref',
 	'SSL Certificate',
 	$pconfig['ssl-certref'],
 	$values

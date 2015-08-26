@@ -791,7 +791,8 @@ class altq_root_queue {
 			array('Kb' => 'Kb',
 				  'Mb' => 'Mb',
 				  'Gb' => 'Gb',
-				  'b' => 'b')
+				  'b' => 'b',
+				  '%' => '%')
 		));
 
 		$section->add($group);
@@ -2196,7 +2197,8 @@ EOJS;
 			array('Kb' => 'Kb',
 				  'Mb' => 'Mb',
 				  'Gb' => 'Gb',
-				  'b' => 'b')
+				  'b' => 'b',
+				  '%' => '%')
 		));
 
 		$group->setHelp('Choose the amount of bandwidth for this queue');
@@ -2753,7 +2755,8 @@ class cbq_queue extends priq_queue {
 			array('Kb' => 'Kb',
 				  'Mb' => 'Mb',
 				  'Gb' => 'Gb',
-				  'b' => 'b')
+				  'b' => 'b',
+				  '%' => '%')
 		));
 
 		$group->setHelp('Choose the amount of bandwidth for this queue');
@@ -3053,7 +3056,8 @@ class fairq_queue extends priq_queue {
 			array('Kb' => 'Kb',
 				  'Mb' => 'Mb',
 				  'Gb' => 'Gb',
-				  'b' => 'b')
+				  'b' => 'b',
+				  '%' => '%')
 		));
 
 		$group->setHelp('Choose the amount of bandwidth for this queue');

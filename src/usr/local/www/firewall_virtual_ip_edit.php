@@ -251,7 +251,7 @@ if ($_POST) {
 		/* CARP specific fields */
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
-			$vipent['vhid'] = $_POST['uinqid'];
+			$vipent['uniqid'] = $_POST['uniqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
 			$vipent['password'] = $_POST['password'];

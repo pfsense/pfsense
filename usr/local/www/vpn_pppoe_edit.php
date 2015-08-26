@@ -48,10 +48,11 @@ function vpn_pppoe_get_id() {
 	$vpnid = 1;
 	if (is_array($config['pppoes']['pppoe'])) {
 		foreach ($config['pppoes']['pppoe'] as $pppoe) {
-			if ($vpnid == $pppoe['pppoeid'])
+			if ($vpnid == $pppoe['pppoeid']) {
 				$vpnid++;
-			else
+			} else {
 				return $vpnid;
+			}
 		}
 	}
 
@@ -64,7 +65,7 @@ if (!is_array($config['pppoes']['pppoe'])) {
 
 $a_pppoes = &$config['pppoes']['pppoe'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 
 if($_GET['addrow'] == 'true')
@@ -75,6 +76,7 @@ if (is_numericint($_GET['dltrow']))
 
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_pppoes[$id]) {
 	$pppoecfg =& $a_pppoes[$id];
@@ -121,44 +123,52 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
+		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
-				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
+				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (($_POST['localip'] && !is_ipaddr($_POST['localip'])))
+		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
-		if (($_POST['pppoe_subnet'] && !is_ipaddr($_POST['remoteip'])))
+		}
+		if (($_POST['pppoe_subnet'] && !is_ipaddr($_POST['remoteip']))) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
-		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver'])))
+		}
+		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
+		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
 		$subnet_start = ip2ulong($_POST['remoteip']);
 		$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
 		if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-			(ip2ulong($_POST['localip']) <= $subnet_end))
+		    (ip2ulong($_POST['localip']) <= $subnet_end)) {
 			$input_errors[] = gettext("The specified server address lies in the remote subnet.");
-		if ($_POST['localip'] == get_interface_ip($_POST['interface']))
+		}
+		if ($_POST['localip'] == get_interface_ip($_POST['interface'])) {
 			$input_errors[] = gettext("The specified server address is equal to an interface ip address.");
+		}
 
-		for($x=0; $x<4999; $x++) {
+		for ($x = 0; $x < 4999; $x++) {
 			if ($_POST["username{$x}"]) {
-				if (empty($_POST["password{$x}"]))
-					$input_errors[] = sprintf(gettext("No password specified for username %s"),$_POST["username{$x}"]);
-				if ($_POST["ip{$x}"] != "" && !is_ipaddr($_POST["ip{$x}"]))
-					$input_errors[] = sprintf(gettext("Incorrect ip address	 specified for username %s"),$_POST["username{$x}"]);
+				if (empty($_POST["password{$x}"])) {
+					$input_errors[] = sprintf(gettext("No password specified for username %s"), $_POST["username{$x}"]);
+				}
+				if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"])) {
+					$input_errors[] = sprintf(gettext("Incorrect ip address specified for username %s"), $_POST["username{$x}"]);
+				}
 			}
 		}
 	}
 
-	if ($_POST['pppoeid'] && !is_numeric($_POST['pppoeid']))
+	if ($_POST['pppoeid'] && !is_numeric($_POST['pppoeid'])) {
 		$input_errors[] = gettext("Wrong data submitted");
+	}
 
 	if (!$input_errors) {
 		$pppoecfg = array();
@@ -195,49 +205,58 @@ if ($_POST) {
 			$pppoecfg['radius']['server2']['acctport'] = $_POST['radiusserver2acctport'];
 		}
 
-		if ($_POST['pppoe_dns1'] != "")
+		if ($_POST['pppoe_dns1'] <> "") {
 			$pppoecfg['dns1'] = $_POST['pppoe_dns1'];
+		}
 
-		if ($_POST['pppoe_dns2'] != "")
+		if ($_POST['pppoe_dns2'] <> "") {
 			$pppoecfg['dns2'] = $_POST['pppoe_dns2'];
+		}
 
-		if($_POST['radiusenable'] == "yes")
+		if ($_POST['radiusenable'] == "yes") {
 			$pppoecfg['radius']['server']['enable'] = true;
+		}
 
-		if($_POST['radiussecenable'] == "yes")
+		if ($_POST['radiussecenable'] == "yes") {
 			$pppoecfg['radius']['server2']['enable'] = true;
+		}
 
-		if($_POST['radacct_enable'] == "yes")
+		if ($_POST['radacct_enable'] == "yes") {
 			$pppoecfg['radius']['accounting'] = true;
+		}
 
-		if($_POST['radiusissueips'] == "yes")
+		if ($_POST['radiusissueips'] == "yes") {
 			$pppoecfg['radius']['radiusissueips'] = true;
+		}
 
-		if($_POST['pppoeid'])
+		if ($_POST['pppoeid']) {
 			$pppoecfg['pppoeid'] = $_POST['pppoeid'];
-		else
+		} else {
 			$pppoecfg['pppoeid'] = vpn_pppoe_get_id();
+		}
 
 		$users = array();
-		for($x=0; $x<4999; $x++) {
+		for ($x = 0; $x < 4999; $x++) {
 			if ($_POST["username{$x}"]) {
 				$usernam = $_POST["username{$x}"] . ":" . base64_encode($_POST["password{$x}"]);
-				if ($_POST["ip{$x}"])
+				if ($_POST["ip{$x}"]) {
 					$usernam .= ":" . $_POST["ip{$x}"];
+				}
 				$users[] = $usernam;
 			}
 		}
-
-		if (count($users) > 0)
+		if (count($users) > 0) {
 			$pppoecfg['username'] = implode(" ", $users);
+		}
 
-		if (!isset($id))
+		if (!isset($id)) {
 			$id = count($a_pppoes);
-
-		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply"))
+		}
+		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
-		else
+		} else {
 			$toapplylist = array();
+		}
 
 		$toapplylist[] = $pppoecfg['pppoeid'];
 		$a_pppoes[$id] = $pppoecfg;

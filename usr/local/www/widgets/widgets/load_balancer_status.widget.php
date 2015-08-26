@@ -60,8 +60,9 @@ $relay_hosts = get_lb_summary();
 
 $lb_logfile = "{$g['varlog_path']}/relayd.log";
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
 ?>
 

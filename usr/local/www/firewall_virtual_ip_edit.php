@@ -61,11 +61,12 @@ if (!is_array($config['virtualip']['vip'])) {
 
 $a_vip = &$config['virtualip']['vip'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 function return_first_two_octets($ip) {
 	$ip_split = explode(".", $ip);
@@ -76,10 +77,10 @@ function find_last_used_vhid() {
 	global $config, $g;
 
 	$vhid = 0;
-
-	foreach($config['virtualip']['vip'] as $vip) {
-		if($vip['vhid'] > $vhid)
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if ($vip['vhid'] > $vhid) {
 			$vhid = $vip['vhid'];
+		}
 	}
 
 	return $vhid;
@@ -116,33 +117,38 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['subnet'])
+	if ($_POST['subnet']) {
 		$_POST['subnet'] = trim($_POST['subnet']);
+	}
 
 	if ($_POST['subnet']) {
-		if (!is_ipaddr($_POST['subnet']))
+		if (!is_ipaddr($_POST['subnet'])) {
 			$input_errors[] = gettext("A valid IP address must be specified.");
-		else {
+		} else {
 			if (isset($id) && isset($a_vip[$id])) {
 				$ignore_if = $a_vip[$id]['interface'];
 				$ignore_mode = $a_vip[$id]['mode'];
-				if (isset($a_vip[$id]['vhid']))
+				if (isset($a_vip[$id]['vhid'])) {
 					$ignore_vhid = $a_vip[$id]['vhid'];
+				}
 			} else {
 				$ignore_if = $_POST['interface'];
 				$ignore_mode = $_POST['mode'];
 			}
 
-			if (!isset($ignore_vhid))
+			if (!isset($ignore_vhid)) {
 				$ignore_vhid = $_POST['vhid'];
+			}
 
-			if ($ignore_mode == 'carp')
+			if ($ignore_mode == 'carp') {
 				$ignore_if .= "_vip{$ignore_vhid}";
-			else
+			} else {
 				$ignore_if .= "_virtualip{$id}";
+			}
 
-			if (is_ipaddr_configured($_POST['subnet'], $ignore_if))
+			if (is_ipaddr_configured($_POST['subnet'], $ignore_if)) {
 				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
+			}
 
 			unset($ignore_if, $ignore_mode);
 		}
@@ -150,8 +156,9 @@ if ($_POST) {
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr) {
-		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6'])))
+		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6']))) {
 			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
+		}
 	}
 
 	/* ipalias and carp should not use network or broadcast address */
@@ -159,15 +166,16 @@ if ($_POST) {
 		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32") {
 			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
-		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128" ) {
+		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128") {
 			$network_addr = gen_subnetv6($_POST['subnet'], $_POST['subnet_bits']);
 			$broadcast_addr = gen_subnetv6_max($_POST['subnet'], $_POST['subnet_bits']);
 		}
 
-		if (isset($network_addr) && $_POST['subnet'] == $network_addr)
+		if (isset($network_addr) && $_POST['subnet'] == $network_addr) {
 			$input_errors[] = gettext("You cannot use the network address for this VIP");
-		else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr)
+		} else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr) {
 			$input_errors[] = gettext("You cannot use the broadcast address for this VIP");
+		}
 	}
 
 	/* make sure new ip is within the subnet of a valid ip
@@ -251,10 +259,11 @@ if ($_POST) {
 
 		/* Common fields */
 		$vipent['descr'] = $_POST['descr'];
-		if (isset($_POST['type']))
+		if (isset($_POST['type'])) {
 			$vipent['type'] = $_POST['type'];
-		else
+		} else {
 			$vipent['type'] = "single";
+		}
 
 		if ($vipent['type'] == "single" || $vipent['type'] == "network") {
 			if (!isset($_POST['subnet_bits'])) {
@@ -266,21 +275,23 @@ if ($_POST) {
 			$vipent['subnet'] = $_POST['subnet'];
 		}
 
-		if (!isset($id))
+		if (!isset($id)) {
 			$id = count($a_vip);
-
-		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply"))
+		}
+		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
-		else
+		} else {
 			$toapplylist = array();
+		}
 
 		$toapplylist[$id] = $a_vip[$id];
 
 		if (!empty($a_vip[$id])) {
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet'])
+				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet']) {
 					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
+				}
 			}
 		}
 

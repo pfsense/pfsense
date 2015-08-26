@@ -53,24 +53,24 @@
 require("certs.inc");
 require("guiconfig.inc");
 
-
 // start admin user code
-$pgtitle = array(gettext("System"),gettext("User Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"));
 
-if (isset($_POST['userid']) && is_numericint($_POST['userid']))
+if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
-else if (isset($_GET['userid']) && is_numericint($_GET['userid']))
-	$id = $_GET['userid'];
+}
 
-if (!isset($config['system']['user']) || !is_array($config['system']['user']))
+if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 	$config['system']['user'] = array();
+}
 
 $a_user = &$config['system']['user'];
 
-if (isset($_SERVER['HTTP_REFERER']))
+if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
-else
+} else {
 	$referer = '/system_usermanager.php';
+}
 
 if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
@@ -111,6 +111,24 @@ else if ($_GET['act'] == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
+if (isset($_POST['dellall_x'])) {
+
+	$del_users = $_POST['delete_check'];
+
+	if (!empty($del_users)) {
+		foreach ($del_users as $userid) {
+			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
+				conf_mount_rw();
+				local_user_del($a_user[$userid]);
+				conf_mount_ro();
+				unset($a_user[$userid]);
+			}
+		}
+		$savemsg = gettext("Selected users removed successfully!");
+		write_config($savemsg);
+	}
+}
+
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -139,22 +157,27 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
+	}
 
-	if (strlen($_POST['usernamefld']) > 16)
+	if (strlen($_POST['usernamefld']) > 16) {
 		$input_errors[] = gettext("The username is longer than 16 characters.");
+	}
 
-	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
+	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
 		$input_errors[] = gettext("The passwords do not match.");
+	}
 
-	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk']))
+	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk'])) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
+	}
 
-	if (isset($id) && $a_user[$id])
+	if (isset($id) && $a_user[$id]) {
 		$oldusername = $a_user[$id]['name'];
-	else
+	} else {
 		$oldusername = "";
+	}
 	/* make sure this user name is unique */
 	if (!$input_errors) {
 		foreach ($a_user as $userent) {
@@ -184,20 +207,21 @@ if ($_POST['save']) {
 	 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
 	 * Otherwise such an entry would lead to an invalid expiration data.
 	 */
-	if ($_POST['expires']){
+	if ($_POST['expires']) {
 		try {
 			$expdate = new DateTime($_POST['expires']);
 			//convert from any DateTime compatible date to MM/DD/YYYY
 			$_POST['expires'] = $expdate->format("m/d/Y");
-		} catch ( Exception $ex ) {
+		} catch (Exception $ex) {
 			$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
 		}
 	}
 
 	if (!empty($_POST['name'])) {
 		$ca = lookup_ca($_POST['caref']);
-		if (!$ca)
+		if (!$ca) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+		}
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -225,8 +249,9 @@ if ($_POST['save']) {
 
 		conf_mount_rw();
 		$userent = array();
-		if (isset($id) && $a_user[$id])
+		if (isset($id) && $a_user[$id]) {
 			$userent = $a_user[$id];
+		}
 
 		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
@@ -237,8 +262,9 @@ if ($_POST['save']) {
 		}
 
 		/* the user password was modified */
-		if ($_POST['passwordfld1'])
+		if ($_POST['passwordfld1']) {
 			local_user_set_password($userent, $_POST['passwordfld1']);
+		}
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['descr'] = $_POST['descr'];
@@ -246,14 +272,15 @@ if ($_POST['save']) {
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
-		if($_POST['disabled'])
+		if ($_POST['disabled']) {
 			$userent['disabled'] = true;
-		else
+		} else {
 			unset($userent['disabled']);
+		}
 
-		if (isset($id) && $a_user[$id])
+		if (isset($id) && $a_user[$id]) {
 			$a_user[$id] = $userent;
-		else {
+		} else {
 			if (!empty($_POST['name'])) {
 				$cert = array();
 				$cert['refid'] = uniqid();
@@ -274,8 +301,9 @@ if ($_POST['save']) {
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
 					(int)$_POST['lifetime'], $dn);
 
-				if (!is_array($config['cert']))
+				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
+				}
 				$config['cert'][] = $cert;
 				$userent['cert'][] = $cert['refid'];
 			}
@@ -283,8 +311,9 @@ if ($_POST['save']) {
 			/* Add the user to All Users group. */
 			foreach ($config['system']['group'] as $gidx => $group) {
 				if ($group['name'] == "all") {
-					if (!is_array($config['system']['group'][$gidx]['member']))
+					if (!is_array($config['system']['group'][$gidx]['member'])) {
 						$config['system']['group'][$gidx]['member'] = array();
+					}
 					$config['system']['group'][$gidx]['member'][] = $userent['uid'];
 					break;
 				}
@@ -294,11 +323,12 @@ if ($_POST['save']) {
 		}
 
 		local_user_set($userent);
-		local_user_set_groups($userent,$_POST['groups']);
+		local_user_set_groups($userent, $_POST['groups']);
 		write_config();
 
-		if(is_dir("/etc/inc/privhooks"))
+		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
+		}
 
 		conf_mount_ro();
 

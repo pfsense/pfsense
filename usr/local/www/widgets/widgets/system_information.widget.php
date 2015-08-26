@@ -37,27 +37,30 @@ require_once("guiconfig.inc");
 require_once('notices.inc');
 include_once("includes/functions.inc.php");
 
-if($_REQUEST['getupdatestatus']) {
-	if(isset($config['system']['firmware']['disablecheck'])) {
+if ($_REQUEST['getupdatestatus']) {
+	if (isset($config['system']['firmware']['disablecheck'])) {
 		exit;
 	}
-	if(isset($config['system']['firmware']['alturl']['enable']))
+	if (isset($config['system']['firmware']['alturl']['enable'])) {
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-	else
+	} else {
 		$updater_url = $g['update_url'];
+	}
 
 	$nanosize = "";
 	if ($g['platform'] == "nanobsd") {
-		if (file_exists("/etc/nano_use_vga.txt"))
+		if (file_exists("/etc/nano_use_vga.txt")) {
 			$nanosize = "-nanobsd-vga-";
-		else
+		} else {
 			$nanosize = "-nanobsd-";
+		}
 		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 	}
 
 	@unlink("/tmp/{$g['product_name']}_version");
-	if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true)
+	if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
 		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
+	}
 
 	if(empty($remote_version))
 		echo "<i>Unable to check for updates</i>";
@@ -111,7 +114,7 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			</td>
 		</tr>
-		<?php if(!$g['hideplatform']): ?>
+		<?php if (!$g['hideplatform']): ?>
 		<tr>
 			<th><?=gettext("Platform");?></td>
 			<td>
@@ -150,7 +153,7 @@ $filesystems = get_mounted_filesystems();
 			if ($cpucount > 1): ?>
 			<div id="cpucount">
 				<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?></div>
-		<?php	endif; ?>
+		<?php endif; ?>
 			</td>
 		</tr>
 		<?php if ($hwcrypto): ?>
@@ -248,7 +251,7 @@ $filesystems = get_mounted_filesystems();
 				</div>
 			</td>
 		</tr>
-		<?php if($showswap == true): ?>
+		<?php if ($showswap == true): ?>
 		<tr>
 			<th><?=gettext("SWAP usage");?></td>
 			<td>

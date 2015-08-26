@@ -28,9 +28,9 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/mount /sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
-	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount /bin/dd /sbin/tunefs
-	pfSense_MODULE: nanobsd
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
+	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/bin/dd	/sbin/tunefs
+	pfSense_MODULE:	nanobsd
 */
 
 ##|+PRIV

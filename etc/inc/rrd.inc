@@ -55,7 +55,7 @@ function restore_rrd() {
 
 	$rrdrestore = "";
 	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != "pfSense")) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
@@ -116,7 +116,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
+	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew , $numrranew));
 
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
@@ -485,7 +485,7 @@ function enable_rrd_graphing() {
 							break;
 				}
 				$qbandwidth = $altq->GetBandwidth() * $factor;
-				if ($qbandwidth <=0) {
+				if ($qbandwidth <= 0) {
 					$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 				}
 				$qlist =& $altq->get_queue_list($notused);

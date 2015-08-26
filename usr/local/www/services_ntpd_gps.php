@@ -45,11 +45,12 @@ require_once("guiconfig.inc");
 function set_default_gps() {
 	global $config;
 
-	if (!is_array($config['ntpd']))
+	if (!is_array($config['ntpd'])) {
 		$config['ntpd'] = array();
-
-	if (is_array($config['ntpd']['gps']))
+	}
+	if (is_array($config['ntpd']['gps'])) {
 		unset($config['ntpd']['gps']);
+	}
 
 	$config['ntpd']['gps'] = array();
 	$config['ntpd']['gps']['type'] = 'Default';
@@ -67,85 +68,102 @@ function set_default_gps() {
 if ($_POST) {
 	unset($input_errors);
 
-	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
+	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
-	/* if port is not set, remove all the gps config */
-	else unset($config['ntpd']['gps']);
+	} else {
+		/* if port is not set, remove all the gps config */
+		unset($config['ntpd']['gps']);
+	}
 
-	if (!empty($_POST['gpstype']))
+	if (!empty($_POST['gpstype'])) {
 		$config['ntpd']['gps']['type'] = $_POST['gpstype'];
-	elseif (isset($config['ntpd']['gps']['type']))
+	} elseif (isset($config['ntpd']['gps']['type'])) {
 		unset($config['ntpd']['gps']['type']);
+	}
 
-	if (!empty($_POST['gpsspeed']))
+	if (!empty($_POST['gpsspeed'])) {
 		$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
-	elseif (isset($config['ntpd']['gps']['speed']))
+	} elseif (isset($config['ntpd']['gps']['speed'])) {
 		unset($config['ntpd']['gps']['speed']);
+	}
 
-	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0"))
+	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0")) {
 		$config['ntpd']['gps']['nmea'] = "0";
-	else
+	} else {
 		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
+	}
 
-	if (!empty($_POST['gpsfudge1']))
+	if (!empty($_POST['gpsfudge1'])) {
 		$config['ntpd']['gps']['fudge1'] = $_POST['gpsfudge1'];
-	elseif (isset($config['ntpd']['gps']['fudge1']))
+	} elseif (isset($config['ntpd']['gps']['fudge1'])) {
 		unset($config['ntpd']['gps']['fudge1']);
+	}
 
-	if (!empty($_POST['gpsfudge2']))
+	if (!empty($_POST['gpsfudge2'])) {
 		$config['ntpd']['gps']['fudge2'] = $_POST['gpsfudge2'];
-	elseif (isset($config['ntpd']['gps']['fudge2']))
+	} elseif (isset($config['ntpd']['gps']['fudge2'])) {
 		unset($config['ntpd']['gps']['fudge2']);
+	}
 
-	if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17 )
+	if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17) {
 		$config['ntpd']['gps']['stratum'] = $_POST['gpsstratum'];
-	elseif (isset($config['ntpd']['gps']['stratum']))
+	} elseif (isset($config['ntpd']['gps']['stratum'])) {
 		unset($config['ntpd']['gps']['stratum']);
+	}
 
-	if (empty($_POST['gpsprefer']))
+	if (empty($_POST['gpsprefer'])) {
 		$config['ntpd']['gps']['prefer'] = 'on';
-	elseif (isset($config['ntpd']['gps']['prefer']))
+	} elseif (isset($config['ntpd']['gps']['prefer'])) {
 		unset($config['ntpd']['gps']['prefer']);
+	}
 
-	if (!empty($_POST['gpsselect']))
+	if (!empty($_POST['gpsselect'])) {
 		$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
-	elseif (isset($config['ntpd']['gps']['noselect']))
+	} elseif (isset($config['ntpd']['gps']['noselect'])) {
 		unset($config['ntpd']['gps']['noselect']);
+	}
 
-	if (!empty($_POST['gpsflag1']))
+	if (!empty($_POST['gpsflag1'])) {
 		$config['ntpd']['gps']['flag1'] = $_POST['gpsflag1'];
-	elseif (isset($config['ntpd']['gps']['flag1']))
+	} elseif (isset($config['ntpd']['gps']['flag1'])) {
 		unset($config['ntpd']['gps']['flag1']);
+	}
 
-	if (!empty($_POST['gpsflag2']))
+	if (!empty($_POST['gpsflag2'])) {
 		$config['ntpd']['gps']['flag2'] = $_POST['gpsflag2'];
-	elseif (isset($config['ntpd']['gps']['flag2']))
+	} elseif (isset($config['ntpd']['gps']['flag2'])) {
 		unset($config['ntpd']['gps']['flag2']);
+	}
 
-	if (!empty($_POST['gpsflag3']))
+	if (!empty($_POST['gpsflag3'])) {
 		$config['ntpd']['gps']['flag3'] = $_POST['gpsflag3'];
-	elseif (isset($config['ntpd']['gps']['flag3']))
+	} elseif (isset($config['ntpd']['gps']['flag3'])) {
 		unset($config['ntpd']['gps']['flag3']);
+	}
 
-	if (!empty($_POST['gpsflag4']))
+	if (!empty($_POST['gpsflag4'])) {
 		$config['ntpd']['gps']['flag4'] = $_POST['gpsflag4'];
-	elseif (isset($config['ntpd']['gps']['flag4']))
+	} elseif (isset($config['ntpd']['gps']['flag4'])) {
 		unset($config['ntpd']['gps']['flag4']);
+	}
 
-	if (!empty($_POST['gpssubsec']))
+	if (!empty($_POST['gpssubsec'])) {
 		$config['ntpd']['gps']['subsec'] = $_POST['gpssubsec'];
-	elseif (isset($config['ntpd']['gps']['subsec']))
+	} elseif (isset($config['ntpd']['gps']['subsec'])) {
 		unset($config['ntpd']['gps']['subsec']);
+	}
 
-	if (!empty($_POST['gpsrefid']))
+	if (!empty($_POST['gpsrefid'])) {
 		$config['ntpd']['gps']['refid'] = $_POST['gpsrefid'];
-	elseif (isset($config['ntpd']['gps']['refid']))
+	} elseif (isset($config['ntpd']['gps']['refid'])) {
 		unset($config['ntpd']['gps']['refid']);
+	}
 
-	if (!empty($_POST['gpsinitcmd']))
+	if (!empty($_POST['gpsinitcmd'])) {
 		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
-	elseif (isset($config['ntpd']['gps']['initcmd']))
+	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
 		unset($config['ntpd']['gps']['initcmd']);
+	}
 
 	write_config("Updated NTP GPS Settings");
 
@@ -182,7 +200,7 @@ function build_nmea_list() {
 
 $closehead = false;
 $pconfig = &$config['ntpd']['gps'];
-$pgtitle = array(gettext("Services"),gettext("NTP GPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP GPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -428,7 +446,7 @@ events.push(function(){
 		$('#gpsfudge1').val(0);
 
 		//stuff the JS object as needed for each type
-		switch(type) {
+		switch (type) {
 			case "Default":
 				$('#gpsfudge1').val("0.155");
 				$('#gpsfudge2').val("");

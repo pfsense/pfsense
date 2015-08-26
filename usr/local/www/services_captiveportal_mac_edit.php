@@ -46,7 +46,7 @@ function passthrumacscmp($a, $b) {
 function passthrumacs_sort() {
 	global $config, $cpzone;
 
-	usort($config['captiveportal'][$cpzone]['passthrumac'],"passthrumacscmp");
+	usort($config['captiveportal'][$cpzone]['passthrumac'], "passthrumacscmp");
 }
 
 require("guiconfig.inc");
@@ -58,33 +58,34 @@ require("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit MAC address rules"));
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit MAC address rules"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
-
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($a_cp[$cpzone]['passthrumac']))
+if (!is_array($a_cp[$cpzone]['passthrumac'])) {
 	$a_cp[$cpzone]['passthrumac'] = array();
-
+}
 $a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
@@ -121,18 +122,19 @@ if ($_POST) {
 			$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
 		}
 	}
-
-	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
+	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
 		$input_errors[] = gettext("Upload speed needs to be an integer");
-
-	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+	}
+	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down'])) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
+	}
 
 	foreach ($a_passthrumacs as $macent) {
-		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent))
+		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent)) {
 			continue;
+		}
 
-		if ($macent['mac'] == $_POST['mac']){
+		if ($macent['mac'] == $_POST['mac']) {
 			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already exists"));
 			break;
 		}
@@ -142,12 +144,15 @@ if ($_POST) {
 		$mac = array();
 		$mac['action'] = $_POST['action'];
 		$mac['mac'] = $_POST['mac'];
-		if ($_POST['bw_up'])
+		if ($_POST['bw_up']) {
 			$mac['bw_up'] = $_POST['bw_up'];
-		if ($_POST['bw_down'])
+		}
+		if ($_POST['bw_down']) {
 			$mac['bw_down'] = $_POST['bw_down'];
-		if ($_POST['username'])
+		}
+		if ($_POST['username']) {
 			$mac['username'] = $_POST['username'];
+		}
 
 		$mac['descr'] = $_POST['descr'];
 

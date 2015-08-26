@@ -55,22 +55,24 @@ if (!is_array($config['nat']['outbound']['rule'])) {
 
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!is_array($config['aliases']['alias']))
+if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
-
+}
 $a_aliases = &$config['aliases']['alias'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-	
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1")
+if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
 	$after = $_GET['after'];
-	
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1"))
+}
+if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
+}
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	$id = $_GET['dup'];
@@ -78,18 +80,19 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 }
 
 if (isset($id) && $a_out[$id]) {
-	if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+	if (isset($a_out[$id]['created']) && is_array($a_out[$id]['created'])) {
 		$pconfig['created'] = $a_out[$id]['created'];
+	}
 
-	if ( isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']) )
+	if (isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated'])) {
 		$pconfig['updated'] = $a_out[$id]['updated'];
+	}
 
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
-	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
-	
-	if (!is_numeric($pconfig['source_subnet']))
+	list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
+	if (!is_numeric($pconfig['source_subnet'])) {
 		$pconfig['source_subnet'] = 32;
-		
+	}
 	$pconfig['sourceport'] = $a_out[$id]['sourceport'];
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 		$pconfig['destination_subnet'], $pconfig['destination_not'],
@@ -119,8 +122,9 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
+}
 
 if ($_POST) {
 	if ($_POST['destination_type'] == "any") {
@@ -138,45 +142,55 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	/*	run through $_POST items encoding HTML entties so that the user
-	 *	cannot think he is slick and perform a XSS attack on the unwilling
+	/*  run through $_POST items encoding HTML entitles so that the user
+	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
-		if($newpost != $temp)
-			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+		if ($newpost <> $temp) {
+			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
+		}
 	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
-	$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Source"),gettext("Source bit count"),gettext("Destination"),gettext("Destination bit count"));
+	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Source"), gettext("Source bit count"), gettext("Destination"), gettext("Destination bit count"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
 
-	if ($_POST['source'])
+	if ($_POST['source']) {
 		$_POST['source'] = trim($_POST['source']);
-	if ($_POST['destination'])
+	}
+	if ($_POST['destination']) {
 		$_POST['destination'] = trim($_POST['destination']);
-	if ($_POST['targetip'])
+	}
+	if ($_POST['targetip']) {
 		$_POST['targetip'] = trim($_POST['targetip']);
-	if ($_POST['sourceport'])
+	}
+	if ($_POST['sourceport']) {
 		$_POST['sourceport'] = trim($_POST['sourceport']);
-	if ($_POST['dstport'])
+	}
+	if ($_POST['dstport']) {
 		$_POST['dstport'] = trim($_POST['dstport']);
-	if ($_POST['natport'])
+	}
+	if ($_POST['natport']) {
 		$_POST['natport'] = trim($_POST['natport']);
+	}
 
-	if($protocol_uses_ports && $_POST['sourceport'] != "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport'])))
+	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
+	}
 
-	if($protocol_uses_ports && $_POST['dstport'] != "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport'])))
+	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
+	}
 
-	if($protocol_uses_ports && $_POST['natport'] != "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
+	}
 
 	if (($_POST['source_type'] != "any") && ($_POST['source_type'] != "(self)")) {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] != "any") {
@@ -221,22 +235,23 @@ if ($_POST) {
 	/* Verify Pool Options */
 	$poolopts = "";
 	if ($_POST['poolopts']) {
-		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet"))
+		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet")) {
 			$poolopts = $_POST['poolopts'];
-		elseif (is_alias($_POST['target'])) {
-			if (substr($_POST['poolopts'], 0, 11) == "round-robin")
+		} elseif (is_alias($_POST['target'])) {
+			if (substr($_POST['poolopts'], 0, 11) == "round-robin") {
 				$poolopts = $_POST['poolopts'];
-			else
+			} else {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+			}
 		}
 	}
 
 	/* if user has selected any as source, set it here */
-	if($_POST['source_type'] == "any") {
+	if ($_POST['source_type'] == "any") {
 		$osn = "any";
-	} else if($_POST['source_type'] == "(self)") {
+	} else if ($_POST['source_type'] == "(self)") {
 		$osn = "(self)";
-	} else if(is_alias($_POST['source'])) {
+	} else if (is_alias($_POST['source'])) {
 		$osn = $_POST['source'];
 	} else {
 		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
@@ -245,7 +260,7 @@ if ($_POST) {
 	/* check for existing entries */
 	if ($_POST['destination_type'] == "any") {
 		$ext = "any";
-	} else if(is_alias($_POST['destination'])) {
+	} else if (is_alias($_POST['destination'])) {
 		$ext = $_POST['destination'];
 	} else {
 		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
@@ -262,8 +277,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-			$natent = array();
-			
+		$natent = array();
 		$natent['source']['network'] = $osn;
 		$natent['sourceport'] = ($protocol_uses_ports) ? $_POST['sourceport'] : "";
 		$natent['descr'] = $_POST['descr'];
@@ -274,49 +288,48 @@ if ($_POST) {
 		$natent['poolopts'] = $poolopts;
 
 		/* static-port */
-		if(isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
+		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
 			$natent['staticnatport'] = true;
 		} else {
 			unset($natent['staticnatport']);
 		}
 
-		if(isset($_POST['disabled'])) {
+		if (isset($_POST['disabled'])) {
 			$natent['disabled'] = true;
 		} else {
 			unset($natent['disabled']);
 		}
 
 		/* if user has selected not nat, set it here */
-		if(isset($_POST['nonat'])) {
+		if (isset($_POST['nonat'])) {
 			$natent['nonat'] = true;
 		} else {
 			unset($natent['nonat']);
 		}
 
-		if ($_POST['protocol'] && $_POST['protocol'] != "any")
+		if ($_POST['protocol'] && $_POST['protocol'] != "any") {
 			$natent['protocol'] = $_POST['protocol'];
-		else
+		} else {
 			unset($natent['protocol']);
+		}
 
 		if ($ext == "any") {
 			$natent['destination']['any'] = true;
 		} else {
 			$natent['destination']['address'] = $ext;
 		}
-		
-		if($_POST['natport'] != "" && $protocol_uses_ports && !isset($_POST['nonat'])) {
+		if ($_POST['natport'] != "" && $protocol_uses_ports && !isset($_POST['nonat'])) {
 				$natent['natport'] = $_POST['natport'];
 		} else {
 			unset($natent['natport']);
 		}
-		
-		if($_POST['dstport'] != "" && $protocol_uses_ports) {
+		if ($_POST['dstport'] != "" && $protocol_uses_ports) {
 			$natent['dstport'] = $_POST['dstport'];
 		} else {
 			unset($natent['dstport']);
 		}
 
-		if($_POST['nosync'] == "yes") {
+		if ($_POST['nosync'] == "yes") {
 			$natent['nosync'] = true;
 		} else {
 			unset($natent['nosync']);
@@ -326,8 +339,9 @@ if ($_POST) {
 			$natent['destination']['not'] = true;
 		}
 
-		if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+		if (isset($a_out[$id]['created']) && is_array($a_out[$id]['created'])) {
 			$natent['created'] = $a_out[$id]['created'];
+		}
 
 		$natent['updated'] = make_config_revision_entry();
 
@@ -345,15 +359,15 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-			
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));
 $closehead = false;
 include("head.inc");
 

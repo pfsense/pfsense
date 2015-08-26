@@ -46,7 +46,7 @@
 
 global $g;
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"));
 $shortcut_section = "ipsec";
 
 require("guiconfig.inc");
@@ -72,20 +72,23 @@ if ($_GET['act'] == 'connect') {
 	}
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
-		else
+		} else {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+		}
 	}
 } else if ($_GET['act'] == 'childdisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
 			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
+		}
 	}
 }
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
@@ -156,6 +159,14 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 						print(htmlspecialchars($ikesa['local']['identification']));
 				} else
 					print(gettext("Unknown"));
+			}
+
+			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
+				$icon = "pass";
+			} elseif (!isset($config['ipsec']['enable'])) {
+				$icon = "block";
+			} else {
+				$icon = "reject";
 			}
 ?>
 					</td>

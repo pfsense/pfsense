@@ -49,38 +49,44 @@ $pconfig['authmode'] = &$config['system']['webgui']['authmode'];
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
-$pgtitle = array(gettext("System"),gettext("User manager settings"));
+$pgtitle = array(gettext("System"), gettext("User manager settings"));
 
 $save_and_test = false;
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if(isset($_POST['session_timeout'])) {
+	if (isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0))
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0)) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
+		}
 	}
 
 	if (!$input_errors) {
 		if ($_POST['authmode'] != "local") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
-			if ($_POST['savetest'])
-				if (1||$authsrv['type'] == "ldap")
+			if ($_POST['savetest']) {
+				if ($authsrv['type'] == "ldap") {
 					$save_and_test = true;
-				else
+				} else {
 					$savemsg = gettext("The test was not performed because it is supported only for ldap based backends.");
+				}
+			}
 		}
 
-		if(isset($_POST['session_timeout']) && $_POST['session_timeout'] != "")
-			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
-		else
-			unset($config['system']['webgui']['session_timeout']);
 
-		if($_POST['authmode'])
+		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
+			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
+		} else {
+			unset($config['system']['webgui']['session_timeout']);
+		}
+
+		if ($_POST['authmode']) {
 			$config['system']['webgui']['authmode'] = $_POST['authmode'];
-		else
+		} else {
 			unset($config['system']['webgui']['authmode']);
+		}
 
 		write_config();
 

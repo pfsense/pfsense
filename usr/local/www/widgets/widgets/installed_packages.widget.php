@@ -41,12 +41,10 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-
 if(is_array($config['installedpackages']['package'])) {
 	$instpkgs = array();
 	foreach ($config['installedpackages']['package'] as $instpkg)
 		$instpkgs[ $instpkg['name'] ] = $instpkg;
-
 	ksort($instpkgs);
 	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
 }

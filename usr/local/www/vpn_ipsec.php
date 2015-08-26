@@ -45,11 +45,13 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
-if (!is_array($config['ipsec']['phase2']))
+if (!is_array($config['ipsec']['phase2'])) {
 	$config['ipsec']['phase2'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
@@ -64,8 +66,9 @@ if ($_POST) {
 		filter_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval >= 0) {
-			if (is_subsystem_dirty('ipsec'))
+			if (is_subsystem_dirty('ipsec')) {
 				clear_subsystem_dirty('ipsec');
+			}
 		}
 	} else if ($_POST['save']) {
 		$pconfig = $_POST;
@@ -81,8 +84,9 @@ if ($_POST) {
 			foreach ($_POST['p1entry'] as $p1entrydel) {
 				unset($a_phase1[$p1entrydel]);
 			}
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	} else if (isset($_POST['delp2'])) {
 		/* delete selected p2 entries */
@@ -90,8 +94,9 @@ if ($_POST) {
 			foreach ($_POST['p2entry'] as $p2entrydel) {
 				unset($a_phase2[$p2entrydel]);
 			}
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	} else {
 		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
@@ -122,29 +127,35 @@ if ($_POST) {
 
 			/* copy all p1 entries < $movebtn and not selected */
 			for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['p1entry']))
+				if (!in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
 
 			/* copy all selected p1 entries */
 			for ($i = 0; $i < count($a_phase1); $i++) {
-				if ($i == $movebtn)
+				if ($i == $movebtn) {
 					continue;
-				if (in_array($i, $_POST['p1entry']))
+				}
+				if (in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
 
 			/* copy $movebtn p1 entry */
-			if ($movebtn < count($a_phase1))
+			if ($movebtn < count($a_phase1)) {
 				$a_phase1_new[] = $a_phase1[$movebtn];
+			}
 
 			/* copy all p1 entries > $movebtn and not selected */
 			for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
-				if (!in_array($i, $_POST['p1entry']))
+				if (!in_array($i, $_POST['p1entry'])) {
 					$a_phase1_new[] = $a_phase1[$i];
+				}
 			}
-			if (count($a_phase1_new) > 0)
+			if (count($a_phase1_new) > 0) {
 				$a_phase1 = $a_phase1_new;
+			}
 
 		} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 			/* move selected p2 entries before this */
@@ -152,70 +163,79 @@ if ($_POST) {
 
 			/* copy all p2 entries < $movebtnp2 and not selected */
 			for ($i = 0; $i < $movebtnp2; $i++) {
-				if (!in_array($i, $_POST['p2entry']))
+				if (!in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
 
 			/* copy all selected p2 entries */
 			for ($i = 0; $i < count($a_phase2); $i++) {
-				if ($i == $movebtnp2)
+				if ($i == $movebtnp2) {
 					continue;
-				if (in_array($i, $_POST['p2entry']))
+				}
+				if (in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
 
 			/* copy $movebtnp2 p2 entry */
-			if ($movebtnp2 < count($a_phase2))
+			if ($movebtnp2 < count($a_phase2)) {
 				$a_phase2_new[] = $a_phase2[$movebtnp2];
+			}
 
 			/* copy all p2 entries > $movebtnp2 and not selected */
 			for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
-				if (!in_array($i, $_POST['p2entry']))
+				if (!in_array($i, $_POST['p2entry'])) {
 					$a_phase2_new[] = $a_phase2[$i];
+				}
 			}
-			if (count($a_phase2_new) > 0)
+			if (count($a_phase2_new) > 0) {
 				$a_phase2 = $a_phase2_new;
+			}
 
 		} else if (isset($togglebtn)) {
-			if (isset($a_phase1[$togglebtn]['disabled']))
+			if (isset($a_phase1[$togglebtn]['disabled'])) {
 				unset($a_phase1[$togglebtn]['disabled']);
-			else
+			} else {
 				$a_phase1[$togglebtn]['disabled'] = true;
-
+			}
 		} else if (isset($togglebtnp2)) {
-			if (isset($a_phase2[$togglebtnp2]['disabled']))
+			if (isset($a_phase2[$togglebtnp2]['disabled'])) {
 				unset($a_phase2[$togglebtnp2]['disabled']);
-			else
+			} else {
 				$a_phase2[$togglebtnp2]['disabled'] = true;
-
+			}
 		} else if (isset($delbtn)) {
 			/* remove static route if interface is not WAN */
-			if ($a_phase1[$delbtn]['interface'] != "wan")
+			if ($a_phase1[$delbtn]['interface'] <> "wan") {
 				mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
+			}
 
 			/* remove all phase2 entries that match the ikeid */
 			$ikeid = $a_phase1[$delbtn]['ikeid'];
-			foreach ($a_phase2 as $p2index => $ph2tmp)
+			foreach ($a_phase2 as $p2index => $ph2tmp) {
 				if ($ph2tmp['ikeid'] == $ikeid) {
 					unset($a_phase2[$p2index]);
 				}
-
+			}
 			unset($a_phase1[$delbtn]);
 
 		} else if (isset($delbtnp2)) {
 			unset($a_phase2[$delbtnp2]);
 
-		} else
+		} else {
 			$save = 0;
+		}
 
 		if ($save === 1) {
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -225,34 +245,12 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 
 <?php
-
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg);
-	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
+	}
+	if ($pconfig['enable'] && is_subsystem_dirty('ipsec')) {
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-	$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
-	$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-	display_top_tabs($tab_array);
-
-	require('classes/Form.class.php');
-	$form = new Form;
-
-	$section = new Form_Section('Enable IPsec');
-	$section->addInput(new Form_Checkbox(
-		'enable',
-		'Enable',
-		'Enable IPsec',
-		$pconfig['enable']
-	));
-
-	$form->add($section);
-
-	print $form;
-
+	}
 ?>
 
 <h2>Rules</h2>

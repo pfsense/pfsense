@@ -93,9 +93,15 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		if (strstr($_POST['syslocation'],"#")) $input_errors[] = gettext("Invalid character '#' in system location");
-		if (strstr($_POST['syscontact'],"#")) $input_errors[] = gettext("Invalid character '#' in system contact");
-		if (strstr($_POST['rocommunity'],"#")) $input_errors[] = gettext("Invalid character '#' in read community string");
+		if (strstr($_POST['syslocation'], "#")) {
+			$input_errors[] = gettext("Invalid character '#' in system location");
+		}
+		if (strstr($_POST['syscontact'], "#")) {
+			$input_errors[] = gettext("Invalid character '#' in system contact");
+		}
+		if (strstr($_POST['rocommunity'], "#")) {
+			$input_errors[] = gettext("Invalid character '#' in read community string");
+		}
 
 		$reqdfields = explode(" ", "rocommunity");
 		$reqdfieldsn = array(gettext("Community"));
@@ -104,10 +110,14 @@ if ($_POST) {
 		$reqdfields = explode(" ", "pollport");
 		$reqdfieldsn = array(gettext("Polling Port"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+
 	}
 
 	if ($_POST['trapenable']) {
-		if (strstr($_POST['trapstring'],"#")) $input_errors[] = gettext("Invalid character '#' in SNMP trap string");
+		if (strstr($_POST['trapstring'], "#")) {
+			$input_errors[] = gettext("Invalid character '#' in SNMP trap string");
+		}
 
 		$reqdfields = explode(" ", "trapserver");
 		$reqdfieldsn = array(gettext("Trap server"));
@@ -124,11 +134,13 @@ if ($_POST) {
 
 /* disabled until some docs show up on what this does.
 	if ($_POST['rwenable']) {
-			   $reqdfields = explode(" ", "rwcommunity");
-			   $reqdfieldsn = explode(",", "Write community string");
-			   do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+		$reqdfields = explode(" ", "rwcommunity");
+		$reqdfieldsn = explode(",", "Write community string");
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 */
+
+
 
 	if (!$input_errors) {
 		$config['snmpd']['enable'] = $_POST['enable'] ? true : false;
@@ -176,7 +188,7 @@ function build_iplist() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("SNMP"));
+$pgtitle = array(gettext("Services"), gettext("SNMP"));
 $shortcut_section = "snmp";
 
 include("head.inc");

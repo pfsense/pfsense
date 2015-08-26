@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: routing
+	pfSense_MODULE:	routing
 */
 
 ##|+PRIV
@@ -50,15 +50,16 @@ define('WHITE',		 '#FFFFFF');
 
 require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_group']))
+if (!is_array($config['gateways']['gateway_group'])) {
 	$config['gateways']['gateway_group'] = array();
+}
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();
 
-$pgtitle = array(gettext("Status"),gettext("Gateway Groups"));
+$pgtitle = array(gettext("Status"), gettext("Gateway Groups"));
 $shortcut_section = "gateway-groups";
 include("head.inc");
 

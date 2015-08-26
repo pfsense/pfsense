@@ -45,9 +45,9 @@ function cpelementscmp($a, $b) {
 }
 
 function cpelements_sort() {
-		global $config, $cpzone;
+	global $config, $cpzone;
 
-		usort($config['captiveportal'][$cpzone]['element'],"cpelementscmp");
+	usort($config['captiveportal'][$cpzone]['element'], "cpelementscmp");
 }
 
 require("guiconfig.inc");
@@ -57,25 +57,26 @@ require("shaper.inc");
 require("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
-
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
-$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
-if (!is_array($a_cp[$cpzone]['element']))
+if (!is_array($a_cp[$cpzone]['element'])) {
 	$a_cp[$cpzone]['element'] = array();
-
+}
 $a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
@@ -89,10 +90,11 @@ if ($_POST) {
 
 	if (is_uploaded_file($_FILES['new']['tmp_name'])) {
 
-		if(!stristr($_FILES['new']['name'], "captiveportal-"))
+		if (!stristr($_FILES['new']['name'], "captiveportal-")) {
 			$name = "captiveportal-" . $_FILES['new']['name'];
-		else
+		} else {
 			$name = $_FILES['new']['name'];
+		}
 		$size = filesize($_FILES['new']['tmp_name']);
 
 		// is there already a file with that name?

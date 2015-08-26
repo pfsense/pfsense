@@ -44,8 +44,9 @@ require("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
-if (!is_array($config['ntpd']))
+if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
+}
 
 if (empty($config['ntpd']['interface'])) {
 	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
@@ -53,10 +54,12 @@ if (empty($config['ntpd']['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 		write_config("Upgraded settings from openttpd");
-	} else
+	} else {
 		$pconfig['interface'] = array();
-} else
+	}
+} else {
 	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
+}
 
 if($_GET['addrow'])
 	$maxrows = $_GET['addrow'] + 1;
@@ -68,15 +71,17 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!$input_errors) {
-		if (is_array($_POST['interface']))
+		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
-		elseif (isset($config['ntpd']['interface']))
+		} elseif (isset($config['ntpd']['interface'])) {
 			unset($config['ntpd']['interface']);
+		}
 
-		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
+		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
 			$config['ntpd']['gpsport'] = $_POST['gpsport'];
-		elseif (isset($config['ntpd']['gpsport']))
+		} elseif (isset($config['ntpd']['gpsport'])) {
 			unset($config['ntpd']['gpsport']);
+		}
 
 		unset($config['ntpd']['prefer']);
 		unset($config['ntpd']['noselect']);
@@ -86,91 +91,112 @@ if ($_POST) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
-				if (!empty($_POST["servprefer{$i}"])) $config['ntpd']['prefer'] .= "{$tserver} ";
-				if (!empty($_POST["servselect{$i}"])) $config['ntpd']['noselect'].= "{$tserver} ";
+				if (!empty($_POST["servprefer{$i}"])) {
+					$config['ntpd']['prefer'] .= "{$tserver} ";
+				}
+				if (!empty($_POST["servselect{$i}"])) {
+					$config['ntpd']['noselect'] .= "{$tserver} ";
+				}
 			}
 		}
-
-		if (trim($timeservers) == "")
+		if (trim($timeservers) == "") {
 			$timeservers = "pool.ntp.org";
+		}
 		$config['system']['timeservers'] = trim($timeservers);
 
-		if (!empty($_POST['ntporphan']) && ($_POST['ntporphan'] < 17) && ($_POST['ntporphan'] != '12'))
+		if (!empty($_POST['ntporphan']) && ($_POST['ntporphan'] < 17) && ($_POST['ntporphan'] != '12')) {
 			$config['ntpd']['orphan'] = $_POST['ntporphan'];
-		elseif (isset($config['ntpd']['orphan']))
+		} elseif (isset($config['ntpd']['orphan'])) {
 			unset($config['ntpd']['orphan']);
+		}
 
-		if (!empty($_POST['logpeer']))
+		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
-		elseif (isset($config['ntpd']['logpeer']))
+		} elseif (isset($config['ntpd']['logpeer'])) {
 			unset($config['ntpd']['logpeer']);
+		}
 
-		if (!empty($_POST['logsys']))
+		if (!empty($_POST['logsys'])) {
 			$config['ntpd']['logsys'] = $_POST['logsys'];
-		elseif (isset($config['ntpd']['logsys']))
+		} elseif (isset($config['ntpd']['logsys'])) {
 			unset($config['ntpd']['logsys']);
+		}
 
-		if (!empty($_POST['clockstats']))
+		if (!empty($_POST['clockstats'])) {
 			$config['ntpd']['clockstats'] = $_POST['clockstats'];
-		elseif (isset($config['ntpd']['clockstats']))
+		} elseif (isset($config['ntpd']['clockstats'])) {
 			unset($config['ntpd']['clockstats']);
+		}
 
-		if (!empty($_POST['loopstats']))
+		if (!empty($_POST['loopstats'])) {
 			$config['ntpd']['loopstats'] = $_POST['loopstats'];
-		elseif (isset($config['ntpd']['loopstats']))
+		} elseif (isset($config['ntpd']['loopstats'])) {
 			unset($config['ntpd']['loopstats']);
+		}
 
-		if (!empty($_POST['peerstats']))
+		if (!empty($_POST['peerstats'])) {
 			$config['ntpd']['peerstats'] = $_POST['peerstats'];
-		elseif (isset($config['ntpd']['peerstats']))
+		} elseif (isset($config['ntpd']['peerstats'])) {
 			unset($config['ntpd']['peerstats']);
+		}
 
-		if (empty($_POST['kod']))
+		if (empty($_POST['kod'])) {
 			$config['ntpd']['kod'] = 'on';
-		elseif (isset($config['ntpd']['kod']))
+		} elseif (isset($config['ntpd']['kod'])) {
 			unset($config['ntpd']['kod']);
+		}
 
-		if (empty($_POST['nomodify']))
+		if (empty($_POST['nomodify'])) {
 			$config['ntpd']['nomodify'] = 'on';
-		elseif (isset($config['ntpd']['nomodify']))
+		} elseif (isset($config['ntpd']['nomodify'])) {
 			unset($config['ntpd']['nomodify']);
+		}
 
-		if (!empty($_POST['noquery']))
+		if (!empty($_POST['noquery'])) {
 			$config['ntpd']['noquery'] = $_POST['noquery'];
-		elseif (isset($config['ntpd']['noquery']))
+		} elseif (isset($config['ntpd']['noquery'])) {
 			unset($config['ntpd']['noquery']);
+		}
 
-		if (!empty($_POST['noserve']))
+		if (!empty($_POST['noserve'])) {
 			$config['ntpd']['noserve'] = $_POST['noserve'];
-		elseif (isset($config['ntpd']['noserve']))
+		} elseif (isset($config['ntpd']['noserve'])) {
 			unset($config['ntpd']['noserve']);
+		}
 
-		if (empty($_POST['nopeer']))
+		if (empty($_POST['nopeer'])) {
 			$config['ntpd']['nopeer'] = 'on';
-		elseif (isset($config['ntpd']['nopeer']))
+		} elseif (isset($config['ntpd']['nopeer'])) {
 			unset($config['ntpd']['nopeer']);
+		}
 
-		if (empty($_POST['notrap']))
+		if (empty($_POST['notrap'])) {
 			$config['ntpd']['notrap'] = 'on';
-		elseif (isset($config['ntpd']['notrap']))
+		} elseif (isset($config['ntpd']['notrap'])) {
 			unset($config['ntpd']['notrap']);
+		}
 
-		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph'])))
+		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
 			$enable_rrd_graphing = true;
-		if (!empty($_POST['statsgraph']))
+		}
+		if (!empty($_POST['statsgraph'])) {
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
-		elseif (isset($config['ntpd']['statsgraph']))
+		} elseif (isset($config['ntpd']['statsgraph'])) {
 			unset($config['ntpd']['statsgraph']);
-		if (isset($enable_rrd_graphing))
+		}
+		if (isset($enable_rrd_graphing)) {
 			enable_rrd_graphing();
+		}
 
-		if (!empty($_POST['leaptxt']))
+		if (!empty($_POST['leaptxt'])) {
 			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptxt']);
-		elseif (isset($config['ntpd']['leapsec']))
+		} elseif (isset($config['ntpd']['leapsec'])) {
 			unset($config['ntpd']['leapsec']);
+		}
 
-		if (is_uploaded_file($_FILES['leapfile']['tmp_name']))
+		if (is_uploaded_file($_FILES['leapfile']['tmp_name'])) {
 			$config['ntpd']['leapsec'] = base64_encode(file_get_contents($_FILES['leapfile']['tmp_name']));
+		}
 
 		write_config("Updated NTP Server Settings");
 
@@ -214,13 +240,12 @@ function build_interface_list() {
 
 $closehead = false;
 $pconfig = &$config['ntpd'];
-
-if (empty($pconfig['interface']))
+if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
-else
+} else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
-	
-$pgtitle = array(gettext("Services"),gettext("NTP"));
+}
+$pgtitle = array(gettext("Services"), gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");
 

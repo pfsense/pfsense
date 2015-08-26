@@ -47,8 +47,9 @@ function hostcmp($a, $b) {
 function hosts_sort() {
 	global $g, $config;
 
-	if (!is_array($config['dnsmasq']['hosts']))
-			return;
+	if (!is_array($config['dnsmasq']['hosts'])) {
+		return;
+	}
 
 	usort($config['dnsmasq']['hosts'], "hostcmp");
 }
@@ -60,11 +61,12 @@ if (!is_array($config['dnsmasq']['hosts']))
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -80,7 +82,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
+	$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -94,11 +96,13 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['domain'] && !is_domain($_POST['domain'])))
+	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 		$input_errors[] = gettext("A valid domain must be specified.");
+	}
 
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip'])))
+	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
 		$input_errors[] = gettext("A valid IP address must be specified.");
+	}
 
 	/* collect aliases */
 	$aliases = array();
@@ -145,11 +149,14 @@ if ($_POST) {
 
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
-		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent))
+		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
 			continue;
+		}
 
-		if (($hostent['host'] == $_POST['host']) && ($hostent['domain'] == $_POST['domain'])
-			&& ((is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) || (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])))) {
+		if (($hostent['host'] == $_POST['host']) &&
+		    ($hostent['domain'] == $_POST['domain']) &&
+		    ((is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) ||
+		     (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])))) {
 			$input_errors[] = gettext("This host/domain already exists.");
 			break;
 		}
@@ -163,10 +170,11 @@ if ($_POST) {
 		$hostent['descr'] = $_POST['descr'];
 		$hostent['aliases']['item'] = $aliases;
 
-		if (isset($id) && $a_hosts[$id])
+		if (isset($id) && $a_hosts[$id]) {
 			$a_hosts[$id] = $hostent;
-		else
+		} else {
 			$a_hosts[] = $hostent;
+		}
 		hosts_sort();
 
 		mark_subsystem_dirty('hosts');

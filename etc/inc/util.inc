@@ -434,19 +434,19 @@ function ip_range_size_v4($startip, $endip) {
 function find_smallest_cidr_v4($number) {
 	$smallest = 1;
 	for ($b=32; $b > 0; $b--) {
-		$smallest = ($number <= pow(2,$b)) ? $b : $smallest;
+		$smallest = ($number <= pow(2, $b)) ? $b : $smallest;
 	}
 	return (32-$smallest);
 }
 
 /* Return the previous IP address before the given address */
-function ip_before($ip) {
-	return long2ip32(ip2long($ip)-1);
+function ip_before($ip, $offset = 1) {
+	return long2ip32(ip2long($ip) - $offset);
 }
 
 /* Return the next IP address after the given address */
-function ip_after($ip) {
-	return long2ip32(ip2long($ip)+1);
+function ip_after($ip, $offset = 1) {
+	return long2ip32(ip2long($ip) + $offset);
 }
 
 /* Return true if the first IP is 'before' the second */
@@ -615,18 +615,10 @@ function is_ipaddrv6($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */
 function is_ipaddrv4($ipaddr) {
-	if (!is_string($ipaddr) || empty($ipaddr)) {
+	if (!is_string($ipaddr) || empty($ipaddr) || ip2long($ipaddr) === FALSE) {
 		return false;
 	}
-
-	$ip_long = ip2long($ipaddr);
-	$ip_reverse = long2ip32($ip_long);
-
-	if ($ipaddr == $ip_reverse) {
-		return true;
-	} else {
-		return false;
-	}
+	return true;
 }
 
 /* returns true if $ipaddr is a valid IPv6 linklocal address */
@@ -770,7 +762,7 @@ function subnet_expand($subnet) {
 function subnetv4_expand($subnet) {
 	$result = array();
 	list ($ip, $bits) = explode("/", $subnet);
-	$net  = ip2long($ip);
+	$net = ip2long($ip);
 	$mask = (0xffffffff << (32 - $bits));
 	$net &= $mask;
 	$size = round(exp(log(2) * (32 - $bits)));
@@ -813,7 +805,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 }
 
 /* return true if $addr is in $subnet, false if not */
-function ip_in_subnet($addr,$subnet) {
+function ip_in_subnet($addr, $subnet) {
 	if (is_ipaddrv6($addr) && is_subnetv6($subnet)) {
 		return (Net_IPv6::isInNetmask($addr, $subnet));
 	} else if (is_ipaddrv4($addr) && is_subnetv4($subnet)) {
@@ -1072,12 +1064,12 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 function get_configured_ip_aliases_list($returnfullentry = false) {
 	global $config;
 
-	$alias_list=array();
+	$alias_list = array();
 
 	if (is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
-			if ($vip['mode']=="ipalias") {
+			if ($vip['mode'] == "ipalias") {
 				if ($returnfullentry) {
 					$alias_list[$vip['subnet']] = $vip;
 				} else {
@@ -1094,7 +1086,7 @@ function get_configured_ip_aliases_list($returnfullentry = false) {
 function get_configured_vips_list() {
 	global $config;
 
-	$alias_list=array();
+	$alias_list = array();
 
 	if (is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
@@ -1269,7 +1261,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	$upints = array();
 	/* get a list of virtual interface types */
 	if (!$vfaces) {
-		$vfaces = array (
+		$vfaces = array(
 				'bridge',
 				'ppp',
 				'pppoe',
@@ -1556,8 +1548,9 @@ function alias_expand_urltable($name) {
 			if (preg_match("/urltable/i", $alias['type']) && ($alias['name'] == $name)) {
 				if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename)) {
 					return $urltable_filename;
-				} else if (process_alias_urltable($name, $alias["url"], 0, true)) {
-					return $urltable_filename;
+				} else {
+					send_event("service sync alias {$name}");
+					break;
 				}
 			}
 		}
@@ -1704,7 +1697,7 @@ function run_plugins($directory) {
 		foreach ($files as $file) {
 			if (stristr($file, ".sh") == true) {
 				mwexec($directory . $file . " start");
-			} else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
+			} else if (!is_dir($directory . "/" . $file) && stristr($file, ".inc")) {
 				require_once($directory . "/" . $file);
 			}
 		}
@@ -1715,7 +1708,7 @@ function run_plugins($directory) {
  *    safe_mkdir($path, $mode = 0755)
  *    create directory if it doesn't already exist and isn't a file!
  */
-function safe_mkdir($path, $mode=0755) {
+function safe_mkdir($path, $mode = 0755) {
 	global $g;
 
 	if (!is_file($path) && !is_dir($path)) {
@@ -1723,23 +1716,6 @@ function safe_mkdir($path, $mode=0755) {
 	} else {
 		return false;
 	}
-}
-
-/*
- * make_dirs($path, $mode = 0755)
- * create directory tree recursively (mkdir -p)
- */
-function make_dirs($path, $mode = 0755) {
-	$base = '';
-	foreach (explode('/', $path) as $dir) {
-		$base .= "/$dir";
-		if (!is_dir($base)) {
-			if (!@mkdir($base, $mode)) {
-				return false;
-			}
-		}
-	}
-	return true;
 }
 
 /*
@@ -1856,17 +1832,15 @@ function get_memory() {
 	$physmem = get_single_sysctl("hw.physmem");
 	$realmem = get_single_sysctl("hw.realmem");
 	/* convert from bytes to megabytes */
-	return array(($physmem/1048576),($realmem/1048576));
+	return array(($physmem/1048576), ($realmem/1048576));
 }
 
 function mute_kernel_msgs() {
-	global $config;
+	global $g, $config;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
+	if ($g['platform'] == 'nanobsd') {
+		return;
 	}
 	if ($config['system']['enableserial']) {
 		return;
@@ -1875,23 +1849,16 @@ function mute_kernel_msgs() {
 }
 
 function unmute_kernel_msgs() {
-	global $config;
+	global $g;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
+	if ($g['platform'] == 'nanobsd') {
+		return;
 	}
 	exec("/sbin/conscontrol mute off");
 }
 
 function start_devd() {
-	global $g;
-
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 	/* Use the undocumented -q options of devd to quiet its log spamming */
 	$_gb = exec("/sbin/devd -q");
 	sleep(1);
@@ -1975,7 +1942,7 @@ function isAjax() {
 function timeout($timer = 9) {
 	while (!isset($key)) {
 		if ($timer >= 9) {
-			echo chr(8) . chr(8) . ($timer==9 ? chr(32) : null)  . "{$timer}";
+			echo chr(8) . chr(8) . ($timer == 9 ? chr(32) : null) . "{$timer}";
 		} else {
 			echo chr(8). "{$timer}";
 		}
@@ -2001,11 +1968,11 @@ function timeout($timer = 9) {
  * RESULT
  *   returns newly sorted array
  ******/
-function msort($array, $id="id", $sort_ascending=true) {
+function msort($array, $id = "id", $sort_ascending = true) {
 	$temp_array = array();
 	while (count($array)>0) {
 		$lowest_id = 0;
-		$index=0;
+		$index = 0;
 		foreach ($array as $item) {
 			if (isset($item[$id])) {
 				if ($array[$lowest_id][$id]) {
@@ -2017,7 +1984,7 @@ function msort($array, $id="id", $sort_ascending=true) {
 			$index++;
 		}
 		$temp_array[] = $array[$lowest_id];
-		$array = array_merge(array_slice($array, 0,$lowest_id), array_slice($array, $lowest_id+1));
+		$array = array_merge(array_slice($array, 0, $lowest_id), array_slice($array, $lowest_id + 1));
 	}
 	if ($sort_ascending) {
 		return $temp_array;

@@ -132,10 +132,11 @@ print $form;
 			<tbody>
 <?php
 $row = 0;
-if(count($sources) > 0) {
-	foreach($sources as $line) {
-		if($row >= 1000)
+if (count($sources) > 0) {
+	foreach ($sources as $line) {
+		if ($row >= 1000) {
 			break;
+		}
 
 		// 192.168.20.2 -> 216.252.56.1 ( states 10, connections 0, rate 0.0/0s )
 

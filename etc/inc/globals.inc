@@ -43,6 +43,7 @@ $g = array(
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
 	"unbound_chroot_path" => "/var/unbound",
+	"var_path" => "/var",
 	"varrun_path" => "/var/run",
 	"varetc_path" => "/var/etc",
 	"vardb_path" => "/var/db",
@@ -50,7 +51,6 @@ $g = array(
 	"etc_path" => "/etc",
 	"tmp_path" => "/tmp",
 	"conf_path" => "/conf",
-	"ftmp_path" => "/ftmp",
 	"conf_default_path" => "/conf.default",
 	"cf_path" => "/cf",
 	"cf_conf_path" => "/cf/conf",
@@ -58,6 +58,7 @@ $g = array(
 	"xml_rootobj" => "pfsense",
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
+	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
 	"product_copyright" => "Electric Sheep Fencing LLC",
 	"product_copyright_url" => "http://www.electricsheepfencing.com",
 	"product_copyright_years" => "2004 - ".date("Y"),
@@ -73,12 +74,11 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "11.8",
+	"latest_config" => "11.9",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
-	"nopccard_platforms" => array("wrap", "net48xx"),
 	"xmlrpcbaseurl" => "https://packages.pfsense.org",
 	"captiveportal_path" => "/usr/local/captiveportal",
 	"captiveportal_element_path" => "/var/db/cpelements",
@@ -87,7 +87,8 @@ $g = array(
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
-	"help_base_url" => "/help.php"
+	"help_base_url" => "/help.php",
+	"pkg_prefix" => "pfSense-pkg-"
 );
 
 /* IP TOS flags */
@@ -98,9 +99,8 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
 if (file_exists("/etc/platform")) {
 	$arch = php_uname("m");
-	$current_version = trim(file_get_contents("{$g['etc_path']}/version"));
 
-	if (strstr($current_version, "-RELEASE")) {
+	if (strstr($g['product_version'], "-RELEASE")) {
 		/* This is only necessary for RELEASE */
 		$arch = ($arch == "i386") ? "" : '/' . $arch;
 		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
@@ -151,7 +151,6 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.icmp.icmplim" => "0",
 	"vfs.read_max" => "32",
 	"kern.ipc.maxsockbuf" => "4262144",
-	"debug.pfftpproxy" => "0",
 	"net.inet.ip.process_options" => 0,
 	"kern.random.sys.harvest.interrupt" => 0,
 	"kern.random.sys.harvest.point_to_point" => 0,
@@ -160,7 +159,6 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.udp.checksum" => 1,
 	"net.bpf.zerocopy_enable" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
-	"vfs.forcesync" => "0",
 	"net.inet6.ip6.rfc6204w3" => 1,
 	"net.enc.out.ipsec_bpf_mask" => "0x0001",
 	"net.enc.out.ipsec_filter_mask" => "0x0001",

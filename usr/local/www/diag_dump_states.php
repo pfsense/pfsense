@@ -44,7 +44,7 @@ require_once("guiconfig.inc");
 require_once("interfaces.inc");
 
 /* handle AJAX operations */
-if(isset($_POST['action']) && $_POST['action'] == "remove") {
+if (isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
 		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
@@ -69,7 +69,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 ?>
 

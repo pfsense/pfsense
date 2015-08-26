@@ -6,7 +6,7 @@
 	rc.banner
 	part of pfSense
 	Copyright (C) 2005 Scott Ullrich and Colin Smith
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	All rights reserved
 
 	Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@
 	require_once("gwlb.inc");
 	require_once("interfaces.inc");
 
-	$version  = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];
 	$product = $g['product_name'];
@@ -47,7 +46,7 @@
 		$platformbanner = "-{$platform}";
 	}
 
-	print "*** Welcome to {$product} {$version}{$platformbanner} ({$machine}) on {$hostname} ***\n";
+	print "*** Welcome to {$product} {$g['product_version']}{$platformbanner} ({$machine}) on {$hostname} ***\n";
 
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach ($iflist as $ifname => $friendly) {
@@ -111,7 +110,7 @@
 		}
 		if (!empty($ipaddr6) && !empty($subnet6)) {
 			if (!$v6first) {
-				printf("\n%s", str_repeat(" ",34));
+				printf("\n%s", str_repeat(" ", 34));
 			}
 			printf("v6%s: %s/%s",
 				$class6,
@@ -120,5 +119,5 @@
 			);
 		}
 	}
-
+	printf("\n");
 ?>

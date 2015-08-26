@@ -39,7 +39,7 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = array(gettext("Status"),gettext("Wireless"));
+$pgtitle = array(gettext("Status"), gettext("Wireless"));
 $shortcut_section = "wireless";
 
 include("head.inc");
@@ -50,11 +50,11 @@ if($_GET['if'] != "")
 	$if = $_GET['if'];
 
 $ciflist = get_configured_interface_with_descr();
-
-if(empty($if)) {
-	/* Find the first interface that is wireless */
-	foreach($ciflist as $interface => $ifdescr) {
-		if(is_interface_wireless(get_real_interface($interface))) {
+if (empty($if)) {
+	/* Find the first interface
+	   that is wireless */
+	foreach ($ciflist as $interface => $ifdescr) {
+		if (is_interface_wireless(get_real_interface($interface))) {
 			$if = $interface;
 			break;
 		}
@@ -108,8 +108,8 @@ display_top_tabs($tab_array);
 	/* Skip Header */
 	array_shift($states);
 
-	$counter=0;
-	foreach($states as $state) {
+	$counter = 0;
+	foreach ($states as $state) {
 		/* Split by Mac address for the SSID Field */
 		$split = preg_split("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state);
 		preg_match("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state, $bssid);

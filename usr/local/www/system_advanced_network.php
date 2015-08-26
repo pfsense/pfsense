@@ -57,45 +57,45 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if ($_POST['ipv6-over-ipv4-tunneling'] && !is_ipaddr($_POST['ip-address']))
+	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr'])) {
 		$input_errors[] = gettext("You must specify an IP address to NAT IPv6 packets.");
+	}
 
 	ob_flush();
 	flush();
 	if (!$input_errors) {
 
-		if($_POST['ipv6-over-ipv4-tunneling'] == "yes") {
+		if ($_POST['ipv6nat_enable'] == "yes") {
 			$config['diag']['ipv6nat']['enable'] = true;
 			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ip-address'];
 		} else {
-			if($config['diag']) {
-				if($config['diag']['ipv6nat']) {
+			if ($config['diag']) {
+				if ($config['diag']['ipv6nat']) {
 					unset($config['diag']['ipv6nat']['enable']);
 					unset($config['diag']['ipv6nat']['ipaddr']);
 				}
 			}
 		}
 
-		if($_POST['allow-ipv6'] == "yes") {
+		if ($_POST['ipv6allow'] == "yes") {
 			$config['system']['ipv6allow'] = true;
 		} else {
 			unset($config['system']['ipv6allow']);
 		}
 
-		if($_POST['prefer-ipv4-over-ipv6'] == "yes") {
+		if ($_POST['prefer_ipv4'] == "yes") {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
 			unset($config['system']['prefer_ipv4']);
 		}
 
-		if($_POST['arp-handling'] == "yes") {
+		if ($_POST['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;
 			system_disable_arp_wrong_if();
 		} else {
@@ -103,7 +103,7 @@ if ($_POST) {
 			system_enable_arp_wrong_if();
 		}
 
-		if($_POST['device-polling'] == "yes") {
+		if ($_POST['polling_enable'] == "yes") {
 			$config['system']['polling'] = true;
 			setup_polling();
 		} else {
@@ -111,25 +111,19 @@ if ($_POST) {
 			setup_polling();
 		}
 
-		if($_POST['enable-flowtable'] == "yes") {
-			$config['system']['flowtable'] = $_POST['enable-flowtable'];
-		} else {
-			unset($config['system']['flowtable']);
-		}
-
-		if($_POST['hardware-checksum-offloading'] == "yes") {
+		if ($_POST['disablechecksumoffloading'] == "yes") {
 			$config['system']['disablechecksumoffloading'] = true;
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
 		}
 
-		if($_POST['hardware-tcp-segmentation-offloading'] == "yes") {
+		if ($_POST['disablesegmentationoffloading'] == "yes") {
 			$config['system']['disablesegmentationoffloading'] = true;
 		} else {
 			unset($config['system']['disablesegmentationoffloading']);
 		}
 
-		if($_POST['hardware-large-receive-offloading'] == "yes") {
+		if ($_POST['disablelargereceiveoffloading'] == "yes") {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
 			unset($config['system']['disablelargereceiveoffloading']);
@@ -144,14 +138,15 @@ if ($_POST) {
 		prefer_ipv4_or_ipv6();
 
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
-		else
+		} else {
 			$savemsg = gettext($retval);
+		}
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Networking"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Networking"));
 include("head.inc");
 
 if ($input_errors)

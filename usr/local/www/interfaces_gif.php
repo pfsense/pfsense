@@ -42,8 +42,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gifs']['gif']))
+if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
+}
 
 $a_gifs = &$config['gifs']['gif'] ;
 
@@ -52,20 +53,21 @@ function gif_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif'])
+		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-	if (!isset($_GET['id']))
-			$input_errors[] = gettext("Wrong parameters supplied");
-	else if (empty($a_gifs[$_GET['id']]))
-			$input_errors[] = gettext("Wrong index supplied");
+	if (!isset($_GET['id'])) {
+		$input_errors[] = gettext("Wrong parameters supplied");
+	} else if (empty($a_gifs[$_GET['id']])) {
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (gif_inuse($_GET['id'])) {
+	} else if (gif_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gifs[$_GET['id']]['gifif'] . " destroy");
@@ -78,7 +80,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GIF"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIF"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

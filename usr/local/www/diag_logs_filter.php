@@ -34,7 +34,7 @@
 */
 
 /*
-	pfSense_MODULE: filter
+	pfSense_MODULE:	filter
 */
 
 ##|+PRIV
@@ -52,31 +52,29 @@ if (isset($_POST['resolve'])) {
 	$ip = strtolower($_POST['resolve']);
 	$res = (is_ipaddr($ip) ? gethostbyaddr($ip) : '');
 
-	if ($res && $res != $ip)
+	if ($res && $res != $ip) {
 		$response = array('resolve_ip' => $ip, 'resolve_text' => $res);
-	else
+	} else {
 		$response = array('resolve_ip' => $ip, 'resolve_text' => gettext("Cannot resolve"));
+	}
 
-	echo json_encode(str_replace("\\","\\\\", $response)); // single escape chars can break JSON decode
+	echo json_encode(str_replace("\\", "\\\\", $response)); // single escape chars can break JSON decode
 	exit;
 }
 
-function getGETPOSTsettingvalue($settingname, $default)
-{
+function getGETPOSTsettingvalue($settingname, $default) {
 	$settingvalue = $default;
-
-	if($_GET[$settingname])
+	if ($_GET[$settingname]) {
 		$settingvalue = $_GET[$settingname];
-
-	if($_POST[$settingname])
+	}
+	if ($_POST[$settingname]) {
 		$settingvalue = $_POST[$settingname];
-
+	}
 	return $settingvalue;
 }
 
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
-
-if($rulenum) {
+if ($rulenum) {
 	list($rulenum, $tracker, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $tracker, $type);
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
@@ -117,16 +115,19 @@ $filter_logfile = "{$g['varlog_path']}/filter.log";
 $nentries = $config['syslog']['nentries'];
 
 # Override Display Quantity
-if ($filterlogentries_qty)
+if ($filterlogentries_qty) {
 	$nentries = $filterlogentries_qty;
+}
 
-if (!$nentries || !is_numeric($nentries))
+if (!$nentries || !is_numeric($nentries)) {
 	$nentries = 50;
+}
 
-if ($_POST['clear'])
+if ($_POST['clear']) {
 	clear_log_file($filter_logfile);
+}
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"));
 $shortcut_section = "firewall";
 include("head.inc");
 

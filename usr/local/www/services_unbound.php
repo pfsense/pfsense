@@ -111,8 +111,9 @@ if ($_POST) {
 		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			if ($_POST['port'] == $config['dnsmasq']['port'])
+			if ($_POST['port'] == $config['dnsmasq']['port']) {
 				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
+			}
 		}
 
 		if (empty($_POST['active_interface'])) {
@@ -223,7 +224,7 @@ function build_if_list() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"));
 $shortcut_section = "resolver";
 
 include_once("head.inc");

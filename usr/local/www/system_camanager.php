@@ -46,34 +46,40 @@ $ca_methods = array(
 	"internal" => gettext("Create an internal Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array( "512", "1024", "2048", "4096");
+$ca_keylens = array("512", "1024", "2048", "4096");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
-if (!is_array($config['crl']))
+if (!is_array($config['crl'])) {
 	$config['crl'] = array();
+}
 
 $a_crl =& $config['crl'];
 
 $act = $_GET['act'];
-if ($_POST['act'])
+if ($_POST['act']) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 
@@ -83,19 +89,23 @@ if ($act == "del") {
 	}
 
 	$index = count($a_cert) - 1;
-	for (;$index >=0; $index--)
-		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid'])
+	for (;$index >= 0; $index--) {
+		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
 			unset($a_cert[$index]);
+		}
+	}
 
 	$index = count($a_crl) - 1;
-	for (;$index >=0; $index--)
-		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid'])
+	for (;$index >= 0; $index--) {
+		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
 			unset($a_crl[$index]);
+		}
+	}
 
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br />";
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name)) . "<br />";
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -109,8 +119,9 @@ if ($act == "edit") {
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
 	$pconfig['serial'] = $a_ca[$id]['serial'];
-	if (!empty($a_ca[$id]['prv']))
+	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+	}
 }
 
 if ($act == "new") {
@@ -167,62 +178,73 @@ if ($_POST) {
 	if ($pconfig['method'] == "existing") {
 		$reqdfields = explode(" ", "descr cert");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate data"));
-		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
+			gettext("Descriptive name"),
+			gettext("Certificate data"));
+		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 			$input_errors[] = gettext("This certificate does not appear to be valid.");
-		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED"))
+		}
+		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
+		}
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-				"descr keylen lifetime dn_country dn_state dn_city ".
-				"dn_organization dn_email dn_commonname");
+			"descr keylen lifetime dn_country dn_state dn_city ".
+			"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Key length"),
-				gettext("Lifetime"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
-				gettext("Distinguished name Common Name"));
+			gettext("Descriptive name"),
+			gettext("Key length"),
+			gettext("Lifetime"),
+			gettext("Distinguished name Country Code"),
+			gettext("Distinguished name State or Province"),
+			gettext("Distinguished name City"),
+			gettext("Distinguished name Organization"),
+			gettext("Distinguished name Email Address"),
+			gettext("Distinguished name Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
-				"descr caref keylen lifetime dn_country dn_state dn_city ".
-				"dn_organization dn_email dn_commonname");
+			"descr caref keylen lifetime dn_country dn_state dn_city ".
+			"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Signing Certificate Authority"),
-				gettext("Key length"),
-				gettext("Lifetime"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
-				gettext("Distinguished name Common Name"));
+			gettext("Descriptive name"),
+			gettext("Signing Certificate Authority"),
+			gettext("Key length"),
+			gettext("Lifetime"),
+			gettext("Distinguished name Country Code"),
+			gettext("Distinguished name State or Province"),
+			gettext("Distinguished name City"),
+			gettext("Distinguished name Organization"),
+			gettext("Distinguished name Email Address"),
+			gettext("Distinguished name Common Name"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	if ($pconfig['method'] != "existing") {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
-		for ($i = 0; $i < count($reqdfields); $i++) {
-			if ($reqdfields[$i] == 'dn_email'){
-				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"]))
-					array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
-			}else if ($reqdfields[$i] == 'dn_commonname'){
-				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"]))
-					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-			}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
-				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 		}
-		if (!in_array($_POST["keylen"], $ca_keylens))
+
+		for ($i = 0; $i < count($reqdfields); $i++) {
+			if ($reqdfields[$i] == 'dn_email') {
+				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
+					array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
+				}
+			} else if ($reqdfields[$i] == 'dn_commonname') {
+				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"])) {
+					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
+				}
+			} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"])) {
+				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+			}
+		}
+		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
-		if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+		}
+		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+		}
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -235,13 +257,15 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$ca = array();
-		if (!isset($pconfig['refid']) || empty($pconfig['refid']))
+		if (!isset($pconfig['refid']) || empty($pconfig['refid'])) {
 			$ca['refid'] = uniqid();
-		else
+		} else {
 			$ca['refid'] = $pconfig['refid'];
+		}
 
-		if (isset($id) && $a_ca[$id])
+		if (isset($id) && $a_ca[$id]) {
 			$ca = $a_ca[$id];
+		}
 
 		$ca['descr'] = $pconfig['descr'];
 
@@ -249,15 +273,15 @@ if ($_POST) {
 			$ca['descr']  = $pconfig['descr'];
 			$ca['refid']  = $pconfig['refid'];
 			$ca['serial'] = $pconfig['serial'];
-			$ca['crt'] = base64_encode($pconfig['cert']);
-			if (!empty($pconfig['key']))
-				$ca['prv'] = base64_encode($pconfig['key']);
+			$ca['crt']    = base64_encode($pconfig['cert']);
+			if (!empty($pconfig['key'])) {
+				$ca['prv']    = base64_encode($pconfig['key']);
+			}
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
-			if ($pconfig['method'] == "existing")
+			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
-
-			else if ($pconfig['method'] == "internal") {
+			} else if ($pconfig['method'] == "internal") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
 					'stateOrProvinceName' => $pconfig['dn_state'],
@@ -265,8 +289,8 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])){
-					while($ssl_err = openssl_error_string()){
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
@@ -280,8 +304,8 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])){
-					while($ssl_err = openssl_error_string()){
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
@@ -290,13 +314,15 @@ if ($_POST) {
 			error_reporting($old_err_level);
 		}
 
-		if (isset($id) && $a_ca[$id])
+		if (isset($id) && $a_ca[$id]) {
 			$a_ca[$id] = $ca;
-		else
+		} else {
 			$a_ca[] = $ca;
+		}
 
-		if (!$input_errors)
+		if (!$input_errors) {
 			write_config();
+		}
 
 //		pfSenseHeader("system_camanager.php");
 	}

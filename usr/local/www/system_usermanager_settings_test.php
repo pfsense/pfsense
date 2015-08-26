@@ -90,8 +90,9 @@ if (!$authcfg) {
 						echo "<tr><td>" . $ou . "</td></tr>";
 					}
 				}
-			} else
+			} else {
 				echo "<td><font color=red>" . gettext("failed") . "</td></tr>";
+			}
 
 			echo "</table><p/>";
 

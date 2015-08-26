@@ -45,7 +45,7 @@
 ##|-PRIV
 
 // Don't really restore or reboot while testing. Should be 'false' for production of course
-define(DEBUG, true);
+define(DEBUG, false);
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '0');
@@ -56,15 +56,17 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if($_GET['backupnow'])
-	mwexec_bg("/etc/rc.create_full_backup");
-
-if($_POST['overwriteconfigxml'])
+if ($_POST['overwriteconfigxml']) {
 	touch("/tmp/do_not_restore_config.xml");
+}
+
+if ($_GET['backupnow']) {
+	mwexec_bg("/etc/rc.create_full_backup");
+}
 
 if($_POST['downloadbackup']) {
 	$filename = basename($_POST['downloadbackup']);
-
+	
 	if(DEBUG)
 		print_info_box('DEBUG: Simulating download of ' . htmlspecialchars($filename));
 	else {
@@ -120,8 +122,7 @@ else if ($_POST['restorefile']) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Restore full backup"));
-
+$pgtitle = array(gettext("Diagnostics"), gettext("Restore full backup"));
 include("head.inc");
 
 if ($input_errors)
@@ -221,7 +222,8 @@ decrypt_change();
 
 <?php
 
-if (!DEBUG && is_subsystem_dirty('restore'))
+if (is_subsystem_dirty('restore')) {
 	system_reboot();
+}
 
 include("foot.inc");?>

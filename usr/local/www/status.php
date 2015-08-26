@@ -8,7 +8,7 @@
  *
  */
 /*
-		Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat /usr/bin/netstat	/sbin/dmesg /sbin/mount /sbin/setkey	/usr/local/sbin/pftop
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl /sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl /sbin/ifconfig
-	pfSense_MODULE: support
+	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
+	pfSense_MODULE:	support
 */
 
 ##|+PRIV
@@ -52,10 +52,18 @@
 /* include all configuration functions */
 require_once("guiconfig.inc");
 require_once("functions.inc");
+$output_path = "/tmp/status_output/";
+$output_file = "/tmp/status_output.tgz";
 
 function doCmdT($title, $command) {
-	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
-	print( "\n<a name=\"" . str_replace($rubbish,'',$title) . "\" id=\"" . str_replace($rubbish,'',$title) . "\"></a>\n");
+	global $output_path, $output_file;
+	/* Fixup output directory */
+
+	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
+	echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
+	echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"" . $title . "\">\n";
+	echo "\t<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
+	echo "\t<tr>\n\t\t<td class=\"listlr\">\n\t\t\t<pre>";		/* no newline after pre */
 
 	print('<div class="panel panel-default">');
 	print(	  '<div class="panel-heading">' . $title . '</div>');
@@ -63,6 +71,7 @@ function doCmdT($title, $command) {
 	print(		  '<pre>');
 
 	if ($command == "dumpconfigxml") {
+		$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
 		$fd = @fopen("/conf/config.xml", "r");
 		if ($fd) {
 			while (!feof($fd)) {
@@ -72,6 +81,8 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
 				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
 				$line = preg_replace("/<prv>.*?<\\/prv>/", "<prv>xxxxx</prv>", $line);
+				$line = preg_replace("/<shared_key>.*?<\\/shared_key>/", "<shared_key>xxxxx</shared_key>", $line);
+				$line = preg_replace("/<tls>.*?<\\/tls>/", "<tls>xxxxx</tls>", $line);
 				$line = preg_replace("/<ipsecpsk>.*?<\\/ipsecpsk>/", "<ipsecpsk>xxxxx</ipsecpsk>", $line);
 				$line = preg_replace("/<md5-hash>.*?<\\/md5-hash>/", "<md5-hash>xxxxx</md5-hash>", $line);
 				$line = preg_replace("/<md5password>.*?<\\/md5password>/", "<md5password>xxxxx</md5password>", $line);
@@ -81,12 +92,15 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
 				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
-				$line = str_replace("\t", " ", $line);
-				echo htmlspecialchars($line,ENT_NOQUOTES);
+				$line = str_replace("\t", "    ", $line);
+				echo htmlspecialchars($line, ENT_NOQUOTES);
+				fwrite($ofd, $line);
 			}
 		}
 		fclose($fd);
+		fclose($ofd);
 	} else {
+		$ofd = @fopen("{$output_path}/{$title}.txt", "w");
 		$execOutput = "";
 		$execStatus = "";
 		exec ($command . " 2>&1", $execOutput, $execStatus);
@@ -94,8 +108,10 @@ function doCmdT($title, $command) {
 			if ($i > 0) {
 				echo "\n";
 			}
-			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
+			echo htmlspecialchars($execOutput[$i], ENT_NOQUOTES);
+			fwrite($ofd, $execOutput[$i] . "\n");
 		}
+		fclose($ofd);
 	}
 
 	print(		  '</pre>');
@@ -103,23 +119,11 @@ function doCmdT($title, $command) {
 	print('</div>');
 }
 
-/* Execute a command, giving it a title which is the same as the command. */
-function doCmd($command) {
-	doCmdT($command,$command);
-}
-
 /* Define a command, with a title, to be executed later. */
 function defCmdT($title, $command) {
 	global $commands;
-	$title = htmlspecialchars($title,ENT_NOQUOTES);
+	$title = htmlspecialchars($title, ENT_NOQUOTES);
 	$commands[] = array($title, $command);
-}
-
-/* Define a command, with a title which is the same as the command,
- * to be executed later.
- */
-function defCmd($command) {
-	defCmdT($command,$command);
 }
 
 /* List all of the commands as an index. */
@@ -147,7 +151,7 @@ function listCmds() {
 /* Execute all of the commands which were defined by a call to defCmd. */
 function execCmds() {
 	global $commands;
-	for ($i = 0; isset($commands[$i]); $i++ ) {
+	for ($i = 0; isset($commands[$i]); $i++) {
 		doCmdT($commands[$i][0], $commands[$i][1]);
 	}
 }
@@ -164,60 +168,59 @@ defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
-		if (isset($cpdata['enable']))
-			defCmdT("ipfw -x {$cpdata['zoneid']} show", "/sbin/ipfw -x {$cpdata['zoneid']} show");
+		if (isset($cpdata['enable'])) {
+			defCmdT("IPFW rules for {$cpdata['zoneid']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
+		}
 	}
 }
 
-defCmdT("pfctl -sn", "/sbin/pfctl -sn");
-defCmdT("pfctl -sr", "/sbin/pfctl -sr");
-defCmdT("pfctl -ss", "/sbin/pfctl -ss");
-defCmdT("pfctl -si", "/sbin/pfctl -si");
-defCmdT("pfctl -sa", "/sbin/pfctl -sa");
-defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
-defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
-defCmdT("pfctl -s nat -v","/sbin/pfctl -s nat -v");
-defCmdT("PF OSFP","/sbin/pfctl -s osfp");
-defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
-defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
-defCmdT("pfctl -vs Tables","/sbin/pfctl -vs Tables");
-defCmdT("Load Balancer","/sbin/pfctl -a slb -s nat");
-defCmdT("pftop -w 150 -a -b","/usr/local/sbin/pftop -a -b");
-defCmdT("pftop -w 150 -a -b -v long","/usr/local/sbin/pftop -w 150 -a -b -v long");
-defCmdT("pftop -w 150 -a -b -v queue","/usr/local/sbin/pftop -w 150 -a -b -v queue");
-defCmdT("pftop -w 150 -a -b -v rules","/usr/local/sbin/pftop -w 150 -a -b -v rules");
-defCmdT("pftop -w 150 -a -b -v size","/usr/local/sbin/pftop -w 150 -a -b -v size");
-defCmdT("pftop -w 150 -a -b -v speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
-defCmdT("resolv.conf","cat /etc/resolv.conf");
-defCmdT("Processes","ps xauww");
-defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
-defCmdT("df","/bin/df");
-defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
-defCmdT("SPD","/sbin/setkey -DP");
-defCmdT("SAD","/sbin/setkey -D");
-
-if(isset($config['system']['usefifolog']))	{
-	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
-	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
-} else {
-	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
-	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+/* Configuration Files */
+defCmdT("Contents of /var/run", "/bin/ls /var/run");
+defCmdT("Contents of /conf", "/bin/ls /conf");
+defCmdT("config.xml", "dumpconfigxml");
+defCmdT("resolv.conf", "/bin/cat /etc/resolv.conf");
+defCmdT("DHCP Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
+defCmdT("DHCPv6 Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
+defCmdT("strongSwan config", "/bin/cat /var/etc/ipsec/strongswan.conf");
+defCmdT("IPsec config", "/bin/cat /var/etc/ipsec/ipsec.conf");
+defCmdT("SPD", "/sbin/setkey -DP");
+defCmdT("SAD", "/sbin/setkey -D");
+if (file_exists("/cf/conf/upgrade_log.txt")) {
+	defCmdT("Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
 }
-
-defCmd("ls /conf");
-defCmd("ls /var/run");
-defCmd("/sbin/mount");
-defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
-defCmdT("VMStat", "vmstat -afimsz");
-defCmdT("config.xml","dumpconfigxml");
-defCmdT("DMESG","/sbin/dmesg -a");
-defCmdT("netstat -mb","netstat -mb");
-defCmdT("vmstat -z","vmstat -z");
+if (file_exists("/boot/loader.conf")) {
+	defCmdT("Loader Configuration", "/bin/cat /boot/loader.conf");
+}
+if (file_exists("/boot/loader.conf.local")) {
+	defCmdT("Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
+}
+if (file_exists("/var/run/apinger.status")) {
+	defCmdT("Gateway Status", "/bin/cat /var/run/apinger.status");
+}
+if (file_exists("/var/etc/apinger.conf")) {
+	defCmdT("Gateway Monitoring Config", "/bin/cat /var/etc/apinger.conf");
+}
+if (file_exists("/var/etc/filterdns.conf")) {
+	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
+}
+if (isset($config['system']['usefifolog'])) {
+	defCmdT("last 200 system log entries", "/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 50 filter log entries", "/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
+} else {
+	defCmdT("last 200 system log entries", "/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 50 filter log entries", "/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+}
+if (file_exists("/tmp/PHP_errors.log")) {
+	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");
+}
+defCmdT("System Message Buffer", "/sbin/dmesg -a");
+defCmdT("System Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
+defCmdT("sysctl values", "/sbin/sysctl -a");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array("{$g['product_name']}","status");
+$pgtitle = array("{$g['product_name']}", "status");
 include("head.inc");
 
 print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, maybe also IP addresses) before posting " .

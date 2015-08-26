@@ -46,8 +46,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['onetoone']))
+if (!is_array($config['nat']['onetoone'])) {
 	$config['nat']['onetoone'] = array();
+}
 
 $a_1to1 = &$config['nat']['onetoone'];
 
@@ -86,8 +87,9 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_1to1[$_GET['id']]) {
 		unset($a_1to1[$_GET['id']]);
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
@@ -99,20 +101,23 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 			unset($a_1to1[$rulei]);
 		}
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
 
 } else if ($_GET['act'] == "toggle") {
 	if ($a_1to1[$_GET['id']]) {
-		if(isset($a_1to1[$_GET['id']]['disabled']))
+		if (isset($a_1to1[$_GET['id']]['disabled'])) {
 			unset($a_1to1[$_GET['id']]['disabled']);
-		else
+		} else {
 			$a_1to1[$_GET['id']]['disabled'] = true;
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule"))
+		}
+		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
@@ -131,38 +136,45 @@ if (isset($_POST['del_x'])) {
 
 		/* copy all rules < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_1to1_new[] = $a_1to1[$i];
+			}
 		}
 
 		/* copy all selected rules */
 		for ($i = 0; $i < count($a_1to1); $i++) {
-			if ($i == $movebtn)
+			if ($i == $movebtn) {
 				continue;
-			if (in_array($i, $_POST['rule']))
+			}
+			if (in_array($i, $_POST['rule'])) {
 				$a_1to1_new[] = $a_1to1[$i];
+			}
 		}
 
 		/* copy $movebtn rule */
-		if ($movebtn < count($a_1to1))
+		if ($movebtn < count($a_1to1)) {
 			$a_1to1_new[] = $a_1to1[$movebtn];
+		}
 
 		/* copy all rules > $movebtn and not selected */
 		for ($i = $movebtn+1; $i < count($a_1to1); $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_1to1_new[] = $a_1to1[$i];
+			}
 		}
-		if (count($a_1to1_new) > 0)
+		if (count($a_1to1_new) > 0) {
 			$a_1to1 = $a_1to1_new;
+		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
 include("head.inc");
 
 if ($savemsg)
@@ -217,11 +229,11 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 					echo $textss;
-					if (!$natent['interface'])
+					if (!$natent['interface']) {
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
-					else
+					} else {
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
-
+					}
 					echo $textse;
 ?>
 						</td>

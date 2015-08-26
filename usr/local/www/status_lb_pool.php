@@ -69,7 +69,7 @@ if (!$nentries)
 $now = time();
 $year = date("Y");
 
-$pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Pool"));
+$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -89,7 +89,7 @@ if ($_POST) {
 
 		foreach ($_POST as $name => $value) {
 			/* Look through the POST vars to find the pool data */
-			if (strpos($name, '|') !== false){
+			if (strpos($name, '|') !== false) {
 				list($poolname, $ip) = explode("|", $name);
 				$ip = str_replace('_', '.', $ip);
 				$newservers[$poolname][] = $ip;

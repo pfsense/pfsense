@@ -37,47 +37,55 @@
 
 require("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pkg-utils.inc");
 
-if (!is_array($config['openvpn']['openvpn-server']))
+if (!is_array($config['openvpn']['openvpn-server'])) {
 	$config['openvpn']['openvpn-server'] = array();
+}
 
 $a_server = &$config['openvpn']['openvpn-server'];
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
-if (!is_array($config['crl']))
+if (!is_array($config['crl'])) {
 	$config['crl'] = array();
+}
 
 $a_crl =& $config['crl'];
 
 foreach ($a_crl as $cid => $acrl) {
-	if (!isset($acrl['refid']))
+	if (!isset($acrl['refid'])) {
 		unset ($a_crl[$cid]);
+	}
 }
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 $act = $_GET['act'];
-
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
-if (isset($id) && $a_server[$id])
+if (isset($id) && $a_server[$id]) {
 	$vpnid = $a_server[$id]['vpnid'];
-else
+} else {
 	$vpnid = 0;
+}
 
 if ($_GET['act'] == "del") {
 
@@ -85,16 +93,15 @@ if ($_GET['act'] == "del") {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
-
-	if (!empty($a_server[$id]))
+	if (!empty($a_server[$id])) {
 		openvpn_delete('server', $a_server[$id]);
-
+	}
 	unset($a_server[$id]);
 	write_config();
 	$savemsg = gettext("Server successfully deleted")."<br />";
 }
 
-if($_GET['act']=="new") {
+if ($_GET['act'] == "new") {
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
@@ -109,7 +116,7 @@ if($_GET['act']=="new") {
 	$pconfig['digest'] = "SHA1";
 }
 
-if($_GET['act']=="edit") {
+if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_server[$id]) {
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
@@ -137,17 +144,17 @@ if($_GET['act']=="edit") {
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
-
-			if (isset($a_server[$id]['cert_depth']))
+			if (isset($a_server[$id]['cert_depth'])) {
 				$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
-			else
+			} else {
 				$pconfig['cert_depth'] = 1;
-
-			if ($pconfig['mode'] == "server_tls_user")
+			}
+			if ($pconfig['mode'] == "server_tls_user") {
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
-		} else
+			}
+		} else {
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
-
+		}
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
 		// OpenVPN Defaults to SHA1 if unset
 		$pconfig['digest'] = !empty($a_server[$id]['digest']) ? $a_server[$id]['digest'] : "SHA1";
@@ -176,9 +183,9 @@ if($_GET['act']=="edit") {
 		$pconfig['serverbridge_dhcp_end'] = $a_server[$id]['serverbridge_dhcp_end'];
 
 		$pconfig['dns_domain'] = $a_server[$id]['dns_domain'];
-
-		if ($pconfig['dns_domain'])
+		if ($pconfig['dns_domain']) {
 			$pconfig['dns_domain_enable'] = true;
+		}
 
 		$pconfig['dns_server1'] = $a_server[$id]['dns_server1'];
 		$pconfig['dns_server2'] = $a_server[$id]['dns_server2'];
@@ -186,17 +193,19 @@ if($_GET['act']=="edit") {
 		$pconfig['dns_server4'] = $a_server[$id]['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
-			$pconfig['dns_server2'] ||
-			$pconfig['dns_server3'] ||
-			$pconfig['dns_server4'])
+		    $pconfig['dns_server2'] ||
+		    $pconfig['dns_server3'] ||
+		    $pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
+		}
 
 		$pconfig['ntp_server1'] = $a_server[$id]['ntp_server1'];
 		$pconfig['ntp_server2'] = $a_server[$id]['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
-			$pconfig['ntp_server2'])
+		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
+		}
 
 		$pconfig['netbios_enable'] = $a_server[$id]['netbios_enable'];
 		$pconfig['netbios_ntype'] = $a_server[$id]['netbios_ntype'];
@@ -206,18 +215,19 @@ if($_GET['act']=="edit") {
 		$pconfig['wins_server2'] = $a_server[$id]['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
-			$pconfig['wins_server2'])
+		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
+		}
 
 		$pconfig['client_mgmt_port'] = $a_server[$id]['client_mgmt_port'];
-
-		if ($pconfig['client_mgmt_port'])
+		if ($pconfig['client_mgmt_port']) {
 			$pconfig['client_mgmt_port_enable'] = true;
+		}
 
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
-
-		if ($pconfig['nbdd_server1'])
+		if ($pconfig['nbdd_server1']) {
 			$pconfig['nbdd_server_enable'] = true;
+		}
 
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
@@ -226,11 +236,11 @@ if($_GET['act']=="edit") {
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 
 		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
-
-		if (isset($a_server[$id]['verbosity_level']))
+		if (isset($a_server[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
-		else
+		} else {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
+		}
 
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
@@ -240,13 +250,13 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($id) && $a_server[$id])
+	if (isset($id) && $a_server[$id]) {
 		$vpnid = $a_server[$id]['vpnid'];
-	else
+	} else {
 		$vpnid = 0;
+	}
 
-	list($iv_iface, $iv_ip) = explode ("|",$pconfig['interface']);
-
+	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
 	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
@@ -257,102 +267,128 @@ if ($_POST) {
 		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
 	}
 
-	if ($pconfig['mode'] != "p2p_shared_key")
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
-	else
+	} else {
 		$tls_mode = false;
+	}
 
-	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
+	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user"))) {
 		$input_errors[] = gettext("You must select a Backend for Authentication if the server mode requires User Auth.");
+	}
 
 	/* input validation */
-	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
+	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port')) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4"))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6"))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6")) {
 		$input_errors[] = $result;
+	}
 
 	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
-
-	if (($portused != $vpnid) && ($portused != 0))
+	if (($portused != $vpnid) && ($portused != 0)) {
 		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
+	}
 
-	if ($pconfig['autokey_enable'])
+	if ($pconfig['autokey_enable']) {
 		$pconfig['shared_key'] = openvpn_create_key();
+	}
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
+		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
+		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
+		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
+		}
 	}
 
 	if ($pconfig['dns_server_enable']) {
-		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1'])))
+		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1']))) {
 			$input_errors[] = gettext("The field 'DNS Server #1' must contain a valid IP address");
-		if (!empty($pconfig['dns_server2']) && !is_ipaddr(trim($pconfig['dns_server2'])))
+		}
+		if (!empty($pconfig['dns_server2']) && !is_ipaddr(trim($pconfig['dns_server2']))) {
 			$input_errors[] = gettext("The field 'DNS Server #2' must contain a valid IP address");
-		if (!empty($pconfig['dns_server3']) && !is_ipaddr(trim($pconfig['dns_server3'])))
+		}
+		if (!empty($pconfig['dns_server3']) && !is_ipaddr(trim($pconfig['dns_server3']))) {
 			$input_errors[] = gettext("The field 'DNS Server #3' must contain a valid IP address");
-		if (!empty($pconfig['dns_server4']) && !is_ipaddr(trim($pconfig['dns_server4'])))
+		}
+		if (!empty($pconfig['dns_server4']) && !is_ipaddr(trim($pconfig['dns_server4']))) {
 			$input_errors[] = gettext("The field 'DNS Server #4' must contain a valid IP address");
+		}
 	}
 
 	if ($pconfig['ntp_server_enable']) {
-		if (!empty($pconfig['ntp_server1']) && !is_ipaddr(trim($pconfig['ntp_server1'])))
+		if (!empty($pconfig['ntp_server1']) && !is_ipaddr(trim($pconfig['ntp_server1']))) {
 			$input_errors[] = gettext("The field 'NTP Server #1' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server2']) && !is_ipaddr(trim($pconfig['ntp_server2'])))
+		}
+		if (!empty($pconfig['ntp_server2']) && !is_ipaddr(trim($pconfig['ntp_server2']))) {
 			$input_errors[] = gettext("The field 'NTP Server #2' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server3']) && !is_ipaddr(trim($pconfig['ntp_server3'])))
+		}
+		if (!empty($pconfig['ntp_server3']) && !is_ipaddr(trim($pconfig['ntp_server3']))) {
 			$input_errors[] = gettext("The field 'NTP Server #3' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server4']) && !is_ipaddr(trim($pconfig['ntp_server4'])))
+		}
+		if (!empty($pconfig['ntp_server4']) && !is_ipaddr(trim($pconfig['ntp_server4']))) {
 			$input_errors[] = gettext("The field 'NTP Server #4' must contain a valid IP address");
+		}
 	}
 
 	if ($pconfig['netbios_enable']) {
 		if ($pconfig['wins_server_enable']) {
-			if (!empty($pconfig['wins_server1']) && !is_ipaddr(trim($pconfig['wins_server1'])))
+			if (!empty($pconfig['wins_server1']) && !is_ipaddr(trim($pconfig['wins_server1']))) {
 				$input_errors[] = gettext("The field 'WINS Server #1' must contain a valid IP address");
-			if (!empty($pconfig['wins_server2']) && !is_ipaddr(trim($pconfig['wins_server2'])))
+			}
+			if (!empty($pconfig['wins_server2']) && !is_ipaddr(trim($pconfig['wins_server2']))) {
 				$input_errors[] = gettext("The field 'WINS Server #2' must contain a valid IP address");
+			}
 		}
-		if ($pconfig['nbdd_server_enable'])
-			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1'])))
+		if ($pconfig['nbdd_server_enable']) {
+			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
+			}
+		}
 	}
 
 	if ($pconfig['client_mgmt_port_enable']) {
-		if ($result = openvpn_validate_port($pconfig['client_mgmt_port'], 'Client management port'))
+		if ($result = openvpn_validate_port($pconfig['client_mgmt_port'], 'Client management port')) {
 			$input_errors[] = $result;
+		}
 	}
 
-	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
+	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients'])) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
+	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
+		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');
@@ -363,17 +399,22 @@ if ($_POST) {
 		$reqdfields[] = 'tunnel_network';
 		$reqdfieldsn[] = gettext('Tunnel network');
 	} else {
-		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network'])
+		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
-		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end'])
-		|| (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end']))
+		}
+		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) ||
+		    (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
-		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start'])))
+		}
+		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start']))) {
 			$input_errors[] = gettext("Server Bridge DHCP Start must be an IPv4 address.");
-		if (($pconfig['serverbridge_dhcp_end'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_end'])))
+		}
+		if (($pconfig['serverbridge_dhcp_end'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_end']))) {
 			$input_errors[] = gettext("Server Bridge DHCP End must be an IPv4 address.");
-		if (ip2ulong($pconfig['serverbridge_dhcp_start']) > ip2ulong($pconfig['serverbridge_dhcp_end']))
+		}
+		if (ip2ulong($pconfig['serverbridge_dhcp_start']) > ip2ulong($pconfig['serverbridge_dhcp_end'])) {
 			$input_errors[] = gettext("The Server Bridge DHCP range is invalid (start higher than end).");
+		}
 	}
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -381,32 +422,35 @@ if ($_POST) {
 
 		$server = array();
 
-		if ($id && $pconfig['dev_mode'] != $a_server[$id]['dev_mode'])
+		if ($id && $pconfig['dev_mode'] <> $a_server[$id]['dev_mode']) {
 			openvpn_delete('server', $a_server[$id]);// delete(rename) old interface so a new TUN or TAP interface can be created.
+		}
 
-		if ($vpnid)
+		if ($vpnid) {
 			$server['vpnid'] = $vpnid;
-		else
+		} else {
 			$server['vpnid'] = openvpn_vpnid_next();
+		}
 
-		if ($_POST['disable'] == "yes")
+		if ($_POST['disable'] == "yes") {
 			$server['disable'] = true;
-
+		}
 		$server['mode'] = $pconfig['mode'];
-		if (!empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
+		if (!empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user"))) {
 			$server['authmode'] = implode(",", $pconfig['authmode']);
-
+		}
 		$server['protocol'] = $pconfig['protocol'];
 		$server['dev_mode'] = $pconfig['dev_mode'];
-		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
+		list($server['interface'], $server['ipaddr']) = explode ("|", $pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
 		$server['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
 		if ($tls_mode) {
 			if ($pconfig['tlsauth_enable']) {
-				if ($pconfig['autotls_enable'])
+				if ($pconfig['autotls_enable']) {
 					$pconfig['tls'] = openvpn_create_key();
+				}
 				$server['tls'] = base64_encode($pconfig['tls']);
 			}
 			$server['caref'] = $pconfig['caref'];
@@ -414,9 +458,9 @@ if ($_POST) {
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
 			$server['cert_depth'] = $pconfig['cert_depth'];
-
-			if ($pconfig['mode'] == "server_tls_user")
+			if ($pconfig['mode'] == "server_tls_user") {
 				$server['strictusercn'] = $pconfig['strictusercn'];
+			}
 		} else {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -446,8 +490,9 @@ if ($_POST) {
 		$server['serverbridge_dhcp_start'] = $pconfig['serverbridge_dhcp_start'];
 		$server['serverbridge_dhcp_end'] = $pconfig['serverbridge_dhcp_end'];
 
-		if ($pconfig['dns_domain_enable'])
+		if ($pconfig['dns_domain_enable']) {
 			$server['dns_domain'] = $pconfig['dns_domain'];
+		}
 
 		if ($pconfig['dns_server_enable']) {
 			$server['dns_server1'] = $pconfig['dns_server1'];
@@ -456,8 +501,9 @@ if ($_POST) {
 			$server['dns_server4'] = $pconfig['dns_server4'];
 		}
 
-		if ($pconfig['push_register_dns'])
+		if ($pconfig['push_register_dns']) {
 			$server['push_register_dns'] = $pconfig['push_register_dns'];
+		}
 
 		if ($pconfig['ntp_server_enable']) {
 			$server['ntp_server1'] = $pconfig['ntp_server1'];
@@ -478,20 +524,24 @@ if ($_POST) {
 				$server['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable'])
+			if ($pconfig['dns_server_enable']) {
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
+			}
 		}
 
-		if ($pconfig['client_mgmt_port_enable'])
+		if ($pconfig['client_mgmt_port_enable']) {
 			$server['client_mgmt_port'] = $pconfig['client_mgmt_port'];
+		}
 
-		if ($_POST['duplicate_cn'] == "yes")
+		if ($_POST['duplicate_cn'] == "yes") {
 			$server['duplicate_cn'] = true;
+		}
 
-		if (isset($id) && $a_server[$id])
+		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
-		else
+		} else {
 			$a_server[] = $server;
+		}
 
 		openvpn_resync('server', $server);
 		write_config();
@@ -499,9 +549,9 @@ if ($_POST) {
 		header("Location: vpn_openvpn_server.php");
 		exit;
 	}
-
-	if (!empty($pconfig['authmode']))
+	if (!empty($pconfig['authmode'])) {
 		$pconfig['authmode'] = implode(",", $pconfig['authmode']);
+	}
 }
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Server"));

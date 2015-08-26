@@ -42,17 +42,18 @@
 
 define('CLOCK', '&#x1f550;');
 
-$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
+$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
 require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"));
+$pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-if (!is_array($config['schedules']['schedule']))
+if (!is_array($config['schedules']['schedule'])) {
 	$config['schedules']['schedule'] = array();
+}
 
 $a_schedules = &$config['schedules']['schedule'];
 
@@ -63,10 +64,10 @@ if ($_GET['act'] == "del") {
 		$referenced_by = false;
 		$schedule_name = $a_schedules[$_GET['id']]['name'];
 
-		if(is_array($config['filter']['rule'])) {
-			foreach($config['filter']['rule'] as $rule) {
+		if (is_array($config['filter']['rule'])) {
+			foreach ($config['filter']['rule'] as $rule) {
 				//check for this later once this is established
-				if ($rule['sched'] == $schedule_name){
+				if ($rule['sched'] == $schedule_name) {
 					$referenced_by = $rule['descr'];
 					$is_schedule_referenced = true;
 					break;
@@ -74,8 +75,8 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete Schedule.	 Currently in use by %s"),$referenced_by);
+		if ($is_schedule_referenced == true) {
+			$savemsg = sprintf(gettext("Cannot delete Schedule.  Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_schedules[$_GET['id']]);
 			write_config();

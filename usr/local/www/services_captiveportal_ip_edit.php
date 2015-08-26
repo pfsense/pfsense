@@ -49,7 +49,7 @@ function allowedipscmp($a, $b) {
 function allowedips_sort() {
 	global $g, $config, $cpzone;
 
-	usort($config['captiveportal'][$cpzone]['allowedip'],"allowedipscmp");
+	usort($config['captiveportal'][$cpzone]['allowedip'], "allowedipscmp");
 }
 
 require("guiconfig.inc");
@@ -58,32 +58,34 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed IP address"));
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit allowed IP address"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
-		$config['captiveportal'] = array();
-
+if (!is_array($config['captiveportal'])) {
+	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['captiveportal'][$cpzone]['allowedip']))
+if (!is_array($config['captiveportal'][$cpzone]['allowedip'])) {
 	$config['captiveportal'][$cpzone]['allowedip'] = array();
-
+}
 $a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 
 if (isset($id) && $a_allowedips[$id]) {
@@ -104,23 +106,28 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['ip'] && !is_ipaddr($_POST['ip']))
+	if ($_POST['ip'] && !is_ipaddr($_POST['ip'])) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);
+	}
 
-	if ($_POST['sn'] && (!is_numeric($_POST['sn']) || ($_POST['sn'] < 1) || ($_POST['sn'] > 32)))
+	if ($_POST['sn'] && (!is_numeric($_POST['sn']) || ($_POST['sn'] < 1) || ($_POST['sn'] > 32))) {
 		$input_errors[] = gettext("A valid subnet mask must be specified");
+	}
 
-	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
+	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
 		$input_errors[] = gettext("Upload speed needs to be an integer");
+	}
 
-	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down'])) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
+	}
 
 	foreach ($a_allowedips as $ipent) {
-		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent))
+		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent)) {
 			continue;
+		}
 
-		if ($ipent['ip'] == $_POST['ip']){
+		if ($ipent['ip'] == $_POST['ip']) {
 			$input_errors[] = sprintf("[%s] %s.", $_POST['ip'], gettext("already allowed")) ;
 			break ;
 		}
@@ -131,16 +138,19 @@ if ($_POST) {
 		$ip['ip'] = $_POST['ip'];
 		$ip['sn'] = $_POST['sn'];
 		$ip['descr'] = $_POST['descr'];
-		if ($_POST['bw_up'])
+		if ($_POST['bw_up']) {
 			$ip['bw_up'] = $_POST['bw_up'];
-		if ($_POST['bw_down'])
+		}
+		if ($_POST['bw_down']) {
 			$ip['bw_down'] = $_POST['bw_down'];
+		}
 		if (isset($id) && $a_allowedips[$id]) {
 			$oldip = $a_allowedips[$id]['ip'];
-			if (!empty($a_allowedips[$id]['sn']))
+			if (!empty($a_allowedips[$id]['sn'])) {
 				$oldmask = $a_allowedips[$id]['sn'];
-			else
+			} else {
 				$oldmask = 32;
+			}
 			$a_allowedips[$id] = $ip;
 		} else {
 			$a_allowedips[] = $ip;
@@ -180,17 +190,6 @@ if ($_POST) {
 	}
 }
 
-// Do it this way to accommodate the '/'. If we could add plain text to the group
-// between hte tow input elements we could use range(...
-function subnet_list() {
-	$subnetlist = array();
-
-	for($idx = 32; $idx >= 0; $idx--)
-		$subnetlist[$idx] = '/' . $idx;
-
-	return($subnetlist);
-}
-
 function build_dir_list() {
 	$dirs = array(gettext("Both"),gettext("From"),gettext("To"));
 	$dirlist = array();
@@ -213,26 +212,12 @@ $form = new Form();
 
 $section = new Form_Section('Edit Captive Portal IP rule');
 
-$ipaddress = new Form_IpAddress(
+$section->addInput(new Form_IpAddress(
 	'ip',
 	'IP Address',
 	$pconfig['ip']
-);
+))->addMask(sn, $pconfig['sn'], 32);
 
-$subnet = new Form_Select(
-	'sn',
-	'Subnet',
-	32,
-	subnet_list(),
-	$pconfig['sn']
-);
-
-$group = new Form_Group('IP Address and Subnet');
-$group->add($ipaddress);
-$group->add($subnet);
-$group->setHelp('IP address and subnet mask. Use /32 for a single address.');
-
-$section->add($group);
 
 $section->addInput(new Form_Select(
 	'dir',

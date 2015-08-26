@@ -48,10 +48,12 @@ if (!is_array($config['ipsec']['mobilekey'])) {
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
@@ -70,19 +72,22 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = array(gettext("Identifier"),gettext("Pre-Shared Key"));
+	$reqdfieldsn = array(gettext("Identifier"), gettext("Pre-Shared Key"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident']))
+	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident'])) {
 		$input_errors[] = gettext("The identifier contains invalid characters.");
+	}
 
-	if (array_key_exists($_POST['ident'], $userids))
+	if (array_key_exists($_POST['ident'], $userids)) {
 		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
+	}
 	unset($userids);
 
-	if (isset($_POST['psk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['psk']))
+	if (isset($_POST['psk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['psk'])) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
+	}
 
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
@@ -96,8 +101,9 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_secret[$id])
+		if (isset($id) && $a_secret[$id]) {
 			$secretent = $a_secret[$id];
+		}
 
 		$secretent['ident'] = $_POST['ident'];
 		$secretent['type'] = $_POST['type'];

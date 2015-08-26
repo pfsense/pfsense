@@ -43,21 +43,23 @@
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("IGMP Proxy"), gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("IGMP Proxy"), gettext("Edit"));
 
 require("guiconfig.inc");
 
-if (!is_array($config['igmpproxy']['igmpentry']))
+if (!is_array($config['igmpproxy']['igmpentry'])) {
 	$config['igmpproxy']['igmpentry'] = array();
+}
 
 //igmpproxy_sort();
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_igmpproxy[$id]) {
 	$pconfig['ifname'] = $a_igmpproxy[$id]['ifname'];
@@ -94,10 +96,12 @@ if ($_POST) {
 
 	if ($_POST['type'] == "upstream") {
 		foreach ($a_igmpproxy as $pid => $proxyentry) {
-			if (isset($id) && $id == $pid)
+			if (isset($id) && $id == $pid) {
 				continue;
-			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface'])
+			}
+			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface']) {
 				$input_errors[] = gettext("Only one 'upstream' interface can be configured.");
+			}
 		}
 	}
 
@@ -108,10 +112,11 @@ if ($_POST) {
 	$address = "";
 	$isfirst = 0;
 	/* item is a normal igmpentry type */
-	for($x=0; $x<4999; $x++) {
-		if($_POST["address{$x}"] != "") {
-			if ($isfirst > 0)
+	for ($x = 0; $x < 4999; $x++) {
+		if ($_POST["address{$x}"] <> "") {
+			if ($isfirst > 0) {
 				$address .= " ";
+			}
 			$address .= $_POST["address{$x}"];
 			$address .= "/" . $_POST["address_subnet{$x}"];
 			$isfirst++;
@@ -122,20 +127,19 @@ if ($_POST) {
 		$igmpentry['address'] = $address;
 		$igmpentry['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_igmpproxy[$id])
+		if (isset($id) && $a_igmpproxy[$id]) {
 			$a_igmpproxy[$id] = $igmpentry;
-		else
+		} else {
 			$a_igmpproxy[] = $igmpentry;
+		}
 
 		write_config();
 
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
 		exit;
-	}
-	//we received input errors, copy data to prevent retype
-	else
-	{
+	} else {
+		//we received input errors, copy data to prevent retype
 		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = $address;
 		$pconfig['type'] = $_POST['type'];

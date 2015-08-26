@@ -43,8 +43,9 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['ifgroups']['ifgroupentry']))
+if (!is_array($config['ifgroups']['ifgroupentry'])) {
 	$config['ifgroups']['ifgroupentry'] = array();
+}
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
@@ -53,8 +54,9 @@ if ($_GET['act'] == "del") {
 		$members = explode(" ", $a_ifgroups[$_GET['id']]['members']);
 		foreach ($members as $ifs) {
 			$realif = get_real_interface($ifs);
-			if ($realif)
+			if ($realif) {
 				mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$_GET['id']]['ifname']);
+			}
 		}
 		unset($a_ifgroups[$_GET['id']]);
 		write_config();
@@ -63,7 +65,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Groups"));
+$pgtitle = array(gettext("Interfaces"), gettext("Groups"));
 $shortcut_section = "interfaces";
 
 include("head.inc");

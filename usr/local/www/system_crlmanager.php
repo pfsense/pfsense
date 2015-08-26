@@ -1,21 +1,21 @@
 <?php
 /*
 	system_crlmanager.php
-	
+
 	Copyright (C) 2010 Jim Pingle
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	notice, this list of conditions and the following disclaimer in the
 	documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -40,7 +40,8 @@
 
 require("guiconfig.inc");
 require_once("certs.inc");
-require_once('openvpn.inc');
+require_once("openvpn.inc");
+require_once("vpn.inc");
 
 global $openssl_crl_status;
 
@@ -50,39 +51,45 @@ $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
 
-if (ctype_alnum($_GET['id']))
+if (ctype_alnum($_GET['id'])) {
 	$id = $_GET['id'];
-	
-if (isset($_POST['id']) && ctype_alnum($_POST['id']))
+}
+if (isset($_POST['id']) && ctype_alnum($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
-if (!is_array($config['crl']))
+if (!is_array($config['crl'])) {
 	$config['crl'] = array();
+}
 
 $a_crl =& $config['crl'];
 
-foreach ($a_crl as $cid => $acrl)
-	if (!isset($acrl['refid']))
+foreach ($a_crl as $cid => $acrl) {
+	if (!isset($acrl['refid'])) {
 		unset ($a_crl[$cid]);
+	}
+}
 
 $act = $_GET['act'];
-
-if ($_POST['act'])
+if ($_POST['act']) {
 	$act = $_POST['act'];
+}
 
-
-if (!empty($id))
+if (!empty($id)) {
 	$thiscrl =& lookup_crl($id);
+}
 
 // If we were given an invalid crlref in the id, no sense in continuing as it would only cause errors.
 if (!$thiscrl && (($act != "") && ($act != "new"))) {
@@ -92,13 +99,15 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 }	
 
 if ($act == "del") {
-	$name = $thiscrl['descr'];
+	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br />";
 	} else {
-		foreach ($a_crl as $cid => $acrl)
-			if ($acrl['refid'] == $thiscrl['refid'])
+		foreach ($a_crl as $cid => $acrl) {
+			if ($acrl['refid'] == $thiscrl['refid']) {
 				unset($a_crl[$cid]);
+			}
+		}
 		write_config("Deleted CRL {$name}.");
 		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br />";
 	}
@@ -152,7 +161,9 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
+			// refresh IPsec and OpenVPN CRLs 
 			openvpn_refresh_crls();
+			vpn_ipsec_configure();
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
 			exit;
@@ -176,37 +187,43 @@ if ($act == "delcert") {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
-	$name = $thiscert['descr'];
+	$certname = htmlspecialchars($thiscert['descr']);
+	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
+		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
-		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
+		vpn_ipsec_configure();
+		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
+		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
 	}
 	$act="edit";
 }
 
 if ($_POST) {
-	unset($input_errors);
+	$input_errors = array();
 	$pconfig = $_POST;
 
 	/* input validation */
 	if (($pconfig['method'] == "existing") || ($act == "editimported")) {
 		$reqdfields = explode(" ", "descr crltext");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate Revocation List data"));
+			gettext("Descriptive name"),
+			gettext("Certificate Revocation List data"));
 	}
 	if ($pconfig['method'] == "internal") {
-		$reqdfields = explode(" ",
-				"descr caref");
+		$reqdfields = explode(" ", "descr caref");
 		$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate Authority"));
+			gettext("Descriptive name"),
+			gettext("Certificate Authority"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
+		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+	}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -241,11 +258,14 @@ if ($_POST) {
 			$crl['cert'] = array();
 		}
 
-		if (!$thiscrl)
+		if (!$thiscrl) {
 			$a_crl[] = $crl;
+		}
 
 		write_config("Saved CRL {$crl['descr']}");
+		// refresh IPsec and OpenVPN CRLs 
 		openvpn_refresh_crls();
+		vpn_ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
 	}
 }

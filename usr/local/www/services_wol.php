@@ -57,14 +57,16 @@ if($_GET['wakeall'] != "") {
 		$if = $wolent['interface'];
 		$description = $wolent['descr'];
 		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr))
+		if (!is_ipaddr($ipaddr)) {
 			continue;
+		}
 		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 		/* Execute wol command and check return code. */
-		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}"))
-			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'),$mac, $description, ".<br />");
-		else
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'),'<a href="/diag_logs.php">','</a>',$description,$mac,".<br />");
+		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
+			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'), $mac, $description, ".<br />");
+		} else {
+			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'), '<a href="/diag_logs.php">', '</a>', $description, $mac, ".<br />");
+		}
 	}
 }
 
@@ -72,35 +74,38 @@ if ($_POST || $_GET['mac']) {
 	unset($input_errors);
 
 	if ($_GET['mac']) {
-			/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-			$_GET['mac'] = strtolower(str_replace("-", ":", $_GET['mac']));
+		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+		$_GET['mac'] = strtolower(str_replace("-", ":", $_GET['mac']));
 		$mac = $_GET['mac'];
 		$if = $_GET['if'];
 	} else {
-			/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-			$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+		$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 		$mac = $_POST['mac'];
 		$if = $_POST['interface'];
 	}
 
 	/* input validation */
-	if (!$mac || !is_macaddr($mac))
+	if (!$mac || !is_macaddr($mac)) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
-	if (!$if)
+	}
+	if (!$if) {
 		$input_errors[] = gettext("A valid interface must be specified.");
+	}
 
 	if (!$input_errors) {
 		/* determine broadcast address */
 		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr))
+		if (!is_ipaddr($ipaddr)) {
 			$input_errors[] = gettext("A valid ip could not be found!");
-		else {
+		} else {
 			$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 			/* Execute wol command and check return code. */
-			if(!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac)))
-				$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
-			else
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br />");
+			if (!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac))) {
+				$savemsg .= sprintf(gettext("Sent magic packet to %s."), $mac);
+			} else {
+				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'), '<a href="/diag_logs.php">', '</a>', $mac, ".<br />");
+			}
 		}
 	}
 }
@@ -114,7 +119,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Wake on LAN"));
+$pgtitle = array(gettext("Services"), gettext("Wake on LAN"));
 include("head.inc");
 
 ?>

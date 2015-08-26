@@ -62,29 +62,33 @@ if (!is_array($config['nat']['rule'])) {
 
 $a_nat = &$config['nat']['rule'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1")
+if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
 	$after = $_GET['after'];
-
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1"))
+}
+if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
+}
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-		$id = $_GET['dup'];
-		$after = $_GET['dup'];
+	$id = $_GET['dup'];
+	$after = $_GET['dup'];
 }
 
 if (isset($id) && $a_nat[$id]) {
-	if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+	if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {
 		$pconfig['created'] = $a_nat[$id]['created'];
+	}
 
-	if ( isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']) )
+	if (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated'])) {
 		$pconfig['updated'] = $a_nat[$id]['updated'];
+	}
 
 	$pconfig['disabled'] = isset($a_nat[$id]['disabled']);
 	$pconfig['nordr'] = isset($a_nat[$id]['nordr']);
@@ -106,20 +110,22 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
 	$pconfig['natreflection'] = $a_nat[$id]['natreflection'];
 
-	if (!$pconfig['interface'])
+	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
-	} else {
-		$pconfig['interface'] = "wan";
-		$pconfig['src'] = "any";
-		$pconfig['srcbeginport'] = "any";
-		$pconfig['srcendport'] = "any";
 	}
+} else {
+	$pconfig['interface'] = "wan";
+	$pconfig['src'] = "any";
+	$pconfig['srcbeginport'] = "any";
+	$pconfig['srcendport'] = "any";
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
+}
 
-/*	run through $_POST items encoding HTML entties so that the user
- *	cannot think he is slick and perform a XSS attack on the unwilling
+/*  run through $_POST items encoding HTML entities so that the user
+ *  cannot think he is slick and perform a XSS attack on the unwilling
  */
 unset($input_errors);
 
@@ -131,50 +137,57 @@ foreach ($_POST as $key => $value) {
 }
 
 if ($_POST) {
-	if(strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
-		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
-			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
 
-		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
+	if (strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
+		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
+			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
+		}
+		if ($_POST['srcendport_cust'] && !$_POST['srcendport']) {
 			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
+		}
 
 		if ($_POST['srcbeginport'] == "any") {
 			$_POST['srcbeginport'] = 0;
 			$_POST['srcendport'] = 0;
 		} else {
-			if (!$_POST['srcendport'])
+			if (!$_POST['srcendport']) {
 				$_POST['srcendport'] = $_POST['srcbeginport'];
+			}
+		}
+		if ($_POST['srcendport'] == "any") {
+			$_POST['srcendport'] = $_POST['srcbeginport'];
 		}
 
-		if ($_POST['srcendport'] == "any")
-			$_POST['srcendport'] = $_POST['srcbeginport'];
-
-		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
+		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport']) {
 			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
-
-		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
+		}
+		if ($_POST['dstendport_cust'] && !$_POST['dstendport']) {
 			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
+		}
 
 		if ($_POST['dstbeginport'] == "any") {
 			$_POST['dstbeginport'] = 0;
 			$_POST['dstendport'] = 0;
 		} else {
-			if (!$_POST['dstendport'])
+			if (!$_POST['dstendport']) {
 				$_POST['dstendport'] = $_POST['dstbeginport'];
+			}
+		}
+		if ($_POST['dstendport'] == "any") {
+			$_POST['dstendport'] = $_POST['dstbeginport'];
 		}
 
-		if ($_POST['dstendport'] == "any")
-			$_POST['dstendport'] = $_POST['dstbeginport'];
-
-		if ($_POST['localbeginport_cust'] && !$_POST['localbeginport'])
+		if ($_POST['localbeginport_cust'] && !$_POST['localbeginport']) {
 			$_POST['localbeginport'] = trim($_POST['localbeginport_cust']);
+		}
 
 		/* Make beginning port end port if not defined and endport is */
-		if (!$_POST['srcbeginport'] && $_POST['srcendport'])
+		if (!$_POST['srcbeginport'] && $_POST['srcendport']) {
 			$_POST['srcbeginport'] = $_POST['srcendport'];
-
-		if (!$_POST['dstbeginport'] && $_POST['dstendport'])
+		}
+		if (!$_POST['dstbeginport'] && $_POST['dstendport']) {
 			$_POST['dstbeginport'] = $_POST['dstendport'];
+		}
 	} else {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
@@ -203,12 +216,12 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
+	if (strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 		$reqdfields = explode(" ", "interface proto dstbeginport dstendport");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Destination port from"),gettext("Destination port to"));
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Destination port from"), gettext("Destination port to"));
 	} else {
 		$reqdfields = explode(" ", "interface proto");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"));
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
 	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
@@ -238,33 +251,40 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if ($_POST['src'])
+	if ($_POST['src']) {
 		$_POST['src'] = trim($_POST['src']);
-	if ($_POST['dst'])
+	}
+	if ($_POST['dst']) {
 		$_POST['dst'] = trim($_POST['dst']);
-	if ($_POST['localip'])
+	}
+	if ($_POST['localip']) {
 		$_POST['localip'] = trim($_POST['localip']);
+	}
 
 	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport']))
+	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport']))
+	}
+	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport']))
+	}
+	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
+	}
+	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
+	}
 
 	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
 		$input_errors[] = sprintf(gettext("A valid redirect target port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
-	if( ($_POST['srctype'] == "network" && is_alias($_POST['src']) )
-	 || ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) ) ) {
+	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
+	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
 
@@ -301,28 +321,33 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if (!isset($_POST['nordr']) && ($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535)
+		if (!isset($_POST['nordr']) && ($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535) {
 			$input_errors[] = gettext("The target port range must be an integer between 1 and 65535.");
+		}
 	}
 
 	/* check for overlaps */
 	foreach ($a_nat as $natent) {
-		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent))
+		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent)) {
 			continue;
-		if ($natent['interface'] != $_POST['interface'])
+		}
+		if ($natent['interface'] != $_POST['interface']) {
 			continue;
-		if ($natent['destination']['address'] != $_POST['dst'])
+		}
+		if ($natent['destination']['address'] != $_POST['dst']) {
 			continue;
-		if (($natent['proto'] != $_POST['proto']) && ($natent['proto'] != "tcp/udp") && ($_POST['proto'] != "tcp/udp"))
+		}
+		if (($natent['proto'] != $_POST['proto']) && ($natent['proto'] != "tcp/udp") && ($_POST['proto'] != "tcp/udp")) {
 			continue;
+		}
 
-		list($begp,$endp) = explode("-", $natent['destination']['port']);
-		if (!$endp)
+		list($begp, $endp) = explode("-", $natent['destination']['port']);
+		if (!$endp) {
 			$endp = $begp;
+		}
 
-		if (!(	 (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
-			  || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
-
+		if (!((($_POST['dstbeginport'] < $begp) && ($_POST['dstendport'] < $begp)) ||
+		     (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
@@ -358,21 +383,24 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['associated-rule-id'] = $_POST['associated-rule-id'];
 
-		if($_POST['filter-rule-association'] == "pass")
+		if ($_POST['filter-rule-association'] == "pass") {
 			$natent['associated-rule-id'] = "pass";
+		}
 
-		if($_POST['nosync'] == "yes")
+		if ($_POST['nosync'] == "yes") {
 			$natent['nosync'] = true;
-		else
+		} else {
 			unset($natent['nosync']);
+		}
 
-		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "purenat" || $_POST['natreflection'] == "disable")
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "purenat" || $_POST['natreflection'] == "disable") {
 			$natent['natreflection'] = $_POST['natreflection'];
-		else
+		} else {
 			unset($natent['natreflection']);
+		}
 
 		// If we used to have an associated filter rule, but no-longer should have one
-		if (!empty($a_nat[$id]) && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
+		if (!empty($a_nat[$id]) && (empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'])) {
 			// Delete the previous rule
 			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
 			mark_subsystem_dirty('filter');
@@ -380,20 +408,21 @@ if ($_POST) {
 
 		$need_filter_rule = false;
 		// Updating a rule with a filter rule associated
-		if (!empty($natent['associated-rule-id']))
+		if (!empty($natent['associated-rule-id'])) {
 			$need_filter_rule = true;
-
+		}
 		// Create a rule or if we want to create a new one
-		if( $natent['associated-rule-id']=='new' ) {
+		if ($natent['associated-rule-id'] == 'new') {
 			$need_filter_rule = true;
-			unset( $natent['associated-rule-id'] );
+			unset($natent['associated-rule-id']);
 			$_POST['filter-rule-association']='add-associated';
 		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
-		else if( isset($_POST['filter-rule-association']) &&
-			($_POST['filter-rule-association']=='add-associated' ||
-			$_POST['filter-rule-association']=='add-unassociated') )
+		else if (isset($_POST['filter-rule-association']) &&
+		    ($_POST['filter-rule-association'] == 'add-associated' ||
+		     $_POST['filter-rule-association'] == 'add-unassociated')) {
 			$need_filter_rule = true;
+		}
 
 		if ($need_filter_rule == true) {
 			/* auto-generate a matching firewall rule */
@@ -402,10 +431,11 @@ if ($_POST) {
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
 				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
-				if ($filterentid === false)
+				if ($filterentid === false) {
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
-				else
+				} else {
 					$filterent =& $config['filter']['rule'][$filterentid];
+				}
 			}
 
 			pconfig_to_address($filterent['source'], $_POST['src'],
@@ -420,10 +450,11 @@ if ($_POST) {
 			$dstpfrom = $_POST['localbeginport'];
 			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
 
-			if ($dstpfrom == $dstpto)
+			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;
-			else
+			} else {
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
+			}
 
 			/*
 			 * Our firewall filter description may be no longer than
@@ -432,7 +463,7 @@ if ($_POST) {
 			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 62);
 
 			// If this is a new rule, create an ID and add the rule
-			if( $_POST['filter-rule-association']=='add-associated' ) {
+			if ($_POST['filter-rule-association'] == 'add-associated') {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
@@ -441,8 +472,9 @@ if ($_POST) {
 			mark_subsystem_dirty('filter');
 		}
 
-		if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {
 			$natent['created'] = $a_nat[$id]['created'];
+		}
 
 		$natent['updated'] = make_config_revision_entry();
 
@@ -450,18 +482,20 @@ if ($_POST) {
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
 
 		// Update the NAT entry now
-		if (isset($id) && $a_nat[$id])
+		if (isset($id) && $a_nat[$id]) {
 			$a_nat[$id] = $natent;
-		else {
+		} else {
 			$natent['created'] = make_config_revision_entry();
-			if (is_numeric($after))
+			if (is_numeric($after)) {
 				array_splice($a_nat, $after+1, 0, array($natent));
-			else
+			} else {
 				$a_nat[] = $natent;
+			}
 		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 
 		header("Location: firewall_nat.php");
 		exit;
@@ -571,7 +605,7 @@ function srctype_selected() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)
@@ -655,7 +689,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
+))->setPattern([.0-9A-Za-z_]+')->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -716,7 +750,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
+))->setPattern([.0-9A-Za-z_]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -770,7 +804,7 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
 	$pconfig['localip']
-))->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
+))->setPattern([.0-9A-Za-z_]+')->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
 			'e.g.: 192.168.1.12');
 
 $group = new Form_Group('Redirect target port');

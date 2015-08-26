@@ -33,7 +33,7 @@
 */
 
 /*
-	pfSense_MODULE: system
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV
@@ -54,22 +54,27 @@ else
 $system_logfile = "{$g['varlog_path']}/{$logfile}.log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if ($_POST['clear'])
+if ($_POST['clear']) {
 	clear_log_file($system_logfile);
+}
 
-if ($_GET['filtertext'])
+if ($_GET['filtertext']) {
 	$filtertext = htmlspecialchars($_GET['filtertext']);
+}
 
-if ($_POST['filtertext'])
+if ($_POST['filtertext']) {
 	$filtertext = htmlspecialchars($_POST['filtertext']);
+}
 
-if ($filtertext)
+if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
+}
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("General"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("General"));
 include("head.inc");
 
 $tab_array = array();

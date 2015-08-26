@@ -47,20 +47,23 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"),gettext("Rules"));
+$pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 function delete_nat_association($id) {
 	global $config;
 
-	if (!$id || !is_array($config['nat']['rule']))
+	if (!$id || !is_array($config['nat']['rule'])) {
 		return;
+	}
 
 	$a_nat = &$config['nat']['rule'];
 
-	foreach ($a_nat as &$natent)
-		if ($natent['associated-rule-id'] == $id)
+	foreach ($a_nat as &$natent) {
+		if ($natent['associated-rule-id'] == $id) {
 			$natent['associated-rule-id'] = '';
+		}
+	}
 }
 
 if (!is_array($config['filter']['rule'])) {
@@ -71,52 +74,68 @@ filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
 $if = $_GET['if'];
-if ($_POST['if'])
+if ($_POST['if']) {
 	$if = $_POST['if'];
+}
 
 $ifdescs = get_configured_interface_with_descr();
 
 /* add group interfaces */
-if (is_array($config['ifgroups']['ifgroupentry']))
-	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
-		if (have_ruleint_access($ifgen['ifname']))
+if (is_array($config['ifgroups']['ifgroupentry'])) {
+	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+		if (have_ruleint_access($ifgen['ifname'])) {
 			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+		}
+	}
+}
 
-foreach ($ifdescs as $ifent => $ifdesc)
-	if(have_ruleint_access($ifent))
+foreach ($ifdescs as $ifent => $ifdesc) {
+	if (have_ruleint_access($ifent)) {
 		$iflist[$ifent] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if(have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$iflist['l2tp'] = "L2TP VPN";
+	}
+}
 
-if ($config['pptpd']['mode'] == "server")
-	if(have_ruleint_access("pptp"))
+if ($config['pptpd']['mode'] == "server") {
+	if (have_ruleint_access("pptp")) {
 		$iflist['pptp'] = "PPTP VPN";
+	}
+}
 
 if (is_array($config['pppoes']['pppoe'])) {
-	foreach ($config['pppoes']['pppoe'] as $pppoes)
-		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe"))
+	foreach ($config['pppoes']['pppoe'] as $pppoes) {
+		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
 			$iflist['pppoe'] = "PPPoE Server";
+		}
+	}
 }
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if(have_ruleint_access("enc0"))
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (have_ruleint_access("enc0")) {
 		$iflist["enc0"] = "IPsec";
+	}
+}
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$iflist["openvpn"] = "OpenVPN";
+}
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if)
+	if ("any" == $if) {
 		$if = "FloatingRules";
-	else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan']))
+	} else if ("FloatingRules" != $if) {
+		if (isset($iflist['wan'])) {
 			$if = "wan";
-		else
+		} else {
 			$if = "FloatingRules";
+		}
 	}
 }
 
@@ -139,25 +158,29 @@ if ($_GET['act'] == "del") {
 			delete_nat_association($a_filter[$_GET['id']]['associated-rule-id']);
 		}
 		unset($a_filter[$_GET['id']]);
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('filter');
+		}
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
 }
 
 // Handle save msg if defined
-if($_REQUEST['savemsg'])
+if ($_REQUEST['savemsg']) {
 	$savemsg = htmlentities($_REQUEST['savemsg']);
+}
 
 if ($_GET['act'] == "toggle") {
 	if ($a_filter[$_GET['id']]) {
-		if(isset($a_filter[$_GET['id']]['disabled']))
+		if (isset($a_filter[$_GET['id']]['disabled'])) {
 			unset($a_filter[$_GET['id']]['disabled']);
-		else
+		} else {
 			$a_filter[$_GET['id']]['disabled'] = true;
-		if (write_config())
+		}
+		if (write_config()) {
 			mark_subsystem_dirty('filter');
+		}
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
@@ -171,8 +194,9 @@ if ($_GET['act'] == "toggle") {
 			$a_filter_new[] = $a_filter[$id];
 
 		$a_filter = $a_filter_new;
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('filter');
+		}
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}

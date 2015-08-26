@@ -54,8 +54,9 @@ function clone_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
+		}
 	}
 
 	return false;
@@ -67,11 +68,12 @@ function clone_compare($a, $b) {
 
 $portlist = get_interface_list();
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_clones[$id]) {
 	$pconfig['if'] = $a_clones[$id]['if'];
@@ -86,7 +88,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if mode");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("Mode"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Mode"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -97,8 +99,9 @@ if ($_POST) {
 		$clone['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_clones[$id]) {
-			if ($clone['if'] == $a_clones[$id]['if'])
+			if ($clone['if'] == $a_clones[$id]['if']) {
 				$clone['cloneif'] = $a_clones[$id]['cloneif'];
+			}
 		}
 
 		if (!$clone['cloneif']) {
@@ -118,10 +121,11 @@ if ($_POST) {
 
 		if (isset($id) && $a_clones[$id]) {
 			if (clone_inuse($id)) {
-				if ($clone['if'] != $a_clones[$id]['if'])
+				if ($clone['if'] != $a_clones[$id]['if']) {
 					$input_errors[] = gettext("This wireless clone cannot be modified because it is still assigned as an interface.");
-				else if ($clone['mode'] != $a_clones[$id]['mode'])
+				} else if ($clone['mode'] != $a_clones[$id]['mode']) {
 					$input_errors[] = gettext("Use the configuration page for the assigned interface to change the mode.");
+				}
 			}
 		}
 
@@ -130,8 +134,9 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.	 The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
 			} else {
 				if (isset($id) && $a_clones[$id]) {
-					if ($clone['if'] != $a_clones[$id]['if'])
+					if ($clone['if'] != $a_clones[$id]['if']) {
 						mwexec("/sbin/ifconfig " . $a_clones[$id]['cloneif'] . " destroy");
+					}
 					$input_errors[] = sprintf(gettext("Created with id %s"), $id);
 					$a_clones[$id] = $clone;
 				} else {

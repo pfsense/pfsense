@@ -51,14 +51,17 @@ $portlist = get_interface_list();
 
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg)
-			$portlist[$lagg['laggif']] = $lagg;
+	foreach ($config['laggs']['lagg'] as $lagg) {
+		$portlist[$lagg['laggif']] = $lagg;
+	}
 }
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_vlans[$id]) {
 	$pconfig['if'] = $a_vlans[$id]['if'];
@@ -74,7 +77,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tag");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN tag"));
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("VLAN tag"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -82,28 +85,33 @@ if ($_POST) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 
-	if (!does_interface_exist($_POST['if']))
+	if (!does_interface_exist($_POST['if'])) {
 		$input_errors[] = gettext("Interface supplied as parent is invalid");
+	}
 
 	if (isset($id)) {
 		if ($_POST['tag'] && $_POST['tag'] != $a_vlans[$id]['tag']) {
-			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL)
+			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL) {
 				$input_errors[] = gettext("Interface is assigned and you cannot change the VLAN tag while assigned.");
+			}
 		}
 	}
 	foreach ($a_vlans as $vlan) {
-		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan))
+		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan)) {
 			continue;
+		}
 
 		if (($vlan['if'] == $_POST['if']) && ($vlan['tag'] == $_POST['tag'])) {
-			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."),$vlan['tag']);
+			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."), $vlan['tag']);
 			break;
 		}
 	}
 	if (is_array($config['qinqs']['qinqentry'])) {
-		foreach ($config['qinqs']['qinqentry'] as $qinq)
-			if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if'])
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if']) {
 				$input_errors[] = gettext("A QinQ VLAN exists with this tag please remove it to use this tag with.");
+			}
+		}
 	}
 
 	if (!$input_errors) {
@@ -127,13 +135,14 @@ if ($_POST) {
 		$vlan['descr'] = $_POST['descr'];
 		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
-		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
+		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
-		else {
-			if (isset($id) && $a_vlans[$id])
+		} else {
+			if (isset($id) && $a_vlans[$id]) {
 				$a_vlans[$id] = $vlan;
-			else
+			} else {
 				$a_vlans[] = $vlan;
+			}
 
 			write_config();
 
@@ -145,7 +154,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("VLAN"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("VLAN"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

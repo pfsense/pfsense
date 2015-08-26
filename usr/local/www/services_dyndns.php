@@ -42,8 +42,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['dyndnses']['dyndns']))
+if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
+}
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 

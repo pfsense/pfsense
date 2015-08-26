@@ -61,10 +61,12 @@ if (isset($_GET['id'])) {
 if (isset($_POST['id'])) {
 	$id = htmlspecialchars_decode($_POST['id']);
 }
+
 $act = $_GET['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];
 }
+
 if ($act == "edit") {
 	if (isset($a_tunable[$id])) {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
@@ -79,7 +81,7 @@ if ($act == "edit") {
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
-		if(isAjax() && is_array($input_errors)) {
+		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
@@ -130,7 +132,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: System Tunables"));
+$pgtitle = array(gettext("System"), gettext("Advanced: System Tunables"));
 include("head.inc");
 
 if ($input_errors)

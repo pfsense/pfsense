@@ -62,16 +62,16 @@ function addipinfo(&$iparr, $ip, $proto, $srcport, $dstport) {
 }
 
 $row = 0;
-if(count($states) > 0) {
-	foreach($states as $line) {
+if (count($states) > 0) {
+	foreach ($states as $line) {
 		$line_split = preg_split("/\s+/", $line);
 		$iface = array_shift($line_split);
 		$proto = array_shift($line_split);
 		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
+		$info = implode(" ", $line_split);
 
 		/* Handle NAT cases
-			Replaces an external IP + NAT by the internal IP */
+		   Replaces an external IP + NAT by the internal IP */
 		if (strpos($info, ') ->') !== FALSE) {
 			/* Outbound NAT */
 			$info = preg_replace('/(\S+) \((\S+)\)/U', "$2", $info);
@@ -128,15 +128,17 @@ function sort_by_ip($a, $b) {
 }
 
 function build_port_info($portarr, $proto) {
-	if (!$portarr)
+	if (!$portarr) {
 		return '';
+	}
 	$ports = array();
 	asort($portarr);
 	foreach (array_reverse($portarr, TRUE) as $port => $count) {
 		$service = getservbyport($port, strtolower($proto));
 		$port = "{$proto}/{$port}";
-		if ($service)
+		if ($service) {
 			$port = "{$port} ({$service})";
+		}
 		$ports[] = "{$port}: {$count}";
 	}
 	return implode($ports, ', ');
@@ -197,7 +199,7 @@ function print_summary_table($label, $iparr, $sort = TRUE)
 <?php
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
+$pgtitle = array(gettext("Diagnostics"), gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
 

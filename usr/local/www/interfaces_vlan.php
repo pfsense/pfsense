@@ -43,8 +43,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan']))
+if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
+}
 
 $a_vlans = &$config['vlans']['vlan'] ;
 
@@ -53,24 +54,26 @@ function vlan_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif'])
+		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif']) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-	if (!isset($_GET['id']))
+	if (!isset($_GET['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	else if (empty($a_vlans[$_GET['id']]))
+	} else if (empty($a_vlans[$_GET['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (vlan_inuse($_GET['id'])) {
+	} else if (vlan_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	} else {
-		if (does_interface_exist($a_vlans[$_GET['id']]['vlanif']))
+		if (does_interface_exist($a_vlans[$_GET['id']]['vlanif'])) {
 			pfSense_interface_destroy($a_vlans[$_GET['id']]['vlanif']);
+		}
 		unset($a_vlans[$_GET['id']]);
 
 		write_config();
@@ -80,7 +83,8 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("VLAN"));
+
+$pgtitle = array(gettext("Interfaces"), gettext("VLAN"));
 $shortcut_section = "interfaces";
 include('head.inc');
 

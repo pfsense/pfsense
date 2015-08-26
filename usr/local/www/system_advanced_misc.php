@@ -69,24 +69,30 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
+$pconfig['host_uuid'] = !isset($config['system']['host_uuid']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
-if (!empty($config['system']['powerd_ac_mode']))
+if (!empty($config['system']['powerd_ac_mode'])) {
 	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
+}
 
 $pconfig['powerd_battery_mode'] = "hadp";
-if (!empty($config['system']['powerd_battery_mode']))
+if (!empty($config['system']['powerd_battery_mode'])) {
 	$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
+}
 
 $pconfig['powerd_normal_mode'] = "hadp";
-if (!empty($config['system']['powerd_normal_mode']))
+if (!empty($config['system']['powerd_normal_mode'])) {
 	$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
+}
 
-$crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
-			'aesni' => gettext("AES-NI CPU-based Acceleration"));
+$crypto_modules = array(
+	'glxsb' => gettext("AMD Geode LX Security Block"),
+	'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
-$thermal_hardware_modules = array(	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
-					'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor"));
+$thermal_hardware_modules = array(
+	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
+	'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor"));
 
 if ($_POST) {
 
@@ -96,42 +102,69 @@ if ($_POST) {
 	ob_flush();
 	flush();
 
-	if (!empty($_POST['cryptographic-hardware']) && !array_key_exists($_POST['cryptographic-hardware'], $crypto_modules))
+	if (!empty($_POST['crypto_hardware']) && !array_key_exists($_POST['crypto_hardware'], $crypto_modules)) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
+	}
 
-	if (!empty($_POST['thermal-sensors']) && !array_key_exists($_POST['thermal-sensors'], $thermal_hardware_modules))
+	if (!empty($_POST['thermal_hardware']) && !array_key_exists($_POST['thermal_hardware'], $thermal_hardware_modules)) {
 		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
+	}
 
-	if (!empty($_POST['-tmp-ram-disk-size']) && (!is_numeric($_POST['-tmp-ram-disk-size']) || ($_POST['-tmp-ram-disk-size'] < 40)))
+	if (!empty($_POST['use_mfs_tmp_size']) && (!is_numeric($_POST['use_mfs_tmp_size']) || ($_POST['use_mfs_tmp_size'] < 40))) {
 		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MB.");
+	}
 
-	if (!empty($_POST['-var-ram-disk-size']) && (!is_numeric($_POST['-var-ram-disk-size']) || ($_POST['-var-ram-disk-size'] < 60)))
+	if (!empty($_POST['use_mfs_var_size']) && (!is_numeric($_POST['use_mfs_var_size']) || ($_POST['use_mfs_var_size'] < 60))) {
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MB.");
+	}
 
+	if (!empty($_POST['proxyport']) && !is_port($_POST['proxyport'])) {
+		$input_errors[] = gettext("Proxy port must be a valid port number, 1-65535.");
+	}
+	
+	if (!empty($_POST['proxyurl']) && !is_fqdn($_POST['proxyurl']) && !is_ipaddr($_POST['proxyurl'])) {
+		$input_errors[] = gettext("Proxy URL must be a valid IP address or FQDN.");
+	}
+	
+	if (!empty($_POST['proxyuser']) && preg_match("/[^a-zA-Z0-9\.\-_@]/", $_POST['proxyuser'])) {
+		$input_errors[] = gettext("The proxy username contains invalid characters.");
+	}
+	
 	if (!$input_errors) {
 
-		if($_POST['proxy-url'] != "")
-			$config['system']['proxyurl'] = $_POST['proxy-url'];
-		else
+		if ($_POST['harddiskstandby'] <> "") {
+			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
+			system_set_harddisk_standby();
+		} else {
+			unset($config['system']['harddiskstandby']);
+		}
+
+		if ($_POST['proxyurl'] <> "") {
+			$config['system']['proxyurl'] = $_POST['proxyurl'];
+		} else {
 			unset($config['system']['proxyurl']);
+		}
 
-		if($_POST['proxy-port'] != "")
-			$config['system']['proxyport'] = $_POST['proxy-port'];
-		else
+		if ($_POST['proxyport'] <> "") {
+			$config['system']['proxyport'] = $_POST['proxyport'];
+		} else {
 			unset($config['system']['proxyport']);
+		}
 
-		if($_POST['proxy-username'] != "")
-			$config['system']['proxyuser'] = $_POST['proxy-username'];
-		else
+		if ($_POST['proxyuser'] <> "") {
+			$config['system']['proxyuser'] = $_POST['proxyuser'];
+		} else {
 			unset($config['system']['proxyuser']);
+		}
 
-		if($_POST['proxy-password'] != "")
-			$config['system']['proxypass'] = $_POST['proxy-password'];
-		else
+		if ($_POST['proxypass'] <> "") {
+			$config['system']['proxypass'] = $_POST['proxypass'];
+		} else {
 			unset($config['system']['proxypass']);
+		}
 
 		$need_relayd_restart = false;
-		if($_POST['use-sticky-connections'] == "yes") {
+		if ($_POST['lb_use_sticky'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
 				$need_relayd_restart = true;
@@ -147,65 +180,82 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['default-gateway-switching'] == "yes")
+		if ($_POST['gw_switch_default'] == "yes") {
 			$config['system']['gw_switch_default'] = true;
-		else
+		} else {
 			unset($config['system']['gw_switch_default']);
+		}
 
-		if($_POST['package-signature'] == "yes")
+		if ($_POST['pkg_nochecksig'] == "yes") {
 			$config['system']['pkg_nochecksig'] = true;
-		elseif (isset($config['system']['pkg_nochecksig']))
+		} elseif (isset($config['system']['pkg_nochecksig'])) {
 			unset($config['system']['pkg_nochecksig']);
+		}
 
-		if($_POST['powerd'] == "yes")
+		if ($_POST['host_uuid'] == "yes") {
+			unset($config['system']['host_uuid']);
+		} else {
+			$config['system']['host_uuid'] = true;
+		}
+
+		if ($_POST['powerd_enable'] == "yes") {
 			$config['system']['powerd_enable'] = true;
-		else
+		} else {
 			unset($config['system']['powerd_enable']);
+		}
 
 		$config['system']['powerd_ac_mode'] = $_POST['ac-power'];
 		$config['system']['powerd_battery_mode'] = $_POST['battery-power'];
 		$config['system']['powerd_normal_mode'] = $_POST['unknown-power'];
 
-		if($_POST['cryptographic-hardware'])
-			$config['system']['crypto_hardware'] = $_POST['cryptographic-hardware'];
-		else
+		if ($_POST['crypto_hardware']) {
+			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
+		} else {
 			unset($config['system']['crypto_hardware']);
+		}
 
-		if($_POST['thermal-sensors'])
-			$config['system']['thermal_hardware'] = $_POST['thermal-sensors'];
-		else
+		if ($_POST['thermal_hardware']) {
+			$config['system']['thermal_hardware'] = $_POST['thermal_hardware'];
+		} else {
 			unset($config['system']['thermal_hardware']);
+		}
 
-		if($_POST['schedule-states'] == "yes")
+		if ($_POST['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
-		else
+		} else {
 			unset($config['system']['schedule_states']);
+		}
 
-		if($_POST['state-killing-on-gateway-failure'] == "yes")
+		if ($_POST['kill_states'] == "yes") {
 			$config['system']['kill_states'] = true;
-		else
+		} else {
 			unset($config['system']['kill_states']);
+		}
 
-		if($_POST['skip-rules-when-gateway-is-down'] == "yes")
+		if ($_POST['skip_rules_gw_down'] == "yes") {
 			$config['system']['skip_rules_gw_down'] = true;
-		else
+		} else {
 			unset($config['system']['skip_rules_gw_down']);
+		}
 
 		$need_apinger_restart = false;
-		if($_POST['gateway-monitoring-logging'] == "yes") {
-			if (!isset($config['system']['apinger_debug']))
+		if ($_POST['apinger_debug'] == "yes") {
+			if (!isset($config['system']['apinger_debug'])) {
 				$need_apinger_restart = true;
+			}
 			$config['system']['apinger_debug'] = true;
 		} else {
-			if (isset($config['system']['apinger_debug']))
+			if (isset($config['system']['apinger_debug'])) {
 				$need_apinger_restart = true;
+			}
 			unset($config['system']['apinger_debug']);
 		}
 
-		if($_POST['use-ram-disks'] == "yes")
+		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
-		else
+		} else {
 			unset($config['system']['use_mfs_tmpvar']);
+		}
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['-tmp-ram-disk-size'];
 		$config['system']['use_mfs_var_size'] = $_POST['-var-ram-disk-size'];
@@ -224,22 +274,25 @@ if ($_POST) {
 		$retval = 0;
 		system_resolvconf_generate(true);
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
-		else
+		} else {
 			$savemsg = gettext($retval);
+		}
 
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
-		if ($need_relayd_restart)
+		if ($need_relayd_restart) {
 			relayd_configure();
-		if ($need_apinger_restart)
+		}
+		if ($need_apinger_restart) {
 			setup_gateways_monitor();
+		}
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Miscellaneous"));
 include("head.inc");
 
 if ($input_errors)

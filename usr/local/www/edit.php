@@ -42,8 +42,8 @@
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
-if($_POST['action']) {
-	switch($_POST['action']) {
+if ($_POST['action']) {
+	switch ($_POST['action']) {
 		case 'load':
 			if(strlen($_POST['file']) < 1) {
 				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
@@ -70,9 +70,10 @@ if($_POST['action']) {
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
 				conf_mount_ro();
-				if($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
-					if(file_exists("/tmp/config.cache"))
+				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
+					if (file_exists("/tmp/config.cache")) {
 						unlink("/tmp/config.cache");
+					}
 					disable_security_checks();
 				}
 				if($ret === false) {
@@ -139,7 +140,7 @@ require("head.inc");
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
 
-		if(values.shift() == "0") {
+		if (values.shift() == "0") {
 			var file = values.shift();
 			var fileContent = window.atob(values.join("|"));
 
@@ -156,8 +157,9 @@ require("head.inc");
 	function saveFile(file) {
 		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
+
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
-		fileContent = fileContent.replace(/\+/g,"%2B");
+		fileContent = fileContent.replace(/\+/g, "%2B");
 
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {

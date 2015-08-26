@@ -50,23 +50,24 @@ require("guiconfig.inc");
 require_once("vpn.inc");
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
-if (htmlspecialchars($_POST['vpntype']))
+if (htmlspecialchars($_POST['vpntype'])) {
 	$vpntype = htmlspecialchars($_POST['vpntype']);
-elseif (htmlspecialchars($_GET['vpntype']))
+} elseif (htmlspecialchars($_GET['vpntype'])) {
 	$vpntype = htmlspecialchars($_GET['vpntype']);
-else
+} else {
 	$vpntype = "pptp";
-
-if (htmlspecialchars($_POST['mode']))
+}
+if (htmlspecialchars($_POST['mode'])) {
 	$mode = htmlspecialchars($_POST['mode']);
-elseif (htmlspecialchars($_GET['mode']))
+} elseif (htmlspecialchars($_GET['mode'])) {
 	$mode = htmlspecialchars($_GET['mode']);
-else
+} else {
 	$mode = "login";
-
+}
 switch ($vpntype) {
 	case 'pptp':
 		$logname = "pptps";
@@ -80,10 +81,11 @@ switch ($vpntype) {
 }
 
 if ($_POST['clear']) {
-	if ($mode != "raw")
+	if ($mode != "raw") {
 		clear_log_file("/var/log/vpn.log");
-	else
+	} else {
 		clear_log_file("/var/log/{$logname}.log");
+	}
 }
 
 function dump_clog_vpn($logfile, $tail) {
@@ -93,27 +95,28 @@ function dump_clog_vpn($logfile, $tail) {
 
 	$logarr = "";
 
-	if(isset($config['system']['usefifolog']))
+	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	else
+	} else {
 		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
+	}
 
 	$rows = 0;
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
 		$iftype = substr($llent[1], 0, 4);
-		if ($iftype != $vpntype)
+		if ($iftype != $vpntype) {
 			continue;
-
-		$rows++;
+		}
 		echo "<tr>\n";
 		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
-		if ($llent[0] == "login")
-			echo "<td>&#x25c0;</td>\n";
-		else
-			echo "<td>&#x25ba;</td>\n";
+		if ($llent[0] == "login") {
+			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\" alt=\"in\" /></td>\n";
+		} else {
+			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\" alt=\"out\" /></td>\n";
+		}
 
 		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";
 		echo "<td>" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";

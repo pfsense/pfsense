@@ -34,10 +34,10 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
-if(!$nocsrf) {
+if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ?	$config['system']['webgui']['session_timeout'] : 240;
+		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
@@ -47,8 +47,7 @@ if(!$nocsrf) {
 if (!$omit_nocacheheaders) {
 	header("Expires: 0");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	header("Cache-Control: no-store, no-cache, must-revalidate");
-	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
 }
 
@@ -68,7 +67,7 @@ foreach (scandir("/usr/local/www/classes/") as $file) {
 $g['theme'] = get_current_theme();
 
 /* Set the default interface language */
-if($config['system']['language'] <> "") {
+if ($config['system']['language'] <> "") {
 	$g['language'] = $config['system']['language'];
 } elseif ($g['language'] == "") {
 	$g['language'] = 'en_US';
@@ -84,7 +83,7 @@ $mandfldhtml = "";		/* display this before mandatory input fields */
 $mandfldhtmlspc = "";	/* same as above, but with spacing */
 
 /* Some ajax scripts still need access to GUI */
-if(!$ignorefirmwarelock) {
+if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
 		if (!$d_isfwfile) {
 			header("Location: system_firmware.php");
@@ -95,43 +94,44 @@ if(!$ignorefirmwarelock) {
 	}
 }
 
-/* Reserved table names to avoid colision */
+/* Reserved table names to avoid collision */
 $reserved_table_names = array(
-		"bogons",
-		"bogonsv6",
-		"negate_networks",
-		"snort2c",
-		"sshlockout",
-		"tonatsubnets",
-		"virusprot",
-		"vpn_networks",
-		"webConfiguratorlockout"
+	"bogons",
+	"bogonsv6",
+	"negate_networks",
+	"snort2c",
+	"sshlockout",
+	"tonatsubnets",
+	"virusprot",
+	"vpn_networks",
+	"webConfiguratorlockout"
 );
 
-$firewall_rules_dscp_types = array("af11",
-				"af12",
-				"af13",
-				"af21",
-				"af22",
-				"af23",
-				"af31",
-				"af32",
-				"af33",
-				"af41",
-				"af42",
-				"af43",
-				"VA",
-				"EF",
-				"cs1",
-				"cs2",
-				"cs3",
-				"cs4",
-				"cs5",
-				"cs6",
-				"cs7",
-				"0x01",
-				"0x02",
-				"0x04");
+$firewall_rules_dscp_types = array(
+	"af11",
+	"af12",
+	"af13",
+	"af21",
+	"af22",
+	"af23",
+	"af31",
+	"af32",
+	"af33",
+	"af41",
+	"af42",
+	"af43",
+	"VA",
+	"EF",
+	"cs1",
+	"cs2",
+	"cs3",
+	"cs4",
+	"cs5",
+	"cs6",
+	"cs7",
+	"0x01",
+	"0x02",
+	"0x04");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
@@ -152,22 +152,22 @@ $ldap_protvers = array(
 $ldap_templates = array(
 
 	'open' => array(
-				'desc' => "OpenLDAP",
-				'attr_user' => "cn",
-				'attr_group' => "cn",
-				'attr_member' => "member"),
+		'desc' => "OpenLDAP",
+		'attr_user' => "cn",
+		'attr_group' => "cn",
+		'attr_member' => "member"),
 
 	'msad' => array(
-				'desc' => "Microsoft AD",
-				'attr_user' => "samAccountName",
-				'attr_group' => "cn",
-				'attr_member' => "memberOf"),
+		'desc' => "Microsoft AD",
+		'attr_user' => "samAccountName",
+		'attr_group' => "cn",
+		'attr_member' => "memberOf"),
 
 	'edir' => array(
-				'desc' => "Novell eDirectory",
-				'attr_user' => "cn",
-				'attr_group' => "cn",
-				'attr_member' => "uniqueMember"));
+		'desc' => "Novell eDirectory",
+		'attr_user' => "cn",
+		'attr_group' => "cn",
+		'attr_member' => "uniqueMember"));
 
 $radius_srvcs = array(
 	'both' => "Authentication and Accounting",
@@ -181,7 +181,7 @@ $netbios_nodetypes = array(
 	'4' => "m-node",
 	'8' => "h-node");
 
-/* some well knows ports */
+/* some well known ports */
 $wkports = array(
 	5999 => "CVSup",
 	53 => "DNS",
@@ -239,15 +239,17 @@ foreach ($spiflist as $ifgui => $ifdesc) {
 	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";
 }
 
-$medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
-	"100half" => "100BASE-TX half-duplex", "10full" => "10BASE-T full-duplex",
+$medias = array(
+	"auto" => "autoselect",
+	"100full" => "100BASE-TX full-duplex",
+	"100half" => "100BASE-TX half-duplex",
+	"10full" => "10BASE-T full-duplex",
 	"10half" => "10BASE-T half-duplex");
 
-$wlan_modes = array("bss" => "Infrastructure (BSS)", "adhoc" => "Ad-hoc (IBSS)",
+$wlan_modes = array(
+	"bss" => "Infrastructure (BSS)",
+	"adhoc" => "Ad-hoc (IBSS)",
 	"hostap" => "Access Point");
-
-/* platforms that support firmware updating */
-$fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
 
 function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
@@ -280,10 +282,11 @@ function print_input_errors($input_errors) {
 
 function verify_gzip_file($fname) {
 	$returnvar = mwexec("/usr/bin/gzip -t " . escapeshellarg($fname));
-	if ($returnvar != 0)
+	if ($returnvar != 0) {
 		return 0;
-	else
+	} else {
 		return 1;
+	}
 }
 
 function print_info_box_np($msg, $name="apply",$value="", $showapply=false, $class="alert-warning") {
@@ -311,34 +314,35 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false, $cla
 	echo '<div class="alert ' . $class . ' clearfix" role="alert">'.$msg.'</div>';
 }
 
-function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
+function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes", $undo) {
 	global $g;
 
-	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
+	if (stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class=\"infoboxsave nowrap\">";
 		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		$savebutton .= "</td>";
-		if($_POST['if'])
+		if ($_POST['if']) {
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
+		}
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
 
 	$themename = $g['theme'];
 
-	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
+	if (file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
 		eval($toeval);
 	}
 
-	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
+	if (file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
 		eval($toeval);
 	}
 
 
-	if(!$savebutton) {
+	if (!$savebutton) {
 		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
@@ -387,11 +391,14 @@ function get_std_save_message($ok) {
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
 	$to_return = gettext("The changes have been applied successfully.");
-	foreach($filter_pages as $fp)
-		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
+	foreach ($filter_pages as $fp) {
+		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
 			$filter_related = true;
-	if($filter_related)
-		$to_return .= gettext(" You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
+		}
+	}
+	if ($filter_related) {
+		$to_return .= "<br />" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
+	}
 	return $to_return;
 }
 
@@ -406,8 +413,9 @@ function pprint_address($adr) {
 		$padr = $adr['address'];
 	}
 
-	if (isset($adr['not']))
+	if (isset($adr['not'])) {
 		$padr = "! " . $padr;
+	}
 
 	return $padr;
 }
@@ -417,17 +425,18 @@ function pprint_port($port) {
 
 	$pport = "";
 
-	if (!$port)
+	if (!$port) {
 		return "*";
-	else {
+	} else {
 		$srcport = explode("-", $port);
 		if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 			$pport = $srcport[0];
 			if ($wkports[$srcport[0]]) {
 				$pport .= " (" . $wkports[$srcport[0]] . ")";
 			}
-		} else
+		} else {
 			$pport .= $srcport[0] . " - " . $srcport[1];
+		}
 	}
 
 	return $pport;
@@ -435,65 +444,92 @@ function pprint_port($port) {
 
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
-	if($item['os'])
-		$item_set .= "os {$item['os']} ";
-	if($item['dscp'])
+	if ($item['os']) {
+			$item_set .= "os {$item['os']} ";
+	}
+	if ($item['dscp']) {
 		$item_set .= "dscp {$item['dscp']} ";
-	if($item['max'])
+	}
+	if ($item['max']) {
 		$item_set .= "max {$item['max']} ";
-	if($item['max-src-nodes'])
+	}
+	if ($item['max-src-nodes']) {
 		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
-	if($item['max-src-conn'])
+	}
+	if ($item['max-src-conn']) {
 		$item_set .= "max-src-conn {$item['max-src-conn']} ";
-	if($item['max-src-states'])
+	}
+	if ($item['max-src-states']) {
 		$item_set .= "max-src-states {$item['max-src-states']} ";
-	if(isset($item['nopfsync']))
+	}
+	if (isset($item['nopfsync'])) {
 		$item_set .= "nopfsync ";
-	if($item['statetype'] != "keep state" && $item['statetype'] != "")
+	}
+	if ($item['statetype'] != "keep state" && $item['statetype'] != "") {
 		$item_set .= "statetype {$item['statetype']} ";
-	if($item['statetimeout'])
+	}
+	if ($item['statetimeout']) {
 		$item_set .= "statetimeout {$item['statetimeout']} ";
-	if(isset($item['nosync']))
+	}
+	if (isset($item['nosync'])) {
 		$item_set .= "no XMLRPC Sync ";
-	if($item['max-src-conn-rate'])
+	}
+	if ($item['max-src-conn-rate']) {
 		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
-	if($item['max-src-conn-rates'])
+	}
+	if ($item['max-src-conn-rates']) {
 		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
-	if($item['vlanprio'])
+	}
+	if ($item['vlanprio']) {
 		$item_set .= "vlanprio {$item['vlanprio']} ";
-	if($item['vlanprioset'])
+	}
+	if ($item['vlanprioset']) {
 		$item_set .= "vlanprioset {$item['vlanprioset']} ";
-	if($item['gateway'])
+	}
+	if ($item['gateway']) {
 		$item_set .= "gateway {$item['gateway']} ";
-	if($item['dnpipe'])
+	}
+	if ($item['dnpipe']) {
 		$item_set .= "limiter {$item['dnpipe']} ";
-	if($item['pdnpipe'])
+	}
+	if ($item['pdnpipe']) {
 		$item_set .= "limiter {$item['pdnpipe']} ";
-	if($item['ackqueue'])
+	}
+	if ($item['ackqueue']) {
 		$item_set .= "ackqueue {$item['ackqueue']} ";
-	if($item['defaultqueue'])
+	}
+	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue {$item['defaultqueue']} ";
-	if($item['l7container'])
+	}
+	if ($item['l7container']) {
 		$item_set .= "layer7 {$item['l7container']} ";
-	if($item['tag'])
+	}
+	if ($item['tag']) {
 		$item_set .= "tag {$item['tag']} ";
-	if($item['tagged'])
+	}
+	if ($item['tagged']) {
 		$item_set .= "tagged {$item['tagged']} ";
-	if(isset($item['allowopts']))
+	}
+	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";
-	if(isset($item['disablereplyto']))
+	}
+	if (isset($item['disablereplyto'])) {
 		$item_set .= "disable reply-to ";
-	if($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2'])
+	}
+	if ($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2']) {
 		$item_set .= "tcpflags set";
+	}
 
 	return $item_set;
 }
 
 function gentitle($title) {
-	if(!is_array($title))
+	global $navlevelsep;
+	if (!is_array($title)) {
 		return $title;
-	else
+	} else {
 		return join($navlevelsep, $title);
+	}
 }
 
 function genhtmltitle($title) {
@@ -523,20 +559,23 @@ function update_changedesc($update) {
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
-	if ($restart_syslogd)
+	if ($restart_syslogd) {
 		exec("/usr/bin/killall syslogd");
-	if(isset($config['system']['disablesyslogclog'])) {
+	}
+	if (isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
 		touch($logfile);
 	} else {
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
-		if(isset($config['system']['usefifolog']))
+		if (isset($config['system']['usefifolog'])) {
 			exec("/usr/sbin/fifolog_create -s {$log_size} " . escapeshellarg($logfile));
-		else
+		} else {
 			exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
+		}
 	}
-	if ($restart_syslogd)
+	if ($restart_syslogd) {
 		system_syslogd_start();
+	}
 }
 
 function clear_all_log_files() {
@@ -610,43 +649,45 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
-	if(is_array($grepfor))
+	if (is_array($grepfor)) {
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
-	if(is_array($grepinvert))
+	}
+	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
+	}
 	if (is_dir($logfile)) {
 		$logarr = array("File $logfile is a directory.");
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
-		if($config['system']['disablesyslogclog']) {
+		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if(isset($config['system']['usefifolog']))
+			if (isset($config['system']['usefifolog'])) {
 				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			else
+			} else {
 				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+			}
 		}
 	}
 	foreach ($logarr as $logent) {
-			$logent = preg_split("/\s+/", $logent, 6);
-			echo "<tr valign=\"top\">\n";
-			if ($withorig) {
-					if(isset($config['system']['usefifolog'])) {
-						$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
-						$entry_text = htmlspecialchars($logent[5]);
-					} else {
-						$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-						$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
-						$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-					}
-					echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
-					echo "<td class=\"listr\">{$entry_text}</td>\n";
-
+		$logent = preg_split("/\s+/", $logent, 6);
+		echo "<tr valign=\"top\">\n";
+		if ($withorig) {
+			if (isset($config['system']['usefifolog'])) {
+				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
+				$entry_text = htmlspecialchars($logent[5]);
 			} else {
-					echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
+				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
-			echo "</tr>\n";
+			echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
+			echo "<td class=\"listr\">{$entry_text}</td>\n";
+		} else {
+				echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+		}
+		echo "</tr>\n";
 	}
 }
 
@@ -655,14 +696,16 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
-	if(is_array($grepfor))
+	if (is_array($grepfor)) {
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
-	if(is_array($grepinvert))
+	}
+	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
-	if($config['system']['disablesyslogclog']) {
+	}
+	if ($config['system']['disablesyslogclog']) {
 		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {
-		if(isset($config['system']['usefifolog'])) {
+		if (isset($config['system']['usefifolog'])) {
 			exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
 			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
@@ -701,66 +744,73 @@ function update_if_changed($varname, & $orig, $new) {
 }
 
 function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendport) {
-	if (isset($adr['any']))
+	if (isset($adr['any'])) {
 		$padr = "any";
-	else if ($adr['network'])
+	} else if ($adr['network']) {
 		$padr = $adr['network'];
-	else if ($adr['address']) {
+	} else if ($adr['address']) {
 		list($padr, $pmask) = explode("/", $adr['address']);
 		if (!$pmask) {
-			if (is_ipaddrv6($padr))
+			if (is_ipaddrv6($padr)) {
 				$pmask = 128;
-			else
+			} else {
 				$pmask = 32;
+			}
 		}
 	}
 
-	if (isset($adr['not']))
+	if (isset($adr['not'])) {
 		$pnot = 1;
-	else
+	} else {
 		$pnot = 0;
+	}
 
 	if ($adr['port']) {
 		list($pbeginport, $pendport) = explode("-", $adr['port']);
-		if (!$pendport)
+		if (!$pendport) {
 			$pendport = $pbeginport;
+		}
 	} else if (!is_alias($pbeginport) && !is_alias($pendport)) {
 		$pbeginport = "any";
 		$pendport = "any";
 	}
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $pendport=0) {
+function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0) {
 	$adr = array();
 
-	if ($padr == "any")
+	if ($padr == "any") {
 		$adr['any'] = true;
-	else if (is_specialnet($padr))
+	} else if (is_specialnet($padr)) {
 		$adr['network'] = $padr;
-	else {
+	} else {
 		$adr['address'] = $padr;
 		if (is_ipaddrv6($padr)) {
-			if ($pmask != 128)
+			if ($pmask != 128) {
 				$adr['address'] .= "/" . $pmask;
+			}
 		} else {
-			if ($pmask != 32)
+			if ($pmask != 32) {
 				$adr['address'] .= "/" . $pmask;
+			}
 		}
 	}
 
-	if ($pnot)
+	if ($pnot) {
 		$adr['not'] = true;
-	else
+	} else {
 		unset($adr['not']);
-
-	if (($pbeginport != 0) && ($pbeginport != "any")) {
-		if ($pbeginport != $pendport)
-			$adr['port'] = $pbeginport . "-" . $pendport;
-		else
-			$adr['port'] = $pbeginport;
 	}
 
-	if(is_alias($pbeginport)) {
+	if (($pbeginport != 0) && ($pbeginport != "any")) {
+		if ($pbeginport != $pendport) {
+			$adr['port'] = $pbeginport . "-" . $pendport;
+		} else {
+			$adr['port'] = $pbeginport;
+		}
+	}
+
+	if (is_alias($pbeginport)) {
 		$adr['port'] = $pbeginport;
 	}
 }
@@ -768,12 +818,14 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
 function is_specialnet($net) {
 	global $specialsrcdst;
 
-	if(!$net)
+	if (!$net) {
 		return false;
-	if (in_array($net, $specialsrcdst))
+	}
+	if (in_array($net, $specialsrcdst)) {
 		return true;
-	else
+	} else {
 		return false;
+	}
 }
 
 //function to create widget tabs when called
@@ -781,15 +833,14 @@ function display_widget_tabs(& $tab_array) {
 	echo "<div id=\"tabs\">";
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
-	$dashpos = strpos($ta[2],'-');
-	$tabname = $ta[2] . "-tab";
-	$tabclass = substr($ta[2],0,$dashpos);
-	$tabclass = $tabclass . "-class";
+		$dashpos = strpos($ta[2], '-');
+		$tabname = $ta[2] . "-tab";
+		$tabclass = substr($ta[2], 0, $dashpos);
+		$tabclass = $tabclass . "-class";
 		if ($ta[1] == true) {
 			$tabActive = "table-cell";
 			$tabNonActive = "none";
-		}
-		else {
+		} else {
 			$tabActive = "none";
 			$tabNonActive = "table-cell";
 		}
@@ -815,38 +866,38 @@ function display_widget_tabs(& $tab_array) {
 }
 
 
-// Return inline javascript file or CSS to minimizie
+// Return inline javascript file or CSS to minimize
 // request count going back to server.
 function outputJavaScriptFileInline($javascript) {
-	if(file_exists($javascript)) {
+	if (file_exists($javascript)) {
 		echo "\n<script type=\"text/javascript\">\n";
 		include($javascript);
 		echo "\n</script>\n";
 	} else {
-		echo "\n\n<!-- Could not location file:	 {$javascript} -->\n\n";
+		echo "\n\n<!-- Could not locate file:  {$javascript} -->\n\n";
 	}
 }
 
 
 
 function outputCSSPrintFileInline($css) {
-	if(file_exists($css)) {
+	if (file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
 		include($css);
 		echo "\n</style>\n";
 	} else {
-		echo "\n\n<!-- Could not location file:	 {$css} -->\n\n";
+		echo "\n\n<!-- Could not locate file:  {$css} -->\n\n";
 	}
 }
 
 
 function outputCSSFileInline($css) {
-	if(file_exists($css)) {
+	if (file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";
 		include($css);
 		echo "\n</style>\n";
 	} else {
-		echo "\n\n<!-- Could not location file:	 {$css} -->\n\n";
+		echo "\n\n<!-- Could not locate file:  {$css} -->\n\n";
 	}
 }
 
@@ -896,21 +947,23 @@ $rfc2616 = array(
 
 function is_rfc2616_code($code) {
 	global $rfc2616;
-	if (isset($rfc2616[$code]))
+	if (isset($rfc2616[$code])) {
 		return true;
-	else
+	} else {
 		return false;
+	}
 }
 
-function print_rfc2616_select($tag, $current){
+function print_rfc2616_select($tag, $current) {
 	global $rfc2616;
 
 	/* Default to 200 OK if not set */
-	if ($current == "")
+	if ($current == "") {
 		$current = 200;
+	}
 
 	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";
-	foreach($rfc2616 as $code => $message) {
+	foreach ($rfc2616 as $code => $message) {
 		if ($code == $current) {
 			$sel = " selected=\"selected\"";
 		} else {
@@ -922,28 +975,28 @@ function print_rfc2616_select($tag, $current){
 }
 
 // Useful debugging function, much cleaner than print_r
-function echo_array($array,$return_me=false){
-	if(is_array($array) == false){
+function echo_array($array, $return_me = false) {
+	if (is_array($array) == false) {
 		$return = "The provided variable is not an array.";
-	}else{
-		foreach($array as $name=>$value){
-			if(is_array($value)){
+	} else {
+		foreach ($array as $name=>$value) {
+			if (is_array($value)) {
 				$return .= "";
 				$return .= "['<b>$name</b>'] {<div style=\"margin-left:10px;\">\n";
-				$return .= echo_array($value,true);
+				$return .= echo_array($value, true);
 				$return .= "</div>}";
 				$return .= "\n\n";
-			}else{
-				if(is_string($value)){
+			} else {
+				if (is_string($value)) {
 					$value = "\"$value\"";
 				}
 				$return .= "['<b>$name</b>'] = $value\n\n";
 			}
 		}
 	}
-	if($return_me == true){
+	if ($return_me == true) {
 		return $return;
-	}else{
+	} else {
 		echo "<pre>".$return."</pre>";
 	}
 }
@@ -982,9 +1035,10 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 		$tab_array_char_limit = 92;
 	}
 
-	foreach ($tab_array as $tab_id => $ta){
-		if(!isAllowedPage($ta[2]))
+	foreach ($tab_array as $tab_id => $ta) {
+		if (!isAllowedPage($ta[2])) {
 			unset ($tab_array[$tab_id]);
+		}
 	}
 
 	$tab_active_bg	 = "#EEEEEE";
@@ -1030,19 +1084,24 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 <?php endif;
 }
 
-function add_package_tabs($tabgroup, & $tab_array) {
+function add_package_tabs($pkgname, &$tab_array) {
 	global $config, $g;
 
-	if(!is_array($config['installedpackages']))
-		return;
-	if(!is_array($config['installedpackages']['tab']))
-		return;
+	$pkg = get_pkg_data($pkgname);
 
-	foreach($config['installedpackages']['tab'] as $tab) {
-		if ($tab['group'] !== $group)
-			continue;
+	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
+		return;
+	}
+
+	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg['configurationfile'], "packagegui");
+
+	if (!isset($pkg_config['tabs']['tab'])) {
+		return;
+	}
+
+	foreach ($pkg_config['tabs']['tab'] as $tab) {
 		$tab_entry = array();
-		if($tab['name']) {
+		if ($tab['name']) {
 			$tab_entry[] = $tab['name'];
 			$tab_entry[] = false;
 			$tab_entry[] = $tab['url'];
@@ -1051,7 +1110,7 @@ function add_package_tabs($tabgroup, & $tab_array) {
 	}
 }
 
-function alias_info_popup($alias_id){
+function alias_info_popup($alias_id) {
 	global $config;
 
 	if (!is_array($config['aliases']['alias'][$alias_id]))
@@ -1127,8 +1186,9 @@ var_dump($content);die;
 }
 
 $timezone = $config['system']['timezone'];
-if (!$timezone)
+if (!$timezone) {
 	$timezone = "Etc/UTC";
+}
 
 date_default_timezone_set($timezone);
 

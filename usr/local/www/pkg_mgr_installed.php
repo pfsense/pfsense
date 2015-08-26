@@ -42,14 +42,15 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
 $timezone = $config['system']['timezone'];
-if (!$timezone)
+if (!$timezone) {
 	$timezone = "Etc/UTC";
+}
 
 date_default_timezone_set($timezone);
 
 /* if upgrade in progress, alert user */
-if(is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+if (is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
 	print_info_box_np("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
@@ -60,10 +61,10 @@ if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink','descr'));
+	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
 }
 $closehead = false;
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"));
 include("head.inc");
 
 /* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */

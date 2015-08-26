@@ -56,23 +56,26 @@ if (isset($_REQUEST['isAjax'])) {
 		echo "IPv4\n";
 
 	}
-	if (!isset($_REQUEST['resolve']))
+	if (!isset($_REQUEST['resolve'])) {
 		$netstat .= " -n";
+	}
 
-	if (!empty($_REQUEST['filter']))
+	if (!empty($_REQUEST['filter'])) {
 		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
-	else
+	} else {
 		$netstat .= " | /usr/bin/sed -e '1,3d'";
+	}
 
-	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0)
+	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0) {
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
+	}
 
 	echo htmlspecialchars_decode(shell_exec($netstat));
 
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Routing tables"));
 $shortcut_section = "routing";
 
 include('head.inc');

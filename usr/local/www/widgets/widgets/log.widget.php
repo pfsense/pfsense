@@ -42,24 +42,32 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if(is_numeric($_POST['filterlogentries'])) {
+if (is_numeric($_POST['filterlogentries'])) {
 	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
 	$acts = array();
-	if ($_POST['actpass'])	$acts[] = "Pass";
-	if ($_POST['actblock'])  $acts[] = "Block";
-	if ($_POST['actreject']) $acts[] = "Reject";
+	if ($_POST['actpass']) {
+		$acts[] = "Pass";
+	}
+	if ($_POST['actblock']) {
+		$acts[] = "Block";
+	}
+	if ($_POST['actreject']) {
+		$acts[] = "Reject";
+	}
 
-	if (!empty($acts))
+	if (!empty($acts)) {
 		$config['widgets']['filterlogentriesacts'] = implode(" ", $acts);
-	else
+	} else {
 		unset($config['widgets']['filterlogentriesacts']);
+	}
 	unset($acts);
 
-	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") )
+	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
 		$config['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
-	else
+	} else {
 		unset($config['widgets']['filterlogentriesinterfaces']);
+	}
 
 	write_config("Saved Filter Log Entries via Dashboard");
 	Header("Location: /");
@@ -142,7 +150,9 @@ else
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>
 			</td>
 		</tr>
-	<?php endforeach; ?>
+	<?php
+	endforeach;
+	?>
 	</tbody>
 </table>
 

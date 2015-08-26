@@ -41,56 +41,66 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['ntpd']))
+if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
-	
-if (!is_array($config['ntpd']['pps']))
+}
+if (!is_array($config['ntpd']['pps'])) {
 	$config['ntpd']['pps'] = array();
+}
 
 if ($_POST) {
 	unset($input_errors);
 
 	if (!$input_errors) {
-		if (!empty($_POST['ppsport']) && file_exists('/dev/'.$_POST['ppsport']))
+		if (!empty($_POST['ppsport']) && file_exists('/dev/'.$_POST['ppsport'])) {
 			$config['ntpd']['pps']['port'] = $_POST['ppsport'];
-		/* if port is not set, remove all the pps config */
-		else unset($config['ntpd']['pps']);
+		} else {
+			/* if port is not set, remove all the pps config */
+			unset($config['ntpd']['pps']);
+		}
 
-		if (!empty($_POST['ppsfudge1']))
+		if (!empty($_POST['ppsfudge1'])) {
 			$config['ntpd']['pps']['fudge1'] = $_POST['ppsfudge1'];
-		elseif (isset($config['ntpd']['pps']['fudge1']))
+		} elseif (isset($config['ntpd']['pps']['fudge1'])) {
 			unset($config['ntpd']['pps']['fudge1']);
+		}
 
-		if (!empty($_POST['ppsstratum']) && ($_POST['ppsstratum']) < 17 )
+		if (!empty($_POST['ppsstratum']) && ($_POST['ppsstratum']) < 17) {
 			$config['ntpd']['pps']['stratum'] = $_POST['ppsstratum'];
-		elseif (isset($config['ntpd']['pps']['stratum']))
+		} elseif (isset($config['ntpd']['pps']['stratum'])) {
 			unset($config['ntpd']['pps']['stratum']);
+		}
 
-		if (!empty($_POST['ppsselect']))
+		if (!empty($_POST['ppsselect'])) {
 			$config['ntpd']['pps']['noselect'] = $_POST['ppsselect'];
-		elseif (isset($config['ntpd']['pps']['noselect']))
+		} elseif (isset($config['ntpd']['pps']['noselect'])) {
 			unset($config['ntpd']['pps']['noselect']);
+		}
 
-		if (!empty($_POST['ppsflag2']))
+		if (!empty($_POST['ppsflag2'])) {
 			$config['ntpd']['pps']['flag2'] = $_POST['ppsflag2'];
-		elseif (isset($config['ntpd']['pps']['flag2']))
+		} elseif (isset($config['ntpd']['pps']['flag2'])) {
 			unset($config['ntpd']['pps']['flag2']);
+		}
 
-		if (!empty($_POST['ppsflag3']))
+		if (!empty($_POST['ppsflag3'])) {
 			$config['ntpd']['pps']['flag3'] = $_POST['ppsflag3'];
-		elseif (isset($config['ntpd']['pps']['flag3']))
+		} elseif (isset($config['ntpd']['pps']['flag3'])) {
 			unset($config['ntpd']['pps']['flag3']);
+		}
 
-		if (!empty($_POST['ppsflag4']))
+		if (!empty($_POST['ppsflag4'])) {
 			$config['ntpd']['pps']['flag4'] = $_POST['ppsflag4'];
-		elseif (isset($config['ntpd']['pps']['flag4']))
+		} elseif (isset($config['ntpd']['pps']['flag4'])) {
 			unset($config['ntpd']['pps']['flag4']);
+		}
 
-		if (!empty($_POST['ppsrefid']))
+		if (!empty($_POST['ppsrefid'])) {
 			$config['ntpd']['pps']['refid'] = $_POST['ppsrefid'];
-		elseif (isset($config['ntpd']['pps']['refid']))
+		} elseif (isset($config['ntpd']['pps']['refid'])) {
 			unset($config['ntpd']['pps']['refid']);
-			
+		}
+
 		write_config("Updated NTP PPS Settings");
 
 		$retval = 0;
@@ -101,7 +111,7 @@ if ($_POST) {
 
 $pconfig = &$config['ntpd']['pps'];
 
-$pgtitle = array(gettext("Services"),gettext("NTP PPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP PPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 

@@ -67,12 +67,14 @@ function kill_client($port, $remipp) {
 			$line = fgets($fp, 1024);
 
 			$info = stream_get_meta_data($fp);
-			if ($info['timed_out'])
+			if ($info['timed_out']) {
 				break;
+			}
 
 			/* parse header list line */
-			if (strpos($line, "INFO:") !== false)
+			if (strpos($line, "INFO:") !== false) {
 				continue;
+			}
 			if (strpos($line, "SUCCESS") !== false) {
 				$killed = 0;
 			}
@@ -136,7 +138,8 @@ $clients = openvpn_get_active_clients();
 				<th>Name/Time</td>
 				<th>Real/Virtual IP</td>
 			</tr>
-			<?php $rowIndex = 0;
+		<?php
+		$rowIndex = 0;
 			foreach ($server['conns'] as $conn):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;

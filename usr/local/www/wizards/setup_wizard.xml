@@ -71,7 +71,7 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9-]+$</validate>
 			<message>Invalid Hostname</message>
 		</field>
 		<field>
@@ -79,7 +79,7 @@
 			<type>input</type>
 			<bindstofield>wizardtemp->system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
-			<validate>^[a-z0-9.|-]+$</validate>
+			<validate>^[a-zA-Z0-9.-]+$</validate>
 			<message>Domain name field is invalid</message>
 		</field>
 		<field>
@@ -410,9 +410,14 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
+		if (empty($config['interfaces']['wan']['gateway'])) {
+			$wangw_name = "WANGW";
+		} else {
+			$wangw_name = $config['interfaces']['wan']['gateway'];
+		}
 		if (is_array($config['gateways']['gateway_item']))
 			foreach ($config['gateways']['gateway_item'] as $gw)
-				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
+				if ($gw['name'] == $wangw_name || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
 					$config['wizardtemp']['wangateway'] = $gw['gateway'];
 		]]>
 	</stepbeforeformdisplay>
@@ -447,7 +452,7 @@
 			die;
 		}
 		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
-			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
+			print_info_box_np("Invalid PPTP Remote IP Address. Please press back in your browser window and correct.");
 			die;
 		}
 		$type = $_POST['selectedtype'];
@@ -534,19 +539,52 @@
 			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
 			die;
 		}
-		if ($_POST['subnetmask'] < 31 &&
-		    ($_POST['lanipaddress'] == gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']) ||
-		     $_POST['lanipaddress'] == gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']))) {
-			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+
+		$lowestip = gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']);
+		$highestip = gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']);
+
+		if ($_POST['subnetmask'] < 31) {
+			if ($_POST['lanipaddress'] == $lowestip) {
+				print_info_box_np("LAN IP Address equals subnet network address. This is not allowed. Please press back in your browser window and correct.");
+				die;
+			}
+			if ($_POST['lanipaddress'] == $highestip) {
+				print_info_box_np("LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in your browser window and correct.");
+				die;
+			}
+		} else {
+			print_info_box_np("Invalid subnet mask, choose a mask less than 31. Please press back in your browser window and correct.");
 			die;
 		}
-		$ft = explode(".", $_POST['lanipaddress']);
-		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
-		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
-		$highestip = gen_subnet_max($_POST['lanipaddress'], $config['interfaces']['lan']['subnet']);
-		$hi = explode(".", $highestip);
-		$highestip = $hi[3]-10;
-		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
+
+		$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
+		$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+
+		if ($ipaddresses_after >= $ipaddresses_before) {
+			// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
+			if ($ipaddresses_after > 30) {
+				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+				// This case will work out like the old defaults if the user has specified the ".1" address.
+				// The range will be something like ".10" to ".245"
+				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+			} else {
+				// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
+				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+			}
+		} else {
+			// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
+			if ($ipaddresses_before > 30) {
+				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+			} else {
+				// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
+				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
+				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+			}
+		}
 		]]>
 	</stepsubmitphpaction>
 </step>

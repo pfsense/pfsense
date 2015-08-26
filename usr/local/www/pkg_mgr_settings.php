@@ -47,11 +47,14 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
 if ($_POST) {
-	if($_POST['alturlenable'] == "yes") {
-		$config['system']['altpkgrepo']['enable'] = 'yes';
-		$config['system']['altpkgrepo']['xmlrpcbaseurl'] = $_POST['pkgrepourl'];
-	} else {
-		unset($config['system']['altpkgrepo']['enable']);
+	if (!$input_errors) {
+		if ($_POST['alturlenable'] == "yes") {
+			$config['system']['altpkgrepo']['enable'] = true;
+			$config['system']['altpkgrepo']['xmlrpcbaseurl'] = $_POST['pkgrepourl'];
+		} else {
+			unset($config['system']['altpkgrepo']['enable']);
+		}
+		write_config();
 	}
 
 	write_config();
@@ -59,7 +62,7 @@ if ($_POST) {
 
 $curcfg = $config['system']['altpkgrepo'];
 $closehead = false;
-$pgtitle = array(gettext("System"),gettext("Package Settings"));
+$pgtitle = array(gettext("System"), gettext("Package Settings"));
 include("head.inc");
 
 // Print package server mismatch warning. See https://redmine.pfsense.org/issues/484

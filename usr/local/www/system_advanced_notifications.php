@@ -43,42 +43,55 @@ require_once("notices.inc");
 
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
-if($config['notifications']['growl']['password'])
+if ($config['notifications']['growl']['password']) {
 	$pconfig['password'] = $config['notifications']['growl']['password'];
-if($config['notifications']['growl']['ipaddress'])
+}
+if ($config['notifications']['growl']['ipaddress']) {
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
+}
 
-if($config['notifications']['growl']['notification_name'])
+if ($config['notifications']['growl']['notification_name']) {
 	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
-else
+} else {
   $pconfig['notification_name'] = "{$g['product_name']} growl alert";
+}
 
-if($config['notifications']['growl']['name'])
+if ($config['notifications']['growl']['name']) {
 	$pconfig['name'] = $config['notifications']['growl']['name'];
-else
+} else {
   $pconfig['name'] = 'PHP-Growl';
+}
 
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
-if ($config['notifications']['smtp']['ipaddress'])
+if ($config['notifications']['smtp']['ipaddress']) {
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
-if ($config['notifications']['smtp']['port'])
+}
+if ($config['notifications']['smtp']['port']) {
 	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
-if (isset($config['notifications']['smtp']['ssl']))
+}
+if (isset($config['notifications']['smtp']['ssl'])) {
 	$pconfig['smtpssl'] = true;
-if (isset($config['notifications']['smtp']['tls']))
+}
+if (isset($config['notifications']['smtp']['tls'])) {
 	$pconfig['smtptls'] = true;
-if ($config['notifications']['smtp']['notifyemailaddress'])
+}
+if ($config['notifications']['smtp']['notifyemailaddress']) {
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
-if ($config['notifications']['smtp']['username'])
+}
+if ($config['notifications']['smtp']['username']) {
 	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
-if ($config['notifications']['smtp']['password'])
+}
+if ($config['notifications']['smtp']['password']) {
 	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
-if ($config['notifications']['smtp']['authentication_mechanism'])
+}
+if ($config['notifications']['smtp']['authentication_mechanism']) {
 	$pconfig['smtpauthmech'] = $config['notifications']['smtp']['authentication_mechanism'];
-if ($config['notifications']['smtp']['fromaddress'])
+}
+if ($config['notifications']['smtp']['fromaddress']) {
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
+}
 
 // System Sounds
 $pconfig['disablebeep'] = isset($config['system']['disablebeep']);
@@ -96,38 +109,45 @@ if ($_POST) {
 		$config['notifications']['growl']['name'] = $_POST['registration-name'];
 		$config['notifications']['growl']['notification_name'] = $_POST['notification-name'];
 
-		if($_POST['disable-growl'] == "yes")
+		if ($_POST['disable_growl'] == "yes") {
 			$config['notifications']['growl']['disable'] = true;
-		else
-			unset($config['notif	ications']['growl']['disable']);
+		} else {
+			unset($config['notifications']['growl']['disable']);
+		}
 
 		// SMTP
-		$config['notifications']['smtp']['ipaddress'] = $_POST['e-mail-server'];
-		$config['notifications']['smtp']['port'] = $_POST['smtp-port-of-e-mail-server'];
-		if (isset($_POST['enable-ssl-tls']))
+		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
+		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
+		if (isset($_POST['smtpssl'])) {
 			$config['notifications']['smtp']['ssl'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['ssl']);
-		if (isset($_POST['secure-starttls']))
+		}
+		
+		if (isset($_POST['smtptls'])) {
 			$config['notifications']['smtp']['tls'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['tls']);
+		}
+		
+		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
+		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
+		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
+		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
-		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['notification-e-mail-address'];
-		$config['notifications']['smtp']['username'] = $_POST['notification-e-mail-auth-username-optional-'];
-		$config['notifications']['smtp']['password'] = $_POST['notification-e-mail-auth-password'];
-		$config['notifications']['smtp']['fromaddress'] = $_POST['from-e-mail-address'];
-
-		if($_POST['disable-smtp'] == "yes")
+		if ($_POST['disable_smtp'] == "yes") {
 			$config['notifications']['smtp']['disable'] = true;
-		else
+		} else {
 			unset($config['notifications']['smtp']['disable']);
+		}
 
 		// System Sounds
-		if($_POST['startup-shutdown-sound'] == "yes")
+		if ($_POST['disablebeep'] == "yes") {
 			$config['system']['disablebeep'] = true;
-		else
+		} else {
 			unset($config['system']['disablebeep']);
+		}
 
 		write_config();
 		pfSenseHeader("system_advanced_notifications.php");
@@ -137,8 +157,8 @@ if ($_POST) {
 
 	if (isset($_POST['test-growl'])) {
 		// Send test message via growl
-		if($config['notifications']['growl']['ipaddress'] &&
-			$config['notifications']['growl']['password'] = $_POST['password']) {
+		if ($config['notifications']['growl']['ipaddress'] &&
+		    $config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
@@ -147,13 +167,14 @@ if ($_POST) {
 
 	if (isset($_POST['test-smtp'])) {
 		// Send test message via smtp
-		if(file_exists("/var/db/notices_lastmsg.txt"))
+		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
+		}
 		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Notifications"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Notifications"));
 include("head.inc");
 
 if ($input_errors)

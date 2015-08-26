@@ -11,11 +11,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -42,7 +42,7 @@
 
 include('guiconfig.inc');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Sockets"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 
 include('head.inc');
 
@@ -65,13 +65,12 @@ $showAllOption = $showAll ? "" : "?showAll";
 
 
 <?php
-	if (isset($_GET['showAll']))
-	{
+	if (isset($_GET['showAll'])) {
 		$internet4 = shell_exec('sockstat -4');
 		$internet6 = shell_exec('sockstat -6');
 	} else {
-		$internet4 = shell_exec('sockstat -4lL');
-		$internet6 = shell_exec('sockstat -6lL');
+		$internet4 = shell_exec('sockstat -4l');
+		$internet6 = shell_exec('sockstat -6l');
 	}
 	foreach (array(&$internet4, &$internet6) as $tabindex => $table) {
 		$elements = ($tabindex == 0 ? 7 : 7);

@@ -62,33 +62,36 @@ if (isset($config['ipsec']['phase1'])) {
 	} else if (!is_array($ipsec_status['query']['ikesalist'])) {
 		$ipsec_status['query']['ikesalist'] = array();
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
-	} else if (!is_array($ipsec_status['query']['ikesalist']['ikesa']))
+	} else if (!is_array($ipsec_status['query']['ikesalist']['ikesa'])) {
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
+	}
 
 	$ipsec_detail_array = array();
 	$ikenum = array();
 	if (isset($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase2'] as $ph2ent) {
-			if ($ph2ent['remoteid']['type'] == "mobile")
+			if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
 				continue;
+			}
 
-			if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
+			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
 				continue;
-
-			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile']))
+			}
+			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
 				continue;
-			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
-				continue;
+			}
 
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
-				if (!isset($ikenum[$ph1ent['ikeid']]))
+				if (!isset($ikenum[$ph1ent['ikeid']])) {
 					$ikenum[$ph1ent['ikeid']] = 0;
-				else
+				} else {
 					$ikenum[$ph1ent['ikeid']]++;
+				}
 				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
 			} else {
-				if (isset($ikenum[$ph1ent['ikeid']]))
+				if (isset($ikenum[$ph1ent['ikeid']])) {
 					continue;
+				}
 				$ikeid = "con{$ph1ent['ikeid']}";
 				$ikenum[$ph1ent['ikeid']] = true;
 			}
@@ -96,7 +99,7 @@ if (isset($config['ipsec']['phase1'])) {
 			$found = false;
 			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
 				if (isset($ikesa['childsalist']) && isset($ikesa['childsalist']['childsa'])) {
-					foreach($ikesa['childsalist']['childsa'] as $childsa) {
+					foreach ($ikesa['childsalist']['childsa'] as $childsa) {
 						if ($ikeid == $childsa['childconfig']) {
 							$found = true;
 							break;

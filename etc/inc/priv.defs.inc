@@ -644,30 +644,6 @@ $priv_list['page-loadbalancer-pool-edit']['descr'] = gettext("Allow access to th
 $priv_list['page-loadbalancer-pool-edit']['match'] = array();
 $priv_list['page-loadbalancer-pool-edit']['match'][] = "load_balancer_pool_edit.php*";
 
-$priv_list['page-services-loadbalancer-relay-action'] = array();
-$priv_list['page-services-loadbalancer-relay-action']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Actions page");
-$priv_list['page-services-loadbalancer-relay-action']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Actions' page.");
-$priv_list['page-services-loadbalancer-relay-action']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-action']['match'][] = "load_balancer_relay_action.php*";
-
-$priv_list['page-services-loadbalancer-relay-action-edit'] = array();
-$priv_list['page-services-loadbalancer-relay-action-edit']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Action: Edit page");
-$priv_list['page-services-loadbalancer-relay-action-edit']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Action: Edit' page.");
-$priv_list['page-services-loadbalancer-relay-action-edit']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-action-edit']['match'][] = "load_balancer_relay_action_edit.php*";
-
-$priv_list['page-services-loadbalancer-relay-protocol'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Protocols page");
-$priv_list['page-services-loadbalancer-relay-protocol']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Protocols' page.");
-$priv_list['page-services-loadbalancer-relay-protocol']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol']['match'][] = "load_balancer_relay_protocol.php*";
-
-$priv_list['page-services-loadbalancer-relay-protocol-edit'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['name'] = gettext("WebCfg - Services: Load Balancer: Relay Protocol: Edit page");
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Relay Protocol: Edit' page.");
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['match'] = array();
-$priv_list['page-services-loadbalancer-relay-protocol-edit']['match'][] = "load_balancer_relay_protocol_edit.php*";
-
 $priv_list['page-services-loadbalancer-setting'] = array();
 $priv_list['page-services-loadbalancer-setting']['name'] = gettext("Webcfg - Services: Load Balancer: setting page");
 $priv_list['page-services-loadbalancer-setting']['descr'] = gettext("Allow access to the 'Settings: Load Balancer: Settings' page.");

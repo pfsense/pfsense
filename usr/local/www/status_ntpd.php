@@ -44,11 +44,12 @@
 
 require_once("guiconfig.inc");
 
-if(!isset($config['ntpd']['noquery'])) {
-	if (isset($config['system']['ipv6allow']))
+if (!isset($config['ntpd']['noquery'])) {
+	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
-	else
+	} else {
 		$inet_version = " -4";
+	}
 
 	exec("/usr/local/sbin/ntpq -pn $inet_version | /usr/bin/tail +3", $ntpq_output);
 
@@ -107,7 +108,7 @@ if(!isset($config['ntpd']['noquery'])) {
 			$tmp = $tmp[1];
 			if (substr($tmp, 0, 6) == '$GPRMC') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[2] == "A");
+				$gps_ok = ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
 				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
@@ -116,9 +117,9 @@ if(!isset($config['ntpd']['noquery'])) {
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
 				$gps_lon = $gps_lon_deg + $gps_lon_min;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
-			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
+			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = $gps_vars[6];
+				$gps_ok = $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
 				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
@@ -130,9 +131,9 @@ if(!isset($config['ntpd']['noquery'])) {
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
 				$gps_sat = $gps_vars[7];
-			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
+			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[6] == "A");
+				$gps_ok = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
@@ -149,18 +150,18 @@ if(!isset($config['ntpd']['noquery'])) {
 if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
 	//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
 	$gpsport = fopen("/dev/gps0", "r+");
-	while($gpsport){
+	while ($gpsport) {
 		$buffer = fgets($gpsport);
-		if(substr($buffer, 0, 6)=='$GPGSV'){
+		if (substr($buffer, 0, 6) == '$GPGSV') {
 			//echo $buffer."\n";
-			$gpgsv = explode(',',$buffer);
+			$gpgsv = explode(',', $buffer);
 			$gps_satview = $gpgsv[3];
 			break;
 		}
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("NTP"));
+$pgtitle = array(gettext("Status"), gettext("NTP"));
 $shortcut_section = "ntp";
 
 include("head.inc");

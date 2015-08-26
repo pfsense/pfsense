@@ -42,8 +42,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['bridges']['bridged']))
+if (!is_array($config['bridges']['bridged'])) {
 	$config['bridges']['bridged'] = array();
+}
 
 $a_bridges = &$config['bridges']['bridged'] ;
 
@@ -53,20 +54,21 @@ function bridge_inuse($num) {
 	$iflist = get_configured_interface_list(false, true);
 
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif'])
+		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif']) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-	if (!isset($_GET['id']))
+	if (!isset($_GET['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	else if (empty($a_bridges[$_GET['id']]))
+	} else if (empty($a_bridges[$_GET['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (bridge_inuse($_GET['id'])) {
+	} else if (bridge_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
 	} else {
 		if (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {

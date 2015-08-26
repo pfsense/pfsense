@@ -15,14 +15,18 @@ function get_content($dir) {
 	clearstatcache();
 	$fd = @opendir($dir);
 
-	while($entry = @readdir($fd)) {
-		if($entry == ".")                 continue;
-		if($entry == ".." && $dir == "/") continue;
-
-		if(is_dir("{$dir}/{$entry}"))
+	while ($entry = @readdir($fd)) {
+		if ($entry == ".") {
+			continue;
+		}
+		if ($entry == ".." && $dir == "/") {
+			continue;
+		}
+		if (is_dir("{$dir}/{$entry}")) {
 			array_push($dirs, $entry);
-		else
+		} else {
 			array_push($files, $entry);
+		}
 	}
 
 	@closedir($fd);
@@ -34,8 +38,9 @@ function get_content($dir) {
 }
 
 $path = realpath(strlen($_GET['path']) > 0 ? $_GET['path'] : "/");
-if(is_file($path))
+if (is_file($path)) {
 	$path = dirname($path);
+}
 
 // ----- header -----
 ?>
@@ -54,15 +59,14 @@ if(is_file($path))
 <?php
 
 // ----- read contents -----
-if(is_dir($path)) {
+if (is_dir($path)) {
 	list($dirs, $files) = get_content($path);
 ?>
-			
+
 		</td>
 	</tr>
 <?php
-}
-else {
+} else {
 ?>
 			Directory does not exist.
 		</td>
@@ -73,7 +77,7 @@ else {
 }
 
 // ----- directories -----
-foreach($dirs as $dir):
+foreach ($dirs as $dir):
 	$realDir = realpath("{$path}/{$dir}");
 ?>
 	<tr>
@@ -90,56 +94,56 @@ foreach($dirs as $dir):
 endforeach;
 
 // ----- files -----
-foreach($files as $file):
+foreach ($files as $file):
 	$ext = strrchr($file, ".");
 
 	switch ($ext) {
-	   case ".css":
-	   case ".html":
-	   case ".xml":
-		$type = "code";
-		break;
-	   case ".rrd":
-		$type = "database";
-		break;
-	   case ".gif":
-	   case ".jpg":
-	   case ".png":
-		$type = "image";
-		break;
-	   case ".js":
-		 $type = "js";
-		break;
-	   case ".pdf":
-		$type = "pdf";
-		break;
-	   case ".inc":
-	   case ".php":
-		$type = "php";
-		break;
-	   case ".conf":
-	   case ".pid":
-	   case ".sh":
-		$type = "system";
-		break;
-	   case ".bz2":
-	   case ".gz":
-	   case ".tgz":
-	   case ".zip":
-		$type = "zip";
-		break;
-	   default:
-		$type = "generic";
+		case ".css":
+		case ".html":
+		case ".xml":
+			$type = "code";
+			break;
+		case ".rrd":
+			$type = "database";
+			break;
+		case ".gif":
+		case ".jpg":
+		case ".png":
+			$type = "image";
+			break;
+		case ".js":
+			$type = "js";
+			break;
+		case ".pdf":
+			$type = "pdf";
+			break;
+		case ".inc":
+		case ".php":
+			$type = "php";
+			break;
+		case ".conf":
+		case ".pid":
+		case ".sh":
+			$type = "system";
+			break;
+		case ".bz2":
+		case ".gz":
+		case ".tgz":
+		case ".zip":
+			$type = "zip";
+			break;
+		default:
+			$type = "generic";
 	}
 
 	$fqpn = "{$path}/{$file}";
 
-	if(is_file($fqpn)) {
+	if (is_file($fqpn)) {
 		$fqpn = realpath($fqpn);
 		$size = sprintf("%.2f KiB", filesize($fqpn) / 1024);
-	}
-	else
+	} else {
 		$size = "";
+	}
 
 ?>
 	<tr>

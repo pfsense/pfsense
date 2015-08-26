@@ -42,13 +42,15 @@
 
 /* returns true if $uname is a valid DynDNS username */
 function is_dyndns_username($uname) {
-	if (!is_string($uname))
+	if (!is_string($uname)) {
 		return false;
+	}
 
-	if (preg_match("/[^a-z0-9\-\+.@_:]/i", $uname))
+	if (preg_match("/[^a-z0-9\-\+.@_:]/i", $uname)) {
 		return false;
-	else
+	} else {
 		return true;
+	}
 }
 
 require("guiconfig.inc");
@@ -59,11 +61,12 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
@@ -89,8 +92,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if(($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "") {
 		$_POST['username'] = "none";
+	}
 
 	/* input validation */
 	$reqdfields = array();
@@ -105,7 +109,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Password");
 		$reqdfields[] = "username";
 		$reqdfieldsn[] = gettext("Username");
-	}else{
+	} else {
 		$reqdfields[] = "updateurl";
 		$reqdfieldsn[] = gettext("Update URL");
 	}
@@ -114,23 +118,26 @@ if ($_POST) {
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
-		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.')
+		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
 			$host_to_check = substr($_POST['host'], 2);
-		else
+		} else {
 			$host_to_check = $_POST['host'];
+		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-			if (!is_domain($host_to_check))
+			if (!is_domain($host_to_check)) {
 				$input_errors[] = gettext("The hostname contains invalid characters.");
+			}
 		}
 
 		unset($host_to_check);
 	}
-	if (($_POST['mx'] && !is_domain($_POST['mx'])))
+	if (($_POST['mx'] && !is_domain($_POST['mx']))) {
 		$input_errors[] = gettext("The MX contains invalid characters.");
-
-	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == "")))
+	}
+	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) {
 		$input_errors[] = gettext("The username contains invalid characters.");
+	}
 
 	if (!$input_errors) {
 		$dyndns = array();
@@ -144,11 +151,11 @@ if ($_POST) {
 		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
 		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
 		/* In this place enable means disabled */
-		if ($_POST['enable'])
+		if ($_POST['enable']) {
 			unset($dyndns['enable']);
-		else
+		} else {
 			$dyndns['enable'] = true;
-
+		}
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
@@ -159,19 +166,20 @@ if ($_POST) {
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
-		if($dyndns['username'] == "none")
+		if ($dyndns['username'] == "none") {
 			$dyndns['username'] = "";
+		}
 
-		if (isset($id) && $a_dyndns[$id])
+		if (isset($id) && $a_dyndns[$id]) {
 			$a_dyndns[$id] = $dyndns;
-		else {
+		} else {
 			$a_dyndns[] = $dyndns;
 			$id = count($a_dyndns) - 1;
 		}
 
 		$dyndns['id'] = $id;
 		//Probably overkill, but its better to be safe
-		for($i = 0; $i < count($a_dyndns); $i++) {
+		for ($i = 0; $i < count($a_dyndns); $i++) {
 			$a_dyndns[$i]['id'] = $i;
 		}
 

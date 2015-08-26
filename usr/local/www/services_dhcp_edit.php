@@ -53,7 +53,7 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-if(!$g['services_dhcp_server_enable']) {
+if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
 }
@@ -70,18 +70,19 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpd']))
+if (!is_array($config['dhcpd'])) {
 	$config['dhcpd'] = array();
-
-if (!is_array($config['dhcpd'][$if]))
+}
+if (!is_array($config['dhcpd'][$if])) {
 	$config['dhcpd'][$if] = array();
-
-if (!is_array($config['dhcpd'][$if]['staticmap']))
+}
+if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 	$config['dhcpd'][$if]['staticmap'] = array();
+}
 
-if (!is_array($config['dhcpd'][$if]['pool']))
+if (!is_array($config['dhcpd'][$if]['pool'])) {
 	$config['dhcpd'][$if]['pool'] = array();
-
+}
 $a_pools = &$config['dhcpd'][$if]['pool'];
 
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
@@ -91,10 +92,12 @@ $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
@@ -110,14 +113,14 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['gateway'] = $a_maps[$id]['gateway'];
 	$pconfig['domain'] = $a_maps[$id]['domain'];
 	$pconfig['domainsearchlist'] = $a_maps[$id]['domainsearchlist'];
-	list($pconfig['wins1'],$pconfig['wins2']) = $a_maps[$id]['winsserver'];
-	list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $a_maps[$id]['dnsserver'];
+	list($pconfig['wins1'], $pconfig['wins2']) = $a_maps[$id]['winsserver'];
+	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
-	list($pconfig['ntp1'],$pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
 	$pconfig['mac'] = $_GET['mac'];
@@ -159,16 +162,18 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* either MAC or Client-ID must be specified */
-	if (empty($_POST['mac']) && empty($_POST['cid']))
+	if (empty($_POST['mac']) && empty($_POST['cid'])) {
 		$input_errors[] = gettext("Either MAC address or Client identifier must be specified");
+	}
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
-		if($matches)
+		if ($matches) {
 			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");
+		}
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
@@ -185,18 +190,25 @@ if ($_POST) {
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
-
-	if($static_arp_enabled && !$_POST['ipaddr']) {
+	if ($static_arp_enabled && !$_POST['ipaddr']) {
 		$input_errors[] = gettext("Static ARP is enabled.  You must specify an IP address.");
 	}
 
 	/* check for overlaps */
 	foreach ($a_maps as $mapent) {
-		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
+		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
 			continue;
-
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr'] ) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-			$input_errors[] = gettext("This Hostname, IP, MAC address or Client identifier already exists.");
+		}
+		/* The fully qualified hostname (hostname + '.' + domainname) must be unique.
+		 * The unqualified hostname does not have to be unique as long as the fully
+		 * qualified hostname is unique. */
+		$existingFqn = "{$mapent['hostname']}.{$mapent['domain']}";
+		$candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
+		if ((($existingFqn == $candidateFqn) && $mapent['hostname']) ||
+		    (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
+		    (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) ||
+		    (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
+			$input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
 			break;
 		}
 	}
@@ -206,7 +218,7 @@ if ($_POST) {
 		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
 		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
 		if ((ip2ulong($_POST['ipaddr']) >= $dynsubnet_start) &&
-			(ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
+		    (ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
@@ -220,39 +232,50 @@ if ($_POST) {
 		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
-			(ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
-			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."),$ifcfgdescr);
+		    (ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
+			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."), $ifcfgdescr);
 		}
 	}
 
-	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
+	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
-
-	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2'])))
+	}
+	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
+	}
 
 	$parent_ip = get_interface_ip($POST['if']);
 	if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
 		$parent_sn = get_interface_subnet($_POST['if']);
-		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
+		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
+		}
+	}
+	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) ||
+	    ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) ||
+	    ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) ||
+	    ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
+		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
 	}
 
-	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4'])))
-		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
-	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
+	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
-	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
+	}
+	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
-	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
+	}
+	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
-	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+	}
+	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
 		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+	}
 	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-		($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
 		$input_errors[] = gettext("You must specify both a valid domain key and key name.");
+	}
 	if ($_POST['domainsearchlist']) {
-		$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
+		$domain_array=preg_split("/[ ;]+/", $_POST['domainsearchlist']);
 		foreach ($domain_array as $curdomain) {
 			if (!is_domain($curdomain)) {
 				$input_errors[] = gettext("A valid domain search list must be specified.");
@@ -261,12 +284,15 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])))
+	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
-	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp']))
+	}
+	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
 		$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
-	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver'])))
+	}
+	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
+	}
 
 	if (!$input_errors) {
 		$mapent = array();
@@ -282,20 +308,26 @@ if ($_POST) {
 		$mapent['maxleasetime'] = $_POST['maxtime'];
 
 		unset($mapent['winsserver']);
-		if ($_POST['wins1'])
+		if ($_POST['wins1']) {
 			$mapent['winsserver'][] = $_POST['wins1'];
-		if ($_POST['wins2'])
+		}
+		if ($_POST['wins2']) {
 			$mapent['winsserver'][] = $_POST['wins2'];
+		}
 
 		unset($mapent['dnsserver']);
-		if ($_POST['dns1'])
+		if ($_POST['dns1']) {
 			$mapent['dnsserver'][] = $_POST['dns1'];
-		if ($_POST['dns2'])
+		}
+		if ($_POST['dns2']) {
 			$mapent['dnsserver'][] = $_POST['dns2'];
-		if ($_POST['dns3'])
+		}
+		if ($_POST['dns3']) {
 			$mapent['dnsserver'][] = $_POST['dns3'];
-		if ($_POST['dns4'])
+		}
+		if ($_POST['dns4']) {
 			$mapent['dnsserver'][] = $_POST['dns4'];
+		}
 
 		$mapent['gateway'] = $_POST['gateway'];
 		$mapent['domain'] = $_POST['domain'];
@@ -307,28 +339,33 @@ if ($_POST) {
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($mapent['ntpserver']);
-		if ($_POST['ntp1'])
+		if ($_POST['ntp1']) {
 			$mapent['ntpserver'][] = $_POST['ntp1'];
-		if ($_POST['ntp2'])
+		}
+		if ($_POST['ntp2']) {
 			$mapent['ntpserver'][] = $_POST['ntp2'];
+		}
 
 		$mapent['tftp'] = $_POST['tftp'];
 		$mapent['ldap'] = $_POST['ldap'];
 
-		if (isset($id) && $a_maps[$id])
+		if (isset($id) && $a_maps[$id]) {
 			$a_maps[$id] = $mapent;
-		else
+		} else {
 			$a_maps[] = $mapent;
+		}
 		staticmaps_sort($if);
 
 		write_config();
 
-		if(isset($config['dhcpd'][$if]['enable'])) {
+		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
+			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
 				mark_subsystem_dirty('hosts');
-			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic']))
+			}
+			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
 				mark_subsystem_dirty('unbound');
+			}
 		}
 
 		header("Location: services_dhcp.php?if={$if}");
@@ -342,7 +379,7 @@ $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
 $mymac = str_replace("\n","",$mymac);
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DHCP"),gettext("Edit static mapping"));
+$pgtitle = array(gettext("Services"), gettext("DHCP"), gettext("Edit static mapping"));
 $shortcut_section = "dhcp";
 
 include("head.inc");

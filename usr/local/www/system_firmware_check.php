@@ -47,7 +47,7 @@ require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
-$pgtitle=array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
+$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
 $tab_array = array();
@@ -76,49 +76,46 @@ display_top_tabs($tab_array);
 <?php
 
 /* Define necessary variables. */
-if(isset($curcfg['alturl']['enable']))
+if (isset($curcfg['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else
+} else {
 	$updater_url = $g['update_url'];
-
+}
 $needs_system_upgrade = false;
 $static_text .= gettext("Downloading new version information...");
 
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt"))
+	if (file_exists("/etc/nano_use_vga.txt")) {
 		$nanosize = "-nanobsd-vga-";
-	else
+	} else {
 		$nanosize = "-nanobsd-";
+	}
 
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 }
 
-if(download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true)
+if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
 	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
-
-$static_text .= gettext("done") . "<br />";
-
+}
+$static_text .= gettext("done") . "\\n";
 if (!$remote_version) {
-	$static_text .= gettext("Unable to check for updates.") . "<br />";
-
-	if(isset($curcfg['alturl']['enable']))
-		$static_text .= gettext("Could not contact custom update server.") . "<br />";
-	else
+	$static_text .= gettext("Unable to check for updates.") . "\\n";
+	if (isset($curcfg['alturl']['enable'])) {
+		$static_text .= gettext("Could not contact custom update server.") . "\\n";
+	} else {
 		$static_text .= sprintf(gettext('Could not contact %1$s update server %2$s%3$s'), $g['product_name'], $updater_url, "\\n");
-
-	panel_heading_class('danger');
+	}
 } else {
 	$static_text .= gettext("Obtaining current version information...");
 	panel_text($static_text);
 
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-	$current_installed_version = trim(file_get_contents("/etc/version"));
 
 	$static_text .= "done<br />";
 	panel_text($static_text);
 
-	if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
+	if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version) == -1) {
 		$needs_system_upgrade = true;
 	} else {
 		$static_text .= "<br />" . gettext("You are on the latest version.") . "<br />";

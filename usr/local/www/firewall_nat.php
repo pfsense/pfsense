@@ -51,8 +51,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-if (!is_array($config['nat']['rule']))
+if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
+}
 
 $a_nat = &$config['nat']['rule'];
 
@@ -74,8 +75,9 @@ if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 }
 
 /* if a custom message has been passed along, lets process it */
-if ($_GET['savemsg'])
+if ($_GET['savemsg']) {
 	$savemsg = $_GET['savemsg'];
+}
 
 if ($_POST) {
 
@@ -109,8 +111,9 @@ if ($_GET['act'] == "del") {
 
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-			if ($want_dirty_filter)
+			if ($want_dirty_filter) {
 				mark_subsystem_dirty('filter');
+			}
 		}
 
 		header("Location: firewall_nat.php");
@@ -124,69 +127,72 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 		$target = $rule['target'];
 			// Check for filter rule associations
-			if (isset($a_nat[$rulei]['associated-rule-id'])){
+			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
 
 				mark_subsystem_dirty('filter');
 			}
 			unset($a_nat[$rulei]);
 		}
-
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-
+		}
 		header("Location: firewall_nat.php");
 		exit;
 	}
 
 } else {
-	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
-	unset($movebtn);
-	foreach ($_POST as $pn => $pd) {
-		if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
+		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
+		unset($movebtn);
+		foreach ($_POST as $pn => $pd) {
+			if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
 				$movebtn = $matches[1];
 				break;
+			}
 		}
-	}
-	/* move selected rules before this rule */
-	if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_nat_new = array();
+		/* move selected rules before this rule */
+		if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
+			$a_nat_new = array();
 
-		/* copy all rules < $movebtn and not selected */
-		for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['rule']))
-						$a_nat_new[] = $a_nat[$i];
-		}
+			/* copy all rules < $movebtn and not selected */
+			for ($i = 0; $i < $movebtn; $i++) {
+				if (!in_array($i, $_POST['rule'])) {
+					$a_nat_new[] = $a_nat[$i];
+				}
+			}
 
-		/* copy all selected rules */
-		for ($i = 0; $i < count($a_nat); $i++) {
-				if ($i == $movebtn)
-						continue;
-				if (in_array($i, $_POST['rule']))
-						$a_nat_new[] = $a_nat[$i];
-		}
+			/* copy all selected rules */
+			for ($i = 0; $i < count($a_nat); $i++) {
+				if ($i == $movebtn) {
+					continue;
+				}
+				if (in_array($i, $_POST['rule'])) {
+					$a_nat_new[] = $a_nat[$i];
+				}
+			}
 
-		/* copy $movebtn rule */
-		if ($movebtn < count($a_nat))
+			/* copy $movebtn rule */
+			if ($movebtn < count($a_nat)) {
 				$a_nat_new[] = $a_nat[$movebtn];
+			}
 
-		/* copy all rules > $movebtn and not selected */
-		for ($i = $movebtn+1; $i < count($a_nat); $i++) {
-				if (!in_array($i, $_POST['rule']))
-						$a_nat_new[] = $a_nat[$i];
+			/* copy all rules > $movebtn and not selected */
+			for ($i = $movebtn+1; $i < count($a_nat); $i++) {
+				if (!in_array($i, $_POST['rule'])) {
+					$a_nat_new[] = $a_nat[$i];
+				}
+			}
+			$a_nat = $a_nat_new;
+			if (write_config()) {
+				mark_subsystem_dirty('natconf');
+			}
+			header("Location: firewall_nat.php");
+			exit;
 		}
-
-	$a_nat = $a_nat_new;
-
-	if (write_config())
-		mark_subsystem_dirty('natconf');
-		header("Location: firewall_nat.php");
-		exit;
-	}
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 include("head.inc");
 
 if ($savemsg)

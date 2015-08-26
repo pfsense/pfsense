@@ -52,8 +52,7 @@ require_once("interfaces.inc");
  * We will use our local hostname to make up the nas_id
  */
 if (!function_exists("getNasID")) {
-function getNasID()
-{
+function getNasID() {
 	global $g;
 
 	$nasId = gethostname();
@@ -71,8 +70,7 @@ function getNasID()
  *
  */
 if (!function_exists("getNasIP")) {
-function getNasIP()
-{
+function getNasIP() {
 	$nasIp = get_interface_ip();
 	if (!$nasIp) {
 		$nasIp = "0.0.0.0";

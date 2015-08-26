@@ -11,11 +11,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -44,7 +44,7 @@
 require("guiconfig.inc");
 
 $allowautocomplete = true;
-$pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Traceroute"));
 include("head.inc");
 
 define('MAX_TTL', 64);
@@ -71,7 +71,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
-	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
+	$reqdfieldsn = array(gettext("Host"), gettext("ttl"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
@@ -79,10 +79,12 @@ if ($_POST || $_REQUEST['host']) {
 	}
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
-	if (($ipproto == "ipv4") && is_ipaddrv6($host))
+	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
-	if (($ipproto == "ipv6") && is_ipaddrv4($host))
+	}
+	if (($ipproto == "ipv6") && is_ipaddrv4($host)) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
+	}
 
 	if (!$input_errors)
 		$host = $_REQUEST['host'];
@@ -165,16 +167,17 @@ if (!$input_errors && $do_traceroute) {
 	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
 	$n = isset($resolve) ? "" : "-n";
 
-	$command = "/usr/sbin/traceroute";
-	if ($ipproto == "ipv6") {
-		$command .= "6";
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-	} else {
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-	}
+			$command = "/usr/sbin/traceroute";
+			if ($ipproto == "ipv6") {
+				$command .= "6";
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+			} else {
+				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+			}
 
-	if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
-		$srcip = "-s " . escapeshellarg($ifaddr);
+			if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+				$srcip = "-s " . escapeshellarg($ifaddr);
+			}
 
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 ?>

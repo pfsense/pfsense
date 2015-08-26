@@ -519,8 +519,8 @@ function openvpn_reconfigure($mode, $settings) {
 	$digest = !empty($settings['digest']) ? $settings['digest'] : "SHA1";
 
 	$interface = get_failover_interface($settings['interface']);
+	// The IP address in the settings can be an IPv4 or IPv6 address associated with the interface
 	$ipaddr = $settings['ipaddr'];
-	$ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it
@@ -532,8 +532,8 @@ function openvpn_reconfigure($mode, $settings) {
 			$iface_ip=get_interface_ip($interface);
 		}
 	}
-	if (is_ipaddrv6($ipaddrv6)) {
-		$iface_ipv6=$ipaddrv6;
+	if (is_ipaddrv6($ipaddr)) {
+		$iface_ipv6 = $ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ipv6=get_interface_ipv6($interface);
@@ -789,11 +789,21 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 		}
 
-		if ($settings['auth_user'] && $settings['auth_pass']) {
+		if ($settings['auth_user'] || $settings['auth_pass']) {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
+			if ($settings['auth_user']) {
 			$userpass = "{$settings['auth_user']}\n";
+			} else {
+				$userpass = "";
+			}
+			if ($settings['auth_pass']) {
 			$userpass .= "{$settings['auth_pass']}\n";
+			}
+			// If only auth_pass is given, then it acts like a user name and we put a blank line where pass would normally go.
+			if (!($settings['auth_user'] && $settings['auth_pass'])) {
+				$userpass .= "\n";
+			}
 			file_put_contents($up_file, $userpass);
 		}
 
@@ -1097,9 +1107,6 @@ function openvpn_resync($mode, $settings) {
 function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
-	if ($g['platform'] == 'jail') {
-		return;
-	}
 	openvpn_create_dirs();
 
 	if (!is_array($config['openvpn'])) {

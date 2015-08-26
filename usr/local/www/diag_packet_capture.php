@@ -80,16 +80,18 @@ function fixup_host($value, $position) {
 	$host = strip_host_logic($value);
 	$not = has_not($value) ? "not " : "";
 	$andor = ($position > 0) ? get_host_boolean($value, $host) : "";
-	if (is_ipaddr($host))
+	if (is_ipaddr($host)) {
 		return "{$andor}host {$not}" . $host;
-	elseif (is_subnet($host))
+	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
-	else
+	} else {
 		return "";
+	}
 }
 
-if ($_POST['downloadbtn'] == gettext("Download Capture"))
+if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 	$nocsrf = true;
+}
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
@@ -107,10 +109,9 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-
-if (isset($config['ipsec']['enable']))
+if (isset($config['ipsec']['enable'])) {
 	$interfaces['ipsec'] = "IPsec";
-
+}
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -202,14 +203,15 @@ if ($_POST) {
 			$disabledns = "-n";
 		}
 
-		if ($_POST['startbtn'] != "" ) {
+		if ($_POST['startbtn'] != "") {
 			$action = gettext("Start");
 
 			//delete previous packet capture if it exists
-			if (file_exists($fp.$fn))
+			if (file_exists($fp.$fn)) {
 				unlink ($fp.$fn);
+			}
 
-		} elseif ($_POST['stopbtn']!= "") {
+		} elseif ($_POST['stopbtn'] != "") {
 			$action = gettext("Stop");
 			$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
 
@@ -223,7 +225,7 @@ if ($_POST) {
 				exec("kill $process_id");
 			}
 
-		} elseif ($_POST['downloadbtn']!= "") {
+		} elseif ($_POST['downloadbtn'] != "") {
 			//download file
 			$fs = filesize($fp.$fn);
 			header("Content-Type: application/octet-stream");

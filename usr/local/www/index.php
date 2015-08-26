@@ -44,7 +44,7 @@
 ##|-PRIV
 
 // Turn on buffering to speed up rendering
-ini_set('output_buffering','true');
+ini_set('output_buffering', 'true');
 
 // Start buffering with a cache size of 100000
 ob_start(null, "1000");
@@ -56,29 +56,32 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
-if(isset($_REQUEST['closenotice'])){
+if (isset($_REQUEST['closenotice'])) {
 	close_notice($_REQUEST['closenotice']);
 	echo get_menu_messages();
 	exit;
 }
 
-if($g['disablecrashreporter'] != true) {
+if ($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
 	$x = 0;
-	if(file_exists("/tmp/PHP_errors.log")) {
+	if (file_exists("/tmp/PHP_errors.log")) {
 		$total = `/usr/bin/grep -vi warning /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
-		if($total > 0)
+		if ($total > 0) {
 			$x++;
+		}
 	}
 	$crash = glob("/var/crash/*");
 	$skip_files = array(".", "..", "minfree", "");
-	if(is_array($crash)) {
-		foreach($crash as $c) {
-			if (!in_array(basename($c), $skip_files))
+	if (is_array($crash)) {
+		foreach ($crash as $c) {
+			if (!in_array(basename($c), $skip_files)) {
 				$x++;
+			}
 		}
-		if($x > 0)
+		if ($x > 0) {
 			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+		}
 	}
 }
 
@@ -225,14 +228,15 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 ##build list of php include files
 $phpincludefiles = array();
 $directory = "/usr/local/www/widgets/include/";
-$dirhandle  = opendir($directory);
+$dirhandle = opendir($directory);
 $filename = "";
 while (false !== ($filename = readdir($dirhandle))) {
 	$phpincludefiles[] = $filename;
 }
-foreach($phpincludefiles as $includename) {
-	if(!stristr($includename, ".inc"))
+foreach ($phpincludefiles as $includename) {
+	if (!stristr($includename, ".inc")) {
 		continue;
+	}
 	include($directory . $includename);
 }
 
@@ -241,11 +245,13 @@ $pgtitle = array(gettext("Status: Dashboard"));
 include("head.inc");
 
 /* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers())
+if (!verify_all_package_servers()) {
 	print_info_box(package_server_mismatch_message());
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 

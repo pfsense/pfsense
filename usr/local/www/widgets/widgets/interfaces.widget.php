@@ -51,20 +51,33 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	if ($ifinfo['ppplink']) {
 		$icon = 'headphones';
 	} else if (is_interface_wireless($ifdescr)) {
-		$icon = 'signal';
-	} else
-		$icon = 'inbox';
+		if ($ifinfo['status'] == "associated") {
+			$icon = 'wlan';
+		} else {
+			$icon = 'wlan_d';
+		}
+	} else {
+		$icon = 'cablenic';
+	}
 
-	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated")
-		$status = 'ok';
-	elseif ($ifinfo['status'] == "no carrier")
-		$status = 'remove';
-	elseif ($ifinfo['status'] == "down")
-		$status = 'ban';
-	else
-		unset($status);
-
-	$addresses = array_filter(array($ifinfo['ipaddr'], $ifinfo['ipaddrv6']));
+	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+		$known_status = true;
+		$up_display = "inline";
+		$down_display = "none";
+		$block_display = "none";
+	} elseif ($ifinfo['status'] == "no carrier") {
+		$known_status = true;
+		$up_display = "none";
+		$down_display = "inline";
+		$block_display = "none";
+	} elseif ($ifinfo['status'] == "down") {
+		$known_status = true;
+		$up_display = "none";
+		$down_display = "none";
+		$block_display = "inline";
+	} else {
+		$known_status = false;
+	}
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">

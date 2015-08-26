@@ -44,8 +44,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-if (substr($_GET['act'], 0, 3) == "get")
+if (substr($_GET['act'], 0, 3) == "get") {
 	$nocsrf = true;
+}
 
 require_once("guiconfig.inc");
 
@@ -54,25 +55,27 @@ global $cpzoneid;
 
 $cpzoneid = 1; /* Just a default */
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext'])
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
+	}
 	exit;
 } else if ($_GET['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['htmltext']);
@@ -90,8 +93,9 @@ if ($_GET['act'] == "viewhtml") {
 	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext'])
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
+	}
 	exit;
 } else if ($_GET['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['errtext']);
@@ -109,8 +113,9 @@ if ($_GET['act'] == "viewhtml") {
 	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext'])
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
+	}
 	exit;
 } else if ($_GET['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
@@ -129,13 +134,15 @@ if ($_GET['act'] == "viewhtml") {
 	exit;
 }
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
@@ -193,13 +200,15 @@ if ($a_cp[$cpzone]) {
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
-
-	if ($a_cp[$cpzone]['page']['htmltext'])
+	if ($a_cp[$cpzone]['page']['htmltext']) {
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
-	if ($a_cp[$cpzone]['page']['errtext'])
+	}
+	if ($a_cp[$cpzone]['page']['errtext']) {
 		$pconfig['page']['errtext'] = $a_cp[$cpzone]['page']['errtext'];
-	if ($a_cp[$cpzone]['page']['logouttext'])
+	}
+	if ($a_cp[$cpzone]['page']['logouttext']) {
 		$pconfig['page']['logouttext'] = $a_cp[$cpzone]['page']['logouttext'];
+	}
 }
 
 if ($_POST) {
@@ -224,12 +233,14 @@ if ($_POST) {
 		/* make sure no interfaces are bridged or used on other zones */
 		if (is_array($_POST['cinterface'])) {
 			foreach ($pconfig['cinterface'] as $cpbrif) {
-				if (link_interface_to_bridge($cpbrif))
+				if (link_interface_to_bridge($cpbrif)) {
 					$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
+				}
 				foreach ($a_cp as $cpkey => $cp) {
 					if ($cpkey != $cpzone || empty($cpzone)) {
-						if (in_array($cpbrif, explode(",", $cp['interface'])))
+						if (in_array($cpbrif, explode(",", $cp['interface']))) {
 							$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is used already on %s instance."), $cpbrif, $cp['zone']);
+						}
 					}
 				}
 			}
@@ -246,27 +257,33 @@ if ($_POST) {
 	}
 
 	if ($_POST['timeout']) {
-		if (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))
+		if (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1)) {
 			$input_errors[] = gettext("The timeout must be at least 1 minute.");
-		else if (isset($config['dhcpd']) && is_array($config['dhcpd'])) {
+		} else if (isset($config['dhcpd']) && is_array($config['dhcpd'])) {
 			foreach ($config['dhcpd'] as $dhcpd_if => $dhcpd_data) {
-				if (!isset($dhcpd_data['enable']))
+				if (!isset($dhcpd_data['enable'])) {
 					continue;
-				if (!is_array($_POST['cinterface']) || !in_array($dhcpd_if, $_POST['cinterface']))
+				}
+				if (!is_array($_POST['cinterface']) || !in_array($dhcpd_if, $_POST['cinterface'])) {
 					continue;
+				}
 
 				$deftime = 7200; // Default lease time
-				if (isset($dhcpd_data['defaultleasetime']) && is_numeric($dhcpd_data['defaultleasetime']))
+				if (isset($dhcpd_data['defaultleasetime']) && is_numeric($dhcpd_data['defaultleasetime'])) {
 					$deftime = $dhcpd_data['defaultleasetime'];
+				}
 
-				if ($_POST['timeout'] > $deftime)
+				if ($_POST['timeout'] > $deftime) {
 					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+				}
 			}
 		}
 	}
+	
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
+	
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -274,36 +291,47 @@ if ($_POST) {
 			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
 		}
 	}
+	
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
+	
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
+	
 	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
 	}
+	
 	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
+	
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
+	
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
+	
 	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
 	}
+	
 	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
+	
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
+	
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
+	
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
@@ -314,17 +342,17 @@ if ($_POST) {
 		if (empty($newcp['zoneid'])) {
 			$newcp['zoneid'] = 2;
 			foreach ($a_cp as $keycpzone => $cp) {
-				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
-					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
+				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone) {
+					$newcp['zoneid'] += 2; /* Reserve space for SSL config if needed */
+				}
 			}
 
 			$cpzoneid = $newcp['zoneid'];
 		}
 		$oldifaces = explode(",", $newcp['interface']);
-
-		if (is_array($_POST['cinterface']))
+		if (is_array($_POST['cinterface'])) {
 			$newcp['interface'] = implode(",", $_POST['cinterface']);
-
+		}
 		$newcp['maxproc'] = $_POST['maxproc'];
 		$newcp['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$newcp['timeout'] = $_POST['timeout'];
@@ -332,12 +360,11 @@ if ($_POST) {
 		$newcp['freelogins_count'] = $_POST['freelogins_count'];
 		$newcp['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
 		$newcp['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
-
-		if ($_POST['enable'])
+		if ($_POST['enable']) {
 			$newcp['enable'] = true;
-		else
+		} else {
 			unset($newcp['enable']);
-
+		}
 		$newcp['auth_method'] = $_POST['auth_method'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
@@ -345,27 +372,25 @@ if ($_POST) {
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
-
-		if ($_POST['httpslogin_enable'])
+		if ($_POST['httpslogin_enable']) {
 			$newcp['httpslogin'] = true;
-		else
+		} else {
 			unset($newcp['httpslogin']);
-
+		}
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
-
-		if (isset($_POST['bwdefaultdn']))
+		if (isset($_POST['bwdefaultdn'])) {
 			$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
-		else
+		} else {
 			unset($newcp['bwdefaultdn']);
-
-		if (isset($_POST['bwdefaultup']))
+		}
+		if (isset($_POST['bwdefaultup'])) {
 			$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
-		else
+		} else {
 			unset($newcp['bwdefaultup']);
-
+		}
 		$newcp['certref'] = $_POST['certref'];
 		$newcp['nohttpsforwards'] = $_POST['nohttpsforwards'] ? true : false;
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
@@ -373,36 +398,34 @@ if ($_POST) {
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
 		$newcp['radius_protocol'] = $_POST['radius_protocol'];
 		$newcp['redirurl'] = $_POST['redirurl'];
-
-		if (isset($_POST['radiusip']))
+		if (isset($_POST['radiusip'])) {
 			$newcp['radiusip'] = $_POST['radiusip'];
-		else
+		} else {
 			unset($newcp['radiusip']);
-
-		if (isset($_POST['radiusip2']))
+		}
+		if (isset($_POST['radiusip2'])) {
 			$newcp['radiusip2'] = $_POST['radiusip2'];
-		else
+		} else {
 			unset($newcp['radiusip2']);
-
-		if (isset($_POST['radiusip3']))
+		}
+		if (isset($_POST['radiusip3'])) {
 			$newcp['radiusip3'] = $_POST['radiusip3'];
-		else
+		} else {
 			unset($newcp['radiusip3']);
-
-		if (isset($_POST['radiusip4']))
+		}
+		if (isset($_POST['radiusip4'])) {
 			$newcp['radiusip4'] = $_POST['radiusip4'];
-		else
+		} else {
 			unset($newcp['radiusip4']);
-
+		}
 		$newcp['radiusport'] = $_POST['radiusport'];
 		$newcp['radiusport2'] = $_POST['radiusport2'];
-
-		if (isset($_POST['radiusport3']))
+		if (isset($_POST['radiusport3'])) {
 			$newcp['radiusport3'] = $_POST['radiusport3'];
-
-		if (isset($_POST['radiusport4']))
+		}
+		if (isset($_POST['radiusport4'])) {
 			$newcp['radiusport4'] = $_POST['radiusport4'];
-
+		}
 		$newcp['radiusacctport'] = $_POST['radiusacctport'];
 		$newcp['radiuskey'] = $_POST['radiuskey'];
 		$newcp['radiuskey2'] = $_POST['radiuskey2'];
@@ -417,18 +440,20 @@ if ($_POST) {
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 
-		if (!is_array($newcp['page']))
+		if (!is_array($newcp['page'])) {
 			$newcp['page'] = array();
+		}
 
 		/* file upload? */
-		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
+		if (is_uploaded_file($_FILES['htmlfile']['tmp_name'])) {
 			$newcp['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
-
-		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
+		}
+		if (is_uploaded_file($_FILES['errfile']['tmp_name'])) {
 			$newcp['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
-
-		if (is_uploaded_file($_FILES['logoutfile']['tmp_name']))
+		}
+		if (is_uploaded_file($_FILES['logoutfile']['tmp_name'])) {
 			$newcp['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
+		}
 
 		write_config();
 
@@ -449,8 +474,9 @@ if ($_POST) {
 		header("Location: services_captiveportal_zones.php");
 		exit;
 	} else {
-		if (is_array($_POST['cinterface']))
+		if (is_array($_POST['cinterface'])) {
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
+		}
 	}
 }
 

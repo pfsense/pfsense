@@ -99,12 +99,12 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
 	} else if(!$deleting) {
 
 		// input validation - only allow 50 entries in a single ACL
-		for($x=0; $x<50; $x++) {
+		for ($x = 0; $x < 50; $x++) {
 			if (isset($pconfig["acl_network{$x}"])) {
 				$networkacl[$x] = array();
 				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
@@ -157,12 +157,9 @@ if ($_POST) {
 				pfSenseHeader("/services_unbound_acls.php");
 				exit;
 			}
-
 		}
 	}
 }
-
-//DEBUG
 
 $closehead = false;
 $pgtitle = "Services: DNS Resolver: Access Lists";

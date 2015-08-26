@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: routing
+	pfSense_MODULE:	routing
 */
 
 ##|+PRIV
@@ -56,7 +56,7 @@ $gateways_status = return_gateways_status(true);
 $now = time();
 $year = date("Y");
 
-$pgtitle = array(gettext("Status"),gettext("Gateways"));
+$pgtitle = array(gettext("Status"), gettext("Gateways"));
 $shortcut_section = "gateways";
 include("head.inc");
 

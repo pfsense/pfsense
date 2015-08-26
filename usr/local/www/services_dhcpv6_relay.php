@@ -51,14 +51,16 @@ function filterDestinationServers(array $destinationServers)
 }
 
 $pconfig['enable'] = isset($config['dhcrelay6']['enable']);
-if (empty($config['dhcrelay6']['interface']))
+if (empty($config['dhcrelay6']['interface'])) {
 	$pconfig['interface'] = array();
-else
+} else {
 	$pconfig['interface'] = explode(",", $config['dhcrelay6']['interface']);
+}
 
 $pconfig['server'] = filterDestinationServers(
 	explode(',', $config['dhcrelay6']['server'])
 );
+
 $pconfig['agentoption'] = isset($config['dhcrelay6']['agentoption']);
 
 $iflist = array_intersect_key(
@@ -79,7 +81,7 @@ $iflist = array_intersect_key(
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpdv6'])) {
-	foreach($config['dhcpdv6'] as $dhcp) {
+	foreach ($config['dhcpdv6'] as $dhcp) {
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;
@@ -122,12 +124,11 @@ if ($_POST) {
 		$retval = 0;
 		$retval = services_dhcrelay6_configure();
 		$savemsg = get_std_save_message($retval);
-
 	}
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DHCPv6 Relay"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
 include("head.inc");
 

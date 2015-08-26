@@ -76,14 +76,14 @@ function get_priv_files($directory) {
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file,".inc")) {
+	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
 		include("/etc/inc/priv/{$file}");
 	}
 }
 if (is_dir("/usr/local/pkg/priv")) {
 	$dir_array = get_priv_files("/usr/local/pkg/priv");
 	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file,".inc")) {
+		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
 			include("/usr/local/pkg/priv/{$file}");
 		}
 	}
@@ -128,12 +128,12 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 	foreach ($matches as $match) {
 
 		/* possibly ignore full wildcard match */
-		if (!$fullwc && !strcmp($match ,"*")) {
+		if (!$fullwc && !strcmp($match , "*")) {
 			continue;
 		}
 
 		/* compare exact or wildcard match */
-		$match =  str_replace(array(".", "*","?"), array("\.", ".*","\?"), $match);
+		$match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
 		$result = preg_match("@^/{$match}$@", "/{$page}");
 
 		if ($result) {
@@ -152,7 +152,7 @@ function map_page_privname($page) {
 			continue;
 		}
 		$fullwc = false;
-		if (!strcasecmp($page,"any")||!strcmp($page,"*")) {
+		if (!strcasecmp($page, "any")||!strcmp($page, "*")) {
 			$fullwc = true;
 		}
 		if (cmp_page_matches($page, $pdata['match'], $fullwc)) {
@@ -182,7 +182,7 @@ function get_user_privdesc(& $user) {
 			continue;
 		}
 		foreach ($group_privs as $pname) {
-			if (in_array($pname,$user_privs)) {
+			if (in_array($pname, $user_privs)) {
 				continue;
 			}
 			if (!$priv_list[$pname]) {
@@ -214,7 +214,7 @@ function isAllowed($username, $page) {
 	$user = getUserEntry($username);
 	if (isset($user)) {
 		if (isset($user['uid'])) {
-			if ($user['uid']==0) {
+			if ($user['uid'] == 0) {
 				return true;
 			}
 		}
@@ -243,7 +243,7 @@ function isAllowedPage($page) {
 	$user = getUserEntry($username);
 	if (isset($user)) {
 		if (isset($user['uid'])) {
-			if ($user['uid']==0) {
+			if ($user['uid'] == 0) {
 				return true;
 			}
 		}
@@ -292,13 +292,14 @@ function getAllowedPages($username) {
 	// obtain ldap groups if we are in ldap mode
 	if ($authcfg['type'] == "ldap") {
 		$allowed_groups = @ldap_get_groups($username, $authcfg);
-	} else {
+	}
+	if (!$allowed_groups) {
 		// search for a local user by name
 		$local_user = getUserEntry($username);
-		getPrivPages($local_user, $allowed_pages);
 
-		// obtain local groups if we have a local user
+		// obtain local user pages and groups if we have a local user
 		if ($local_user) {
+			getPrivPages($local_user, $allowed_pages);
 			$allowed_groups = local_user_get_groups($local_user);
 		}
 	}
@@ -327,7 +328,7 @@ function sort_user_privs($privs) {
 	$priority_privs = array("page-dashboard-all", "page-system-login/logout");
 
 	$fprivs = array_intersect($privs, $priority_privs);
-	$sprivs  = array_diff($privs, $priority_privs);
+	$sprivs = array_diff($privs, $priority_privs);
 
 	return array_merge($fprivs, $sprivs);
 }

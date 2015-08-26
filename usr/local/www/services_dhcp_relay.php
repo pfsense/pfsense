@@ -50,14 +50,17 @@ function filterDestinationServers(array $destinationServers)
 }
 
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
-if (empty($config['dhcrelay']['interface']))
+
+if (empty($config['dhcrelay']['interface'])) {
 	$pconfig['interface'] = array();
-else
+} else {
 	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
+}
 
 $pconfig['server'] = filterDestinationServers(
 	explode(',', $config['dhcrelay']['server'])
 );
+
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 
 $iflist = array_intersect_key(
@@ -78,7 +81,7 @@ $iflist = array_intersect_key(
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
-	foreach($config['dhcpd'] as $dhcpif => $dhcp) {
+	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;
@@ -103,9 +106,11 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($_POST['server']) {
-			foreach ($_POST['server'] as $srv) {
-				if (!is_ipaddr($srv))
+			$checksrv = explode(",", $_POST['server']);
+			foreach ($checksrv as $srv) {
+				if (!is_ipaddr($srv)) {
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
+				}
 			}
 		}
 	}
@@ -126,12 +131,11 @@ if ($_POST) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DHCP Relay"));
+$pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");
 
-if ($dhcpd_enabled)
-{
+if ($dhcpd_enabled) {
 	echo '<div class="alert alert-danger">DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.</div>';
 	include("foot.inc");
 	exit;
@@ -177,16 +181,16 @@ $section->addInput(new Form_Checkbox(
 function createDestinationServerInputGroup($value = null)
 {
 	$group = new Form_Group('Destination server');
-	$group->enableDuplication();
 
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
 		$value
-	))->setHelp(
+	))->setWidth(4)->setHelp(
 		'This is the IP address of the server to which DHCP requests are relayed.'
 	)->setIsRepeated();
-
+	
+	$group->enableDuplication(null, true); // Buttons are in-line with the input
 	return $group;
 }
 

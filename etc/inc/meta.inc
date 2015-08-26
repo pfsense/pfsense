@@ -95,9 +95,9 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 	}
 
 	$fname = $fpath;
-	$slash = strrpos($fname,"/");
+	$slash = strrpos($fname, "/");
 	if ($slash) {
-		$fname = substr($fname,$slash + 1);
+		$fname = substr($fname, $slash + 1);
 	}
 
 	$fdata = @file_get_contents($fpath);
@@ -157,14 +157,14 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 		$offset = $tagend_trm + 1;
 
 		if (is_array($taglist)) {
-			if (!in_array($tagbeg,$taglist)) {
+			if (!in_array($tagbeg, $taglist)) {
 				continue;
 			}
 		}
 
 		$vals = array();
 
-		$lines = explode("\n",$mdata);
+		$lines = explode("\n", $mdata);
 		foreach ($lines as $line) {
 
 			if (!strlen($line)) {

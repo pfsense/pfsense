@@ -44,7 +44,7 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Interface Group Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Groups"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 if (!is_array($config['ifgroups']['ifgroupentry'])) {
@@ -53,7 +53,7 @@ if (!is_array($config['ifgroups']['ifgroupentry'])) {
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
-if (is_numericint($_GET['id'])){
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
@@ -74,18 +74,32 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!isset($id)) {
-		foreach ($a_ifgroups as $group_entry)
-			if ($group_entry['ifname'] == $_POST['ifname'])
+		foreach ($a_ifgroups as $groupentry) {
+			if ($groupentry['ifname'] == $_POST['ifname']) {
 				$input_errors[] = gettext("Group name already exists!");
+			}
+		}
 	}
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match)) {
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
 	}
 
-	/* chech if ifname is the same as an interface name */
-	foreach ($interface_list as $gif => $gdescr) {
-		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname'])
+	foreach ($iflist as $gif => $gdescr) {
+		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+		}
+	}
+	$members = "";
+	$isfirst = 0;
+	/* item is a normal ifgroupentry type */
+	for ($x = 0; $x < 9999; $x++) {
+		if ($_POST["members{$x}"] <> "") {
+			if ($isfirst > 0) {
+				$members .= " ";
+			}
+			$members .= $_POST["members{$x}"];
+			$isfirst++;
+		}
 	}
 
 	$members = isset($_POST['members']) ? join(' ', $_POST['members']) : "";

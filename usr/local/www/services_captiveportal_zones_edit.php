@@ -1,7 +1,7 @@
 <?php
 /*
 	services_captiveportal_zones_edit.php
-	Copyright (C) 2011 Ermal Luci
+	Copyright (C) 2011 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -43,12 +43,12 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Zones"));
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
 if ($_POST) {
@@ -102,7 +102,7 @@ $section = new Form_Section('Edit Captive Portal Zones');
 $section->addInput(new Form_Input(
 	'zone',
 	'Zone name'
-))->setPattern('[0-9a-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
+))->setPattern('[0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
 
 $section->addInput(new Form_Input(
 	'descr',

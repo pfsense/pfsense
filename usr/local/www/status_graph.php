@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: routing
+	pfSense_MODULE:	routing
 */
 
 ##|+PRIV
@@ -48,20 +48,23 @@
 
 require("guiconfig.inc");
 
-if ($_POST['width'])
+if ($_POST['width']) {
 	$width = $_POST['width'];
-else
+} else {
 	$width = "100%";
+}
 
-if ($_POST['height'])
+if ($_POST['height']) {
 	$height = $_POST['height'];
-else
+} else {
 	$height = "200";
+}
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable']))
+if (isset($config['ipsec']['enable'])) {
 	$ifdescrs['enc0'] = "IPsec";
+}
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -75,7 +78,7 @@ foreach (array('server', 'client') as $mode) {
 if ($_POST['if']) {
 	$curif = $_POST['if'];
 	$found = false;
-	foreach($ifdescrs as $descr => $ifdescr) {
+	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
 			$found = true;
 			break;
@@ -90,8 +93,7 @@ if ($_POST['if']) {
 		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
 		reset($ifdescrs);
 		$curif = key($ifdescrs);
-	}
-	else {
+	} else {
 		$curif = "wan";
 	}
 }
@@ -130,48 +132,52 @@ include("head.inc");
 require('classes/Form.class.php');
 
 $form = new Form(false);
-$form->addClass('auto-submit', 'form-inline');
+$form->addClass('auto-submit');
 
 $section = new Form_Section('Graph settings');
 
-$section->addInput(new Form_Select(
+$group = new Form_Group('');
+
+$group->add(new Form_Select(
 	'if',
-	'Interface ',
+	null,
 	$curif,
 	iflist()
-));
+))->setHelp('Interface');
 
-$section->addInput(new Form_Select(
+$group->add(new Form_Select(
 	'sort',
-	'Sort by',
+	null,
 	$cursort,
 	array (
 		'in'	=> 'Bandwidth In',
 		'out'	=> 'Bandwidth Out'
 	)
-));
+))->setHelp('Sort by');
 
-$section->addInput(new Form_Select(
+$group->add(new Form_Select(
 	'filter',
-	'Filter',
+	null,
 	$curfilter,
 	array (
 		'local'	=> 'Local',
 		'remote'=> 'Remote',
 		'all'	=> 'All'
 	)
-));
+))->setHelp('Filter');
 
-$section->addInput(new Form_Select(
+$group->add(new Form_Select(
 	'hostipformat',
-	'Display',
+	null,
 	$curhostipformat,
 	array (
 		''			=> 'IP Address',
 		'hostname'	=> 'Host Name',
 		'fqdn'		=> 'FQDN'
 	)
-));
+))->setHelp('Display');
+
+$section->add($group);
 
 $form->add($section);
 print $form;
@@ -219,8 +225,9 @@ events.push(function(){
 <?php
 
 /* link the ipsec interface magically */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
 	$ifdescrs['enc0'] = "IPsec";
+}
 
 ?>
 <div class="panel panel-default">

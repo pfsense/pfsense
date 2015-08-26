@@ -58,10 +58,11 @@ if ($_POST['apply']) {
 	/* Setup pf rules since the user may have changed the optimization value */
 	$retval = filter_configure();
 	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") != true)
+	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
-	else
+	} else {
 		$savemsg = $retval;
+	}
 
 	/* reset rrd queues */
 	unlink_if_exists("/var/db/rrd/*queuedrops.rrd");
@@ -71,7 +72,7 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
 $shortcut_section = "trafficshaper";
 
 $wizards = array(

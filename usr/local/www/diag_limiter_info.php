@@ -45,14 +45,15 @@ require("guiconfig.inc");
 $pgtitle = gettext("Diagnostics: Limiter Info");
 $shortcut_section = "trafficshaper-limiters";
 
-if($_REQUEST['getactivity']) {
+if ($_REQUEST['getactivity']) {
 	$text = `/sbin/ipfw pipe show`;
-	if($text == "")
-		$text = "Unable to find any limiters on this system.";
+	if ($text == "") {
+		$text = "We could not find any limiters on this system.";
+	}
 	echo "Limiters:\n";
 	echo $text;
 	$text = `/sbin/ipfw queue show`;
-	if($text != "") {
+	if ($text != "") {
 		echo "\n\nQueues:\n";
 		echo $text;
 	}

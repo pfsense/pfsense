@@ -29,7 +29,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl
-	pfSense_MODULE: interfaces
+	pfSense_MODULE:	interfaces
 */
 
 ##|+PRIV
@@ -39,13 +39,14 @@
 ##|*MATCH=interfaces_qinq_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQ"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
 
-if (!is_array($config['qinqs']['qinqentry']))
+if (!is_array($config['qinqs']['qinqentry'])) {
 	$config['qinqs']['qinqentry'] = array();
+}
 
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
@@ -53,8 +54,9 @@ $portlist = get_interface_list();
 
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg)
-			$portlist[$lagg['laggif']] = $lagg;
+	foreach ($config['laggs']['lagg'] as $lagg) {
+		$portlist[$lagg['laggif']] = $lagg;
+	}
 }
 
 if (count($portlist) < 1) {
@@ -62,11 +64,12 @@ if (count($portlist) < 1) {
 	exit;
 }
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_qinqs[$id]) {
 	$pconfig['if'] = $a_qinqs[$id]['if'];
@@ -81,22 +84,27 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (empty($_POST['tag']))
+	if (empty($_POST['tag'])) {
 		$input_errors[] = gettext("First level tag cannot be empty.");
-	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag'])
+	}
+	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag']) {
 		$input_errors[] = gettext("You are editing an existing entry and modifying the first level tag is not allowed.");
-	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if'])
+	}
+	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if']) {
 		$input_errors[] = gettext("You are editing an existing entry and modifying the interface is not allowed.");
+	}
 	if (!isset($id)) {
 		foreach ($a_qinqs as $qinqentry) {
-			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if'])
+			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if']) {
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
 			}
-
+		}
 		if (is_array($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan)
-				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if'])
+			foreach ($config['vlans']['vlan'] as $vlan) {
+				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if']) {
 					$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
+				}
+			}
 		}
 	}
 
@@ -104,8 +112,9 @@ if ($_POST) {
 	$qinqentry['if'] = $_POST['if'];
 	$qinqentry['tag'] = $_POST['tag'];
 
-	if ($_POST['autogroup'] == "yes")
+	if ($_POST['autogroup'] == "yes") {
 		$qinqentry['autogroup'] = true;
+	}
 
 	$members = "";
 	$isfirst = 0;
@@ -170,8 +179,9 @@ if ($_POST) {
 			$a_qinqs[] = $qinqentry;
 		}
 		if ($_POST['autogroup'] == "yes") {
-			if (!is_array($config['ifgroups']['ifgroupentry']))
+			if (!is_array($config['ifgroups']['ifgroupentry'])) {
 				$config['ifgroups']['ifgroupentry'] = array();
+			}
 			foreach ($config['ifgroups']['ifgroupentry'] as $gid => $group) {
 				if ($group['ifname'] == "QinQ") {
 					$found = true;
@@ -179,12 +189,13 @@ if ($_POST) {
 				}
 			}
 			$additions = "";
-			foreach($nmembers as $qtag)
+			foreach ($nmembers as $qtag) {
 				$additions .= "{$qinqentry['vlanif']}_{$qtag} ";
+			}
 			$additions .= "{$qinqentry['vlanif']}";
-			if ($found == true)
+			if ($found == true) {
 				$config['ifgroups']['ifgroupentry'][$gid]['members'] .= " {$additions}";
-			else {
+			} else {
 				$gentry = array();
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";

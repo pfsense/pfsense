@@ -41,11 +41,12 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['wireless']))
+if (!is_array($config['wireless'])) {
 	$config['wireless'] = array();
-
-if (!is_array($config['wireless']['clone']))
+}
+if (!is_array($config['wireless']['clone'])) {
 	$config['wireless']['clone'] = array();
+}
 
 $a_clones = &$config['wireless']['clone'];
 
@@ -55,8 +56,9 @@ function clone_inuse($num) {
 	$iflist = get_configured_interface_list(false, true);
 
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
+		}
 	}
 
 	return false;
@@ -77,7 +79,8 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Wireless"));
+
+$pgtitle = array(gettext("Interfaces"), gettext("Wireless"));
 $shortcut_section = "wireless";
 include("head.inc");
 

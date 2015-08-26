@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: system
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV
@@ -47,7 +47,7 @@ require_once("rrd.inc");
 unset($input_errors);
 
 /* if the rrd graphs are not enabled redirect to settings page */
-if(! isset($config['rrd']['enable'])) {
+if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
 }
 
@@ -60,7 +60,7 @@ chdir($home);
 if ($_GET['cat']) {
 	$curcat = htmlspecialchars($_GET['cat']);
 } else {
-	if(! empty($config['rrd']['category'])) {
+	if (!empty($config['rrd']['category'])) {
 		$curcat = $config['rrd']['category'];
 	} else {
 		$curcat = "system";
@@ -79,7 +79,7 @@ else
 if ($_POST['period']) {
 	$curperiod = $_POST['period'];
 } else {
-	if(! empty($config['rrd']['period'])) {
+	if (!empty($config['rrd']['period'])) {
 		$curperiod = $config['rrd']['period'];
 	} else {
 		$curperiod = "absolute";
@@ -110,8 +110,8 @@ if ($_POST['option']) {
 			$curoption = "queuedrops";
 			break;
 		case "quality":
-			foreach($databases as $database) {
-				if(preg_match("/[-]quality\.rrd/i", $database)) {
+			foreach ($databases as $database) {
+				if (preg_match("/[-]quality\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the quality graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
@@ -119,8 +119,8 @@ if ($_POST['option']) {
 				}
 			}
 		case "wireless":
-			foreach($databases as $database) {
-				if(preg_match("/[-]wireless\.rrd/i", $database)) {
+			foreach ($databases as $database) {
+				if (preg_match("/[-]wireless\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the wireless graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
@@ -128,8 +128,8 @@ if ($_POST['option']) {
 				}
 			}
 		case "cellular":
-			foreach($databases as $database) {
-				if(preg_match("/[-]cellular\.rrd/i", $database)) {
+			foreach ($databases as $database) {
+				if (preg_match("/[-]cellular\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the celullar graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
@@ -137,8 +137,8 @@ if ($_POST['option']) {
 				}
 			}
 		case "vpnusers":
-			foreach($databases as $database) {
-				if(preg_match("/[-]vpnusers\.rrd/i", $database)) {
+			foreach ($databases as $database) {
+				if (preg_match("/[-]vpnusers\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the VPN graphs */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
@@ -149,7 +149,7 @@ if ($_POST['option']) {
 			$curoption = "allgraphs";
 			break;
 		case "ntpd":
-			if(isset($config['ntpd']['statsgraph'])) {
+			if (isset($config['ntpd']['statsgraph'])) {
 				$curoption = "allgraphs";
 			} else {
 				$curoption = "processor";
@@ -163,10 +163,9 @@ if ($_POST['option']) {
 }
 
 $now = time();
-
-if($curcat == "custom") {
-	if (is_numeric($_POST['start'])) {
-		if($start < ($now - (3600 * 24 * 365 * 5))) {
+if ($curcat == "custom") {
+	if (is_numeric($_GET['start'])) {
+		if ($start < ($now - (3600 * 24 * 365 * 5))) {
 			$start = $now - (8 * 3600);
 		}
 
@@ -184,11 +183,10 @@ if($curcat == "custom") {
 	}
 }
 
-if (is_numeric($_POST['end'])) {
-	$end = $_POST['end'];
-} else if ($_POST['end']) {
-	$end = strtotime($_POST['end']);
-
+if (is_numeric($_GET['end'])) {
+	$end = $_GET['end'];
+} else if ($_GET['end']) {
+	$end = strtotime($_GET['end']);
 	if ($end === FALSE || $end === -1) {
 		$input_errors[] = gettext("Invalid end date/time:") . " '{$_POST['end']}'";
 
@@ -199,7 +197,7 @@ if (is_numeric($_POST['end'])) {
 }
 
 /* this should never happen */
-if($end < $start) {
+if ($end < $start) {
 	log_error("start $start is smaller than end $end");
 	$end = $now;
 }
@@ -207,7 +205,7 @@ if($end < $start) {
 $seconds = $end - $start;
 
 $styles = array('inverse' => gettext('Inverse'),
-				'absolute' => gettext('Absolute'));
+	'absolute' => gettext('Absolute'));
 
 /* sort names reverse so WAN comes first */
 rsort($databases);
@@ -228,28 +226,23 @@ $dbheader = array("allgraphs-traffic.rrd",
 /* additional menu choices for the custom tab */
 $dbheader_custom = array("system-throughput.rrd");
 
-foreach($databases as $database) {
-	if(stristr($database, "-wireless")) {
+foreach ($databases as $database) {
+	if (stristr($database, "-wireless")) {
 		$wireless = true;
 	}
-
-	if(stristr($database, "-queues")) {
+	if (stristr($database, "-queues")) {
 		$queues = true;
 	}
-
-	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
+	if (stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
-
-	if(stristr($database, "-vpnusers")) {
+	if (stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
-
-	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
+	if (stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
-
-	if(stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
+	if (stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
 		$ntpd = true;
 	}
 }
@@ -268,17 +261,17 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
 
 $closehead = false;
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
 	$cp_zones_tab_array = array();
-
-	foreach($config['captiveportal'] as $cpkey => $cp) {
-		if (!isset($cp['enable']))
+	foreach ($config['captiveportal'] as $cpkey => $cp) {
+		if (!isset($cp['enable'])) {
 			continue;
+		}
 
 		if ($curzone == '') {
 			$tabactive = true;
@@ -298,7 +291,7 @@ function get_dates($curperiod, $graph) {
 	$now = time();
 	$end = $now;
 
-	if($curperiod == "absolute") {
+	if ($curperiod == "absolute") {
 		$start = $end - $graph_length[$graph];
 	} else {
 		$curyear = date('Y', $now);
@@ -308,23 +301,26 @@ function get_dates($curperiod, $graph) {
 		$curday = date('d', $now);
 		$curhour = date('G', $now);
 
-		switch($curperiod) {
+		switch ($curperiod) {
 			case "previous":
 				$offset = -1;
 				break;
 			default:
 				$offset = 0;
 		}
-		switch($graph) {
+		switch ($graph) {
 			case "eighthour":
-				if($curhour < 24)
+				if ($curhour < 24) {
 					$starthour = 16;
-				if($curhour < 16)
+				}
+				if ($curhour < 16) {
 					$starthour = 8;
-				if($curhour < 8)
+				}
+				if ($curhour < 8) {
 					$starthour = 0;
+				}
 
-				switch($offset) {
+				switch ($offset) {
 					case 0:
 						$houroffset = $starthour;
 						break;
@@ -333,17 +329,18 @@ function get_dates($curperiod, $graph) {
 						break;
 				}
 				$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
-				if($offset != 0) {
+				if ($offset != 0) {
 					$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
 				}
 				break;
 			case "day":
 				$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
+				}
 				break;
 			case "week":
-				switch($offset) {
+				switch ($offset) {
 					case 0:
 						$weekoffset = 0;
 						break;
@@ -352,28 +349,33 @@ function get_dates($curperiod, $graph) {
 						break;
 				}
 				$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
+				}
 				break;
 			case "month":
 				$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				}
 				break;
 			case "quarter":
 				$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				}
 				break;
 			case "year":
 				$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				}
 				break;
 			case "fouryear":
 				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
-				if($offset != 0)
+				if ($offset != 0) {
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				}
 				break;
 		}
 	}

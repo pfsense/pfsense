@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: filter
+	pfSense_MODULE:	filter
 */
 
 ##|+PRIV
@@ -42,24 +42,23 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
+$pgtitle = array(gettext("Status"), gettext("Filter Reload Status"));
 $shortcut_section = "firewall";
 
-if(file_exists("{$g['varrun_path']}/filter_reload_status"))
+if (file_exists("{$g['varrun_path']}/filter_reload_status")) {
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");
+}
 
-if($_GET['getstatus']) {
+if ($_GET['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
-
-if($_POST['reloadfilter']) {
+if ($_POST['reloadfilter']) {
 	send_event("filter reload");
 	header("Location: status_filter_reload.php");
 	exit;
 }
-
-if($_POST['syncfilter']) {
+if ($_POST['syncfilter']) {
 	send_event("filter sync");
 	header("Location: status_filter_reload.php");
 	exit;
@@ -109,20 +108,20 @@ function update_data(obj) {
 	var result_text = obj.content;
 	var result_text_split = result_text.split("|");
 	result_text = result_text_split[1];
-	result_text = result_text.replace("\n","");
-	result_text = result_text.replace("\r","");
+	result_text = result_text.replace("\n", "");
+	result_text = result_text.replace("\r", "");
 	if (result_text) {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> ' + result_text + '...');
 	} else {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Obtaining filter status...');
 	}
-	if(result_text == "Initializing") {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Initializing...');
-	} else if(result_text == "Done") {
+	if (result_text == "Initializing") {
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> Initializing...');
+	} else if (result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
-		jQuery('#reloadinfo').css("visibility","hidden");
-		jQuery('#doneurl').css("visibility","visible");
+		jQuery('#reloadinfo').css("visibility", "hidden");
+		jQuery('#doneurl').css("visibility", "visible");
 		jQuery('#doneurl').html("<p><a href='status_queues.php'>Queue Status<\/a><\/p>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
@@ -137,43 +136,46 @@ function update_data(obj) {
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.
  */
 if (typeof getURL == 'undefined') {
-  getURL = function(url, callback) {
-	if (!url)
-	  throw 'No URL for getURL';
+	getURL = function(url, callback) {
+		if (!url) {
+			throw 'No URL for getURL';
+		}
 
-	try {
-	  if (typeof callback.operationComplete == 'function')
-		callback = callback.operationComplete;
-	} catch (e) {}
-	if (typeof callback != 'function')
-	  throw 'No callback function for getURL';
-
-	var http_request = null;
-	if (typeof XMLHttpRequest != 'undefined') {
-	  http_request = new XMLHttpRequest();
-	}
-	else if (typeof ActiveXObject != 'undefined') {
-	  try {
-		http_request = new ActiveXObject('Msxml2.XMLHTTP');
-	  } catch (e) {
 		try {
-		  http_request = new ActiveXObject('Microsoft.XMLHTTP');
+			if (typeof callback.operationComplete == 'function') {
+				callback = callback.operationComplete;
+			}
 		} catch (e) {}
-	  }
-	}
-	if (!http_request)
-	  throw 'Both getURL and XMLHttpRequest are undefined';
+		if (typeof callback != 'function') {
+			throw 'No callback function for getURL';
+		}
 
-	http_request.onreadystatechange = function() {
-	  if (http_request.readyState == 4) {
-		callback( { success : true,
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+			http_request = new XMLHttpRequest();
+		} else if (typeof ActiveXObject != 'undefined') {
+			try {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				try {
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
+			}
+		}
+		if (!http_request) {
+			throw 'Both getURL and XMLHttpRequest are undefined';
+		}
+
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
 					content : http_request.responseText,
 					contentType : http_request.getResponseHeader("Content-Type") } );
-	  }
+			}
+		}
+		http_request.open('GET', url, true);
+		http_request.send(null);
 	}
-	http_request.open('GET', url, true);
-	http_request.send(null);
-  }
 }
 
 window.setTimeout('update_status_thread()', 2500);

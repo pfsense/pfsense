@@ -47,7 +47,7 @@
 		}
 		echo "\nDevices capable of config.xml storage:\n";
 		foreach ($dirs as $dir) {
-			preg_match_all("/capable\_(.*)/",$dir,$match_array);
+			preg_match_all("/capable\_(.*)/", $dir, $match_array);
 			echo $match_array[1][0] . " ";
 		}
 		echo "\n\n";

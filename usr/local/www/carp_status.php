@@ -74,8 +74,9 @@ if($_POST['disablecarp'] <> "") {
 					 */
 					if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 						foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-							if ($dhcpv6ifconf['rainterface'] != $carp_iface)
+								if ($dhcpv6ifconf['rainterface'] != $carp_iface) {
 								continue;
+								}
 
 							services_radvd_configure();
 							break;
@@ -100,8 +101,9 @@ if($_POST['disablecarp'] <> "") {
 					sleep(1);
 					break;
 				case 'ipalias':
-					if (strpos($vip['interface'], '_vip'))
+						if (strpos($vip['interface'], '_vip')) {
 						interface_ipalias_configure($vip);
+						}
 					break;
 				}
 			}
@@ -174,8 +176,9 @@ if ($carpcount > 0):
 	</tr>
 <?php
 	foreach($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp")
+						if ($carp['mode'] != "carp") {
 			continue;
+						}
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");

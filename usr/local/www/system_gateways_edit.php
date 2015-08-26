@@ -43,28 +43,36 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
+if (isset($_POST['referer'])) {
+	$referer = $_POST['referer'];
+} else {
+	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
+}
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
-foreach($a_gateways as $gw) {
+foreach ($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
 }
 $a_gateways = $a_gateways_arr;
 
-if (!is_array($config['gateways']['gateway_item']))
+if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
+}
 
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $apinger_default = return_apinger_defaults();
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	$id = $_GET['dup'];
+}
 
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig = array();
@@ -80,8 +88,9 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['ipprotocol'] = $a_gateways[$id]['ipprotocol'];
-	if (isset($a_gateways[$id]['dynamic']))
+	if (isset($a_gateways[$id]['dynamic'])) {
 		$pconfig['dynamic'] = true;
+	}
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
@@ -102,8 +111,9 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($pconfig['attribute']);
 }
 
-if (isset($id) && $a_gateways[$id])
+if (isset($id) && $a_gateways[$id]) {
 	$realid = $a_gateways[$id]['attribute'];
+}
 
 if ($_POST) {
 
@@ -115,11 +125,36 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (! isset($_POST['name'])) {
+	if (!isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
-	if (! is_validaliasname($_POST['name'])) {
+	if (!is_validaliasname($_POST['name'])) {
 		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
+	} else if (isset($_POST['disabled'])) {
+		// We have a valid gateway name that the user wants to mark as disabled.
+		// Check if the gateway name is used in any gateway group.
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				foreach ($group['item'] as $item) {
+					$items = explode("|", $item);
+					if ($items[0] == $_POST['name']) {
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $_POST['name'], $group['name']);
+					}
+				}
+			}
+		}
+
+		// Check if the gateway name is used in any enabled Static Route.
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['gateway'] == $_POST['name']) {
+					if (!isset($route['disabled'])) {
+						// There is a static route that uses this gateway and is enabled (not disabled).
+						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $_POST['name'], $route['network']);
+					}
+				}
+			}
+		}
 	}
 	/* skip system gateways which have been automatically added */
 	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] !== "system")) && ($_POST['gateway'] != "dynamic")) {
@@ -127,89 +162,98 @@ if ($_POST) {
 	}
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && !$_REQUEST['isAjax']) {
-		if(is_ipaddrv4($_POST['gateway'])) {
+		if (is_ipaddrv4($_POST['gateway'])) {
 			$parent_ip = get_interface_ip($_POST['interface']);
 			$parent_sn = get_interface_subnet($_POST['interface']);
-			if(empty($parent_ip) || empty($parent_sn)) {
+			if (empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
 			} else {
 				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
 				$vips = link_interface_to_vips($_POST['interface']);
-				if (is_array($vips))
-					foreach($vips as $vip) {
-						if (!is_ipaddrv4($vip['subnet']))
+				if (is_array($vips)) {
+					foreach ($vips as $vip) {
+						if (!is_ipaddrv4($vip['subnet'])) {
 							continue;
+						}
 						$subnets[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
 					}
+				}
 
 				$found = false;
-				foreach($subnets as $subnet)
-					if(ip_in_subnet($_POST['gateway'], $subnet)) {
+				foreach ($subnets as $subnet) {
+					if (ip_in_subnet($_POST['gateway'], $subnet)) {
 						$found = true;
 						break;
 					}
+				}
 
-				if ($found === false)
+				if ($found === false) {
 					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+				}
 			}
-		}
-		else if(is_ipaddrv6($_POST['gateway'])) {
+		} else if (is_ipaddrv6($_POST['gateway'])) {
 			/* do not do a subnet match on a link local address, it's valid */
-			if(!is_linklocal($_POST['gateway'])) {
+			if (!is_linklocal($_POST['gateway'])) {
 				$parent_ip = get_interface_ipv6($_POST['interface']);
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
-				if(empty($parent_ip) || empty($parent_sn)) {
+				if (empty($parent_ip) || empty($parent_sn)) {
 					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
 				} else {
 					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
 					$vips = link_interface_to_vips($_POST['interface']);
-					if (is_array($vips))
-						foreach($vips as $vip) {
-							if (!is_ipaddrv6($vip['subnet']))
+					if (is_array($vips)) {
+						foreach ($vips as $vip) {
+							if (!is_ipaddrv6($vip['subnet'])) {
 								continue;
+							}
 							$subnets[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
 						}
+					}
 
 					$found = false;
-					foreach($subnets as $subnet)
-						if(ip_in_subnet($_POST['gateway'], $subnet)) {
+					foreach ($subnets as $subnet) {
+						if (ip_in_subnet($_POST['gateway'], $subnet)) {
 							$found = true;
 							break;
 						}
+					}
 
-					if ($found === false)
+					if ($found === false) {
 						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+					}
 				}
 			}
 		}
 
 		if (!empty($config['interfaces'][$_POST['interface']]['ipaddr'])) {
-			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
 				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv4 configuration.");
+			}
 		}
 		if (!empty($config['interfaces'][$_POST['interface']]['ipaddrv6'])) {
-			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddrv6']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddrv6']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
 				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv6 configuration.");
+			}
 		}
 	}
 	if (($_POST['monitor'] != "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
 	/* only allow correct IPv4 and IPv6 gateway addresses */
-	if (($_POST['gateway'] != "") && is_ipaddr($_POST['gateway']) && $_POST['gateway'] != "dynamic") {
-		if(is_ipaddrv6($_POST['gateway']) && ($_POST['ipprotocol'] == "inet")) {
+	if (($_POST['gateway'] <> "") && is_ipaddr($_POST['gateway']) && $_POST['gateway'] != "dynamic") {
+		if (is_ipaddrv6($_POST['gateway']) && ($_POST['ipprotocol'] == "inet")) {
 			$input_errors[] = gettext("The IPv6 gateway address '{$_POST['gateway']}' can not be used as a IPv4 gateway'.");
 		}
-		if(is_ipaddrv4($_POST['gateway']) && ($_POST['ipprotocol'] == "inet6")) {
+		if (is_ipaddrv4($_POST['gateway']) && ($_POST['ipprotocol'] == "inet6")) {
 			$input_errors[] = gettext("The IPv4 gateway address '{$_POST['gateway']}' can not be used as a IPv6 gateway'.");
 		}
 	}
 	/* only allow correct IPv4 and IPv6 monitor addresses */
-	if (($_POST['monitor'] != "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		if(is_ipaddrv6($_POST['monitor']) && ($_POST['ipprotocol'] == "inet")) {
+	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
+		if (is_ipaddrv6($_POST['monitor']) && ($_POST['ipprotocol'] == "inet")) {
 			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used on a IPv4 gateway'.");
 		}
-		if(is_ipaddrv4($_POST['monitor']) && ($_POST['ipprotocol'] == "inet6")) {
+		if (is_ipaddrv4($_POST['monitor']) && ($_POST['ipprotocol'] == "inet6")) {
 			$input_errors[] = gettext("The IPv4 monitor address '{$_POST['monitor']}' can not be used on a IPv6 gateway'.");
 		}
 	}
@@ -218,24 +262,25 @@ if ($_POST) {
 		/* check for overlaps */
 		foreach ($a_gateways as $gateway) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
-				if ($gateway['name'] != $_POST['name'])
+				if ($gateway['name'] != $_POST['name']) {
 					$input_errors[] = gettext("Changing name on a gateway is not allowed.");
+				}
 				continue;
 			}
-			if($_POST['name'] != "") {
-				if (($gateway['name'] != "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] !== "system")) {
+			if ($_POST['name'] <> "") {
+				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] !== "system")) {
 					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $_POST['name']);
 					break;
 				}
 			}
-			if(is_ipaddr($_POST['gateway'])) {
-				if (($gateway['gateway'] != "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] !== "system")) {
+			if (is_ipaddr($_POST['gateway'])) {
+				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] !== "system")) {
 					$input_errors[] = sprintf(gettext('The gateway IP address "%s" already exists.'), $_POST['gateway']);
 					break;
 				}
 			}
-			if(is_ipaddr($_POST['monitor'])) {
-				if (($gateway['monitor'] != "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] !== "system")) {
+			if (is_ipaddr($_POST['monitor'])) {
+				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] !== "system")) {
 					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. You must choose a different monitor IP.'), $_POST['monitor']);
 					break;
 				}
@@ -244,8 +289,8 @@ if ($_POST) {
 	}
 
 	/* input validation of apinger advanced parameters */
-	if($_POST['latencylow']) {
-		if (! is_numeric($_POST['latencylow'])) {
+	if ($_POST['latencylow']) {
+		if (!is_numeric($_POST['latencylow'])) {
 			$input_errors[] = gettext("The low latency threshold needs to be a numeric value.");
 		} else {
 			if ($_POST['latencylow'] < 1) {
@@ -254,8 +299,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['latencyhigh']) {
-		if (! is_numeric($_POST['latencyhigh'])) {
+	if ($_POST['latencyhigh']) {
+		if (!is_numeric($_POST['latencyhigh'])) {
 			$input_errors[] = gettext("The high latency threshold needs to be a numeric value.");
 		} else {
 			if ($_POST['latencyhigh'] < 1) {
@@ -264,8 +309,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['losslow']) {
-		if (! is_numeric($_POST['losslow'])) {
+	if ($_POST['losslow']) {
+		if (!is_numeric($_POST['losslow'])) {
 			$input_errors[] = gettext("The low Packet Loss threshold needs to be a numeric value.");
 		} else {
 			if ($_POST['losslow'] < 1) {
@@ -277,8 +322,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['losshigh']) {
-		if (! is_numeric($_POST['losshigh'])) {
+	if ($_POST['losshigh']) {
+		if (!is_numeric($_POST['losshigh'])) {
 			$input_errors[] = gettext("The high Packet Loss threshold needs to be a numeric value.");
 		} else {
 			if ($_POST['losshigh'] < 1) {
@@ -290,54 +335,54 @@ if ($_POST) {
 		}
 	}
 
-	if(($_POST['latencylow']) && ($_POST['latencyhigh'])) {
+	if (($_POST['latencylow']) && ($_POST['latencyhigh'])) {
 		if ((is_numeric($_POST['latencylow'])) && (is_numeric($_POST['latencyhigh']))) {
-			if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
+			if (($_POST['latencylow'] > $_POST['latencyhigh'])) {
 				$input_errors[] = gettext("The high latency threshold needs to be higher than the low latency threshold");
 			}
 		}
 	} else {
-		if($_POST['latencylow']){
+		if ($_POST['latencylow']) {
 			if (is_numeric($_POST['latencylow'])) {
-				if($_POST['latencylow'] > $apinger_default['latencyhigh']) {
+				if ($_POST['latencylow'] > $apinger_default['latencyhigh']) {
 					$input_errors[] = gettext(sprintf("The low latency threshold needs to be less than the default high latency threshold (%d)", $apinger_default['latencyhigh']));
 				}
 			}
 		}
-		if($_POST['latencyhigh']){
+		if ($_POST['latencyhigh']) {
 			if (is_numeric($_POST['latencyhigh'])) {
-				if($_POST['latencyhigh'] < $apinger_default['latencylow']) {
+				if ($_POST['latencyhigh'] < $apinger_default['latencylow']) {
 					$input_errors[] = gettext(sprintf("The high latency threshold needs to be higher than the default low latency threshold (%d)", $apinger_default['latencylow']));
 				}
 			}
 		}
 	}
 
-	if(($_POST['losslow']) && ($_POST['losshigh'])){
+	if (($_POST['losslow']) && ($_POST['losshigh'])) {
 		if ((is_numeric($_POST['losslow'])) && (is_numeric($_POST['losshigh']))) {
-			if($_POST['losslow'] > $_POST['losshigh']) {
+			if ($_POST['losslow'] > $_POST['losshigh']) {
 				$input_errors[] = gettext("The high Packet Loss threshold needs to be higher than the low Packet Loss threshold");
 			}
 		}
 	} else {
-		if($_POST['losslow']){
+		if ($_POST['losslow']) {
 			if (is_numeric($_POST['losslow'])) {
-				if($_POST['losslow'] > $apinger_default['losshigh']) {
+				if ($_POST['losslow'] > $apinger_default['losshigh']) {
 					$input_errors[] = gettext(sprintf("The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)", $apinger_default['losshigh']));
 				}
 			}
 		}
-		if($_POST['losshigh']){
+		if ($_POST['losshigh']) {
 			if (is_numeric($_POST['losshigh'])) {
-				if($_POST['losshigh'] < $apinger_default['losslow']) {
+				if ($_POST['losshigh'] < $apinger_default['losslow']) {
 					$input_errors[] = gettext(sprintf("The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)", $apinger_default['losslow']));
 				}
 			}
 		}
 	}
 
-	if($_POST['interval']) {
-		if (! is_numeric($_POST['interval'])) {
+	if ($_POST['interval']) {
+		if (!is_numeric($_POST['interval'])) {
 			$input_errors[] = gettext("The probe interval needs to be a numeric value.");
 		} else {
 			if ($_POST['interval'] < 1) {
@@ -346,8 +391,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['down']) {
-		if (! is_numeric($_POST['down'])) {
+	if ($_POST['down']) {
+		if (!is_numeric($_POST['down'])) {
 			$input_errors[] = gettext("The down time setting needs to be a numeric value.");
 		} else {
 			if ($_POST['down'] < 1) {
@@ -356,31 +401,31 @@ if ($_POST) {
 		}
 	}
 
-	if(($_POST['interval']) && ($_POST['down'])){
+	if (($_POST['interval']) && ($_POST['down'])) {
 		if ((is_numeric($_POST['interval'])) && (is_numeric($_POST['down']))) {
-			if($_POST['interval'] > $_POST['down']) {
+			if ($_POST['interval'] > $_POST['down']) {
 				$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
 			}
 		}
 	} else {
-		if($_POST['interval']){
+		if ($_POST['interval']) {
 			if (is_numeric($_POST['interval'])) {
-				if($_POST['interval'] > $apinger_default['down']) {
+				if ($_POST['interval'] > $apinger_default['down']) {
 					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
 				}
 			}
 		}
-		if($_POST['down']){
+		if ($_POST['down']) {
 			if (is_numeric($_POST['down'])) {
-				if($_POST['down'] < $apinger_default['interval']) {
+				if ($_POST['down'] < $apinger_default['interval']) {
 					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $apinger_default['interval']));
 				}
 			}
 		}
 	}
 
-	if($_POST['avg_delay_samples']) {
-		if (! is_numeric($_POST['avg_delay_samples'])) {
+	if ($_POST['avg_delay_samples']) {
+		if (!is_numeric($_POST['avg_delay_samples'])) {
 			$input_errors[] = gettext("The average delay replies qty needs to be a numeric value.");
 		} else {
 			if ($_POST['avg_delay_samples'] < 1) {
@@ -389,8 +434,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['avg_loss_samples']) {
-		if (! is_numeric($_POST['avg_loss_samples'])) {
+	if ($_POST['avg_loss_samples']) {
+		if (!is_numeric($_POST['avg_loss_samples'])) {
 			$input_errors[] = gettext("The average packet loss probes qty needs to be a numeric value.");
 		} else {
 			if ($_POST['avg_loss_samples'] < 1) {
@@ -399,8 +444,8 @@ if ($_POST) {
 		}
 	}
 
-	if($_POST['avg_loss_delay_samples']) {
-		if (! is_numeric($_POST['avg_loss_delay_samples'])) {
+	if ($_POST['avg_loss_delay_samples']) {
+		if (!is_numeric($_POST['avg_loss_delay_samples'])) {
 			$input_errors[] = gettext("The lost probe delay needs to be a numeric value.");
 		} else {
 			if ($_POST['avg_loss_delay_samples'] < 1) {
@@ -413,93 +458,111 @@ if ($_POST) {
 		$reloadif = "";
 		$gateway = array();
 
-		if (empty($_POST['interface']))
+		if (empty($_POST['interface'])) {
 			$gateway['interface'] = $pconfig['friendlyiface'];
-		else
+		} else {
 			$gateway['interface'] = $_POST['interface'];
-		if (is_ipaddr($_POST['gateway']))
+		}
+		if (is_ipaddr($_POST['gateway'])) {
 			$gateway['gateway'] = $_POST['gateway'];
-		else
+		} else {
 			$gateway['gateway'] = "dynamic";
+		}
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
 		$gateway['ipprotocol'] = $_POST['ipprotocol'];
 		$gateway['interval'] = $_POST['interval'];
 
 		$gateway['avg_delay_samples'] = $_POST['avg_delay_samples'];
-		if ($_POST['avg_delay_samples_calculated'] == "yes" || $_POST['avg_delay_samples_calculated'] == "on")
+		if ($_POST['avg_delay_samples_calculated'] == "yes" || $_POST['avg_delay_samples_calculated'] == "on") {
 			$gateway['avg_delay_samples_calculated'] = true;
+		}
 
 		$gateway['avg_loss_samples'] = $_POST['avg_loss_samples'];
-		if ($_POST['avg_loss_samples_calculated'] == "yes" || $_POST['avg_loss_samples_calculated'] == "on")
+		if ($_POST['avg_loss_samples_calculated'] == "yes" || $_POST['avg_loss_samples_calculated'] == "on") {
 			$gateway['avg_loss_samples_calculated'] = true;
+		}
 
 		$gateway['avg_loss_delay_samples'] = $_POST['avg_loss_delay_samples'];
-		if ($_POST['avg_loss_delay_samples_calculated'] == "yes" || $_POST['avg_loss_delay_samples_calculated'] == "on")
+		if ($_POST['avg_loss_delay_samples_calculated'] == "yes" || $_POST['avg_loss_delay_samples_calculated'] == "on") {
 			$gateway['avg_loss_delay_samples_calculated'] = true;
+		}
 
 		$gateway['descr'] = $_POST['descr'];
-		if ($_POST['monitor_disable'] == "yes")
+		if ($_POST['monitor_disable'] == "yes") {
 			$gateway['monitor_disable'] = true;
-		if ($_POST['force_down'] == "yes")
+		}
+		if ($_POST['force_down'] == "yes") {
 			$gateway['force_down'] = true;
-		if (is_ipaddr($_POST['monitor']))
+		}
+		if (is_ipaddr($_POST['monitor'])) {
 			$gateway['monitor'] = $_POST['monitor'];
+		}
 
 		/* NOTE: If monitor ip is changed need to cleanup the old static route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
 			$_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
-			if (is_ipaddrv4($a_gateway_item[$realid]['monitor']))
+			if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
 				mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
-			else
+			} else {
 				mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+			}
 		}
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 			$i = 0;
 			/* remove the default gateway bits for all gateways with the same address family */
-			foreach($a_gateway_item as $gw) {
+			foreach ($a_gateway_item as $gw) {
 				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
 					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw']) {
 						$reloadif = $gw['interface'];
+					}
 				}
 				$i++;
 			}
 			$gateway['defaultgw'] = true;
 		}
 
-		if ($_POST['latencylow'])
+		if ($_POST['latencylow']) {
 			$gateway['latencylow'] = $_POST['latencylow'];
-		if ($_POST['latencyhigh'])
+		}
+		if ($_POST['latencyhigh']) {
 			$gateway['latencyhigh'] = $_POST['latencyhigh'];
-		if ($_POST['losslow'])
+		}
+		if ($_POST['losslow']) {
 			$gateway['losslow'] = $_POST['losslow'];
-		if ($_POST['losshigh'])
+		}
+		if ($_POST['losshigh']) {
 			$gateway['losshigh'] = $_POST['losshigh'];
-		if ($_POST['down'])
+		}
+		if ($_POST['down']) {
 			$gateway['down'] = $_POST['down'];
+		}
 
-		if(isset($_POST['disabled']))
+		if (isset($_POST['disabled'])) {
 			$gateway['disabled'] = true;
-		else
+		} else {
 			unset($gateway['disabled']);
+		}
 
 		/* when saving the manual gateway we use the attribute which has the corresponding id */
-		if (isset($realid) && $a_gateway_item[$realid])
+		if (isset($realid) && $a_gateway_item[$realid]) {
 			$a_gateway_item[$realid] = $gateway;
-		else
+		} else {
 			$a_gateway_item[] = $gateway;
+		}
 
 		mark_subsystem_dirty('staticroutes');
 
 		write_config();
 
-		if($_REQUEST['isAjax']) {
+		if ($_REQUEST['isAjax']) {
 			echo $_POST['name'];
 			exit;
-		} else if (!empty($reloadif))
+		} else if (!empty($reloadif)) {
 			send_event("interface reconfigure {$reloadif}");
+		}
 
 		header("Location: system_gateways.php");
 		exit;
@@ -514,13 +577,14 @@ if ($_POST) {
 		}
 
 		$pconfig = $_POST;
-		if (empty($_POST['friendlyiface']))
+		if (empty($_POST['friendlyiface'])) {
 			$pconfig['friendlyiface'] = $_POST['interface'];
+		}
 	}
 }
 
 
-$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
+$pgtitle = array(gettext("System"), gettext("Gateways"), gettext("Edit gateway"));
 $shortcut_section = "gateways";
 
 include("head.inc");

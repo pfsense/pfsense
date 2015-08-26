@@ -61,8 +61,9 @@ if (isset($_POST['apply'])) {
 	/* reload the filter in the background */
 	filter_configure();
 	$savemsg = get_std_save_message($retval);
-	if (is_subsystem_dirty('ipsec'))
+	if (is_subsystem_dirty('ipsec')) {
 		clear_subsystem_dirty('ipsec');
+	}
 }
 
 if ($_GET['act'] == "del") {

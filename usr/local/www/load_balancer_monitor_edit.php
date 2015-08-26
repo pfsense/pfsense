@@ -49,10 +49,12 @@ if (!is_array($config['load_balancer']['monitor_type'])) {
 }
 $a_monitor = &$config['load_balancer']['monitor_type'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_monitor[$id]) {
 	$pconfig['name'] = $a_monitor[$id]['name'];
@@ -76,10 +78,10 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* turn $_POST['http_options_*'] into $pconfig['options'][*] */
-	foreach($_POST as $key => $val) {
+	foreach ($_POST as $key => $val) {
 		if (stristr($key, 'options') !== false) {
 			if (stristr($key, $pconfig['type'].'_') !== false) {
-				$opt = explode('_',$key);
+				$opt = explode('_', $key);
 				$pconfig['options'][$opt[2]] = $val;
 			}
 			unset($pconfig[$key]);
@@ -88,22 +90,26 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name type descr");
-	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Type"), gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our monitor names are unique */
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id))
-			$input_errors[] = gettext("This monitor name has already been used.	 Monitor names must be unique.");
+	for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
+		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id)) {
+			$input_errors[] = gettext("This monitor name has already been used.  Monitor names must be unique.");
+		}
+	}
 
-	if (preg_match('/[ \/]/', $_POST['name']))
+	if (preg_match('/[ \/]/', $_POST['name'])) {
 		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+	}
 
-	if (strlen($_POST['name']) > 16)
+	if (strlen($_POST['name']) > 16) {
 		$input_errors[] = gettext("The 'name' field must be 16 characters or less.");
+	}
 
-	switch($_POST['type']) {
+	switch ($_POST['type']) {
 		case 'icmp': {
 			break;
 		}
@@ -120,7 +126,7 @@ if ($_POST) {
 				}
 				if (isset($pconfig['options']['code']) && $pconfig['options']['code'] != "") {
 					// Check code
-					if(!is_rfc2616_code($pconfig['options']['code'])) {
+					if (!is_rfc2616_code($pconfig['options']['code'])) {
 						$input_errors[] = gettext("HTTP(s) codes must be from RFC2616.");
 					}
 				}
@@ -145,15 +151,17 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$monent = array();
-		if(isset($id) && $a_monitor[$id])
+		if (isset($id) && $a_monitor[$id]) {
 			$monent = $a_monitor[$id];
-		if($monent['name'] != "")
+		}
+		if ($monent['name'] != "") {
 			$changedesc .= " " . sprintf(gettext("modified '%s' monitor:"), $monent['name']);
+		}
 
 		update_if_changed("name", $monent['name'], $pconfig['name']);
 		update_if_changed("type", $monent['type'], $pconfig['type']);
 		update_if_changed("description", $monent['descr'], $pconfig['descr']);
-		if($pconfig['type'] == "http" || $pconfig['type'] == "https" ) {
+		if ($pconfig['type'] == "http" || $pconfig['type'] == "https") {
 			/* log updates, then clear array and reassign - dumb, but easiest way to have a clear array */
 			update_if_changed("path", $monent['options']['path'], $pconfig['options']['path']);
 			update_if_changed("host", $monent['options']['host'], $pconfig['options']['host']);
@@ -163,7 +171,7 @@ if ($_POST) {
 			$monent['options']['host'] = $pconfig['options']['host'];
 			$monent['options']['code'] = $pconfig['options']['code'];
 		}
-		if($pconfig['type'] == "send" ) {
+		if ($pconfig['type'] == "send") {
 			/* log updates, then clear array and reassign - dumb, but easiest way to have a clear array */
 			update_if_changed("send", $monent['options']['send'], $pconfig['options']['send']);
 			update_if_changed("expect", $monent['options']['expect'], $pconfig['options']['expect']);
@@ -171,19 +179,21 @@ if ($_POST) {
 			$monent['options']['send'] = $pconfig['options']['send'];
 			$monent['options']['expect'] = $pconfig['options']['expect'];
 		}
-		if($pconfig['type'] == "tcp" || $pconfig['type'] == "icmp") {
+		if ($pconfig['type'] == "tcp" || $pconfig['type'] == "icmp") {
 			$monent['options'] = array();
 		}
 
 		if (isset($id) && $a_monitor[$id]) {
 			/* modify all pools with this name */
 			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-				if ($config['load_balancer']['lbpool'][$i]['monitor'] == $a_monitor[$id]['name'])
+				if ($config['load_balancer']['lbpool'][$i]['monitor'] == $a_monitor[$id]['name']) {
 					$config['load_balancer']['lbpool'][$i]['monitor'] = $monent['name'];
+				}
 			}
 			$a_monitor[$id] = $monent;
-		} else
+		} else {
 			$a_monitor[] = $monent;
+		}
 
 		if ($changecount > 0) {
 			/* Mark config dirty */
@@ -196,7 +206,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");

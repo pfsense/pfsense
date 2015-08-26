@@ -51,19 +51,17 @@ if ($_POST) {
 
 	if ($_POST['statetable']) {
 		filter_flush_state_table();
-
-		if ($savemsg)
+		if ($savemsg) {
 			$savemsg .= " ";
-
+		}
 		$savemsg .= gettext("The state table has been flushed successfully.");
 	}
 
 	if ($_POST['sourcetracking']) {
 		mwexec("/sbin/pfctl -F Sources");
-
-		if ($savemsg)
+		if ($savemsg) {
 			$savemsg .= " <br />";
-
+		}
 		$savemsg .= gettext("The source tracking table has been flushed successfully.");
 	}
 }

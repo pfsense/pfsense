@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2010 Ermal Lu�i
+	Copyright (C) 2010 Ermal Luçi
 	All rights reserved.
 
 	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
@@ -520,7 +520,6 @@ function local_user_set(& $user) {
 	/* create user directory if required */
 	if (!is_dir($user_home)) {
 		mkdir($user_home, 0700);
-		mwexec("/bin/cp /root/.* {$home_base}/", true);
 	}
 	@chown($user_home, $user_name);
 	@chgrp($user_home, $user_group);
@@ -1230,7 +1229,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/* Get LDAP Authcontainers and split em up. */
 	$ldac_splits = explode(";", $ldapauthcont);
 
-	/* setup the usercount so we think we havn't found anyone yet */
+	/* setup the usercount so we think we haven't found anyone yet */
 	$usercount  = 0;
 
 	/*****************************************************************/

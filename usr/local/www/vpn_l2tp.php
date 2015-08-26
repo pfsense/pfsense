@@ -72,12 +72,12 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
+		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
-				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
+				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -96,7 +96,7 @@ if ($_POST) {
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
-		if(isAjax() && is_array($input_errors)) {
+		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
@@ -117,7 +117,7 @@ if ($_POST) {
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
-	if(isAjax() && is_array($input_errors)) {
+	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
@@ -134,40 +134,48 @@ if ($_POST) {
 		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
 		$l2tpcfg['secret'] = $_POST['secret'];
 
-		if($_POST['wins'])
+		if ($_POST['wins']) {
 			$l2tpcfg['wins'] = $_POST['wins'];
-		else
+		} else {
 			unset($l2tpcfg['wins']);
+		}
 
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
 
 
 		if ($_POST['l2tp_dns1'] == "") {
-			if (isset($l2tpcfg['dns1']))
+			if (isset($l2tpcfg['dns1'])) {
 				unset($l2tpcfg['dns1']);
-			} else
-				$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
+			}
+		} else {
+			$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
+		}
 
-			if ($_POST['l2tp_dns2'] == "") {
-				if (isset($l2tpcfg['dns2']))
-					unset($l2tpcfg['dns2']);
-			} else
-				$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		if ($_POST['l2tp_dns2'] == "") {
+			if (isset($l2tpcfg['dns2'])) {
+				unset($l2tpcfg['dns2']);
+			}
+		} else {
+			$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		}
 
-		if($_POST['radiusenable'] == "yes")
+		if ($_POST['radiusenable'] == "yes") {
 			$l2tpcfg['radius']['enable'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['enable']);
+		}
 
-		if($_POST['radacct_enable'] == "yes")
+		if ($_POST['radacct_enable'] == "yes") {
 			$l2tpcfg['radius']['accounting'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['accounting']);
+		}
 
-		if($_POST['radiusissueips'] == "yes")
+		if ($_POST['radiusissueips'] == "yes") {
 			$l2tpcfg['radius']['radiusissueips'] = true;
-		else
+		} else {
 			unset($l2tpcfg['radius']['radiusissueips']);
+		}
 
 		write_config();
 
@@ -176,8 +184,9 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 
 		/* if ajax is calling, give them an update message */
-		if(isAjax())
+		if (isAjax()) {
 			print_info_box_np($savemsg);
+		}
 	}
 }
 
@@ -186,11 +195,11 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-function get_radio_value(obj)
-{
+function get_radio_value(obj) {
 	for (i = 0; i < obj.length; i++) {
-		if (obj[i].checked)
+		if (obj[i].checked) {
 			return obj[i].value;
+		}
 	}
 	return null;
 }
@@ -208,7 +217,7 @@ function enable_change(enable_over) {
 		document.iform.secret.disabled = 0;
 		document.iform.l2tp_dns1.disabled = 0;
 		document.iform.l2tp_dns2.disabled = 0;
-	/* fix colors */
+		/* fix colors */
 		document.iform.remoteip.style.backgroundColor = '#FFFFFF';
 		document.iform.localip.style.backgroundColor = '#FFFFFF';
 		document.iform.l2tp_subnet.style.backgroundColor = '#FFFFFF';
@@ -223,7 +232,7 @@ function enable_change(enable_over) {
 			document.iform.radiusserver.disabled = 0;
 			document.iform.radiussecret.disabled = 0;
 			document.iform.radiusissueips.disabled = 0;
-	  /* fix colors */
+			/* fix colors */
 			document.iform.radacct_enable.style.backgroundColor = '#FFFFFF';
 			document.iform.radiusserver.style.backgroundColor = '#FFFFFF';
 			document.iform.radiussecret.style.backgroundColor = '#FFFFFF';
@@ -233,7 +242,7 @@ function enable_change(enable_over) {
 			document.iform.radiusserver.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
 			document.iform.radiusissueips.disabled = 1;
-	  /* fix colors */
+			/* fix colors */
 			document.iform.radacct_enable.style.backgroundColor = '#D4D0C8';
 			document.iform.radiusserver.style.backgroundColor = '#D4D0C8';
 			document.iform.radiussecret.style.backgroundColor = '#D4D0C8';
@@ -254,7 +263,7 @@ function enable_change(enable_over) {
 		document.iform.radiussecret.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
 		document.iform.secret.disabled = 1;
-	/* fix colors */
+		/* fix colors */
 		document.iform.interface.style.backgroundColor = '#D4D0C8';
 		document.iform.n_l2tp_units.style.backgroundColor = '#D4D0C8';
 		document.iform.l2tp_subnet.style.backgroundColor = '#D4D0C8';

@@ -1,7 +1,7 @@
 <?php
 /*
 	vpn_pppoe.php
-	Copyright (C) 2010 Ermal Luci
+	Copyright (C) 2010 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -41,8 +41,9 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['pppoes']['pppoe']))
+if (!is_array($config['pppoes']['pppoe'])) {
 	$config['pppoes']['pppoe'] = array();
+}
 
 $a_pppoes = &$config['pppoes']['pppoe'];
 
@@ -53,8 +54,9 @@ if ($_POST) {
 		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
 			foreach ($toapplylist as $pppoeid) {
-				if (!is_numeric($pppoeid))
+				if (!is_numeric($pppoeid)) {
 					continue;
+				}
 				if (is_array($config['pppoes']['pppoe'])) {
 					foreach ($config['pppoes']['pppoe'] as $pppoe) {
 						if ($pppoe['pppoeid'] == $pppoeid) {
@@ -75,12 +77,12 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_pppoes[$_GET['id']]) {
-		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid")
+		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid") {
 			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid");
-
-		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']))
+		}
+		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'])) {
 			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']);
-
+		}
 		unset($a_pppoes[$_GET['id']]);
 		write_config();
 		header("Location: vpn_pppoe.php");
@@ -88,7 +90,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("PPPoE"));
+$pgtitle = array(gettext("VPN"), gettext("PPPoE"));
 $shortcut_section = "pppoes";
 include("head.inc");
 

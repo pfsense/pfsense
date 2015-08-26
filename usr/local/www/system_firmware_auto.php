@@ -50,16 +50,18 @@ require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
 
-if(isset($curcfg['alturl']['enable']))
+if (isset($curcfg['alturl']['enable'])) {
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else
+} else {
 	$updater_url = $g['update_url'];
+}
 
-if($_POST['backupbeforeupgrade'])
+if ($_POST['backupbeforeupgrade']) {
 	touch("/tmp/perform_full_backup.txt");
+}
 
 $closehead = false;
-$pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
 $tab_array = array();
@@ -89,10 +91,11 @@ panel_heading_class('info');
 
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt"))
+	if (file_exists("/etc/nano_use_vga.txt")) {
 		$nanosize = "-nanobsd-vga-";
-	else
+	} else {
 		$nanosize = "-nanobsd-";
+	}
 
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 }
@@ -100,14 +103,12 @@ if ($g['platform'] == "nanobsd") {
 @unlink("/tmp/{$g['product_name']}_version");
 download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
-
-if(!$latest_version) {
+if (!$latest_version) {
 	update_output_window(gettext("Unable to check for updates."));
 	require("foot.inc");
 	exit;
 } else {
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-	$current_installed_version = trim(file_get_contents("/etc/version"));
 	$latest_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
 	if(!$latest_version) {
@@ -145,10 +146,11 @@ if(!$latest_version) {
 /* launch external upgrade helper */
 $external_upgrade_helper_text = "/etc/rc.firmware ";
 
-if($g['platform'] == "nanobsd")
+if ($g['platform'] == "nanobsd") {
 	$external_upgrade_helper_text .= "pfSenseNanoBSDupgrade ";
-else
+} else {
 	$external_upgrade_helper_text .= "pfSenseupgrade ";
+}
 
 $external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
@@ -157,8 +159,9 @@ $upgrade_latest_tgz_sha256 = str_replace("\n", "", `/bin/cat {$g['upload_path']}
 
 $sigchk = 0;
 
-if(!isset($curcfg['alturl']['enable']))
+if (!isset($curcfg['alturl']['enable'])) {
 	$sigchk = verify_digital_signature("{$g['upload_path']}/latest.tgz");
+}
 
 $exitstatus = 0;
 if ($sigchk == 1) {
@@ -166,8 +169,9 @@ if ($sigchk == 1) {
 	$exitstatus = 1;
 } else if ($sigchk == 2) {
 	$sig_warning = gettext("This image is not digitally signed.");
-	if (!isset($config['system']['firmware']['allowinvalidsig']))
+	if (!isset($config['system']['firmware']['allowinvalidsig'])) {
 		$exitstatus = 1;
+	}
 } else if (($sigchk >= 3)) {
 	$sig_warning = gettext("There has been an error verifying the signature on this image.");
 	$exitstatus = 1;
@@ -216,7 +220,7 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 */
 
 function read_body_firmware($ch, $string) {
-	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_version;
+	global $g, $fout, $file_size, $downloaded, $counter, $version, $latest_version;
 	$length = strlen($string);
 	$downloaded += intval($length);
 	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
@@ -226,14 +230,14 @@ function read_body_firmware($ch, $string) {
 	$c = $downloadProgress;
 	$text  = "	" . gettext("Auto Update Download Status") . "\\n";
 	$text .= "----------------------------------------------------\\n";
-	$text .= "	" . gettext("Current Version") . " : {$current_installed_version}\\n";
-	$text .= "	" . gettext("Latest Version") . "  : {$latest_version}\\n";
-	$text .= "	" . gettext("File size") . "	   : {$a}\\n";
-	$text .= "	" . gettext("Downloaded") . "	   : {$b}\\n";
-	$text .= "	" . gettext("Percent") . "		   : {$c}%\\n";
+	$text .= "  " . gettext("Current Version") . " : {$g['product_version']}\\n";
+	$text .= "  " . gettext("Latest Version") . "  : {$latest_version}\\n";
+	$text .= "  " . gettext("File size") . "       : {$a}\\n";
+	$text .= "  " . gettext("Downloaded") . "      : {$b}\\n";
+	$text .= "  " . gettext("Percent") . "         : {$c}%\\n";
 	$text .= "----------------------------------------------------\\n";
 	$counter++;
-	if($counter > 150) {
+	if ($counter > 150) {
 		update_output_window($text);
 		update_progress_bar($downloadProgress);
 		$counter = 0;

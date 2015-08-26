@@ -42,11 +42,14 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 foreach ($ipsec_loglevels as $lkey => $ldescr) {
-	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
+	if (!empty($config['ipsec']["ipsec_{$lkey}"])) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
+	}
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
-$pconfig['shuntlaninterfaces'] = isset($config['ipsec']['shuntlaninterfaces']);
+$pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
+$pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
+$pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
@@ -111,98 +114,130 @@ if ($_POST) {
 		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
-		if ($pconfig['maxmss'] != '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
+		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
 			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
+		}
 	}
 
 	if (!$input_errors) {
 
-		if (is_array($config['ipsec'])) {
-			foreach ($ipsec_loglevels as $lkey => $ldescr) {
-				if (empty($_POST["ipsec_{$lkey}"])) {
-					if (isset($config['ipsec']["ipsec_{$lkey}"]))
-						unset($config['ipsec']["ipsec_{$lkey}"]);
-				} else
-					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		foreach ($ipsec_loglevels as $lkey => $ldescr) {
+			if (empty($_POST["ipsec_{$lkey}"])) {
+				if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+					unset($config['ipsec']["ipsec_{$lkey}"]);
+				}
+			} else {
+				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 			}
 		}
 
 		$needsrestart = false;
 
-		if($_POST['compression'] == "yes") {
-			if (!isset($config['ipsec']['compression']))
+		if ($_POST['compression'] == "yes") {
+			if (!isset($config['ipsec']['compression'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['compression'] = true;
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
 		}
 
-		if($_POST['enableinterfacesuse'] == "yes") {
-			if (!isset($config['ipsec']['enableinterfacesuse']))
+		if ($_POST['enableinterfacesuse'] == "yes") {
+			if (!isset($config['ipsec']['enableinterfacesuse'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['enableinterfacesuse'] = true;
 		} elseif (isset($config['ipsec']['enableinterfacesuse'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['enableinterfacesuse']);
 		}
 
-		if($_POST['unityplugin'] == "yes") {
-			if (!isset($config['ipsec']['unityplugin']))
+		if ($_POST['unityplugin'] == "yes") {
+			if (!isset($config['ipsec']['unityplugin'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['unityplugin'] = true;
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
 		}
-
-		if($_POST['shuntlaninterfaces'] == "yes") {
-			$config['ipsec']['shuntlaninterfaces'] = true;
-		} elseif (isset($config['ipsec']['shuntlaninterfaces'])) {
-			unset($config['ipsec']['shuntlaninterfaces']);
+		
+		if ($_POST['strictcrlpolicy'] == "yes") {
+			$config['ipsec']['strictcrlpolicy'] = true;
+		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
+			unset($config['ipsec']['strictcrlpolicy']);
 		}
 
-		if($_POST['acceptunencryptedmainmode'] == "yes") {
-			if (!isset($config['ipsec']['acceptunencryptedmainmode']))
+		if ($_POST['makebeforebreak'] == "yes") {
+			$config['ipsec']['makebeforebreak'] = true;
+		} elseif (isset($config['ipsec']['makebeforebreak'])) {
+			unset($config['ipsec']['makebeforebreak']);
+		}
+
+		if ($_POST['noshuntlaninterfaces'] == "yes") {
+			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
+				unset($config['ipsec']['noshuntlaninterfaces']);
+			}
+		} else {
+			$config['ipsec']['noshuntlaninterfaces'] = true;
+		}
+
+		if ($_POST['acceptunencryptedmainmode'] == "yes") {
+			if (!isset($config['ipsec']['acceptunencryptedmainmode'])) {
 				$needsrestart = true;
+			}
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
 		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['acceptunencryptedmainmode']);
 		}
 
-		if(!empty($_POST['uniqueids'])) {
+		if (!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
-		} else {
+		} else if (isset($config['ipsec']['uniqueids'])) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
-		if($_POST['maxmss_enable'] == "yes") {
+		if ($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
 			$config['system']['maxmss'] = $_POST['maxmss'];
 		} else {
-			unset($config['system']['maxmss_enable']);
-			unset($config['system']['maxmss']);
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
 		}
 
 		write_config();
 
 		$retval = 0;
 		$retval = filter_configure();
-		if(stristr($retval, "error") != true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
-		else
+		} else {
 			$savemsg = gettext($retval);
+		}
 
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
-//		header("Location: vpn_ipsec_settings.php");
-//		return;
+		header("Location: vpn_ipsec_settings.php");
+		return;
+	}
+
+	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
+	if ($_POST['noshuntlaninterfaces'] == "yes") {
+		$pconfig['noshuntlaninterfaces'] = false;
+	} else {
+		$pconfig['noshuntlaninterfaces'] = true;
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Settings"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -212,20 +247,23 @@ include("head.inc");
 //<![CDATA[
 
 function maxmss_checked(obj) {
-	if (obj.checked)
-		jQuery('#maxmss').attr('disabled',false);
-	else
-		jQuery('#maxmss').attr('disabled','true');
+	if (obj.checked) {
+		jQuery('#maxmss').attr('disabled', false);
+	} else {
+		jQuery('#maxmss').attr('disabled', 'true');
+	}
 }
 
 //]]>
 </script>
 
 <?php
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg);
-	if ($input_errors)
+	}
+	if ($input_errors) {
 		print_input_errors($input_errors);
+	}
 ?>
 
 <?php

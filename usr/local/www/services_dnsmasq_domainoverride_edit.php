@@ -47,25 +47,23 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_domainOverrides[$id]) {
-	   $pconfig['domain'] = $a_domainOverrides[$id]['domain'];
-
-	   if (is_ipaddr($a_domainOverrides[$id]['ip']) && ($a_domainOverrides[$id]['ip'] != '#')) {
-			  $pconfig['ip'] = $a_domainOverrides[$id]['ip'];
-	   }
-	   else {
-			 $dnsmasqpieces = explode('@', $a_domainOverrides[$id]['ip'], 2);
-			 $pconfig['ip'] = $dnsmasqpieces[0];
-			 $pconfig['dnssrcip'] = $dnsmasqpieces[1];
-	   }
-
-	   $pconfig['descr'] = $a_domainOverrides[$id]['descr'];
+	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
+	if (is_ipaddr($a_domainOverrides[$id]['ip']) && ($a_domainOverrides[$id]['ip'] != '#')) {
+		$pconfig['ip'] = $a_domainOverrides[$id]['ip'];
+	} else {
+		$dnsmasqpieces = explode('@', $a_domainOverrides[$id]['ip'], 2);
+		$pconfig['ip'] = $dnsmasqpieces[0];
+		$pconfig['dnssrcip'] = $dnsmasqpieces[1];
+	}
+	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
 }
 
 if ($_POST) {
@@ -112,21 +110,22 @@ if ($_POST) {
 
 			$doment['descr'] = $_POST['descr'];
 
-			if (isset($id) && $a_domainOverrides[$id])
-				$a_domainOverrides[$id] = $doment;
-			else
-				$a_domainOverrides[] = $doment;
+		if (isset($id) && $a_domainOverrides[$id]) {
+			$a_domainOverrides[$id] = $doment;
+		} else {
+			$a_domainOverrides[] = $doment;
+		}
 
-			$retval = services_dnsmasq_configure();
+		$retval = services_dnsmasq_configure();
 
-			write_config();
+		write_config();
 
-			header("Location: services_dnsmasq.php");
-			exit;
-	   }
+		header("Location: services_dnsmasq.php");
+		exit;
+	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit Domain Override"));
+$pgtitle = array(gettext("Services"), gettext("DNS forwarder"), gettext("Edit Domain Override"));
 $shortcut_section = "forwarder";
 include("head.inc");
 

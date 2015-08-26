@@ -36,20 +36,21 @@
 ##|*MATCH=vpn_l2tp_users_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("User"),gettext("Edit"));
+$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("User"), gettext("Edit"));
 $shortcut_section = "l2tps";
 
-function  l2tpusercmp($a,  $b)  {
-	return  strcasecmp($a['name'],  $b['name']);
+function l2tpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
 }
 
-function  l2tp_users_sort()  {
-		global  $config;
+function l2tp_users_sort() {
+	global $config;
 
-		if (!is_array($config['l2tp']['user']))
-				return;
+	if (!is_array($config['l2tp']['user'])) {
+		return;
+	}
 
-		usort($config['l2tp']['user'],  "l2tpusercmp");
+	usort($config['l2tp']['user'], "l2tpusercmp");
 }
 
 require("guiconfig.inc");
@@ -60,10 +61,12 @@ if (!is_array($config['l2tp']['user'])) {
 }
 $a_secret = &$config['l2tp']['user'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['usernamefld'] = $a_secret[$id]['name'];
@@ -81,16 +84,18 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
 		$reqdfields = explode(" ", "usernamefld passwordfld");
-		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
+		$reqdfieldsn = array(gettext("Username"), gettext("Password"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
+	}
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['passwordfld']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['passwordfld'])) {
 		$input_errors[] = gettext("The password contains invalid characters.");
+	}
 
 	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld2'])) {
 		$input_errors[] = gettext("The passwords do not match.");
@@ -110,26 +115,29 @@ if ($_POST) {
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
-	if(isAjax() && is_array($input_errors)) {
+	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_secret[$id])
+		if (isset($id) && $a_secret[$id]) {
 			$secretent = $a_secret[$id];
+		}
 
 		$secretent['name'] = $_POST['usernamefld'];
 		$secretent['ip'] = $_POST['ip'];
 
-		if ($_POST['passwordfld'])
+		if ($_POST['passwordfld']) {
 			$secretent['password'] = $_POST['passwordfld'];
+		}
 
-		if (isset($id) && $a_secret[$id])
+		if (isset($id) && $a_secret[$id]) {
 			$a_secret[$id] = $secretent;
-		else
+		} else {
 			$a_secret[] = $secretent;
+		}
 		l2tp_users_sort();
 
 		write_config();

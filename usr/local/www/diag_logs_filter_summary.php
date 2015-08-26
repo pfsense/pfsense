@@ -9,11 +9,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -29,7 +29,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE: filter
+	pfSense_MODULE:	filter
 */
 
 $pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
@@ -57,7 +57,7 @@ $numcolors = 10;
 
 $summary = array();
 foreach (array_keys($fields) as $f) {
-	$summary[$f]  = array();
+	$summary[$f] = array();
 }
 
 $totals = array();
@@ -78,7 +78,7 @@ function stat_block($summary, $stat, $num) {
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
-	for ($i=0; $i < $num; $i++) {
+	for ($i = 0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
@@ -89,8 +89,9 @@ function stat_block($summary, $stat, $num) {
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
-				if ($service)
+				if ($service) {
 					$outstr .= ": {$service}";
+				}
 			}
 
 			if(!is_ipaddr($outstr))
@@ -221,18 +222,21 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 foreach ($filterlog as $fe) {
 	$specialfields = array('srcport', 'dstport');
 	foreach (array_keys($fields) as $field) {
-		if (!in_array($field, $specialfields))
+		if (!in_array($field, $specialfields)) {
 			$summary[$field][$fe[$field]]++;
+		}
 	}
 	/* Handle some special cases */
-	if ($fe['srcport'])
+	if ($fe['srcport']) {
 		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
-	else
+	} else {
 		$summary['srcport'][$fe['srcport']]++;
-	if ($fe['dstport'])
+	}
+	if ($fe['dstport']) {
 		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
-	else
+	} else {
 		$summary['dstport'][$fe['dstport']]++;
+	}
 }
 
 include("head.inc");

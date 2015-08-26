@@ -57,17 +57,19 @@ $pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
 
 $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
-
-if (!empty($config['dnsmasq']['interface']))
+if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
-else
+} else {
 	$pconfig['interface'] = array();
+}
 
-if (!is_array($config['dnsmasq']['hosts']))
+if (!is_array($config['dnsmasq']['hosts'])) {
 	$config['dnsmasq']['hosts'] = array();
+}
 
-if (!is_array($config['dnsmasq']['domainoverrides']))
+if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	$config['dnsmasq']['domainoverrides'] = array();
+}
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
@@ -87,31 +89,36 @@ if ($_POST) {
 	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
 
 	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-		if ($_POST['port'] == $config['unbound']['port'])
+		if ($_POST['port'] == $config['unbound']['port']) {
 			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+		}
 	}
 
 	if ($_POST['port']) {
-		if(is_port($_POST['port']))
+		if (is_port($_POST['port'])) {
 			$config['dnsmasq']['port'] = $_POST['port'];
-		else
+		} else {
 			$input_errors[] = gettext("You must specify a valid port number");
-	}
-	else if (isset($config['dnsmasq']['port']))
+		}
+	} else if (isset($config['dnsmasq']['port'])) {
 		unset($config['dnsmasq']['port']);
+	}
 
-	if (is_array($_POST['interface']))
+	if (is_array($_POST['interface'])) {
 		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	elseif (isset($config['dnsmasq']['interface']))
+	} elseif (isset($config['dnsmasq']['interface'])) {
 		unset($config['dnsmasq']['interface']);
+	}
 
 	if ($config['dnsmasq']['custom_options']) {
 		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
+		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
 			$args .= escapeshellarg("--{$c}") . " ";
+		}
 		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-		if ($rc != 0)
+		if ($rc != 0) {
 			$input_errors[] = gettext("Invalid custom options");
+		}
 	}
 
 	if (!$input_errors) {
@@ -121,15 +128,16 @@ if ($_POST) {
 		$retval = services_dnsmasq_configure();
 		$savemsg = get_std_save_message($retval);
 
-		// Relaod filter (we might need to sync to CARP hosts)
+		// Reload filter (we might need to sync to CARP hosts)
 		filter_configure();
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
 		/* Start or restart dhcpleases when it's necessary */
 		system_dhcpleases_configure();
 
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('hosts');
+		}
 	}
 }
 
@@ -175,7 +183,7 @@ function build_if_list() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
+$pgtitle = array(gettext("Services"), gettext("DNS forwarder"));
 $shortcut_section = "forwarder";
 include("head.inc");
 

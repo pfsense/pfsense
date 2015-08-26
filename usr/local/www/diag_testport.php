@@ -15,11 +15,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -62,7 +62,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host port");
-	$reqdfieldsn = array(gettext("Host"),gettext("Port"));
+	$reqdfieldsn = array(gettext("Host"), gettext("Port"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!is_ipaddr($_REQUEST['host']) && !is_hostname($_REQUEST['host'])) {
@@ -203,7 +203,7 @@ else {
 		if(!$showtext)
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful").'</div>');
 		else
-			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from teh host will be shown below the form.</div>');
+			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from the host will be shown below the form.</div>');
 	}
 
 	// netcat exit value != 0

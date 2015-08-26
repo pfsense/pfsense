@@ -50,11 +50,13 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-if (!is_array($config['nat']['outbound']))
+if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
+}
 
-if (!is_array($config['nat']['outbound']['rule']))
+if (!is_array($config['nat']['outbound']['rule'])) {
 	$config['nat']['outbound']['rule'] = array();
+}
 
 $a_out = &$config['nat']['outbound']['rule'];
 
@@ -84,10 +86,11 @@ if ($_POST['apply']) {
 	$retval = 0;
 	$retval |= filter_configure();
 
-	if(stristr($retval, "error") != true)
+	if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
-	else
+	} else {
 		$savemsg = $retval;
+	}
 
 	if ($retval == 0) {
 		clear_subsystem_dirty('natconf');
@@ -103,10 +106,12 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		 *	lets automatically create entries
 		 *	for all of the interfaces to make life easier on the pip-o-chap
 		 */
-		if(empty($FilterIflist))
+		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();
-		if(empty($GatewaysList))
+		}
+		if (empty($GatewaysList)) {
 			filter_generate_gateways();
+		}
 		$tonathosts = filter_nat_rules_automatic_tonathosts(true);
 		$automatic_rules = filter_nat_rules_outbound_automatic("");
 
@@ -118,7 +123,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					convert_real_interface_to_friendly_descr($natent['interface']));
 				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 
-				/* Try to detect already auto created rules and avoid duplicate them */
+				/* Try to detect already auto created rules and avoid duplicating them */
 				$found = false;
 				foreach ($a_out as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
@@ -131,8 +136,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					}
 				}
 
-				if ($found === false)
+				if ($found === false) {
 					$a_out[] = $natent;
+				}
 			}
 		}
 		$savemsg = gettext("Default rules for each interface have been created.");
@@ -141,8 +147,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 
 	$config['nat']['outbound']['mode'] = $_POST['mode'];
 
-	if (write_config())
+	if (write_config()) {
 		mark_subsystem_dirty('natconf');
+	}
 	header("Location: firewall_nat_out.php");
 	exit;
 }
@@ -150,8 +157,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 if ($_GET['act'] == "del") {
 	if ($a_out[$_GET['id']]) {
 		unset($a_out[$_GET['id']]);
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -163,24 +171,23 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 			unset($a_out[$rulei]);
 		}
-
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
 
 } else if ($_GET['act'] == "toggle") {
 	if ($a_out[$_GET['id']]) {
-		if(isset($a_out[$_GET['id']]['disabled']))
+		if (isset($a_out[$_GET['id']]['disabled'])) {
 			unset($a_out[$_GET['id']]['disabled']);
-		else
+		} else {
 			$a_out[$_GET['id']]['disabled'] = true;
-
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule"))
+		}
+		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
 			mark_subsystem_dirty('natconf');
-
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -199,34 +206,39 @@ if (isset($_POST['del_x'])) {
 
 		/* copy all rules < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
 
 		/* copy all selected rules */
 		for ($i = 0; $i < count($a_out); $i++) {
-			if ($i == $movebtn)
+			if ($i == $movebtn) {
 				continue;
-
-			if (in_array($i, $_POST['rule']))
+			}
+			if (in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
 
 		/* copy $movebtn rule */
-		if ($movebtn < count($a_out))
+		if ($movebtn < count($a_out)) {
 			$a_out_new[] = $a_out[$movebtn];
+		}
 
 		/* copy all rules > $movebtn and not selected */
 		for ($i = $movebtn+1; $i < count($a_out); $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
-		if (count($a_out_new) > 0)
+		if (count($a_out_new) > 0) {
 			$a_out = $a_out_new;
+		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -394,7 +406,7 @@ print($form);
 							</a>
 
 <?php
-						endif;
+					endif;
 ?>
 						</td>
 

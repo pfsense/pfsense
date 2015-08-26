@@ -34,7 +34,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: dyndns
+	pfSense_MODULE:	igmpproxy
 */
 
 ##|+PRIV
@@ -46,8 +46,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['igmpproxy']['igmpentry']))
+if (!is_array($config['igmpproxy']['igmpentry'])) {
 	$config['igmpproxy']['igmpentry'] = array();
+}
 
 //igmpproxy_sort();
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
@@ -59,10 +60,11 @@ if ($_POST) {
 	/* reload all components that use igmpproxy */
 	$retval = services_igmpproxy_configure();
 
-	if(stristr($retval, "error") != true)
+	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
-	else
+	} else {
 		$savemsg = $retval;
+	}
 
 	clear_subsystem_dirty('igmpproxy');
 }
@@ -77,7 +79,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("IGMP Proxy"));
+$pgtitle = array(gettext("Services"), gettext("IGMP Proxy"));
 include("head.inc");
 
 if ($savemsg)

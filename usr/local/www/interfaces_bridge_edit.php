@@ -49,15 +49,17 @@ $a_bridges = &$config['bridges']['bridged'];
 $ifacelist = get_configured_interface_with_descr();
 
 foreach ($ifacelist as $bif => $bdescr) {
-	if (substr(get_real_interface($bif), 0, 3) == "gre")
+	if (substr(get_real_interface($bif), 0, 3) == "gre") {
 		unset($ifacelist[$bif]);
+	}
 }
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_bridges[$id]) {
 	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);
@@ -66,16 +68,15 @@ if (isset($id) && $a_bridges[$id]) {
 	$pconfig['members'] = $a_bridges[$id]['members'];
 	$pconfig['maxaddr'] = $a_bridges[$id]['maxaddr'];
 	$pconfig['timeout'] = $a_bridges[$id]['timeout'];
-
-	if ($a_bridges[$id]['static'])
+	if ($a_bridges[$id]['static']) {
 		$pconfig['static'] = $a_bridges[$id]['static'];
-
-	if ($a_bridges[$id]['private'])
+	}
+	if ($a_bridges[$id]['private']) {
 		$pconfig['private'] = $a_bridges[$id]['private'];
-
-	if (isset($a_bridges[$id]['stp']))
+	}
+	if (isset($a_bridges[$id]['stp'])) {
 		$pconfig['stp'] = $a_bridges[$id]['stp'];
-
+	}
 	$pconfig['maxage'] = $a_bridges[$id]['maxage'];
 	$pconfig['fwdelay'] = $a_bridges[$id]['fwdelay'];
 	$pconfig['hellotime'] = $a_bridges[$id]['hellotime'];
@@ -87,7 +88,7 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
 		$ifpriority = array();
 		foreach ($pconfig['ifpriority'] as $cfg) {
-			list ($key, $value)	 = explode(":", $cfg);
+			list ($key, $value) = explode(":", $cfg);
 			$embprioritycfg[$key] = $value;
 			foreach ($embprioritycfg as $key => $value) {
 				$ifpriority[$key] = $value;
@@ -100,7 +101,7 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpathcost'] = explode(",", $a_bridges[$id]['ifpathcost']);
 		$ifpathcost = array();
 		foreach ($pconfig['ifpathcost'] as $cfg) {
-			list ($key, $value)	 = explode(":", $cfg);
+			list ($key, $value) = explode(":", $cfg);
 			$embpathcfg[$key] = $value;
 			foreach ($embpathcfg as $key => $value) {
 				$ifpathcost[$key] = $value;
@@ -110,18 +111,18 @@ if (isset($id) && $a_bridges[$id]) {
 	}
 
 	$pconfig['span'] = $a_bridges[$id]['span'];
-
-	if (isset($a_bridges[$id]['edge']))
+	if (isset($a_bridges[$id]['edge'])) {
 		$pconfig['edge'] = $a_bridges[$id]['edge'];
-
-	if (isset($a_bridges[$id]['autoedge']))
+	}
+	if (isset($a_bridges[$id]['autoedge'])) {
 		$pconfig['autoedge'] = $a_bridges[$id]['autoedge'];
-
-	if (isset($a_bridges[$id]['ptp']))
+	}
+	if (isset($a_bridges[$id]['ptp'])) {
 		$pconfig['ptp'] = $a_bridges[$id]['ptp'];
-
-	if (isset($a_bridges[$id]['autoptp']))
+	}
+	if (isset($a_bridges[$id]['autoptp'])) {
 		$pconfig['autoptp'] = $a_bridges[$id]['autoptp'];
+	}
 }
 
 if ($_POST) {
@@ -134,52 +135,58 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['maxage'] && !is_numeric($_POST['maxage']))
+	if ($_POST['maxage'] && !is_numeric($_POST['maxage'])) {
 		$input_errors[] = gettext("Maxage needs to be an integer between 6 and 40.");
-
-	if ($_POST['maxaddr'] && !is_numeric($_POST['maxaddr']))
+	}
+	if ($_POST['maxaddr'] && !is_numeric($_POST['maxaddr'])) {
 		$input_errors[] = gettext("Maxaddr needs to be an integer.");
-
-	if ($_POST['timeout'] && !is_numeric($_POST['timeout']))
+	}
+	if ($_POST['timeout'] && !is_numeric($_POST['timeout'])) {
 		$input_errors[] = gettext("Timeout needs to be an integer.");
-
-	if ($_POST['fwdelay'] && !is_numeric($_POST['fwdelay']))
+	}
+	if ($_POST['fwdelay'] && !is_numeric($_POST['fwdelay'])) {
 		$input_errors[] = gettext("Forward Delay needs to be an integer between 4 and 30.");
-
-	if ($_POST['hellotime'] && !is_numeric($_POST['hellotime']))
+	}
+	if ($_POST['hellotime'] && !is_numeric($_POST['hellotime'])) {
 		$input_errors[] = gettext("Hello time for STP needs to be an integer between 1 and 2.");
-
-	if ($_POST['priority'] && !is_numeric($_POST['priority']))
+	}
+	if ($_POST['priority'] && !is_numeric($_POST['priority'])) {
 		$input_errors[] = gettext("Priority for STP needs to be an integer between 0 and 61440.");
-
-	if ($_POST['holdcnt'] && !is_numeric($_POST['holdcnt']))
+	}
+	if ($_POST['holdcnt'] && !is_numeric($_POST['holdcnt'])) {
 		$input_errors[] = gettext("Transmit Hold Count for STP needs to be an integer between 1 and 10.");
-
+	}
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		if ($_POST[$ifn] != "" && !is_numeric($_POST[$ifn]))
+		if ($_POST[$ifn] <> "" && !is_numeric($_POST[$ifn])) {
 			$input_errors[] = "{$ifdescr} " . gettext("interface priority for STP needs to be an integer between 0 and 240.");
+		}
 	}
 
 	$i = 0;
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		if ($_POST["{$ifn}{$i}"] != "" && !is_numeric($_POST["{$ifn}{$i}"]))
+		if ($_POST["{$ifn}{$i}"] <> "" && !is_numeric($_POST["{$ifn}{$i}"])) {
 			$input_errors[] = "{$ifdescr} " . gettext("interface path cost for STP needs to be an integer between 1 and 200000000.");
+		}
 		$i++;
 	}
 
-	if (!is_array($_POST['members']) || count($_POST['members']) < 2)
-		$input_errors[] = gettext("You must select at least 2 member interfaces for a bridge.");
+	if (!is_array($_POST['members']) || count($_POST['members']) < 1) {
+		$input_errors[] = gettext("You must select at least one member interface for a bridge.");
+	}
 
 	if (is_array($_POST['members'])) {
-		foreach($_POST['members'] as $ifmembers) {
-			if (empty($config['interfaces'][$ifmembers]))
+		foreach ($_POST['members'] as $ifmembers) {
+			if (empty($config['interfaces'][$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
+			}
 			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
-				$config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap")
+			    $config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap") {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
-			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers)
+			}
+			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers) {
 				$input_errors[] = gettext("Span interface cannot be part of the bridge. Remove the span interface from bridge members to continue.");
+			}
 		}
 	}
 
@@ -190,16 +197,15 @@ if ($_POST) {
 		$bridge['descr'] = $_POST['descr'];
 		$bridge['maxaddr'] = $_POST['maxaddr'];
 		$bridge['timeout'] = $_POST['timeout'];
-
-		if ($_POST['static'])
+		if ($_POST['static']) {
 			$bridge['static'] = implode(',', $_POST['static']);
-
-		if ($_POST['private'])
+		}
+		if ($_POST['private']) {
 			$bridge['private'] = implode(',', $_POST['private']);
-
-		if (isset($_POST['stp']))
+		}
+		if (isset($_POST['stp'])) {
 			$bridge['stp'] = implode(',', $_POST['stp']);
-
+		}
 		$bridge['maxage'] = $_POST['maxage'];
 		$bridge['fwdelay'] = $_POST['fwdelay'];
 		$bridge['hellotime'] = $_POST['hellotime'];
@@ -211,15 +217,16 @@ if ($_POST) {
 		$ifpathcost = "";
 
 		foreach ($ifacelist as $ifn => $ifdescr) {
-			if ($_POST[$ifn] != "") {
-				if ($i > 0)
+			if ($_POST[$ifn] <> "") {
+				if ($i > 0) {
 					$ifpriority .= ",";
+				}
 				$ifpriority .= $ifn.":".$_POST[$ifn];
 			}
-
-			if ($_POST["{$ifn}0"] != "") {
-				if ($i > 0)
+			if ($_POST["{$ifn}0"] <> "") {
+				if ($i > 0) {
 					$ifpathcost .= ",";
+				}
 				$ifpathcost .= $ifn.":".$_POST["{$ifn}0"];
 			}
 			$i++;
@@ -228,40 +235,42 @@ if ($_POST) {
 		$bridge['ifpriority'] = $ifpriority;
 		$bridge['ifpathcost'] = $ifpathcost;
 
-		if ($_POST['span'] != "none")
+		if ($_POST['span'] != "none") {
 			$bridge['span'] = $_POST['span'];
-		else
+		} else {
 			unset($bridge['span']);
-
-		if (isset($_POST['edge']))
+		}
+		if (isset($_POST['edge'])) {
 			$bridge['edge'] = implode(',', $_POST['edge']);
-
-		if (isset($_POST['autoedge']))
+		}
+		if (isset($_POST['autoedge'])) {
 			$bridge['autoedge'] = implode(',', $_POST['autoedge']);
-
-		if (isset($_POST['ptp']))
+		}
+		if (isset($_POST['ptp'])) {
 			$bridge['ptp'] = implode(',', $_POST['ptp']);
-
-		if (isset($_POST['autoptp']))
+		}
+		if (isset($_POST['autoptp'])) {
 			$bridge['autoptp'] = implode(',', $_POST['autoptp']);
+		}
 
 
 		$bridge['bridgeif'] = $_POST['bridgeif'];
 		interface_bridge_configure($bridge);
-
-		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge"))
+		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
-		else {
-			if (isset($id) && $a_bridges[$id])
+		} else {
+			if (isset($id) && $a_bridges[$id]) {
 				$a_bridges[$id] = $bridge;
-			else
+			} else {
 				$a_bridges[] = $bridge;
+			}
 
 			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($bridge['bridgeif']);
-			if ($confif != "")
+			if ($confif <> "") {
 				interface_configure($confif);
+			}
 
 			header("Location: interfaces_bridge.php");
 			exit;

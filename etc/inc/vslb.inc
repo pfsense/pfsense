@@ -124,12 +124,12 @@ function echo_lbaction($action) {
 
 	// Index actions by name
 	$actions_a = array();
-	for ($i=0; isset($config['load_balancer']['lbaction'][$i]); $i++) {
+	for ($i = 0; isset($config['load_balancer']['lbaction'][$i]); $i++) {
 		$actions_a[$config['load_balancer']['lbaction'][$i]['name']] = $config['load_balancer']['lbaction'][$i];
 	}
 
 	$ret = "";
-	$ret .=  "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
+	$ret .= "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
 	switch ($actions_a[$action]['action']) {
 		case 'append':
 			$ret .= " \"{$actions_a[$action]['options']['value']}\" to \"{$actions_a[$action]['options']['akey']}\"";
@@ -303,15 +303,19 @@ function relayd_configure($kill_first=false) {
 			for ($j = 0; $j < count($ip_list); $j += 1) {
 				$ip = $ip_list[$j];
 				for ($k = 0; $k < count($src_port_array) && $k < count($dest_port_array); $k += 1) {
-					$src_port  = $src_port_array[$k];
+					$src_port = $src_port_array[$k];
 					$dest_port = $dest_port_array[$k];
+					if (is_portrange($dest_port)) {
+						$dest_ports = explode(':', $dest_port);
+						$dest_port = $dest_ports[0];
+					}
 
 					$name = $vs_a[$i]['name'];
 					if ($append_ip_to_name) {
 						$name .= "_" . $j;
 					}
 					if ($append_port_to_name) {
-						$name .= "_" . $src_port;
+						$name .= "_" . str_replace(":", "_", $src_port);
 					}
 
 					if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {
@@ -330,11 +334,11 @@ function relayd_configure($kill_first=false) {
 
 						$conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 
-						if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns')) {
+						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns')) {
 							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 						}
 						$conf .= "}\n";
-					} else  {
+					} else {
 						$conf .= "redirect \"{$name}\" {\n";
 						$conf .= "  listen on {$ip} port {$src_port}\n";
 						$conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
@@ -358,7 +362,7 @@ function relayd_configure($kill_first=false) {
 	fclose($fd);
 
 	if (is_process_running('relayd')) {
-		if (! empty($vs_a)) {
+		if (!empty($vs_a)) {
 			if ($kill_first) {
 				mwexec('pkill relayd');
 				/* Remove all active relayd anchors now that relayd is no longer running. */

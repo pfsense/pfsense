@@ -8,11 +8,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -71,57 +71,58 @@ if ($_POST) {
 
 	$input_errors = "";
 
-	if (($_POST['action'] != "clear") && !is_valid_mirror($_POST['mirror']))
+	if (($_POST['action'] != "clear") && !is_valid_mirror($_POST['mirror'])) {
 		$input_errors[] = gettext("You must supply a valid mirror name.");
+	}
 
-	if (!empty($_POST['consumer']) && !is_valid_consumer($_POST['consumer']))
+	if (!empty($_POST['consumer']) && !is_valid_consumer($_POST['consumer'])) {
 		$input_errors[] = gettext("You must supply a valid consumer name");
+	}
 
 	/* Additional action-specific validation that hasn't already been tested */
 	switch ($_POST['action']) {
 		case "insert":
-			if (!is_consumer_unused($_POST['consumer']))
+			if (!is_consumer_unused($_POST['consumer'])) {
 				$input_errors[] = gettext("Consumer is already in use and cannot be inserted. Remove consumer from existing mirror first.");
-
-			if (gmirror_consumer_has_metadata($_POST['consumer']))
+			}
+			if (gmirror_consumer_has_metadata($_POST['consumer'])) {
 				$input_errors[] = gettext("Consumer has metadata from an existing mirror. Clear metadata before inserting consumer.");
-
+			}
 			$mstat = gmirror_get_status_single($_POST['mirror']);
-
-			if (strtoupper($mstat) != "COMPLETE")
+			if (strtoupper($mstat) != "COMPLETE") {
 				$input_errors[] = gettext("Mirror is not in a COMPLETE state, cannot insert consumer. Forget disconnected disks or wait for rebuild to finish.");
-
+			}
 			break;
 
 		case "clear":
-			if (!is_consumer_unused($_POST['consumer']))
+			if (!is_consumer_unused($_POST['consumer'])) {
 				$input_errors[] = gettext("Consumer is in use and cannot be cleared. Deactivate disk first.");
-
-			if (!gmirror_consumer_has_metadata($_POST['consumer']))
+			}
+			if (!gmirror_consumer_has_metadata($_POST['consumer'])) {
 				$input_errors[] = gettext("Consumer has no metadata to clear.");
-
+			}
 			break;
 
 		case "activate":
-			if (is_consumer_in_mirror($_POST['consumer'], $_POST['mirror']))
+			if (is_consumer_in_mirror($_POST['consumer'], $_POST['mirror'])) {
 				$input_errors[] = gettext("Consumer is already present on specified mirror.");
-
-			if (!gmirror_consumer_has_metadata($_POST['consumer']))
+			}
+			if (!gmirror_consumer_has_metadata($_POST['consumer'])) {
 				$input_errors[] = gettext("Consumer has no metadata and cannot be reactivated.");
+			}
 
 			break;
 
 		case "remove":
 		case "deactivate":
 		case "rebuild":
-			if (!is_consumer_in_mirror($_POST['consumer'], $_POST['mirror']))
+			if (!is_consumer_in_mirror($_POST['consumer'], $_POST['mirror'])) {
 				$input_errors[] = gettext("Consumer must be present on the specified mirror.");
-
+			}
 			break;
 	}
 
 	$result = 0;
-
 	if (empty($input_errors)) {
 		switch ($_POST['action']) {
 			case "forget":
@@ -166,15 +167,17 @@ $unused_disks = gmirror_get_disks();
 $unused_consumers = array();
 
 foreach ($unused_disks as $disk) {
-	if (is_consumer_unused($disk))
+	if (is_consumer_unused($disk)) {
 		$unused_consumers = array_merge($unused_consumers, gmirror_get_all_unused_consumer_sizes_on_disk($disk));
+	}
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-if ($_GET["error"] && ($_GET["error"] != 0))
-	print_info_box(gettext("There was an error performing the chosen mirror operation. Check the System Log for details."), 'danger');
+}
+if ($_GET["error"] && ($_GET["error"] != 0)) {
+	print_info_box(gettext("There was an error performing the chosen mirror operation. Check the System Log for details."));
+}
 
 ?>
 <form action="diag_gmirror.php" method="POST" id="gmirror_form" name="gmirror_form">

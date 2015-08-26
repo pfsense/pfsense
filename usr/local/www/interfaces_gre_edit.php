@@ -47,11 +47,12 @@ if (!is_array($config['gres']['gre']))
 
 $a_gres = &$config['gres']['gre'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_gres[$id]) {
 	$pconfig['if'] = $a_gres[$id]['if'];
@@ -72,22 +73,24 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("Local address"),gettext("Remote tunnel address"),gettext("Remote tunnel network"), gettext("Local tunnel address"));
+	$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");
+	$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IP address"), gettext("Local tunnel IP address"), gettext("Remote tunnel IP address"), gettext("Remote tunnel network"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
-		(!is_ipaddr($_POST['remote-addr']))) {
+	if ((!is_ipaddr($_POST['tunnel-local-addr'])) ||
+	    (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
+	    (!is_ipaddr($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
 
 	foreach ($a_gres as $gre) {
-		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre))
+		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre)) {
 			continue;
+		}
 
 		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
-			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."),$gre['remote-network']);
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."), $gre['remote-network']);
 			break;
 		}
 	}
@@ -106,15 +109,17 @@ if ($_POST) {
 		$gre['greif'] = $_POST['greif'];
 
 		$gre['greif'] = interface_gre_configure($gre);
-		if ($gre['greif'] == "" || !stristr($gre['greif'], "gre"))
+		if ($gre['greif'] == "" || !stristr($gre['greif'], "gre")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
-		else {
-			if (isset($id) && $a_gres[$id])
+		} else {
+			if (isset($id) && $a_gres[$id]) {
 				$a_gres[$id] = $gre;
-			else
+			} else {
 				$a_gres[] = $gre;
+			}
 
 			write_config();
+
 			$confif = convert_real_interface_to_friendly_interface_name($gre['greif']);
 
 			if ($confif != "")
@@ -139,6 +144,8 @@ $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require('classes/Form.class.php');
+
+$form = new Form();
 
 $section = new Form_Section('GRE Configuration');
 

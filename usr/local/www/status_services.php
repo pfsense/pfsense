@@ -27,8 +27,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn /usr/bin/killall	/bin/ps
-	pfSense_MODULE: services
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/killall	/bin/ps
+	pfSense_MODULE:	services
 */
 
 ##|+PRIV
@@ -43,9 +43,9 @@ require_once("service-utils.inc");
 require_once("shortcuts.inc");
 
 $service_name = '';
-
-if (isset($_GET['service']))
+if (isset($_GET['service'])) {
 	$service_name = htmlspecialchars($_GET['service']);
+}
 
 if (!empty($service_name)) {
 	switch ($_GET['mode']) {
@@ -64,10 +64,11 @@ if (!empty($service_name)) {
 }
 
 /* batch mode, allow other scripts to call this script */
-if($_GET['batch'])
+if ($_GET['batch']) {
 	exit;
+}
 
-$pgtitle = array(gettext("Status"),gettext("Services"));
+$pgtitle = array(gettext("Status"), gettext("Services"));
 include("head.inc");
 
 if ($savemsg)

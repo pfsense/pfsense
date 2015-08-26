@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: captiveportal
+	pfSense_MODULE:	captiveportal
 */
 
 ##|+PRIV
@@ -49,18 +49,18 @@ $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit V
 $shortcut_section = "captiveportal-vouchers";
 
 $cpzone = $_GET['zone'];
-
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
 if (!is_array($config['voucher'])) {
@@ -73,11 +73,12 @@ if (!is_array($config['voucher'][$cpzone]['roll'])) {
 
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_roll[$id]) {
 	$pconfig['zone'] = $a_roll[$id]['zone'];
@@ -91,39 +92,44 @@ $maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;	// Highest Roll#
 $maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;	 // Highest Ticket#
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
 	$reqdfields = explode(" ", "number count minutes");
-	$reqdfieldsn = array(gettext("Number"),gettext("Count"),gettext("minutes"));
+	$reqdfieldsn = array(gettext("Number"), gettext("Count"), gettext("minutes"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	// Look for duplicate roll #
-	foreach($a_roll as $re) {
-		if($re['number'] == $_POST['number']) {
+	foreach ($a_roll as $re) {
+		if ($re['number'] == $_POST['number']) {
 			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;
 		}
 	}
 
-	if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber)
+	if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber) {
 		$input_errors[] = sprintf(gettext("Roll number must be numeric and less than %s"), $maxnumber);
+	}
 
-	if (!is_numeric($_POST['count']) || $_POST['count'] < 1 || $_POST['count'] > $maxcount)
+	if (!is_numeric($_POST['count']) || $_POST['count'] < 1 || $_POST['count'] > $maxcount) {
 		$input_errors[] = sprintf(gettext("A roll has at least one voucher and less than %s."), $maxcount);
+	}
 
-	if (!is_numeric($_POST['minutes']) || $_POST['minutes'] < 1)
+	if (!is_numeric($_POST['minutes']) || $_POST['minutes'] < 1) {
 		$input_errors[] = gettext("Each voucher must be good for at least 1 minute.");
+	}
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_roll[$id])
+		if (isset($id) && $a_roll[$id]) {
 			$rollent = $a_roll[$id];
+		}
 
-		$rollent['zone']  = $_POST['zone'];
-		$rollent['number']	= $_POST['number'];
+		$rollent['zone'] = $_POST['zone'];
+		$rollent['number'] = $_POST['number'];
 		$rollent['minutes'] = $_POST['minutes'];
 		$rollent['descr'] = $_POST['descr'];
 

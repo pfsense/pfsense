@@ -48,10 +48,10 @@ $viewtypes = array('default', 'label', 'long', 'queue', 'rules', 'size', 'speed'
 $viewall = array('queue', 'label', 'rules');
 $numstates = array('50', '100', '200', '500', '1000', 'all');
 
-if($_REQUEST['getactivity']) {
-	if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
-		&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
-		&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
+if ($_REQUEST['getactivity']) {
+	if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
+	    $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes) &&
+	    $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
 		$viewtype = escapeshellarg($_REQUEST['viewtype']);
 		if (in_array($_REQUEST['viewtype'], $viewall)) {
 			$sorttype = "";
@@ -73,9 +73,9 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
-	&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
-	&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
+if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
+    $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes) &&
+    $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
 	$viewtype = escapeshellarg($_REQUEST['viewtype']);
 	if (in_array($_REQUEST['viewtype'], $viewall)) {
 		$sorttype = "";

@@ -85,12 +85,14 @@ function kill_client($port, $remipp) {
 			$line = fgets($fp, 1024);
 
 			$info = stream_get_meta_data($fp);
-			if ($info['timed_out'])
+			if ($info['timed_out']) {
 				break;
+			}
 
 			/* parse header list line */
-			if (strpos($line, "INFO:") !== false)
+			if (strpos($line, "INFO:") !== false) {
 				continue;
+			}
 			if (strpos($line, "SUCCESS") !== false) {
 				$killed = 0;
 			}
@@ -141,8 +143,10 @@ include("head.inc"); ?>
 	}
 //]]>
 </script>
-<?php $i = 0; ?>
-<?php foreach ($servers as $server): ?>
+<?php
+	$i = 0;
+	foreach ($servers as $server):
+?>
 
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" summary="status openvpn">
 	<tr>
@@ -161,8 +165,9 @@ include("head.inc"); ?>
 				<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
 				<td class="listhdrr"><?=gettext("Bytes Received"); ?></td>
 			</tr>
-
-			<?php foreach ($server['conns'] as $conn): ?>
+<?php
+		foreach ($server['conns'] as $conn):
+?>
 			<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
 				<td class="listlr">
 					<?=$conn['common_name'];?>
@@ -189,8 +194,9 @@ include("head.inc"); ?>
 					   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>" alt="delete" />
 				</td>
 			</tr>
-
-			<?php endforeach; ?>
+<?php
+		endforeach;
+?>
 			<tfoot>
 			<tr>
 				<td colspan="2" class="list" height="12">
@@ -209,7 +215,9 @@ include("head.inc"); ?>
 		</td>
 	</tr>
 </table>
-<?php if (is_array($server['routes']) && count($server['routes'])): ?>
+<?php
+		if (is_array($server['routes']) && count($server['routes'])):
+?>
 <div id="shroutebut-<?= $i ?>">
 <input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
 <br /><br />
@@ -230,7 +238,9 @@ include("head.inc"); ?>
 				<td class="listhdrr"><?=gettext("Last Used"); ?></td>
 			</tr>
 
-			<?php foreach ($server['routes'] as $conn): ?>
+<?php
+			foreach ($server['routes'] as $conn):
+?>
 			<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
 				<td class="listlr">
 					<?=$conn['common_name'];?>
@@ -245,8 +255,9 @@ include("head.inc"); ?>
 					<?=$conn['last_time'];?>
 				</td>
 			</tr>
-
-			<?php endforeach; ?>
+<?php
+			endforeach;
+?>
 			<tfoot>
 			<tr>
 				<td colspan="6" class="list" height="12"><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
@@ -256,13 +267,19 @@ include("head.inc"); ?>
 		</td>
 	</tr>
 </table>
-<?php endif; ?>
+<?php
+		endif;
+?>
 <br />
-<?php $i++; ?>
-<?php endforeach; ?>
+<?php
+		$i++;
+	endforeach;
+?>
 <br />
 
-<?php if (!empty($sk_servers)) { ?>
+<?php
+	if (!empty($sk_servers)) {
+?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" summary="peer to peer stats">
 	<tr>
 		<td colspan="6" class="listtopic">
@@ -283,7 +300,9 @@ include("head.inc"); ?>
 				<td class="listhdrr"><?=gettext("Service"); ?></td>
 			</tr>
 
-<?php foreach ($sk_servers as $sk_server): ?>
+<?php
+		foreach ($sk_servers as $sk_server):
+?>
 			<tr id="<?php echo "r:{$sk_server['port']}:{$sk_server['vpnid']}"; ?>">
 				<td class="listlr">
 					<?=$sk_server['name'];?>
@@ -311,21 +330,27 @@ include("head.inc"); ?>
 				<tr>
 				<td><?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
 				<?= get_service_status_icon($ssvc, false, true); ?>
-				<?= get_service_control_links($ssvc, true); ?></td>
+									<?= get_service_control_links($ssvc, true); ?>
+								</td>
 				</tr>
 				</table>
 				</td>
 			</tr>
-<?php endforeach; ?>
+<?php
+		endforeach;
+?>
 			</table>
 		</td>
 	</tr>
 </table>
 
 <?php
-} ?>
+	}
+?>
 <br />
-<?php if (!empty($clients)) { ?>
+<?php
+	if (!empty($clients)) {
+?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" summary="client stats">
 	<tr>
 		<td colspan="6" class="listtopic">
@@ -346,7 +371,9 @@ include("head.inc"); ?>
 				<td class="listhdrr"><?=gettext("Service"); ?></td>
 			</tr>
 
-<?php foreach ($clients as $client): ?>
+<?php
+		foreach ($clients as $client):
+?>
 			<tr id="<?php echo "r:{$client['port']}:{$client['vpnid']}"; ?>">
 				<td class="listlr">
 					<?=$client['name'];?>
@@ -372,14 +399,18 @@ include("head.inc"); ?>
 				<td class="listr" height="12">
 				<table>
 				<tr>
-				<td><?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
+								<td>
+									<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
 				<?= get_service_status_icon($ssvc, false, true); ?>
-				<?= get_service_control_links($ssvc, true); ?></td>
+									<?= get_service_control_links($ssvc, true); ?>
+								</td>
 				</tr>
 				</table>
 				</td>
 			</tr>
-<?php endforeach; ?>
+<?php
+		endforeach;
+?>
 			</table>
 		</td>
 	</tr>

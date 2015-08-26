@@ -72,11 +72,13 @@ $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 $a_cert =& $config['cert'];
 
 $certs_available = false;
-if (is_array($a_cert) && count($a_cert))
+if (is_array($a_cert) && count($a_cert)) {
 	$certs_available = true;
+}
 
-if (!$pconfig['webguiproto'] || !$certs_available)
+if (!$pconfig['webguiproto'] || !$certs_available) {
 	$pconfig['webguiproto'] = "http";
+}
 
 if ($_POST) {
 
@@ -84,43 +86,56 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['tcp-port'])
-		if(!is_port($_POST['tcp-port']))
+	if ($_POST['webguiport']) {
+		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
-
-	if ($_POST['max-processes'])
-		if(!is_numericint($_POST['max-processes']) || ($_POST['max-processes'] < 1) || ($_POST['max-processes'] > 500))
-			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
-
-	if ($_POST['alternate-hostnames']) {
-		$althosts = explode(" ", $_POST['alternate-hostnames']);
-		foreach ($althosts as $ah)
-			if (!is_hostname($ah))
-				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."),htmlspecialchars($ah));
+		}
 	}
 
-	if ($_POST['ssh-port'])
-		if(!is_port($_POST['ssh-port']))
-			$input_errors[] = gettext("You must specify a valid port number");
+	if ($_POST['max_procs']) {
+		if (!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500)) {
+			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
+		}
+	}
 
-	if($_POST['authentication-method'] == "yes")
+	if ($_POST['althostnames']) {
+		$althosts = explode(" ", $_POST['althostnames']);
+		foreach ($althosts as $ah) {
+			if (!is_hostname($ah)) {
+				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."), htmlspecialchars($ah));
+			}
+		}
+	}
+
+	if ($_POST['sshport']) {
+		if (!is_port($_POST['sshport'])) {
+			$input_errors[] = gettext("You must specify a valid port number");
+		}
+	}
+
+	if ($_POST['sshdkeyonly'] == "yes") {
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
-	else if (isset($config['system']['ssh']['sshdkeyonly']))
+	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 		unset($config['system']['ssh']['sshdkeyonly']);
+	}
 
 	ob_flush();
 	flush();
 
 	if (!$input_errors) {
 
-		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['protocol']))
+		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['tcp-port']))
+		}
+		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certificate']))
+		}
+		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref'])) {
 			$restart_webgui = true;
-		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max-processes']))
+		}
+		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
 			$restart_webgui = true;
+		}
 
 		if ($_POST['webgui-redirect'] == "yes") {
 			$config['system']['webgui']['disablehttpredirect'] = true;
@@ -135,85 +150,99 @@ if ($_POST) {
 			unset($config['system']['webgui']['quietlogin']);
 		}
 
-		if($_POST['console-menu'] == "yes")
+		if ($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
-		else
+		} else {
 			unset($config['system']['disableconsolemenu']);
+		}
 
-		if ($_POST['anti-lockout'] == "yes")
+		if ($_POST['noantilockout'] == "yes") {
 			$config['system']['webgui']['noantilockout'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['noantilockout']);
+		}
 
-		if ($_POST['serial-terminal'] == "yes" || $g['enableserial_force'])
+		if ($_POST['enableserial'] == "yes" || $g['enableserial_force']) {
 			$config['system']['enableserial'] = true;
-		else
+		} else {
 			unset($config['system']['enableserial']);
+		}
 
-		if (is_numericint($_POST['serial-speed']))
-			$config['system']['serialspeed'] = $_POST['serial-speed'];
-		else
+		if (is_numericint($_POST['serialspeed'])) {
+			$config['system']['serialspeed'] = $_POST['serialspeed'];
+		} else {
 			unset($config['system']['serialspeed']);
+		}
 
-		if ($_POST['primary-console'])
-			$config['system']['primaryconsole'] = $_POST['primary-console'];
-		else
+		if ($_POST['primaryconsole']) {
+			$config['system']['primaryconsole'] = $_POST['primaryconsole'];
+		} else {
 			unset($config['system']['primaryconsole']);
+		}
 
-		if ($_POST['dns-rebind-check'] == "yes")
+		if ($_POST['nodnsrebindcheck'] == "yes") {
 			$config['system']['webgui']['nodnsrebindcheck'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['nodnsrebindcheck']);
+		}
 
-		if ($_POST['browser-http_referer-enforcement'] == "yes")
+		if ($_POST['nohttpreferercheck'] == "yes") {
 			$config['system']['webgui']['nohttpreferercheck'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['nohttpreferercheck']);
+		}
 
-		if ($_POST['pagenamefirst'] == "yes")
+		if ($_POST['pagenamefirst'] == "yes") {
 			$config['system']['webgui']['pagenamefirst'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['pagenamefirst']);
+		}
 
-		if ($_POST['webgui-login-autocomplete'] == "yes")
+		if ($_POST['loginautocomplete'] == "yes") {
 			$config['system']['webgui']['loginautocomplete'] = true;
-		else
+		} else {
 			unset($config['system']['webgui']['loginautocomplete']);
+		}
 
-		if ($_POST['alternate-hostnames'])
-			$config['system']['webgui']['althostnames'] = $_POST['alternate-hostnames'];
-		else
+		if ($_POST['althostnames']) {
+			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
+		} else {
 			unset($config['system']['webgui']['althostnames']);
+		}
 
 		$sshd_enabled = $config['system']['enablesshd'];
-		if($_POST['secure-shell-server'])
+		if ($_POST['enablesshd']) {
 			$config['system']['enablesshd'] = "enabled";
-		else
+		} else {
 			unset($config['system']['enablesshd']);
+		}
 
 		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
-		if ($_POST['authentication-method'])
+		if ($_POST['sshdkeyonly']) {
 			$config['system']['sshdkeyonly'] = true;
-		else
+		} else {
 			unset($config['system']['sshdkeyonly']);
+		}
 
 		$sshd_port = $config['system']['ssh']['port'];
-		if ($_POST['ssh-port'])
-			$config['system']['ssh']['port'] = $_POST['ssh-port'];
-		else if (isset($config['system']['ssh']['port']))
+		if ($_POST['sshport']) {
+			$config['system']['ssh']['port'] = $_POST['sshport'];
+		} else if (isset($config['system']['ssh']['port'])) {
 			unset($config['system']['ssh']['port']);
+		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-			($sshd_port != $config['system']['ssh']['port']))
+		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
+		}
 
 		if ($restart_webgui) {
 			global $_SERVER;
 			$http_host_port = explode("]", $_SERVER['HTTP_HOST']);
 			/* IPv6 address check */
-			if(strstr($_SERVER['HTTP_HOST'], "]")) {
-				if(count($http_host_port) > 1) {
+			if (strstr($_SERVER['HTTP_HOST'], "]")) {
+				if (count($http_host_port) > 1) {
 					array_pop($http_host_port);
 					$host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
 					$host = "[{$host}]";
@@ -226,10 +255,11 @@ if ($_POST) {
 			}
 			$prot = $config['system']['webgui']['protocol'];
 			$port = $config['system']['webgui']['port'];
-			if ($port)
+			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
-			else
+			} else {
 				$url = "{$prot}://{$host}/system_advanced_admin.php";
+			}
 		}
 
 		write_config();
@@ -237,21 +267,23 @@ if ($_POST) {
 		$retval = filter_configure();
 		$savemsg = get_std_save_message($retval);
 
-		if ($restart_webgui)
-			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."),$url);
+		if ($restart_webgui) {
+			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
+		}
 
 		conf_mount_rw();
 		setup_serial_port();
 		// Restart DNS in case dns rebinding toggled
-		if (isset($config['dnsmasq']['enable']))
+		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();
-		elseif (isset($config['unbound']['enable']))
+		} elseif (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
+		}
 		conf_mount_ro();
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
 include("head.inc");
 
 if ($input_errors)

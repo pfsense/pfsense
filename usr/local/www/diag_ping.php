@@ -13,11 +13,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -65,7 +65,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
-	$reqdfieldsn = array(gettext("Host"),gettext("Count"));
+	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
@@ -74,17 +74,20 @@ if ($_POST || $_REQUEST['host']) {
 
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
-	if (($ipproto == "ipv4") && is_ipaddrv6($host))
+	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
-	if (($ipproto == "ipv6") && is_ipaddrv4($host))
+	}
+	if (($ipproto == "ipv6") && is_ipaddrv4($host)) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
+	}
 
 	if (!$input_errors) {
 		$do_ping = true;
 		$sourceip = $_REQUEST['sourceip'];
 		$count = $_POST['count'];
-		if (preg_match('/[^0-9]/', $count) )
+		if (preg_match('/[^0-9]/', $count)) {
 			$count = DEFAULT_COUNT;
+		}
 	}
 }
 

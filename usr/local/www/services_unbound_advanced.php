@@ -42,22 +42,26 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-if(!is_array($config['unbound'])) {
+if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
 }
 
 if (isset($config['unbound']['hideidentity'])) {
 	$pconfig['hideidentity'] = true;
 }
-if (isset($config['unbound']['hideversion'])){
+
+if (isset($config['unbound']['hideversion'])) {
 	$pconfig['hideversion'] = true;
 }
+
 if (isset($config['unbound']['prefetch'])) {
 	$pconfig['prefetch'] = true;
 }
+
 if (isset($config['unbound']['prefetchkey'])) {
 	$pconfig['prefetchkey'] = true;
 }
+
 if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
 }
@@ -193,7 +197,7 @@ if ($_POST) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced"));
 $shortcut_section = "resolver";
 include_once("head.inc");
 

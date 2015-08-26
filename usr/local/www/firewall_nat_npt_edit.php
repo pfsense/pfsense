@@ -47,8 +47,9 @@ function natnptcmp($a, $b) {
 function nat_npt_rules_sort() {
 	global $g, $config;
 
-	if (!is_array($config['nat']['npt']))
-		return;
+	if (!is_array($config['nat']['npt'])) {
+			return;
+	}
 
 	usort($config['nat']['npt'], "natnptcmp");
 }
@@ -70,11 +71,12 @@ if (!is_array($config['nat']['npt']))
 
 $a_npt = &$config['nat']['npt'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_npt[$id]) {
 	$pconfig['disabled'] = isset($a_npt[$id]['disabled']);
@@ -88,17 +90,19 @@ if (isset($id) && $a_npt[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['interface'] = $a_npt[$id]['interface'];
-
-	if (!$pconfig['interface'])
+	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
+	}
 
 	$pconfig['external'] = $a_npt[$id]['external'];
 	$pconfig['descr'] = $a_npt[$id]['descr'];
-} else
+} else {
 	$pconfig['interface'] = "wan";
+}
 
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -119,27 +123,27 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
 
-		if ($_POST['src'])
+		if ($_POST['src']) {
 			$_POST['src'] = trim($_POST['src']);
-
-		if ($_POST['dst'])
+		}
+		if ($_POST['dst']) {
 			$_POST['dst'] = trim($_POST['dst']);
+		}
 
-		pconfig_to_address($natent['source'], $_POST['src'],
-						$_POST['srcmask'], $_POST['srcnot']);
+		pconfig_to_address($natent['source'], $_POST['src'], $_POST['srcmask'], $_POST['srcnot']);
 
-		pconfig_to_address($natent['destination'], $_POST['dst'],
-				$_POST['dstmask'], $_POST['dstnot']);
+		pconfig_to_address($natent['destination'], $_POST['dst'], $_POST['dstmask'], $_POST['dstnot']);
 
-		if (isset($id) && $a_npt[$id])
+		if (isset($id) && $a_npt[$id]) {
 			$a_npt[$id] = $natent;
-		else
+		} else {
 			$a_npt[] = $natent;
-
+		}
 		nat_npt_rules_sort();
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 
 		header("Location: firewall_nat_npt.php");
 		exit;

@@ -107,30 +107,33 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	foreach ($config['laggs']['lagg'] as $lagg) {
 		unset($portlist[$lagg['laggif']]);
 		$laggiflist = explode(",", $lagg['members']);
-		
-		foreach ($laggiflist as $tmpif)
+		foreach ($laggiflist as $tmpif) {
 			$realifchecklist[get_real_interface($tmpif)] = $tmpif;
+		}
 	}
 }
 
 $checklist = get_configured_interface_list(false, true);
-foreach ($checklist as $tmpif)
-	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 
-if (is_numericint($_GET['id']))
+foreach ($checklist as $tmpif) {
+	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
+}
+
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-	
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_laggs[$id]) {
 	$pconfig['laggif'] = $a_laggs[$id]['laggif'];
 	$pconfig['members'] = $a_laggs[$id]['members'];
 	$laggiflist = explode(",", $a_laggs[$id]['members']);
-	
-	foreach ($laggiflist as $tmpif)
+	foreach ($laggiflist as $tmpif) {
 		unset($realifchecklist[get_real_interface($tmpif)]);
-
+	}
 	$pconfig['proto'] = $a_laggs[$id]['proto'];
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
@@ -147,14 +150,17 @@ if ($_POST) {
 
 	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $member) {
-			if (!does_interface_exist($member))
+			if (!does_interface_exist($member)) {
 				$input_errors[] = gettext("Interface supplied as member is invalid");
+			}
 		}
-	} else if (!does_interface_exist($_POST['members']))
+	} else if (!does_interface_exist($_POST['members'])) {
 		$input_errors[] = gettext("Interface supplied as member is invalid");
+	}
 
-	if (!in_array($_POST['proto'], $laggprotos))
+	if (!in_array($_POST['proto'], $laggprotos)) {
 		$input_errors[] = gettext("Protocol supplied is invalid");
+	}
 
 	if (!$input_errors) {
 		$lagg = array();
@@ -162,17 +168,19 @@ if ($_POST) {
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
 		$lagg['proto'] = $_POST['proto'];
-		if (isset($id) && $a_laggs[$id])
+		if (isset($id) && $a_laggs[$id]) {
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
+		}
 
 		$lagg['laggif'] = interface_lagg_configure($lagg);
-		if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
+		if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
-		else {
-			if (isset($id) && $a_laggs[$id])
+		} else {
+			if (isset($id) && $a_laggs[$id]) {
 				$a_laggs[$id] = $lagg;
-			else
+			} else {
 				$a_laggs[] = $lagg;
+			}
 
 			write_config();
 

@@ -48,7 +48,7 @@ function allowedhostnamescmp($a, $b) {
 
 function allowedhostnames_sort() {
 	global $g, $config, $cpzone;
-	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostnamescmp");
+	usort($config['captiveportal'][$cpzone]['allowedhostname'], "allowedhostnamescmp");
 }
 
 require("guiconfig.inc");
@@ -57,32 +57,37 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
+global $cpzone, $cpzoneid;
+
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit allowed Hostname"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
+$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($a_cp[$cpzone]['allowedhostname']))
+if (!is_array($a_cp[$cpzone]['allowedhostname'])) {
 	$a_cp[$cpzone]['allowedhostname'] = array();
-
+}
 $a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 if (isset($id) && $a_allowedhostnames[$id]) {
@@ -105,19 +110,23 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['hostname'] && !is_hostname($_POST['hostname'])))
+	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
 		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
+	}
 
-	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
+	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
 		$input_errors[] = gettext("Upload speed needs to be an integer");
-	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+	}
+	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down'])) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
+	}
 
 	foreach ($a_allowedhostnames as $ipent) {
-		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent))
+		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent)) {
 			continue;
+		}
 
-		if ($ipent['hostname'] == $_POST['hostname']){
+		if ($ipent['hostname'] == $_POST['hostname']) {
 			$input_errors[] = sprintf("[%s] %s.", $_POST['hostname'], gettext("already allowed")) ;
 			break ;
 		}
@@ -129,14 +138,17 @@ if ($_POST) {
 		$ip['sn'] = $_POST['sn'];
 		$ip['dir'] = $_POST['dir'];
 		$ip['descr'] = $_POST['descr'];
-		if ($_POST['bw_up'])
+		if ($_POST['bw_up']) {
 			$ip['bw_up'] = $_POST['bw_up'];
-		if ($_POST['bw_down'])
+		}
+		if ($_POST['bw_down']) {
 			$ip['bw_down'] = $_POST['bw_down'];
-		if (isset($id) && $a_allowedhostnames[$id])
+		}
+		if (isset($id) && $a_allowedhostnames[$id]) {
 			$a_allowedhostnames[$id] = $ip;
-		else
+		} else {
 			$a_allowedhostnames[] = $ip;
+		}
 
 		allowedhostnames_sort();
 
@@ -144,8 +156,7 @@ if ($_POST) {
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules");
+		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules", true);
 		unset($rules);
 
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");

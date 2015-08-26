@@ -180,7 +180,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
 	xml_set_element_handler($xml_parser, "startElement", "endElement");
 	xml_set_character_data_handler($xml_parser, "cdata");
-	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1);
+	xml_parser_set_option($xml_parser, XML_OPTION_SKIP_WHITE, 1);
 
 	if (!($fp = fopen($cffile, "r"))) {
 		log_error(gettext("Error: could not open XML input") . "\n");
@@ -285,9 +285,9 @@ function dump_xml_config_sub($arr, $indent) {
 				    (substr($ent, 0, 9) == "ldap_bind") ||
 				    (substr($ent, 0, 11) == "ldap_basedn") ||
 				    (substr($ent, 0, 18) == "ldap_authcn") ||
-				    (substr($ent, 0, 19) == "ldap_extended_query"))
+				    (substr($ent, 0, 19) == "ldap_extended_query")) {
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
-				else {
+				} else {
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
 				}
 			}

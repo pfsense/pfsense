@@ -45,25 +45,31 @@ require_once("auth.inc");
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (!is_array($config['system']['authserver']))
+if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
+}
 
 $a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers)
+foreach ($a_servers as $servers) {
 	$a_server[] = $servers;
+}
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 $a_ca =& $config['ca'];
 
 $act = $_GET['act'];
-if ($_POST['act'])
+if ($_POST['act']) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 
@@ -75,16 +81,15 @@ if ($act == "del") {
 	/* Remove server from main list. */
 	$serverdeleted = $a_server[$_GET['id']]['name'];
 	foreach ($config['system']['authserver'] as $k => $as) {
-		if ($config['system']['authserver'][$k]['name'] == $serverdeleted)
+		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
 			unset($config['system']['authserver'][$k]);
+		}
 	}
 
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
 
-	$savemsg = gettext("Authentication Server")." ". htmlspecialchars($serverdeleted) ." ".
-				gettext("deleted")."<br />";
-				
+	$savemsg = gettext("Authentication Server") . " " . htmlspecialchars($serverdeleted) . " " . gettext("deleted") . "<br />";
 	write_config($savemsg);
 }
 
@@ -113,8 +118,9 @@ if ($act == "edit") {
 			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
 			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
 
-			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw'])
+			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
 				$pconfig['ldap_anon'] = true;
+			}
 		}
 
 		if ($pconfig['type'] == "radius") {
@@ -125,18 +131,18 @@ if ($act == "edit") {
 			$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
 
 			if ($pconfig['radius_auth_port'] &&
-				$pconfig['radius_acct_port'] ) {
+			    $pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "both";
 			}
 
-			if ( $pconfig['radius_auth_port'] &&
-				!$pconfig['radius_acct_port'] ) {
+			if ($pconfig['radius_auth_port'] &&
+			    !$pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "auth";
 				$pconfig['radius_acct_port'] = 1813;
 			}
 
 			if (!$pconfig['radius_auth_port'] &&
-				 $pconfig['radius_acct_port'] ) {
+			    $pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "acct";
 				$pconfig['radius_auth_port'] = 1812;
 			}
@@ -160,9 +166,10 @@ if ($_POST) {
 	/* input validation */
 
 	if ($pconfig['type'] == "ldap") {
-		$reqdfields = explode(" ", "name type ldap_host ldap_port ".
-						"ldap_urltype ldap_protver ldap_scope ".
-						"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
+		$reqdfields = explode(" ",
+			"name type ldap_host ldap_port " .
+			"ldap_urltype ldap_protver ldap_scope " .
+			"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Type"),
@@ -193,13 +200,13 @@ if ($_POST) {
 			gettext("Services"));
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "auth") {
+		    $pconfig['radisu_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
 			$reqdfieldsn[] = gettext("Authentication port value");
 		}
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "acct") {
+		    $pconfig['radisu_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
 			$reqdfieldsn[] = gettext("Accounting port value");
 		}
@@ -212,14 +219,17 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['host']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['host'])) {
 		$input_errors[] = gettext("The host name contains invalid characters.");
+	}
 
-	if (auth_get_authserver($pconfig['name']) && !isset($id))
+	if (auth_get_authserver($pconfig['name']) && !isset($id)) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
+	}
 
-	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && !empty($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
+	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && !empty($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0)))) {
 		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
+	}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -230,16 +240,18 @@ if ($_POST) {
 	if (!$input_errors) {
 		$server = array();
 		$server['refid'] = uniqid();
-		if (isset($id) && $a_server[$id])
+		if (isset($id) && $a_server[$id]) {
 			$server = $a_server[$id];
+		}
 
 		$server['type'] = $pconfig['type'];
 		$server['name'] = $pconfig['name'];
 
 		if ($server['type'] == "ldap") {
 
-			if (!empty($pconfig['ldap_caref']))
+			if (!empty($pconfig['ldap_caref'])) {
 				$server['ldap_caref'] = $pconfig['ldap_caref'];
+			}
 			$server['host'] = $pconfig['ldap_host'];
 			$server['ldap_port'] = $pconfig['ldap_port'];
 			$server['ldap_urltype'] = $pconfig['ldap_urltype'];
@@ -252,14 +264,16 @@ if ($_POST) {
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
-			if ($pconfig['ldap_utf8'] == "yes")
+			if ($pconfig['ldap_utf8'] == "yes") {
 				$server['ldap_utf8'] = true;
-			else
+			} else {
 				unset($server['ldap_utf8']);
-			if ($pconfig['ldap_nostrip_at'] == "yes")
+			}
+			if ($pconfig['ldap_nostrip_at'] == "yes") {
 				$server['ldap_nostrip_at'] = true;
-			else
+			} else {
 				unset($server['ldap_nostrip_at']);
+			}
 
 
 			if (!$pconfig['ldap_anon']) {
@@ -275,13 +289,15 @@ if ($_POST) {
 
 			$server['host'] = $pconfig['radius_host'];
 
-			if ($pconfig['radius_secret'])
+			if ($pconfig['radius_secret']) {
 				$server['radius_secret'] = $pconfig['radius_secret'];
+			}
 
-			if ($pconfig['radius_timeout'])
+			if ($pconfig['radius_timeout']) {
 				$server['radius_timeout'] = $pconfig['radius_timeout'];
-			else
+			} else {
 				$server['radius_timeout'] = 5;
+			}
 
 			if ($pconfig['radius_srvcs'] == "both") {
 				$server['radius_auth_port'] = $pconfig['radius_auth_port'];
@@ -299,10 +315,11 @@ if ($_POST) {
 			}
 		}
 
-		if (isset($id) && $config['system']['authserver'][$id])
+		if (isset($id) && $config['system']['authserver'][$id]) {
 			$config['system']['authserver'][$id] = $server;
-		else
+		} else {
 			$config['system']['authserver'][] = $server;
+		}
 
 		write_config();
 

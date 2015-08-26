@@ -14,11 +14,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -76,14 +76,14 @@ foreach ($rawdata as $line) {
 }
 
 /* FIXME: Not ipv6 compatible dns resolving. PHP needs fixing */
-function _getHostName($mac,$ip)
-{
-	if(is_ipaddr($ip)) {
+function _getHostName($mac, $ip) {
+	if (is_ipaddr($ip)) {
 		list($ip, $scope) = explode("%", $ip);
-		if(gethostbyaddr($ip) != "" and gethostbyaddr($ip) != $ip)
+		if (gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip) {
 			return gethostbyaddr($ip);
-		else
+		} else {
 			return "";
+		}
 	}
 }
 
@@ -92,10 +92,11 @@ function _getHostName($mac,$ip)
 // resolvable addresses will appear last in the list.
 foreach ($data as &$entry) {
 	$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
-	if(trim($dns))
+	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
-	else
+	} else {
 		$entry['dnsresolve'] = "Z_ ";
+	}
 }
 
 // Sort the data alpha first
@@ -104,7 +105,7 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-$pgtitle = array(gettext("Diagnostics"),gettext("NDP Table"));
+$pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
 ?>
 

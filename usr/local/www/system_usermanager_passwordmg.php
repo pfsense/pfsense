@@ -27,8 +27,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-		pfSense_BUILDER_BINARIES:
-		pfSense_MODULE: auth
+	pfSense_BUILDER_BINARIES:
+	pfSense_MODULE: auth
 */
 
 ##|+PRIV
@@ -42,7 +42,7 @@ require_once("auth.inc");
 require_once("certs.inc");
 require_once("guiconfig.inc");
 
-$pgtitle = array(gettext("System"),gettext("User Password"));
+$pgtitle = array(gettext("System"), gettext("User Password"));
 
 if (isset($_POST['save'])) {
 	unset($input_errors);
@@ -52,12 +52,14 @@ if (isset($_POST['save'])) {
 	$reqdfieldsn = array(gettext("Password"));
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['passwordfld1'] != $_POST['passwordfld2'])
+	if ($_POST['passwordfld1'] != $_POST['passwordfld2']) {
 		$input_errors[] = gettext("The passwords do not match.");
+	}
 
 	if (!$input_errors) {
-		if (!session_id())
+		if (!session_id()) {
 			session_start();
+		}
 		// all values are okay --> saving changes
 
 		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
@@ -72,15 +74,16 @@ if (isset($_POST['save'])) {
 	}
 }
 
-if (!session_id())
+if (!session_id()) {
 	session_start();
+}
 
 /* determine if user is not local to system */
 $islocal = false;
-
-foreach($config['system']['user'] as $user) {
-	if($user['name'] == $_SESSION['Username'])
+foreach ($config['system']['user'] as $user) {
+	if ($user['name'] == $_SESSION['Username']) {
 		$islocal = true;
+	}
 }
 
 session_commit();
@@ -89,9 +92,10 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 if ($islocal == false) {
 	echo gettext("Sorry, you cannot change the password for a non-local user.");

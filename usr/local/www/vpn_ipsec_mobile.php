@@ -41,13 +41,15 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1']))
+if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
+}
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
-if (!is_array($config['ipsec']['client']))
+if (!is_array($config['ipsec']['client'])) {
 	$config['ipsec']['client'] = array();
+}
 
 $a_client = &$config['ipsec']['client'];
 
@@ -73,37 +75,47 @@ if (count($a_client)) {
 	$pconfig['pfs_group'] = $a_client['pfs_group'];
 	$pconfig['login_banner'] = $a_client['login_banner'];
 
-	if (isset($pconfig['enable']))
+	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
+	}
 
-	if ($pconfig['pool_address']&&$pconfig['pool_netbits'])
+	if ($pconfig['pool_address']&&$pconfig['pool_netbits']) {
 		$pconfig['pool_enable'] = true;
-	else
+	} else {
 		$pconfig['pool_netbits'] = 24;
+	}
 
-	if (isset($pconfig['net_list']))
+	if (isset($pconfig['net_list'])) {
 		$pconfig['net_list_enable'] = true;
+	}
 
-	if (isset($pconfig['save_passwd']))
+	if (isset($pconfig['save_passwd'])) {
 		$pconfig['save_passwd_enable'] = true;
+	}
 
-	if ($pconfig['dns_domain'])
+	if ($pconfig['dns_domain']) {
 		$pconfig['dns_domain_enable'] = true;
+	}
 
-	if ($pconfig['dns_split'])
+	if ($pconfig['dns_split']) {
 		$pconfig['dns_split_enable'] = true;
+	}
 
-	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4'])
+	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4']) {
 		$pconfig['dns_server_enable'] = true;
+	}
 
-	if ($pconfig['wins_server1']||$pconfig['wins_server2'])
+	if ($pconfig['wins_server1']||$pconfig['wins_server2']) {
 		$pconfig['wins_server_enable'] = true;
+	}
 
-	if (isset($pconfig['pfs_group']))
+	if (isset($pconfig['pfs_group'])) {
 		$pconfig['pfs_group_enable'] = true;
+	}
 
-	if ($pconfig['login_banner'])
+	if ($pconfig['login_banner']) {
 		$pconfig['login_banner_enable'] = true;
+	}
 }
 
 if ($_POST['create']) {
@@ -115,9 +127,11 @@ if ($_POST['apply']) {
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
 	$retval = vpn_ipsec_configure(true);
 	$savemsg = get_std_save_message($retval);
-	if ($retval >= 0)
-		if (is_subsystem_dirty('ipsec'))
+	if ($retval >= 0) {
+		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
+		}
+	}
 }
 
 if ($_POST['save']) {
@@ -127,28 +141,28 @@ if ($_POST['save']) {
 
 	/* input consolidation */
 
-
-
 	/* input validation */
 
 	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn =  array(gettext("User Authentication Source"),gettext("Group Authentication Source"));
+	$reqdfieldsn = array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($pconfig['pool_enable'])
-		if (!is_ipaddr($pconfig['pool_address']))
+	if ($pconfig['pool_enable']) {
+		if (!is_ipaddr($pconfig['pool_address'])) {
 			$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
-
-	if ($pconfig['dns_domain_enable'])
-		if (!is_domain($pconfig['dns_domain']))
+		}
+	}
+	if ($pconfig['dns_domain_enable']) {
+		if (!is_domain($pconfig['dns_domain'])) {
 			$input_errors[] = gettext("A valid value for 'DNS Default Domain' must be specified.");
-
+		}
+	}
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
 			/* Replace multiple spaces by single */
 			$pconfig['dns_split'] = preg_replace('/\s+/', ' ', trim($pconfig['dns_split']));
-			$domain_array=explode(' ', $pconfig['dns_split']);
+			$domain_array = explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
 					$input_errors[] = gettext("A valid split DNS domain list must be specified.");
@@ -160,39 +174,51 @@ if ($_POST['save']) {
 
 	if ($pconfig['dns_server_enable']) {
 		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
-			!$pconfig['dns_server3'] && !$pconfig['dns_server4'] )
+		    !$pconfig['dns_server3'] && !$pconfig['dns_server4']) {
 			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
-		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1']))
+		}
+		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #1' must be specified.");
-		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2']))
+		}
+		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #2' must be specified.");
-		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3']))
+		}
+		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #3' must be specified.");
-		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4']))
+		}
+		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4'])) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #4' must be specified.");
+		}
 	}
 
 	if ($pconfig['wins_server_enable']) {
-		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2'])
+		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2']) {
 			$input_errors[] = gettext("At least one WINS server must be specified to enable the DNS Server option.");
-		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1']))
+		}
+		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1'])) {
 			$input_errors[] = gettext("A valid IP address for 'WINS Server #1' must be specified.");
-		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2']))
+		}
+		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2'])) {
 			$input_errors[] = gettext("A valid IP address for 'WINS Server #2' must be specified.");
+		}
 	}
 
-	if ($pconfig['login_banner_enable'])
-		if (!strlen($pconfig['login_banner']))
+	if ($pconfig['login_banner_enable']) {
+		if (!strlen($pconfig['login_banner'])) {
 			$input_errors[] = gettext("A valid value for 'Login Banner' must be specified.");
+		}
+	}
 
 	if (!$input_errors) {
 		$client = array();
 
-		if ($pconfig['enable'])
+		if ($pconfig['enable']) {
 			$client['enable'] = true;
+		}
 
-		if (!empty($pconfig['user_source']))
+		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
+		}
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
@@ -200,17 +226,21 @@ if ($_POST['save']) {
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
 
-		if ($pconfig['net_list_enable'])
+		if ($pconfig['net_list_enable']) {
 			$client['net_list'] = true;
+		}
 
-		if ($pconfig['save_passwd_enable'])
+		if ($pconfig['save_passwd_enable']) {
 			$client['save_passwd'] = true;
+		}
 
-		if ($pconfig['dns_domain_enable'])
+		if ($pconfig['dns_domain_enable']) {
 			$client['dns_domain'] = $pconfig['dns_domain'];
+		}
 
-		if ($pconfig['dns_split_enable'])
+		if ($pconfig['dns_split_enable']) {
 			$client['dns_split'] = $pconfig['dns_split'];
+		}
 
 		if ($pconfig['dns_server_enable']) {
 			$client['dns_server1'] = $pconfig['dns_server1'];
@@ -224,11 +254,13 @@ if ($_POST['save']) {
 			$client['wins_server2'] = $pconfig['wins_server2'];
 		}
 
-		if ($pconfig['pfs_group_enable'])
+		if ($pconfig['pfs_group_enable']) {
 			$client['pfs_group'] = $pconfig['pfs_group'];
+		}
 
-		if ($pconfig['login_banner_enable'])
+		if ($pconfig['login_banner_enable']) {
 			$client['login_banner'] = $pconfig['login_banner'];
+		}
 
 		$a_client = $client;
 
@@ -240,7 +272,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Mobile"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile"));
 $shortcut_section = "ipsec";
 
 include("head.inc");

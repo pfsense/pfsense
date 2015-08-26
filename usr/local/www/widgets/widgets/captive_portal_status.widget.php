@@ -47,16 +47,19 @@ require_once("captiveportal.inc");
 
 <?php
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
+}
 $a_cp =& $config['captiveportal'];
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+}
 
 if (($_GET['act'] == "del") && !empty($cpzone) && isset($cpzoneid)) {
 	captiveportal_disconnect_client($_GET['id']);
@@ -78,25 +81,27 @@ foreach ($a_cp as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;
-		if ($showact == 1)
+		if ($showact == 1) {
 			$cpent[11] = captiveportal_get_last_activity($cpent[2], $cpentry[3]);
+		}
 		$cpdb_all[] = $cpent;
 	}
 }
 
 if ($_GET['order']) {
-	if ($_GET['order'] == "ip")
+	if ($_GET['order'] == "ip") {
 		$order = 2;
-	else if ($_GET['order'] == "mac")
+	} else if ($_GET['order'] == "mac") {
 		$order = 3;
-	else if ($_GET['order'] == "user")
+	} else if ($_GET['order'] == "user") {
 		$order = 4;
-	else if ($_GET['order'] == "lastact")
+	} else if ($_GET['order'] == "lastact") {
 		$order = 5;
-	else if ($_GET['order'] == "zone")
+	} else if ($_GET['order'] == "zone") {
 		$order = 10;
-	else
+	} else {
 		$order = 0;
+	}
 	usort($cpdb_all, "clientcmp");
 }
 ?>

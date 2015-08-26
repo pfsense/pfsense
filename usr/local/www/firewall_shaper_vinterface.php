@@ -51,7 +51,7 @@ if($_GET['reset'] != "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Limiter"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiter"));
 $shortcut_section = "trafficshaper-limiters";
 $dfltmsg = false;
 
@@ -62,36 +62,40 @@ read_dummynet_config();
  */
 
 if ($_GET) {
-	if ($_GET['queue'])
+	if ($_GET['queue']) {
 		$qname = htmlspecialchars(trim($_GET['queue']));
-
-	if ($_GET['pipe'])
+	}
+	if ($_GET['pipe']) {
 		$pipe = htmlspecialchars(trim($_GET['pipe']));
-
-	if ($_GET['action'])
+	}
+	if ($_GET['action']) {
 		$action = htmlspecialchars($_GET['action']);
+	}
 }
 
 if ($_POST) {
-	if ($_POST['name'])
+	if ($_POST['name']) {
 		$qname = htmlspecialchars(trim($_POST['name']));
-	else if ($_POST['newname'])
+	} else if ($_POST['newname']) {
 		$qname = htmlspecialchars(trim($_POST['newname']));
-
-	if ($_POST['pipe'])
+	}
+	if ($_POST['pipe']) {
 		$pipe = htmlspecialchars(trim($_POST['pipe']));
-	else
+	} else {
 		$pipe = htmlspecialchars(trim($qname));
-
-	if ($_POST['parentqueue'])
+	}
+	if ($_POST['parentqueue']) {
 		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
+	}
 }
 
 if ($pipe) {
 	$dnpipe = $dummynet_pipe_list[$pipe];
 	if ($dnpipe) {
 		$queue =& $dnpipe->find_queue($pipe, $qname);
-	} else $addnewpipe = true;
+	} else {
+		$addnewpipe = true;
+	}
 }
 
 $dontshow = false;
@@ -104,50 +108,50 @@ if ($_GET) {
 			if ($queue) {
 				if (is_array($config['filter']['rule'])) {
 					foreach ($config['filter']['rule'] as $rule) {
-						if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname())
+						if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname()) {
 							$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
+						}
 					}
 				}
 				if (!$input_errors) {
 					$queue->delete_queue();
-					if (write_config())
+					if (write_config()) {
 						mark_subsystem_dirty('shaper');
+					}
 					header("Location: firewall_shaper_vinterface.php");
 					exit;
 				}
-				$sform = $queue->build_form();
+				$output_form .= $queue->build_form();
 			} else {
-				$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
-
-				$dfltmsg = true;
+				$input_errors[] = sprintf(gettext("No queue with name %s was found!"), $qname);
+				$output_form .= $dn_default_shaper_msg;
 				$dontshow = true;
 			}
-		break;
-	case "resetall":
-		foreach ($dummynet_pipe_list as $dn)
-			$dn->delete_queue();
-
-		unset($dummynet_pipe_list);
-		$dummynet_pipe_list = array();
-		unset($config['dnshaper']['queue']);
-		unset($queue);
-		unset($pipe);
-		$can_add = false;
-		$can_enable = false;
-		$dontshow = true;
-
-		foreach ($config['filter']['rule'] as $key => $rule) {
-			if (isset($rule['dnpipe']))
-				unset($config['filter']['rule'][$key]['dnpipe']);
-
-			if (isset($rule['pdnpipe']))
-				unset($config['filter']['rule'][$key]['pdnpipe']);
-		}
-
-		if (write_config()) {
-			$retval = 0;
-			$retval = filter_configure();
-			$savemsg = get_std_save_message($retval);
+			break;
+		case "resetall":
+			foreach ($dummynet_pipe_list as $dn) {
+				$dn->delete_queue();
+			}
+			unset($dummynet_pipe_list);
+			$dummynet_pipe_list = array();
+			unset($config['dnshaper']['queue']);
+			unset($queue);
+			unset($pipe);
+			$can_add = false;
+			$can_enable = false;
+			$dontshow = true;
+			foreach ($config['filter']['rule'] as $key => $rule) {
+				if (isset($rule['dnpipe'])) {
+					unset($config['filter']['rule'][$key]['dnpipe']);
+				}
+				if (isset($rule['pdnpipe'])) {
+					unset($config['filter']['rule'][$key]['pdnpipe']);
+				}
+			}
+			if (write_config()) {
+				$retval = 0;
+				$retval = filter_configure();
+				$savemsg = get_std_save_message($retval);
 
 			if (stristr($retval, "error") != true)
 				$savemsg = get_std_save_message($retval);
@@ -216,9 +220,9 @@ if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewpipe) {
-		if (!empty($dummynet_pipe_list[$qname]))
+		if (!empty($dummynet_pipe_list[$qname])) {
 			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
-		else {
+		} else {
 			$dnpipe =& new dnpipe_class();
 
 			$dnpipe->ReadConfig($_POST);
@@ -230,8 +234,9 @@ if ($_POST) {
 				$tmppath[] = $dnpipe->GetQname();
 				$dnpipe->SetLink($tmppath);
 				$dnpipe->wconfig();
-				if (write_config())
+				if (write_config()) {
 					mark_subsystem_dirty('shaper');
+				}
 				$can_enable = true;
 				$can_add = true;
 			}
@@ -241,9 +246,9 @@ if ($_POST) {
 			$newjavascript = $dnpipe->build_javascript();
 		}
 	} else if ($parentqueue) { /* Add a new queue */
-		if (!empty($dummynet_pipe_list[$qname]))
+		if (!empty($dummynet_pipe_list[$qname])) {
 			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
-		else if ($dnpipe) {
+		} else if ($dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);
 			$tmp =& $dnpipe->add_queue($pipe, $_POST, $tmppath, $input_errors);
@@ -321,9 +326,9 @@ if ($queue) {
 
 $tree = "<ul class=\"tree\" >";
 if (is_array($dummynet_pipe_list)) {
-		foreach ($dummynet_pipe_list as $tmpdn) {
-				$tree .= $tmpdn->build_tree();
-		}
+	foreach ($dummynet_pipe_list as $tmpdn) {
+		$tree .= $tmpdn->build_tree();
+	}
 }
 $tree .= "</ul>";
 
@@ -349,10 +354,11 @@ function show_source_port_range() {
 </script>
 
 <?php
-if ($queue)
+if ($queue) {
 	echo $queue->build_javascript();
-else
+} else {
 	echo $newjavascript;
+}
 
 if ($input_errors)
 	print_input_errors($input_errors);

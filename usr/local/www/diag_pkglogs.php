@@ -42,7 +42,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
-	pfSense_MODULE: pkgs
+	pfSense_MODULE:	pkgs
 */
 
 ##|+PRIV
@@ -55,15 +55,17 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
+if (!($nentries = $config['syslog']['nentries'])) {
+	$nentries = 50;
+}
 
 $i = 0;
 $pkgwithlogging = false;
 $apkg = $_GET['pkg'];
-if(!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
-	if($config['installedpackages']['package'] <> "") {
-		foreach($config['installedpackages']['package'] as $package) {
-			if(is_array($package['logging'])) {
+if (!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
+	if ($config['installedpackages']['package'] <> "") {
+		foreach ($config['installedpackages']['package'] as $package) {
+			if (is_array($package['logging'])) {
 				$pkgwithlogging = true;
 				$apkg = $package['name'];
 				$apkgid = $i;
@@ -72,15 +74,15 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 			$i++;
 		}
 	}
-} elseif($apkg) {
-	$apkgid = get_pkg_id($apkg);
+} elseif ($apkg) {
+	$apkgid = get_package_id($apkg);
 	if ($apkgid != -1) {
 		$pkgwithlogging = true;
 		$i = $apkgid;
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("Package logs"));
+$pgtitle = array(gettext("Status"), gettext("Package logs"));
 include("head.inc");
 
 if($pkgwithlogging == false) {
@@ -94,9 +96,9 @@ if($pkgwithlogging == false) {
 
 			if($apkg == $package['name']) {
 				$curtab = $logtab;
-				$tab_array[] = array(sprintf(gettext("%s"),$logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
 			} else {
-				$tab_array[] = array(sprintf(gettext("%s"),$logtab), false, "diag_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "diag_pkglogs.php?pkg=".$package['name']);
 			}
 		}
 	}

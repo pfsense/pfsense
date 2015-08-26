@@ -37,25 +37,28 @@
 
 require("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pkg-utils.inc");
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
 $shortcut_section = "openvpn";
 
-if (!is_array($config['openvpn']['openvpn-csc']))
+if (!is_array($config['openvpn']['openvpn-csc'])) {
 	$config['openvpn']['openvpn-csc'] = array();
+}
 
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 $act = $_GET['act'];
-
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
 if ($_GET['act'] == "del") {
 	if (!$a_csc[$id]) {
@@ -69,7 +72,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Client Specific Override successfully deleted")."<br />";
 }
 
-if($_GET['act']=="edit"){
+if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
@@ -88,9 +91,9 @@ if($_GET['act']=="edit"){
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
 
 		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
-
-		if ($pconfig['dns_domain'])
+		if ($pconfig['dns_domain']) {
 			$pconfig['dns_domain_enable'] = true;
+		}
 
 		$pconfig['dns_server1'] = $a_csc[$id]['dns_server1'];
 		$pconfig['dns_server2'] = $a_csc[$id]['dns_server2'];
@@ -98,17 +101,19 @@ if($_GET['act']=="edit"){
 		$pconfig['dns_server4'] = $a_csc[$id]['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
-			$pconfig['dns_server2'] ||
-			$pconfig['dns_server3'] ||
-			$pconfig['dns_server4'])
+		    $pconfig['dns_server2'] ||
+		    $pconfig['dns_server3'] ||
+		    $pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
+		}
 
 		$pconfig['ntp_server1'] = $a_csc[$id]['ntp_server1'];
 		$pconfig['ntp_server2'] = $a_csc[$id]['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
-			$pconfig['ntp_server2'])
+		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
+		}
 
 		$pconfig['netbios_enable'] = $a_csc[$id]['netbios_enable'];
 		$pconfig['netbios_ntype'] = $a_csc[$id]['netbios_ntype'];
@@ -118,13 +123,14 @@ if($_GET['act']=="edit"){
 		$pconfig['wins_server2'] = $a_csc[$id]['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
-			$pconfig['wins_server2'])
+		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
+		}
 
 		$pconfig['nbdd_server1'] = $a_csc[$id]['nbdd_server1'];
-
-		if ($pconfig['nbdd_server1'])
+		if ($pconfig['nbdd_server1']) {
 			$pconfig['nbdd_server_enable'] = true;
+		}
 	}
 }
 
@@ -134,54 +140,69 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network')) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
 		$input_errors[] = $result;
+	}
 
 	if ($pconfig['dns_server_enable']) {
-		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1'])))
+		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1']))) {
 			$input_errors[] = gettext("The field 'DNS Server #1' must contain a valid IP address");
-		if (!empty($pconfig['dns_server2']) && !is_ipaddr(trim($pconfig['dns_server2'])))
+		}
+		if (!empty($pconfig['dns_server2']) && !is_ipaddr(trim($pconfig['dns_server2']))) {
 			$input_errors[] = gettext("The field 'DNS Server #2' must contain a valid IP address");
-		if (!empty($pconfig['dns_server3']) && !is_ipaddr(trim($pconfig['dns_server3'])))
+		}
+		if (!empty($pconfig['dns_server3']) && !is_ipaddr(trim($pconfig['dns_server3']))) {
 			$input_errors[] = gettext("The field 'DNS Server #3' must contain a valid IP address");
-		if (!empty($pconfig['dns_server4']) && !is_ipaddr(trim($pconfig['dns_server4'])))
+		}
+		if (!empty($pconfig['dns_server4']) && !is_ipaddr(trim($pconfig['dns_server4']))) {
 			$input_errors[] = gettext("The field 'DNS Server #4' must contain a valid IP address");
+		}
 	}
 
 	if ($pconfig['ntp_server_enable']) {
-		if (!empty($pconfig['ntp_server1']) && !is_ipaddr(trim($pconfig['ntp_server1'])))
+		if (!empty($pconfig['ntp_server1']) && !is_ipaddr(trim($pconfig['ntp_server1']))) {
 			$input_errors[] = gettext("The field 'NTP Server #1' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server2']) && !is_ipaddr(trim($pconfig['ntp_server2'])))
+		}
+		if (!empty($pconfig['ntp_server2']) && !is_ipaddr(trim($pconfig['ntp_server2']))) {
 			$input_errors[] = gettext("The field 'NTP Server #2' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server3']) && !is_ipaddr(trim($pconfig['ntp_server3'])))
+		}
+		if (!empty($pconfig['ntp_server3']) && !is_ipaddr(trim($pconfig['ntp_server3']))) {
 			$input_errors[] = gettext("The field 'NTP Server #3' must contain a valid IP address");
-		if (!empty($pconfig['ntp_server4']) && !is_ipaddr(trim($pconfig['ntp_server4'])))
+		}
+		if (!empty($pconfig['ntp_server4']) && !is_ipaddr(trim($pconfig['ntp_server4']))) {
 			$input_errors[] = gettext("The field 'NTP Server #4' must contain a valid IP address");
+		}
 	}
 
 	if ($pconfig['netbios_enable']) {
 		if ($pconfig['wins_server_enable']) {
-			if (!empty($pconfig['wins_server1']) && !is_ipaddr(trim($pconfig['wins_server1'])))
+			if (!empty($pconfig['wins_server1']) && !is_ipaddr(trim($pconfig['wins_server1']))) {
 				$input_errors[] = gettext("The field 'WINS Server #1' must contain a valid IP address");
-			if (!empty($pconfig['wins_server2']) && !is_ipaddr(trim($pconfig['wins_server2'])))
+			}
+			if (!empty($pconfig['wins_server2']) && !is_ipaddr(trim($pconfig['wins_server2']))) {
 				$input_errors[] = gettext("The field 'WINS Server #2' must contain a valid IP address");
+			}
 		}
-
 		if ($pconfig['nbdd_server_enable']) {
-			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1'])))
+			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
+			}
 		}
 	}
 
@@ -194,10 +215,9 @@ if ($_POST) {
 		$csc = array();
 
 		$csc['custom_options'] = $pconfig['custom_options'];
-
-		if ($_POST['disable'] == "yes")
+		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;
-
+		}
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
@@ -209,8 +229,9 @@ if ($_POST) {
 		$csc['gwredir'] = $pconfig['gwredir'];
 		$csc['push_reset'] = $pconfig['push_reset'];
 
-		if ($pconfig['dns_domain_enable'])
+		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
+		}
 
 		if ($pconfig['dns_server_enable']) {
 			$csc['dns_server1'] = $pconfig['dns_server1'];
@@ -234,19 +255,21 @@ if ($_POST) {
 				$csc['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable'])
+			if ($pconfig['dns_server_enable']) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
+			}
 		}
 
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc_cn = $a_csc[$id]['common_name'];
 			$a_csc[$id] = $csc;
-		} else
+		} else {
 			$a_csc[] = $csc;
+		}
 
-		if (!empty($old_csc_cn))
+		if (!empty($old_csc_cn)) {
 			openvpn_cleanup_csc($old_csc_cn);
-
+		}
 		openvpn_resync_csc($csc);
 		write_config();
 

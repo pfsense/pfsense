@@ -37,6 +37,24 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
+if ($_POST) {
+	if (!is_array($config["widgets"]["gateways_widget"])) {
+		$config["widgets"]["gateways_widget"] = array();
+	}
+	if (isset($_POST["display_type"])) {
+		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
+	}
+	write_config("Updated gateways widget settings via dashboard.");
+	header("Location: /");
+	exit(0);
+}
+
+if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+} else {
+	$display_type = "gw_ip";
+}
+
 $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);

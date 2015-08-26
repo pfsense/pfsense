@@ -47,26 +47,27 @@ if (!is_array($config['hasync']))
 
 $a_hasync = &$config['hasync'];
 
-$checkbox_names = array('pfsyncenabled',
-			'synchronizeusers',
-			'synchronizeauthservers',
-			'synchronizecerts',
-			'synchronizerules',
-			'synchronizeschedules',
-			'synchronizealiases',
-			'synchronizenat',
-			'synchronizeipsec',
-			'synchronizeopenvpn',
-			'synchronizedhcpd',
-			'synchronizewol',
-			'synchronizestaticroutes',
-			'synchronizelb',
-			'synchronizevirtualip',
-			'synchronizetrafficshaper',
-			'synchronizetrafficshaperlimiter',
-			'synchronizetrafficshaperlayer7',
-			'synchronizednsforwarder',
-			'synchronizecaptiveportal');
+$checkbox_names = array(
+	'pfsyncenabled',
+	'synchronizeusers',
+	'synchronizeauthservers',
+	'synchronizecerts',
+	'synchronizerules',
+	'synchronizeschedules',
+	'synchronizealiases',
+	'synchronizenat',
+	'synchronizeipsec',
+	'synchronizeopenvpn',
+	'synchronizedhcpd',
+	'synchronizewol',
+	'synchronizestaticroutes',
+	'synchronizelb',
+	'synchronizevirtualip',
+	'synchronizetrafficshaper',
+	'synchronizetrafficshaperlimiter',
+	'synchronizetrafficshaperlayer7',
+	'synchronizednsforwarder',
+	'synchronizecaptiveportal');
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -96,7 +97,7 @@ $pconfig['passwordfld']	 = $a_hasync['password'];
 $ifaces = get_configured_interface_with_descr();
 $ifaces["lo0"] = "loopback";
 
-$pgtitle = array(gettext("System"),gettext("High Availability Sync"));
+$pgtitle = array(gettext("System"), gettext("High Availability Sync"));
 $shortcut_section = "carp";
 
 // Build a list of available interfaces

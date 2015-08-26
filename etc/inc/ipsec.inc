@@ -44,22 +44,23 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 
 global $my_identifier_list;
 $my_identifier_list = array(
-	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
-	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
-	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
-	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
-	'keyid tag' => array( 'desc' => gettext('KeyID tag'), 'mobile' => true ),
-	'dyn_dns' => array( 'desc' => gettext('Dynamic DNS'), 'mobile' => true ));
+	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),
+	'address' => array('desc' => gettext('IP address'), 'mobile' => true),
+	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
+	'keyid tag' => array('desc' => gettext('KeyID tag'), 'mobile' => true),
+	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true));
 
 global $peer_identifier_list;
 $peer_identifier_list = array(
-	'peeraddress' => array( 'desc' => gettext('Peer IP address'), 'mobile' => false ),
-	'address' => array( 'desc' => gettext('IP address'), 'mobile' => false ),
-	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
-	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
-	'keyid tag' => array( 'desc' =>gettext('KeyID tag'), 'mobile' => true ));
+	'any' => array('desc' => gettext('Any'), 'mobile' => true),
+	'peeraddress' => array('desc' => gettext('Peer IP address'), 'mobile' => false),
+	'address' => array('desc' => gettext('IP address'), 'mobile' => false),
+	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
+	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true));
 
 global $ipsec_idhandling;
 $ipsec_idhandling = array(
@@ -68,22 +69,25 @@ $ipsec_idhandling = array(
 
 global $p1_ealgos;
 $p1_ealgos = array(
-	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'3des' => array( 'name' => '3DES' ),
-	'cast128' => array( 'name' => 'CAST128' ),
-	'des' => array( 'name' => 'DES' ));
+	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'3des' => array('name' => '3DES'),
+	'cast128' => array('name' => 'CAST128'),
+	'des' => array('name' => 'DES'));
 
 global $p2_ealgos;
 $p2_ealgos = array(
-	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'3des' => array( 'name' => '3DES' ),
-	'cast128' => array( 'name' => 'CAST128' ),
-	'des' => array( 'name' => 'DES' ));
+	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'3des' => array('name' => '3DES'),
+	'cast128' => array('name' => 'CAST128'),
+	'des' => array('name' => 'DES'));
 
 global $p1_halgos;
 $p1_halgos = array(
@@ -105,9 +109,15 @@ $p1_dhgroups = array(
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
 	18 => '18 (8192 bit)',
+	19 => '19 (nist ecp256)',
+	20 => '20 (nist ecp384)',
+	21 => '21 (nist ecp521)',
 	22 => '22 (1024(sub 160) bit)',
 	23 => '23 (2048(sub 224) bit)',
-	24 => '24 (2048(sub 256) bit)'
+	24 => '24 (2048(sub 256) bit)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 global $p2_halgos;
@@ -122,13 +132,14 @@ $p2_halgos = array(
 
 global $p1_authentication_methods;
 $p1_authentication_methods = array(
-	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
-	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
-	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
-	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
-	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
-	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
-	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+	'hybrid_rsa_server' => array('name' => 'Hybrid RSA + Xauth', 'mobile' => true),
+	'xauth_rsa_server' => array('name' => 'Mutual RSA + Xauth', 'mobile' => true),
+	'xauth_psk_server' => array('name' => 'Mutual PSK + Xauth', 'mobile' => true),
+	'eap-tls' => array('name' => 'EAP-TLS', 'mobile' => true),
+	'eap-radius' => array('name' => 'EAP-RADIUS', 'mobile' => true),
+	'eap-mschapv2' => array('name' => 'EAP-MSChapv2', 'mobile' => true),
+	'rsasig' => array('name' => 'Mutual RSA', 'mobile' => false),
+	'pre_shared_key' => array('name' => 'Mutual PSK', 'mobile' => false));
 
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
@@ -157,7 +168,13 @@ $p2_pfskeygroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)'
+	18 => '18 (8192 bit)',
+	19 => '19 (nist ecp256)',
+	20 => '20 (nist ecp384)',
+	21 => '21 (nist ecp521)',
+	28 => '28 (brainpool ecp256)',
+	29 => '29 (brainpool ecp384)',
+	30 => '30 (brainpool ecp512)'
 );
 
 /*
@@ -168,7 +185,7 @@ function ipsec_ikeid_used($ikeid) {
 	global $config;
 
 	foreach ($config['ipsec']['phase1'] as $ph1ent) {
-		if ( $ikeid == $ph1ent['ikeid'] ) {
+		if ($ikeid == $ph1ent['ikeid']) {
 			return true;
 		}
 	}
@@ -204,7 +221,7 @@ function ipsec_get_phase1_src(& $ph1ent) {
 				$interfaceip = get_interface_ip($if);
 			}
 		} else {
-			$interfaceip=$ph1ent['interface'];
+			$interfaceip = $ph1ent['interface'];
 		}
 	} else {
 		$if = "wan";
@@ -229,7 +246,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	}
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if (! platform_booting()) {
+		if (!platform_booting()) {
 			return resolve_retry($rg);
 		}
 	}
@@ -254,8 +271,9 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 				} else {
 					return $idinfo['address']."/32";
 				}
-			} else
+			} else {
 				return $idinfo['address'];
+			}
 			break; /* NOTREACHED */
 		case "network":
 			return "{$idinfo['address']}/{$idinfo['netbits']}";
@@ -272,12 +290,12 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			if ($mode == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
-				$address = gen_subnetv6($address,$netbits);
+				$address = gen_subnetv6($address, $netbits);
 				return "{$address}/{$netbits}";
 			} else {
 				$address = get_interface_ip($idinfo['type']);
 				$netbits = get_interface_subnet($idinfo['type']);
-				$address = gen_subnet($address,$netbits);
+				$address = gen_subnet($address, $netbits);
 				return "{$address}/{$netbits}";
 			}
 			break; /* NOTREACHED */
@@ -287,7 +305,7 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 /*
  * Return phase2 idinfo in address/netmask format
  */
-function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
+function ipsec_idinfo_to_subnet(& $idinfo, $addrbits = false) {
 	global $config;
 
 	switch ($idinfo['type']) {
@@ -298,8 +316,9 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 				} else {
 					return $idinfo['address']."/255.255.255.255";
 				}
-			} else
+			} else {
 				return $idinfo['address'];
+			}
 			break; /* NOTREACHED */
 		case "none":
 		case "network":
@@ -312,12 +331,12 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 			if ($idinfo['mode'] == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
-				$address = gen_subnetv6($address,$netbits);
+				$address = gen_subnetv6($address, $netbits);
 				return $address."/".$netbits;
 			} else {
 				$address = get_interface_ip($idinfo['type']);
 				$netbits = get_interface_subnet($idinfo['type']);
-				$address = gen_subnet($address,$netbits);
+				$address = gen_subnet($address, $netbits);
 				return $address."/".$netbits;
 			}
 			break; /* NOTREACHED */
@@ -356,7 +375,7 @@ function ipsec_idinfo_to_text(& $idinfo) {
 /*
  * Return phase1 association for phase2
  */
-function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
+function ipsec_lookup_phase1(& $ph2ent, & $ph1ent) {
 	global $config;
 
 	if (!is_array($config['ipsec'])) {
@@ -400,7 +419,7 @@ function ipsec_phase1_status(&$ipsec_status, $ikeid) {
  */
 function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 
-	if (ipsec_lookup_phase1($ph2ent,$ph1ent)) {
+	if (ipsec_lookup_phase1($ph2ent, $ph1ent)) {
 		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 	}
 
@@ -457,8 +476,7 @@ function ipsec_smp_dump_status() {
 /*
  * Return dump of SPD table
  */
-function ipsec_dump_spd()
-{
+function ipsec_dump_spd() {
 	$fd = @popen("/sbin/setkey -DP", "r");
 	$spd = array();
 	if ($fd) {
@@ -494,7 +512,7 @@ function ipsec_dump_spd()
 						$upperspec = explode("/", $linea[0]);
 						$cursp['proto'] = $upperspec[0];
 						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
-						$cursp['reqid'] =  substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
 						break;
 				}
 			}
@@ -512,8 +530,7 @@ function ipsec_dump_spd()
 /*
  * Return dump of SAD table
  */
-function ipsec_dump_sad()
-{
+function ipsec_dump_sad() {
 	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
@@ -530,7 +547,7 @@ function ipsec_dump_sad()
 					$sad[] = $cursa;
 				}
 				$cursa = array();
-				list($cursa['src'],$cursa['dst']) = explode(" ", $line);
+				list($cursa['src'], $cursa['dst']) = explode(" ", $line);
 			} else {
 				$line = trim($line, "\t\n\r ");
 				$linea = explode(" ", $line);
@@ -603,7 +620,7 @@ function ipsec_get_number_of_phase2($ikeid) {
 	global $config;
 	$a_phase2 = $config['ipsec']['phase2'];
 
-	$nbph2=0;
+	$nbph2 = 0;
 
 	if (is_array($a_phase2) && count($a_phase2)) {
 		foreach ($a_phase2 as $ph2tmp) {
@@ -703,7 +720,7 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			break;
 		case 'keyid tag':
 			$thisid_type = 'keyid';
-			$thisid_data = "{$thisid_data}";
+			$thisid_data = "{$id_data}";
 			break;
 		case 'user_fqdn':
 			$thisid_type = 'userfqdn';
@@ -711,9 +728,6 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			break;
 		case 'asn1dn':
 			$thisid_data = $id_data;
-			if ($thisid_data && $thisid_data[0] != '"') {
-				$thisid_data = "\"{$id_data}\"";
-			}
 			break;
 	}
 	return array($thisid_type, $thisid_data);

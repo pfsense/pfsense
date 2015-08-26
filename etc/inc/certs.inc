@@ -153,7 +153,7 @@ function ca_chain(& $cert) {
 	return "";
 }
 
-function ca_import(& $ca, $str, $key="", $serial=0) {
+function ca_import(& $ca, $str, $key = "", $serial = 0) {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
@@ -178,7 +178,7 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $oca) {
 			$issuer = cert_get_issuer($oca['crt']);
-			if ($ca['refid']<>$oca['refid'] && $issuer==$subject) {
+			if ($ca['refid'] <> $oca['refid'] && $issuer == $subject) {
 				$oca['caref'] = $ca['refid'];
 			}
 		}
@@ -186,7 +186,7 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
 			$issuer = cert_get_issuer($cert['crt']);
-			if ($issuer==$subject) {
+			if ($issuer == $subject) {
 				$cert['caref'] = $ca['refid'];
 			}
 		}
@@ -306,7 +306,7 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	return true;
 }
 
-function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $digest_alg = "sha256") {
+function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $digest_alg = "sha256") {
 
 	$cert['type'] = $type;
 
@@ -554,8 +554,8 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
 	}
 
 	$modulus = "";
-	if ( in_array($type, array("crt", "prv", "csr")) ) {
-		$type = str_replace( array("crt","prv","csr"), array("x509","rsa","req"), $type);
+	if (in_array($type, array("crt", "prv", "csr"))) {
+		$type = str_replace(array("crt", "prv", "csr"), array("x509", "rsa", "req"), $type);
 		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
 	}
 	return $modulus;
@@ -692,7 +692,7 @@ function cert_in_use($certref) {
 		is_captiveportal_cert($certref));
 }
 
-function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
+function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	global $config;
 	$ca =& lookup_ca($caref);
 	if (!$ca) {
@@ -732,7 +732,7 @@ function crl_update(& $crl) {
 	return $crl_res;
 }
 
-function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
+function cert_revoke($cert, & $crl, $reason = OCSP_REVOKED_STATUS_UNSPECIFIED) {
 	global $config;
 	if (is_cert_revoked($cert, $crl['refid'])) {
 		return true;

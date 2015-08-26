@@ -59,6 +59,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
@@ -90,9 +91,10 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ((empty($_POST['adaptive-start']) && !empty($_POST['adaptive-end'])) || (!empty($_POST['adaptive-start']) && empty($_POST['adaptive-end'])))
+	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend']))) {
 		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
-	if (!empty($_POST['adaptive-start']) && !is_numericint($_POST['adaptive-start'])) {
+	}
+	if (!empty($_POST['adaptivestart']) && !is_numericint($_POST['adaptivestart'])) {
 		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
 	}
 	if (!empty($_POST['adaptive-end']) && !is_numericint($_POST['adaptive-end'])) {
@@ -107,7 +109,13 @@ if ($_POST) {
 	if ($_POST['firewall-maximum-table-entries'] && !is_numericint($_POST['firewall-maximum-table-entries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
 	}
-	if ($_POST['reflection-timeout'] && !is_numericint($_POST['reflection-timeout'])) {
+	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
+		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
+	}
+	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
+		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
+	}
+	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
 	}
 	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) {
@@ -158,120 +166,133 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if($_POST['disable-firewall'] == "yes")
+		if ($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
-		else
+		} else {
 			unset($config['system']['disablefilter']);
+		}
 
-		if($_POST['disable-auto-added-vpn-rules'] == "yes")
+		if ($_POST['disablevpnrules'] == "yes") {
 			$config['system']['disablevpnrules'] = true;
-		else
+		} else {
 			unset($config['system']['disablevpnrules']);
+		}
+		if ($_POST['rfc959workaround'] == "yes") {
+			$config['system']['rfc959workaround'] = "enabled";
+		} else {
+			unset($config['system']['rfc959workaround']);
+		}
 
-		if($_POST['ip-do-not-fragment-compatibility'] == "yes")
+		if ($_POST['scrubnodf'] == "yes") {
 			$config['system']['scrubnodf'] = "enabled";
-		else
+		} else {
 			unset($config['system']['scrubnodf']);
+		}
 
-		if($_POST['ip-random-id-generation'] == "yes")
+		if ($_POST['scrubrnid'] == "yes") {
 			$config['system']['scrubrnid'] = "enabled";
-		else
+		} else {
 			unset($config['system']['scrubrnid']);
+		}
 
-		if (!empty($_POST['adaptive-end']))
-			$config['system']['adaptiveend'] = $_POST['adaptive-end'];
-		else
+		if (!empty($_POST['adaptiveend'])) {
+			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
+		} else {
 			unset($config['system']['adaptiveend']);
-		if (!empty($_POST['adaptive-start']))
-			$config['system']['adaptivestart'] = $_POST['adaptive-start'];
-		else
-			unset($config['system']['adaptive-start']);
+		}
+		if (!empty($_POST['adaptivestart'])) {
+			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
+		} else {
+			unset($config['system']['adaptivestart']);
+		}
 
-		if ($_POST['check-certificate-of-aliases-urls'] == "yes")
+		if ($_POST['checkaliasesurlcert'] == "yes") {
 			$config['system']['checkaliasesurlcert'] = true;
-		else
+		} else {
 			unset($config['system']['checkaliasesurlcert']);
+		}
 
-		$config['system']['optimization'] = $_POST['firewall-optimization-options'];
-		$config['system']['maximumstates'] = $_POST['firewall-maximum-states'];
-		$config['system']['aliasesresolveinterval'] = $_POST['aliases-hostnames-resolve-interval'];
-		$config['system']['maximumtableentries'] = $_POST['firewall-maximum-table-entries'];
+		$config['system']['optimization'] = $_POST['optimization'];
+		$config['system']['maximumstates'] = $_POST['maximumstates'];
+		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
+		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
+		$config['system']['maximumfrags'] = $_POST['maximumfrags'];
 
 		if (!empty($_POST['tcpfirsttimeout'])) {
-				$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
+			$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
 		} else {
-				unset($config['system']['tcpfirsttimeout']);
+			unset($config['system']['tcpfirsttimeout']);
 		}
 		if (!empty($_POST['tcpopeningtimeout'])) {
-				$config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
+			$config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
 		} else {
-				unset($config['system']['tcpopeningtimeout']);
+			unset($config['system']['tcpopeningtimeout']);
 		}
 		if (!empty($_POST['tcpestablishedtimeout'])) {
-				$config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
+			$config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
 		} else {
-				unset($config['system']['tcpestablishedtimeout']);
+			unset($config['system']['tcpestablishedtimeout']);
 		}
 		if (!empty($_POST['tcpclosingtimeout'])) {
-				$config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
+			$config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
 		} else {
-				unset($config['system']['tcpclosingtimeout']);
+			unset($config['system']['tcpclosingtimeout']);
 		}
 		if (!empty($_POST['tcpfinwaittimeout'])) {
-				$config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
+			$config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
 		} else {
-				unset($config['system']['tcpfinwaittimeout']);
+			unset($config['system']['tcpfinwaittimeout']);
 		}
 		if (!empty($_POST['tcpclosedtimeout'])) {
-				$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
+			$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
 		} else {
-				unset($config['system']['tcpclosedtimeout']);
+			unset($config['system']['tcpclosedtimeout']);
 		}
 		if (!empty($_POST['udpfirsttimeout'])) {
-				$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
+			$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
 		} else {
-				unset($config['system']['udpfirsttimeout']);
+			unset($config['system']['udpfirsttimeout']);
 		}
 		if (!empty($_POST['udpsingletimeout'])) {
-				$config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
+			$config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
 		} else {
-				unset($config['system']['udpsingletimeout']);
+			unset($config['system']['udpsingletimeout']);
 		}
 		if (!empty($_POST['udpmultipletimeout'])) {
-				$config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
+			$config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
 		} else {
-				unset($config['system']['udpmultipletimeout']);
+			unset($config['system']['udpmultipletimeout']);
 		}
 		if (!empty($_POST['icmpfirsttimeout'])) {
-				$config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
+			$config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
 		} else {
-				unset($config['system']['icmpfirsttimeout']);
+			unset($config['system']['icmpfirsttimeout']);
 		}
 		if (!empty($_POST['icmperrortimeout'])) {
-				$config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
+			$config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
 		} else {
-				unset($config['system']['icmperrortimeout']);
+			unset($config['system']['icmperrortimeout']);
 		}
 		if (!empty($_POST['otherfirsttimeout'])) {
-				$config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
+			$config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
 		} else {
-				unset($config['system']['otherfirsttimeout']);
+			unset($config['system']['otherfirsttimeout']);
 		}
 		if (!empty($_POST['othersingletimeout'])) {
-				$config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
+			$config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
 		} else {
-				unset($config['system']['othersingletimeout']);
+			unset($config['system']['othersingletimeout']);
 		}
 		if (!empty($_POST['othermultipletimeout'])) {
-				$config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
+			$config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
 		} else {
-				unset($config['system']['othermultipletimeout']);
+			unset($config['system']['othermultipletimeout']);
 		}
 
-		if($_POST['natreflection'] == "proxy") {
+		if ($_POST['natreflection'] == "proxy") {
 			unset($config['system']['disablenatreflection']);
 			unset($config['system']['enablenatreflectionpurenat']);
-		} else if($_POST['nat-reflection-mode-for-port-forwards'] == "purenat") {
+		} else if ($_POST['natreflection'] == "purenat") {
 			unset($config['system']['disablenatreflection']);
 			$config['system']['enablenatreflectionpurenat'] = "yes";
 		} else {
@@ -279,42 +300,49 @@ if ($_POST) {
 			unset($config['system']['enablenatreflectionpurenat']);
 		}
 
-		if($_POST['enable-nat-reflection-for-1-1-nat'] == "yes")
+		if ($_POST['enablebinatreflection'] == "yes") {
 			$config['system']['enablebinatreflection'] = "yes";
-		else
+		} else {
 			unset($config['system']['enablebinatreflection']);
+		}
 
-		if($_POST['disable-reply-to'] == "yes")
-			$config['system']['disablereplyto'] = $_POST['disable-reply-to'];
-		else
+		if ($_POST['disablereplyto'] == "yes") {
+			$config['system']['disablereplyto'] = $_POST['disablereplyto'];
+		} else {
 			unset($config['system']['disablereplyto']);
+		}
 
-		if($_POST['disable-negate-rules'] == "yes")
-			$config['system']['disablenegate'] = $_POST['disable-negate-rules'];
-		else
+		if ($_POST['disablenegate'] == "yes") {
+			$config['system']['disablenegate'] = $_POST['disablenegate'];
+		} else {
 			unset($config['system']['disablenegate']);
+		}
 
-		if($_POST['enable-automatic-outbound-nat-for-reflection'] == "yes")
+		if ($_POST['enablenatreflectionhelper'] == "yes") {
 			$config['system']['enablenatreflectionhelper'] = "yes";
-		else
+		} else {
 			unset($config['system']['enablenatreflectionhelper']);
+		}
 
 		$config['system']['reflectiontimeout'] = $_POST['reflection-timeout'];
 
-		if($_POST['static-route-filtering'] == "yes")
-			$config['filter']['bypassstaticroutes'] = $_POST['static-route-filtering'];
-		elseif(isset($config['filter']['bypassstaticroutes']))
+		if ($_POST['bypassstaticroutes'] == "yes") {
+			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
+		} elseif (isset($config['filter']['bypassstaticroutes'])) {
 			unset($config['filter']['bypassstaticroutes']);
+		}
 
-		if($_POST['disable-firewall-scrub'] == "yes")
-			$config['system']['disablescrub'] = $_POST['disable-firewall-scrub'];
-		else
+		if ($_POST['disablescrub'] == "yes") {
+			$config['system']['disablescrub'] = $_POST['disablescrub'];
+		} else {
 			unset($config['system']['disablescrub']);
+		}
 
-		if ($_POST['tftp-proxy'])
-			$config['system']['tftpinterface'] = implode(",", $_POST['tftp-proxy']);
-		else
+		if ($_POST['tftpinterface']) {
+			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
+		} else {
 			unset($config['system']['tftpinterface']);
+		}
 
 		if ($_POST['update-frequency'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['update-frequency']) {
@@ -336,19 +364,21 @@ if ($_POST) {
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-			isvalidpid("{$g['varrun_path']}/filterdns.pid"))
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
+		}
 
 		$retval = 0;
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
+		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
-		else
+		} else {
 			$savemsg = $retval;
+		}
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced: Firewall and NAT"));
 include("head.inc");
 
 if ($input_errors)

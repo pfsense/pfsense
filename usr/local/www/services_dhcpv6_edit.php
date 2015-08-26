@@ -62,35 +62,37 @@ if(!$g['services_dhcp_server_enable']) {
 require("guiconfig.inc");
 
 $if = $_GET['if'];
-
-if ($_POST['if'])
+if ($_POST['if']) {
 	$if = $_POST['if'];
+}
 
 if (!$if) {
 	header("Location: services_dhcpv6.php");
 	exit;
 }
 
-if (!is_array($config['dhcpdv6']))
+if (!is_array($config['dhcpdv6'])) {
 	$config['dhcpdv6'] = array();
-
-if (!is_array($config['dhcpdv6'][$if]))
+}
+if (!is_array($config['dhcpdv6'][$if])) {
 	$config['dhcpdv6'][$if] = array();
-
-if (!is_array($config['dhcpdv6'][$if]['staticmap']))
+}
+if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 	$config['dhcpdv6'][$if]['staticmap'] = array();
+}
 
-$netboot_enabled=isset($config['dhcpdv6'][$if]['netboot']);
+$netboot_enabled = isset($config['dhcpdv6'][$if]['netboot']);
 $a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['duid'] = $a_maps[$id]['duid'];
@@ -120,8 +122,9 @@ if ($_POST) {
 
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
-		if($matches)
+		if ($matches) {
 			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");
+		}
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
@@ -140,10 +143,11 @@ if ($_POST) {
 
 	/* check for overlaps */
 	foreach ($a_maps as $mapent) {
-		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
+		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
 			continue;
+		}
 
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['duid'] == $_POST['duid'])) {
+		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname']) || ($mapent['duid'] == $_POST['duid'])) {
 			$input_errors[] = gettext("This Hostname, IP or DUID already exists.");
 			break;
 		}
@@ -163,21 +167,24 @@ if ($_POST) {
 		$mapent['filename'] = $_POST['filename'];
 		$mapent['rootpath'] = $_POST['rootpath'];
 
-		if (isset($id) && $a_maps[$id])
+		if (isset($id) && $a_maps[$id]) {
 			$a_maps[$id] = $mapent;
-		else
+		} else {
 			$a_maps[] = $mapent;
-
+		}
 		staticmaps_sort($if);
 
 		write_config();
 
-		if(isset($config['dhcpdv6'][$if]['enable'])) {
+		if (isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
+			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
 				mark_subsystem_dirty('hosts');
-			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic']))
+			}
+			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
 				mark_subsystem_dirty('unbound');
+			}
+
 		}
 
 		header("Location: services_dhcpv6.php?if={$if}");
@@ -185,7 +192,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("DHCPv6"),gettext("Edit static mapping"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6"), gettext("Edit static mapping"));
 $shortcut_section = "dhcp6";
 
 include("head.inc");

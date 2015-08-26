@@ -42,8 +42,9 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['qinqs']['qinqentry']))
+if (!is_array($config['qinqs']['qinqentry'])) {
 	$config['qinqs']['qinqentry'] = array();
+}
 
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
@@ -52,8 +53,9 @@ function qinq_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_qinqs[$num]['qinqif'])
+		if ($config['interfaces'][$if]['if'] == $a_qinqs[$num]['qinqif']) {
 			return true;
+		}
 	}
 
 	return false;
@@ -72,8 +74,9 @@ if ($_GET['act'] == "del") {
 
 		$delmembers = explode(" ", $qinq['members']);
 		if (count($delmembers) > 0) {
-			foreach ($delmembers as $tag)
+			foreach ($delmembers as $tag) {
 				mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}h{$tag}:");
+			}
 		}
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}qinq:");
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}:");
@@ -87,7 +90,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQ"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

@@ -37,43 +37,52 @@
 
 require("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pkg-utils.inc");
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client"));
 $shortcut_section = "openvpn";
 
-if (!is_array($config['openvpn']['openvpn-client']))
+if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
+}
 
 $a_client = &$config['openvpn']['openvpn-client'];
 
-if (!is_array($config['ca']))
+if (!is_array($config['ca'])) {
 	$config['ca'] = array();
+}
 
 $a_ca =& $config['ca'];
 
-if (!is_array($config['cert']))
+if (!is_array($config['cert'])) {
 	$config['cert'] = array();
+}
 
 $a_cert =& $config['cert'];
 
-if (!is_array($config['crl']))
+if (!is_array($config['crl'])) {
 	$config['crl'] = array();
+}
 
 $a_crl =& $config['crl'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 $act = $_GET['act'];
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
-if (isset($id) && $a_client[$id])
+if (isset($id) && $a_client[$id]) {
 	$vpnid = $a_client[$id]['vpnid'];
-else
+} else {
 	$vpnid = 0;
+}
 
 if ($_GET['act'] == "del") {
 
@@ -81,14 +90,15 @@ if ($_GET['act'] == "del") {
 		pfSenseHeader("vpn_openvpn_client.php");
 		exit;
 	}
-	if (!empty($a_client[$id]))
+	if (!empty($a_client[$id])) {
 		openvpn_delete('client', $a_client[$id]);
+	}
 	unset($a_client[$id]);
 	write_config();
 	$savemsg = gettext("Client successfully deleted")."<br />";
 }
 
-if($_GET['act']=="new"){
+if ($_GET['act'] == "new") {
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
@@ -100,13 +110,14 @@ if($_GET['act']=="new"){
 }
 
 global $simplefields;
-$simplefields = array('auth_user','auth_pass');
+$simplefields = array('auth_user', 'auth_pass');
 
-if($_GET['act']=="edit"){
+if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_client[$id]) {
-		foreach($simplefields as $stat)
+		foreach ($simplefields as $stat) {
 			$pconfig[$stat] = $a_client[$id][$stat];
+		}
 
 		$pconfig['disable'] = isset($a_client[$id]['disable']);
 		$pconfig['mode'] = $a_client[$id]['mode'];
@@ -136,8 +147,9 @@ if($_GET['act']=="edit"){
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 			}
-		} else
+		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
+		}
 		$pconfig['crypto'] = $a_client[$id]['crypto'];
 		// OpenVPN Defaults to SHA1 if unset
 		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA1";
@@ -158,10 +170,11 @@ if($_GET['act']=="edit"){
 		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
-		if (isset($a_client[$id]['verbosity_level']))
+		if (isset($a_client[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
-		else
+		} else {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
+		}
 	}
 }
 
@@ -170,12 +183,13 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($id) && $a_client[$id])
+	if (isset($id) && $a_client[$id]) {
 		$vpnid = $a_client[$id]['vpnid'];
-	else
+	} else {
 		$vpnid = 0;
+	}
 
-	list($iv_iface, $iv_ip) = explode ("|",$pconfig['interface']);
+	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
 	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
@@ -186,71 +200,91 @@ if ($_POST) {
 		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
 	}
 
-	if ($pconfig['mode'] != "p2p_shared_key")
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
-	else
+	} else {
 		$tls_mode = false;
+	}
 
 	/* input validation */
 	if ($pconfig['local_port']) {
 
-		if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
+		if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port')) {
 			$input_errors[] = $result;
+		}
 
 		$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
-		if (($portused != $vpnid) && ($portused != 0))
+		if (($portused != $vpnid) && ($portused != 0)) {
 			$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
-	}
-
-	if ($result = openvpn_validate_host($pconfig['server_addr'], 'Server host or address'))
-		$input_errors[] = $result;
-
-	if ($result = openvpn_validate_port($pconfig['server_port'], 'Server port'))
-		$input_errors[] = $result;
-
-	if ($pconfig['proxy_addr']) {
-
-		if ($result = openvpn_validate_host($pconfig['proxy_addr'], 'Proxy host or address'))
-			$input_errors[] = $result;
-
-		if ($result = openvpn_validate_port($pconfig['proxy_port'], 'Proxy port'))
-			$input_errors[] = $result;
-
-		if ($pconfig['proxy_authtype'] != "none") {
-			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd']))
-				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 		}
 	}
 
-	if($pconfig['tunnel_network'])
-		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4"))
-			$input_errors[] = $result;
-
-	if($pconfig['tunnel_networkv6'])
-		if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6"))
-			$input_errors[] = $result;
-
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+	if ($result = openvpn_validate_host($pconfig['server_addr'], 'Server host or address')) {
 		$input_errors[] = $result;
+	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+	if ($result = openvpn_validate_port($pconfig['server_port'], 'Server port')) {
 		$input_errors[] = $result;
+	}
 
-	if (!empty($pconfig['use_shaper']) && (!is_numeric($pconfig['use_shaper']) || ($pconfig['use_shaper'] <= 0)))
+	if ($pconfig['proxy_addr']) {
+
+		if ($result = openvpn_validate_host($pconfig['proxy_addr'], 'Proxy host or address')) {
+			$input_errors[] = $result;
+		}
+
+		if ($result = openvpn_validate_port($pconfig['proxy_port'], 'Proxy port')) {
+			$input_errors[] = $result;
+		}
+
+		if ($pconfig['proxy_authtype'] != "none") {
+			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
+				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
+			}
+		}
+	}
+
+	if ($pconfig['tunnel_network']) {
+		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
+			$input_errors[] = $result;
+		}
+	}
+
+	if ($pconfig['tunnel_networkv6']) {
+		if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
+			$input_errors[] = $result;
+		}
+	}
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
+		$input_errors[] = $result;
+	}
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
+		$input_errors[] = $result;
+	}
+
+	if (!empty($pconfig['use_shaper']) && (!is_numeric($pconfig['use_shaper']) || ($pconfig['use_shaper'] <= 0))) {
 		$input_errors[] = gettext("The bandwidth limit must be a positive numeric value.");
+	}
 
-	if ($pconfig['autokey_enable'])
+	if ($pconfig['autokey_enable']) {
 		$pconfig['shared_key'] = openvpn_create_key();
+	}
 
-	if (!$tls_mode && !$pconfig['autokey_enable'])
+	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
+		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
+		}
+	}
 
-	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable'])
+	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
+		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
+		}
+	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
@@ -265,26 +299,29 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
-		$input_errors[] = gettext("If no Client Certificate is selected, a username and password must be entered.");
+		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
 	}
 
 	if (!$input_errors) {
 
 		$client = array();
 
-		foreach($simplefields as $stat)
+		foreach ($simplefields as $stat) {
 			update_if_changed($stat, $client[$stat], $_POST[$stat]);
+		}
 
-		if ($vpnid)
+		if ($vpnid) {
 			$client['vpnid'] = $vpnid;
-		else
+		} else {
 			$client['vpnid'] = openvpn_vpnid_next();
+		}
 
-		if ($_POST['disable'] == "yes")
+		if ($_POST['disable'] == "yes") {
 			$client['disable'] = true;
+		}
 		$client['protocol'] = $pconfig['protocol'];
 		$client['dev_mode'] = $pconfig['dev_mode'];
-		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
+		list($client['interface'], $client['ipaddr']) = explode ("|", $pconfig['interface']);
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
 		$client['server_port'] = $pconfig['server_port'];
@@ -302,8 +339,9 @@ if ($_POST) {
 			$client['caref'] = $pconfig['caref'];
 			$client['certref'] = $pconfig['certref'];
 			if ($pconfig['tlsauth_enable']) {
-				if ($pconfig['autotls_enable'])
+				if ($pconfig['autotls_enable']) {
 					$pconfig['tls'] = openvpn_create_key();
+				}
 				$client['tls'] = base64_encode($pconfig['tls']);
 			}
 		} else {
@@ -326,10 +364,11 @@ if ($_POST) {
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
 
-		if (isset($id) && $a_client[$id])
+		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
-		else
+		} else {
 			$a_client[] = $client;
+		}
 
 		openvpn_resync('client', $client);
 		write_config();
@@ -410,7 +449,7 @@ function build_cert_list() {
 if (!$savemsg)
 	$savemsg = "";
 
-if ($input_errors)
+if ($input_errors) 
 	print_input_errors($input_errors);
 
 if ($savemsg)

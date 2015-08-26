@@ -52,21 +52,21 @@ $pconfig['period'] = $config['rrd']['period'];
 
 $curcat = "settings";
 $categories = array('system' => gettext("System"),
-		'traffic' => gettext("Traffic"),
-		'packets' => gettext("Packets"),
-		'quality' => gettext("Quality"),
-		'queues' => gettext("Queues"),
-		'captiveportal' => gettext("Captive Portal"));
+	'traffic' => gettext("Traffic"),
+	'packets' => gettext("Packets"),
+	'quality' => gettext("Quality"),
+	'queues' => gettext("Queues"),
+	'captiveportal' => gettext("Captive Portal"));
 
-if(isset($config['ntpd']['statsgraph'])) {
+if (isset($config['ntpd']['statsgraph'])) {
 	$categories['ntpd'] = gettext("NTP");
 }
 
 $styles = array('inverse' => gettext("Inverse"),
-		'absolute' => gettext("Absolute"));
+	'absolute' => gettext("Absolute"));
 $periods = array("absolute" => gettext("Absolute Timespans"),
-		"current" => gettext("Current Period"),
-		"previous" => gettext("Previous Period"));
+	"current" => gettext("Current Period"),
+	"previous" => gettext("Previous Period"));
 
 if ($_POST['ResetRRD']) {
 	mwexec('/bin/rm /var/db/rrd/*');
@@ -96,26 +96,25 @@ chdir($rrddbpath);
 $databases = glob('*.rrd');
 chdir($here);		// Need to go back home otherwise the 'include/requires fail!
 
-foreach($databases as $database) {
-	if(stristr($database, "wireless")) {
+foreach ($databases as $database) {
+	if (stristr($database, "wireless")) {
 		$wireless = true;
 	}
-	if(stristr($database, "queues")) {
+	if (stristr($database, "queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
+	if (stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
-	if(stristr($database, "-vpnusers")) {
+	if (stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
-	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
+	if (stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
-
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
 include("head.inc");
 
 $tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");

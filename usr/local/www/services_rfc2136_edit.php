@@ -40,30 +40,34 @@ if (!is_array($config['dnsupdates']['dnsupdate'])) {
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
 	$pconfig['host'] = $a_rfc2136[$id]['host'];
 	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
-	if (!$pconfig['ttl'])
+	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
+	}
 	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
 	$pconfig['keytype'] = $a_rfc2136[$id]['keytype'];
-	if (!$pconfig['keytype'])
+	if (!$pconfig['keytype']) {
 		$pconfig['keytype'] = "zone";
+	}
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
 	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
 	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
-	if (!$pconfig['recordtype'])
+	if (!$pconfig['recordtype']) {
 		$pconfig['recordtype'] = "both";
+	}
 	$pconfig['descr'] = $a_rfc2136[$id]['descr'];
 
 }
@@ -81,12 +85,15 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host'])))
+	if (($_POST['host'] && !is_domain($_POST['host']))) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
-	if (($_POST['ttl'] && !is_numericint($_POST['ttl'])))
+	}
+	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
-	if (($_POST['keyname'] && !is_domain($_POST['keyname'])))
+	}
+	if (($_POST['keyname'] && !is_domain($_POST['keyname']))) {
 		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
+	}
 
 	if (!$input_errors) {
 		$rfc2136 = array();
@@ -103,24 +110,26 @@ if ($_POST) {
 		$rfc2136['interface'] = $_POST['interface'];
 		$rfc2136['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_rfc2136[$id])
+		if (isset($id) && $a_rfc2136[$id]) {
 			$a_rfc2136[$id] = $rfc2136;
-		else
+		} else {
 			$a_rfc2136[] = $rfc2136;
+		}
 
 		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
 
-		if ($_POST['Submit'] == gettext("Save & Force Update"))
+		if ($_POST['Submit'] == gettext("Save & Force Update")) {
 			$retval = services_dnsupdate_process("", $rfc2136['host'], true);
-		else
+		} else {
 			$retval = services_dnsupdate_process();
+		}
 
 		header("Location: services_rfc2136.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("RFC 2136 client"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("RFC 2136 client"), gettext("Edit"));
 include("head.inc");
 
 require('classes/Form.class.php');

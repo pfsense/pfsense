@@ -5,7 +5,7 @@
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 */
 
-if(Connection_Aborted()) {
+if (Connection_Aborted()) {
 	exit;
 }
 
@@ -32,42 +32,76 @@ function get_stats() {
 }
 
 function get_gatewaystats() {
+	global $config;
+	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+	} else {
+		$display_type = "gw_ip";
+	}
+
 	$a_gateways = return_gateways_array();
 	$gateways_status = array();
 	$gateways_status = return_gateways_status(true);
 	$data = "";
 	$isfirst = true;
-	foreach($a_gateways as $gname => $gw) {
-		if(!$isfirst)
+	foreach ($a_gateways as $gname => $gw) {
+		if (!$isfirst) {
 			$data .= ",";
+		}
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
+
+		$monitor_address = "";
+		$monitor_address_disp = "";
+		if ($display_type == "monitor_ip" || $display_type == "both_ip") {
+			$monitor_address = $gw['monitor'];
+			if ($monitor_address != "" && $display_type == "both_ip") {
+				$monitor_address_disp = " (" . $monitor_address . ")";
+			} else {
+				$monitor_address_disp = $monitor_address;
+			}
+		}
+
 		if ($gateways_status[$gname]) {
-			$data .= "<b>" . lookup_gateway_ip_by_name($gname) . "</b>,";
+			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+				$if_gw = lookup_gateway_ip_by_name($gname);
+			} else {
+				$if_gw = "";
+			}
+			if ($monitor_address == $if_gw) {
+				$monitor_address_disp = "";
+			}
+
+			$data .= "<b>" . $if_gw . $monitor_address_disp . "</b>,";
 			$gws = $gateways_status[$gname];
-			switch(strtolower($gws['status'])) {
-			case "none":
-				$online = "Online";
-				$bgcolor = "#90EE90";  // lightgreen
-				break;
-			case "down":
-				$online = "Offline";
-				$bgcolor = "#F08080";  // lightcoral
-				break;
-			case "delay":
-				$online = "Latency";
-				$bgcolor = "#F0E68C";  // khaki
-				break;
-			case "loss":
-				$online = "Packetloss";
-				$bgcolor = "#F0E68C";  // khaki
-				break;
-			default:
-				$online = "Pending";
-				break;
+			switch (strtolower($gws['status'])) {
+				case "none":
+					$online = "Online";
+					$bgcolor = "#90EE90";  // lightgreen
+					break;
+				case "down":
+					$online = "Offline";
+					$bgcolor = "#F08080";  // lightcoral
+					break;
+				case "delay":
+					$online = "Latency";
+					$bgcolor = "#F0E68C";  // khaki
+					break;
+				case "loss":
+					$online = "Packetloss";
+					$bgcolor = "#F0E68C";  // khaki
+					break;
+				default:
+					$online = "Pending";
+					break;
 			}
 		} else {
-			$data .= "~,";
+			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+				$if_gw = "~";
+			} else {
+				$if_gw = "";
+			}
+			$data .= $if_gw . $monitor_address_disp . ",";
 			$gws['delay'] = "~";
 			$gws['loss'] = "~";
 			$online = "Unknown";
@@ -82,8 +116,9 @@ function get_gatewaystats() {
 function get_uptime() {
 	$uptime = get_uptime_sec();
 
-	if(intval($uptime) == 0)
+	if (intval($uptime) == 0) {
 		return;
+	}
 
 	$updays = (int)($uptime / 86400);
 	$uptime %= 86400;
@@ -94,19 +129,23 @@ function get_uptime() {
 	$upsecs = (int)($uptime);
 
 	$uptimestr = "";
-	if ($updays > 1)
+	if ($updays > 1) {
 		$uptimestr .= "$updays Days ";
-	else if ($updays > 0)
+	} else if ($updays > 0) {
 		$uptimestr .= "1 Day ";
+	}
 
-	if ($uphours > 1)
+	if ($uphours > 1) {
 		$hours = "s";
+	}
 
-	if ($upmins > 1)
+	if ($upmins > 1) {
 		$minutes = "s";
+	}
 
-	if ($upmins > 1)
+	if ($upmins > 1) {
 		$seconds = "s";
+	}
 
 	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
 	return $uptimestr;
@@ -124,8 +163,9 @@ function cpu_usage() {
 	$totalEnd = array_sum($cpuTicks2);
 
 	// Something wrapped ?!?!
-	if ($totalEnd <= $totalStart)
+	if ($totalEnd <= $totalStart) {
 		return 0;
+	}
 
 	// Calculate total cycles used
 	$totalUsed = ($totalEnd - $totalStart) - ($cpuTicks2['idle'] - $cpuTicks['idle']);
@@ -139,23 +179,27 @@ function cpu_usage() {
 function get_pfstate($percent=false) {
 	global $config;
 	$matches = "";
-	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
+	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
 		$maxstates="{$config['system']['maximumstates']}";
-	else
+	} else {
 		$maxstates=pfsense_default_state_size();
+	}
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
 	}
-	if (!is_numeric($curentries))
+	if (!is_numeric($curentries)) {
 		$curentries = 0;
-	if ($percent)
-		if (intval($maxstates) > 0)
+	}
+	if ($percent) {
+		if (intval($maxstates) > 0) {
 			return round(($curentries / $maxstates) * 100, 0);
-		else
+		} else {
 			return "NA";
-	else
+		}
+	} else {
 		return $curentries . "/" . $maxstates;
+	}
 }
 
 function has_temp() {
@@ -171,20 +215,23 @@ function get_hwtype() {
 
 function get_mbuf($percent=false) {
 	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters in use" | /usr/bin/awk '{ print $1 }'`);
-	list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
-	if ($percent)
-		if ($mbufs_max > 0)
+	list($mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max) = explode("/", $mbufs_output);
+	if ($percent) {
+		if ($mbufs_max > 0) {
 			return round(($mbufs_total / $mbufs_max) * 100, 0);
-		else
+		} else {
 			return "NA";
-	else
+		}
+	} else {
 		return "{$mbufs_total}/{$mbufs_max}";
+	}
 }
 
 function get_temp() {
 	$temp_out = get_single_sysctl("dev.cpu.0.temperature");
-	if ($temp_out == "")
+	if ($temp_out == "") {
 		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
+	}
 
 	// Remove 'C' from the end
 	return rtrim($temp_out, 'C');
@@ -221,11 +268,12 @@ function disk_usage($slice = '/') {
 function swap_usage() {
 	exec("/usr/sbin/swapinfo", $swap_info);
 	$swap_used = "";
-	foreach ($swap_info as $line)
+	foreach ($swap_info as $line) {
 		if (preg_match('/(\d+)%$/', $line, $matches)) {
 			$swap_used = $matches[1];
 			break;
 		}
+	}
 
 	return $swap_used;
 }
@@ -238,8 +286,9 @@ function mem_usage() {
 		$freeMem = get_single_sysctl("vm.stats.vm.v_free_count");
 		$usedMem = $totalMem - ($inactiveMem + $cachedMem + $freeMem);
 		$memUsage = round(($usedMem * 100) / $totalMem, 0);
-	} else
+	} else {
 		$memUsage = "NA";
+	}
 
 	return $memUsage;
 }
@@ -257,8 +306,9 @@ function get_cpufreq() {
 	$maxfreq = $maxfreq[0];
 	$curfreq = "";
 	$curfreq = get_single_sysctl('dev.cpu.0.freq');
-	if (($curfreq > 0) && ($curfreq != $maxfreq))
+	if (($curfreq > 0) && ($curfreq != $maxfreq)) {
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
+	}
 	return $out;
 }
 
@@ -295,24 +345,24 @@ function get_interfacestats() {
 	$new_data = "";
 
 	//build data arrays
-	foreach ($ifdescrs as $ifdescr => $ifname){
+	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$ifinfo = get_interface_info($ifdescr);
-			$new_data .= "{$ifinfo['inpkts']},";
-			$new_data .= "{$ifinfo['outpkts']},";
-			$new_data .= format_bytes($ifinfo['inbytes']) . ",";
-			$new_data .= format_bytes($ifinfo['outbytes']) . ",";
-			if (isset($ifinfo['inerrs'])){
-				$new_data .= "{$ifinfo['inerrs']},";
-				$new_data .= "{$ifinfo['outerrs']},";
-			}
-			else{
-				$new_data .= "0,";
-				$new_data .= "0,";
-			}
-			if (isset($ifinfo['collisions']))
-				$new_data .= htmlspecialchars($ifinfo['collisions']) . ",";
-			else
-				$new_data .= "0,";
+		$new_data .= "{$ifinfo['inpkts']},";
+		$new_data .= "{$ifinfo['outpkts']},";
+		$new_data .= format_bytes($ifinfo['inbytes']) . ",";
+		$new_data .= format_bytes($ifinfo['outbytes']) . ",";
+		if (isset($ifinfo['inerrs'])) {
+			$new_data .= "{$ifinfo['inerrs']},";
+			$new_data .= "{$ifinfo['outerrs']},";
+		} else {
+			$new_data .= "0,";
+			$new_data .= "0,";
+		}
+		if (isset($ifinfo['collisions'])) {
+			$new_data .= htmlspecialchars($ifinfo['collisions']) . ",";
+		} else {
+			$new_data .= "0,";
+		}
 	}//end for
 
 	return $new_data;
@@ -325,25 +375,28 @@ function get_interfacestatus() {
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_with_descr();
 
-	foreach ($ifdescrs as $ifdescr => $ifname){
+	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$ifinfo = get_interface_info($ifdescr);
-		$data .= $ifname . ",";
-		if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+		$data .= $ifname . "^";
+		if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
 			$data .= "up";
-		}else if ($ifinfo['status'] == "no carrier") {
+		} else if ($ifinfo['status'] == "no carrier") {
 			$data .= "down";
-		}else if ($ifinfo['status'] == "down") {
+		} else if ($ifinfo['status'] == "down") {
 			$data .= "block";
 		}
-		$data .= ",";
-		if ($ifinfo['ipaddr'])
+		$data .= "^";
+		if ($ifinfo['ipaddr']) {
 			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddr']) . "</strong>";
-		$data .= ",";
-		if ($ifinfo['ipaddrv6'])
+		}
+		$data .= "^";
+		if ($ifinfo['ipaddrv6']) {
 			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddrv6']) . "</strong>";
-		$data .= ",";
-		if ($ifinfo['status'] != "down")
+		}
+		$data .= "^";
+		if ($ifinfo['status'] != "down") {
 			$data .= htmlspecialchars($ifinfo['media']);
+		}
 
 		$data .= "~";
 

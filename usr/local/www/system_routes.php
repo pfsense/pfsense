@@ -46,12 +46,14 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['staticroutes']['route']))
+if (!is_array($config['staticroutes']['route'])) {
 	$config['staticroutes']['route'] = array();
+}
 
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true, true);
 $changedesc_prefix = gettext("Static Routes") . ": ";
+unset($input_errors);
 
 if ($_POST) {
 
@@ -63,8 +65,9 @@ if ($_POST) {
 
 		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
-			foreach ($toapplylist as $toapply)
+			foreach ($toapplylist as $toapply) {
 				mwexec("{$toapply}");
+			}
 
 			@unlink("{$g['tmp_path']}/.system_routes.apply");
 		}
@@ -75,26 +78,30 @@ if ($_POST) {
 		setup_gateways_monitor();
 
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('staticroutes');
+		}
 	}
 }
 
 function delete_static_route($id) {
 	global $config, $a_routes, $changedesc_prefix;
 
-	if (!isset($a_routes[$id]))
+	if (!isset($a_routes[$id])) {
 		return;
+	}
 
 	$targets = array();
 	if (is_alias($a_routes[$id]['network'])) {
 		foreach (filter_expand_alias_array($a_routes[$id]['network']) as $tgt) {
-			if (is_ipaddrv4($tgt))
+			if (is_ipaddrv4($tgt)) {
 				$tgt .= "/32";
-			else if (is_ipaddrv6($tgt))
+			} else if (is_ipaddrv6($tgt)) {
 				$tgt .= "/128";
-			if (!is_subnet($tgt))
+			}
+			if (!is_subnet($tgt)) {
 				continue;
+			}
 			$targets[] = $tgt;
 		}
 	} else {
@@ -136,19 +143,29 @@ if (isset($_POST['del_x'])) {
 
 } else if ($_GET['act'] == "toggle") {
 	if ($a_routes[$_GET['id']]) {
-		if(isset($a_routes[$_GET['id']]['disabled'])) {
-			unset($a_routes[$_GET['id']]['disabled']);
-			$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$id]['network'];
+		$do_update_config = true;
+		if (isset($a_routes[$_GET['id']]['disabled'])) {
+			// Do not enable a route whose gateway is disabled
+			if (isset($a_gateways[$a_routes[$_GET['id']]['gateway']]['disabled'])) {
+				$do_update_config = false;
+				$input_errors[] = $changedesc_prefix . gettext("gateway is disabled, cannot enable route to") . " " . $a_routes[$_GET['id']]['network'];
+			} else {
+				unset($a_routes[$_GET['id']]['disabled']);
+				$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
+			}
 		} else {
 			delete_static_route($_GET['id']);
 			$a_routes[$_GET['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$id]['network'];
+			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$_GET['id']]['network'];
 		}
 
-		if (write_config($changedesc))
-			mark_subsystem_dirty('staticroutes');
-		header("Location: system_routes.php");
-		exit;
+		if ($do_update_config) {
+			if (write_config($changedesc)) {
+				mark_subsystem_dirty('staticroutes');
+			}
+			header("Location: system_routes.php");
+			exit;
+		}
 	}
 } else {
 	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
@@ -165,38 +182,45 @@ if (isset($_POST['del_x'])) {
 
 		/* copy all routes < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['route']))
+			if (!in_array($i, $_POST['route'])) {
 				$a_routes_new[] = $a_routes[$i];
+			}
 		}
 
 		/* copy all selected routes */
 		for ($i = 0; $i < count($a_routes); $i++) {
-			if ($i == $movebtn)
+			if ($i == $movebtn) {
 				continue;
-			if (in_array($i, $_POST['route']))
+			}
+			if (in_array($i, $_POST['route'])) {
 				$a_routes_new[] = $a_routes[$i];
+			}
 		}
 
 		/* copy $movebtn route */
-		if ($movebtn < count($a_routes))
+		if ($movebtn < count($a_routes)) {
 			$a_routes_new[] = $a_routes[$movebtn];
+		}
 
 		/* copy all routes > $movebtn and not selected */
 		for ($i = $movebtn+1; $i < count($a_routes); $i++) {
-			if (!in_array($i, $_POST['route']))
+			if (!in_array($i, $_POST['route'])) {
 				$a_routes_new[] = $a_routes[$i];
+			}
 		}
-		if (count($a_routes_new) > 0)
+		if (count($a_routes_new) > 0) {
 			$a_routes = $a_routes_new;
+		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('staticroutes');
+		}
 		header("Location: system_routes.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Static Routes"));
+$pgtitle = array(gettext("System"), gettext("Static Routes"));
 $shortcut_section = "routing";
 
 include("head.inc");

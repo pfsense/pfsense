@@ -65,8 +65,8 @@ if (!$rcfiles) {
 if (is_array($config['installedpackages']['package'])) {
 	foreach ($config['installedpackages']['package'] as $pkgid => $package) {
 		echo " Starting package {$package['name']}...";
-		sync_package($pkgid);
-		$internal_name = get_pkg_internal_name($package);
+		sync_package($package['name']);
+		$internal_name = get_package_internal_name($package);
 		start_service($internal_name);
 		unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 		echo "done.\n";

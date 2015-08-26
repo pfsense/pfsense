@@ -51,8 +51,9 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-if (!is_array($config['ppps']['ppp']))
+if (!is_array($config['ppps']['ppp'])) {
 	$config['ppps']['ppp'] = array();
+}
 
 $a_ppps = &$config['ppps']['ppp'];
 
@@ -88,8 +89,9 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
-	if (isset($a_ppps[$id]['ondemand']))
+	if (isset($a_ppps[$id]['ondemand'])) {
 		$pconfig['ondemand'] = true;
+	}
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
@@ -101,19 +103,19 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['shortseq']))
 		$pconfig['shortseq'] = true;
 
-	if (isset($a_ppps[$id]['acfcomp']))
+	if (isset($a_ppps[$id]['acfcomp'])) {
 		$pconfig['acfcomp'] = true;
-
-	if (isset($a_ppps[$id]['protocomp']))
+	}
+	if (isset($a_ppps[$id]['protocomp'])) {
 		$pconfig['protocomp'] = true;
-
-	if (isset($a_ppps[$id]['vjcomp']))
+	}
+	if (isset($a_ppps[$id]['vjcomp'])) {
 		$pconfig['vjcomp'] = true;
-
-	if (isset($a_ppps[$id]['tcpmssfix']))
+	}
+	if (isset($a_ppps[$id]['tcpmssfix'])) {
 		$pconfig['tcpmssfix'] = true;
-
-	switch($a_ppps[$id]['type']) {
+	}
+	switch ($a_ppps[$id]['type']) {
 		case "ppp":
 			$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
 			$pconfig['simpin'] = $a_ppps[$id]['simpin'];
@@ -122,18 +124,19 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['apnum'] = $a_ppps[$id]['apnum'];
 			$pconfig['phone'] = $a_ppps[$id]['phone'];
 			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
+			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
 			break;
 		case "l2tp":
 		case "pptp":
-			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
-			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
+			$pconfig['subnet'] = explode(",", $a_ppps[$id]['subnet']);
+			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
-			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider']))
+			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
 				$pconfig['null_service'] = true;
+			}
 			/* ================================================ */
 			/* = force a connection reset at a specific time? = */
 			/* ================================================ */
@@ -153,11 +156,12 @@ if (isset($id) && $a_ppps[$id]) {
 					$pconfig['pppoe_pr_custom'] = true;
 					$pconfig['pppoe_resetminute'] = $resetTime_a[0];
 					$pconfig['pppoe_resethour'] = $resetTime_a[1];
-					/*	just initialize $pconfig['pppoe_resetdate'] if the
-					 *	coresponding item contains appropriate numeric values.
+					/*  just initialize $pconfig['pppoe_resetdate'] if the
+					 *  corresponding item contains appropriate numeric values.
 					 */
-					if ($resetTime_a[2] != "*" && $resetTime_a[3] != "*")
+					if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") {
 						$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
+					}
 				} else if ($a_ppps[$id]['pppoe-reset-type'] == "preset") {
 					$pconfig['pppoe_pr_preset'] = true;
 
@@ -180,8 +184,9 @@ if (isset($id) && $a_ppps[$id]) {
 			break;
 	}
 
-} else
+} else {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
+}
 
 if ($_POST) {
 
@@ -189,7 +194,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* okay first of all, cause we are just hiding the PPPoE HTML
-	 * fields releated to PPPoE resets, we are going to unset $_POST
+	 * fields related to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
 	 * data validation procedure below, may trigger a false error
 	 * message.
@@ -202,19 +207,19 @@ if ($_POST) {
 	}
 
 	/* input validation */
-	switch($_POST['type']) {
+	switch ($_POST['type']) {
 		case "ppp":
 			$reqdfields = explode(" ", "interfaces phone");
-			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
+			$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username passwordfld ondemand idletimeout");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username passwordfld");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
@@ -222,10 +227,10 @@ if ($_POST) {
 		case "pptp":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway ondemand idletimeout");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Local IP address"), gettext("Subnet"), gettext("Remote IP address"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username passwordfld localip subnet gateway");
-				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
+				$reqdfieldsn = array(gettext("Link Interface(s)"), gettext("Username"), gettext("Password"), gettext("Local IP address"), gettext("Subnet"), gettext("Remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
@@ -233,62 +238,67 @@ if ($_POST) {
 			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
 	}
-	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
+	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
-
-	if ($_POST['provider'] && !is_domain($_POST['provider']))
+	}
+	if ($_POST['provider'] && !is_domain($_POST['provider'])) {
 		$input_errors[] = gettext("The Service name contains invalid characters.");
-
-	if ($_POST['provider'] && $_POST['null_service'])
+	}
+	if ($_POST['provider'] && $_POST['null_service']) {
 		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
-
-	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout']))
+	}
+	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
-
-	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resethour'] != "" && !is_numericint($_POST['pppoe_resethour']) &&
-		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23)
+	}
+	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) &&
+	    $_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
 		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
-
-	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetminute'] != "" && !is_numericint($_POST['pppoe_resetminute']) &&
-		$_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59)
+	}
+	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetminute'] <> "" && !is_numericint($_POST['pppoe_resetminute']) &&
+	    $_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
 		$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
-
-	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetdate'] != "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate'])))
+	}
+	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
-
-	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetdate'] != "" && is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
-		$date_nums = explode("/",$_POST['pppoe_resetdate']);
-		if ($date_nums[0] < 1 || $date_nums[0] > 12)
+	}
+	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resetdate'] <> "" && is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
+		$date_nums = explode("/", $_POST['pppoe_resetdate']);
+		if ($date_nums[0] < 1 || $date_nums[0] > 12) {
 			$input_errors[] = gettext("A valid PPPoE reset month must be specified (1-12) in the Custom PPPoE Periodic reset fields.");
-
-		if ($date_nums[1] < 1 || $date_nums[1] > 31)
+		}
+		if ($date_nums[1] < 1 || $date_nums[1] > 31) {
 			$input_errors[] = gettext("A valid PPPoE reset day of month must be specified (1-31) in the Custom PPPoE Periodic reset fields. No checks are done on valid # of days per month");
-
-		if ($date_nums[2] < date("Y"))
+		}
+		if ($date_nums[2] < date("Y")) {
 			$input_errors[] = gettext("A valid PPPoE reset year must be specified. Don't select a year in the past!");
+		}
 	}
 
-	foreach($_POST['interfaces'] as $iface){
-		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
-			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."),$iface);
-
-		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface]))
-			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."),$iface);
-
-		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface]))
-			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."),$iface);
-
-		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576))
-			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."),$iface);
-
-		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576))
-			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."),$iface);
+	if (is_array($_POST['interfaces'])) {
+		foreach ($_POST['interfaces'] as $iface) {
+			if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface])) {
+				$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."), $iface);
+			}
+			if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) {
+				$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."), $iface);
+			}
+			if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) {
+				$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."), $iface);
+			}
+			if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) {
+				$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."), $iface);
+			}
+			if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) {
+				$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."), $iface);
+			}
+		}
 	}
 
 /*
 	foreach ($a_ppps as $ppp) {
-		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp))
+		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp)) {
 			continue;
+		}
 
 		if ($ppp['serialport'] == $_POST['serialport']) {
 			$input_errors[] = "Serial port is in use";
@@ -302,40 +312,39 @@ if ($_POST) {
 		$ppp['ptpid'] = $_POST['ptpid'];
 		$ppp['type'] = $_POST['type'];
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
-		$ppp['ports'] = implode(',',$_POST['interfaces']);
+		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = base64_encode($_POST['passwordfld']);
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
-
-		if (!empty($_POST['idletimeout']))
+		if (!empty($_POST['idletimeout'])) {
 			$ppp['idletimeout'] = $_POST['idletimeout'];
-		else
+		} else {
 			unset($ppp['idletimeout']);
-
+		}
 		$ppp['uptime'] = $_POST['uptime'] ? true : false;
-
-		if (!empty($_POST['descr']))
+		if (!empty($_POST['descr'])) {
 			$ppp['descr'] = $_POST['descr'];
-		else
+		} else {
 			unset($ppp['descr']);
+		}
 
-		// Loop through fields associated with a individual link/port and make an array of the data
+		// Loop through fields associated with an individual link/port and make an array of the data
 		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
-
-		foreach($_POST['interfaces'] as $iface){
-			foreach($port_fields as $field_label){
-				if (isset($_POST[$field_label][$iface]))
+		foreach ($_POST['interfaces'] as $iface) {
+			foreach ($port_fields as $field_label) {
+				if (isset($_POST[$field_label][$iface])) {
 					$port_data[$field_label][] = $_POST[$field_label][$iface];
+				}
 			}
 		}
 
-		switch($_POST['type']) {
+		switch ($_POST['type']) {
 			case "ppp":
-				if (!empty($_POST['initstr']))
+				if (!empty($_POST['initstr'])) {
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
-				else
+				} else {
 					unset($ppp['initstr']);
-
+				}
 				if (!empty($_POST['simpin'])) {
 					$ppp['simpin'] = $_POST['simpin'];
 					$ppp['pin-wait'] = $_POST['pin-wait'];
@@ -344,7 +353,7 @@ if ($_POST) {
 					unset($ppp['pin-wait']);
 				}
 
-				if (!empty($_POST['apn'])){
+				if (!empty($_POST['apn'])) {
 					$ppp['apn'] = $_POST['apn'];
 					$ppp['apnum'] = $_POST['apnum'];
 				} else {
@@ -353,33 +362,33 @@ if ($_POST) {
 				}
 
 				$ppp['phone'] = $_POST['phone'];
-				$ppp['localip'] = implode(',',$port_data['localip']);
-				$ppp['gateway'] = implode(',',$port_data['gateway']);
-
-				if (!empty($_POST['connect-timeout']))
+				$ppp['localip'] = implode(',', $port_data['localip']);
+				$ppp['gateway'] = implode(',', $port_data['gateway']);
+				if (!empty($_POST['connect-timeout'])) {
 					$ppp['connect-timeout'] = $_POST['connect-timeout'];
-				else
+				} else {
 					unset($ppp['connect-timeout']);
+				}
 				break;
 			case "pppoe":
-				if (!empty($_POST['provider']))
+				if (!empty($_POST['provider'])) {
 					$ppp['provider'] = $_POST['provider'];
-				else{
+				} else {
 					unset($ppp['provider']);
 					$ppp['provider'] = $_POST['null_service'] ? true : false;
 				}
-
-				if (!empty($_POST['pppoe-reset-type']))
+				if (!empty($_POST['pppoe-reset-type'])) {
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
-				else
+				} else {
 					unset($ppp['pppoe-reset-type']);
+				}
 
 				break;
 			case "pptp":
 			case "l2tp":
-				$ppp['localip'] = implode(',',$port_data['localip']);
-				$ppp['subnet'] = implode(',',$port_data['subnet']);
-				$ppp['gateway'] = implode(',',$port_data['gateway']);
+				$ppp['localip'] = implode(',', $port_data['localip']);
+				$ppp['subnet'] = implode(',', $port_data['subnet']);
+				$ppp['gateway'] = implode(',', $port_data['gateway']);
 				break;
 			default:
 				break;
@@ -392,44 +401,46 @@ if ($_POST) {
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
-
-		if (is_array($port_data['mtu']))
+		if (is_array($port_data['mtu'])) {
 			$ppp['mtu'] = implode(',', $port_data['mtu']);
-
-		if (is_array($port_data['mru']))
+		}
+		if (is_array($port_data['mru'])) {
 			$ppp['mru'] = implode(',', $port_data['mru']);
-
-		if (is_array($port_data['mrru']))
+		}
+		if (is_array($port_data['mrru'])) {
 			$ppp['mrru'] = implode(',', $port_data['mrru']);
+		}
 
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we
 		must be able to clear the config data in the <cron> section of config.xml if it exists
 		*/
 		handle_pppoe_reset($_POST);
 
-		if (isset($id) && $a_ppps[$id])
+		if (isset($id) && $a_ppps[$id]) {
 			$a_ppps[$id] = $ppp;
-		else
+		} else {
 			$a_ppps[] = $ppp;
+		}
 
 		write_config();
 		configure_cron();
 
 		foreach ($iflist as $pppif => $ifdescr) {
-			if ($config['interfaces'][$pppif]['if'] == $ppp['if'])
+			if ($config['interfaces'][$pppif]['if'] == $ppp['if']) {
 				interface_ppps_configure($pppif);
+			}
 		}
 		header("Location: interfaces_ppps.php");
 		exit;
 	}
-} // end if($_POST)
+} // end if ($_POST)
 
 $closehead = false;
-$pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",	 "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  );
+$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP", "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/);
 
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);

@@ -56,22 +56,25 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['onetoone']))
+if (!is_array($config['nat']['onetoone'])) {
 	$config['nat']['onetoone'] = array();
+}
 
 $a_1to1 = &$config['nat']['onetoone'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 $after = $_GET['after'];
-if (isset($_POST['after']))
+if (isset($_POST['after'])) {
 	$after = $_POST['after'];
+}
 
-if (isset($_GET['dup']))  {
+if (isset($_GET['dup'])) {
 	$id = $_GET['dup'];
 	$after = $_GET['dup'];
 }
@@ -88,25 +91,27 @@ if (isset($id) && $a_1to1[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['interface'] = $a_1to1[$id]['interface'];
-
-	if (!$pconfig['interface'])
+	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
+	}
 
 	$pconfig['external'] = $a_1to1[$id]['external'];
 	$pconfig['descr'] = $a_1to1[$id]['descr'];
 	$pconfig['natreflection'] = $a_1to1[$id]['natreflection'];
-} else
+} else {
 	$pconfig['interface'] = "wan";
+}
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup'])) {
 	unset($id);
+}
 
 if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	/*	run through $_POST items encoding HTML entties so that the user
-	 *	cannot think he is slick and perform a XSS attack on the unwilling
+	/*  run through $_POST items encoding HTML entities so that the user
+	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
@@ -132,14 +137,15 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['external'])
+	if ($_POST['external']) {
 		$_POST['external'] = trim($_POST['external']);
-
-	if ($_POST['src'])
+	}
+	if ($_POST['src']) {
 		$_POST['src'] = trim($_POST['src']);
-
-	if ($_POST['dst'])
+	}
+	if ($_POST['dst']) {
 		$_POST['dst'] = trim($_POST['dst']);
+	}
 
 	if (is_specialnet($_POST['srctype'])) {
 		$_POST['src'] = $_POST['srctype'];
@@ -160,12 +166,14 @@ if ($_POST) {
 	}
 
 	/* For external, user can enter only ip's */
-	if (($_POST['external'] && !is_ipaddr($_POST['external'])))
+	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
 		$input_errors[] = gettext("A valid external subnet must be specified.");
+	}
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
-	if ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) )
+	if ($_POST['dsttype'] == "network" && is_alias($_POST['dst'])) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+	}
 
 	/* For src, user can enter only ip's or networks */
 	if (!is_specialnet($_POST['srctype'])) {
@@ -191,8 +199,9 @@ if ($_POST) {
 
 	/* check for overlaps with other 1:1 */
 	foreach ($a_1to1 as $natent) {
-		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent))
+		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent)) {
 			continue;
+		}
 
 		if (check_subnets_overlap($_POST['internal'], $_POST['subnet'], $natent['internal'], $natent['subnet'])) {
 			//$input_errors[] = "Another 1:1 rule overlaps with the specified internal subnet.";
@@ -214,29 +223,31 @@ if ($_POST) {
 		pconfig_to_address($natent['destination'], $_POST['dst'],
 			$_POST['dstmask'], $_POST['dstnot']);
 
-		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable") {
 			$natent['natreflection'] = $_POST['natreflection'];
-		else
+		} else {
 			unset($natent['natreflection']);
-
-		if (isset($id) && $a_1to1[$id])
-			$a_1to1[$id] = $natent;
-		else {
-			if (is_numeric($after))
-				array_splice($a_1to1, $after+1, 0, array($natent));
-			else
-				$a_1to1[] = $natent;
 		}
 
-		if (write_config())
-			mark_subsystem_dirty('natconf');
+		if (isset($id) && $a_1to1[$id]) {
+			$a_1to1[$id] = $natent;
+		} else {
+			if (is_numeric($after)) {
+				array_splice($a_1to1, $after+1, 0, array($natent));
+			} else {
+				$a_1to1[] = $natent;
+			}
+		}
 
+		if (write_config()) {
+			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"), gettext("Edit"));
 include("head.inc");
 
 function build_srctype_list() {

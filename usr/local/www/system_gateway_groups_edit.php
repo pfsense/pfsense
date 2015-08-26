@@ -50,19 +50,22 @@ if (!is_array($config['gateways']['gateway_group']))
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
-$categories = array('down' => gettext("Member Down"),
-					'downloss' => gettext("Packet Loss"),
-					'downlatency' => gettext("High Latency"),
-					'downlosslatency' => gettext("Packet Loss or High Latency"));
+$categories = array(
+	'down' => gettext("Member Down"),
+	'downloss' => gettext("Packet Loss"),
+	'downlatency' => gettext("High Latency"),
+	'downlosslatency' => gettext("Packet Loss or High Latency"));
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-	
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	$id = $_GET['dup'];
+}
 
 if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['name'] = $a_gateway_groups[$id]['name'];
@@ -71,8 +74,9 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
+}
 
 if ($_POST) {
 	unset($input_errors);
@@ -84,21 +88,21 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (! isset($_POST['name'])) {
+	if (!isset($_POST['name'])) {
 		$input_errors[] = gettext("A valid gateway group name must be specified.");
 	}
-	
-	if (! is_validaliasname($_POST['name'])) {
+	if (!is_validaliasname($_POST['name'])) {
 		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
 	}
 
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
-		if(is_array($a_gateway_groups)) {
+		if (is_array($a_gateway_groups)) {
 			foreach ($a_gateway_groups as $gateway_group) {
 				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group)) {
-					if ($gateway_group['name'] != $_POST['name'])
+					if ($gateway_group['name'] != $_POST['name']) {
 						$input_errors[] = gettext("Changing name on a gateway group is not allowed.");
+					}
 					continue;
 				}
 
@@ -112,19 +116,21 @@ if ($_POST) {
 
 	/* Build list of items in group with priority */
 	$pconfig['item'] = array();
-	foreach($a_gateways as $gwname => $gateway) {
-		if($_POST[$gwname] > 0) {
+	foreach ($a_gateways as $gwname => $gateway) {
+		if ($_POST[$gwname] > 0) {
 			$vipname = "{$gwname}_vip";
 			/* we have a priority above 0 (disabled), add item to list */
 			$pconfig['item'][] = "{$gwname}|{$_POST[$gwname]}|{$_POST[$vipname]}";
 		}
 		/* check for overlaps */
-		if ($_POST['name'] == $gwname)
+		if ($_POST['name'] == $gwname) {
 			$input_errors[] = sprintf(gettext('A gateway group cannot have the same name with a gateway "%s" please choose another name.'), $_POST['name']);
+		}
 
 	}
-	if(count($pconfig['item']) == 0)
+	if (count($pconfig['item']) == 0) {
 		$input_errors[] = gettext("No gateway(s) have been selected to be used in this group");
+	}
 
 	if (!$input_errors) {
 		$gateway_group = array();
@@ -133,10 +139,11 @@ if ($_POST) {
 		$gateway_group['trigger'] = $_POST['trigger'];
 		$gateway_group['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_gateway_groups[$id])
+		if (isset($id) && $a_gateway_groups[$id]) {
 			$a_gateway_groups[$id] = $gateway_group;
-		else
+		} else {
 			$a_gateway_groups[] = $gateway_group;
+		}
 
 		mark_subsystem_dirty('staticroutes');
 		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
@@ -148,7 +155,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway group"));
+$pgtitle = array(gettext("System"), gettext("Gateways"), gettext("Edit gateway group"));
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {

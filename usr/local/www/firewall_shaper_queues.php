@@ -1,6 +1,6 @@
 <?php
 /* $Id$ */
-/*
+/* NEW
 	firewall_shaper_queues.php
 	Copyright (C) 2004, 2005 Scott Ullrich
 	Copyright (C) 2008 Ermal Luçi
@@ -51,32 +51,39 @@ if($_GET['reset'] != "") {
 	exit;
 }
 
+$qname = gettext("No queue configured/selected");
+
 $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();
 $qlist =& get_unique_queue_list();
 
-if (!is_array($qlist))
+if (!is_array($qlist)) {
 	$qlist = array();
+}
 
 $tree = "<ul class=\"tree\" >";
 foreach ($qlist as $queue => $qkey) {
 	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&amp;action=show\" >";
-	if (isset($shaperIFlist[$queue]))
+	if (isset($shaperIFlist[$queue])) {
 		$tree .= $shaperIFlist[$queue] . "</a></li>";
-	else
+	} else {
 		$tree .= $queue . "</a></li>";
+	}
 }
 $tree .= "</ul>";
 
 if ($_GET) {
-	if ($_GET['queue'])
+	if ($_GET['queue']) {
 		$qname = htmlspecialchars(trim($_GET['queue']));
+	}
 
-	if ($_GET['interface'])
+	if ($_GET['interface']) {
 		$interface = htmlspecialchars(trim($_GET['interface']));
+	}
 
-	if ($_GET['action'])
+	if ($_GET['action']) {
 		$action = htmlspecialchars($_GET['action']);
+	}
 
 	switch ($action) {
 		case "delete":
@@ -84,12 +91,13 @@ if ($_GET) {
 			$qtmp =& $altq->find_queue("", $qname);
 			if ($qtmp) {
 				$qtmp->delete_queue();
-				if (write_config())
+				if (write_config()) {
 					mark_subsystem_dirty('shaper');
+				}
 			}
 			header("Location: firewall_shaper_queues.php");
 			exit;
-		break;
+			break;
 		case "add":
 			/*
 			 * XXX: WARNING: This returns the first it finds.
@@ -97,23 +105,26 @@ if ($_GET) {
 			 */
 			foreach ($altq_list_queues as $altq) {
 				$qtmp =& $altq->find_queue("", $qname);
-
+				
 				if ($qtmp) {
 					$copycfg = array();
 					$qtmp->copy_queue($interface, $copycfg);
 					$aq =& $altq_list_queues[$interface];
-
+					
 					if ($qname == $qtmp->GetInterface()) {
 						$config['shaper']['queue'][] = $copycfg;
 					} else if ($aq) {
 						$tmp1 =& $qtmp->find_parentqueue($interface, $qname);
-						if ($tmp1)
-								$tmp =& $aq->find_queue($interface, $tmp1->GetQname());
+						if ($tmp1) {
+							$tmp =& $aq->find_queue($interface, $tmp1->GetQname());
+						}
 
-						if ($tmp)
-								$link =& get_reference_to_me_in_config($tmp->GetLink());
-						else
-								$link =& get_reference_to_me_in_config($aq->GetLink());
+						if ($tmp) {
+							$link =& get_reference_to_me_in_config($tmp->GetLink());
+						} else {
+							$link =& get_reference_to_me_in_config($aq->GetLink());
+						}
+
 						$link['queue'][] = $copycfg;
 					} else {
 						$newroot = array();
@@ -165,13 +176,14 @@ if ($_POST['apply']) {
 	write_config();
 
 	$retval = 0;
-		/* Setup pf rules since the user may have changed the optimization value */
+	/* Setup pf rules since the user may have changed the optimization value */
 	$retval = filter_configure();
 	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") != true)
+	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
-	else
+	} else {
 		$savemsg = $retval;
+	}
 
 	/* reset rrd queues */
 	system("rm -f /var/db/rrd/*queuedrops.rrd");

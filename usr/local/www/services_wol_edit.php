@@ -45,9 +45,9 @@ function wolcmp($a, $b) {
 }
 
 function wol_sort() {
-		global $config;
+	global $config;
 
-		usort($config['wol']['wolentry'], "wolcmp");
+	usort($config['wol']['wolentry'], "wolcmp");
 }
 
 require("guiconfig.inc");
@@ -58,18 +58,18 @@ if (!is_array($config['wol']['wolentry'])) {
 }
 $a_wol = &$config['wol']['wolentry'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_wol[$id]) {
 	$pconfig['interface'] = $a_wol[$id]['interface'];
 	$pconfig['mac'] = $a_wol[$id]['mac'];
 	$pconfig['descr'] = $a_wol[$id]['descr'];
-}
-else
-{
+} else {
 	$pconfig['interface'] = $_GET['if'];
 	$pconfig['mac'] = $_GET['mac'];
 	$pconfig['descr'] = $_GET['descr'];
@@ -82,12 +82,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface mac");
-	$reqdfieldsn = array(gettext("Interface"),gettext("MAC address"));
+	$reqdfieldsn = array(gettext("Interface"), gettext("MAC address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-		$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
@@ -99,10 +99,11 @@ if ($_POST) {
 		$wolent['mac'] = $_POST['mac'];
 		$wolent['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_wol[$id])
+		if (isset($id) && $a_wol[$id]) {
 			$a_wol[$id] = $wolent;
-		else
+		} else {
 			$a_wol[] = $wolent;
+		}
 		wol_sort();
 
 		write_config();
@@ -112,7 +113,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Wake on LAN"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Wake on LAN"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)

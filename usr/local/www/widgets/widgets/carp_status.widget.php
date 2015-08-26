@@ -45,8 +45,9 @@ $carp_enabled = get_carp_status();
 	if(is_array($config['virtualip']['vip'])) {
 		$carpint=0;
 		foreach($config['virtualip']['vip'] as $carp) {
-			if ($carp['mode'] != "carp")
+			if ($carp['mode'] != "carp") {
 				continue;
+			}
 			$ipaddress = $carp['subnet'];
 			$password = $carp['password'];
 			$netmask = $carp['subnet_bits'];

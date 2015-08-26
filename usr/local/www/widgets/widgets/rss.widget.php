@@ -34,7 +34,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if($_POST['rssfeed']) {
+if ($_POST['rssfeed']) {
 	$config['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
 	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
 	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
@@ -44,42 +44,50 @@ if($_POST['rssfeed']) {
 }
 
 // Use saved feed and max items
-if($config['widgets']['rssfeed'])
+if ($config['widgets']['rssfeed']) {
 	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);
+}
 
-if($config['widgets']['rssmaxitems'])
+if ($config['widgets']['rssmaxitems']) {
 	$max_items =  $config['widgets']['rssmaxitems'];
+}
 
-if(is_numeric($config['widgets']['rsswidgetheight']))
+if (is_numeric($config['widgets']['rsswidgetheight'])) {
 	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
+}
 
-if(is_numeric($config['widgets']['rsswidgettextlength']))
+if (is_numeric($config['widgets']['rsswidgettextlength'])) {
 	$rsswidgettextlength =  $config['widgets']['rsswidgettextlength'];
+}
 
 // Set a default feed if none exists
-if(!$rss_feed_s) {
+if (!$rss_feed_s) {
 	$rss_feed_s = "https://blog.pfsense.org";
 	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 
-if(!$max_items)
+if (!$max_items) {
 	$max_items = 10;
+}
 
-if(!$rsswidgetheight)
+if (!$rsswidgetheight) {
 	$rsswidgetheight = 300;
+}
 
-if(!$rsswidgettextlength)
+if (!$rsswidgettextlength) {
 	$rsswidgettextlength = 140;	// oh twitter, how do we love thee?
+}
 
-if($config['widgets']['rssfeed'])
+if ($config['widgets']['rssfeed']) {
 	$textarea_txt =  str_replace(",", "\n", $config['widgets']['rssfeed']);
-else
+} else {
 	$textarea_txt = "";
+}
 
 ?>
 <div class="list-group" style="height: <?=$rsswidgetheight?>px; overflow:scroll;">
 <?php
-	if(!is_dir("/tmp/simplepie")) {
+	if (!is_dir("/tmp/simplepie")) {
 		mkdir("/tmp/simplepie");
 		mkdir("/tmp/simplepie/cache");
 	}

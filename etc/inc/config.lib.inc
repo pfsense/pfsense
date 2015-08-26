@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt
 	pfSense_MODULE:	config
 */
 
@@ -81,6 +81,7 @@ function encrypted_configxml() {
 				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 				echo "\n" . gettext("Config.xml unlocked.") . "\n";
 				fclose($fp);
+				pfSense_fsync("{$g['conf_path']}/config.xml");
 			} else {
 				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 			}
@@ -114,8 +115,9 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting(true))
+	if (platform_booting(true)) {
 		echo ".";
+	}
 
 	// Check for encrypted config.xml
 	encrypted_configxml();
@@ -186,12 +188,15 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	pfSense_fsync("{$g['tmp_path']}/config.cache");
+	
 	unset($configcache);
 	/* Used for config.extra.xml */
 	if (file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
 		fclose($configcacheextra);
+		pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
 }
@@ -216,7 +221,9 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
-		copy("$file","/cf/conf/config.xml");
+		copy("$file", "/cf/conf/config.xml");
+		pfSense_fsync("/cf/conf/config.xml");
+		pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -330,9 +337,8 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	if ($status <> 0) {
 		if (platform_booting()) {
-			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
+			echo gettext("/cf Filesystem is dirty.") . "\n";
 		}
-		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
@@ -340,10 +346,9 @@ function conf_mount_rw() {
 	 *    compact flash cards root.
 	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
-	/* we could not mount this correctly.  kick off fsck */
+	/* we could not mount this correctly. */
 	if ($status <> 0) {
-		log_error(gettext("File system is dirty.  Launching FSCK for /"));
-		mwexec("/sbin/fsck -y /");
+		log_error(gettext("/ File system is dirty."));
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
 
@@ -380,7 +385,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	pfSense_sync();
+	pfSense_fsync($g['cf_path']);
 	mwexec("/sbin/mount -u -r -f -o sync,noatime {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f -o sync,noatime /");
 }
@@ -407,9 +412,9 @@ function convert_config() {
 	/* fix every minute crontab bogons entry */
 	if (is_array($config['cron'])) {
 		$cron_item_count = count($config['cron']['item']);
-		for($x=0; $x<$cron_item_count; $x++) {
+		for ($x = 0; $x < $cron_item_count; $x++) {
 			if (stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-				if ($config['cron']['item'][$x]['hour'] == "*" ) {
+				if ($config['cron']['item'][$x]['hour'] == "*") {
 					$config['cron']['item'][$x]['hour'] = "3";
 					write_config(gettext("Updated bogon update frequency to 3am"));
 					log_error(gettext("Updated bogon update frequency to 3am"));
@@ -487,16 +492,14 @@ function safe_write_file($file, $content, $force_binary) {
 	fflush($fd);
 	fclose($fd);
 
-	if (!rename($tmp_file, $file)) {
+	if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;
 	}
 
 	// Sync file before returning
-	pfSense_sync();
-
-	return true;
+	return pfSense_fsync($file);
 }
 
 /****f* config/write_config
@@ -546,7 +549,7 @@ function write_config($desc="Unknown", $backup = true) {
 
 	/* write new configuration */
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
-		log_error(gettext("WARNING: Config contents could not be save. Could not open file!"));
+		log_error(gettext("WARNING: Config contents could not be saved. Could not open file!"));
 		unlock($lockkey);
 		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));
 		return -1;
@@ -831,6 +834,7 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
+	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 	conf_mount_ro();
 
 	if (!$lock) {
@@ -867,12 +871,12 @@ function backup_config() {
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
-
 	if ($config['revision']['time'] == "") {
 		$baktime = 0;
 	} else {
 		$baktime = $config['revision']['time'];
 	}
+
 	if ($config['revision']['description'] == "") {
 		$bakdesc = "Unknown";
 	} else {
@@ -882,6 +886,7 @@ function backup_config() {
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];
 	$bakfilename = $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml';
 	copy($g['cf_conf_path'] . '/config.xml', $bakfilename);
+
 	if (file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	} else {
@@ -891,6 +896,7 @@ function backup_config() {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
+	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	conf_mount_ro();
 
@@ -899,9 +905,10 @@ function backup_config() {
 
 function set_device_perms() {
 	$devices = array(
-		'pf'	=> array(	'user'	=> 'root',
-					'group'	=> 'proxy',
-					'mode'	=> 0660),
+		'pf' => array(
+			'user' => 'root',
+			'group' => 'proxy',
+			'mode' => 0660),
 		);
 
 	foreach ($devices as $name => $attr) {
@@ -972,8 +979,12 @@ function pfSense_clear_globals() {
 	$error = error_get_last();
 
 	if ($error !== NULL) {
-		if ($error['type'] != E_NOTICE) {
+		if ($error['type'] == E_ERROR) {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
+			print($errorstr);
+			log_error($errorstr);
+		} else if ($error['type'] != E_NOTICE) {
+			$errorstr = "PHP WARNING: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			// XXX: comment out for now, should re-enable post-2.2
 			//print($errorstr);
 			//log_error($errorstr);

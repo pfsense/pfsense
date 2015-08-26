@@ -47,7 +47,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"),gettext("DHCP leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCP leases"));
 $shortcut_section = "dhcp";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
@@ -60,7 +60,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	/* $leases_contents has the lines of the file, including the newline char at the end of each line. */
 	$leases_contents = file($leasesfile);
 	$newleases_contents = array();
-	$i=0;
+	$i = 0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
 		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {\n") {
@@ -99,8 +99,9 @@ function adjust_gmt($dt) {
 	$dhcpd = $config['dhcpd'];
 	foreach ($dhcpd as $dhcpditem) {
 		$dhcpleaseinlocaltime = $dhcpditem['dhcpleaseinlocaltime'];
-		if ($dhcpleaseinlocaltime == "yes")
+		if ($dhcpleaseinlocaltime == "yes") {
 			break;
+		}
 	}
 	if ($dhcpleaseinlocaltime == "yes") {
 		$ts = strtotime($dt . " GMT");
@@ -112,13 +113,14 @@ function adjust_gmt($dt) {
 	return $dt;
 }
 
-function remove_duplicate($array, $field)
-{
-	foreach ($array as $sub)
+function remove_duplicate($array, $field) {
+	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];
-	$unique = array_unique(array_reverse($cmp,true));
-	foreach ($unique as $k => $rien)
+	}
+	$unique = array_unique(array_reverse($cmp, true));
+	foreach ($unique as $k => $rien) {
 		$new[] = $array[$k];
+	}
 	return $new;
 }
 
@@ -135,10 +137,10 @@ exec("/usr/sbin/arp -an", $rawdata);
 $arpdata_ip = array();
 $arpdata_mac = array();
 foreach ($rawdata as $line) {
-	$elements = explode(' ',$line);
+	$elements = explode(' ', $line);
 	if ($elements[3] != "(incomplete)") {
 		$arpent = array();
-		$arpdata_ip[] = trim(str_replace(array('(',')'),'',$elements[1]));
+		$arpdata_ip[] = trim(str_replace(array('(', ')'), '', $elements[1]));
 		$arpdata_mac[] = strtolower(trim($elements[3]));
 	}
 }
@@ -150,19 +152,19 @@ $l = 0;
 $p = 0;
 
 // Put everything together again
-foreach($leases_content as $lease) {
+foreach ($leases_content as $lease) {
 	/* split the line by space */
 	$data = explode(" ", $lease);
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
 	/* with less than 20 fields there is nothing useful */
-	if($fcount < 20) {
+	if ($fcount < 20) {
 		$i++;
 		continue;
 	}
-	while($f < $fcount) {
-		switch($data[$f]) {
+	while ($f < $fcount) {
+		switch ($data[$f]) {
 			case "failover":
 				$pools[$p]['name'] = trim($data[$f+2], '"');
 				$pools[$p]['name'] = "{$pools[$p]['name']} (" . convert_friendly_interface_to_friendly_descr(substr($pools[$p]['name'], 5)) . ")";
@@ -210,7 +212,7 @@ foreach($leases_content as $lease) {
 				$f = $f+3;
 				break;
 			case "binding":
-				switch($data[$f+2]) {
+				switch ($data[$f+2]) {
 					case "active":
 						$leases[$l]['act'] = "active";
 						break;
@@ -244,11 +246,11 @@ foreach($leases_content as $lease) {
 				$f = $f+2;
 				break;
 			case "client-hostname":
-				if($data[$f+1] != "") {
-					$leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
+				if ($data[$f+1] <> "") {
+					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($leases[$l]['ip']);
-					if($hostname != "") {
+					if ($hostname <> "") {
 						$leases[$l]['hostname'] = $hostname;
 					}
 				}
@@ -269,20 +271,20 @@ foreach($leases_content as $lease) {
 unset($lease_content);
 
 /* remove duplicate items by mac address */
-if(count($leases) > 0) {
-	$leases = remove_duplicate($leases,"ip");
+if (count($leases) > 0) {
+	$leases = remove_duplicate($leases, "ip");
 }
 
-if(count($pools) > 0) {
-	$pools = remove_duplicate($pools,"name");
+if (count($pools) > 0) {
+	$pools = remove_duplicate($pools, "name");
 	asort($pools);
 }
 
-foreach($config['interfaces'] as $ifname => $ifarr) {
+foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
-		is_array($config['dhcpd'][$ifname]['staticmap'])) {
+	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		$staticmap_array_index = 0;
-		foreach($config['dhcpd'][$ifname]['staticmap'] as $static) {
+		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
 			$slease['ip'] = $static['ipaddr'];
 			$slease['type'] = "static";
@@ -300,11 +302,12 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 	}
 }
 
-if ($_GET['order'])
+if ($_GET['order']) {
 	usort($leases, "leasecmp");
+}
 
 /* only print pool status when we have one */
-if(count($pools) > 0) {
+if (count($pools) > 0) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>

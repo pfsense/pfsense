@@ -316,6 +316,7 @@ $helppages = array(
 	'open-vm-tools.xml' => 'https://doc.pfsense.org/index.php/Open_VM_Tools_package',
 	'arping.xml' => 'https://doc.pfsense.org/index.php/Arping_package',
 	'unbound.xml' => 'https://doc.pfsense.org/index.php/Unbound_package',
+	'nut.xml' => 'https://doc.pfsense.org/index.php/Nut_package',
 
 );
 
@@ -367,7 +368,6 @@ if (array_key_exists($pagename, $helppages)) {
 
 if (empty($helppage)) {
 	$helppage = 'https://doc.pfsense.org/index.php/No_Help_Found';
-
 }
 
 /* Redirect to help page. */

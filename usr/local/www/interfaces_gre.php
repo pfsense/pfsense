@@ -43,8 +43,9 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['gres']['gre']))
+if (!is_array($config['gres']['gre'])) {
 	$config['gres']['gre'] = array();
+}
 
 $a_gres = &$config['gres']['gre'] ;
 
@@ -53,20 +54,21 @@ function gre_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gres[$num]['greif'])
+		if ($config['interfaces'][$if]['if'] == $a_gres[$num]['greif']) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-	if (!isset($_GET['id']))
+	if (!isset($_GET['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	else if (empty($a_gres[$_GET['id']]))
+	} else if (empty($a_gres[$_GET['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (gre_inuse($_GET['id'])) {
+	} else if (gre_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gres[$_GET['id']]['greif'] . " destroy");
@@ -79,7 +81,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"));
+$pgtitle = array(gettext("Interfaces"), gettext("GRE"));
 $shortcut_section = "interfaces";
 include("head.inc");
 if ($input_errors)

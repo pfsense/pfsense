@@ -67,20 +67,23 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	unset($_POST['txtCommand']);
 }
 
-if($_POST)
+if ($_POST) {
 	conf_mount_rw();
+}
 
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 
-function isBlank( $arg ) { return preg_match( "/^\s*$/", $arg ); }
-
+function isBlank($arg) {
+	return preg_match("/^\s*$/", $arg);
+}
 
 // Function: Puts
 // Put string, Ruby-style.
 
-function puts( $arg ) { echo "$arg\n"; }
-
+function puts($arg) {
+	echo "$arg\n";
+}
 
 // "Constants".
 
@@ -93,24 +96,28 @@ $arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $closehead = false;
-$pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
 <script>
 	// Create recall buffer array (of encoded strings).
 <?php
 
-if (isBlank( $_POST['txtRecallBuffer'] )) {
-	puts( "	  var arrRecallBuffer = new Array;" );
+if (isBlank($_POST['txtRecallBuffer'])) {
+	puts("   var arrRecallBuffer = new Array;");
 } else {
-	puts( "	  var arrRecallBuffer = new Array(" );
-	$arrBuffer = explode( "&", $_POST['txtRecallBuffer'] );
-	for ($i=0; $i < (count( $arrBuffer ) - 1); $i++)
-		puts( "	  '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "'," );
-	puts( "	  '" . htmlspecialchars($arrBuffer[count( $arrBuffer ) - 1], ENT_QUOTES | ENT_HTML401) . "'" );
-	puts( "	  );" );
+	puts("   var arrRecallBuffer = new Array(");
+	$arrBuffer = explode("&", $_POST['txtRecallBuffer']);
+	for ($i = 0; $i < (count($arrBuffer) - 1); $i++) {
+		puts("      '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "',");
+	}
+	puts("      '" . htmlspecialchars($arrBuffer[count($arrBuffer) - 1], ENT_QUOTES | ENT_HTML401) . "'");
+	puts("   );");
 }
 ?>
+	// Set pointer to end of recall buffer.
+	var intRecallPtr = arrRecallBuffer.length-1;
+
 	// Set pointer to end of recall buffer.
 	var intRecallPtr = arrRecallBuffer.length-1;
 
@@ -129,15 +136,17 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 	// Function: frmExecPlus onSubmit (event handler)
 	// Builds the recall buffer from the command string on submit.
 	function frmExecPlus_onSubmit( form ) {
+
 		if (!isBlank(form.txtCommand.value)) {
 			// If this command is repeat of last command, then do not store command.
 			if (form.txtCommand.value.encode() == arrRecallBuffer[arrRecallBuffer.length-1]) { return true }
 
 			// Stuff encoded command string into the recall buffer.
-			if (isBlank(form.txtRecallBuffer.value))
+			if (isBlank(form.txtRecallBuffer.value)) {
 				form.txtRecallBuffer.value = form.txtCommand.value.encode();
-			else
+			} else {
 				form.txtRecallBuffer.value += '&' + form.txtCommand.value.encode();
+			}
 		}
 
 		return true;
@@ -149,7 +158,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
 		// If nothing in recall buffer, then error.
 		if (!arrRecallBuffer.length) {
-			alert( '<?=gettext("Nothing to recall"); ?>!' );
+			alert('<?=gettext("Nothing to recall"); ?>!');
 			form.txtCommand.focus();
 			return;
 		}

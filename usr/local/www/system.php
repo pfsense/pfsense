@@ -48,7 +48,7 @@ require_once("shaper.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
-list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
+list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $config['system']['dnsserver'];
 
 $arr_gateways = return_gateways_array();
 
@@ -66,12 +66,15 @@ $pconfig['language'] = $config['system']['language'];
 
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
-if (!isset($pconfig['timeupdateinterval']))
+if (!isset($pconfig['timeupdateinterval'])) {
 	$pconfig['timeupdateinterval'] = 300;
-if (!$pconfig['timezone'])
+}
+if (!$pconfig['timezone']) {
 	$pconfig['timezone'] = "Etc/UTC";
-if (!$pconfig['timeservers'])
+}
+if (!$pconfig['timeservers']) {
 	$pconfig['timeservers'] = "pool.ntp.org";
+}
 
 $changedesc = gettext("System") . ": ";
 $changecount = 0;
@@ -80,7 +83,7 @@ function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
 
-if($pconfig['timezone'] != $_POST['timezone']) {
+if ($pconfig['timezone'] <> $_POST['timezone']) {
 	filter_pflog_start(true);
 }
 
@@ -90,8 +93,8 @@ sort($timezonelist);
 
 $multiwan = false;
 $interfaces = get_configured_interface_list();
-foreach($interfaces as $interface) {
-	if(interface_has_gateway($interface)) {
+foreach ($interfaces as $interface) {
+	if (interface_has_gateway($interface)) {
 		$multiwan = true;
 	}
 }
@@ -105,7 +108,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "hostname domain");
-	$reqdfieldsn = array(gettext("Hostname"),gettext("Domain"));
+	$reqdfieldsn = array(gettext("Hostname"), gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -124,19 +127,19 @@ if ($_POST) {
 
 	$ignore_posted_dnsgw = array();
 
-	for ($dnscounter=1; $dnscounter<5; $dnscounter++){
+	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter.");
 		} else {
-			if(($_POST[$dnsgwname] != "") && ($_POST[$dnsgwname] != "none")) {
+			if (($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
-					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
 						$input_errors[] = gettext("You can not specify IPv6 gateway '{$_POST[$dnsgwname]}' for IPv4 DNS server '{$_POST[$dnsname]}'");
 					}
-					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
 						$input_errors[] = gettext("You can not specify IPv4 gateway '{$_POST[$dnsgwname]}' for IPv6 DNS server '{$_POST[$dnsname]}'");
 					}
 				} else {
@@ -152,10 +155,10 @@ if ($_POST) {
 		$dnsitem = "dns{$dnscounter}";
 		$dnsgwitem = "dns{$dnscounter}gw";
 		if ($_POST[$dnsgwitem]) {
-			if(interface_has_gateway($_POST[$dnsgwitem])) {
-				foreach($direct_networks_list as $direct_network) {
-					if(ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("You can not assign a gateway to DNS '%s' server which is on a directly connected network."),$_POST[$dnsitem]);
+			if (interface_has_gateway($_POST[$dnsgwitem])) {
+				foreach ($direct_networks_list as $direct_network) {
+					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
+						$input_errors[] = sprintf(gettext("You can not assign a gateway to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 					}
 				}
 			}
@@ -182,37 +185,42 @@ if ($_POST) {
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
-		if($_POST['language'] && $_POST['language'] != $config['system']['language']) {
+		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
 			set_language($config['system']['language']);
 		}
 
 		/* pfSense themes */
-		if (! $g['disablethemeselection']) {
+		if (!$g['disablethemeselection']) {
 			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
 		unset($config['system']['dnsserver']);
-		if ($_POST['dns1'])
+		if ($_POST['dns1']) {
 			$config['system']['dnsserver'][] = $_POST['dns1'];
-		if ($_POST['dns2'])
+		}
+		if ($_POST['dns2']) {
 			$config['system']['dnsserver'][] = $_POST['dns2'];
-		if ($_POST['dns3'])
+		}
+		if ($_POST['dns3']) {
 			$config['system']['dnsserver'][] = $_POST['dns3'];
-		if ($_POST['dns4'])
+		}
+		if ($_POST['dns4']) {
 			$config['system']['dnsserver'][] = $_POST['dns4'];
+		}
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
-		if($_POST['dnslocalhost'] == "yes")
+		if ($_POST['dnslocalhost'] == "yes") {
 			$config['system']['dnslocalhost'] = true;
-		else
+		} else {
 			unset($config['system']['dnslocalhost']);
+		}
 
 		/* which interface should the dns servers resolve through? */
 		$outdnscounter = 0;
@@ -221,10 +229,11 @@ if ($_POST) {
 			$dnsgwname="dns{$dnscounter}gw";
 			$olddnsgwname = $config['system'][$dnsgwname];
 
-			if ($ignore_posted_dnsgw[$dnsgwname])
+			if ($ignore_posted_dnsgw[$dnsgwname]) {
 				$thisdnsgwname = "none";
-			else
+			} else {
 				$thisdnsgwname = $pconfig[$dnsgwname];
+			}
 
 			// "Blank" out the settings for this index, then we set them below using the "outdnscounter" index.
 			$config['system'][$dnsgwname] = "none";
@@ -239,7 +248,7 @@ if ($_POST) {
 				$outdnsname="dns{$outdnscounter}";
 				$outdnsgwname="dns{$outdnscounter}gw";
 				$pconfig[$outdnsname] = $_POST[$dnsname];
-				if($_POST[$dnsgwname]) {
+				if ($_POST[$dnsgwname]) {
 					$config['system'][$outdnsgwname] = $thisdnsgwname;
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
 				} else {
@@ -251,30 +260,35 @@ if ($_POST) {
 			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter-1] != $_POST[$dnsname]))) {
 				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
 				// Remove the route. Later calls will add the correct new route if needed.
-				if (is_ipaddrv4($olddnsservers[$dnscounter-1]))
+				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
 					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				else
-					if (is_ipaddrv6($olddnsservers[$dnscounter-1]))
+				} else {
+					if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
 						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
+					}
+				}
 			}
 		}
 
-		if ($changecount > 0)
+		if ($changecount > 0) {
 			write_config($changedesc);
+		}
 
 		$retval = 0;
 		$retval = system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
-		if (isset($config['dnsmasq']['enable']))
+		if (isset($config['dnsmasq']['enable'])) {
 			$retval |= services_dnsmasq_configure();
-		elseif (isset($config['unbound']['enable']))
+		} elseif (isset($config['unbound']['enable'])) {
 			$retval |= services_unbound_configure();
+		}
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
 
-		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
+		if ($olddnsallowoverride != $config['system']['dnsallowoverride']) {
 			$retval |= send_event("service reload dns");
+		}
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();
@@ -285,7 +299,7 @@ if ($_POST) {
 	unset($ignore_posted_dnsgw);
 }
 
-$pgtitle = array(gettext("System"),gettext("General Setup"));
+$pgtitle = array(gettext("System"), gettext("General Setup"));
 include("head.inc");
 
 if ($input_errors)

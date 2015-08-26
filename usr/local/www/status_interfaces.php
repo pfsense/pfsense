@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE: interfaces
+	pfSense_MODULE:	interfaces
 */
 
 ##|+PRIV
@@ -49,10 +49,11 @@ require_once("filter.inc");
 
 if ($_POST['if'] && $_POST['submit']) {
 	$interface = $_POST['if'];
-	if ($_POST['status'] == "up")
+	if ($_POST['status'] == "up") {
 		interface_bring_down($interface);
-	else
+	} else {
 		interface_configure($interface);
+	}
 	header("Location: status_interfaces.php");
 	exit;
 }

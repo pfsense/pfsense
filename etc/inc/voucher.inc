@@ -1,7 +1,7 @@
 <?php
 /*
 	voucher.inc
-	Copyright (C) 2010-2012 Ermal Luci <eri@pfsense.org>
+	Copyright (C) 2010-2012 Ermal Luçi <eri@pfsense.org>
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
 	All rights reserved.
@@ -56,7 +56,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
@@ -90,7 +90,7 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 
 	return $toreturn;
 }
@@ -114,7 +114,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	$dbent_str = serialize($dbent);
 	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
@@ -150,7 +150,7 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 
 	return $toreturn;
 }
@@ -172,7 +172,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
+	$execcmd = <<<EOF
 	global \$cpzone;
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
@@ -208,7 +208,7 @@ EOF;
 	} else {
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
-	$toreturn =  XML_RPC_Decode($resp->value());
+	$toreturn = XML_RPC_Decode($resp->value());
 	if (!is_array($config['voucher'])) {
 		$config['voucher'] = array();
 	}
@@ -226,7 +226,7 @@ EOF;
 }
 
 function voucher_expire($voucher_received) {
-	global $g, $config, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	// XMLRPC Call over to the master Voucher node
 	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
@@ -291,9 +291,13 @@ function voucher_expire($voucher_received) {
 
 				/* Check if this voucher has any active sessions */
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
-				if (!empty($cpentry)) {
-					captiveportal_disconnect($cpentry,null,13);
-					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");
+				if (!empty($cpentry) && !empty($cpentry[0])) {
+					if (empty($cpzoneid) && !empty($config['captiveportal'][$cpzone])) {
+						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+					}
+					$cpentry = $cpentry[0];
+					captiveportal_disconnect($cpentry, null, 13);
+					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else {
@@ -407,7 +411,7 @@ function voucher_auth($voucher_received, $test = 0) {
 				}
 				// valid voucher. Store roll# and ticket#
 				if (!empty($active_vouchers[$roll][$voucher])) {
-					list($timestamp,$minutes) = explode(",", $active_vouchers[$roll][$voucher]);
+					list($timestamp, $minutes) = explode(",", $active_vouchers[$roll][$voucher]);
 					// we have an already active voucher here.
 					$remaining = intval((($timestamp + (60*$minutes)) - time())/60);
 					$test_result[] = sprintf(gettext('%1$s (%2$s/%3$s) active and good for %4$d Minutes'), $voucher, $roll, $nr, $remaining);
@@ -450,7 +454,7 @@ function voucher_auth($voucher_received, $test = 0) {
 		if ($error) {
 			$test_result[] = gettext("Access denied!");
 		} else {
-			$test_result[] = sprintf(gettext("Access granted for %d Minutes in total."),$total_minutes);
+			$test_result[] = sprintf(gettext("Access granted for %d Minutes in total."), $total_minutes);
 		}
 		unlock($voucherlck);
 
@@ -632,7 +636,7 @@ function voucher_read_active_db($roll) {
 			while (!feof($fd)) {
 				$line = trim(fgets($fd));
 				if ($line) {
-					list($voucher,$timestamp,$minutes) = explode(",", $line); // voucher,timestamp
+					list($voucher, $timestamp, $minutes) = explode(",", $line); // voucher,timestamp
 					if ((($timestamp + (60*$minutes)) - time()) > 0) {
 						$active[$voucher] = "$timestamp,$minutes";
 					} else {
@@ -716,7 +720,7 @@ function voucher_log($priority, $message) {
 
 	$message = trim($message);
 	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-	syslog($priority, sprintf(gettext("Voucher: %s"),$message));
+	syslog($priority, sprintf(gettext("Voucher: %s"), $message));
 	closelog();
 }
 
@@ -758,7 +762,7 @@ function voucher_save_db_to_config_zone() {
 		$db = array();
 		$dbi = 1;
 		foreach ($active_vouchers as $voucher => $line) {
-			list($timestamp,$minutes) = explode(",", $line);
+			list($timestamp, $minutes) = explode(",", $line);
 			$activent['voucher'] = $voucher;
 			$activent['timestamp'] = $timestamp;
 			$activent['minutes'] = $minutes;

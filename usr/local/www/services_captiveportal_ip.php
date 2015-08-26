@@ -49,23 +49,25 @@ require("shaper.inc");
 require("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+}
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {

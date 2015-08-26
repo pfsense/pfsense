@@ -10,11 +10,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -48,11 +48,13 @@ if ($_POST) {
 	unset($input_errors);
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
-	if (!$authcfg)
+	if (!$authcfg) {
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
+	}
 
-	if (empty($_POST['username']) || empty($_POST['password']))
+	if (empty($_POST['username']) || empty($_POST['password'])) {
 		$input_errors[] = gettext("A username and password must be specified.");
+	}
 
 	if (!$input_errors) {
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
@@ -69,7 +71,7 @@ if ($_POST) {
 		}
 	}
 }
-$pgtitle = array(gettext("Diagnostics"),gettext("Authentication"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
 $shortcut_section = "authentication";
 include("head.inc");
 

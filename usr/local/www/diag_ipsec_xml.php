@@ -44,8 +44,9 @@ global $g;
 require("guiconfig.inc");
 require("ipsec.inc");
 
-if (!is_array($config['ipsec']['phase2']))
-    $config['ipsec']['phase2'] = array();
+if (!is_array($config['ipsec']['phase2'])) {
+	$config['ipsec']['phase2'] = array();
+}
 
 $ipsec_status = array();
 
@@ -55,15 +56,16 @@ $status = ipsec_smp_dump_status();
 
 if (is_array($status['query']) && $status['query']['ikesalist'] && $status['query']['ikesalist']['ikesa']) {
 	foreach ($a_phase2 as $ph2ent) {
-		ipsec_lookup_phase1($ph2ent,$ph1ent);
+		ipsec_lookup_phase1($ph2ent, $ph1ent);
 		$tunnel = array();
 		if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
-			if(ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ph1ent['ikeid']))
+			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ph1ent['ikeid'])) {
 				$tunnel['state'] = "up";
-			elseif(!isset($config['ipsec']['enable']))
+			} elseif (!isset($config['ipsec']['enable'])) {
 				$tunnel['state'] = "disabled";
-			else
+			} else {
 				$tunnel['state'] = "down";
+			}
 
 			$tunnel['src'] = ipsec_get_phase1_src($ph1ent);
 			$tunnel['endpoint'] = $ph1ent['remote-gateway'];

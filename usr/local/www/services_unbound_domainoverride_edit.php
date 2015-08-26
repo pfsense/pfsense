@@ -48,11 +48,12 @@ if (!is_array($config['unbound']['domainoverrides']))
 
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
@@ -67,28 +68,32 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
+	$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	function String_Begins_With($needle, $haystack) {
-		return (substr($haystack, 0, strlen($needle))==$needle);
+		return (substr($haystack, 0, strlen($needle)) == $needle);
 	}
 
 	if (String_Begins_With(_msdcs, $_POST['domain'])) {
 		$subdomainstr = substr($_POST['domain'], 7);
-		if ($subdomainstr && !is_domain($subdomainstr))
+		if ($subdomainstr && !is_domain($subdomainstr)) {
 			$input_errors[] = gettext("A valid domain must be specified after _msdcs.");
-	} elseif ($_POST['domain'] && !is_domain($_POST['domain']))
+		}
+	} elseif ($_POST['domain'] && !is_domain($_POST['domain'])) {
 		$input_errors[] = gettext("A valid domain must be specified.");
+	}
 
 	if ($_POST['ip']) {
-		if (strpos($_POST['ip'],'@') !== false) {
+		if (strpos($_POST['ip'], '@') !== false) {
 			$ip_details = explode("@", $_POST['ip']);
-			if (!is_ipaddr($ip_details[0]) || !is_port($ip_details[1]))
+			if (!is_ipaddr($ip_details[0]) || !is_port($ip_details[1])) {
 				$input_errors[] = gettext("A valid IP address and port must be specified, for example 192.168.100.10@5353.");
-		} else if (!is_ipaddr($_POST['ip']))
+			}
+		} else if (!is_ipaddr($_POST['ip'])) {
 			$input_errors[] = gettext("A valid IP address must be specified, for example 192.168.100.10.");
+		}
 	}
 
 	if (!$input_errors) {
@@ -97,10 +102,11 @@ if ($_POST) {
 		$doment['ip'] = $_POST['ip'];
 		$doment['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_domainOverrides[$id])
+		if (isset($id) && $a_domainOverrides[$id]) {
 			$a_domainOverrides[$id] = $doment;
-		else
+		} else {
 			$a_domainOverrides[] = $doment;
+		}
 
 		mark_subsystem_dirty('unbound');
 
@@ -111,7 +117,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit Domain Override"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Domain Override"));
 $shortcut_section = "resolver";
 include("head.inc");
 

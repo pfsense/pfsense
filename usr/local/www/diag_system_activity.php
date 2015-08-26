@@ -45,7 +45,7 @@ require("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"),gettext("System Activity"));
 
-if($_REQUEST['getactivity']) {
+if ($_REQUEST['getactivity']) {
 	$text = `/usr/bin/top -aHS | /usr/bin/cut -c1-105`;
 	echo $text;
 	exit;

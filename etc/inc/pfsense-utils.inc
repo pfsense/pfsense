@@ -127,20 +127,24 @@ function get_tmp_file() {
 
 /****f* pfsense-utils/get_dns_servers
  * NAME
- *   get_dns_servres - get system dns servers
+ *   get_dns_servers - get system dns servers
  * INPUTS
- *   $dns_servers - an array of the dns servers
+ *   none
  * RESULT
- *   null
+ *   $dns_servers - an array of the dns servers
  ******/
 function get_dns_servers() {
 	$dns_servers = array();
+	if (file_exists("/etc/resolv.conf")) {
 	$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	}
+	if (is_array($dns_s)) {
 	foreach ($dns_s as $dns) {
 		$matches = "";
 		if (preg_match("/nameserver (.*)/", $dns, $matches)) {
 			$dns_servers[] = $matches[1];
 		}
+	}
 	}
 	return array_unique($dns_servers);
 }
@@ -451,27 +455,6 @@ function remove_text_from_file($file, $text) {
 }
 
 /*
- * add_text_to_file($file, $text): adds $text to $file.
- * replaces the text if it already exists.
- */
-function add_text_to_file($file, $text, $replace = false) {
-	if (file_exists($file) and is_writable($file)) {
-		$filecontents = file($file);
-		$filecontents = array_map('rtrim', $filecontents);
-		array_push($filecontents, $text);
-		if ($replace) {
-			$filecontents = array_unique($filecontents);
-		}
-
-		$file_text = implode("\n", $filecontents);
-
-		@file_put_contents($file, $file_text);
-		return true;
-	}
-	return false;
-}
-
-/*
  *   after_sync_bump_adv_skew(): create skew values by 1S
  */
 function after_sync_bump_adv_skew() {
@@ -515,8 +498,7 @@ function get_dir($dir) {
  * RESULT
  *   true/false - true if the operation was successful
  ******/
-function WakeOnLan($addr, $mac)
-{
+function WakeOnLan($addr, $mac) {
 	$addr_byte = explode(':', $mac);
 	$hw_addr = '';
 
@@ -824,7 +806,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	}
 	$version = php_uname('r');
 	$version = explode('-', $version);
-	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
+	$rawparams = array("firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $version[0]),
 		"base"     => array("version" => $version[0]),
 		"platform" => trim(file_get_contents('/etc/platform')),
@@ -863,7 +845,7 @@ function host_firmware_version($tocheck = "") {
 	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
 
 	return array(
-		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
+		"firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
 		"platform" => trim(file_get_contents('/etc/platform', " \n")),
@@ -1018,6 +1000,18 @@ function setup_serial_port($when="save", $path="") {
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	if ($g['platform'] != "cdrom") {
+		$serial_only = false;
+
+		if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			$serial_only = true;
+		} else {
+			$specific_platform = system_identify_specific_platform();
+			if ($specific_platform['name'] == 'RCC-VE' ||
+			    $specific_platform['name'] == 'RCC-DFF') {
+				$serial_only = true;
+			}
+		}
+
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if ($fd) {
@@ -1030,7 +1024,7 @@ function setup_serial_port($when="save", $path="") {
 					}
 				}
 			}
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			if ($serial_only === true) {
 				fwrite($fd, "-S{$serialspeed} -h");
 			} else if (is_serial_enabled()) {
 				fwrite($fd, "-S{$serialspeed} -D");
@@ -1053,12 +1047,14 @@ function setup_serial_port($when="save", $path="") {
 				    (stripos($bcs, "console") === false) &&
 				    (stripos($bcs, "boot_multicons") === false) &&
 				    (stripos($bcs, "boot_serial") === false) &&
-				    (stripos($bcs, "hw.usb.no_pf") === false)) {
+				(stripos($bcs, "hw.usb.no_pf") === false) &&
+				(stripos($bcs, "hint.uart.0.flags") === false) &&
+				(stripos($bcs, "hint.uart.1.flags") === false)) {
 					$new_boot_config[] = $bcs;
 				}
 			}
 
-			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+			if ($serial_only === true) {
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'console="comconsole"';
 			} else if (is_serial_enabled()) {
@@ -1075,6 +1071,14 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+			
+			$specplatform = system_identify_specific_platform();
+			if ($specplatform['name'] == 'RCC-VE' ||
+			    $specplatform['name'] == 'RCC-DFF') {
+				$new_boot_config[] = 'comconsole_port="0x2F8"';
+				$new_boot_config[] = 'hint.uart.0.flags="0x00"';
+				$new_boot_config[] = 'hint.uart.1.flags="0x10"';
+			}
 			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
@@ -1755,7 +1759,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 60, $timeout = 0) {
+function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 5, $timeout = 0) {
 	global $config, $g;
 
 	$fp = fopen($destination, "wb");
@@ -1772,7 +1776,11 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	if (!isset($config['system']['host_uuid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
+	} else {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1792,8 +1800,9 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	return ($http_code == 200) ? true : $http_code;
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update, $g;
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
+	global $config, $g;
+	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
 	$file_size  = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
@@ -1813,7 +1822,11 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	if (!isset($config['system']['host_uuid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
+	} else {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+	}
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -2291,7 +2304,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
 			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
-				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = explode("\n", str_replace("\r", "", file_get_contents($urltable_filename)));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			}
@@ -2471,8 +2484,7 @@ function get_include_contents($filename) {
  * The reason we do not use it for pfSense is that it does not know about array fields
  * which causes it to fail on array fields with single items. Possible Todo?
  */
-function xml2array($contents, $get_attributes = 1, $priority = 'tag')
-{
+function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 	if (!function_exists('xml_parser_create')) {
 		return array ();
 	}
@@ -2702,12 +2714,40 @@ function load_mac_manufacturer_table() {
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
+ *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
+ *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
+ *     If check_subnets is true and cidrprefix is specified,
+ *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
- *   returns true if the IP Address is
- *   configured and present on this device.
+ *   returns true if the IP Address is configured and present on this device or overlaps a configured subnet.
 */
-function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false) {
+function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false, $cidrprefix = "") {
+	if (count(where_is_ipaddr_configured($ipaddr, $ignore_if, $check_localip, $check_subnets, $cidrprefix))) {
+		return true;
+	}
+	return false;
+}
+
+/****f* pfsense-utils/where_is_ipaddr_configured
+ * NAME
+ *   where_is_ipaddr_configured
+ * INPUTS
+ *   IP Address to check.
+ *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
+ *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
+ *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
+ *     If check_subnets is true and cidrprefix is specified,
+ *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
+ * RESULT
+ *   Returns an array of the interfaces 'if' plus IP address or subnet 'ip_or_subnet' that match or overlap the IP address to check.
+ *   If there are no matches then an empty array is returned.
+*/
+function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false, $cidrprefix = "") {
 	global $config;
+
+	$where_configured = array();
 
 	$pos = strpos($ignore_if, '_virtualip');
 	if ($pos !== false) {
@@ -2721,26 +2761,44 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
 	if ($check_subnets) {
+		$cidrprefix = intval($cidrprefix);
+		if ($isipv6) {
+			if (($cidrprefix < 1) || ($cidrprefix > 128)) {
+				$cidrprefix = 128;
+			}
+		} else {
+			if (($cidrprefix < 1) || ($cidrprefix > 32)) {
+				$cidrprefix = 32;
+			}
+		}
 		$iflist = get_configured_interface_list();
 		foreach ($iflist as $if => $ifname) {
 			if ($ignore_if == $if) {
 				continue;
 			}
 
-			if ($isipv6 === true) {
-				$bitmask = get_interface_subnetv6($if);
-				$subnet = gen_subnetv6(get_interface_ipv6($if), $bitmask);
+			if ($isipv6) {
+				$if_ipv6 = get_interface_ipv6($if);
+				$if_snbitsv6 = get_interface_subnetv6($if);
+				if ($if_ipv6 && $if_snbitsv6 && check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
+					$where_entry = array();
+					$where_entry['if'] = $if;
+					$where_entry['ip_or_subnet'] = get_interface_ipv6($if) . "/" . get_interface_subnetv6($if);
+					$where_configured[] = $where_entry;
+				}
 			} else {
-				$bitmask = get_interface_subnet($if);
-				$subnet = gen_subnet(get_interface_ip($if), $bitmask);
+				$if_ipv4 = get_interface_ip($if);
+				$if_snbitsv4 = get_interface_subnet($if);
+				if ($if_ipv4 && $if_snbitsv4 && check_subnets_overlap($ipaddr, $cidrprefix, $if_ipv4, $if_snbitsv4)) {
+					$where_entry = array();
+					$where_entry['if'] = $if;
+					$where_entry['ip_or_subnet'] = get_interface_ip($if) . "/" . get_interface_subnet($if);
+					$where_configured[] = $where_entry;
 			}
-
-			if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask)) {
-				return true;
 			}
 		}
 	} else {
-		if ($isipv6 === true) {
+		if ($isipv6) {
 			$interface_list_ips = get_configured_ipv6_addresses();
 		} else {
 			$interface_list_ips = get_configured_ip_addresses();
@@ -2751,7 +2809,10 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 				continue;
 			}
 			if (strcasecmp($ipaddr, $ilips) == 0) {
-				return true;
+				$where_entry = array();
+				$where_entry['if'] = $if;
+				$where_entry['ip_or_subnet'] = $ilips;
+				$where_configured[] = $where_entry;
 			}
 		}
 	}
@@ -2763,21 +2824,30 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = $vip['if'];
+			$where_entry['ip_or_subnet'] = $vip['ipaddr'];
+			$where_configured[] = $where_entry;
 		}
 	}
 
 	if ($check_localip) {
 		if (is_array($config['pptpd']) && !empty($config['pptpd']['localip']) && (strcasecmp($ipaddr, $config['pptpd']['localip']) == 0)) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = 'pptp';
+			$where_entry['ip_or_subnet'] = $config['pptpd']['localip'];
+			$where_configured[] = $where_entry;
 		}
 
 		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
-			return true;
+			$where_entry = array();
+			$where_entry['if'] = 'l2tp';
+			$where_entry['ip_or_subnet'] = $config['l2tp']['localip'];
+			$where_configured[] = $where_entry;
 		}
 	}
 
-	return false;
+	return $where_configured;
 }
 
 /****f* pfsense-utils/pfSense_handle_custom_code
@@ -2868,7 +2938,7 @@ $g_languages = array (
 	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
 	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
 	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
-	"pt_BR" => array("codeset" => "ISO-8859-1", "desc" => gettext("Portuguese (Brazil)")),
+	"pt_BR" => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Brazil)")),
 	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
 	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
 	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),
@@ -3112,7 +3182,7 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 						continue;
 					}
 					$plugin_function = $pkgname . '_'. $plugin_type;
-					$results[$pkgname] = @eval($plugin_function($plugin_params));
+					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 				}
 			}
 		}

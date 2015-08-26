@@ -51,11 +51,12 @@ require_once("guiconfig.inc");
 $tablename = "sshlockout";
 $bogons = false;
 
-if($_REQUEST['type'])
+if ($_REQUEST['type']) {
 	$tablename = $_REQUEST['type'];
+}
 
-if($_REQUEST['delete']) {
-	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
+if ($_REQUEST['delete']) {
+	if (is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
 		echo htmlentities($_REQUEST['delete']);
 	}
@@ -64,8 +65,8 @@ if($_REQUEST['delete']) {
 
 if($_POST['deleteall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
-	if(is_array($entries)) {
-		foreach($entries as $entryA) {
+	if (is_array($entries)) {
+		foreach ($entries as $entryA) {
 			$entry = trim($entryA);
 			exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T delete " . escapeshellarg($entry), $delete);
 		}

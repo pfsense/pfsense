@@ -42,8 +42,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['laggs']['lagg']))
+if (!is_array($config['laggs']['lagg'])) {
 	$config['laggs']['lagg'] = array();
+}
 
 $a_laggs = &$config['laggs']['lagg'] ;
 
@@ -52,27 +53,28 @@ function lagg_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_laggs[$num]['laggif'])
+		if ($config['interfaces'][$if]['if'] == $a_laggs[$num]['laggif']) {
 			return true;
+		}
 	}
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-					if($vlan['if'] == $a_laggs[$num]['laggif'])
-
-			return true;
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if ($vlan['if'] == $a_laggs[$num]['laggif']) {
+				return true;
 			}
+		}
 	}
 	return false;
 }
 
 if ($_GET['act'] == "del") {
-		if (!isset($_GET['id']))
-				$input_errors[] = gettext("Wrong parameters supplied");
-		else if (empty($a_laggs[$_GET['id']]))
-				$input_errors[] = gettext("Wrong index supplied");
+	if (!isset($_GET['id'])) {
+		$input_errors[] = gettext("Wrong parameters supplied");
+	} else if (empty($a_laggs[$_GET['id']])) {
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	else if (lagg_inuse($_GET['id'])) {
+	} else if (lagg_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
 		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
@@ -85,7 +87,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("LAGG"));
+$pgtitle = array(gettext("Interfaces"), gettext("LAGG"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

@@ -46,12 +46,12 @@ if ($_POST) {
 	unset($input_errors);
 
 	/* input validation */
-	if(($_POST['alturlenable'] == "yes") && (empty($_POST['firmwareurl']))) {
+	if (($_POST['alturlenable'] == "yes") && (empty($_POST['firmwareurl']))) {
 		$input_errors[] = gettext("A Firmware Auto Update Base URL must be specified when \"Use an unofficial server for firmware upgrades\" is enabled.");
 	}
 
 	if (!$input_errors) {
-		if($_POST['alturlenable'] == "yes") {
+		if ($_POST['alturlenable'] == "yes") {
 			$config['system']['firmware']['alturl']['enable'] = true;
 			$config['system']['firmware']['alturl']['firmwareurl'] = $_POST['firmwareurl'];
 		} else {
@@ -60,22 +60,23 @@ if ($_POST) {
 			unset($config['system']['firmware']['alturl']);
 			unset($config['system']['firmware']);
 		}
-
-		if($_POST['allowinvalidsig'] == "yes")
+		if ($_POST['allowinvalidsig'] == "yes") {
 			$config['system']['firmware']['allowinvalidsig'] = true;
-		else
+		} else {
 			unset($config['system']['firmware']['allowinvalidsig']);
+		}
 
-		if($_POST['disablecheck'] == "yes")
+		if ($_POST['disablecheck'] == "yes") {
 			$config['system']['firmware']['disablecheck'] = true;
-		else
+		} else {
 			unset($config['system']['firmware']['disablecheck']);
+		}
 
-		if($_POST['synconupgrade'] == "yes")
+		if ($_POST['synconupgrade'] == "yes") {
 			$config['system']['gitsync']['synconupgrade'] = true;
-		else
+		} else {
 			unset($config['system']['gitsync']['synconupgrade']);
-
+		}
 		$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
 		$config['system']['gitsync']['branch'] = $_POST['branch'];
 
@@ -86,12 +87,11 @@ if ($_POST) {
 $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
-$pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
+$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Settings"));
 $closehead = false;
 
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
-
-if(file_exists("{$g['tmp_path']}/manifest")) {
+if (file_exists("{$g['tmp_path']}/manifest")) {
 	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
 }
 
@@ -216,6 +216,7 @@ if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense") {
 					break;
 				}
 			}
+			unset($output_str);
 		}
 		unset($output_str);
 	}

@@ -62,7 +62,7 @@ function unbound_optimization() {
 	$numprocs = intval(get_single_sysctl('kern.smp.cpus'));
 	if ($numprocs > 1) {
 		$optimization['number_threads'] = "num-threads: {$numprocs}";
-		$optimize_num = pow(2,floor(log($numprocs,2)));
+		$optimize_num = pow(2, floor(log($numprocs, 2)));
 	} else {
 		$optimization['number_threads'] = "num-threads: 1";
 		$optimize_num = 4;
@@ -160,6 +160,8 @@ EOF;
 	} else {
 		$bindints .= "interface: 0.0.0.0\n";
 		$bindints .= "interface: ::0\n";
+		/* If the active interface array is empty, treat it the same as "All" as is done above. Otherwise it breaks CARP with a default config. */
+		$bindints .= "interface-automatic: yes\n";
 	}
 
 	// Determine interfaces to run on
@@ -169,11 +171,11 @@ EOF;
 		$outgoing_interfaces = explode(",", $config['unbound']['outgoing_interface']);
 		foreach ($outgoing_interfaces as $outif) {
 			$outip = get_interface_ip($outif);
-			if (!is_null($outip)) {
+			if (is_ipaddr($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
 			}
 			$outip = get_interface_ipv6($outif);
-			if (!is_null($outip)) {
+			if (is_ipaddrv6($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
 			}
 		}
@@ -243,6 +245,8 @@ EOF;
 					$dnsservers[] = $nameserver;
 				}
 			}
+		} else {
+			$ns = array();
 		}
 		$sys_dnsservers = array_unique(get_dns_servers());
 		foreach ($sys_dnsservers as $sys_dnsserver) {
@@ -498,7 +502,7 @@ function unbound_add_domain_overrides($pvt_rev="") {
 			$domain_entries .= "private-domain: \"$domain\"\n";
 			$domain_entries .= "domain-insecure: \"$domain\"\n";
 		} else if ($pvt_rev == "reverse") {
-			if ((substr($domain,-14) == ".in-addr.arpa.") || (substr($domain,-13) == ".in-addr.arpa")) {
+			if ((substr($domain, -14) == ".in-addr.arpa.") || (substr($domain, -13) == ".in-addr.arpa")) {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {

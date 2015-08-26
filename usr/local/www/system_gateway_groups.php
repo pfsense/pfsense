@@ -46,8 +46,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-if (!is_array($config['gateways']['gateway_group']))
+if (!is_array($config['gateways']['gateway_group'])) {
 	$config['gateways']['gateway_group'] = array();
+}
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = &$config['gateways']['gateway_item'];
@@ -68,8 +69,9 @@ if ($_POST) {
 		setup_gateways_monitor();
 
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('staticroutes');
+		}
 
 		foreach ($a_gateway_groups as $gateway_group) {
 			$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
@@ -85,8 +87,9 @@ if ($_GET['act'] == "del") {
 	if ($a_gateway_groups[$_GET['id']]) {
 		$changedesc .= gettext("removed gateway group") . " {$_GET['id']}";
 		foreach ($config['filter']['rule'] as $idx => $rule) {
-			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name'])
+			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
+			}
 		}
 
 		unset($a_gateway_groups[$_GET['id']]);
@@ -97,7 +100,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Gateway Groups"));
+$pgtitle = array(gettext("System"), gettext("Gateway Groups"));
 $shortcut_section = "gateway-groups";
 
 include("head.inc");

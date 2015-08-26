@@ -45,18 +45,18 @@ require("captiveportal.inc");
 require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];
-
-if (isset($_POST['zone']))
+if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal']))
+if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
-
+}
 $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
@@ -74,17 +74,17 @@ $a_roll = $config['voucher'][$cpzone]['roll'];
 
 $db = array();
 
-foreach($a_roll as $rollent) {
+foreach ($a_roll as $rollent) {
 	$roll = $rollent['number'];
 	$minutes = $rollent['minutes'];
 
-	if (!file_exists("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db"))
+	if (!file_exists("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db")) {
 		continue;
+	}
 
 	$active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-	foreach($active_vouchers as $voucher => $line) {
-		list($voucher,$timestamp, $minutes) = explode(",", $line);
+	foreach ($active_vouchers as $voucher => $line) {
+		list($voucher, $timestamp, $minutes) = explode(",", $line);
 		$remaining = (($timestamp + 60*$minutes) - time());
 
 		if ($remaining > 0) {

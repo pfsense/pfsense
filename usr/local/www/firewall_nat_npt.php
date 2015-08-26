@@ -70,33 +70,15 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_npt[$_GET['id']]) {
 		unset($a_npt[$_GET['id']]);
-
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
-
+		}
 		header("Location: firewall_nat_npt.php");
 		exit;
 	}
 }
 
-/* update rule order, POST[rule] is an array of ordered IDs */
-if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-	$a_npt_new = array();
-
-	// if a rule is not in POST[rule], it has been deleted by the user
-	foreach ($_POST['rule'] as $id)
-		$a_npt_new[] = $a_npt[$id];
-
-	$a_npt = $a_npt_new;
-	
-	if (write_config())
-		mark_subsystem_dirty('filter');
-		
-	header("Location: firewall_nat_npt.php");
-	exit;
-}
-	
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
 include("head.inc");
 
 if ($savemsg)

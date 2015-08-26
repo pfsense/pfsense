@@ -52,18 +52,20 @@ require("guiconfig.inc");
 
 $pgtitle = array(gettext("System"), gettext("Group manager"));
 
-if (!is_array($config['system']['group']))
+if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
+}
 
 $a_group = &$config['system']['group'];
 
 unset($id);
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid']))
+if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$id = $_POST['groupid'];
-elseif (isset($_GET['groupid']) && is_numericint($_GET['groupid']))
-	$id = $_GET['groupid'];
+}
 
-if ($_POST['act'] == "delgroup") {
+$act = (isset($_POST['act']) ? $_POST['act'] : '');
+
+if ($act == "delgroup") {
 
 	if (!isset($id) || !isset($_POST['groupname']) || !isset($a_group[$id]) || ($_POST['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
@@ -76,27 +78,36 @@ if ($_POST['act'] == "delgroup") {
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
-	$savemsg = gettext("Group")." {$groupdeleted} ".
-		gettext("successfully deleted")."<br />";
+	$savemsg = gettext("Group") . " {$groupdeleted} " .
+		gettext("successfully deleted") . "<br />";
 }
 
-if ($_GET['act'] == "edit") {
-	// This used to be a separate act=delpriv
-	if (isset($a_group[$id]) && !empty($_POST['delpriv'])) {
-		foreach ($_POST['delpriv'] as $i)
-			unset($a_group[$id]['priv'][ $i ]);
+if ($act == "delpriv") {
 
-		if (is_array($a_group[$id]['member'])) {
-			foreach ($a_group[$id]['member'] as $uid) {
-				$user = getUserEntryByUID($uid);
-				if ($user)
-					local_user_set($user);
-			}
-		}
-
-		write_config();
+	if (!isset($id) || !isset($a_group[$id])) {
+		pfSenseHeader("system_groupmanager.php");
+		exit;
 	}
 
+	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
+	unset($a_group[$id]['priv'][$_POST['privid']]);
+
+	if (is_array($a_group[$id]['member'])) {
+		foreach ($a_group[$id]['member'] as $uid) {
+			$user = getUserEntryByUID($uid);
+			if ($user) {
+				local_user_set($user);
+			}
+		}
+	}
+
+	write_config();
+	$act = "edit";
+	$savemsg = gettext("Privilege") . " {$privdeleted} " .
+		gettext("successfully deleted") . "<br />";
+}
+
+if ($act == "edit") {
 	if (isset($id) && isset($a_group[$id])) {
 		$pconfig['name'] = $a_group[$id]['name'];
 		$pconfig['gid'] = $a_group[$id]['gid'];
@@ -104,6 +115,24 @@ if ($_GET['act'] == "edit") {
 		$pconfig['description'] = $a_group[$id]['description'];
 		$pconfig['members'] = $a_group[$id]['member'];
 		$pconfig['priv'] = $a_group[$id]['priv'];
+	}
+}
+
+if (isset($_POST['dellall_x'])) {
+
+	$del_groups = $_POST['delete_check'];
+
+	if (!empty($del_groups)) {
+		foreach ($del_groups as $groupid) {
+			if (isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
+				conf_mount_rw();
+				local_group_del($a_group[$groupid]);
+				conf_mount_ro();
+				unset($a_group[$groupid]);
+			}
+		}
+		$savemsg = gettext("Selected groups removed successfully!");
+		write_config($savemsg);
 	}
 }
 
@@ -117,11 +146,13 @@ if (isset($_POST['save'])) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname']))
+	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname'])) {
 		$input_errors[] = gettext("The group name contains invalid characters.");
+	}
 
-	if (strlen($_POST['groupname']) > 16)
+	if (strlen($_POST['groupname']) > 16) {
 		$input_errors[] = gettext("The group name is longer than 16 characters.");
+	}
 
 	if (!$input_errors && !(isset($id) && $a_group[$id])) {
 		/* make sure there are no dupes */
@@ -135,20 +166,22 @@ if (isset($_POST['save'])) {
 
 	if (!$input_errors) {
 		$group = array();
-		if (isset($id) && $a_group[$id])
+		if (isset($id) && $a_group[$id]) {
 			$group = $a_group[$id];
+		}
 
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
 
-		if (empty($_POST['members']))
+		if (empty($_POST['members'])) {
 			unset($group['member']);
-		else if ($group['gid'] != 1998) // all group
+		} else if ($group['gid'] != 1998) { // all group
 			$group['member'] = $_POST['members'];
+		}
 
-		if (isset($id) && $a_group[$id])
+		if (isset($id) && $a_group[$id]) {
 			$a_group[$id] = $group;
-		else {
+		} else {
 			$group['gid'] = $config['system']['nextgid']++;
 			$a_group[] = $group;
 		}
@@ -161,8 +194,9 @@ if (isset($_POST['save'])) {
 		if (is_array($group['member'])) {
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
-				if (in_array($user['uid'], $group['member']))
+				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
+				}
 			}
 		}
 

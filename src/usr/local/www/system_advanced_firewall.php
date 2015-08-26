@@ -426,10 +426,10 @@ $section->addInput($input = new Form_Select(
 	'Firewall Optimization Options',
 	$config['system']['optimization'],
 	array(
-		'normal' => 'normal: the default optimization algorithm',
-		'high-latency' => 'high-latency: used for eg. satellite links. Expires idle connections later than default',
-		'aggressive' => 'aggressive: expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections',
-		'conservative' => 'conservative: tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization.',
+		'normal' => 'Normal',
+		'high-latency' => 'High-latency',
+		'aggressive' => 'Aggressive',
+		'conservative' => 'Conservative',
 	)
 ))->setHelp('Select the type of state table optimization to use');
 
@@ -711,4 +711,36 @@ foreach ($udpTimeouts as $name)
 $section->add($group);
 
 print $form;
+
+?>
+<script>
+//<![CDATA[   
+events.push(function(){
+	// Change help text based on the selector value
+	function setHelpText(id, text) {
+		$('#' + id).parent().parent('div').find('span').text(text);
+	}
+	
+	function setOptText(val) {
+        if(val == 'normal')
+        	setHelpText('firewall-optimization-options', 'The default optimization algorithm');	
+        else if (val == 'high-latency')
+        	setHelpText('firewall-optimization-options', 'Used for eg. satellite links. Expires idle connections later than default');
+        else if (val == 'aggressive')
+        	setHelpText('firewall-optimization-options', 'Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections');
+        else if (val == 'conservative')
+        	setHelpText('firewall-optimization-options', 'Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization');		
+	}
+	
+	// On click . . 
+    $('#firewall-optimization-options').on('change', function() {
+        setOptText(this.value);
+    });
+    	
+    // At page load . . 
+	setOptText($('#firewall-optimization-options').val())
+});
+//]]>  
+</script>
+<?php
 include("foot.inc");

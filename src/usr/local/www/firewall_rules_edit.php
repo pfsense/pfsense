@@ -1501,12 +1501,13 @@ $section->addInput(new Form_Select(
 	'State type',
 	$pconfig['statetype'],
 	array(
-		'keep state' => 'Keep: works with all IP protocols',
-		'sloppy state' => 'Sloppy: works with all IP protocols',
-		'synproxy state' => 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined',
-		'none' => 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations',
+		'keep state' => 'Keep',
+		'sloppy state' => 'Sloppy',
+		'synproxy state' => 'Synproxy',
+		'none' => 'None',
 	)
-))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.');
+))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state' . '<br />' .
+			'<span></span>');
 
 $section->addInput(new Form_Checkbox(
 	'nosync',
@@ -1940,7 +1941,36 @@ events.push(function(){
             $('.table-flags').addClass('hidden');
         else
             $('.table-flags').removeClass('hidden');
-    });    
+    });
+    
+	// Change help text based on the selector value
+	function setHelpText(id, text) {
+		$('#' + id).parent().parent('div').find('span').find('span').html(text);
+	}
+	
+	function setOptText(target, val) {
+		var dispstr = '<font color="green">';
+		
+        if(val == 'keep state')
+        	dispstr += 'Keep: works with all IP protocols</font>';	
+        else if (val == 'sloppy state')
+        	dispstr += 'Sloppy: works with all IP protocols';
+        else if (val == 'synproxy state')
+        	dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
+        else if (val == 'none')
+        	dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';		
+
+		dispstr += '</font>';
+		setHelpText(target, dispstr);
+	}
+	
+	// On click . . 
+    $('#statetype').on('change', function() {
+        setOptText('statetype', this.value);
+    });
+    	
+    // At page load . . 
+	setOptText('statetype', $('#statetype').val())  
 });
 //]]>  
 </script>

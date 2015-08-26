@@ -379,6 +379,6 @@ else
 		unset MEMSTICKADIPATH
 		unset UPDATES_TARBALL_FILENAME
 		# builder_defaults.sh will set variables with correct timestamp
-		. ./builder_defaults.sh
+		. ${BUILDER_TOOLS}/builder_defaults.sh
 	done
 fi

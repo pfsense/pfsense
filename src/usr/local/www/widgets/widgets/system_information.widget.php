@@ -71,13 +71,16 @@ if ($_REQUEST['getupdatestatus']) {
 			echo "<br /><br />Unable to check for updates.";
 		} else {
 			$needs_system_upgrade = false;
-			if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version) == -1) {
+			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
+			if ($version_compare == -1) {
 				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "\n<script type=\"text/javascript\">\n";
 				echo "//<![CDATA[\n";
 				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);\n";
 				echo "//]]>\n";
 				echo "</script>\n";
+			} elseif ($version_compare == 1) {
+				echo "<br />You are on a later version than the official release.";
 			} else {
 				echo "<br />You are on the latest version.";
 			}

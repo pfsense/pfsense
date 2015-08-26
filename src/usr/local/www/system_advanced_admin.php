@@ -285,9 +285,6 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
 include("head.inc");
 
-
-print('WebGUIProto = ' . $pconfig['webguiproto']);
-
 if ($input_errors)
 	print_input_errors($input_errors);
 	
@@ -344,7 +341,7 @@ $section->addInput($input = new Form_Select(
 ));
 
 $section->addInput(new Form_Input(
-	'tcp-port',
+	'webguiport',
 	'TCP port',
 	'number',
 	$config['system']['webgui']['port'],
@@ -354,7 +351,7 @@ $section->addInput(new Form_Input(
 	'for HTTPS). Changes will take effect immediately after save.');
 
 $section->addInput(new Form_Input(
-	'max-processes',
+	'max_procs',
 	'Max Processes',
 	'number',
 	$pconfig['max_procs']
@@ -453,14 +450,14 @@ $form->add($section);
 $section = new Form_Section('Secure Shell');
 
 $section->addInput(new Form_Checkbox(
-	'secure-shell-server',
+	'enablesshd',
 	'Secure Shell Server',
 	'Enable Secure Shell',
 	isset($pconfig['enablesshd'])
 ));
 
 $section->addInput(new Form_Checkbox(
-	'authentication-method',
+	'sshdkeyonly',
 	'Authentication Method',
 	'Disable password login for Secure Shell (RSA/DSA key only)',
 	$pconfig['sshdkeyonly']
@@ -469,7 +466,7 @@ $section->addInput(new Form_Checkbox(
 	'access.');
 
 $section->addInput(new Form_Input(
-	'ssh-port',
+	'sshport',
 	'SSH port',
 	'number',
 	$pconfig['sshport'],
@@ -483,7 +480,7 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 	$section = new Form_Section('Serial Communications');
 
 	$section->addInput(new Form_Checkbox(
-		'serial-terminal',
+		'enableserial',
 		'Serial Terminal',
 		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
 		isset($pconfig['enableserial'])
@@ -493,14 +490,14 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 		'serial console.');
 
 	$section->addInput(new Form_Select(
-		'serial-speed',
+		'enableserial',
 		'Serial Speed',
 		$pconfig['serialspeed'],
 		array(115200, 57600, 38400, 19200, 14400, 9600)
 	))->setHelp('Allows selection of different speeds for the serial console port.');
 
 	$section->addInput(new Form_Select(
-		'primary-console',
+		'primaryconsole',
 		'Primary Console',
 		$pconfig['primaryconsole'],
 		array(
@@ -516,7 +513,7 @@ $form->add($section);
 $section = new Form_Section('Console Options');
 
 $section->addInput(new Form_Checkbox(
-	'console-menu',
+	'disableconsolemenu',
 	'Console menu',
 	'Password protect the console menu',
 	$pconfig['disableconsolemenu']

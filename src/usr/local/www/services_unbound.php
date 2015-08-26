@@ -506,8 +506,8 @@ foreach ($a_domainOverrides as $doment):
 						<?=htmlspecialchars($doment['descr'])?>&nbsp;
 					</td>
 					<td>
-						<a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a href="services_unbound_domainoverride_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
 					</td>
 				</tr>
 <?php
@@ -520,6 +520,6 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
 </nav>
 <?php include("foot.inc");

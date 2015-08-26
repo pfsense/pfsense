@@ -53,7 +53,7 @@ if [ "$DLHASH" = "$FILEHASH" ]; then
 	echo "sha256 hashes match." | logger -p daemon.info -i -t AutoUpgrade
 	echo "Beginning ${product} upgrade." | wall
 	if [ "$PLATFORM" = "nanobsd" ]; then
-		/usr/local/bin/php /etc/rc.conf_mount_rw
+		/usr/local/bin/php-cgi /etc/rc.conf_mount_rw
 	fi
 	if [ -r "/tmp/custom.tgz" ]; then
 		sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz

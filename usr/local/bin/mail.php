@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -q
+#!/usr/local/bin/php-cgi -q
 <?php
 require_once("config.inc");
 require_once("globals.inc");

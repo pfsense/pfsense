@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/local/bin/php-cgi
 <?php
 /*
 	rc.notify_message

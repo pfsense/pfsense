@@ -40,7 +40,6 @@
 
 require("guiconfig.inc");
 require_once("certs.inc");
-print_r($_POST);
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),
@@ -247,17 +246,15 @@ if ($_POST) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
 	}
-	print('Here 1<br />');
+
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
-			print('Here 2<br />');
 		input_errors2Ajax($input_errors);
 		exit;
 	}
 
 	/* save modifications */
 	if (!$input_errors) {
-		print('Here 3<br />');
 		$ca = array();
 		if (!isset($pconfig['refid']) || empty($pconfig['refid'])) {
 			$ca['refid'] = uniqid();
@@ -306,6 +303,7 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
+
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
 					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();

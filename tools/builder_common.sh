@@ -962,8 +962,6 @@ ova_setup_platform_specific() {
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
 	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${_mnt}/etc/fstab
 	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${_mnt}/etc/fstab
-	echo ${PRODUCT_NAME} > ${_mnt}/etc/platform
-	mkdir -p ${_mnt}/tmp
 }
 
 # called from create_ova_image

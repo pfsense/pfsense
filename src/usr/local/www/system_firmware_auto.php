@@ -145,7 +145,7 @@ include("head.inc");
 update_status(gettext("Downloading current version information") . "...");
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt")) {
+	if (!isset($g['enableserial_force'])) {
 		$nanosize = "-nanobsd-vga-";
 	} else {
 		$nanosize = "-nanobsd-";

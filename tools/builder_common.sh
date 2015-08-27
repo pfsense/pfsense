@@ -326,9 +326,6 @@ cust_fixup_nanobsd() {
 	if [ "${_NANO_WITH_VGA}" = "nanobsd" ]; then
 		# Tell loader to use serial console early.
 		echo "-S115200 -h" >> ${BOOTCONF}
-	else
-		# Empty file to identify nanobsd_vga images
-		touch ${FINAL_CHROOT_DIR}/etc/nano_use_vga.txt
 	fi
 
 	# Remove old console options if present.

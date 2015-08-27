@@ -556,7 +556,7 @@ function prot_change() {
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
 							</tr>
-							<?php if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
+							<?php if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom")): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
@@ -580,7 +580,7 @@ function prot_change() {
 									<br /><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>
 							</tr>
-							<?php if (!$g['primaryconsole_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
+							<?php if (!$g['primaryconsole_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || !isset($g['enableserial_force']))): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Primary Console")?></td>
 								<td width="78%" class="vtable">

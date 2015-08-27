@@ -1002,7 +1002,7 @@ function setup_serial_port($when = "save", $path = "") {
 	if ($g['platform'] != "cdrom") {
 		$serial_only = false;
 
-		if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+		if (($g['platform'] == "nanobsd") && isset($g['enableserial_force'])) {
 			$serial_only = true;
 		} else {
 			$specific_platform = system_identify_specific_platform();
@@ -1122,7 +1122,7 @@ function is_serial_enabled() {
 
 	if (!isset($g['enableserial_force']) &&
 	    !isset($config['system']['enableserial']) &&
-	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))) {
+	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom")) {
 		return false;
 	}
 

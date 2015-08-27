@@ -194,21 +194,21 @@ export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 # OVF/vmdk parms
 # Name of ovf file included inside OVA archive
 export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}
+# / partition to be used by mkimg
+export OVFUFS=${OVFUFS:-"${PRODUCT_NAME}-disk1.ufs"}
 # On disk name of VMDK file included in OVA
-export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}.vmdk"}
-# optional
-export OVFCERT=${OVFCERT:-""}
+export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}-disk1.vmdk"}
 # 10 gigabyte on disk VMDK size
 export OVADISKSIZE=${OVADISKSIZE:-"10737418240"}
-# dd buffering size when creating raw backed VMDK
-export OVABLOCKSIZE=${OVABLOCKSIZE:-"409600"}
 # first partition size (freebsd-ufs) GPT
-export OVA_FIRST_PART_SIZE=${OVA_FIRST_PART_SIZE:-"8G"}
+export OVA_FIRST_PART_SIZE=${OVA_FIRST_PART_SIZE:-"$((8*1024*1024*1024))"}
 # swap partition size (freebsd-swap) GPT -
 # remaining space of 10G-8G - 128 block beginning/loader
 export OVA_SWAP_PART_SIZE=${OVA_SWAP_PART_SIZE:-"4193725"}
 # 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
 export OVA_DISKSECTIONALLOCATIONUNITS=${OVA_DISKSECTIONALLOCATIONUNITS:-"10737254400"}
+# Temporary place to save files
+export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}
 # end of OVF
 
 # Number of code images on media (1 or 2)
@@ -308,6 +308,7 @@ export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_
 export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
 export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-serial-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
 export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
+export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.ova"}
 
 # set full-update update filename
 export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}

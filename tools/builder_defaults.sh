@@ -193,7 +193,7 @@ export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 
 # OVF/vmdk parms
 # Name of ovf file included inside OVA archive
-export OVFFILE=${OVFFILE:-"${PRODUCT_NAME}.ovf"}
+export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}
 # On disk name of VMDK file included in OVA
 export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}.vmdk"}
 # optional

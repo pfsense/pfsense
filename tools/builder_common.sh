@@ -971,11 +971,6 @@ ova_setup_platform_specific() {
 	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${_mnt}/etc/fstab
 	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${_mnt}/etc/fstab
 	echo ${PRODUCT_NAME} > ${_mnt}/etc/platform
-	rmdir ${_mnt}/conf
-	mkdir -p ${_mnt}/cf
-	mkdir -p ${_mnt}/cf/conf
-	cp ${_mnt}/conf.default/config.xml ${_mnt}/cf/conf/
-	chroot ${_mnt} /bin/ln -s /cf/conf /conf
 	mkdir -p ${_mnt}/tmp
 }
 

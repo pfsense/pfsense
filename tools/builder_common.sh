@@ -805,7 +805,6 @@ create_ova_image() {
 	ova_mount_mnt $MD ${_mnt}
 	ova_cpdup_files ${_mnt}
 	ova_setup_platform_specific ${_mnt} # after cpdup
-	ova_calculate_mnt_size ${_mnt}
 	ova_umount_mnt ${_mnt}
 	# Restore default action
 	trap "-" 1 2 15 EXIT
@@ -894,13 +893,6 @@ ova_prereq_check() {
 		print_error_pfS
 	fi
 	sysctl kern.geom.debugflags=16
-}
-
-# called from create_ova_image
-ova_calculate_mnt_size() {
-	local _mnt="${1}"
-	echo -n ">>> Calculating size of ${_mnt}..." | tee -a ${LOFGILE}
-	du -d0 -h ${_mnt} | awk '{ print $1 }'
 }
 
 # called from create_ova_image

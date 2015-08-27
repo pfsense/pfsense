@@ -21,10 +21,6 @@ $GITSYNC_MERGE = "/root/.gitsync_merge";
 /* NOTE: Set branches here */
 $branches = array(
 	"master" => "2.2 development branch",
-	"RELENG_2_2" => "2.2.* release branch",
-	"RELENG_2_1" => "2.1.* release branch",
-	"RELENG_2_0" => "2.0.* release branch",
-	"RELENG_1_2" => "1.2.* release branch",
 	"build_commit" => "The commit originally used to build the image",
 	"bootstrap" => "Bootstrap branch"
 );
@@ -41,8 +37,8 @@ if (is_array($command_split)) {
 
 $valid_args = array(
 	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
-				   "\tNot recommended if the system has files modified by any method other\n" .
-				   "\tthan gitsync.\n",
+	    "\tNot recommended if the system has files modified by any method other\n" .
+	    "\tthan gitsync.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();
@@ -268,7 +264,7 @@ if (is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} config remote.origin.url " . escapeshellarg($GIT_REPO));
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} fetch");
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -f -x -d");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -x -d");
 	run_cmds($git_cmd);
 } else {
 	exec("mkdir -p $CODIR/pfSenseGITREPO");
@@ -301,9 +297,9 @@ if (isset($args["--minimal"])) {
 	} else if (file_exists("/etc/version.lastcommit")) {
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
 	}
-	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only --relative=src " . escapeshellarg($old_revision)), "\n", " ");
 } else {
-	$files_to_copy = '--exclude .git .';
+	$files_to_copy = '-C ./src .';
 }
 
 // Save new commit ID for later minimal file copies

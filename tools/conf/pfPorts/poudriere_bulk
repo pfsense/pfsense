@@ -1,7 +1,7 @@
 benchmarks/iperf
 benchmarks/iperf3
 security/%%PRODUCT_NAME%%
-security/%%PRODUCT_NAME%%-vm
+security/%%PRODUCT_NAME%%-vmware
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/bsdinstaller
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG

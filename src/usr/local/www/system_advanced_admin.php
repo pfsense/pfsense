@@ -34,7 +34,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -231,8 +231,8 @@ if ($_POST) {
 		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-		    ($sshd_port != $config['system']['ssh']['port'])) {
+			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+			($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
 
@@ -287,7 +287,7 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -326,7 +326,7 @@ $group->add(new Form_Checkbox(
 $group->setHelp($certs_available ? '':'No Certificates have been defined. You must '.
 	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.
 	'a Certificate before SSL can be enabled.');
-	
+
 $section->add($group);
 
 $values = array();
@@ -360,7 +360,7 @@ $section->addInput(new Form_Input(
 	'users/browsers to access the GUI concurrently.');
 
 $section->addInput(new Form_Checkbox(
-	'webgui-redirect',
+	'disablehttpredirect',
 	'WebGUI redirect',
 	'Disable webConfigurator redirect rule',
 	$pconfig['disablehttpredirect']
@@ -369,7 +369,7 @@ $section->addInput(new Form_Checkbox(
 	'Check this box to disable this automatically added redirect rule.');
 
 $section->addInput(new Form_Checkbox(
-	'webgui-login-autocomplete',
+	'loginautocomplete',
 	'WebGUI Login Autocomplete',
 	'Enable webConfigurator login autocomplete',
 	$pconfig['loginautocomplete']
@@ -380,7 +380,7 @@ $section->addInput(new Form_Checkbox(
 	'this option).');
 
 $section->addInput(new Form_Checkbox(
-	'webgui-login-messages',
+	'quietlogin',
 	'WebGUI login messages',
 	'Disable logging of webConfigurator successful logins',
 	$pconfig['quietlogin']
@@ -393,7 +393,7 @@ else
 	$lockout_interface = "WAN";
 
 $section->addInput(new Form_Checkbox(
-	'anti-lockout',
+	'noantilockout',
 	'Anti-lockout',
 	'Disable webConfigurator anti-lockout rule',
 	$pconfig['noantilockout']
@@ -406,7 +406,7 @@ $section->addInput(new Form_Checkbox(
 	'option in the console menu resets this setting as well.</em>', [$lockout_interface]);
 
 $section->addInput(new Form_Checkbox(
-	'dns-rebind-check',
+	'nodnsrebindcheck',
 	'DNS Rebind Check',
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
@@ -417,7 +417,7 @@ $section->addInput(new Form_Checkbox(
 	'name resolution in your environment.');
 
 $section->addInput(new Form_Input(
-	'alternate-hostnames',
+	'althostnames',
 	'Alternate Hostnames',
 	'text',
 	htmlspecialchars($pconfig['althostnames'])
@@ -426,7 +426,7 @@ $section->addInput(new Form_Input(
 	'bypass the DNS Rebinding Attack checks. Separate hostnames with spaces.');
 
 $section->addInput(new Form_Checkbox(
-	'browser-http_referer-enforcement',
+	'nohttpreferercheck',
 	'Browser HTTP_REFERER enforcement',
 	'Disable HTTP_REFERER enforcement check',
 	$pconfig['nohttpreferercheck']
@@ -434,11 +434,11 @@ $section->addInput(new Form_Checkbox(
 	'against HTTP_REFERER redirection attempts. Check this box to disable this '.
 	'protection if you find that it interferes with webConfigurator access in certain '.
 	'corner cases such as using external scripts to interact with this system. More '.
-	'information on HTTP_REFERER is available from<a target="_blank" '.
+	'information on HTTP_REFERER is available from <a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
 $section->addInput(new Form_Checkbox(
-	'browser-tab-text',
+	'pagenamefirst',
 	'Browser tab text',
 	'Display page name first in browser tab',
 	$pconfig['pagenamefirst']
@@ -484,13 +484,13 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 		'Serial Terminal',
 		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
 		isset($pconfig['enableserial'])
-	))->setHelp('Note:  This will redirect the console output and messages to '.
+	))->setHelp('Note:	This will redirect the console output and messages to '.
 		'the serial port. You can still access the console menu from the internal video '.
 		'card/keyboard. A<b>null modem</b>serial cable or adapter is required to use the '.
 		'serial console.');
 
 	$section->addInput(new Form_Select(
-		'enableserial',
+		'serialspeed',
 		'Serial Speed',
 		$pconfig['serialspeed'],
 		array(115200, 57600, 38400, 19200, 14400, 9600)
@@ -524,28 +524,28 @@ print $form;
 
 ?>
 <script>
-//<![CDATA[   
+//<![CDATA[
 events.push(function(){
-    
-    // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-    function hideInput(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent('div').removeClass('hidden');            
-    }
-    
-    // On page load . . 
+
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
+	}
+
+	// On page load . .
 	hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
-	
+
 	// On click . .
-     $('[id=webguiproto]').click(function () {
-        hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
-    });       
+	 $('[id=webguiproto]').click(function () {
+		hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+	});
 });
-//]]>  
+//]]>
 </script>
-    
+
 <?php
 include("foot.inc");
 

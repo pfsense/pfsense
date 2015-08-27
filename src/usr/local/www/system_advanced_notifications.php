@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -123,13 +123,13 @@ if ($_POST) {
 		} else {
 			unset($config['notifications']['smtp']['ssl']);
 		}
-		
+
 		if (isset($_POST['smtptls'])) {
 			$config['notifications']['smtp']['tls'] = true;
 		} else {
 			unset($config['notifications']['smtp']['tls']);
 		}
-		
+
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
@@ -158,7 +158,7 @@ if ($_POST) {
 	if (isset($_POST['test-growl'])) {
 		// Send test message via growl
 		if ($config['notifications']['growl']['ipaddress'] &&
-		    $config['notifications']['growl']['password'] = $_POST['password']) {
+			$config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
@@ -170,7 +170,7 @@ if ($_POST) {
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
-		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.	 It is safe to ignore this message."), $g['product_name']), true);
 	}
 }
 
@@ -198,7 +198,7 @@ $form = new Form;
 $section = new Form_Section('Growl');
 
 $section->addInput(new Form_Checkbox(
-	'disable-growl',
+	'disable_growl',
 	'Disable Growl',
 	'Disable Growl Notifications',
 	$pconfig['disable_growl']
@@ -206,7 +206,7 @@ $section->addInput(new Form_Checkbox(
 	'settings below.');
 
 $section->addInput(new Form_Input(
-	'registration-name',
+	'name',
 	'Registration Name',
 	'text',
 	$pconfig['name'],
@@ -214,7 +214,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the name to register with the Growl server.');
 
 $section->addInput(new Form_Input(
-	'notification-name',
+	'notification_name',
 	'Notification Name',
 	'text',
 	$pconfig['notification_name'],
@@ -223,7 +223,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter a name for the Growl notifications');
 
 $section->addInput(new Form_Input(
-	'ip-address',
+	'ipaddress',
 	'IP Address',
 	'text',
 	$pconfig['ipaddress']
@@ -238,7 +238,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the password of the remote growl notification device.');
 
 $section->addInput(new Form_Input(
-	'test-growl',
+	'test_growl',
 	'Test Growl',
 	'submit',
 	'Test Growl settings'
@@ -249,7 +249,7 @@ $form->add($section);
 $section = new Form_Section('E-Mail');
 
 $section->addInput(new Form_Checkbox(
-	'disable-smtp',
+	'disable_smtp',
 	'Disable SMTP',
 	'Disable SMTP Notifications',
 	$pconfig['disable_smtp']
@@ -258,7 +258,7 @@ $section->addInput(new Form_Checkbox(
 	'in place to function.');
 
 $section->addInput(new Form_Input(
-	'e-mail-server',
+	'mtpipaddress',
 	'E-Mail server',
 	'text',
 	$pconfig['smtpipaddress']
@@ -266,7 +266,7 @@ $section->addInput(new Form_Input(
 	'which notifications will be sent.');
 
 $section->addInput(new Form_Input(
-	'smtp-port-of-e-mail-server',
+	'smtpport',
 	'SMTP Port of E-Mail server',
 	'number',
 	$pconfig['smtpport']
@@ -275,14 +275,14 @@ $section->addInput(new Form_Input(
 
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
-	'enable-ssl-tls',
+	'smtpssl',
 	'Enable SSL/TLS',
 	'Enable SMTP over SSL/TLS',
 	isset($pconfig['smtpssl'])
 ));
 
 $group->add(new Form_Checkbox(
-	'secure-starttls',
+	'smtptls',
 	'Secure STARTTLS',
 	'Enable STARTTLS',
 	isset($pconfig['smtptls'])
@@ -291,14 +291,14 @@ $group->add(new Form_Checkbox(
 $section->add($group);
 
 $section->addInput(new Form_Input(
-	'from-e-mail-address',
+	'smtpfromaddress',
 	'From e-mail address',
 	'text',
 	$pconfig['smtpfromaddress']
 ))->setHelp('This is the e-mail address that will appear in the from field.');
 
 $section->addInput(new Form_Input(
-	'notification-e-mail-address',
+	'smtpnotifyemailaddress',
 	'Notification E-Mail address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
@@ -306,21 +306,21 @@ $section->addInput(new Form_Input(
 	'notifications sent to.');
 
 $section->addInput(new Form_Input(
-	'notification-e-mail-auth-username-optional-',
+	'smtpusername',
 	'Notification E-Mail auth username (optional)',
 	'text',
 	$pconfig['smtpusername']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
 $section->addInput(new Form_Input(
-	'notification-e-mail-auth-password',
+	'smtppassword',
 	'Notification E-Mail auth password',
 	'password',
 	$pconfig['smtppassword']
 ))->setHelp('Enter the e-mail address password for SMTP authentication.');
 
 $section->addInput(new Form_Input(
-	'test-smtp',
+	'test_smtp',
 	'Test SMTP',
 	'submit',
 	'Test SMTP settings'
@@ -328,7 +328,7 @@ $section->addInput(new Form_Input(
 	'marked as disabled.');
 
 $section->addInput(new Form_Checkbox(
-	'startup-shutdown-sound',
+	'disablebeep',
 	'Startup/Shutdown Sound',
 	'Disable the startup/shutdown beep',
 	$pconfig['disablebeep']

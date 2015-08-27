@@ -40,6 +40,7 @@
 
 require("guiconfig.inc");
 require_once("certs.inc");
+print_r($_POST);
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),
@@ -246,16 +247,17 @@ if ($_POST) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
 	}
-
+	print('Here 1<br />');
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
+			print('Here 2<br />');
 		input_errors2Ajax($input_errors);
 		exit;
 	}
 
 	/* save modifications */
 	if (!$input_errors) {
-
+		print('Here 3<br />');
 		$ca = array();
 		if (!isset($pconfig['refid']) || empty($pconfig['refid'])) {
 			$ca['refid'] = uniqid();
@@ -438,7 +440,7 @@ foreach ($a_ca as $i => $ca):
 
 require('classes/Form.class.php');
 $form = new Form;
-$form->setAction('system_camanager.php?act=edit');
+//$form->setAction('system_camanager.php?act=edit');
 if (isset($id) && $a_ca[$id])
 {
 	$form->addGlobal(new Form_Input(

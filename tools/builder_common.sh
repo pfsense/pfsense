@@ -381,12 +381,10 @@ print_flags() {
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "                 OVADISKSIZE: %s\n" $OVADISKSIZE
-	printf "                OVABLOCKSIZE: %s\n" $OVABLOCKSIZE
 	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
 	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
-	printf "                     OVFCERT: %s\n" $OVFCERT
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
 	printf "                     ISOPATH: %s\n" $ISOPATH
 	printf "                MEMSTICKPATH: %s\n" $MEMSTICKPATH
@@ -785,206 +783,109 @@ create_ova_image() {
 
 	LOGFILE=${BUILDER_LOGS}/ova.${TARGET}.log
 
+	[ -d "${OVA_TMP}" ] \
+		&& rm -rf ${OVA_TMP}
+
+	mkdir -p ${OVA_TMP}
+
 	# Prepare folder to be put in image
 	customize_stagearea_for_image "ova"
 	install_default_kernel ${DEFAULT_KERNEL} "no"
 
-	ova_prereq_check
-	ova_remove_old_tmp_files
+	# Fill fstab
+	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
+	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+
+	# Create / partition
+	makefs \
+		-B little \
+		-o label=${PRODUCT_NAME} \
+		-s ${OVA_FIRST_PART_SIZE} \
+		${OVA_TMP}/${OVFUFS} \
+		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
+
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFUFS} ]; then
+		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
+			rm -f ${OVA_TMP}/${OVFUFS}
+		fi
+		echo ">>> ERROR: Error creating vmdk / partition. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+
+	# Create vmdk file
+	mkimg \
+		-s gpt \
+		-f vmdk \
+		-b /boot/pmbr \
+		-p freebsd-boot:=/boot/gptboot \
+		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
+		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
+		-o ${OVA_TMP}/${OVFVMDK} 2>&1 >> ${LOGFILE}
+
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
+			rm -f ${OVA_TMP}/${OVFUFS}
+		fi
+		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
+			rm -f ${OVA_TMP}/${OVFVMDK}
+		fi
+		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+
+	# We don't need it anymore
+	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
+
 	ova_setup_ovf_template
-	ova_create_raw_backed_file
-	echo ">>> Creating mdconfig image ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
-	MD=$(mdconfig -a -t vnode -f ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 
-	local _mnt=${IMAGES_FINAL_DIR}/_.mnt
-
-	# comment out if using pc-sysinstall
-	ova_partition_gpart $MD
-	ova_mount_mnt $MD ${_mnt}
-	ova_cpdup_files ${_mnt}
-	ova_setup_platform_specific ${_mnt} # after cpdup
-	ova_umount_mnt ${_mnt}
-	# Restore default action
-	trap "-" 1 2 15 EXIT
-	ova_umount_mdconfig $MD
-	# We use vbox because it compresses the vmdk on export
-	ova_create_vbox_image
 	# We repack the file with a more universal xml file that
 	# works in both virtual box and esx server
-	ova_repack_vbox_image
-}
+	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
+	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
 
-ova_repack_vbox_image() {
-	BUILDPLATFORM=$(uname -p)
-	POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | awk '{ print \$1 }')
-	POPULATEDSIZEBYTES=$(echo "${POPULATEDSIZE}*1024^2" | bc)
-	REFERENCESSIZE=$(stat -f "%z" ${IMAGES_FINAL_DIR}/${OVFVMDK})
-	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
-	#  OperatingSystemSection (${PRODUCT_NAME}.ovf)
-	#  42   FreeBSD 32-Bit
-	#  78   FreeBSD 64-Bit
-	if [ "$BUILDPLATFORM" = "i386" ]; then
-		file_search_replace '"101"' '"42"' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	fi
-	if [ "$BUILDPLATFORM" = "amd64" ]; then
-		file_search_replace '"101"' '"78"' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	fi
-	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
-	# 10737418240 = 10GB
-	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to 10737254400..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting DISKSECTIONCAPACITY to 10737418240..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	echo ">>> Repacking OVA with universal OVF file..." | tee -a ${LOGFILE}
-	mv ${IMAGES_FINAL_DIR}/${OVFVMDK} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-disk1.vmdk
-	gtar -C ${IMAGES_FINAL_DIR} -cpf ${PRODUCT_NAME}.ova ${PRODUCT_NAME}.ovf ${PRODUCT_NAME}-disk1.vmdk
-	rm $IMAGES_FINAL_DIR/${PRODUCT_NAME}-disk1.vmdk
-	ls -lah ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}*ov*
-}
+	gzip -qf ${OVAPATH} &
 
-# called from create_ova_image
-ova_umount_mnt() {
-	# Unmount /dev/mdX
-	umount -f ${1}
-}
-
-# called from create_ova_image
-ova_umount_mdconfig() {
-	MD=$1
-	# Show gpart info
-	gpart show $MD
-	echo ">>> Unmounting ${MD}..." | tee -a ${LOGFILE}
-	mdconfig -d -u $MD
-}
-
-# called from create_ova_image
-ova_mount_mnt() {
-	local _md=$1
-	local _mnt=$2
-	echo ">>> Mounting image to ${_mnt}..." | tee -a ${LOGFILE}
-	mkdir -p ${_mnt}
-	mount -o rw /dev/${_md}p2 ${_mnt}
+	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
 # called from create_ova_image
 ova_setup_ovf_template() {
 	if [ -f ${OVFTEMPLATE} ]; then
-		cp ${OVFTEMPLATE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+		cp ${OVFTEMPLATE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
 	else
 		echo ">>> ERROR: OVF template file (${OVFTEMPLATE}) not found."
 		print_error_pfS
 	fi
 
-	file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	file_search_replace PRODUCT_URL $PRODUCT_URL ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-}
+	file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	file_search_replace PRODUCT_URL $PRODUCT_URL ${OVA_TMP}/${PRODUCT_NAME}.ovf
 
-# called from create_ova_image
-ova_prereq_check() {
-	if [ ! -f /usr/local/bin/vmdktool ]; then
-		echo ">>> ERROR: vmdktool is not present please check port sysutils/vmdktool installation" | tee -a ${LOGFILE}
-		print_error_pfS
+	local BUILDPLATFORM=$(uname -p)
+	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
+	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
+	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
+	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
+	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
+	#  OperatingSystemSection (${PRODUCT_NAME}.ovf)
+	#  42   FreeBSD 32-Bit
+	#  78   FreeBSD 64-Bit
+	if [ "$BUILDPLATFORM" = "i386" ]; then
+		file_search_replace '"101"' '"42"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
+		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${OVA_TMP}/${PRODUCT_NAME}.ovf
 	fi
-	sysctl kern.geom.debugflags=16
-}
-
-# called from create_ova_image
-ova_create_raw_backed_file() {
-	if [ -z "${OVADISKSIZE}" ]; then
-		echo ">>> ERROR: OVADISKSIZE is not defined"
-		print_error_pfS
+	if [ "$BUILDPLATFORM" = "amd64" ]; then
+		file_search_replace '"101"' '"78"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
+		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${OVA_TMP}/${PRODUCT_NAME}.ovf
 	fi
-
-	if [ -z "${OVABLOCKSIZE}" ]; then
-		echo ">>> ERROR: OVABLOCKSIZE is not defined"
-		print_error_pfS
-	fi
-
-	if [ -z "${OVFVMDK}" ]; then
-		echo ">>> ERROR: OVFVMDK is not defined"
-		print_error_pfS
-	fi
-
-	local COUNT=$((${OVADISKSIZE}/${OVABLOCKSIZE}))
-	local DISKFILE=${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
-	echo ">>> Creating raw backing file ${DISKFILE} (Disk Size: ${OVADISKSIZE}, Block Size: ${OVABLOCKSIZE}, Count: ${COUNT})..." | tee -a ${LOGFILE}
-	dd if=/dev/zero of=$DISKFILE bs=$OVABLOCKSIZE count=0 seek=$COUNT
-}
-
-# called from create_ova_image
-ova_remove_old_tmp_files() {
-	rm ${IMAGES_FINAL_DIR}/*.ovf.final 2>/dev/null
-	rm ${IMAGES_FINAL_DIR}/*.ova 2>/dev/null
-}
-
-# called from create_ova_image
-ova_create_vbox_image() {
-	# VirtualBox
-	echo ">>> Creating image using vmdktool..." | tee -a ${LOGFILE}
-	rm ${IMAGES_FINAL_DIR}/${OVFVMDK} 2>/dev/null
-	vmdktool -v ${IMAGES_FINAL_DIR}/${OVFVMDK} ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
-	rm -rf ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
-	echo ">>> ${IMAGES_FINAL_DIR}/${OVFVMDK} created." | tee -a ${LOGFILE}
-}
-
-# called from create_ova_image
-ova_cpdup_files() {
-	local _mnt="${1}"
-
-	echo ">>> Populating vmdk staging area..."
-	cpdup -o ${FINAL_CHROOT_DIR}/COPYRIGHT ${_mnt}/COPYRIGHT
-	cpdup -o ${FINAL_CHROOT_DIR}/boot ${_mnt}/boot
-	cpdup -o ${FINAL_CHROOT_DIR}/bin ${_mnt}/bin
-	cpdup -o ${FINAL_CHROOT_DIR}/cf/conf ${_mnt}/cf/conf
-	cpdup -o ${FINAL_CHROOT_DIR}/conf.default ${_mnt}/conf.default
-	cpdup -o ${FINAL_CHROOT_DIR}/dev ${_mnt}/dev
-	cpdup -o ${FINAL_CHROOT_DIR}/etc ${_mnt}/etc
-	cpdup -o ${FINAL_CHROOT_DIR}/home ${_mnt}/home
-	cpdup -o ${FINAL_CHROOT_DIR}/pkgs ${_mnt}/pkgs
-	cpdup -o ${FINAL_CHROOT_DIR}/libexec ${_mnt}/libexec
-	cpdup -o ${FINAL_CHROOT_DIR}/lib ${_mnt}/lib
-	cpdup -o ${FINAL_CHROOT_DIR}/root ${_mnt}/root
-	cpdup -o ${FINAL_CHROOT_DIR}/sbin ${_mnt}/sbin
-	cpdup -o ${FINAL_CHROOT_DIR}/usr ${_mnt}/usr
-	cpdup -o ${FINAL_CHROOT_DIR}/var ${_mnt}/var
-}
-
-ova_setup_platform_specific() {
-	local _mnt="${1}"
-
-	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${_mnt}/etc/fstab
-	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${_mnt}/etc/fstab
-}
-
-# called from create_ova_image
-ova_partition_gpart() {
-	# XXX: Switch to mkimg tool!!
-	local MD=$1
-	echo ">>> Creating GPT..." | tee -a ${LOGFILE}
-	gpart create -s gpt $MD
-	echo ">>> Embedding GPT bootstrap into protective MBR..." | tee -a ${LOGFILE}
-	gpart bootcode -b /boot/pmbr $MD
-	echo ">>> Creating GPT boot partition..." | tee -a ${LOGFILE}
-	gpart add -b 34 -s 128 -t freebsd-boot $MD
-	gpart bootcode -p /boot/gptboot -i 1 $MD
-	echo ">>> Setting up disk slices: ${MD}p2 (Size: ${OVA_FIRST_PART_SIZE})..." | tee -a ${LOGFILE}
-	gpart add -s $OVA_FIRST_PART_SIZE -t freebsd-ufs -i 2 $MD
-	echo ">>> Setting up disk slices: ${MD}p3 (swap) (Size: ${OVA_SWAP_PART_SIZE})..." | tee -a ${LOGFILE}
-	gpart add -s $OVA_SWAP_PART_SIZE -t freebsd-swap -i 3 $MD
-	echo ">>> Running newfs..." | tee -a ${LOGFILE}
-	newfs -U /dev/${MD}p2
-	echo ">>> Labeling partitions: ${MD}p2..."  | tee -a ${LOGFILE}
-	glabel label ${PRODUCT_NAME} ${MD}p2
-	echo ">>> Labeling partitions: ${MD}p3..." | tee -a ${LOGFILE}
-	glabel label swap0 ${MD}p3
+	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
+	# 10737418240 = 10GB
+	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to 10737254400..." | tee -a ${LOGFILE}
+	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	echo ">>> Setting DISKSECTIONCAPACITY to 10737418240..." | tee -a ${LOGFILE}
+	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }
 
 # called from create_ova_image

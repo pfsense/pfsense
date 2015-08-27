@@ -305,7 +305,7 @@ include("head.inc"); ?>
 ?>
 			<tr id="<?php echo "r:{$sk_server['port']}:{$sk_server['vpnid']}"; ?>">
 				<td class="listlr">
-					<?=$sk_server['name'];?>
+					<?=htmlspecialchars($sk_server['name']);?>
 				</td>
 				<td class="listr">
 					<?=$sk_server['status'];?>
@@ -376,7 +376,7 @@ include("head.inc"); ?>
 ?>
 			<tr id="<?php echo "r:{$client['port']}:{$client['vpnid']}"; ?>">
 				<td class="listlr">
-					<?=$client['name'];?>
+					<?=htmlspecialchars($client['name']);?>
 				</td>
 				<td class="listr">
 					<?=$client['status'];?>

@@ -798,13 +798,15 @@ create_ova_image() {
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 
+	local _mnt=${IMAGES_FINAL_DIR}/_.mnt
+
 	# comment out if using pc-sysinstall
 	ova_partition_gpart $MD
-	ova_mount_mnt $MD
-	ova_cpdup_files
-	ova_setup_platform_specific # after cpdup
-	ova_calculate_mnt_size
-	ova_umount_mnt $MD
+	ova_mount_mnt $MD ${_mnt}
+	ova_cpdup_files ${_mnt}
+	ova_setup_platform_specific ${_mnt} # after cpdup
+	ova_calculate_mnt_size ${_mnt}
+	ova_umount_mnt ${_mnt}
 	# Restore default action
 	trap "-" 1 2 15 EXIT
 	ova_umount_mdconfig $MD
@@ -851,7 +853,7 @@ ova_repack_vbox_image() {
 # called from create_ova_image
 ova_umount_mnt() {
 	# Unmount /dev/mdX
-	umount /mnt
+	umount -f ${1}
 }
 
 # called from create_ova_image
@@ -865,9 +867,11 @@ ova_umount_mdconfig() {
 
 # called from create_ova_image
 ova_mount_mnt() {
-	MD=$1
-	echo ">>> Mounting image to /mnt..." | tee -a ${LOGFILE}
-	mount -o rw /dev/${MD}p2 /mnt/
+	local _md=$1
+	local _mnt=$2
+	echo ">>> Mounting image to ${_mnt}..." | tee -a ${LOGFILE}
+	mkdir -p ${_mnt}
+	mount -o rw /dev/${_md}p2 ${_mnt}
 }
 
 # called from create_ova_image
@@ -894,10 +898,9 @@ ova_prereq_check() {
 
 # called from create_ova_image
 ova_calculate_mnt_size() {
-	echo -n ">>> Calculating size of /mnt..." | tee -a ${LOFGILE}
-	INSTALLSIZE=$(du -s /mnt/ | awk '{ print $1 }')
-	INSTALLSIZEH=$(du -d0 -h /mnt/ | awk '{ print $1 }')
-	echo $INSTALLSIZEH
+	local _mnt="${1}"
+	echo -n ">>> Calculating size of ${_mnt}..." | tee -a ${LOFGILE}
+	du -d0 -h ${_mnt} | awk '{ print $1 }'
 }
 
 # called from create_ova_image
@@ -941,41 +944,45 @@ ova_create_vbox_image() {
 
 # called from create_ova_image
 ova_cpdup_files() {
+	local _mnt="${1}"
+
 	echo ">>> Populating vmdk staging area..."
-	cpdup -o ${FINAL_CHROOT_DIR}/COPYRIGHT /mnt/COPYRIGHT
-	cpdup -o ${FINAL_CHROOT_DIR}/boot /mnt/boot
-	cpdup -o ${FINAL_CHROOT_DIR}/bin /mnt/bin
-	cpdup -o ${FINAL_CHROOT_DIR}/cf/conf /mnt/cf/conf
-	cpdup -o ${FINAL_CHROOT_DIR}/conf.default /mnt/conf.default
-	cpdup -o ${FINAL_CHROOT_DIR}/dev /mnt/dev
-	cpdup -o ${FINAL_CHROOT_DIR}/etc /mnt/etc
-	cpdup -o ${FINAL_CHROOT_DIR}/home /mnt/home
-	cpdup -o ${FINAL_CHROOT_DIR}/pkgs /mnt/pkgs
-	cpdup -o ${FINAL_CHROOT_DIR}/libexec /mnt/libexec
-	cpdup -o ${FINAL_CHROOT_DIR}/lib /mnt/lib
-	cpdup -o ${FINAL_CHROOT_DIR}/root /mnt/root
-	cpdup -o ${FINAL_CHROOT_DIR}/sbin /mnt/sbin
-	cpdup -o ${FINAL_CHROOT_DIR}/usr /mnt/usr
-	cpdup -o ${FINAL_CHROOT_DIR}/var /mnt/var
+	cpdup -o ${FINAL_CHROOT_DIR}/COPYRIGHT ${_mnt}/COPYRIGHT
+	cpdup -o ${FINAL_CHROOT_DIR}/boot ${_mnt}/boot
+	cpdup -o ${FINAL_CHROOT_DIR}/bin ${_mnt}/bin
+	cpdup -o ${FINAL_CHROOT_DIR}/cf/conf ${_mnt}/cf/conf
+	cpdup -o ${FINAL_CHROOT_DIR}/conf.default ${_mnt}/conf.default
+	cpdup -o ${FINAL_CHROOT_DIR}/dev ${_mnt}/dev
+	cpdup -o ${FINAL_CHROOT_DIR}/etc ${_mnt}/etc
+	cpdup -o ${FINAL_CHROOT_DIR}/home ${_mnt}/home
+	cpdup -o ${FINAL_CHROOT_DIR}/pkgs ${_mnt}/pkgs
+	cpdup -o ${FINAL_CHROOT_DIR}/libexec ${_mnt}/libexec
+	cpdup -o ${FINAL_CHROOT_DIR}/lib ${_mnt}/lib
+	cpdup -o ${FINAL_CHROOT_DIR}/root ${_mnt}/root
+	cpdup -o ${FINAL_CHROOT_DIR}/sbin ${_mnt}/sbin
+	cpdup -o ${FINAL_CHROOT_DIR}/usr ${_mnt}/usr
+	cpdup -o ${FINAL_CHROOT_DIR}/var ${_mnt}/var
 }
 
 ova_setup_platform_specific() {
+	local _mnt="${1}"
+
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > /mnt/etc/fstab
-	echo "/dev/label/swap0	none	swap	sw	0	0" >> /mnt/etc/fstab
-	echo ${PRODUCT_NAME} > /mnt/etc/platform
-	rmdir /mnt/conf
-	mkdir -p /mnt/cf
-	mkdir -p /mnt/cf/conf
-	cp /mnt/conf.default/config.xml /mnt/cf/conf/
-	chroot /mnt /bin/ln -s /cf/conf /conf
-	mkdir -p /mnt/tmp
+	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${_mnt}/etc/fstab
+	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${_mnt}/etc/fstab
+	echo ${PRODUCT_NAME} > ${_mnt}/etc/platform
+	rmdir ${_mnt}/conf
+	mkdir -p ${_mnt}/cf
+	mkdir -p ${_mnt}/cf/conf
+	cp ${_mnt}/conf.default/config.xml ${_mnt}/cf/conf/
+	chroot ${_mnt} /bin/ln -s /cf/conf /conf
+	mkdir -p ${_mnt}/tmp
 }
 
 # called from create_ova_image
 ova_partition_gpart() {
 	# XXX: Switch to mkimg tool!!
-	MD=$1
+	local MD=$1
 	echo ">>> Creating GPT..." | tee -a ${LOGFILE}
 	gpart create -s gpt $MD
 	echo ">>> Embedding GPT bootstrap into protective MBR..." | tee -a ${LOGFILE}

@@ -794,8 +794,8 @@ create_ova_image() {
 	ova_remove_old_tmp_files
 	ova_setup_ovf_file
 	ova_create_raw_backed_file
-	/bin/echo -n ">>> Creating mdconfig image ${OVFPATH}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
-	MD=$(mdconfig -a -t vnode -f ${OVFPATH}/${OVFVMDK}.raw)
+	/bin/echo -n ">>> Creating mdconfig image ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
+	MD=$(mdconfig -a -t vnode -f ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 
@@ -820,33 +820,33 @@ ova_repack_vbox_image() {
 	BUILDPLATFORM=$(uname -p)
 	POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | awk '{ print \$1 }')
 	POPULATEDSIZEBYTES=$(echo "${POPULATEDSIZE}*1024^2" | bc)
-	REFERENCESSIZE=$(stat -f "%z" ${OVFPATH}/${OVFVMDK})
+	REFERENCESSIZE=$(stat -f "%z" ${IMAGES_FINAL_DIR}/${OVFVMDK})
 	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${OVFPATH}/${PRODUCT_NAME}.ovf
+	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
 	#  OperatingSystemSection (${PRODUCT_NAME}.ovf)
 	#  42   FreeBSD 32-Bit
 	#  78   FreeBSD 64-Bit
 	if [ "$BUILDPLATFORM" = "i386" ]; then
-		file_search_replace '"101"' '"42"' ${OVFPATH}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${OVFPATH}/${PRODUCT_NAME}.ovf
+		file_search_replace '"101"' '"42"' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	fi
 	if [ "$BUILDPLATFORM" = "amd64" ]; then
-		file_search_replace '"101"' '"78"' ${OVFPATH}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${OVFPATH}/${PRODUCT_NAME}.ovf
+		file_search_replace '"101"' '"78"' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	fi
-	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${OVFPATH}/${PRODUCT_NAME}.ovf
+	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
 	# 10737418240 = 10GB
 	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to 10737254400..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${OVFPATH}/${PRODUCT_NAME}.ovf
+	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	echo ">>> Setting DISKSECTIONCAPACITY to 10737418240..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${OVFPATH}/${PRODUCT_NAME}.ovf
+	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	echo ">>> Repacking OVA with universal OVF file..." | tee -a ${LOGFILE}
-	mv ${OVFPATH}/${OVFVMDK} ${OVFPATH}/${PRODUCT_NAME}-disk1.vmdk
-	gtar -C ${OVFPATH} -cpf ${PRODUCT_NAME}.ova ${PRODUCT_NAME}.ovf ${PRODUCT_NAME}-disk1.vmdk
-	rm $OVFPATH/${PRODUCT_NAME}-disk1.vmdk
-	ls -lah ${OVFPATH}/${PRODUCT_NAME}*ov*
+	mv ${IMAGES_FINAL_DIR}/${OVFVMDK} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-disk1.vmdk
+	gtar -C ${IMAGES_FINAL_DIR} -cpf ${PRODUCT_NAME}.ova ${PRODUCT_NAME}.ovf ${PRODUCT_NAME}-disk1.vmdk
+	rm $IMAGES_FINAL_DIR/${PRODUCT_NAME}-disk1.vmdk
+	ls -lah ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}*ov*
 }
 
 # called from create_ova_image
@@ -876,13 +876,13 @@ ova_mount_mnt() {
 # called from create_ova_image
 ova_setup_ovf_file() {
 	if [ -f ${OVFFILE} ]; then
-		cp ${OVFFILE} ${OVFPATH}/${PRODUCT_NAME}.ovf
+		cp ${OVFFILE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	fi
 
-	if [ ! -f ${OVFPATH}/${PRODUCT_NAME}.ovf ]; then
-		cp ${BUILDER_TOOLS}/conf/ovf/${PRODUCT_NAME}.ovf ${OVFPATH}/${PRODUCT_NAME}.ovf
-		file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${OVFPATH}/${PRODUCT_NAME}.ovf
-		file_search_replace PRODUCT_URL $PRODUCT_URL ${OVFPATH}/${PRODUCT_NAME}.ovf
+	if [ ! -f ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf ]; then
+		cp ${BUILDER_TOOLS}/conf/ovf/${PRODUCT_NAME}.ovf ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+		file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+		file_search_replace PRODUCT_URL $PRODUCT_URL ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	fi
 }
 
@@ -908,25 +908,25 @@ ova_create_raw_backed_file() {
 	DISKSIZE=$OVADISKSIZE
 	BLOCKSIZE=$OVABLOCKSIZE
 	COUNT=$((${DISKSIZE}/${BLOCKSIZE}))
-	DISKFILE=${OVFPATH}/${OVFVMDK}.raw
+	DISKFILE=${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
 	echo ">>> Creating raw backing file ${DISKFILE} (Disk Size: ${DISKSIZE}, Block Size: ${BLOCKSIZE}, Count: ${COUNT})..." | tee -a ${LOGFILE}
 	dd if=/dev/zero of=$DISKFILE bs=$BLOCKSIZE count=0 seek=$COUNT
 }
 
 # called from create_ova_image
 ova_remove_old_tmp_files() {
-	rm ${OVFPATH}/*.ovf.final 2>/dev/null
-	rm ${OVFPATH}/*.ova 2>/dev/null
+	rm ${IMAGES_FINAL_DIR}/*.ovf.final 2>/dev/null
+	rm ${IMAGES_FINAL_DIR}/*.ova 2>/dev/null
 }
 
 # called from create_ova_image
 ova_create_vbox_image() {
 	# VirtualBox
 	echo ">>> Creating image using vmdktool..." | tee -a ${LOGFILE}
-	rm ${OVFPATH}/${OVFVMDK} 2>/dev/null
-	vmdktool -v ${OVFPATH}/${OVFVMDK} ${OVFPATH}/${OVFVMDK}.raw
-	rm -rf ${OVFPATH}/${OVFVMDK}.raw
-	echo ">>> ${OVFPATH}/${OVFVMDK} created." | tee -a ${LOGFILE}
+	rm ${IMAGES_FINAL_DIR}/${OVFVMDK} 2>/dev/null
+	vmdktool -v ${IMAGES_FINAL_DIR}/${OVFVMDK} ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
+	rm -rf ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
+	echo ">>> ${IMAGES_FINAL_DIR}/${OVFVMDK} created." | tee -a ${LOGFILE}
 }
 
 # called from create_ova_image

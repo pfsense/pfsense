@@ -668,7 +668,6 @@ awk '
 		fi
 
 		umount ${MNT}
-		sync
 		# Restore the original trap
 		trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
@@ -853,7 +852,6 @@ ova_repack_vbox_image() {
 ova_umount_mnt() {
 	# Unmount /dev/mdX
 	umount /mnt
-	sync ; sync
 }
 
 # called from create_ova_image
@@ -863,7 +861,6 @@ ova_umount_mdconfig() {
 	gpart show $MD
 	echo ">>> Unmounting ${MD}..." | tee -a ${LOGFILE}
 	mdconfig -d -u $MD
-	sync ; sync
 }
 
 # called from create_ova_image
@@ -960,7 +957,6 @@ ova_cpdup_files() {
 	cpdup -o ${FINAL_CHROOT_DIR}/sbin /mnt/sbin
 	cpdup -o ${FINAL_CHROOT_DIR}/usr /mnt/usr
 	cpdup -o ${FINAL_CHROOT_DIR}/var /mnt/var
-	sync ; sync ; sync ; sync
 }
 
 ova_setup_platform_specific() {
@@ -993,13 +989,10 @@ ova_partition_gpart() {
 	gpart add -s $OVA_SWAP_PART_SIZE -t freebsd-swap -i 3 $MD
 	echo ">>> Running newfs..." | tee -a ${LOGFILE}
 	newfs -U /dev/${MD}p2
-	sync ; sync ; sync ; sync
 	echo ">>> Labeling partitions: ${MD}p2..."  | tee -a ${LOGFILE}
 	glabel label ${PRODUCT_NAME} ${MD}p2
-	sync ; sync
 	echo ">>> Labeling partitions: ${MD}p3..." | tee -a ${LOGFILE}
 	glabel label swap0 ${MD}p3
-	sync ; sync
 }
 
 # called from create_ova_image

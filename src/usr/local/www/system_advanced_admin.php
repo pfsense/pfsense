@@ -474,7 +474,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 
-if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
+if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom"))
 {
 	$form->add($section);
 	$section = new Form_Section('Serial Communications');

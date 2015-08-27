@@ -23,6 +23,7 @@
 /etc/manpath.config
 /etc/mtree/BSD.x11-4.dist
 /etc/mtree/BSD.x11.dist
+/etc/nano_use_vga.txt
 /etc/ntp.conf
 /etc/pccard.conf
 /etc/periodic/daily/130.clean-msgs

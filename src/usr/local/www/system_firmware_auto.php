@@ -91,7 +91,7 @@ panel_heading_class('info');
 
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
-	if (file_exists("/etc/nano_use_vga.txt")) {
+	if (!isset($g['enableserial_force'])) {
 		$nanosize = "-nanobsd-vga-";
 	} else {
 		$nanosize = "-nanobsd-";

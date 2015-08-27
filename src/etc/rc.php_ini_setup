@@ -90,9 +90,6 @@ fi
 # Define php modules.  Do not add .so, it will
 # be done automatically by the script below.
 PHPMODULES="standard"
-if [ "$LOWMEM" != "TRUE" ]; then
-	PHPMODULES="$PHPMODULES opcache"
-fi
 # Config read/write
 PHPMODULES="$PHPMODULES xml libxml dom"
 PHPMODULES="$PHPMODULES SimpleXML xmlreader xmlwriter"
@@ -140,8 +137,11 @@ PHPMODULES="$PHPMODULES bcmath"
 # filter
 PHPMODULES="$PHPMODULES filter"
 
-PHP_ZEND_MODULES="ioncube_loader"
-PHP_ZEND_MODULES_TS="ioncube_loader_ts"
+PHP_ZEND_MODULES=""
+
+if [ "$LOWMEM" != "TRUE" ]; then
+	PHP_ZEND_MODULES="$PHP_ZEND_MODULES opcache"
+fi
 
 # Modules previously included.
 # can be turned on by touching
@@ -206,35 +206,6 @@ EOF
 # Copy php.ini file to etc/ too (cli)
 /bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
-# Ensure directory exists
-if [ ! -d /etc/php_dynamodules ]; then
-	/bin/mkdir /etc/php_dynamodules
-fi
-if [ ! -d /etc/php_dynamodules_zend ]; then
-	/bin/mkdir /etc/php_dynamodules_zend
-fi
-if [ ! -d /etc/php_dynamodules_zend_ts ]; then
-	/bin/mkdir /etc/php_dynamodules_zend_ts
-fi
-
-# Read in dynamodules
-if [ -d /etc/php_dynamodules ]; then
-	DYNA_MODULES=`/bin/ls -Utr /etc/php_dynamodules/`
-	PHPMODULES="$PHPMODULES $DYNA_MODULES"
-fi
-
-# Read in zend modules
-if [ -d /etc/php_dynamodules_zend ]; then
-	DYNA_MODULES=`/bin/ls /etc/php_dynamodules_zend/`
-	PHP_ZEND_MODULES="$PHP_ZEND_MODULES $DYNA_MODULES"
-fi
-
-# Read in zend threaded modules
-if [ -d /etc/php_dynamodules_zend_ts ]; then
-	DYNA_MODULES=`/bin/ls /etc/php_dynamodules_zend_ts/`
-	PHP_ZEND_MODULES_TS="$PHP_ZEND_MODULES_TS $DYNA_MODULES"
-fi
-
 # Loop through and generate modules to load.
 # Take into account modules built into php.
 for EXT in $PHPMODULES; do
@@ -256,19 +227,10 @@ done
 # Zend modules
 for EXT in $PHP_ZEND_MODULES; do
 	# Ensure extension exists before adding.
-	if [ -f "${EXTENSIONSDIR}/ioncube/${EXT}.so" ]; then
-		echo "zend_extension=${EXTENSIONSDIR}/ioncube/${EXT}.so" >> /usr/local/lib/php.ini
+	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
+		echo "zend_extension=${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
-
-# Zend threaded modules
-for EXT in $PHP_ZEND_MODULES_TS; do
-	# Ensure extension exists before adding.
-	if [ -f "${EXTENSIONSDIR}/ioncube/${EXT}.so" ]; then
-		echo "zend_extension_ts=${EXTENSIONSDIR}/ioncube/${EXT}.so" >> /usr/local/lib/php.ini
-	fi
-done
-
 
 if [ "$LOWMEM" != "TRUE" ]; then
 

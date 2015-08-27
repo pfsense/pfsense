@@ -384,7 +384,7 @@ print_flags() {
 	printf "                OVABLOCKSIZE: %s\n" $OVABLOCKSIZE
 	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
 	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
-	printf "                     OVFFILE: %s\n" $OVFFILE
+	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                     OVFCERT: %s\n" $OVFCERT
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -875,15 +875,15 @@ ova_mount_mnt() {
 
 # called from create_ova_image
 ova_setup_ovf_file() {
-	if [ -f ${OVFFILE} ]; then
-		cp ${OVFFILE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+	if [ -f ${OVFTEMPLATE} ]; then
+		cp ${OVFTEMPLATE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+	else
+		echo ">>> ERROR: OVF template file (${OVFTEMPLATE}) not found."
+		print_error_pfS
 	fi
 
-	if [ ! -f ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf ]; then
-		cp ${BUILDER_TOOLS}/conf/ovf/${PRODUCT_NAME}.ovf ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-		file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-		file_search_replace PRODUCT_URL $PRODUCT_URL ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
-	fi
+	file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
+	file_search_replace PRODUCT_URL $PRODUCT_URL ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 }
 
 # called from create_ova_image

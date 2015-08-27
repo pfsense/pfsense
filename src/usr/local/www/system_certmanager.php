@@ -519,9 +519,11 @@ display_top_tabs($tab_array);
 $dn_cc = array();
 if (file_exists("/etc/ca_countries")){
 	$dn_cc_file=file("/etc/ca_countries");
-	foreach($dn_cc_file as $line)
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
-			array_push($dn_cc, $matches[1]);
+	foreach($dn_cc_file as $line) {
+		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
+			$dn_cc[$matches[1]] = $matches[1];
+		}
+	}
 }
 
 if (!($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)))
@@ -581,7 +583,7 @@ foreach($a_cert as $i => $cert):
 				<?=$subj?>
 				<br />
 				<small>
-					<?=gettext("Valid From")?>: <b><?=$startdate ?></b>, <?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
+					<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 				</small>
 			</td>
 			<td>

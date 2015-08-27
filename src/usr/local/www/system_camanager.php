@@ -332,16 +332,19 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 // Load valid country codes
 $dn_cc = array();
 if (file_exists("/etc/ca_countries")){
 	$dn_cc_file=file("/etc/ca_countries");
-	foreach($dn_cc_file as $line)
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
-			array_push($dn_cc, $matches[1]);
+	foreach($dn_cc_file as $line) {
+		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
+			$dn_cc[$matches[1]] = $matches[1];		
+		}
+	}
 }
 
 $tab_array = array();
@@ -404,7 +407,7 @@ foreach ($a_ca as $i => $ca):
 				<?=$subj?>
 				<br />
 				<small>
-					<?=gettext("Valid From")?>: <b><?=$startdate ?></b>, <?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
+					<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 				</small>
 			</td>
 			<td>
@@ -520,7 +523,7 @@ foreach ($a_ca as $ca)
 }
 
 $group = new Form_Group('Signing Certificate Authority');
-$group->addClass('toggle-intermediate');
+$group->addClass('toggle-intermediate', 'collapse');
 $group->add(new Form_Select(
 	'caref',
 	null,
@@ -601,5 +604,12 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
+
+$internal_ca_count = 0;
+foreach ($a_ca as $ca) {
+	if ($ca['prv']) {
+		$internal_ca_count++;
+	}
+}
 
 include('foot.inc');

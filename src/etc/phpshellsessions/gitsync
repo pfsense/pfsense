@@ -36,8 +36,8 @@ if (is_array($command_split)) {
 
 $valid_args = array(
 	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
-				   "\tNot recommended if the system has files modified by any method other\n" .
-				   "\tthan gitsync.\n",
+	    "\tNot recommended if the system has files modified by any method other\n" .
+	    "\tthan gitsync.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();

@@ -151,7 +151,7 @@ include("head.inc"); ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" summary="status openvpn">
 	<tr>
 		<td colspan="6" class="listtopic">
-			<?=$server['name'];?> <?=gettext("Client connections"); ?>
+			<?=htmlspecialchars($server['name']);?> <?=gettext("Client connections"); ?>
 		</td>
 	</tr>
 	<tr>
@@ -225,7 +225,7 @@ include("head.inc"); ?>
 <table style="display: none; padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" id="tabroute-<?= $i ?>" summary="routing table">
 	<tr>
 		<td colspan="6" class="listtopic">
-			<?=$server['name'];?> <?=gettext("Routing Table"); ?>
+			<?=htmlspecialchars($server['name']);?> <?=gettext("Routing Table"); ?>
 		</td>
 	</tr>
 	<tr>

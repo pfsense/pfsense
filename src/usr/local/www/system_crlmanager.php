@@ -1,34 +1,61 @@
 <?php
 /*
 	system_crlmanager.php
-
-	Copyright (C) 2010 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2010 Jim Pingle
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	certificate_manager
+	pfSense_MODULE: certificate_manager
 */
 
 ##|+PRIV
@@ -96,7 +123,7 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 	pfSenseHeader("system_crlmanager.php");
 	$act="";
 	$savemsg = gettext("Invalid CRL reference.");
-}	
+}
 
 if ($act == "del") {
 	$name = htmlspecialchars($thiscrl['descr']);
@@ -161,7 +188,7 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
-			// refresh IPsec and OpenVPN CRLs 
+			// refresh IPsec and OpenVPN CRLs
 			openvpn_refresh_crls();
 			vpn_ipsec_configure();
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
@@ -191,7 +218,7 @@ if ($act == "delcert") {
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
 		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
-		// refresh IPsec and OpenVPN CRLs 
+		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
@@ -263,7 +290,7 @@ if ($_POST) {
 		}
 
 		write_config("Saved CRL {$crl['descr']}");
-		// refresh IPsec and OpenVPN CRLs 
+		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
@@ -299,24 +326,24 @@ function method_change() {
 
 function build_method_list() {
 	global $_GET, $crl_methods;
-	
+
 	$list = array();
-	
+
 	foreach($crl_methods as $method => $desc) {
 		if (($_GET['importonly'] == "yes") && ($method != "existing"))
 			continue;
-			
+
 		$list[$method] = $desc;
-	}							
-	
-	return($list);		
+	}
+
+	return($list);
 }
 
 function build_ca_list() {
 	global $a_ca;
-	
+
 	$list = array();
-	
+
 	foreach($a_ca as $ca)
 		$list[$ca['refid']] = $ca['descr'];
 
@@ -325,21 +352,21 @@ function build_ca_list() {
 
 function build_cacert_list() {
 	global $ca_certs;
-	
+
 	$list = array();
 
 	foreach($ca_certs as $cert)
-		$list[$cert['refid']] = $cert['descr']; 
+		$list[$cert['refid']] = $cert['descr'];
 
 	return($list);
-}				
+}
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
-	print_info_box($savemsg, 'sucess');	
-	
+	print_info_box($savemsg, 'sucess');
+
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
 $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
@@ -351,18 +378,18 @@ require('classes/Form.class.php');
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (!isset($id)) {
 		$form = new Form();
-		
+
 		$section = new Form_Section('Create new revocation list');
-		
+
 		$section->addInput(new Form_Select(
 			'method',
 			'Method',
 			$pconfig['method'],
 			build_method_list()
 		));
-		
+
 	}
-	
+
 	$section->addInput(new Form_Input(
 		'descr',
 		'Descriptive name',
@@ -376,23 +403,23 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		$pconfig['caref'],
 		build_ca_list()
 	));
-		
+
 	$form->add($section);
-	
+
 	$section = new Form_Section('Existing Certificate Revocation List');
 	$section->addClass('existing');
-	
+
 	$section->addInput(new Form_Textarea(
 		'crltext',
 		'CRL data',
 		$pconfig['crltext']
 		))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
-	
+
 	$form->add($section);
-	
+
 	$section = new Form_Section('Internal Certificate Revocation List');
 	$section->addClass('internal');
-	
+
 	$section->addInput(new Form_Input(
 		'lifetime',
 		'Lifetime (Days)',
@@ -400,79 +427,79 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		$pconfig['lifetime'],
 		[max => '9999']
 	));
-		
+
 	$section->addInput(new Form_Input(
 		'serial',
 		'Serial',
 		'number',
 		$pconfig['serial'],
-		[max => '9999']
+		[min => '0', max => '9999']
 	));
-			
-	$form->add($section);		
-	
+
+	$form->add($section);
+
 	if (isset($id) && $thiscrl) {
 		$section->addInput(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$id
-		));		
+		));
 	}
-									
+
 	print($form);
 
 } elseif ($act == "editimported") {
-	
+
 	$form = new Form();
-		
-	$section = new Form_Section('Edit Imported Certificate Revocation List');	
-	
+
+	$section = new Form_Section('Edit Imported Certificate Revocation List');
+
 	$section->addInput(new Form_Input(
 		'descr',
 		'Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
-	
+
 	$section->addInput(new Form_Textarea(
 		'crltext',
 		'CRL data',
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
-	
+
 	$section->addInput(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$id
 	));
-	
+
 	$section->addInput(new Form_Input(
 		'act',
 		null,
 		'hidden',
 		'editimported'
 	));
-											
+
 	$form->add($section);
-									
+
 	print($form);
-	
+
 } elseif ($act == "edit") {
 	$crl = $thiscrl;
-	
+
 	$form = new Form(false);
 ?>
-	
+
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']?></h2></div>
 		<div class="panel-body table-responsive">
-<?php		
+<?php
 	if (!is_array($crl['cert']) || (count($crl['cert']) == 0))
 		print_info_box(gettext("No Certificates Found for this CRL."), 'danger');
 	else {
-?>	
+?>
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
@@ -483,7 +510,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 					</tr>
 				</thead>
 				<tbody>
-<?php				
+<?php
 		foreach($crl['cert'] as $i => $cert):
 			$name = htmlspecialchars($cert['descr']);
 ?>
@@ -508,7 +535,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 ?>
 				</tbody>
 			</table>
-<?php } ?>			
+<?php } ?>
 		</div>
 	</div>
 <?php
@@ -517,56 +544,56 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	foreach($a_cert as $cert)
 		if ($cert['caref'] == $crl['caref'])
 			$ca_certs[] = $cert;
-			
+
 	if (count($ca_certs) == 0)
 		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
 	else
-	
+
 	$section = new Form_Section('Choose a certificate to revoke');
 	$group = new Form_Group(null);
-		
+
 	$group->add(new Form_Select(
 		'certref',
 		null,
 		$pconfig['certref'],
-		build_cacert_list()	
+		build_cacert_list()
 		))->setWidth(4)->setHelp('Certificate');
-		
+
 	$group->add(new Form_Select(
 		'crlreason',
 		null,
 		-1,
 		$openssl_crl_status
 		))->setHelp('Reason');
-		
+
 	$group->add(new Form_Button(
 		'submit',
 		'Add'
 		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
-		
+
 	$section->add($group);
-	
+
 	$section->addInput(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$crl['refid']
 	));
-	
+
 	$section->addInput(new Form_Input(
 		'act',
 		null,
 		'hidden',
 		'addcert'
 	));
-	
+
 	$section->addInput(new Form_Input(
 		'crlref',
 		null,
 		'hidden',
 		$crl['refid']
 	));
-			
+
 	$form->add($section);
 	print($form);
 } else {
@@ -599,25 +626,25 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		if($ca['prv']) {
 			$cainternal = "YES";
-		} else 
+		} else
 			$cainternal = "NO";
-?>				
+?>
 					<tr>
 						<td colspan="4">
 							<?=$name?>
 						</td>
 						<td>
-<?php 
+<?php
 		if ($cainternal == "YES"): ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRLl")?>
 							</a>
-<?php 
+<?php
 		else: ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRLl")?>
-							</a>							
-<?php 
+							</a>
+<?php
 		endif; ?>
 						</td>
 					</tr>
@@ -637,22 +664,22 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-success">
 								<?=gettext("Export CRL")?>"
 							</a>
-<?php 
+<?php
 				if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
 								<?=gettext("Edit CRL")?>
 							</a>
-<?php 
+<?php
 				else: ?>
 							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
 								<?=gettext("Edit CRL")?>
 							</a>
-<?php 			endif;
+<?php			endif;
 				if (!$inuse): ?>
 							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-danger">
 								<?=gettext("Delete CRL")?>
 							</a>
-<?php 
+<?php
 				endif; ?>
 						</td>
 					</tr>
@@ -662,39 +689,39 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 			endif;
 			$i++;
 		endforeach;
-?>						
+?>
 				</tbody>
 			</table>
 		</div>
 	</div>
-					
-					
-<?php						
+
+
+<?php
 }
 ?>
 
 <script>
-//<![CDATA[   
+//<![CDATA[
 events.push(function(){
-    
-    // Hides all elements of the specified class. This will usually be a section or group   
-    function hideClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).hide();
-        else
-            $('.' + s_class).show();  
-    }
-    
-    // When the 'method" selector is changed, we show/hide certain sections
-    $('#method').on('change', function() {
-    	hideClass('internal', ($('#method').val() == 'existing'));
-    	hideClass('existing', ($('#method').val() == 'internal'));
-    });
-    
+
+	// Hides all elements of the specified class. This will usually be a section or group
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
+	// When the 'method" selector is changed, we show/hide certain sections
+	$('#method').on('change', function() {
+		hideClass('internal', ($('#method').val() == 'existing'));
+		hideClass('existing', ($('#method').val() == 'internal'));
+	});
+
 	hideClass('internal', ($('#method').val() == 'existing'));
 	hideClass('existing', ($('#method').val() == 'internal'));
 });
-//]]>  
+//]]>
 </script>
 
 <?php include("foot.inc");

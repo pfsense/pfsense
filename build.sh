@@ -356,7 +356,7 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		# Create the NanoBSD disk image
 		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 	elif [ "${_IMGTOBUILD}" = "ova" ]; then
-		install_pkg_install_ports ${PRODUCT_NAME}-vm
+		install_pkg_install_ports ${PRODUCT_NAME}-vmware
 		(create_ova_image)
 		install_pkg_install_ports
 	fi

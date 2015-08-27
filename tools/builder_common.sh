@@ -792,7 +792,7 @@ create_ova_image() {
 
 	ova_prereq_check
 	ova_remove_old_tmp_files
-	ova_setup_ovf_file
+	ova_setup_ovf_template
 	ova_create_raw_backed_file
 	/bin/echo -n ">>> Creating mdconfig image ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
 	MD=$(mdconfig -a -t vnode -f ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw)
@@ -874,7 +874,7 @@ ova_mount_mnt() {
 }
 
 # called from create_ova_image
-ova_setup_ovf_file() {
+ova_setup_ovf_template() {
 	if [ -f ${OVFTEMPLATE} ]; then
 		cp ${OVFTEMPLATE} ${IMAGES_FINAL_DIR}/${PRODUCT_NAME}.ovf
 	else

@@ -409,7 +409,7 @@ function get_dates($curperiod, $graph) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rrd graphs">
         <tr>
                 <td>
-			<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>" />
+			<input type="hidden" name="cat" value="<?php echo htmlspecialchars($curcat); ?>" />
 			<?php
 			        $tab_array = array();
 				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }

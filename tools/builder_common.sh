@@ -905,12 +905,25 @@ ova_calculate_mnt_size() {
 
 # called from create_ova_image
 ova_create_raw_backed_file() {
-	DISKSIZE=$OVADISKSIZE
-	BLOCKSIZE=$OVABLOCKSIZE
-	COUNT=$((${DISKSIZE}/${BLOCKSIZE}))
-	DISKFILE=${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
-	echo ">>> Creating raw backing file ${DISKFILE} (Disk Size: ${DISKSIZE}, Block Size: ${BLOCKSIZE}, Count: ${COUNT})..." | tee -a ${LOGFILE}
-	dd if=/dev/zero of=$DISKFILE bs=$BLOCKSIZE count=0 seek=$COUNT
+	if [ -z "${OVADISKSIZE}" ]; then
+		echo ">>> ERROR: OVADISKSIZE is not defined"
+		print_error_pfS
+	fi
+
+	if [ -z "${OVABLOCKSIZE}" ]; then
+		echo ">>> ERROR: OVABLOCKSIZE is not defined"
+		print_error_pfS
+	fi
+
+	if [ -z "${OVFVMDK}" ]; then
+		echo ">>> ERROR: OVFVMDK is not defined"
+		print_error_pfS
+	fi
+
+	local COUNT=$((${OVADISKSIZE}/${OVABLOCKSIZE}))
+	local DISKFILE=${IMAGES_FINAL_DIR}/${OVFVMDK}.raw
+	echo ">>> Creating raw backing file ${DISKFILE} (Disk Size: ${OVADISKSIZE}, Block Size: ${OVABLOCKSIZE}, Count: ${COUNT})..." | tee -a ${LOGFILE}
+	dd if=/dev/zero of=$DISKFILE bs=$OVABLOCKSIZE count=0 seek=$COUNT
 }
 
 # called from create_ova_image

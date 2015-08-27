@@ -296,9 +296,9 @@ if (isset($args["--minimal"])) {
 	} else if (file_exists("/etc/version.lastcommit")) {
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
 	}
-	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only --relative=src " . escapeshellarg($old_revision)), "\n", " ");
 } else {
-	$files_to_copy = '--exclude .git .';
+	$files_to_copy = '-C ./src .';
 }
 
 // Save new commit ID for later minimal file copies

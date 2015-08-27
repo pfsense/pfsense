@@ -793,7 +793,7 @@ create_ova_image() {
 	ova_remove_old_tmp_files
 	ova_setup_ovf_template
 	ova_create_raw_backed_file
-	/bin/echo -n ">>> Creating mdconfig image ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
+	echo ">>> Creating mdconfig image ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw... " | tee -a ${LOGFILE}
 	MD=$(mdconfig -a -t vnode -f ${IMAGES_FINAL_DIR}/${OVFVMDK}.raw)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
@@ -894,7 +894,7 @@ ova_prereq_check() {
 
 # called from create_ova_image
 ova_calculate_mnt_size() {
-	/bin/echo -n ">>> Calculating size of /mnt..." | tee -a ${LOFGILE}
+	echo -n ">>> Calculating size of /mnt..." | tee -a ${LOFGILE}
 	INSTALLSIZE=$(du -s /mnt/ | awk '{ print $1 }')
 	INSTALLSIZEH=$(du -d0 -h /mnt/ | awk '{ print $1 }')
 	echo $INSTALLSIZEH

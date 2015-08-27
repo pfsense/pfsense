@@ -192,7 +192,6 @@ export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"${SCRATCHDIR}/final-dir"}
 export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 
 # OVF/vmdk parms
-export OVFPATH=${OVFPATH:-"${IMAGES_FINAL_DIR}"}
 # Name of ovf file included inside OVA archive
 export OVFFILE=${OVFFILE:-"${PRODUCT_NAME}.ovf"}
 # On disk name of VMDK file included in OVA

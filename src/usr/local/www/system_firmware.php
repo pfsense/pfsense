@@ -302,7 +302,7 @@ if ($sig_warning && !$input_errors) {
 					$section->addInput(new Form_Checkbox(
 						'backupbeforeupgrade',
 						Backup,
-						'Perform a full backup prior to upgrade"',
+						'Perform a full backup prior to upgrade',
 						false
 					));
 				}
@@ -310,7 +310,7 @@ if ($sig_warning && !$input_errors) {
 				$section->addInput(new Form_Button(
 					'submit',
 					'Upgrade firmware'
-				))->addClass('btn-danger btn-sm')->setHelp('Click the "Upgrade firmware" button below to start the upgrade process');
+				))->addClass('btn-danger btn-sm')->setHelp('Click the "Upgrade firmware" button above to start the upgrade process');
 			}
 
 			$form->add($section);

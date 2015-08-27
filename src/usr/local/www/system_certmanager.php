@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	certificate_manager
+	pfSense_MODULE: certificate_manager
 */
 
 ##|+PRIV
@@ -777,8 +777,6 @@ else
 	));
 }
 
-print('<br />keylen = ' . $pconfig['keylen'] . '<br />');
-
 $section->addInput(new Form_Select(
 	'keylen',
 	'Key length',
@@ -989,4 +987,51 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+<?php if ($internal_ca_count): ?>
+	function internalca_change() {
+
+		caref = $('#caref').val();
+
+		switch (caref) {
+<?php
+			foreach ($a_ca as $ca):
+				if (!$ca['prv']) {
+					continue;
+				}
+
+				$subject = cert_get_subject_array($ca['crt']);
+
+?>
+				case "<?=$ca['refid'];?>":
+					$('#dn_country').val("<?=$subject[0]['v'];?>");
+					$('#dn_state').val("<?=$subject[1]['v'];?>");
+					$('#dn_city').val("<?=$subject[2]['v'];?>");
+					$('#dn_organization').val("<?=$subject[3]['v'];?>");
+					$('#dn_email').val("<?=$subject[4]['v'];?>");
+					break;
+<?php
+			endforeach;
+?>
+		}
+	}
+
+	// On click . .
+	$('#caref').on('change', function() {
+		internalca_change();
+	});
+
+	// On page load . .
+	internalca_change();
+
+<?php endif; ?>
+
+
+});
+//]]>
+</script>
+<?php
 include('foot.inc');

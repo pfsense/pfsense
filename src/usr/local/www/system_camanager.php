@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	certificate_manager
+	pfSense_MODULE: certificate_manager
 */
 
 ##|+PRIV
@@ -272,9 +272,9 @@ if ($_POST) {
 			$ca['descr']  = $pconfig['descr'];
 			$ca['refid']  = $pconfig['refid'];
 			$ca['serial'] = $pconfig['serial'];
-			$ca['crt']    = base64_encode($pconfig['cert']);
+			$ca['crt']	  = base64_encode($pconfig['cert']);
 			if (!empty($pconfig['key'])) {
-				$ca['prv']    = base64_encode($pconfig['key']);
+				$ca['prv']	  = base64_encode($pconfig['key']);
 			}
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */

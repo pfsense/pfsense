@@ -263,7 +263,7 @@ if (is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} config remote.origin.url " . escapeshellarg($GIT_REPO));
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} fetch");
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -f -x -d");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -x -d");
 	run_cmds($git_cmd);
 } else {
 	exec("mkdir -p $CODIR/pfSenseGITREPO");

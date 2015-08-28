@@ -155,6 +155,9 @@ export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
 # Path to kernel files being built
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 
+# Do not touch builder /usr/obj
+export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
+
 # Controls how many concurrent make processes are run for each stage
 _CPUS=""
 if [ -z "${NO_MAKEJ}" ]; then

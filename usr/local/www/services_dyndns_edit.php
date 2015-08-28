@@ -120,7 +120,8 @@ if ($_POST) {
 
 			/* No-ip (and maybe others) can have a @ in hostname */
 			$last = strrpos($host_to_check, '@');
-			$host_to_check = substr_replace($host_to_check, '.', $last, 1);
+			if ($last !== false)
+				$host_to_check = substr_replace($host_to_check, '.', $last, 1);
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6")

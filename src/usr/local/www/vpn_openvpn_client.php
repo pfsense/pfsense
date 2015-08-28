@@ -834,7 +834,7 @@ else:
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
-		<?=gettext("Add server")?>
+		<?=gettext("Add client")?>
 	</a>
 </nav>
 

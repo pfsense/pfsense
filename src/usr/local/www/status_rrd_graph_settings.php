@@ -2,32 +2,59 @@
 /* $Id$ */
 /*
 	status_rrd_graph_settings.php
-	Part of pfSense
-	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c) 2007 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/find
 	pfSense_MODULE: system
@@ -151,7 +178,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 require('classes/Form.class.php');
 
@@ -189,7 +216,7 @@ $section->addInput(new Form_Select(
 			'take this into account after changing the style.');
 
 $form->addGlobal(new Form_Button(
-	'resetRRD',
+	'ResetRRD',
 	'Reset RRD Data'
 ))->removeClass('btn-primary')->addClass('btn-danger');
 

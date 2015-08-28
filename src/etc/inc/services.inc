@@ -2443,7 +2443,7 @@ function configure_cron() {
 		exec("cd /tmp && /usr/sbin/cron -s 2>/dev/null");
 	} else {
 	/* do a HUP kill to force sync changes */
-	sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	}
 
 	conf_mount_ro();

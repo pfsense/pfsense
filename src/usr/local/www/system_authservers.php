@@ -650,12 +650,12 @@ $section->addInput(new Form_Input(
 	'radius_auth_port',
 	'Authentication port value',
 	'number',
-	$pconfig['radius_secret']
+	$pconfig['radius_auth_port']
 ));
 
 $section->addInput(new Form_Input(
 	'radius_acct_port',
-	'Authentication Timeout',
+	'Accounting port',
 	'number',
 	$pconfig['radius_acct_port']
 ));

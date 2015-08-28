@@ -889,7 +889,7 @@ ova_setup_ovf_template() {
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
-		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_TOOR}/license.txt" \
+		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/license.txt" \
 		-e "/^%%PRODUCT_LICENSE%%/d" \
 		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }

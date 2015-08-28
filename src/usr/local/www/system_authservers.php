@@ -5,8 +5,8 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c) 2008 Shrew Soft Inc.
- *	Copyright (c) 2010 Ermal Luçi
+ *	Copyright (c)  2008 Shrew Soft Inc.
+ *	Copyright (c)  2010 Ermal Luçi
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -497,20 +497,19 @@ $section->addInput(new Form_Select(
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
 
-$group = new Form_Group('Search scope');
-$group->add(new Form_Select(
+$section->addInput(new Form_Select(
 	'ldap_scope',
-	'Level',
+	'Search scope: Level',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
 ));
-$group->add(new Form_Input(
+
+$section->addInput(new Form_Input(
 	'ldap_basedn',
 	'Base DN',
 	'text',
 	$pconfig['ldap_basedn']
 ));
-$section->add($group);
 
 $group = new Form_Group('Authentication containers');
 $group->add(new Form_Input(

@@ -2438,8 +2438,13 @@ function configure_cron() {
 	file_put_contents("/etc/crontab", $crontab_contents);
 	unset($crontab_contents);
 
+	/* make sure that cron is running and start it if it got killed somehow */
+	if (!is_process_running("cron")) {
+		exec("cd /tmp && /usr/sbin/cron -s 2>/dev/null");
+	} else {
 	/* do a HUP kill to force sync changes */
 	sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+	}
 
 	conf_mount_ro();
 }

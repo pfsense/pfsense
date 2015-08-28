@@ -132,7 +132,7 @@ $(function() {
 
 	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons
 	$('.control-label + .checkbox.multi').each(function() {
-		var a = $('<a class="btn btn-xs btn-default">toggle all</a>');
+		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
 		
 		if(($(this).html().indexOf("type=\"radio\"") == -1)) {
 			a.on('click', function() {

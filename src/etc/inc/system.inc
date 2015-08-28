@@ -2042,6 +2042,11 @@ function system_dmesg_save() {
 
 function system_set_harddisk_standby() {
 	global $g, $config;
+	// Get only suitable candidates for standby; using get_smart_drive_list()
+	// from utils.inc to get the list of drives.
+	$harddisks = array();
+	$harddisks = get_smart_drive_list();
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
@@ -2055,11 +2060,13 @@ function system_set_harddisk_standby() {
 		$standby = $config['system']['harddiskstandby'];
 		// Check for a numeric value
 		if (is_numeric($standby)) {
-			// Sync the disk(s)
-			pfSense_sync();
-			if (set_single_sysctl('hw.ata.standby', (int)$standby)) {
-				// Reinitialize ATA-drives
-				mwexec('/usr/local/sbin/atareinit');
+			// Since get_smart_drive_list() only matches ad|da|ada; lets put the check below
+			// just in case of some weird pfSense platform installs.
+			if (count($harddisks) > 0) {
+				// Iterate disks and run the camcontrol command for each
+				foreach ($harddisks as $harddisk) {
+					mwexec("/sbin/camcontrol standby {$harddisk} -t {$standby}");
+				}
 				if (platform_booting()) {
 					echo gettext("done.") . "\n";
 				}

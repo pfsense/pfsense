@@ -324,7 +324,7 @@ if ($_POST) {
 			write_config();
 		}
 
-//		pfSenseHeader("system_camanager.php");
+		pfSenseHeader("system_camanager.php");
 	}
 }
 

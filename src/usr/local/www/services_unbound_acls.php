@@ -77,10 +77,13 @@ if ($act == "edit") {
 		$networkacl = $a_acls[$id]['row'];
 	}
 }
-
+   
+if(!is_array($networkacl))
+	$networkacl = array();
+	 	 	
 // Add a row to the networks table
-if($_GET && $_GET['addrow'])
-    array_push($networkacl, array('acl_network' => '', 'mask' => '32', 'description' => ''));
+if($act == 'new')
+    $networkacl = array('0' => array('acl_network' => '', 'mask' => '', 'description' => ''));
              
 if ($_POST) {
 	unset($input_errors);
@@ -221,69 +224,39 @@ if($act=="new" || $act=="edit") {
                 'Allow: Allow queries from hosts within the netblock defined below.' . '<br />' .
                 'Allow Snoop: Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.');
 
-    $counter = 0;
-    $numrows = count($networkacl) - 1;
-    
-    foreach($networkacl as $item) {
-    	$network = $item['acl_network'];
-    	$cidr = $item['mask'];
-    	$description = $item['description'];
-    	
-    	$group = new Form_Group($counter == 0 ? 'Networks':null);
-    	
-    	$group->add(new Form_IpAddress(
-    	    'acl_network' . $counter,
-    	    null,
-    	    $network
-    	))->setHelp(($counter == $numrows) ? 'Network':null);
-    	
-    	$group->add(new Form_Select(
-	        'mask' . $counter,
-	        null,
-	        $cidr,
-	        array_combine(range(32, 1, -1), range(32, 1, -1))
-        ))->setWidth(2)->setHelp(($counter == $numrows) ? 'Mask':null);
-        
-        $group->add(new Form_Input(
-    	    'description' . $counter,
-    	    null,
-    	    'text',
-    	    $description
-    	))->setWidth(3)->setHelp(($counter == $numrows) ? 'Description':null);
-    	
-    	$btndlt = new Form_Button(
-    	    'dlt' . $counter,
-    	    'Delete'
-	    );
-	   
-	    $btndlt->removeClass('btn-primary')->addClass('btn-sm btn-danger');
-	   
-    	$group->add($btndlt);
-
-    	$section->add($group);
-    	
-    	$counter++;
-    }
-
-	$btnadd = new Form_Button(
-	    'btnadd',
-	    'Add row',
-	    'services_unbound_acls.php?act=' . $act . '&addrow=yes'
-	);
-	
-	$btnadd->removeClass(btn-primary)->addClass('btn-sm btn-success');
-	
-	$section->addInput(new Form_StaticText(
-	    'Add row',
-	    $btnadd
-	))->setHelp('Remember to save after each Add or Delete');
-	
     $section->addInput(new Form_Input(
     	'descr',
     	'Description',
     	'text',
     	$pconfig['descr']
     ))->setHelp('You may enter a description here for your reference.');
+    
+    $counter = 0;
+    $numrows = count($networkacl) - 1;
+    	
+    foreach($networkacl as $item) {
+    	$network = $item['acl_network'];
+    	$cidr = $item['mask'];
+    	$description = $item['description'];
+
+		$group = new Form_Group('Networks');
+	
+    	$group->add(new Form_IpAddress(
+    	    'acl_network' . $counter,
+    	    null,
+    	    $network
+    	))->addMask('mask' . $counter, $cidr)->setHelp(($counter == $numrows) ? 'Network':null);
+    
+        $group->add(new Form_Input(
+    	    'description' . $counter,
+    	    'something',
+    	    'text',
+    	    $description
+    	)); //->setHelp(($counter == $numrows) ? 'Description':null);
+
+    	$group->enableDuplication();
+    	$section->add($group);
+    }
 
     $form->add($section);
     print($form);

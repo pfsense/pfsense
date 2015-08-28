@@ -38,7 +38,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	auth
+	pfSense_MODULE: auth
 */
 
 ##|+PRIV
@@ -63,11 +63,15 @@ if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$id = $_POST['groupid'];
 }
 
-$act = (isset($_POST['act']) ? $_POST['act'] : '');
+if (isset($_GET['groupid']) && is_numericint($_GET['groupid'])) {
+	$id = $_GET['groupid'];
+}
+
+$act = (isset($_GET['act']) ? $_GET['act'] : '');
 
 if ($act == "delgroup") {
 
-	if (!isset($id) || !isset($_POST['groupname']) || !isset($a_group[$id]) || ($_POST['groupname'] != $a_group[$id]['name'])) {
+	if (!isset($id) || !isset($_GET['groupname']) || !isset($a_group[$id]) || ($_GET['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
@@ -90,7 +94,7 @@ if ($act == "delpriv") {
 	}
 
 	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_POST['privid']]);
+	unset($a_group[$id]['priv'][$_GET['privid']]);
 
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
@@ -118,9 +122,9 @@ if ($act == "edit") {
 	}
 }
 
-if (isset($_POST['dellall_x'])) {
+if (isset($_GET['dellall_x'])) {
 
-	$del_groups = $_POST['delete_check'];
+	$del_groups = $_GET['delete_check'];
 
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
@@ -205,6 +209,35 @@ if (isset($_POST['save'])) {
 		header("Location: system_groupmanager.php");
 		exit;
 	}
+}
+
+function build_priv_table() {
+	global $a_group, $id;
+
+	$privhtml = '<div class="table-responsive">';
+	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
+	$privhtml .=		'<thead>';
+	$privhtml .=			'<th>' . gettext('Name') . '</th>';
+	$privhtml .=			'<th>' . gettext('Description') . '</th>';
+	$privhtml .=		'</thead>';
+	$privhtml .=		'<tbody>';
+
+	foreach (get_user_privdesc($a_group[$id]) as $i => $priv) {
+		$privhtml .=		'<tr>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=		'</tr>';
+	}
+
+	$privhtml .=		'</tbody>';
+	$privhtml .=	'</table>';
+	$privhtml .= '</div>';
+
+	$privhtml .= '<nav class="action-buttons">';
+	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$privhtml .= '</nav>';
+
+	return($privhtml);
 }
 
 include("head.inc");
@@ -330,48 +363,119 @@ $section->addInput(new Form_Input(
 $form->add($section);
 if ($pconfig['gid'] != 1998) // all users group
 {
-	$section = new Form_Section('Group Memberships');
+	// ==== Group membership ==================================================
+	$group = new Form_Group('Group membership');
 
-	$allUsers = array_map(function($u){ return $u['name']; }, $config['system']['user']);
-	$section->addInput(new Form_Select(
-		'members',
-		'Members',
-		$pconfig['members'],
-		$allUsers,
+	// Make a list of all the groups configured on the system, and a list of
+	// those which this user is a member of
+	$systemGroups = array();
+	$usersGroups = array();
+
+	foreach ($config['system']['user'] as $user) {
+		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members']))
+			$usersGroups[ $user['uid'] ] = $user['name'];	// Add it to the user's list
+		else
+			$systemGroups[ $user['uid'] ] = $user['name']; // Add it to the 'not a member of' list
+	}
+
+	$group->add(new Form_Select(
+		'notmembers',
+		null,
+		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+		$systemGroups,
 		true
-	))->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select');
+	))->setHelp('Not members');
 
-	$form->add($section);
+	$group->add(new Form_Select(
+		'members',
+		null,
+		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+		$usersGroups,
+		true
+	))->setHelp('Members');
+
+	$section->add($group);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Button(
+		'movetoenabled',
+		'Move to "Members" >'
+	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+
+	$group->add(new Form_Button(
+		'movetodisabled',
+		'< Move to "Not members'
+	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+
+	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
+	$section->add($group);
+
 }
 
 if ($_GET['act'] != "new")
 {
 	$section = new Form_Section('Assigned Privileges');
 
-	foreach ((array)$pconfig['priv'] as $i => $priv)
-	{
-		// We reverse name and action for readability of longer names
-		$group = new Form_Group('Revoke privilege');
-
-		$group->add(new Form_Checkbox(
-			'delpriv[]',
-			null,
-			$priv_list[ $priv ]['name'],
-			false,
-			$i
-		));
-
-		$section->add($group);
-	}
-
 	$section->addInput(new Form_StaticText(
 		null,
-		new Form_Button(null, 'grant more privileges', 'system_groupmanager_addprivs.php?groupid='. $id)
+		build_priv_table()
 	));
+
 
 	$form->add($section);
 }
 
 print $form;
+?>
+<script>
+//<![CDATA[
+events.push(function(){
 
+	// Select every option in the specified multiselect
+	function AllServers(id, selectAll) {
+	   for (i = 0; i < id.length; i++)	   {
+		   id.eq(i).prop('selected', selectAll);
+	   }
+	}
+
+	// Move all selected options from one multiselect to another
+	function moveOptions(From, To)	{
+		var len = From.length;
+		var option, value;
+
+		if(len > 1) {
+			for(i=0; i<len; i++) {
+				if(From.eq(i).is(':selected')) {
+					option = From.eq(i).val();
+					value = From.eq(i).text();
+					To.append(new Option(value, option));
+					From.eq(i).remove();
+				}
+			}
+		}
+	}
+
+	// Make buttons plain buttons, not submit
+	$("#movetodisabled").prop('type','button');
+	$("#movetoenabled").prop('type','button');
+
+
+	// On click . .
+	$("#movetodisabled").click(function() {
+		moveOptions($('[name="members[]"] option'), $('[name="notmembers[]"]'));
+	});
+
+	$("#movetoenabled").click(function() {
+		moveOptions($('[name="notmembers[]"] option'), $('[name="members[]"]'));
+	});
+
+	// On submit mark all the user's groups as "selected"
+	$('form').submit(function(){
+		AllServers($('[name="members[]"] option'), true);
+	});
+});
+//]]>
+</script>
+<?php
 include('foot.inc');

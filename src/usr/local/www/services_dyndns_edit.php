@@ -121,7 +121,8 @@ if ($_POST) {
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
 			$host_to_check = substr($_POST['host'], 2);
 		} else {
-			$host_to_check = $_POST['host'];
+			/* No-ip (and maybe others) can have a @ in hostname */
+			$host_to_check = str_replace('@', '', $_POST['host']);
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {

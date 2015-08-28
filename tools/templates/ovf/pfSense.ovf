@@ -9,8 +9,11 @@
   </DiskSection>
   <NetworkSection>
     <Info>The list of logical networks</Info>
-    <Network ovf:name="VM Network">
-      <Description>The VM Network network</Description>
+    <Network ovf:name="VM WAN Network">
+      <Description>The VM WAN Network network</Description>
+    </Network>
+    <Network ovf:name="VM LAN Network">
+      <Description>The VM LAN Network network</Description>
     </Network>
   </NetworkSection>
   <VirtualSystem ovf:id="pfSense">
@@ -69,21 +72,21 @@
       <Item>
         <rasd:AddressOnParent>7</rasd:AddressOnParent>
         <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
-        <rasd:Connection>VM Network</rasd:Connection>
-	<rasd:Description>vmxnet3 ethernet adapter on &quot;VM Network&quot;</rasd:Description>
+        <rasd:Connection>VM WAN Network</rasd:Connection>
+	<rasd:Description>VmxNet3 ethernet adapter on &quot;VM WAN Network&quot;</rasd:Description>
         <rasd:ElementName>ethernet0</rasd:ElementName>
         <rasd:InstanceID>6</rasd:InstanceID>
-        <rasd:ResourceSubType>vmxnet3</rasd:ResourceSubType>
+        <rasd:ResourceSubType>VmxNet3</rasd:ResourceSubType>
         <rasd:ResourceType>10</rasd:ResourceType>
       </Item>
       <Item>
         <rasd:AddressOnParent>8</rasd:AddressOnParent>
         <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
-        <rasd:Connection>VM Network</rasd:Connection>
-        <rasd:Description>vmxnet3 ethernet adapter on &quot;VM Network&quot;</rasd:Description>
+        <rasd:Connection>VM LAN Network</rasd:Connection>
+        <rasd:Description>VmxNet3 ethernet adapter on &quot;VM LAN Network&quot;</rasd:Description>
         <rasd:ElementName>ethernet0</rasd:ElementName>
         <rasd:InstanceID>7</rasd:InstanceID>
-        <rasd:ResourceSubType>vmxnet3</rasd:ResourceSubType>
+        <rasd:ResourceSubType>VmxNet3</rasd:ResourceSubType>
         <rasd:ResourceType>10</rasd:ResourceType>
       </Item>
       <Item>

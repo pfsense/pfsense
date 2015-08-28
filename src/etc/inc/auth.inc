@@ -622,7 +622,7 @@ function local_user_get_groups($user, $all = false) {
 
 function local_user_set_groups($user, $new_groups = NULL ) {
 	global $debug, $config, $groupindex;
-
+	
 	if (!is_array($config['system']['group'])) {
 		return;
 	}

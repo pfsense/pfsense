@@ -1,35 +1,62 @@
 <?php
 /*
 	system_authservers.php
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2010 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c) 2008 Shrew Soft Inc.
+ *	Copyright (c) 2010 Ermal Luçi
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	auth
+	pfSense_MODULE: auth
 */
 
 ##|+PRIV
@@ -131,18 +158,18 @@ if ($act == "edit") {
 			$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
 
 			if ($pconfig['radius_auth_port'] &&
-			    $pconfig['radius_acct_port']) {
+				$pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "both";
 			}
 
 			if ($pconfig['radius_auth_port'] &&
-			    !$pconfig['radius_acct_port']) {
+				!$pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "auth";
 				$pconfig['radius_acct_port'] = 1813;
 			}
 
 			if (!$pconfig['radius_auth_port'] &&
-			    $pconfig['radius_acct_port']) {
+				$pconfig['radius_acct_port']) {
 				$pconfig['radius_srvcs'] = "acct";
 				$pconfig['radius_auth_port'] = 1812;
 			}
@@ -200,13 +227,13 @@ if ($_POST) {
 			gettext("Services"));
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
-		    $pconfig['radisu_srvcs'] == "auth") {
+			$pconfig['radisu_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
 			$reqdfieldsn[] = gettext("Authentication port value");
 		}
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
-		    $pconfig['radisu_srvcs'] == "acct") {
+			$pconfig['radisu_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
 			$reqdfieldsn[] = gettext("Accounting port value");
 		}
@@ -543,15 +570,18 @@ $group->add(new Form_Input(
 ));
 $section->add($group);
 
-if ($act == 'add')
-{
-	$ldap_templates = array_map($ldap_templates, function($t){ return $t['desc']; });
+if (!isset($id)) {
+	$template_list = array();
+
+	foreach($ldap_templates as $option => $template) {
+		$template_list[$option] = $template['desc'];
+	}
 
 	$section->addInput(new Form_Select(
 		'ldap_tmpltype',
 		'Initial Template',
 		$pconfig['ldap_template'],
-		$ldap_templates
+		$template_list
 	));
 }
 
@@ -653,5 +683,37 @@ if (isset($id) && $a_server[$id])
 
 $form->add($section);
 print $form;
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+	function ldap_tmplchange() {
+		switch ($('#ldap_tmpltype').find(":selected").index()) {
+<?php
+		$index = 0;
+		foreach ($ldap_templates as $tmpldata):
+?>
+			case <?=$index;?>:
+				$('#ldap_attr_user').val("<?=$tmpldata['attr_user'];?>");
+				$('#ldap_attr_group').val("<?=$tmpldata['attr_group'];?>");
+				$('#ldap_attr_member').val("<?=$tmpldata['attr_member'];?>");
+				break;
+<?php
+			$index++;
+		endforeach;
+?>
+		}
+	}
 
+	// On page load . .
+	ldap_tmplchange();
+
+	// On click . .
+	$('#ldap_tmpltype').on('change', function() {
+		ldap_tmplchange();
+	});
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

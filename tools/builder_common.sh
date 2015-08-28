@@ -851,53 +851,47 @@ create_ova_image() {
 
 # called from create_ova_image
 ova_setup_ovf_template() {
-	if [ -f ${OVFTEMPLATE} ]; then
-		cp ${OVFTEMPLATE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	else
+	if [ ! -f ${OVFTEMPLATE} ]; then
 		echo ">>> ERROR: OVF template file (${OVFTEMPLATE}) not found."
 		print_error_pfS
 	fi
 
-	file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	file_search_replace PRODUCT_URL $PRODUCT_URL ${OVA_TMP}/${PRODUCT_NAME}.ovf
-
-	local BUILDPLATFORM=$(uname -p)
-	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
-	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
-	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
-	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
 	#  OperatingSystemSection (${PRODUCT_NAME}.ovf)
 	#  42   FreeBSD 32-Bit
 	#  78   FreeBSD 64-Bit
-	if [ "$BUILDPLATFORM" = "i386" ]; then
-		file_search_replace '"101"' '"42"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	if [ "${TARGET}" = "amd64" ]; then
+		local _os_id="78"
+		local _os_type="FreeBSD 64-Bit"
+	elif [ "${TARGET}" = "i386" ]; then
+		local _os_id="42"
+		local _os_type="FreeBSD"
+	else
+		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
+		print_error_pfS
 	fi
-	if [ "$BUILDPLATFORM" = "amd64" ]; then
-		file_search_replace '"101"' '"78"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	fi
-	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
-	# 10737418240 = 10GB
-	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to 10737254400..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting DISKSECTIONCAPACITY to 10737418240..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${OVA_TMP}/${PRODUCT_NAME}.ovf
-}
 
-# called from create_ova_image
-# This routine will replace a string in a file
-file_search_replace() {
-	local SEARCH="$1"
-	local REPLACE="$2"
-	local FILENAME="$3"
+	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
+	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
+	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
 
-	if [ -f "${FILENAME}" ]; then
-		sed -i '' -e "s/${SEARCH}/${REPLACE}/g" ${FILENAME}
-	fi
+	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
+	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
+	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to ${OVA_DISKSECTIONALLOCATIONUNITS}..." | tee -a ${LOGFILE}
+	echo ">>> Setting DISKSECTIONCAPACITY to ${OVADISKSIZE}..." | tee -a ${LOGFILE}
+
+	sed \
+		-e "s,%%REFERENCESSIZE%%,${REFERENCESSIZE},g" \
+		-e "s,%%DISKSECTIONALLOCATIONUNITS%%,${OVA_DISKSECTIONALLOCATIONUNITS},g" \
+		-e "s,%%DISKSECTIONCAPACITY%%,${OVADISKSIZE},g" \
+		-e "s,%%DISKSECTIONPOPULATEDSIZE%%,${POPULATEDSIZEBYTES},g" \
+		-e "s,%%OS_ID%%,${_os_id},g" \
+		-e "s,%%OS_TYPE%%,${_os_type},g" \
+		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
+		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
+		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_TOOR}/license.txt" \
+		-e "/^%%PRODUCT_LICENSE%%/d" \
+		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }
 
 # Cleans up previous builds

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Envelope vmw:buildId="build-171294" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <References>
-    <File ovf:href="pfSense-disk1.vmdk" ovf:id="file1" ovf:size="REFERENCESSIZE"/>
+    <File ovf:href="pfSense-disk1.vmdk" ovf:id="file1" ovf:size="%%REFERENCESSIZE%%"/>
   </References>
   <DiskSection>
     <Info>List of the virtual disks used in the package</Info>
-    <Disk ovf:capacityAllocationUnits="byte" ovf:allocationUnits="DISKSECTIONALLOCATIONUNITS" ovf:capacity="DISKSECTIONCAPACITY" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" populatedSize="DISKSECTIONPOPULATEDSIZE"/>
+    <Disk ovf:capacityAllocationUnits="byte" ovf:allocationUnits="%%DISKSECTIONALLOCATIONUNITS%%" ovf:capacity="%%DISKSECTIONCAPACITY%%" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" populatedSize="%%DISKSECTIONPOPULATEDSIZE%%"/>
   </DiskSection>
   <NetworkSection>
     <Info>The list of logical networks</Info>
@@ -19,9 +19,9 @@
   <VirtualSystem ovf:id="pfSense">
     <Info>pfSense virtual machine</Info>
     <Name>pfSense</Name>
-    <OperatingSystemSection ovf:id="101" vmw:osType="FreeBSD XX-Bit">
-      <Info>FreeBSD XX-Bit</Info>
-      <Description>FreeBSD XX-Bit (pfSense)</Description>
+    <OperatingSystemSection ovf:id="%%OS_ID%%">
+      <Info>%%OS_TYPE%% (pfSense)</Info>
+      <Description>%%OS_TYPE%%</Description>
     </OperatingSystemSection>
     <VirtualHardwareSection>
       <Info>Virtual hardware requirements</Info>
@@ -102,9 +102,9 @@
       <Info>Describes product information for the service</Info>
       <Product>pfSense</Product>
       <Vendor>Electric Sheep Fencing, LLC</Vendor>
-      <Version>PRODUCT_VERSION</Version>
-      <ProductUrl>PRODUCT_URL</ProductUrl>
-      <VendorUrl>PRODUCT_URL</VendorUrl>
+      <Version>%%PRODUCT_VERSION%%</Version>
+      <ProductUrl>%%PRODUCT_URL%%</ProductUrl>
+      <VendorUrl>%%PRODUCT_URL%%</VendorUrl>
     </ProductSection>
     <AnnotationSection xsi:type="ovf:AnnotationSection_Type">
       <Info>An annotation</Info>
@@ -113,26 +113,7 @@
     <EulaSection>
       <Info>The End User License Agreement</Info>
       <License>
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+%%PRODUCT_LICENSE%%
       </License>
     </EulaSection>
   </VirtualSystem>

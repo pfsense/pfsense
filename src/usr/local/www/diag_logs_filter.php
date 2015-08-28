@@ -5,62 +5,62 @@
 */
 
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004-2009 Scott Ullrich
- *  Copyright (c) 2003-2009 Manuel Kasper <mk@neon1.net>
- *  Jim Pingle jim@pingle.org
- *  originally based on m0n0wall (http://m0n0.ch/wall)
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004-2009 Scott Ullrich
+ *	Copyright (c) 2003-2009 Manuel Kasper <mk@neon1.net>
+ *	Jim Pingle jim@pingle.org
+ *	originally based on m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 
 /*
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -402,7 +402,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 ?>
 			<tr>
 				<td>
-					<a class="btn btn-xs btn-info" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
+					<a data-toggle="tooltip" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" class="btn btn-xs btn-info" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
 					<?=gettext('Block')?></a>
 <?php
 		if ($filterent['count'])
@@ -512,39 +512,87 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
 //<![CDATA[
-function resolve_with_ajax(ip_to_resolve) {
-	var url = "/diag_logs_filter.php";
+	function outputrule(req) {
+		alert(req.content);
+	}
+//]]>
+</script>
 
-	jQuery.ajax(
-		url,
-		{
-			type: 'post',
-			dataType: 'json',
-			data: {
-				resolve: ip_to_resolve,
-				},
-			complete: resolve_ip_callback
-		});
+<script type="text/javascript">
+//<![CDATA[
+events.push(function(){
+	function resolve_with_ajax(ip_to_resolve) {
+		var url = "/diag_logs_filter.php";
 
-}
+		jQuery.ajax(
+			url,
+			{
+				method: 'post',
+				dataType: 'json',
+				data: {
+					resolve: ip_to_resolve,
+					},
+				complete: resolve_ip_callback
+			});
 
-function resolve_ip_callback(transport) {
-	var response = jQuery.parseJSON(transport.responseText);
-	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
-	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
+	}
 
-	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
-	jQuery('img.ICON-' + resolve_class).removeAttr('title');
-	jQuery('img.ICON-' + resolve_class).removeAttr('alt');
-	jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
-	jQuery('img.ICON-' + resolve_class).prop('onclick', null);
-	  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
-}
+	function resolve_ip_callback(transport) {
+		var response = jQuery.parseJSON(transport.responseText);
+		var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
+		var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
-// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
-function htmlspecialchars(str) {
-	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-}
+		jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
+		jQuery('img.ICON-' + resolve_class).removeAttr('title');
+		jQuery('img.ICON-' + resolve_class).removeAttr('alt');
+		jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
+		jQuery('img.ICON-' + resolve_class).prop('onclick', null);
+		  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
+	}
+
+	// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+	function htmlspecialchars(str) {
+		return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+	}
+
+	if (typeof getURL == 'undefined') {
+		getURL = function(url, callback) {
+			if (!url)
+				throw 'No URL for getURL';
+			try {
+				if (typeof callback.operationComplete == 'function')
+					callback = callback.operationComplete;
+			} catch (e) {}
+				if (typeof callback != 'function')
+					throw 'No callback function for getURL';
+			var http_request = null;
+			if (typeof XMLHttpRequest != 'undefined') {
+				http_request = new XMLHttpRequest();
+			}
+			else if (typeof ActiveXObject != 'undefined') {
+				try {
+					http_request = new ActiveXObject('Msxml2.XMLHTTP');
+				} catch (e) {
+					try {
+						http_request = new ActiveXObject('Microsoft.XMLHTTP');
+					} catch (e) {}
+				}
+			}
+			if (!http_request)
+				throw 'Both getURL and XMLHttpRequest are undefined';
+			http_request.onreadystatechange = function() {
+				if (http_request.readyState == 4) {
+					callback( { success : true,
+					  content : http_request.responseText,
+					  contentType : http_request.getResponseHeader("Content-Type") } );
+				}
+			};
+			http_request.open('GET', url, true);
+			http_request.send(null);
+		};
+	}
+
+});
 //]]>
 </script>
 

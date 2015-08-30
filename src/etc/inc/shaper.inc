@@ -208,7 +208,7 @@ function get_interface_bandwidth($object) {
 	$altq =& $altq_list_queues[$int];
 	if ($altq) {
 		$bw_3 = $altq->GetBandwidth();
-		$bw_3 = $bw_3 *  get_bandwidthtype_scale($altq->GetBwscale());
+		$bw_3 = $bw_3 * get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
 	} else {
 		return 0;
@@ -576,10 +576,10 @@ class altq_root_queue {
 	/*
 	 * First it spits:
 	 * altq on $interface ..............
-	 *      then it goes like
-	 *      foreach ($queues as $qkey => $queue) {
-	 *              this->queues[$qkey]->build_rule();
-	 *      }
+	 *	then it goes like
+	 *	foreach ($queues as $qkey => $queue) {
+	 *		this->queues[$qkey]->build_rule();
+	 *	}
 	 */
 	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {

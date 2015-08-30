@@ -694,7 +694,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$cert = lookup_cert($settings['certref']);
 				/* XXX: Seems not used at all! */
 				$servercn = urlencode(cert_get_cn($cert['crt']));
-				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} \"\n";
+				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
 			}
 		}
 
@@ -1229,8 +1229,8 @@ function openvpn_get_active_servers($type="multipoint") {
 }
 
 function openvpn_get_server_status($server, $socket) {
-	$errval;
-	$errstr;
+	$errval = null;
+	$errstr = null;
 	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
 	if ($fp) {
 		stream_set_timeout($fp, 1);
@@ -1332,8 +1332,8 @@ function openvpn_get_active_clients() {
 }
 
 function openvpn_get_client_status($client, $socket) {
-	$errval;
-	$errstr;
+	$errval = null;
+	$errstr = null;
 	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
 	if ($fp) {
 		stream_set_timeout($fp, 1);

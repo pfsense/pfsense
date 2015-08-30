@@ -439,7 +439,7 @@ function build_target_list() {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',

@@ -132,7 +132,7 @@ display_top_tabs($tab_array);
 // Start of tab content
 $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(false);
 

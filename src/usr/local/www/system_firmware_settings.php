@@ -113,7 +113,7 @@ if($g['hidedownloadbackup'] == false)
 
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

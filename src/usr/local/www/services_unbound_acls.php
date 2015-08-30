@@ -184,7 +184,7 @@ $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_adva
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 if($act=="new" || $act=="edit") {
 	

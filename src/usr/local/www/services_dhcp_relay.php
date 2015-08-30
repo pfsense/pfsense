@@ -66,7 +66,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
 

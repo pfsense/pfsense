@@ -206,7 +206,7 @@ if (is_array($config['openvpn'])) {
 	}
 }
 
-if (isset($_POST['if_add'])) {
+if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
 	foreach ($config['interfaces'] as $ifname => $ifdata) {

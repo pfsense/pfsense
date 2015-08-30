@@ -469,7 +469,7 @@ if ($pconfig['enable']) : ?>
 <?php
 endif;
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

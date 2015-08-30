@@ -88,7 +88,7 @@ print_info_box(gettext('This page allows an alternate package repository to be c
 					   'The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied.' .
 					   'A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use.'), 'default');
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

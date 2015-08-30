@@ -110,7 +110,7 @@ if ($input_errors)
 if ($savemsg)
 	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form('Test');
 

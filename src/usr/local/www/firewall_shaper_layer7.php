@@ -67,7 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");

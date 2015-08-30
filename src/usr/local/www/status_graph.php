@@ -129,7 +129,7 @@ $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
 include("head.inc");
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(false);
 $form->addClass('auto-submit');

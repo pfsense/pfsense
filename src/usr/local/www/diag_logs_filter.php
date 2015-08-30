@@ -216,7 +216,7 @@ $Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 if ($filterfieldsarray['interface'] == "All")
 	$interface = "";
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 if(!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(new Form_Button(

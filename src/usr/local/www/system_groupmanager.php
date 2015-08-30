@@ -307,7 +307,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 	exit;
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $form->setAction('system_groupmanager.php?act=edit');
 $form->addGlobal(new Form_Input(

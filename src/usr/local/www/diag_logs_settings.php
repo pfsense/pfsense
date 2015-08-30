@@ -242,7 +242,7 @@ $tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
     'Submit',

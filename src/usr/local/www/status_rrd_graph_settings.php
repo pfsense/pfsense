@@ -180,7 +180,7 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form;
 

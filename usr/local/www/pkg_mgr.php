@@ -83,7 +83,6 @@ if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g[
 		$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 		fwrite($fout, serialize($pkg_info));
 		fclose($fout);
-		//$pkg_sizes = get_pkg_sizes();
 	} else {
 		$using_cache = true;
 		if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
@@ -150,10 +149,9 @@ include("head.inc");
 		$categories=array();
 		if(is_array($pkg_keys)) {
 			foreach($pkg_keys as $key) {
-				if (!package_skip_tests($pkg_info[$key],$requested_version))
-					$categories[$pkg_info[$key]['category']]++;
-				}
+				$categories[$pkg_info[$key]['category']]++;
 			}
+		}
 		ksort($categories);
 		$cm_count=0;
 		$tab_array = array();
@@ -204,10 +202,7 @@ include("head.inc");
 			if(is_array($pkg_keys)) {
 				foreach($pkg_keys as $key):
 					$index = &$pkg_info[$key];
-					if(get_pkg_id($index['name']) >= 0 )
-						continue;
-
-					if (package_skip_tests($index,$requested_version))
+					if(get_package_id($index['name']) >= 0 )
 						continue;
 
 					/* get history/changelog git dir */

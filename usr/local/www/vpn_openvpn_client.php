@@ -37,6 +37,7 @@
 
 require("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pkg-utils.inc");
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client"));
 $shortcut_section = "openvpn";
@@ -446,7 +447,7 @@ if ($savemsg)
 				$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
-				add_package_tabs("OpenVPN", $tab_array);
+				add_package_tabs("openvpn-client-export", $tab_array);
 				display_top_tabs($tab_array);
 			?>
 		</td>

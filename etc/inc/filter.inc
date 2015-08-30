@@ -5,7 +5,7 @@
 	Copyright (C) 2004-2006 Scott Ullrich
 	Copyright (C) 2005		Bill Marquette
 	Copyright (C) 2006		Peter Allgeyer
-	Copyright (C) 2008-2010	Ermal Luci
+	Copyright (C) 2008-2010	Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -119,13 +119,21 @@ $icmp6types = array(
 );
 
 global $tracker;
+global $negate_tracker;
 $tracker = 1000000000;
+$negate_tracker = 10000000;
 
 function filter_rule_tracker($tracker) {
 	global $tracker;
 
 	return (++$tracker);
+}
 
+function filter_negaterule_tracker() {
+        global $tracker;
+                        
+        ++$negate_tracker;
+        return "tracker {$negate_tracker} ";
 }
 
 function fix_rule_label($descr) {
@@ -3036,7 +3044,7 @@ function filter_generate_user_rule($rule) {
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
-			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . $aline['tracker'] . $aline['allowopts'] . $aline['flags'] .
+			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
 
@@ -4090,19 +4098,18 @@ function filter_generate_ipsec_rules($log = array()) {
 			unset($gateway);
 			/* add endpoint routes to correct gateway on interface if the
 			remote endpoint is not on this interface's subnet  */
-			if ((is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
+			if ((isset($ph1ent['mobile']) || is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
 				$parentifsubnet = get_interface_ip($parentinterface) . "/" . get_interface_subnet($parentinterface);
-				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+				if (isset($ph1ent['mobile']) || !ip_in_subnet($rgip, $parentifsubnet)) {
 					$gateway = get_interface_gateway($parentinterface);
 					$interface = $FilterIflist[$parentinterface]['if'];
 
 					$route_to = " route-to ( $interface $gateway ) ";
 					$reply_to = " reply-to ( $interface $gateway ) ";
 				}
-			}
-			if ((is_ipaddrv6($rgip)) && (interface_has_gatewayv6($parentinterface))) {
+			} else if ((isset($ph1ent['mobile']) || is_ipaddrv6($rgip)) && (interface_has_gatewayv6($parentinterface))) {
 				$parentifsubnet = get_interface_ipv6($parentinterface) . "/" . get_interface_subnetv6($parentinterface);
-				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+				if (isset($ph1ent['mobile']) || !ip_in_subnet($rgip, $parentifsubnet)) {
 					$gateway = get_interface_gateway_v6($parentinterface);
 					$interface = $FilterIflist[$parentinterface]['if'];
 

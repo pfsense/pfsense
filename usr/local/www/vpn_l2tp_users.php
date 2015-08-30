@@ -58,8 +58,9 @@ if ($_POST) {
 		}
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
-			if (is_subsystem_dirty('l2tpusers'))
+			if (is_subsystem_dirty('l2tpusers')) {
 				clear_subsystem_dirty('l2tpusers');
+			}
 		}
 	}
 }
@@ -82,48 +83,60 @@ include("head.inc");
 <div id="inputerrors"></div>
 <form action="vpn_l2tp_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (isset($config['l2tp']['radius']['enable']))
-	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used.")); ?>
+<?php
+if (isset($config['l2tp']['radius']['enable'])) {
+	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used."));
+}
+?>
 <?php if (is_subsystem_dirty('l2tpusers')): ?><br/>
 <?php print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>");?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn l2pt users">
-  <tr><td class="tabnavtbl">
+	<tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Configuration"), false, "vpn_l2tp.php");
 	$tab_array[1] = array(gettext("Users"), true, "vpn_l2tp_users.php");
 	display_top_tabs($tab_array);
-?>    </td></tr>
-  <tr>
-	<td>
-         <div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-                <tr>
-                  <td class="listhdrr"><?=gettext("Username");?></td>
-                  <td class="listhdr"><?=gettext("IP address");?></td>
-                  <td class="list"></td>
-				</tr>
-			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
-                <tr>
-                  <td class="listlr">
-                    <?=htmlspecialchars($secretent['name']);?>
-                  </td>
-                  <td class="listr">
-              <?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"; ?>
-                    <?=htmlspecialchars($secretent['ip']);?>&nbsp;
-                  </td>
-                  <td class="list nowrap"><a href="vpn_l2tp_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0" alt="edit" /></a>
-                     &nbsp;<a href="vpn_l2tp_users.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>
-				</tr>
-			  <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="2"></td>
-                  <td class="list"> <a href="vpn_l2tp_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
-				</tr>
-              </table>
-</div>
-			</td>
+?>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+					<tr>
+						<td class="listhdrr"><?=gettext("Username");?></td>
+						<td class="listhdr"><?=gettext("IP address");?></td>
+						<td class="list"></td>
+					</tr>
+<?php
+	$i = 0;
+	foreach ($a_secret as $secretent):
+?>
+					<tr>
+						<td class="listlr">
+							<?=htmlspecialchars($secretent['name']);?>
+						</td>
+						<td class="listr">
+							<?php if ($secretent['ip'] == "") $secretent['ip'] = "Dynamic"; ?>
+							<?=htmlspecialchars($secretent['ip']);?>&nbsp;
+						</td>
+						<td class="list nowrap">
+							<a href="vpn_l2tp_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0" alt="edit" /></a>
+							&nbsp;<a href="vpn_l2tp_users.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" width="17" height="17" border="0" alt="delete" /></a>
+						</td>
+					</tr>
+<?php
+		$i++;
+	endforeach;
+?>
+					<tr>
+						<td class="list" colspan="2"></td>
+						<td class="list"> <a href="vpn_l2tp_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
+					</tr>
+				</table>
+			</div>
+		</td>
 	</tr>
 </table>
 </form>

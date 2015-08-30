@@ -48,8 +48,9 @@ require("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_out.php');
 
-if (!is_array($config['nat']['outbound']))
+if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
+}
 
 if (!is_array($config['nat']['outbound']['rule'])) {
 	$config['nat']['outbound']['rule'] = array();
@@ -57,36 +58,44 @@ if (!is_array($config['nat']['outbound']['rule'])) {
 
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!is_array($config['aliases']['alias']))
+if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
+}
 $a_aliases = &$config['aliases']['alias'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1")
+if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
 	$after = $_GET['after'];
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1"))
+}
+if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
+}
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-        $id = $_GET['dup'];
-        $after = $_GET['dup'];
+	$id = $_GET['dup'];
+	$after = $_GET['dup'];
 }
 
 if (isset($id) && $a_out[$id]) {
-	if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+	if (isset($a_out[$id]['created']) && is_array($a_out[$id]['created'])) {
 		$pconfig['created'] = $a_out[$id]['created'];
+	}
 
-	if ( isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']) )
+	if (isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated'])) {
 		$pconfig['updated'] = $a_out[$id]['updated'];
+	}
 
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
-	if (!is_numeric($pconfig['source_subnet']))
+	if (!is_numeric($pconfig['source_subnet'])) {
 		$pconfig['source_subnet'] = 32;
+	}
 	$pconfig['sourceport'] = $a_out[$id]['sourceport'];
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 		$pconfig['destination_subnet'], $pconfig['destination_not'],
@@ -113,8 +122,9 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
+}
 
 if ($_POST) {
 	if ($_POST['destination_type'] == "any") {
@@ -131,14 +141,15 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	/*  run through $_POST items encoding HTML entties so that the user
+	/*  run through $_POST items encoding HTML entitles so that the user
 	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
-		if($newpost <> $temp)
+		if ($newpost <> $temp) {
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+		}
 	}
 
 	/* input validation */
@@ -149,27 +160,36 @@ if ($_POST) {
 
 	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
 
-	if ($_POST['source'])
+	if ($_POST['source']) {
 		$_POST['source'] = trim($_POST['source']);
-	if ($_POST['destination'])
+	}
+	if ($_POST['destination']) {
 		$_POST['destination'] = trim($_POST['destination']);
-	if ($_POST['targetip'])
+	}
+	if ($_POST['targetip']) {
 		$_POST['targetip'] = trim($_POST['targetip']);
-	if ($_POST['sourceport'])
+	}
+	if ($_POST['sourceport']) {
 		$_POST['sourceport'] = trim($_POST['sourceport']);
-	if ($_POST['dstport'])
+	}
+	if ($_POST['dstport']) {
 		$_POST['dstport'] = trim($_POST['dstport']);
-	if ($_POST['natport'])
+	}
+	if ($_POST['natport']) {
 		$_POST['natport'] = trim($_POST['natport']);
+	}
 
-	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport'])))
+	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
+	}
 
-	if($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport'])))
+	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
+	}
 
-	if($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
+	}
 
 	if (($_POST['source_type'] != "any") && ($_POST['source_type'] != "(self)")) {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {
@@ -209,22 +229,23 @@ if ($_POST) {
 	/* Verify Pool Options */
 	$poolopts = "";
 	if ($_POST['poolopts']) {
-		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet"))
+		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet")) {
 			$poolopts = $_POST['poolopts'];
-		elseif (is_alias($_POST['target'])) {
-			if (substr($_POST['poolopts'], 0, 11) == "round-robin")
+		} elseif (is_alias($_POST['target'])) {
+			if (substr($_POST['poolopts'], 0, 11) == "round-robin") {
 				$poolopts = $_POST['poolopts'];
-			else
+			} else {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+			}
 		}
 	}
 
 	/* if user has selected any as source, set it here */
-	if($_POST['source_type'] == "any") {
+	if ($_POST['source_type'] == "any") {
 		$osn = "any";
-	} else if($_POST['source_type'] == "(self)") {
+	} else if ($_POST['source_type'] == "(self)") {
 		$osn = "(self)";
-	} else if(is_alias($_POST['source'])) {
+	} else if (is_alias($_POST['source'])) {
 		$osn = $_POST['source'];
 	} else {
 		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
@@ -233,7 +254,7 @@ if ($_POST) {
 	/* check for existing entries */
 	if ($_POST['destination_type'] == "any") {
 		$ext = "any";
-	} else if(is_alias($_POST['destination'])) {
+	} else if (is_alias($_POST['destination'])) {
 		$ext = $_POST['destination'];
 	} else {
 		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
@@ -249,11 +270,11 @@ if ($_POST) {
 		}
 	}
 
-	// Allow extending of the firewall edit page and include custom input validation 
+	// Allow extending of the firewall edit page and include custom input validation
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/input_validation");
 
 	if (!$input_errors) {
-	        $natent = array();
+		$natent = array();
 		$natent['source']['network'] = $osn;
 		$natent['sourceport'] = ($protocol_uses_ports) ? $_POST['sourceport'] : "";
 		$natent['descr'] = $_POST['descr'];
@@ -264,47 +285,48 @@ if ($_POST) {
 		$natent['poolopts'] = $poolopts;
 
 		/* static-port */
-		if(isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
+		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
 			$natent['staticnatport'] = true;
 		} else {
 			unset($natent['staticnatport']);
 		}
-		
-		if(isset($_POST['disabled'])) {
+
+		if (isset($_POST['disabled'])) {
 			$natent['disabled'] = true;
 		} else {
 			unset($natent['disabled']);
 		}
 
 		/* if user has selected not nat, set it here */
-		if(isset($_POST['nonat'])) {
+		if (isset($_POST['nonat'])) {
 			$natent['nonat'] = true;
 		} else {
 			unset($natent['nonat']);
 		}
 
-		if ($_POST['protocol'] && $_POST['protocol'] != "any")
+		if ($_POST['protocol'] && $_POST['protocol'] != "any") {
 			$natent['protocol'] = $_POST['protocol'];
-		else
+		} else {
 			unset($natent['protocol']);
+		}
 
-	        if ($ext == "any") {
+		if ($ext == "any") {
 			$natent['destination']['any'] = true;
 		} else {
 			$natent['destination']['address'] = $ext;
 		}
-		if($_POST['natport'] != "" && $protocol_uses_ports && !isset($_POST['nonat'])) {
-	        	$natent['natport'] = $_POST['natport'];
+		if ($_POST['natport'] != "" && $protocol_uses_ports && !isset($_POST['nonat'])) {
+				$natent['natport'] = $_POST['natport'];
 		} else {
 			unset($natent['natport']);
 		}
-		if($_POST['dstport'] != "" && $protocol_uses_ports) {
+		if ($_POST['dstport'] != "" && $protocol_uses_ports) {
 			$natent['dstport'] = $_POST['dstport'];
 		} else {
 			unset($natent['dstport']);
 		}
 
-		if($_POST['nosync'] == "yes") {
+		if ($_POST['nosync'] == "yes") {
 			$natent['nosync'] = true;
 		} else {
 			unset($natent['nosync']);
@@ -314,12 +336,13 @@ if ($_POST) {
 			$natent['destination']['not'] = true;
 		}
 
-		if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+		if (isset($a_out[$id]['created']) && is_array($a_out[$id]['created'])) {
 			$natent['created'] = $a_out[$id]['created'];
+		}
 
 		$natent['updated'] = make_config_revision_entry();
 
-		// Allow extending of the firewall edit page and include custom input validation 
+		// Allow extending of the firewall edit page and include custom input validation
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/pre_write_config");
 
 		if (isset($id) && $a_out[$id]) {
@@ -333,8 +356,9 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -352,7 +376,7 @@ include("head.inc");
 //<![CDATA[
 var portsenabled = 1;
 function staticportchange() {
-	if(document.iform.staticnatport.checked) {
+	if (document.iform.staticnatport.checked) {
 		document.iform.natport.value = "";
 		document.iform.natport.disabled = 1;
 	} else {
@@ -446,7 +470,7 @@ function poolopts_change() {
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Advanced Outbound NAT entry");?></td>
 		</tr>
 <?php
-		// Allow extending of the firewall edit page and include custom input validation 
+		// Allow extending of the firewall edit page and include custom input validation
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
 ?>
 		<tr>
@@ -460,7 +484,7 @@ function poolopts_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Do not NAT");?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" name="nonat" id="nonat" onclick="nonat_change();" <?php if(isset($pconfig['nonat'])) echo " checked=\"checked\""; ?> />
+				<input type="checkbox" name="nonat" id="nonat" onclick="nonat_change();" <?php if (isset($pconfig['nonat'])) echo " checked=\"checked\""; ?> />
 				<span class="vexpl"><?=gettext("Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.");?>
 				<br /><?=gettext("Hint: in most cases, you won't use this option.");?></span>
 			</td>
@@ -471,29 +495,39 @@ function poolopts_change() {
 				<select name="interface" class="formselect">
 <?php
 					$iflist = get_configured_interface_with_descr(false, true);
-					foreach ($iflist as $if => $ifdesc)
-						if(have_ruleint_access($if))
+					foreach ($iflist as $if => $ifdesc) {
+						if (have_ruleint_access($if)) {
 							$interfaces[$if] = $ifdesc;
+						}
+					}
 
-					if ($config['l2tp']['mode'] == "server")
-						if(have_ruleint_access("l2tp"))
+					if ($config['l2tp']['mode'] == "server") {
+						if (have_ruleint_access("l2tp")) {
 							$interfaces['l2tp'] = "L2TP VPN";
+						}
+					}
 
-					if ($config['pptpd']['mode'] == "server")
-						if(have_ruleint_access("pptp"))
+					if ($config['pptpd']['mode'] == "server") {
+						if (have_ruleint_access("pptp")) {
 							$interfaces['pptp'] = "PPTP VPN";
+						}
+					}
 
-					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 						$interfaces['pppoe'] = "PPPoE Server";
+					}
 
 					/* add ipsec interfaces */
-					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-						if(have_ruleint_access("enc0"))
+					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+						if (have_ruleint_access("enc0")) {
 							$interfaces["enc0"] = "IPsec";
+						}
+					}
 
 					/* add openvpn/tun interfaces */
-					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 						$interfaces["openvpn"] = "OpenVPN";
+					}
 
 					foreach ($interfaces as $iface => $ifacename):
 ?>
@@ -640,8 +674,9 @@ function poolopts_change() {
 <?php
 								if (is_array($config['virtualip']['vip'])):
 									foreach ($config['virtualip']['vip'] as $sn):
-										if (isset($sn['noexpand']))
+										if (isset($sn['noexpand'])) {
 											continue;
+										}
 										if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
 											$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 											$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
@@ -671,8 +706,9 @@ function poolopts_change() {
 									endforeach;
 								endif;
 								foreach ($a_aliases as $alias):
-									if ($alias['type'] != "host")
+									if ($alias['type'] != "host") {
 										continue;
+									}
 ?>
 								<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?>
@@ -680,7 +716,7 @@ function poolopts_change() {
 <?php
 								endforeach;
 ?>
-								<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected=\"selected\""; ?>>
+								<option value="other-subnet"<?php if ($pconfig['target'] == "other-subnet") echo " selected=\"selected\""; ?>>
 									<?=gettext("Other Subnet (Enter Below)");?>
 								</option>
 							</select>
@@ -765,7 +801,9 @@ function poolopts_change() {
 					</tr>
 					<tr name="tportstatic_tr" id="tportstatic_tr">
 						<td><?=gettext("Static-port:");?>&nbsp;&nbsp;</td>
-						<td><input onchange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " checked=\"checked\"";?> /></td>
+						<td>
+							<input onchange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if ($pconfig['staticnatport']) echo " checked=\"checked\"";?> />
+						</td>
 					</tr>
 				</table>
 			</td>
@@ -773,7 +811,7 @@ function poolopts_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
 			<td width="78%" class="vtable">
-				<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
+				<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if ($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
 				<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 			</td>
 		</tr>
@@ -819,7 +857,7 @@ function poolopts_change() {
 <?php
 		endif;
 	endif;
-	// Allow extending of the firewall edit page and include custom input validation 
+	// Allow extending of the firewall edit page and include custom input validation
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/htmlphplate");
 ?>
 		<tr>

@@ -28,7 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/usr/bin/find
 	pfSense_MODULE:	system
 */
@@ -52,21 +52,21 @@ $pconfig['period'] = $config['rrd']['period'];
 
 $curcat = "settings";
 $categories = array('system' => gettext("System"),
-		'traffic' => gettext("Traffic"),
-		'packets' => gettext("Packets"),
-		'quality' => gettext("Quality"),
-		'queues' => gettext("Queues"),
-		'captiveportal' => gettext("Captive Portal"));
+	'traffic' => gettext("Traffic"),
+	'packets' => gettext("Packets"),
+	'quality' => gettext("Quality"),
+	'queues' => gettext("Queues"),
+	'captiveportal' => gettext("Captive Portal"));
 
-if(isset($config['ntpd']['statsgraph'])) {
+if (isset($config['ntpd']['statsgraph'])) {
 	$categories['ntpd'] = gettext("NTP");
 }
 
 $styles = array('inverse' => gettext("Inverse"),
-		'absolute' => gettext("Absolute"));
+	'absolute' => gettext("Absolute"));
 $periods = array("absolute" => gettext("Absolute Timespans"),
-		"current" => gettext("Current Period"),
-		"previous" => gettext("Previous Period"));
+	"current" => gettext("Current Period"),
+	"previous" => gettext("Previous Period"));
 
 if ($_POST['ResetRRD']) {
 	mwexec('/bin/rm /var/db/rrd/*');
@@ -80,39 +80,37 @@ if ($_POST['ResetRRD']) {
 	/* input validation */
 	/* none */
 
-        if (!$input_errors) {
-                $config['rrd']['enable'] = $_POST['enable'] ? true : false;
-                $config['rrd']['category'] = $_POST['category'];
-                $config['rrd']['style'] = $_POST['style'];
-                $config['rrd']['period'] = $_POST['period'];
-                write_config();
+	if (!$input_errors) {
+		$config['rrd']['enable'] = $_POST['enable'] ? true : false;
+		$config['rrd']['category'] = $_POST['category'];
+		$config['rrd']['style'] = $_POST['style'];
+		$config['rrd']['period'] = $_POST['period'];
+		write_config();
 
-                $retval = 0;
-                $retval = enable_rrd_graphing();
-                $savemsg = get_std_save_message($retval);
+		$retval = 0;
+		$retval = enable_rrd_graphing();
+		$savemsg = get_std_save_message($retval);
 	}
 }
-
-
 
 $rrddbpath = "/var/db/rrd/";
 chdir($rrddbpath);
 $databases = glob("*.rrd");
 
-foreach($databases as $database) {
-	if(stristr($database, "wireless")) {
+foreach ($databases as $database) {
+	if (stristr($database, "wireless")) {
 		$wireless = true;
 	}
-	if(stristr($database, "queues")) {
+	if (stristr($database, "queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
+	if (stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
-	if(stristr($database, "-vpnusers")) {
+	if (stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
-	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
+	if (stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
 }
@@ -126,135 +124,192 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="status_rrd_graph_settings.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rrd graph settings">
-        <tr>
-                <td>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rrd graph settings">
+		<tr>
+			<td>
 			<?php
 				$tab_array = array();
-				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
+				if ($curcat == "system") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
 				$tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
-				if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
+				if ($curcat == "traffic") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
 				$tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
-				if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
+				if ($curcat == "packets") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
 				$tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
-				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
+				if ($curcat == "quality") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
 				$tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
-				if($queues) {
-					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
-					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
-				}
-				if($wireless) {
-					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
-				}
-				if($cellular) {
-					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
-				}
-				if($vpnusers) {
-					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
-				}
-				if($captiveportal) {
-					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
-						$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
-				}
-				if(isset($config['ntpd']['statsgraph'])) {
-					if($curcat == "ntpd") { $tabactive = True; } else { $tabactive = False; }
-				        $tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
-				}
-				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
-				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
-				
-				display_top_tabs($tab_array);
-                        ?>
-                </td>
-        </tr>
-        <tr>
-                <td>
-                        <div id="mainarea">
-                        <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="main area">
-			<tr>
-				<td width="22%" valign="top" class="vtable"><?=gettext("RRD Graphs");?></td>
-				<td width="78%" class="vtable">
-					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"" ?> onclick="enable_change(false)" />
-					<b><?=gettext("Enables the RRD graphing backend.");?></b>
-				</td>
-			</tr>
-			<tr>
-                        	<td width="22%" valign="top" class="vtable"><?=gettext("Default category");?></td>
-	                        <td width="78%" class="vtable">
-					<select name="category" id="category" class="formselect" style="z-index: -10;" >
-					<?php
-					foreach ($categories as $category => $categoryd) {
-						echo "<option value=\"$category\"";
-						if ($category == $pconfig['category']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($categoryd) . "</option>\n";
+				if ($queues) {
+					if ($curcat == "queues") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
 					}
-					?>
-					</select>
-					<b><?=gettext("This selects default category.");?></b>
-				</td>
-			</tr>
-			<tr>
-                        	<td width="22%" valign="top" class="vtable"><?=gettext("Default style");?></td>
-	                        <td width="78%" class="vtable">
-					<select name="style" class="formselect" style="z-index: -10;" >
-					<?php
-					foreach ($styles as $style => $styled) {
-						echo "<option value=\"$style\"";
-						if ($style == $pconfig['style']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($styled) . "</option>\n";
+					$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
+					if ($curcat == "queuedrops") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
 					}
-					?>
-					</select>
-					<b><?=gettext("This selects the default style.");?></b>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vtable"><?=gettext("Default period");?></td>
-				<td width="78%" class="vtable">
-					<select name="period" class="formselect" style="z-index: -10;" >
-					<?php
-					foreach ($periods as $period => $periodd) {
-						echo "<option value=\"$period\"";
-						if ($period == $pconfig['period']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($periodd) . "</option>\n";
+					$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
+				}
+				if ($wireless) {
+					if ($curcat == "wireless") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
 					}
-					?>
-					</select>
-					<b><?=gettext("This selects the default period.");?></b>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input name="ResetRRD" type="submit" class="formbtn" value="<?=gettext("Reset RRD Data");?>" onclick="return confirm('<?=gettext('Do you really want to reset the RRD graphs? This will erase all graph data.');?>')" />
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br />
-					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
-					"take this into account after changing the style.");?>
-				</td>
-			</tr>
-			</table>
-		</div>
-		</td>
-	</tr>
-</table>
+					$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
+				}
+				if ($cellular) {
+					if ($curcat == "cellular") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
+					}
+					$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
+				}
+				if ($vpnusers) {
+					if ($curcat == "vpnusers") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
+					}
+					$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
+				}
+				if ($captiveportal) {
+					if ($curcat == "captiveportal") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
+					}
+					$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
+				}
+				if (isset($config['ntpd']['statsgraph'])) {
+					if ($curcat == "ntpd") {
+						$tabactive = True;
+					} else {
+						$tabactive = False;
+					}
+					$tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
+				}
+				if ($curcat == "custom") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
+				$tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
+				if ($curcat == "settings") {
+					$tabactive = True;
+				} else {
+					$tabactive = False;
+				}
+				$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
 
+				display_top_tabs($tab_array);
+			?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="main area">
+					<tr>
+						<td width="22%" valign="top" class="vtable"><?=gettext("RRD Graphs");?></td>
+						<td width="78%" class="vtable">
+							<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"" ?> onclick="enable_change(false)" />
+							<b><?=gettext("Enables the RRD graphing backend.");?></b>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vtable"><?=gettext("Default category");?></td>
+						<td width="78%" class="vtable">
+							<select name="category" id="category" class="formselect" style="z-index: -10;" >
+							<?php
+								foreach ($categories as $category => $categoryd) {
+									echo "<option value=\"$category\"";
+									if ($category == $pconfig['category']) {
+										echo " selected=\"selected\"";
+									}
+									echo ">" . htmlspecialchars($categoryd) . "</option>\n";
+								}
+							?>
+							</select>
+							<b><?=gettext("This selects default category.");?></b>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vtable"><?=gettext("Default style");?></td>
+						<td width="78%" class="vtable">
+							<select name="style" class="formselect" style="z-index: -10;" >
+							<?php
+								foreach ($styles as $style => $styled) {
+									echo "<option value=\"$style\"";
+									if ($style == $pconfig['style']) {
+										echo " selected=\"selected\"";
+									}
+									echo ">" . htmlspecialchars($styled) . "</option>\n";
+								}
+							?>
+							</select>
+							<b><?=gettext("This selects the default style.");?></b>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vtable"><?=gettext("Default period");?></td>
+						<td width="78%" class="vtable">
+							<select name="period" class="formselect" style="z-index: -10;" >
+							<?php
+								foreach ($periods as $period => $periodd) {
+									echo "<option value=\"$period\"";
+									if ($period == $pconfig['period']) {
+										echo " selected=\"selected\"";
+									}
+									echo ">" . htmlspecialchars($periodd) . "</option>\n";
+								}
+							?>
+							</select>
+							<b><?=gettext("This selects the default period.");?></b>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<input name="ResetRRD" type="submit" class="formbtn" value="<?=gettext("Reset RRD Data");?>" onclick="return confirm('<?=gettext('Do you really want to reset the RRD graphs? This will erase all graph data.');?>')" />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" height="53" valign="top">&nbsp;</td>
+						<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br />
+							<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
+							"take this into account after changing the style.");?>
+						</td>
+					</tr>
+				</table>
+				</div>
+			</td>
+		</tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

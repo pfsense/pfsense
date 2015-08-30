@@ -2,7 +2,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008-2009 Ermal Lu?i
+	Copyright (C) 2008-2009 Ermal Luçi
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -2078,6 +2078,7 @@ function interfaces_sync_setup() {
 		}
 
 		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up", false);
+		mwexec("/sbin/ifconfig pfsync0 -defer", false);
 
 		sleep(1);
 

@@ -37,9 +37,40 @@ require_once("captiveportal.inc");
 require_once("pkg-utils.inc");
 require_once("pfsense-utils.inc");
 
+function usage() {
+	print "Usage: rc.packages PKG_NAME (POST-INSTALL|DEINSTALL|POST-DEINSTALL)\n";
+	exit(1);
+}
+
 $pkg_interface = "console";
 
-resync_all_package_configs(true);
-//start_pkg_system();
+/* Keep old behavior: with no params, sync all and exit */
+if ($argc == 1) {
+	resync_all_package_configs(true);
+	exit;
+}
+
+if ($argc != 3) {
+	print "Error: invalid parameters\n";
+	usage();
+}
+
+$pkg = $argv[1];
+$when = strtolower($argv[2]);
+
+/* Remove pkg_prefix from pkg name */
+pkg_remove_prefix($pkg);
+
+switch ($when) {
+case "post-install":
+	install_package_xml($pkg);
+	break;
+case "deinstall":
+case "post-deinstall":
+	delete_package_xml($pkg, $when);
+	break;
+default:
+	usage();
+}
 
 ?>

@@ -5,7 +5,7 @@
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2010	Ermal Luci
+	Copyright (C) 2010	Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -1605,6 +1605,11 @@ function services_dhcrelay_configure() {
 	 * on the interface in which the destination server sits.
 	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
+	if (!is_array($srvips)) {
+		log_error("No destination ip has been configured!");
+		return;
+	}
+
 	foreach ($srvips as $srcidx => $srvip) {
 		unset($destif);
 		foreach ($iflist as $ifname) {

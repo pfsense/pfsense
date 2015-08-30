@@ -1,7 +1,7 @@
 <?php
 /*
 	vpn_pppoe.php
-	Copyright (C) 2010 Ermal Luci
+	Copyright (C) 2010 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 

@@ -78,7 +78,7 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 		}
 	}
 } elseif ($apkg) {
-	$apkgid = get_pkg_id($apkg);
+	$apkgid = get_package_id($apkg);
 	if ($apkgid != -1) {
 		$pkgwithlogging = true;
 		$i = $apkgid;

@@ -50,16 +50,19 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-if (!is_array($config['nat']['outbound']))
+if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
+}
 
-if (!is_array($config['nat']['outbound']['rule']))
+if (!is_array($config['nat']['outbound']['rule'])) {
 	$config['nat']['outbound']['rule'] = array();
+}
 
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!isset($config['nat']['outbound']['mode']))
+if (!isset($config['nat']['outbound']['mode'])) {
 	$config['nat']['outbound']['mode'] = "automatic";
+}
 
 $mode = $config['nat']['outbound']['mode'];
 
@@ -67,10 +70,11 @@ if ($_POST['apply']) {
 	$retval = 0;
 	$retval |= filter_configure();
 
-	if(stristr($retval, "error") <> true)
-	        $savemsg = get_std_save_message($retval);
-	else
+	if (stristr($retval, "error") <> true) {
+			$savemsg = get_std_save_message($retval);
+	} else {
 		$savemsg = $retval;
+	}
 
 	if ($retval == 0) {
 		clear_subsystem_dirty('natconf');
@@ -86,10 +90,12 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		 *    lets automatically create entries
 		 *    for all of the interfaces to make life easier on the pip-o-chap
 		 */
-		if(empty($FilterIflist))
+		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();
-		if(empty($GatewaysList))
+		}
+		if (empty($GatewaysList)) {
 			filter_generate_gateways();
+		}
 		$tonathosts = filter_nat_rules_automatic_tonathosts(true);
 		$automatic_rules = filter_nat_rules_outbound_automatic("");
 
@@ -101,7 +107,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					convert_real_interface_to_friendly_descr($natent['interface']));
 				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 
-				/* Try to detect already auto created rules and avoid duplicate them */
+				/* Try to detect already auto created rules and avoid duplicating them */
 				$found = false;
 				foreach ($a_out as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
@@ -114,8 +120,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					}
 				}
 
-				if ($found === false)
+				if ($found === false) {
 					$a_out[] = $natent;
+				}
 			}
 		}
 		$savemsg = gettext("Default rules for each interface have been created.");
@@ -124,8 +131,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 
 	$config['nat']['outbound']['mode'] = $_POST['mode'];
 
-	if (write_config())
+	if (write_config()) {
 		mark_subsystem_dirty('natconf');
+	}
 	header("Location: firewall_nat_out.php");
 	exit;
 }
@@ -133,8 +141,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 if ($_GET['act'] == "del") {
 	if ($a_out[$_GET['id']]) {
 		unset($a_out[$_GET['id']]);
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -146,20 +155,23 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 			unset($a_out[$rulei]);
 		}
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
 
 } else if ($_GET['act'] == "toggle") {
 	if ($a_out[$_GET['id']]) {
-		if(isset($a_out[$_GET['id']]['disabled']))
+		if (isset($a_out[$_GET['id']]['disabled'])) {
 			unset($a_out[$_GET['id']]['disabled']);
-		else
+		} else {
 			$a_out[$_GET['id']]['disabled'] = true;
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule"))
+		}
+		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -178,32 +190,39 @@ if (isset($_POST['del_x'])) {
 
 		/* copy all rules < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
 
 		/* copy all selected rules */
 		for ($i = 0; $i < count($a_out); $i++) {
-			if ($i == $movebtn)
+			if ($i == $movebtn) {
 				continue;
-			if (in_array($i, $_POST['rule']))
+			}
+			if (in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
 
 		/* copy $movebtn rule */
-		if ($movebtn < count($a_out))
+		if ($movebtn < count($a_out)) {
 			$a_out_new[] = $a_out[$movebtn];
+		}
 
 		/* copy all rules > $movebtn and not selected */
 		for ($i = $movebtn+1; $i < count($a_out); $i++) {
-			if (!in_array($i, $_POST['rule']))
+			if (!in_array($i, $_POST['rule'])) {
 				$a_out_new[] = $a_out[$i];
+			}
 		}
-		if (count($a_out_new) > 0)
+		if (count($a_out_new) > 0) {
 			$a_out = $a_out_new;
+		}
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -218,10 +237,12 @@ include("head.inc");
 <form action="firewall_nat_out.php" method="post" name="iform">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
-if (is_subsystem_dirty('natconf'))
+}
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext("The NAT configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+}
 ?>
 <br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat outbound">
@@ -369,7 +390,7 @@ if (is_subsystem_dirty('natconf'))
 								title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
 						</a>
 <?php
-						endif;
+					endif;
 ?>
 					</td>
 					<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
@@ -377,28 +398,30 @@ if (is_subsystem_dirty('natconf'))
 						&nbsp;
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
-						<?PHP $natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network']; ?>
+						<?php $natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network']; ?>
 						<?php echo $textss . $alias_src_span_begin . $natent['source']['network'] . $alias_src_span_end . $textse;?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo $textss;
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-						if (!$natent['sourceport'])
+						if (!$natent['sourceport']) {
 							echo "*";
-						else
+						} else {
 							echo $alias_src_port_span_begin . $natent['sourceport'] . $alias_src_port_span_end;
+						}
 						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo $textss;
-						if (isset($natent['destination']['any']))
+						if (isset($natent['destination']['any'])) {
 							echo "*";
-						else {
-							if (isset($natent['destination']['not']))
+						} else {
+							if (isset($natent['destination']['not'])) {
 								echo "!&nbsp;";
+							}
 							echo $alias_dst_span_begin . $natent['destination']['address'] . $alias_dst_span_end;
 						}
 						echo $textse;
@@ -408,44 +431,48 @@ if (is_subsystem_dirty('natconf'))
 <?php
 						echo $textss;
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-						if (!$natent['dstport'])
+						if (!$natent['dstport']) {
 							echo "*";
-						else
+						} else {
 							echo $alias_dst_port_span_begin . $natent['dstport'] . $alias_dst_port_span_end;
+						}
 						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo $textss;
-						if (isset($natent['nonat']))
+						if (isset($natent['nonat'])) {
 							echo '<I>NO NAT</I>';
-						elseif (!$natent['target'])
+						} elseif (!$natent['target']) {
 							echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-						elseif ($natent['target'] == "other-subnet")
+						} elseif ($natent['target'] == "other-subnet") {
 							echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-						else
+						} else {
 							echo $natent['target'];
+						}
 						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo $textss;
-						if (!$natent['natport'])
+						if (!$natent['natport']) {
 							echo "*";
-						else
+						} else {
 							echo $natent['natport'];
+						}
 						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';" align="center">
 <?php
 						echo $textss;
-						if(isset($natent['staticnatport']))
+						if (isset($natent['staticnatport'])) {
 							echo gettext("YES");
-						else
+						} else {
 							echo gettext("NO");
+						}
 						echo $textse;
 ?>
 					</td>
@@ -525,10 +552,12 @@ if (is_subsystem_dirty('natconf'))
 				</tr>
 <?php
 			if ($mode == "automatic" || $mode == "hybrid"):
-				if(empty($FilterIflist))
+				if (empty($FilterIflist)) {
 					filter_generate_optcfg_array();
-				if(empty($GatewaysList))
+				}
+				if (empty($GatewaysList)) {
 					filter_generate_gateways();
+				}
 				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
 				unset($FilterIflist, $GatewaysList);
 ?>
@@ -566,19 +595,21 @@ if (is_subsystem_dirty('natconf'))
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
 							echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-							if (!$natent['sourceport'])
+							if (!$natent['sourceport']) {
 								echo "*";
-							else
+							} else {
 								echo $natent['sourceport'];
+							}
 ?>
 						</td>
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
-							if (isset($natent['destination']['any']))
+							if (isset($natent['destination']['any'])) {
 								echo "*";
-							else {
-								if (isset($natent['destination']['not']))
+							} else {
+								if (isset($natent['destination']['not'])) {
 									echo "!&nbsp;";
+								}
 								echo $natent['destination']['address'];
 							}
 ?>
@@ -586,38 +617,42 @@ if (is_subsystem_dirty('natconf'))
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
 							echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-							if (!$natent['dstport'])
+							if (!$natent['dstport']) {
 								echo "*";
-							else
+							} else {
 								echo $natent['dstport'];
+							}
 ?>
 						</td>
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
-							if (isset($natent['nonat']))
+							if (isset($natent['nonat'])) {
 								echo '<I>NO NAT</I>';
-							elseif (!$natent['target'])
+							} elseif (!$natent['target']) {
 								echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-							elseif ($natent['target'] == "other-subnet")
+							} elseif ($natent['target'] == "other-subnet") {
 								echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-							else
+							} else {
 								echo $natent['target'];
+							}
 ?>
 						</td>
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
-							if (!$natent['natport'])
+							if (!$natent['natport']) {
 								echo "*";
-							else
+							} else {
 								echo $natent['natport'];
+							}
 ?>
 						</td>
 						<td class="listr" style="background-color: #E0E0E0">
 <?php
-							if(isset($natent['staticnatport']))
+							if (isset($natent['staticnatport'])) {
 								echo gettext("YES");
-							else
+							} else {
 								echo gettext("NO");
+							}
 ?>
 						</td>
 						<td class="listbg">

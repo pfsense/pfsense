@@ -209,7 +209,7 @@ $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit host"
 $shortcut_section = "resolver";
 include("head.inc");
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -219,7 +219,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'Host',
 	'text',
-	$pconfig['domain']
+	$pconfig['host']
 ))->setHelp('Name of the host, without the domain part' . '<br />' .
 			'e.g.: "myhost"');
 

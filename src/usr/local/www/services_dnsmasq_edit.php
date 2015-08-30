@@ -210,7 +210,7 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -220,7 +220,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'Host',
 	'text',
-	$pconfig['domain']
+	$pconfig['host']
 ))->setHelp('Name of the host, without the domain part' . '<br />' .
 			'e.g.: "myhost"');
 

@@ -225,7 +225,7 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 					print('<br/>' . $identity);
 				} else {
 					if (empty($identity))
-						print(ettext("Unknown"));
+						print(gettext("Unknown"));
 					else
 						print($identity);
 				}
@@ -375,6 +375,7 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 					print(htmlspecialchars($childsa['dhgroup']) . '<br/>');
 				
 				if (!empty($childsa['esn']))
+					print(htmlspecialchars($childsa['esn']) . '<br/>');
 				
 				print(gettext("IPComp: ") . htmlspecialchars($childsa['ipcomp']));
 ?>

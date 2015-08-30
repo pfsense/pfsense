@@ -189,7 +189,7 @@ function generate_config_cache($config) {
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
 	pfSense_fsync("{$g['tmp_path']}/config.cache");
-	
+
 	unset($configcache);
 	/* Used for config.extra.xml */
 	if (file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {

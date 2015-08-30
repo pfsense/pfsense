@@ -144,7 +144,7 @@ function get_dns_servers() {
 			if (preg_match("/nameserver (.*)/", $dns, $matches)) {
 				$dns_servers[] = $matches[1];
 			}
-		}	
+		}
 	}
 	return array_unique($dns_servers);
 }
@@ -1044,12 +1044,12 @@ function setup_serial_port($when = "save", $path = "") {
 			//  do not contain a console directive.
 			foreach ($boot_config_split as $bcs) {
 				if (!empty($bcs) &&
-				(stripos($bcs, "console") === false) &&
-				(stripos($bcs, "boot_multicons") === false) &&
-				(stripos($bcs, "boot_serial") === false) &&
-				(stripos($bcs, "hw.usb.no_pf") === false) &&
-				(stripos($bcs, "hint.uart.0.flags") === false) &&
-				(stripos($bcs, "hint.uart.1.flags") === false)) {
+				    (stripos($bcs, "console") === false) &&
+				    (stripos($bcs, "boot_multicons") === false) &&
+				    (stripos($bcs, "boot_serial") === false) &&
+				    (stripos($bcs, "hw.usb.no_pf") === false) &&
+				    (stripos($bcs, "hint.uart.0.flags") === false) &&
+				    (stripos($bcs, "hint.uart.1.flags") === false)) {
 					$new_boot_config[] = $bcs;
 				}
 			}
@@ -1071,7 +1071,7 @@ function setup_serial_port($when = "save", $path = "") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-			
+
 			$specplatform = system_identify_specific_platform();
 			if ($specplatform['name'] == 'RCC-VE' ||
 			    $specplatform['name'] == 'RCC-DFF') {

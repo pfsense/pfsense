@@ -1606,8 +1606,8 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
-	
-	$srvips = explode(",", $dhcrelaycfg['server']);	
+
+	$srvips = explode(",", $dhcrelaycfg['server']);
 	if (!is_array($srvips)) {
 		log_error("No destination IP has been configured!");
 		return;

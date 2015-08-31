@@ -127,7 +127,7 @@ if ($_GET['act'] == "del") {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
-				if($rule['destination']['address'] != "") {
+				if ($rule['destination']['address'] != "") {
 					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
@@ -272,7 +272,7 @@ $types = array('proxyarp' => 'Proxy ARP',
 			   'ipalias' => 'IP Alias'
 			   );
 
-$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
 include("head.inc");
 
 if ($input_errors)
@@ -314,20 +314,20 @@ $interfaces['lo0'] = "Localhost";
 
 $i = 0;
 foreach ($a_vip as $vipent):
-	if( $vipent['subnet'] != "" or $vipent['range'] != "" or
-		$vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
+	if ($vipent['subnet'] != "" or $vipent['range'] != "" or
+	    $vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
 ?>
 				<tr>
 					<td>
 <?php
 	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))
-		if($vipent['subnet_bits'])
+		if ($vipent['subnet_bits'])
 			print("{$vipent['subnet']}/{$vipent['subnet_bits']}");
 
 		if ($vipent['type'] == "range")
 			print("{$vipent['range']['from']}-{$vipent['range']['to']}");
 
-		if($vipent['mode'] == "carp")
+		if ($vipent['mode'] == "carp")
 			print(" (vhid: {$vipent['vhid']})");
 ?>
 					</td>

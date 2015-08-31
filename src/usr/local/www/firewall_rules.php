@@ -173,7 +173,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"), "<a href='status_filter_reload.php'>", "</a>");
 	}
 }
 
@@ -268,8 +268,8 @@ display_top_tabs($tab_array);
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 	if (!isset($config['system']['webgui']['noantilockout']) &&
-		(((count($config['interfaces']) > 1) && ($if == 'lan'))
-		|| ((count($config['interfaces']) == 1) && ($if == 'wan')))):
+	    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
 					<tr id="antilockout">
@@ -374,19 +374,19 @@ display_top_tabs($tab_array);
 		$sched_caption_escaped = "";
 		$sched_content = "";
 		$schedstatus = false;
-		$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-		$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+		$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
+		$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
 			foreach ($a_schedules as $schedule)
 			{
-				if ($schedule['name'] == $filterent['sched'] ){
+				if ($schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 
-					foreach($schedule['timerange'] as $timerange) {
+					foreach ($schedule['timerange'] as $timerange) {
 						$tempFriendlyTime = "";
 						$tempID = "";
 						$firstprint = false;
-						if ($timerange){
+						if ($timerange) {
 							$dayFriendly = "";
 							$tempFriendlyTime = "";
 
@@ -397,13 +397,13 @@ display_top_tabs($tab_array);
 							$starttime = substr ($temptimerange, 0, $temptimeseparator);
 							$stoptime = substr ($temptimerange, $temptimeseparator+1);
 
-							if ($timerange['month']){
+							if ($timerange['month']) {
 								$tempmontharray = explode(",", $timerange['month']);
-								$tempdayarray = explode(",",$timerange['day']);
+								$tempdayarray = explode(",", $timerange['day']);
 								$arraycounter = 0;
 								$firstDayFound = false;
 								$firstPrint = false;
-								foreach ($tempmontharray as $monthtmp){
+								foreach ($tempmontharray as $monthtmp) {
 									$month = $tempmontharray[$arraycounter];
 									$day = $tempdayarray[$arraycounter];
 
@@ -417,7 +417,7 @@ display_top_tabs($tab_array);
 									$currentDay = $day;
 									$nextDay = $tempdayarray[$arraycounter+1];
 									$currentDay++;
-									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
 										if ($firstPrint)
 											$dayFriendly .= ", ";
 										$currentDay--;
@@ -440,8 +440,8 @@ display_top_tabs($tab_array);
 								$firstDay = "";
 								$nextDay = "";
 								$counter = 0;
-								foreach ($tempFriendlyDayArray as $day){
-									if ($day != ""){
+								foreach ($tempFriendlyDayArray as $day) {
+									if ($day != "") {
 										if (!$firstDayFound)
 										{
 											$firstDay = $tempFriendlyDayArray[$counter];
@@ -451,7 +451,7 @@ display_top_tabs($tab_array);
 										//get next day
 										$nextDay = $tempFriendlyDayArray[$counter+1];
 										$currentDay++;
-										if ($currentDay != $nextDay){
+										if ($currentDay != $nextDay) {
 											if ($firstprint)
 												$dayFriendly .= ", ";
 											$currentDay--;
@@ -504,7 +504,7 @@ display_top_tabs($tab_array);
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {
-			switch($filterent['ipprotocol']) {
+			switch ($filterent['ipprotocol']) {
 				case "inet":
 					echo "IPv4 ";
 					break;
@@ -524,7 +524,7 @@ display_top_tabs($tab_array);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
 				echo ' <span style="cursor: help;" title="ICMP type: ' .
-					( $filterent['ipprotocol'] == "inet6" ?	 $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']] ) .
+					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
 					'"><u>';
 				echo $filterent['icmptype'];
 				echo '</u></span>';

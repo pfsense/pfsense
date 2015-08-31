@@ -157,7 +157,7 @@ unset($input_errors);
 foreach ($_POST as $key => $value) {
 	$temp = $value;
 	$newpost = htmlentities($temp);
-	if($newpost != $temp)
+	if ($newpost != $temp)
 		$input_errors[] = sprintf(gettext("Invalid characters detected %s. Please remove invalid characters and save again."), $temp);
 }
 
@@ -534,17 +534,17 @@ function build_srctype_list() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if(have_ruleint_access("pptp"))
+	if (have_ruleint_access("pptp"))
 		$list['pptp'] = 'PPTP clients';
 
-	if(have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe"))
 		$list['pppoe'] = 'PPPoE clients';
 
-	if(have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp"))
 		$list['l2tp'] = 'L2TP clients';
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
-		if(have_ruleint_access($ifent)) {
+		if (have_ruleint_access($ifent)) {
 			$list[$ifent] = $ifdesc . ' net';
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
@@ -559,17 +559,17 @@ function build_dsttype_list() {
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
 
-	if(have_ruleint_access("pptp"))
+	if (have_ruleint_access("pptp"))
 		$list['pptp'] = 'PPTP clients';
 
-	if(have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe"))
 		$list['pppoe'] = 'PPPoE clients';
 
-	if(have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp"))
 		$list['l2tp'] = 'L2TP clients';
 
 	foreach ($ifdisp as $if => $ifdesc) {
-		if(have_ruleint_access($if)) {
+		if (have_ruleint_access($if)) {
 			$list[$if] = $ifdesc;
 			$list[$if . 'ip'] = $ifdesc . ' address';
 		}
@@ -604,8 +604,8 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if(!$sel) {
-		if($pconfig['dstmask'] == 32)
+	if (!$sel) {
+		if ($pconfig['dstmask'] == 32)
 			return('single');
 
 		return('network');
@@ -619,8 +619,8 @@ function srctype_selected() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if(!$sel) {
-		if($pconfig['srcmask'] == 32)
+	if (!$sel) {
+		if ($pconfig['srcmask'] == 32)
 			return('single');
 
 		return('network');
@@ -662,15 +662,15 @@ $section->addInput(new Form_Checkbox(
 $iflist = get_configured_interface_with_descr(false, true);
 
 foreach ($iflist as $if => $ifdesc)
-	if(have_ruleint_access($if))
+	if (have_ruleint_access($if))
 		$interfaces[$if] = $ifdesc;
 
 if ($config['l2tp']['mode'] == "server")
-	if(have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp"))
 		$interfaces['l2tp'] = "L2TP VPN";
 
 if ($config['pptpd']['mode'] == "server")
-	if(have_ruleint_access("pptp"))
+	if (have_ruleint_access("pptp"))
 		$interfaces['pptp'] = "PPTP VPN";
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
@@ -678,11 +678,11 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 
 /* add ipsec interfaces */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if(have_ruleint_access("enc0"))
+	if (have_ruleint_access("enc0"))
 		$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 	$interfaces["openvpn"] = "OpenVPN";
 
 $section->addInput(new Form_Select(
@@ -894,7 +894,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 			if (isset($filter_rule['associated-rule-id'])) {
 				$rulelist[$filter_rule['associated-rule-id']] = 'Rule ' . $filter_rule['descr'];
 
-				if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
+				if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
 					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
 				}
 			}
@@ -902,7 +902,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 	}
 
 	if (isset($pconfig['associated-rule-id']))
-	$rulelist['new'] = 'Create new associated filter rule';
+		$rulelist['new'] = 'Create new associated filter rule';
 
 	$section->addInput(new Form_Select(
 		'associated-rule-id',
@@ -932,14 +932,14 @@ $has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['upda
 if ($has_created_time || $has_updated_time) {
 	$section = new Form_Section('Rule Information');
 
-	if($has_created_time) {
+	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
 			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext("by") . $a_nat[$id]['created']['username']
 		));
 	}
 
-	if($has_updated_time) {
+	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
 			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext("by") . $a_nat[$id]['updated']['username']
@@ -979,7 +979,7 @@ events.push(function(){
 	// ---------- "Library" functions ---------------------------------------------------------------------------------
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent().parent('div').addClass('hidden');
 		else
 			$('#' + id).parent().parent('div').removeClass('hidden');
@@ -992,7 +992,7 @@ events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
@@ -1046,7 +1046,7 @@ events.push(function(){
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);
 			disableInput('localbeginport_cust', false);
-			if( dstenabled ) {
+			if ( dstenabled ) {
 				disableInput('dstbeginport', false);
 				disableInput('dstendport', false);
 			}
@@ -1054,7 +1054,7 @@ events.push(function(){
 	}
 
 	function nordr_change() {
-		if( $('#nordr').prop('checked') ) {
+		if ( $('#nordr').prop('checked') ) {
 			hideInput('localip', true);
 			hideClass('lclportrange', true);
 			hideInput('associated-rule-id', true);
@@ -1071,8 +1071,8 @@ events.push(function(){
 		//	if External port range is an alias, then disallow
 		//	entry of Local port
 		//
-		for(i=0; i<customarray.length; i++) {
-			if($('#dstbeginport_cust').val() == customarray[i]) {
+		for (i = 0; i < customarray.length; i++) {
+			if ($('#dstbeginport_cust').val() == customarray[i]) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
 				disableInput('dstendport_cust', true);
@@ -1082,7 +1082,7 @@ events.push(function(){
 				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
-			if($('#dstbeginport').val() == customarray[i]) {
+			if ($('#dstbeginport').val() == customarray[i]) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
 				disableInput('dstendport_cust', true);
@@ -1092,7 +1092,7 @@ events.push(function(){
 				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
-			if($('#dstendport_cust').val() == customarray[i]) {
+			if ($('#dstendport_cust').val() == customarray[i]) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
 				disableInput('dstendport_cust', true);
@@ -1102,7 +1102,7 @@ events.push(function(){
 				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
-			if($('#dstendport').val() == customarray[i]) {
+			if ($('#dstendport').val() == customarray[i]) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
 				disableInput('dstendport_cust', true);
@@ -1159,7 +1159,7 @@ events.push(function(){
 				break;
 		}
 
-		if(dstenabled) {
+		if (dstenabled) {
 			switch ($('#dsttype').find(":selected").index()) {
 				case 1: // single
 					disableInput('dst', false);

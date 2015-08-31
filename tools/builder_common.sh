@@ -840,7 +840,7 @@ create_ova_image() {
 	# Convert vmdk disk to modern version
 	vmdktool -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/i${OVFVMDK}.tmp
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
 		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
 			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
 		fi

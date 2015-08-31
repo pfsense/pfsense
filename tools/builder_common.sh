@@ -380,7 +380,7 @@ print_flags() {
 	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
-	printf "                 OVADISKSIZE: %s\n" $OVADISKSIZE
+	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
 	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
 	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
@@ -821,11 +821,28 @@ create_ova_image() {
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
-		-o ${OVA_TMP}/${OVFVMDK} 2>&1 >> ${LOGFILE}
+		-o ${OVA_TMP}/${OVFVMDK}.tmp 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
+		fi
+		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
+		fi
+		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+
+	# We don't need it anymore
+	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
+
+	# Convert vmdk disk to modern version
+	vmdktool -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/i${OVFVMDK}.tmp
+
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
 		fi
 		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
 			rm -f ${OVA_TMP}/${OVFVMDK}
@@ -834,8 +851,7 @@ create_ova_image() {
 		print_error_pfS
 	fi
 
-	# We don't need it anymore
-	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
+	rm -f ${OVA_TMP}/i${OVFVMDK}.tmp
 
 	ova_setup_ovf_template
 
@@ -843,8 +859,6 @@ create_ova_image() {
 	# works in both virtual box and esx server
 	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
 	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
-
-	gzip -qf ${OVAPATH} &
 
 	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -861,31 +875,28 @@ ova_setup_ovf_template() {
 	#  78   FreeBSD 64-Bit
 	if [ "${TARGET}" = "amd64" ]; then
 		local _os_id="78"
-		local _os_type="FreeBSD 64-Bit"
+		local _os_type="freebsd64Guest"
+		local _os_descr="FreeBSD 64-Bit"
 	elif [ "${TARGET}" = "i386" ]; then
 		local _os_id="42"
-		local _os_type="FreeBSD"
+		local _os_type="freebsdGuest"
+		local _os_descr="FreeBSD"
 	else
 		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
 		print_error_pfS
 	fi
 
-	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
-	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
-	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
-
-	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
-	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to ${OVA_DISKSECTIONALLOCATIONUNITS}..." | tee -a ${LOGFILE}
-	echo ">>> Setting DISKSECTIONCAPACITY to ${OVADISKSIZE}..." | tee -a ${LOGFILE}
+	local POPULATED_SIZE=$(du -d0 -k $FINAL_CHROOT_DIR | cut -f1)
+	local POPULATED_SIZE_IN_BYTES=$((${POPULATED_SIZE}*1024))
+	local VMDK_FILE_SIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
 
 	sed \
-		-e "s,%%REFERENCESSIZE%%,${REFERENCESSIZE},g" \
-		-e "s,%%DISKSECTIONALLOCATIONUNITS%%,${OVA_DISKSECTIONALLOCATIONUNITS},g" \
-		-e "s,%%DISKSECTIONCAPACITY%%,${OVADISKSIZE},g" \
-		-e "s,%%DISKSECTIONPOPULATEDSIZE%%,${POPULATEDSIZEBYTES},g" \
+		-e "s,%%VMDK_FILE_SIZE%%,${VMDK_FILE_SIZE},g" \
+		-e "s,%%VMDK_DISK_CAPACITY_IN_GB%%,${VMDK_DISK_CAPACITY_IN_GB},g" \
+		-e "s,%%POPULATED_SIZE_IN_BYTES%%,${POPULATED_SIZE_IN_BYTES},g" \
 		-e "s,%%OS_ID%%,${_os_id},g" \
 		-e "s,%%OS_TYPE%%,${_os_type},g" \
+		-e "s,%%OS_DESCR%%,${_os_descr},g" \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \

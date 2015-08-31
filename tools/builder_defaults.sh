@@ -199,6 +199,8 @@ export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}
 # / partition to be used by mkimg
 export OVFUFS=${OVFUFS:-"${PRODUCT_NAME}-disk1.ufs"}
+# Raw disk to be converted to vmdk
+export OVFRAW=${OVFRAW:-"${PRODUCT_NAME}-disk1.raw"}
 # On disk name of VMDK file included in OVA
 export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}-disk1.vmdk"}
 # 8 gigabyte on disk VMDK size

@@ -816,19 +816,19 @@ create_ova_image() {
 	# Create vmdk file
 	mkimg \
 		-s gpt \
-		-f vmdk \
+		-f raw \
 		-b /boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
-		-o ${OVA_TMP}/${OVFVMDK}.tmp 2>&1 >> ${LOGFILE}
+		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFRAW} ]; then
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
-		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
 		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
@@ -837,12 +837,12 @@ create_ova_image() {
 	# We don't need it anymore
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
-	# Convert vmdk disk to modern version
-	vmdktool -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFVMDK}.tmp
+	# Convert raw to vmdk
+	vmdktool -c${VMDK_DISK_CAPACITY_IN_GB}G -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
 
 	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
-		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
 		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
 			rm -f ${OVA_TMP}/${OVFVMDK}
@@ -851,7 +851,7 @@ create_ova_image() {
 		print_error_pfS
 	fi
 
-	rm -f ${OVA_TMP}/i${OVFVMDK}.tmp
+	rm -f ${OVA_TMP}/i${OVFRAW}
 
 	ova_setup_ovf_template
 

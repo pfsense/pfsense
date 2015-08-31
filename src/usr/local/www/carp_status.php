@@ -175,8 +175,8 @@ include("head.inc");
 
 <?php
 $carpcount = 0;
-if(is_array($config['virtualip']['vip'])) {
-	foreach($config['virtualip']['vip'] as $carp) {
+if (is_array($config['virtualip']['vip'])) {
+	foreach ($config['virtualip']['vip'] as $carp) {
 		if ($carp['mode'] == "carp") {
 			$carpcount++;
 			break;
@@ -203,21 +203,22 @@ if ($carpcount > 0):
 		<td><?=gettext("Status")?></td>
 	</tr>
 <?php
-	foreach($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp")
+	foreach ($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp") {
 			continue;
+		}
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
-		if($carp_enabled == false) {
+		if ($carp_enabled == false) {
 			$icon = 'remove-sign';
 			$status = "DISABLED";
 		} else {
-			if($status == "MASTER") {
+			if ($status == "MASTER") {
 				$icon = 'ok-sign';
-			} else if($status == "BACKUP") {
+			} else if ($status == "BACKUP") {
 				$icon = 'ok-circle';
-			} else if($status == "INIT") {
+			} else if ($status == "INIT") {
 				$icon = 'question-sign';
 			}
 		}
@@ -236,8 +237,9 @@ if ($carpcount > 0):
 <h4><?=gettext("pfSync nodes")?></h4>
 <ul>
 <?php
-	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node)
+	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node) {
 		echo '<li>'. $node .'</li>';
+	}
 ?>
 </ul>
 

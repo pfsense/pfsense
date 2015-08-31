@@ -76,7 +76,7 @@ if (stristr($_POST['Submit'], gettext("No"))) {
 	exit;
 }
 
-if($_REQUEST['getactivity']) {
+if ($_REQUEST['getactivity']) {
 	$text = `/sbin/pfctl -vvsi`;
 	$text .= "<p/>";
 	$text .= `/sbin/pfctl -vvsm`;

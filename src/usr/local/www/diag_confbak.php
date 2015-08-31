@@ -89,7 +89,7 @@ if ($_GET['getcfg'] != "") {
 
 if (($_GET['diff'] == 'Diff') && isset($_GET['oldtime']) && isset($_GET['newtime']) &&
     (is_numeric($_GET['oldtime'])) &&
-	(is_numeric($_GET['newtime']) || ($_GET['newtime'] == 'current'))) {
+    (is_numeric($_GET['newtime']) || ($_GET['newtime'] == 'current'))) {
 	$diff = "";
 	$oldfile = $g['conf_path'] . '/backup/config-' . $_GET['oldtime'] . '.xml';
 	$oldtime = $_GET['oldtime'];
@@ -112,7 +112,7 @@ unset($confvers['versions']);
 $pgtitle = array(gettext("Diagnostics"), gettext("Configuration History"));
 include("head.inc");
 
-if($savemsg)
+if ($savemsg)
 	print_info_box($savemsg);
 ?>
 	<?php if ($diff):?>
@@ -212,8 +212,8 @@ if($savemsg)
 			<td><i><?=gettext("Current")?></i></td>
 		</tr>
 		<?php
-			foreach($confvers as $version):
-				if($version['time'] != 0)
+			foreach ($confvers as $version):
+				if ($version['time'] != 0)
 					$date = date(gettext("n/j/y H:i:s"), $version['time']);
 				else
 					$date = gettext("Unknown");

@@ -75,7 +75,7 @@ function upload_crash_report($files) {
 	global $g;
 	$post = array();
 	$counter = 0;
-	foreach($files as $file) {
+	foreach ($files as $file) {
 		$post["file{$counter}"] = "@{$file}";
 		$counter++;
 	}
@@ -91,7 +91,7 @@ function upload_crash_report($files) {
 	return $response;
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
 include('head.inc');
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
@@ -119,7 +119,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		echo gettext("Uploading...");
 		ob_flush();
 		flush();
-		if(is_array($files_to_upload)) {
+		if (is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
 			array_map('unlink', glob("/var/crash/*"));
 			// Erase the contents of the PHP error log
@@ -130,7 +130,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		} else {
 			echo "Could not find any crash files.";
 		}
-	} else if(gettext($_POST['Submit']) == "No") {
+	} else if (gettext($_POST['Submit']) == "No") {
 		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
@@ -143,9 +143,9 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			$crash_reports .= "\nPHP Errors:\n";
 			$crash_reports .= implode("\n", $php_errors) . "\n\n";
 		}
-		if(is_array($crash_files))	{
-			foreach($crash_files as $cf) {
-				if(filesize($cf) < FILE_SIZE) {
+		if (is_array($crash_files))	{
+			foreach ($crash_files as $cf) {
+				if (filesize($cf) < FILE_SIZE) {
 					$crash_reports .= "\nFilename: {$cf}\n";
 					$crash_reports .= file_get_contents($cf);
 				}

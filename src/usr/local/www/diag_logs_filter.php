@@ -218,7 +218,7 @@ if ($filterfieldsarray['interface'] == "All")
 
 require('classes/Form.class.php');
 
-if(!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
+if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(new Form_Button(
 		'filterlogentries_submit',
 		'Filter'
@@ -365,8 +365,8 @@ if (!isset($config['syslog']['rawfilter'])) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if ( (!$filtertext) && (!$filterfieldsarray) )
-		printf(gettext("Last %s firewall log entries."),count($filterlog));
+	if ((!$filtertext) && (!$filterfieldsarray))
+		printf(gettext("Last %s firewall log entries."), count($filterlog));
 	else
 		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
 
@@ -431,7 +431,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 		$int = strtolower($filterent['interface']);
 		$proto = strtolower($filterent['proto']);
 
-		if($filterent['version'] == '6') {
+		if ($filterent['version'] == '6') {
 			$ipproto = "inet6";
 			$filterent['srcip'] = "[{$filterent['srcip']}]";
 			$filterent['dstip'] = "[{$filterent['dstip']}]";
@@ -461,7 +461,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 <?php
 		if ($filterent['proto'] == "TCP")
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
-			  ?>
+?>
 				<td><?=htmlspecialchars($filterent['proto'])?></td>
 			</tr>
 <?php
@@ -474,10 +474,10 @@ if (!isset($config['syslog']['rawfilter'])) {
 <?php
 		}
 	} // e-o-foreach
-			buffer_rules_clear();
+	buffer_rules_clear();
 }
 else
-	{
+{
 ?>
 			<tr>
 				<td colspan="2">
@@ -485,7 +485,7 @@ else
 				</td>
 			</tr>
 <?php
-	if($filtertext)
+	if ($filtertext)
 		dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
 	else
 		dump_clog($filter_logfile, $nentries);

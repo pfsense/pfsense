@@ -68,8 +68,8 @@
 
 include('guiconfig.inc');
 
-$limit='100';
-$filter='';
+$limit = '100';
+$filter = '';
 
 if (isset($_REQUEST['isAjax'])) {
 	$netstat = "/usr/bin/netstat -rW";
@@ -121,7 +121,7 @@ $section->addInput(new Form_Checkbox(
 	'Resolve names',
 	'Enable',
 	$resolve
-))->setHelp('Enabling name resolution may cause the query should take longer.'.
+))->setHelp('Enabling name resolution may cause the query to take longer.'.
 	' You can stop it at any time by clicking the Stop button in your browser.');
 
 $validLimits = array('10', '50', '100', '200', '500', '1000', 'all');

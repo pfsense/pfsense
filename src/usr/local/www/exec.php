@@ -298,5 +298,5 @@ if (!isBlank($_POST['txtCommand'])):?>
 <?php
 include("foot.inc");
 
-if($_POST)
+if ($_POST)
 	conf_mount_ro();

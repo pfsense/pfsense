@@ -90,8 +90,8 @@ nanobsd_detect_slice_info();
 $NANOBSD_SIZE = nanobsd_get_size();
 $class='alert-warning';
 
-if($_POST['bootslice']) {
-	if(!DEBUG)
+if ($_POST['bootslice']) {
+	if (!DEBUG)
 	   nanobsd_switch_boot_slice();
 	else
 	   sleep(4);
@@ -102,10 +102,10 @@ if($_POST['bootslice']) {
 	nanobsd_detect_slice_info();
 }
 
-if($_POST['destslice'] && $_POST['duplicateslice']) {
+if ($_POST['destslice'] && $_POST['duplicateslice']) {
 	$statusmsg = gettext("Duplicating slice.  Please wait, this will take a moment...");
 
-	if(!DEBUG && nanobsd_clone_slice($_POST['destslice'])) {
+	if (!DEBUG && nanobsd_clone_slice($_POST['destslice'])) {
 		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
 		$class='alert-success';
 	} else {
@@ -125,7 +125,7 @@ if ($_POST['changero']) {
 }
 
 if ($_POST['setrw']) {
-	if(!DEBUG) {
+	if (!DEBUG) {
 		conf_mount_rw();
 		if (isset($_POST['nanobsd_force_rw']))
 			$config['system']['nanobsd_force_rw'] = true;
@@ -225,7 +225,7 @@ $section->addInput(new Form_StaticText(
 	'These options have been relocated to the ' . '<a href="system_advanced_misc.php">' . 'System > Advanced, Miscellaneous</a> tab.'
 ));
 
-if(file_exists("/conf/upgrade_log.txt")) {
+if (file_exists("/conf/upgrade_log.txt")) {
 	$viewbtn = new Form_Button('viewupgradelog', 'View log');
 	$viewbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
@@ -237,7 +237,7 @@ if(file_exists("/conf/upgrade_log.txt")) {
 $form->add($section);
 print($form);
 
-if(file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
+if (file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous upgrade log")?></h2></div>

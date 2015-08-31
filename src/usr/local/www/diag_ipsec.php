@@ -265,7 +265,7 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 					</td>
 					<td>
 <?php
-			if($ikesa['status'] == 'established')
+			if ($ikesa['status'] == 'established')
 				print('<span style="color:green">');
 			else
 				print('<span>');
@@ -327,8 +327,8 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 									<td>
 <?php
 				if (is_array($childsa['local']) &&
-					is_array($childsa['local']['networks']) &&
-					is_array($childsa['local']['networks']['network']))
+				    is_array($childsa['local']['networks']) &&
+				    is_array($childsa['local']['networks']['network']))
 					foreach ($childsa['local']['networks']['network'] as $lnets)
 						print(htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />");
 				else
@@ -347,8 +347,8 @@ if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_
 									<td>
 <?php
 				if (is_array($childsa['remote']) &&
-					is_array($childsa['remote']['networks']) &&
-					is_array($childsa['remote']['networks']['network']))
+				    is_array($childsa['remote']['networks']) &&
+				    is_array($childsa['remote']['networks']['network']))
 					foreach ($childsa['remote']['networks']['network'] as $rnets)
 						print(htmlspecialchars(ipsec_fixup_network($rnets)) . '<br />');
 				else

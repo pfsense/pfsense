@@ -72,15 +72,15 @@ require("guiconfig.inc");
 if ($_POST['action']) {
 	switch ($_POST['action']) {
 		case 'load':
-			if(strlen($_POST['file']) < 1) {
+			if (strlen($_POST['file']) < 1) {
 				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
-			} elseif(is_dir($_POST['file'])) {
+			} elseif (is_dir($_POST['file'])) {
 				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
-			} elseif(! is_file($_POST['file'])) {
+			} elseif (!is_file($_POST['file'])) {
 				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
-				if($data === false) {
+				if ($data === false) {
 					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
@@ -90,7 +90,7 @@ if ($_POST['action']) {
 			exit;
 
 		case 'save':
-			if(strlen($_POST['file']) < 1) {
+			if (strlen($_POST['file']) < 1) {
 				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} else {
 				conf_mount_rw();
@@ -103,9 +103,9 @@ if ($_POST['action']) {
 					}
 					disable_security_checks();
 				}
-				if($ret === false) {
+				if ($ret === false) {
 					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to write file") . '</div>' . '|');
-				} elseif($ret != strlen($_POST['data'])) {
+				} elseif ($ret != strlen($_POST['data'])) {
 					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Error while writing file") . '</div>' . '|');
 				} else {
 					print('|' . '<div class="alert alert-success" role="alert">' . gettext("File saved successfully") . '</div>' . '|');
@@ -201,7 +201,7 @@ require("head.inc");
 		);
 	}
 
-	<?php if($_GET['action'] == "load"): ?>
+	<?php if ($_GET['action'] == "load"): ?>
 		events.push(function() {
 			jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
 			loadFile();

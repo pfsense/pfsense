@@ -69,7 +69,7 @@
 require("guiconfig.inc");
 
 // The logs to display are specified in a GET argument. Default to 'system' logs
-if(!$_GET['logfile'])
+if (!$_GET['logfile'])
 	$logfile = 'system';
 else
 	$logfile = $_GET['logfile'];
@@ -151,7 +151,7 @@ $form->addGlobal(new Form_Button(
 $form->add($section);
 print $form;
 
-if($logfile == 'dhcpd')
+if ($logfile == 'dhcpd')
 	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
 
 ?>
@@ -159,12 +159,12 @@ if($logfile == 'dhcpd')
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
 	<pre>
 <?php
-	if(($logfile == 'resolver') || ($logfile == 'system'))
+	if (($logfile == 'resolver') || ($logfile == 'system'))
 		$inverse = array("ppp");
 	else
 		$inverse = null;
 
-	if($filtertext)
+	if ($filtertext)
 		dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
 	else
 		dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);

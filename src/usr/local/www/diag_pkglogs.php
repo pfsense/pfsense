@@ -111,16 +111,16 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 $pgtitle = array(gettext("Status"), gettext("Package logs"));
 include("head.inc");
 
-if($pkgwithlogging == false) {
+if ($pkgwithlogging == false) {
 	print_info_box(gettext("No packages with logging facilities are currently installed."));
 } else {
 	$tab_array = array();
-	foreach($config['installedpackages']['package'] as $package) {
-		if(is_array($package['logging'])) {
-			if(!($logtab = $package['logging']['logtab']))
+	foreach ($config['installedpackages']['package'] as $package) {
+		if (is_array($package['logging'])) {
+			if (!($logtab = $package['logging']['logtab']))
 				$logtab = $package['name'];
 
-			if($apkg == $package['name']) {
+			if ($apkg == $package['name']) {
 				$curtab = $logtab;
 				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "diag_pkglogs.php?pkg=".$package['name']);
 			} else {
@@ -132,7 +132,7 @@ if($pkgwithlogging == false) {
 ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=printf(gettext('Last %1$s %2$s log entries'),$nentries,$curtab)?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=printf(gettext('Last %1$s %2$s log entries'), $nentries, $curtab)?></h2></div>
 		<div>class="panel-body">
 			<pre>
 <?php

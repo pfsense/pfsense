@@ -192,7 +192,7 @@ function print_summary_table($label, $iparr, $sort = TRUE)
 						</tr>
 					</thead>
 					<tbody>
-<?php foreach($iparr as $ip => $ipinfo):
+<?php foreach ($iparr as $ip => $ipinfo):
 	$protocolCount = count($ipinfo['protos']);
 	$rowSpan = '';
 	$i = 0;
@@ -204,7 +204,7 @@ function print_summary_table($label, $iparr, $sort = TRUE)
 							<td<?= $rowSpan ?>><?php echo $ip; ?></td>
 							<td<?= $rowSpan ?> class="text-center"><?php echo $ipinfo['seen']; ?></td>
 
-<?php foreach($ipinfo['protos'] as $proto => $protoinfo): ?>
+<?php foreach ($ipinfo['protos'] as $proto => $protoinfo): ?>
 <?php if ($protocolCount > 1 && $i > 0): ?>
 							</tr><tr>
 <?php endif; ?>

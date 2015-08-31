@@ -72,7 +72,7 @@ define(DEBUG, true); // Force dummy data for testing. Setting up a pFSense box t
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("Leases"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Leases"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
@@ -102,7 +102,7 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 			</thead>
 			<tbody>
 <?php
-			foreach($mobile['pool'] as $pool) {
+			foreach ($mobile['pool'] as $pool) {
 				// The first row of each pool includes the pool information
 ?>
 				<tr>
@@ -120,7 +120,7 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 				$leaserow = true;
 				if (is_array($pool['lease']) && count($pool['lease']) > 0) {
 					foreach ($pool['lease'] as $lease) {
-						if(!$leaserow) {
+						if (!$leaserow) {
 							// On subsequent rows the first three columns are blank
 ?>
 				<tr>

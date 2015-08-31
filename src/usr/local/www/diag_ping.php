@@ -121,7 +121,7 @@ if (!isset($do_ping)) {
 	$count = DEFAULT_COUNT;
 }
 
-if($do_ping) {
+if ($do_ping) {
 ?>
 	<script type="text/javascript">
 	//<![CDATA[
@@ -152,7 +152,7 @@ if($do_ping) {
 	//echo "Ping command: {$cmd}\n";
 	$result = shell_exec($cmd);
 
-	if(empty($result))
+	if (empty($result))
 		$input_errors[] = "Host \"" . $host . "\" did not respond or could not be resolved.";
 
 }
@@ -211,7 +211,7 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
-if($do_ping && !empty($result) && !$input_errors) {
+if ($do_ping && !empty($result) && !$input_errors) {
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">

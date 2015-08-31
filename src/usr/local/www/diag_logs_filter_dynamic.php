@@ -235,7 +235,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 </div>
 <?php
 
-if($tcpcnt > 0)
+if ($tcpcnt > 0)
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
 ?>

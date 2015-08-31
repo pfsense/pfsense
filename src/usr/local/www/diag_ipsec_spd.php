@@ -74,11 +74,11 @@ define(LEFTARROW,  '&#x25c0;');
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-if(DEBUG) { // Dummy data for testing. REMOVE for production
+if (DEBUG) { // Dummy data for testing. REMOVE for production
 	$spd = array ( 0 => array ( 'srcid' => '172.27.0.0/16', 'dstid' => '172.21.2.0/24', 'dir' => 'in' , 'proto' => 'esp', 'dst' => '184.57.8.247', 'src' => '208.123.73.7', 'reqid' => 'nique:1' ),
 				   1 => array ( 'srcid' => '172.21.2.0/24', 'dstid' => '172.27.0.0/16', 'dir' => 'out', 'proto' => 'esp', 'dst' => '208.123.73.7', 'src' => '184.57.8.247', 'reqid' => 'nique:1' ) );
 }
@@ -93,7 +93,7 @@ $tab_array[3] = array(gettext("SPD"), true, "diag_ipsec_spd.php");
 $tab_array[4] = array(gettext("Logs"), false, "diag_logs.php?logfile=ipsec");
 display_top_tabs($tab_array);
 
-if (count($spd)){
+if (count($spd)) {
 ?>
 	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
@@ -110,7 +110,7 @@ if (count($spd)){
 			<tbody>
 <?php
 		foreach ($spd as $sp) {
-			if($sp['dir'] == 'in')
+			if ($sp['dir'] == 'in')
 				$dirstr = LEFTARROW . ' Inbound';
 			else
 				$dirstr = RIGHTARROW . ' Outbound';

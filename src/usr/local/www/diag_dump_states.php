@@ -180,9 +180,9 @@ print $form;
 	$row = 0;
 	/* get our states */
 	$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
-	$fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
+	$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
 	while ($line = chop(fgets($fd))) {
-		if($row >= 10000)
+		if ($row >= 10000)
 			break;
 
 		$line_split = preg_split("/\s+/", $line);

@@ -98,7 +98,7 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg, 'alert-success');
 
-$statetabelhelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
+$statetablehelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
 					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.' .
 					'<br /><br />' .
@@ -140,9 +140,9 @@ $section->addInput(new Form_Checkbox(
 	'State Table',
 	'Reset the firewall state table',
 	true
-))->setHelp($statetabelhelp);
+))->setHelp($statetablehelp);
 
-if(isset($config['system']['lb_use_sticky'])) {
+if (isset($config['system']['lb_use_sticky'])) {
 	$section->addInput(new Form_Checkbox(
 		'sourcetracking',
 		'Source Tracking',

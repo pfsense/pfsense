@@ -148,7 +148,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 		<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title">Socket information - explanation</h2></div>
 			<div class="panel-body">
-	This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br />
+	This page shows the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br />
 	Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br />
 				<br />
 	The information listed for each socket is:

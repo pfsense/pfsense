@@ -105,7 +105,7 @@ fi
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
-export PRODUCT_URL=${PRODUCT_VERSION:-""}
+export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then

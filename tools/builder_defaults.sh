@@ -210,7 +210,7 @@ export OVA_FIRST_PART_SIZE=${OVA_FIRST_PART_SIZE:-"6g"}
 # swap partition size (freebsd-swap)
 export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"2"}
 # Calculate real swap size, removing 128 blocks (65536 bytes) beggining/loader
-export OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-128))
+export OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
 # Temporary place to save files
 export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}
 # end of OVF

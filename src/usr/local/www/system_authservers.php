@@ -452,7 +452,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ldap_host']
 ))->setHelp('NOTE: When using SSL, this hostname MUST match the Common Name '.
-	'(CN) of the LDAP server"s SSL Certificate.');
+	'(CN) of the LDAP server\'s SSL Certificate.');
 
 $section->addInput(new Form_Input(
 	'ldap_port',

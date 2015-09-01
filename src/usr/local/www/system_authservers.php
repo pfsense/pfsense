@@ -497,19 +497,23 @@ $section->addInput(new Form_Select(
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
 
-$section->addInput(new Form_Select(
+$group = new Form_Group('Search scope');
+
+$group->add(new Form_Select(
 	'ldap_scope',
-	'Search scope: Level',
+	'Search scope',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
-));
+))->setHelp('Level');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'ldap_basedn',
 	'Base DN',
 	'text',
 	$pconfig['ldap_basedn']
-));
+))->setHelp('Base DN');
+
+$section->add($group);
 
 $group = new Form_Group('Authentication containers');
 $group->add(new Form_Input(

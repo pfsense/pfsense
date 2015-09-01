@@ -241,7 +241,7 @@ if [ -z "${DATESTRING}" ]; then
 	if [ -f "${DATESTRINGFILE}" -a -n "${_USE_OLD_DATESTRING}" ]; then
 		export DATESTRING=$(cat $DATESTRINGFILE)
 	else
-		export DATESTRING=$(date "+%Y%m%d-%H%M"`)
+		export DATESTRING=$(date "+%Y%m%d-%H%M")
 	fi
 fi
 echo "$DATESTRING" > $DATESTRINGFILE

@@ -52,6 +52,7 @@ $(function() {
 
 			var clone = group.clone(true);
 			clone.find('*').val(''); //removeAttr('value');
+//			clone.find('*').removeAttr('value');
 			clone.appendTo(group.parent());
 		});
 
@@ -80,7 +81,8 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').val(''); //removeAttr('value');
+			clone.find('*').removeAttr('value');
+//			clone.find('*').val('');			
 			clone.appendTo(group.parent());
 		});
 
@@ -93,7 +95,6 @@ $(function() {
 		});
 	})();
 
-	// Find all ipaddress masks and make dynamic based on address family of input
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
 
@@ -118,7 +119,7 @@ $(function() {
 		// Fire immediately
 		input.change();
 	});
-
+	
 	// Add confirm to all btn-danger buttons
 	$('.btn-danger').on('click', function(e){
 		var q = 'Are you sure you wish to '+ $.trim(this.textContent) +'?';

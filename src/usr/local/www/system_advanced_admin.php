@@ -461,8 +461,8 @@ $section->addInput(new Form_Checkbox(
 	'Authentication Method',
 	'Disable password login for Secure Shell (RSA/DSA key only)',
 	$pconfig['sshdkeyonly']
-))->setHelp('When enabled, authorized keys need to be configured for each<a '.
-	'href="system_usermanager.php">user</a>that has been granted secure shell '.
+))->setHelp('When enabled, authorized keys need to be configured for each <a '.
+	'href="system_usermanager.php">user</a> that has been granted secure shell '.
 	'access.');
 
 $section->addInput(new Form_Input(

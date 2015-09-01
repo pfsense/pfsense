@@ -1196,6 +1196,7 @@ function alias_info_popup($alias_id) {
 		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
 	}
 	$item_text = ($counter > 1 ? "items" : "item");
+	$alias_descr_substr = htmlspecialchars($alias_descr_substr);
 	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
 	$strlength = strlen ($alias_caption);
 	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;

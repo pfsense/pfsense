@@ -77,7 +77,8 @@ usage() {
 	exit 1
 }
 
-export BUILDER_ROOT=$(realpath $(dirname ${0}))
+export BUILDER_ROOT
+BUILDER_ROOT=$(realpath "$(dirname "${0}")")
 export BUILDER_TOOLS="${BUILDER_ROOT}/tools"
 
 unset _SKIP_REBUILD_PRESTAGE
@@ -200,13 +201,13 @@ while test "$1" != ""; do
 done
 
 # Suck in local vars
-. ${BUILDER_TOOLS}/builder_defaults.sh
+. "${BUILDER_TOOLS}"/builder_defaults.sh
 
 # Suck in script helper functions
-. ${BUILDER_TOOLS}/builder_common.sh
+. "${BUILDER_TOOLS}"/builder_common.sh
 
 # Print var required with -V and exit
-if [ -n "${var_to_print}"  ]; then
+if [ -n "${var_to_print}" ]; then
 	eval "echo \$${var_to_print}"
 	exit 0
 fi
@@ -292,10 +293,10 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
-	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
-	[ -n "${CORE_PKG_PATH}" -a -d "${CORE_PKG_PATH}" ] \
-		&& rm -rf ${CORE_PKG_PATH}
+	[ -n "${CORE_PKG_TMP}" ] && [ -d "${CORE_PKG_TMP}" ] \
+		&& rm -rf "${CORE_PKG_TMP}"
+	[ -n "${CORE_PKG_PATH}" ] && [ -d "${CORE_PKG_PATH}" ] \
+		&& rm -rf "${CORE_PKG_PATH}"
 
 	# Cleanup environment before start
 	clean_builder
@@ -344,28 +345,28 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		(create_memstick_adi_image)
 	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
 		create_Full_update_tarball
-	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-		if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
+	elif [ "${_IMGTOBUILD}" = "nanobsd" ] || [ "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
+		if [ "${TARGET}" = "i386" ] && [ "${_IMGTOBUILD}" = "nanobsd" ]; then
 			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
-		elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
+		elif [ "${TARGET}" = "i386" ] && [ "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
 			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
 		elif [ "${TARGET}" = "amd64" ]; then
 			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
 		fi
 		# Create the NanoBSD disk image
-		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
+		create_nanobsd_diskimage "${_IMGTOBUILD}" "${FLASH_SIZE}"
 	elif [ "${_IMGTOBUILD}" = "ova" ]; then
-		install_pkg_install_ports ${PRODUCT_NAME}-vmware
+		install_pkg_install_ports "${PRODUCT_NAME}-vmware"
 		(create_ova_image)
 		install_pkg_install_ports
 	fi
 done
 
-echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
+echo ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
 wait
 
 echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-ls -lah ${IMAGES_FINAL_DIR}
+ls -lah "${IMAGES_FINAL_DIR}"
 
 set -e
 # Run final finish routines

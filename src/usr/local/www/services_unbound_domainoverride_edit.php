@@ -143,7 +143,7 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Input(
 	'descr',
-	'GUI Log Entries',
+	'Description',
 	'text',
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');

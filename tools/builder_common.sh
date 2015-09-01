@@ -798,6 +798,7 @@ create_ova_image() {
 	echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 
 	# Create / partition
+	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
@@ -809,11 +810,14 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
-	# Create vmdk file
+	# Create raw disk
+	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
 	mkimg \
 		-s gpt \
 		-f raw \
@@ -830,14 +834,17 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
 			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
 	# We don't need it anymore
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
 	# Convert raw to vmdk
+	echo -n ">>> Creating vmdk disk... " | tee -a ${LOGFILE}
 	vmdktool -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
 
 	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
@@ -847,17 +854,20 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
 			rm -f ${OVA_TMP}/${OVFVMDK}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
 	rm -f ${OVA_TMP}/i${OVFRAW}
 
 	ova_setup_ovf_template
 
-	# We repack the file with a more universal xml file that
-	# works in both virtual box and esx server
+	echo -n ">>> Writing final ova image... " | tee -a ${LOGFILE}
+	# Create OVA file for vmware
 	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
+	echo "Done!" | tee -a ${LOGFILE}
 	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
 
 	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

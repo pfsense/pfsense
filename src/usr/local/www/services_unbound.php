@@ -436,8 +436,8 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a href="services_unbound.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
 					</td>
 				</tr>
 
@@ -459,7 +459,7 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="services_unbound_host_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
 					</td>
 				</tr>
 <?php
@@ -474,7 +474,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
 </nav>
 
 <div class="panel panel-default">

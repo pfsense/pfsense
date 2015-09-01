@@ -381,8 +381,8 @@ print_flags() {
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
-	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
-	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
+	printf "   OVA_FIRST_PART_SIZE_IN_GB: %s\n" $OVA_FIRST_PART_SIZE_IN_GB
+	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -549,8 +549,8 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-${DATESTRING}.img"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade-${DATESTRING}.img"
+		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}${TIMESTAMP_SUFFIX}.img"
+		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade${TIMESTAMP_SUFFIX}.img"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -794,14 +794,15 @@ create_ova_image() {
 
 	# Fill fstab
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
-	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 
 	# Create / partition
+	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
-		-s ${OVA_FIRST_PART_SIZE} \
+		-s ${OVA_FIRST_PART_SIZE_IN_GB}g \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
 
@@ -809,55 +810,64 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
-	# Create vmdk file
+	# Create raw disk
+	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
 	mkimg \
 		-s gpt \
-		-f vmdk \
+		-f raw \
 		-b /boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
-		-o ${OVA_TMP}/${OVFVMDK}.tmp 2>&1 >> ${LOGFILE}
+		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFRAW} ]; then
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
-		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
 	# We don't need it anymore
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
-	# Convert vmdk disk to modern version
-	vmdktool -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/i${OVFVMDK}.tmp
+	# Convert raw to vmdk
+	echo -n ">>> Creating vmdk disk... " | tee -a ${LOGFILE}
+	vmdktool -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
-		if [ -f ${OVA_TMP}/${OVFVMDK}.tmp ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}.tmp
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
 		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
 			rm -f ${OVA_TMP}/${OVFVMDK}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
-	rm -f ${OVA_TMP}/i${OVFVMDK}.tmp
+	rm -f ${OVA_TMP}/i${OVFRAW}
 
 	ova_setup_ovf_template
 
-	# We repack the file with a more universal xml file that
-	# works in both virtual box and esx server
+	echo -n ">>> Writing final ova image... " | tee -a ${LOGFILE}
+	# Create OVA file for vmware
 	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
+	echo "Done!" | tee -a ${LOGFILE}
 	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
 
 	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
@@ -900,7 +910,7 @@ ova_setup_ovf_template() {
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
-		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_TOOR}/license.txt" \
+		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/license.txt" \
 		-e "/^%%PRODUCT_LICENSE%%/d" \
 		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }
@@ -1027,6 +1037,14 @@ clone_to_staging_area() {
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
+
+	# Change default interface names to match vmware driver
+	sed -i '' -e 's,em0,vmx0,' -e 's,em1,vmx1,' ${DEFAULTCONF}
+	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore default values to be used by serial package
+	sed -i '' -e 's,vmx0,em0,' -e 's,vmx1,em1,' ${DEFAULTCONF}
+
 	# Activate serial console in config.xml
 	# If it was there before, clear the setting to be sure we don't add it twice.
 	sed -i "" -e "/		<enableserial\/>/d" ${DEFAULTCONF}
@@ -1088,6 +1106,8 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickserial" -o \
 	     "${1}" = "memstickadi" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
+	elif [ "${1}" = "ova" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
 	fi

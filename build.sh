@@ -72,7 +72,7 @@ usage() {
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
 	echo "		--update-poudriere-ports - Update poudriere ports tree"
 	echo "		--update-pkg-repo - Rebuild necessary ports on poudriere and update pkg repo"
-	echo "		--do-not-upload|-U - Do not send updated pkg repo to PKG_RSYNC_HOSTNAME"
+	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -181,7 +181,7 @@ while test "$1" != ""; do
 		--update-pkg-repo)
 			BUILDACTION="update_pkg_repo"
 			;;
-		--do-not-upload|-U)
+		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
 		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
@@ -216,7 +216,6 @@ launch
 
 case $BUILDACTION in
 	builder_setup)
-		update_freebsd_sources
 		builder_setup
 	;;
 	buildkernels)

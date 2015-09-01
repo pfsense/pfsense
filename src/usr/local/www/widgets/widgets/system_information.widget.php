@@ -73,14 +73,18 @@ if ($_REQUEST['getupdatestatus']) {
 		}
 		else {
 			$needs_system_upgrade = false;
-			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
+			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
+			if ($version_compare == -1) {
 ?>
 <div class="alert alert-warning" role="alert">
 	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
 </div>
 <?php
- 		} else
-			echo "You are on the latest version.";
+			} elseif ($version_compare == 1) {
+				echo "You are on a later version than the official release.";
+			} else {
+				echo "You are on the latest version.";
+			}
 		}
 	}
 	exit;

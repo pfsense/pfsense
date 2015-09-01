@@ -139,10 +139,6 @@ PHPMODULES="$PHPMODULES filter"
 
 PHP_ZEND_MODULES=""
 
-if [ "$LOWMEM" != "TRUE" ]; then
-	PHP_ZEND_MODULES="$PHP_ZEND_MODULES opcache"
-fi
-
 # Modules previously included.
 # can be turned on by touching
 # /etc/php_dynamodules/$modulename
@@ -241,6 +237,11 @@ opcache.enabled="1"
 opcache.enable_cli="0"
 opcache.memory_consumption="${OPCACHEMEMSIZE}"
 
+EOF
+else
+	/bin/cat >>/usr/local/lib/php.ini <<EOF
+; opcache Settings
+opcache.enabled="0"
 EOF
 fi
 

@@ -229,13 +229,13 @@ if ($_POST) {
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
-			$reqdfieldsn[] = gettext("Authentication port value");
+			$reqdfieldsn[] = gettext("Authentication port");
 		}
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
-			$reqdfieldsn[] = gettext("Accounting port value");
+			$reqdfieldsn[] = gettext("Accounting port");
 		}
 
 		if (!isset($id)) {
@@ -647,7 +647,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'radius_auth_port',
-	'Authentication port value',
+	'Authentication port',
 	'number',
 	$pconfig['radius_auth_port']
 ));

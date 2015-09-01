@@ -1027,6 +1027,14 @@ clone_to_staging_area() {
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
+
+	# Change default interface names to match vmware driver
+	sed -i '' -e 's,em0,vmx0,' -e 's,em1,vmx1,' ${DEFAULTCONF}
+	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore default values to be used by serial package
+	sed -i '' -e 's,vmx0,em0,' -e 's,vmx1,em1,' ${DEFAULTCONF}
+
 	# Activate serial console in config.xml
 	# If it was there before, clear the setting to be sure we don't add it twice.
 	sed -i "" -e "/		<enableserial\/>/d" ${DEFAULTCONF}
@@ -1088,6 +1096,8 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickserial" -o \
 	     "${1}" = "memstickadi" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
+	elif [ "${1}" = "ova" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
 	fi

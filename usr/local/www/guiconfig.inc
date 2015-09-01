@@ -1116,7 +1116,7 @@ function alias_info_popup($alias_id){
 				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
 				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
 				if ($alias_details[$counter] != "" && $alias_detail_default === False)
-					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_details[$counter]}</td>";
+					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">" . htmlspecialchars($alias_details[$counter]) . "</td>";
 				else
 					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">&nbsp;</td>";
 				$alias_objects_with_details .= "</tr>";
@@ -1129,7 +1129,7 @@ function alias_info_popup($alias_id){
 	if ($strlength >= $maxlength)
 		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
 	$item_text = ($counter > 1 ? "items" : "item");
-	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
+	$alias_caption = htmlspecialchars($alias_descr_substr) . " - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
 	$strlength = strlen ($alias_caption);
 	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
 }

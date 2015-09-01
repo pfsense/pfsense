@@ -499,21 +499,25 @@ $section->addInput(new Form_Select(
 
 $group = new Form_Group('Search scope');
 
-$group->add(new Form_Select(
+$SSF = new Form_Select(
 	'ldap_scope',
-	'Search scope',
+	'Level',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
-))->setHelp('Level');
+);
 
-$group->add(new Form_Input(
+$SSB = new Form_Input(
 	'ldap_basedn',
 	'Base DN',
 	'text',
 	$pconfig['ldap_basedn']
-))->setHelp('Base DN');
+);
 
-$section->add($group);
+
+$section->addInput(new Form_StaticText(
+	'Search scope',
+	'Level ' . $SSF . '<br />' . 'Base DN' . $SSB
+));
 
 $group = new Form_Group('Authentication containers');
 $group->add(new Form_Input(

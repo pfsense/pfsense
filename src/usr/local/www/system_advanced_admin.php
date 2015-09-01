@@ -410,7 +410,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS Rebind Check',
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
-))->setHelp('When this is unchecked, your system is protected against<a '.
+))->setHelp('When this is unchecked, your system is protected against <a '.
 	'href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. '.
 	'This blocks private IP responses from your configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.

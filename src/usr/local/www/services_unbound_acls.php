@@ -403,7 +403,7 @@ events.push(function(){
 	  return newStr || str;
 	}
 
-	// Called after a delete so that there are no gaps in the numbering. Most of hte time the config system doesn't care about
+	// Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
 	// gaps, but I do :)
 	function renumber() {
 		var idx = 0;
@@ -479,7 +479,7 @@ events.push(function(){
 		setMasks();
 	}
 
-	// These are action butons, not submit butons
+	// These are action buttons, not submit buttons
 	$('[id^=addrow]').prop('type','button');
 	$('[id^=delete]').prop('type','button');
 

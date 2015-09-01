@@ -1193,7 +1193,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'proto',
 	'Protocol',
-	$pconfig['ipprotocol'],
+	$pconfig['proto'],
 	array(
 		'tcp' => 'TCP',
 		'udp' => 'UDP',

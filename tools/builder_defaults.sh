@@ -236,42 +236,27 @@ export NANO_BOOT0CFG="-o packet -s 1 -m 3"
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
-_BUILDER_EPOCH=$(date +"%s")
 export DATESTRINGFILE=${DATESTRINGFILE:-"$SCRATCHDIR/version.snapshots"}
-if [ "${DATESTRING}" = "" ]; then
-	if [ -f $DATESTRINGFILE ]; then
-		# If the file is more than 30 minutes old regenerate it
-		TMPDATESTRINGFILE=$(($_BUILDER_EPOCH - `stat -f %m $DATESTRINGFILE`))
-		if [ -z "${_USE_OLD_DATESTRING}" -a $TMPDATESTRINGFILE -gt 1800 ]; then
-			export DATESTRING=`date "+%Y%m%d-%H%M"`
-		else
-			export DATESTRING=`cat $DATESTRINGFILE`
-		fi
-		unset TMPDATESTRINGFILE
+if [ -z "${DATESTRING}" ]; then
+	if [ -f "${DATESTRINGFILE}" -a -n "${_USE_OLD_DATESTRING}" ]; then
+		export DATESTRING=$(cat $DATESTRINGFILE)
 	else
-		export DATESTRING=`date "+%Y%m%d-%H%M"`
+		export DATESTRING=$(date "+%Y%m%d-%H%M"`)
 	fi
-	echo "$DATESTRING" > $DATESTRINGFILE
 fi
+echo "$DATESTRING" > $DATESTRINGFILE
 
 # NOTE: Date string is placed on the final image etc folder to help detect new updates
 #       The file is used for sharing the same value with build_snapshots.sh
 export BUILTDATESTRINGFILE=${BUILTDATESTRINGFILE:-"$SCRATCHDIR/version.buildtime"}
-if [ "${BUILTDATESTRING}" = "" ]; then
-	if [ -f $BUILTDATESTRINGFILE ]; then
-		# If the file is more than 30 minutes old regenerate it
-		TMPBUILTDATESTRINGFILE=$(($_BUILDER_EPOCH - `stat -f %m $BUILTDATESTRINGFILE`))
-		if [ $TMPBUILTDATESTRINGFILE -gt 1800 ]; then
-			export BUILTDATESTRING=`date "+%a %b %d %T %Z %Y"`
-		else
-			export BUILTDATESTRING=`cat $BUILTDATESTRINGFILE`
-		fi
-		unset TMPBUILTDATESTRINGFILE
+if [ -z "${BUILTDATESTRING}" ]; then
+	if [ -f "${BUILTDATESTRINGFILE}" -a -n "${_USE_OLD_DATESTRING}" ]; then
+		export BUILTDATESTRING=$(cat $BUILTDATESTRINGFILE)
 	else
-		export BUILTDATESTRING=`date "+%a %b %d %T %Z %Y"`
+		export BUILTDATESTRING=$(date "+%a %b %d %T %Z %Y")
 	fi
-	echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 fi
+echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"tank"}

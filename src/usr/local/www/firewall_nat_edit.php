@@ -850,7 +850,7 @@ $group->add(new Form_Input(
 	'localbeginport_cust',
 	null,
 	'number',
-	$pconfig['localbeginport_cust'],
+	$pconfig['localbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
 

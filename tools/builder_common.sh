@@ -382,7 +382,7 @@ print_flags() {
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
 	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
-	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
+	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -838,7 +838,7 @@ create_ova_image() {
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
 	# Convert raw to vmdk
-	vmdktool -c${VMDK_DISK_CAPACITY_IN_GB}G -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
+	vmdktool -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
 
 	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
 		if [ -f ${OVA_TMP}/${OVFRAW} ]; then

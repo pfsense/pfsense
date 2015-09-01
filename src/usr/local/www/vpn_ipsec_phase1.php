@@ -1,35 +1,60 @@
 <?php
 /*
 	vpn_ipsec_phase1.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2014 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2008 Shrew Soft Inc
+ *	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>.
+ *	Copyright (c)  2014 Ermal Luçi
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-editphase1
@@ -108,7 +133,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
-	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
+		($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
@@ -198,7 +223,7 @@ if ($_POST) {
 			break;
 		case "pre_shared_key":
 			// If this is a mobile PSK tunnel the user PSKs go on
-			//    the PSK tab, not here, so skip the check.
+			//	  the PSK tab, not here, so skip the check.
 			if ($pconfig['mobile']) {
 				break;
 			}
@@ -555,7 +580,7 @@ function build_cert_list() {
 		foreach ($config['cert'] as $cert)
 			$list[$cert['refid']] = $cert['descr'];
 	}
-	
+
 	return($list);
 }
 
@@ -568,7 +593,7 @@ function build_ca_list() {
 		foreach ($config['ca'] as $ca)
 			$list[$ca['refid']] =  $ca['descr'];
 	}
-	
+
 	return($list);
 }
 
@@ -581,7 +606,7 @@ function build_eal_list() {
 		foreach ($p1_ealgos as $algo => $algodata)
 			$list[$algo] = htmlspecialchars($algodata['name']);
 	}
-	
+
 	return($list);
 }
 
@@ -636,12 +661,14 @@ $section->addInput(new Form_Select(
 	build_interface_list()
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
 
-$section->addInput(new Form_Input(
-	'remotegw',
-	'Remote Gateway',
-	'text',
-	$pconfig['remotegw']
-))->setHelp('Enter the public IP address or host name of the remote gateway');
+if (!$pconfig['mobile']) {
+	$section->addInput(new Form_Input(
+		'remotegw',
+		'Remote Gateway',
+		'text',
+		$pconfig['remotegw']
+	))->setHelp('Enter the public IP address or host name of the remote gateway');
+}
 
 $section->addInput(new Form_Input(
 	'descr',

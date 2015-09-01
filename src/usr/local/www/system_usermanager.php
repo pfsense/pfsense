@@ -392,7 +392,12 @@ function build_priv_table() {
 
 	return($privhtml);
 }
-
+/*
+<input type="image" name="delcert[]" width="17" height="17" border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+		onclick="document.getElementById('certid').value='<?=$i;?>';
+		document.getElementById('userid').value='<?=$id;?>';
+		document.getElementById('act').value='<?php echo "delcert";?>'; " title="<?=gettext("delete cert");?>" />
+*/												
 function build_cert_table() {
 	global $a_user, $id;
 
@@ -402,6 +407,7 @@ function build_cert_table() {
 	$certhtml .=			'<tr>';
 	$certhtml .=				'<th>' . gettext('Name') . '</th>';
 	$certhtml .=				'<th>' . gettext('CA') . '</th>';
+	$certhtml .=                '<th></th>';
 	$certhtml .=			'</tr>';
 	$certhtml .=		'</thead>';
 	$certhtml .=		'<tbody>';
@@ -417,8 +423,16 @@ function build_cert_table() {
 			$certhtml .=	'<tr>';
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
+			$certhtml .=		'<td>';
+			$certhtml .=			'<a name="delcert[]" class="btn btn-xs btn-danger" onclick="document.getElementById(\'certid\').value=\'' . $i. '\';';
+			$certhtml .=			'document.getElementById(\'userid\').value=\'' . $i . '\';';
+			$certhtml .=			'document.getElementById(\'act\').value=\'' . 'delcert' . '\';"' .  'title="';
+			$certhtml .=            gettext('Do you really want to remove this certificate association? (Certificate will not be deleted)') . '")' . '">Delete</a>'; 
+			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
+			$i++;
 		}
+
 	}
 
 	$certhtml .=		'</tbody>';

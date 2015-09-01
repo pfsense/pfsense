@@ -1211,7 +1211,7 @@ $section->addInput(new Form_Select(
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
-))->setHelp('Choose which IP protocol this rule should match. In most cases, you should specify TCP	 here.');
+))->setHelp('Choose which IP protocol this rule should match.');
 
 $section->addInput(new Form_Select(
 	'icmptype',

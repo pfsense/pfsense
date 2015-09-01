@@ -381,7 +381,7 @@ print_flags() {
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
-	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
+	printf "   OVA_FIRST_PART_SIZE_IN_GB: %s\n" $OVA_FIRST_PART_SIZE_IN_GB
 	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
@@ -801,7 +801,7 @@ create_ova_image() {
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
-		-s ${OVA_FIRST_PART_SIZE} \
+		-s ${OVA_FIRST_PART_SIZE_IN_GB}g \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
 

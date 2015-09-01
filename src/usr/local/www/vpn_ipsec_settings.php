@@ -56,6 +56,9 @@ $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencrypte
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
+$pconfig['retransmit_tries'] = $config['ipsec']['retransmit_tries'];
+$pconfig['retransmit_timeout'] = $config['ipsec']['retransmit_timeout'];
+$pconfig['retransmit_base'] = $config['ipsec']['retransmit_base'];
 
 if ($_POST) {
 
@@ -116,6 +119,21 @@ if ($_POST) {
 		}
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
 			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
+		}
+	}
+	if (isset($pconfig['retransmit_tries'])) {
+		if (!is_numericint($pconfig['retransmit_tries']) && $pconfig['retransmit_tries'] <> '') {
+			$input_errors[] = "A positive integer must be specified for retransmit tries.";
+		}
+	}
+	if (isset($pconfig['retransmit_timeout']) && $pconfig['retransmit_timeout'] <> '') {
+		if ((!is_numericfloat($pconfig['retransmit_timeout'])) || floatval($pconfig['retransmit_timeout']) <= 0.0) {
+			$input_errors[] = "A positive decimal number must be specified for retransmit timeout.";
+		}
+	}
+	if (isset($pconfig['retransmit_base']) && $pconfig['retransmit_base'] <> '') {
+		if ((!is_numericfloat($pconfig['retransmit_base']) && $pconfig['retransmit_base'] <> '') || floatval($pconfig['retransmit_base']) <= 0.0) {
+			$input_errors[] = "A positive decimal number must be specified for retransmit base.";
 		}
 	}
 
@@ -208,6 +226,30 @@ if ($_POST) {
 			}
 			if (isset($config['system']['maxmss'])) {
 				unset($config['system']['maxmss']);
+			}
+		}
+
+		if (!empty($_POST['retransmit_tries'])) {
+			$config['ipsec']['retransmit_tries'] = $_POST['retransmit_tries'];
+		} else {
+			if (isset($config['ipsec']['retransmit_tries'])) {
+				unset($config['ipsec']['retransmit_tries']);
+			}
+		}
+
+		if (!empty($_POST['retransmit_timeout'])) {
+			$config['ipsec']['retransmit_timeout'] = $_POST['retransmit_timeout'];
+		} else {
+			if (isset($config['ipsec']['retransmit_timeout'])) {
+				unset($config['ipsec']['retransmit_timeout']);
+			}
+		}
+
+		if (!empty($_POST['retransmit_base'])) {
+			$config['ipsec']['retransmit_base'] = $_POST['retransmit_base'];
+		} else {
+			if (isset($config['ipsec']['retransmit_base'])) {
+				unset($config['ipsec']['retransmit_base']);
 			}
 		}
 
@@ -388,6 +430,31 @@ function maxmss_checked(obj) {
 							<br />
 							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
 							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Retransmission strategy for IKEv2 authentication and dead peer detection"); ?></td>
+						<td width="78%" class="vtable">
+
+							<strong><?=gettext("Retransmit tries"); ?></strong>
+							<br />
+							<input name="retransmit_tries" id="retransmit_tries" value="<?php if ($pconfig['retransmit_tries'] <> "") echo htmlspecialchars($pconfig['retransmit_tries']); ?>" />
+							<br />
+							<?=gettext("Number of retransmissions to send before giving up. If left blank, the default value is 5 tries."); ?>
+							<br />
+							<br />
+							<strong><?=gettext("Retransmit timeout"); ?></strong>
+							<br />
+							<input name="retransmit_timeout" id="retransmit_timeout" value="<?php if ($pconfig['retransmit_timeout'] <> "") echo htmlspecialchars($pconfig['retransmit_timeout']); ?>" />
+							<br />
+							<?=gettext("Timeout in seconds.If left blank, the default value is 4.0 seconds."); ?>
+							<br />
+							<br />
+							<strong><?=gettext("Retransmit base"); ?></strong>
+							<br />
+							<input name="retransmit_base" id="retransmit_base" value="<?php if ($pconfig['retransmit_base'] <> "") echo htmlspecialchars($pconfig['retransmit_base']); ?>" />
+							<br />
+							<?=gettext("Base of exponential backoff. If left blank, the default value is 1.8."); ?>
 						</td>
 					</tr>
 					<tr>

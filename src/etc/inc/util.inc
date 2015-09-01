@@ -329,6 +329,11 @@ function is_numericint($arg) {
 	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);
 }
 
+/* validate non-negative numeric decimal string, or equivalent numeric variable */
+function is_numericfloat($arg) {
+	return (((is_float($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit(preg_replace('/\./', '', $arg, 1)))) ? true : false);
+}
+
 /* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP)
    given an (human readable) ipv4 or ipv6 host address and subnet bit count */
 function gen_subnet($ipaddr, $bits) {

@@ -662,7 +662,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<td><?=($inuse) ? "YES" : "NO"; ?></td>
 						<td>
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-success">
-								<?=gettext("Export CRL")?>"
+								<?=gettext("Export CRL")?>
 							</a>
 <?php
 				if ($internal): ?>

@@ -692,6 +692,13 @@ print $form;
 //<![CDATA[
 events.push(function(){
 	
+	function set_ldap_port() {
+        if($('#ldap_urltype').find(":selected").index() == 0)
+			$('#ldap_port').val('389');
+		else
+			$('#ldap_port').val('636');		
+	}
+	
     // Hides all elements of the specified class. This will usually be a section
     function hideClass(s_class, hide) {
         if(hide)
@@ -721,6 +728,9 @@ events.push(function(){
 	// On page load . .
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
+	
+	if($('#ldap_port').val() == "")
+		set_ldap_port();
 
 <?php
 	if($act == 'edit') {
@@ -738,7 +748,10 @@ events.push(function(){
     $('#ldap_anon').click(function () {
         hideClass('ldapanon', this.checked);
     });
-	
+    
+	$('#ldap_urltype').on('change', function() {
+		set_ldap_port();
+    });    
 });
 //]]>
 </script>

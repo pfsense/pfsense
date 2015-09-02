@@ -554,16 +554,18 @@ $section->addInput(new Form_Checkbox(
 	'Bind anonymous',
 	'Use anonymous binds to resolve distinguished names',
 	$pconfig['ldap_anon']
-))->toggles('.toggle-anon');
+));
 
 $group = new Form_Group('Bind credentials');
-$group->addClass('toggle-anon collapse');
+$group->addClass('ldapanon');
+
 $group->add(new Form_Input(
 	'ldap_binddn',
 	'User DN:',
 	'text',
 	$pconfig['ldap_binddn']
 ));
+
 $group->add(new Form_Input(
 	'ldap_bindpw',
 	'Password',
@@ -689,6 +691,15 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+	
+    // Hides all elements of the specified class. This will usually be a section
+    function hideClass(s_class, hide) {
+        if(hide)
+            $('.' + s_class).hide();
+        else
+            $('.' + s_class).show();
+    }
+    
 	function ldap_tmplchange() {
 		switch ($('#ldap_tmpltype').find(":selected").index()) {
 <?php
@@ -709,6 +720,7 @@ events.push(function(){
 
 	// On page load . .
 	ldap_tmplchange();
+	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 
 <?php
 	if($act == 'edit') {
@@ -722,6 +734,11 @@ events.push(function(){
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();
 	});
+
+    $('#ldap_anon').click(function () {
+        hideClass('ldapanon', this.checked);
+    });
+	
 });
 //]]>
 </script>

@@ -12,7 +12,7 @@ require_once("service-utils.inc");
 
 header('Content-Type: text/html; charset=utf-8');
 
-$pagetitle = gentitle( $pgtitle );
+$pagetitle = gentitle($pgtitle);
 
 if (isset($config['system']['webgui']['pagenamefirst'])) {
 	$tabtitle = $pagetitle . " - " . $config['system']['hostname'] . "." . $config['system']['domain'];
@@ -66,12 +66,12 @@ function return_ext_menu($section) {
 	global $config;
 	$htmltext = "";
 	$extarray = array();
-	if($config['installedpackages']['menu'] != "") {
-		foreach($config['installedpackages']['menu'] as $menuitem) {
-			if($menuitem['section'] != $section) {
+	if ($config['installedpackages']['menu'] != "") {
+		foreach ($config['installedpackages']['menu'] as $menuitem) {
+			if ($menuitem['section'] != $section) {
 				continue;
 			}
-			if($menuitem['url'] != "") {
+			if ($menuitem['url'] != "") {
 				$test_url=$menuitem['url'];
 				$addresswithport = getenv("HTTP_HOST");
 				$colonpos = strpos($addresswithport, ":");
@@ -96,7 +96,7 @@ function return_ext_menu($section) {
 
 function output_menu($arrayitem, $target = null) {
 	foreach ($arrayitem as $item) {
-		if (isAllowedPage($item[1]) || $item[1]=="/index.php?logout") {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout") {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -132,7 +132,7 @@ if (!isAllowedPage("system_usermanager.php*")) {
 } else {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
-$system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
+$system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
 $interfaces_menu = array();
@@ -145,7 +145,7 @@ foreach ($opts as $oif => $odescr) {
 		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")),0);
+$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
 
 // Firewall
 $firewall_menu = array();
@@ -155,7 +155,7 @@ $firewall_menu[] = array(gettext("Rules"), "/firewall_rules.php");
 $firewall_menu[] = array(gettext("Schedules"), "/firewall_schedule.php");
 $firewall_menu[] = array(gettext("Traffic Shaper"), "/firewall_shaper.php");
 $firewall_menu[] = array(gettext("Virtual IPs"), "/firewall_virtual_ip.php");
-$firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),0);
+$firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")), 0);
 
 // Services
 $services_menu = array();
@@ -164,7 +164,7 @@ $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
 $services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
-if($g['services_dhcp_server_enable']) {
+if ($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
 	$services_menu[] = array(gettext("DHCPv6 Server/RA"), "/services_dhcpv6.php");
 }
@@ -174,14 +174,14 @@ $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
-if(count($config['interfaces']) > 1) {
+if (count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
 	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 $services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
-$services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
+$services_menu = msort(array_merge($services_menu, return_ext_menu("Services")), 0);
 
 // VPN
 $vpn_menu = array();
@@ -189,7 +189,7 @@ $vpn_menu[] = array(gettext("IPsec"), "/vpn_ipsec.php");
 $vpn_menu[] = array(gettext("OpenVPN"), "/vpn_openvpn_server.php");
 //$vpn_menu[] = array(gettext("PPTP"), "/vpn_pptp.php");
 $vpn_menu[] = array(gettext("L2TP"), "/vpn_l2tp.php");
-$vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")),0);
+$vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 
 // Status
 $status_menu = array();
@@ -215,20 +215,20 @@ $status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/diag_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
-if(count($config['interfaces']) > 1) {
+if (count($config['interfaces']) > 1) {
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 }
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
-		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
+	    preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
 if (count($wifdescrs) > 0) {
 	$status_menu[] = array(gettext("Wireless"), "/status_wireless.php");
 }
-$status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
+$status_menu = msort(array_merge($status_menu, return_ext_menu("Status")), 0);
 
 // Diagnostics
 $diagnostics_menu = array();
@@ -239,12 +239,12 @@ $diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
 $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
-if(file_exists("/var/run/gmirror_active")) {
-	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php" );
+if (file_exists("/var/run/gmirror_active")) {
+	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php");
 }
-$diagnostics_menu[] = array(gettext("Halt System"), "/halt.php" );
-$diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php" );
-$diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );
+$diagnostics_menu[] = array(gettext("Halt System"), "/halt.php");
+$diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php");
+$diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php");
 $diagnostics_menu[] = array(gettext("Tables"), "/diag_tables.php");
 $diagnostics_menu[] = array(gettext("Ping"), "/diag_ping.php");
 $diagnostics_menu[] = array(gettext("Test Port"), "/diag_testport.php");
@@ -253,28 +253,28 @@ $diagnostics_menu[] = array(gettext("pfTop"), "/diag_system_pftop.php");
 $diagnostics_menu[] = array(gettext("Reboot"), "/reboot.php");
 $diagnostics_menu[] = array(gettext("Routes"), "/diag_routes.php");
 $diagnostics_menu[] = array(gettext("SMART Status"), "/diag_smart.php");
-$diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php" );
+$diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php");
 $diagnostics_menu[] = array(gettext("States"), "/diag_dump_states.php");
 $diagnostics_menu[] = array(gettext("States Summary"), "/diag_states_summary.php");
 $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.php");
 $diagnostics_menu[] = array(gettext("Traceroute"), "/diag_traceroute.php");
 $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php");
-if($g['platform'] == "nanobsd") {
+if ($g['platform'] == "nanobsd") {
 	$diagnostics_menu[] = array(gettext("NanoBSD"), "/diag_nanobsd.php");
 }
 if (isset($config['system']['developer'])) {
 	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
 }
-$diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
+$diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
 $gold_menu = array();
 $gold_menu[] = array(gettext("pfSense Gold"), "https://www.pfsense.org/gold");
-$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
+$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")), 0);
 
-if(! $g['disablehelpmenu']) {
+if (!$g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
-	if($g['product_name'] == "pfSense") {
+	if ($g['product_name'] == "pfSense") {
 		$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
 	}
 	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
@@ -284,7 +284,7 @@ if(! $g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
 	$help_menu[] = array(gettext("Search portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
-	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
+	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
 
 ?>
@@ -323,7 +323,7 @@ if(! $g['disablehelpmenu']) {
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
 			<?php endforeach?>
-				<?php if(false ): ?> // are_notices_pending()):?>
+				<?php if (false): ?> // are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>
@@ -348,7 +348,7 @@ if(! $g['disablehelpmenu']) {
 					))->addClass('btn-primary')->removeClass('btn-default');
 
 					$noticeCategories = $notice['category'];
-					foreach($notices as $time => $notice) {
+					foreach ($notices as $time => $notice) {
 						if (!isset($noticeCategories[$notice['category']])) {
 							$noticeCategories[ $notice['category'] ] = array();
 						}
@@ -356,10 +356,10 @@ if(! $g['disablehelpmenu']) {
 						array_push($noticeCategories[$notice['category']], $notice);
 					}
 
-					foreach($noticeCategories as $category => $catNotices) {
+					foreach ($noticeCategories as $category => $catNotices) {
 						$html .= "<h4>{$category}</h4>";
 						$html .= '<ul>';
-						foreach($catNotices as $notice) {
+						foreach ($catNotices as $notice) {
 							$html .= '<li>';
 							if (!empty($notice['url'])) {
 								$html .= "<a href=\"{$notice['url']}\">{$notice['id']}</a> - ";
@@ -378,7 +378,7 @@ if(! $g['disablehelpmenu']) {
 		</div>
 	</div>
 
-<?php if(are_notices_pending()):?>
+<?php if (are_notices_pending()):?>
 	<div class="modal fade" id="notices" role="dialog" aria-labelledby="noticesTitle" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -393,7 +393,7 @@ if(! $g['disablehelpmenu']) {
 				<div class="modal-body">
 <?php
 $noticeCategories = array();
-foreach($notices as $time => $notice)
+foreach ($notices as $time => $notice)
 {
 	if (!isset($noticeCategories[ $notice['category'] ]))
 		$noticeCategories[ $notice['category'] ] = array();
@@ -402,11 +402,11 @@ foreach($notices as $time => $notice)
 	array_push($noticeCategories[ $notice['category'] ], $notice);
 }
 
-foreach($noticeCategories as $category => $catNotices):?>
+foreach ($noticeCategories as $category => $catNotices):?>
 	<h4><?=$category?></h4>
 	<ul>
 <?php
-	foreach($catNotices as $notice):
+	foreach ($catNotices as $notice):
 ?>
 	<li>
 		<b>
@@ -460,7 +460,7 @@ echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
 echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 
 ?>
-	<?php if(! $g['disablehelpicon']): ?>
+	<?php if (!$g['disablehelpicon']): ?>
 		<li>
 			<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
 				<i class="icon-large icon-question-sign"></i>
@@ -475,7 +475,7 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 		$info_text = sprintf(gettext("%s is booting then packages will be reinstalled in the background.<p>Do not make changes in the GUI until this is complete."), $g['product_name']);
 	} else {
-		$pgtitle = array(gettext("System"),gettext("Package Manager"));
+		$pgtitle = array(gettext("System"), gettext("Package Manager"));
 		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
 	}
 	print_info_box("{$info_text}<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
@@ -485,7 +485,7 @@ $pgtitle_output = true;
 
 /*  If this page is being remotely managed then do not allow the loading of the contents. */
 if ($config['remote_managed_pages']['item']) {
-	foreach($config['remote_managed_pages']['item'] as $rmp) {
+	foreach ($config['remote_managed_pages']['item'] as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
 			print_info_box_np("This page is currently being managed by a remote machine.");
 			include("foot.inc");

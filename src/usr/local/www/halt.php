@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</div>
 
 <?php
-	if(DEBUG)
+	if (DEBUG)
 	   print("Not actually halting (DEBUG is set true)<br>");
 	else
 		system_halt();

@@ -427,10 +427,10 @@ if [ -n "${SNAPSHOTS}" ]; then
 	fi
 	# Alert the world that we have some snapshots ready.
 	snapshots_update_status ">>> Builder run is complete."
-else
-	echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-	ls -lah ${IMAGES_FINAL_DIR}
 fi
+
+echo ">>> ${IMAGES_FINAL_DIR} now contains:"
+ls -lah ${IMAGES_FINAL_DIR}
 
 set -e
 # Run final finish routines

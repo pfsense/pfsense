@@ -772,13 +772,8 @@ events.push(function(){
 	// On page load . .
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
-<?php
-	if(!$input_errors) {
-?>
 	$("#Select").prop('type','button');
-<?php
-	}
-?>
+
 		
 	if($('#ldap_port').val() == "")
 		set_ldap_port();
@@ -790,8 +785,12 @@ events.push(function(){
  			$(this).attr('disabled', 'disabled');
 		});
 		
+<?php
+		if(!$input_errors) {
+?>	
 		$('#name').prop("readonly", true);
 <?php
+		}
 	}
 ?>
 	// On click . .

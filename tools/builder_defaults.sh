@@ -274,7 +274,7 @@ export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
-if echo "${PRODUCT_VERSION}" | grep -qv -- '-RELEASE'; then
+if echo "${PRODUCT_VERSION}" | grep -q -- '-RELEASE'; then
 	export _IS_RELEASE=yes
 else
 	unset _IS_RELEASE

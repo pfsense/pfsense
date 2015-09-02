@@ -142,8 +142,6 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 	puts("   );");
 }
 ?>
-	// Set pointer to end of recall buffer.
-	var intRecallPtr = arrRecallBuffer.length-1;
 
 	// Set pointer to end of recall buffer.
 	var intRecallPtr = arrRecallBuffer.length-1;

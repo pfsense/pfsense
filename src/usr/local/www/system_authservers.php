@@ -526,9 +526,10 @@ $group->add(new Form_Input(
 #FIXME
 $group->add(new Form_Button(
 	'Select',
-	'Select a container',
-	'/system_usermanager_settings_ldapacpicker.php?port=389&host=192.168.1.1&scope=one&basedn=CN=pfsense&binddn=&bindpw=&urltype=TCP%20-%20Standard&proto=3&authcn=OU=Staff&cert='
-));
+	'Select a container'
+//	'/system_usermanager_settings_ldapacpicker.php?port=389&host=192.168.1.1&scope=one&basedn=CN=pfsense&binddn=&bindpw=&urltype=TCP%20-%20Standard&proto=3&authcn=OU=Staff&cert='
+))->removeClass('btn-primary')->addClass('btn-default');
+
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
@@ -691,6 +692,44 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+	function select_clicked() {
+		if (document.getElementById("ldap_port").value == '' ||
+		    document.getElementById("ldap_host").value == '' ||
+		    document.getElementById("ldap_scope").value == '' ||
+		    document.getElementById("ldap_basedn").value == '' ||
+		    document.getElementById("ldapauthcontainers").value == '') {
+			alert("<?=gettext("Please fill the required values.");?>");
+			return;
+		}
+		
+		if (!document.getElementById("ldap_anon").checked) {
+			if (document.getElementById("ldap_binddn").value == '' ||
+			    document.getElementById("ldap_bindpw").value == '') {
+				alert("<?=gettext("Please fill the bind username/password.");?>");
+				return;
+			}
+		}
+		var url = 'system_usermanager_settings_ldapacpicker.php?';
+		url += 'port=' + document.getElementById("ldap_port").value;
+		url += '&host=' + document.getElementById("ldap_host").value;
+		url += '&scope=' + document.getElementById("ldap_scope").value;
+		url += '&basedn=' + document.getElementById("ldap_basedn").value;
+		url += '&binddn=' + document.getElementById("ldap_binddn").value;
+		url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
+		url += '&urltype=' + document.getElementById("ldap_urltype").value;
+		url += '&proto=' + document.getElementById("ldap_protver").value;
+		url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
+		<?php if (count($a_ca) > 0): ?>
+			url += '&cert=' + document.getElementById("ldap_caref").value;
+		<?php else: ?>
+			url += '&cert=';
+		<?php endif; ?>
+	
+		var oWin = window.open(url, "pfSensePop", "width=620,height=400,top=150,left=150");
+		if (oWin == null || typeof(oWin) == "undefined") {
+			alert("<?=gettext('Popup blocker detected.  Action aborted.');?>");
+		}
+	}
 	
 	function set_ldap_port() {
         if($('#ldap_urltype').find(":selected").index() == 0)
@@ -728,6 +767,7 @@ events.push(function(){
 	// On page load . .
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
+	$("#Select").prop('type','button');
 	
 	if($('#ldap_port').val() == "")
 		set_ldap_port();
@@ -751,7 +791,11 @@ events.push(function(){
     
 	$('#ldap_urltype').on('change', function() {
 		set_ldap_port();
-    });    
+    }); 
+    
+    $('#Select').click(function () {
+        select_clicked();
+    });   
 });
 //]]>
 </script>

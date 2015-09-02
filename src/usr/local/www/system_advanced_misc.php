@@ -283,12 +283,12 @@ if ($_POST) {
 		$config['system']['use_mfs_tmp_size'] = $_POST['-tmp-ram-disk-size'];
 		$config['system']['use_mfs_var_size'] = $_POST['-var-ram-disk-size'];
 
-		if (isset($_POST['periodic-rrd-backup'])) {
-			$config['system']['rrdbackup'] = $_POST['periodic-rrd-backup'];
+		if (isset($_POST['rrdbackup'])) {
+			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
 		}
-		if (isset($_POST['periodic-dhcp-leases-backup'])) {
-			$config['system']['dhcpbackup'] = $_POST['periodic-dhcp-leases-backup'];
+		if (isset($_POST['dhcpbackup'])) {
+			$config['system']['dhcpbackup'] = $_POST['dhcpbackup'];
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 		}
 

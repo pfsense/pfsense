@@ -435,6 +435,8 @@ $section->addInput($input = new Form_Select(
 ))->toggles();
 
 $form->add($section);
+
+// ==== LDAP settings =========================================================
 $section = new Form_Section('LDAP Server Settings');
 $section->addClass('toggle-ldap collapse');
 
@@ -627,6 +629,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('e.g. user@host becomes user when unchecked.');
 
 $form->add($section);
+
+// ==== RADIUS section ========================================================
 $section = new Form_Section('Radius Server Settings');
 $section->addClass('toggle-radius collapse');
 
@@ -775,8 +779,11 @@ events.push(function(){
 <?php
 	if($act == 'edit') {
 ?>
-		$('#type').prop("disabled", true);
-		$('#name').prop("disabled", true);
+		$('#type option:not(:selected)').each(function(){
+ 			$(this).attr('disabled', 'disabled');
+		});
+		
+		$('#name').prop("readonly", true);
 <?php
 	}
 ?>

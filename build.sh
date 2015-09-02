@@ -65,6 +65,7 @@ usage() {
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
+	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
 	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
 	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
@@ -85,6 +86,7 @@ unset _USE_OLD_DATESTRING
 unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
+unset SNAPSHOTS
 BUILDACTION="images"
 
 # Maybe use options for nocleans etc?
@@ -129,6 +131,10 @@ while test "$1" != ""; do
 				usage
 			fi
 			export INSTALL_EXTRA_KERNELS="${1}"
+			;;
+		--snapshots)
+			export SNAPSHOTS=1
+			IMAGETYPE="all"
 			;;
 		--build-kernel)
 			BUILDACTION="buildkernel"
@@ -193,6 +199,11 @@ while test "$1" != ""; do
 			[ -n "${1}" ] \
 				&& var_to_print="${1}"
 			;;
+		--snapshot-update-status)
+			shift
+			[ -n "${1}" ] \
+				&& snapshot_status_message="${1}"
+			;;
 		*)
 			usage
 	esac
@@ -208,6 +219,13 @@ done
 # Print var required with -V and exit
 if [ -n "${var_to_print}"  ]; then
 	eval "echo \$${var_to_print}"
+	exit 0
+fi
+
+# Update snapshot status and exit
+if [ -n "${snapshot_status_message}"  ]; then
+	export SNAPSHOTS=1
+	snapshots_update_status "${snapshot_status_message}"
 	exit 0
 fi
 
@@ -232,7 +250,7 @@ case $BUILDACTION in
 	printflags)
 		print_flags
 	;;
-	images)
+	images|snapshots)
 		# It will be handled below
 	;;
 	updatesources)
@@ -269,6 +287,28 @@ if [ "${BUILDACTION}" != "images" ]; then
 	exit 0
 fi
 
+if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${RSYNCIP}" -a -z "${DO_NOT_UPLOAD}" ]; then
+		echo ">>> ERROR: RSYNCIP is not defined"
+		exit 1
+	fi
+
+	if [ -z "${RSYNCUSER}" -a -z "${DO_NOT_UPLOAD}" ]; then
+		echo ">>> ERROR: RSYNCUSER is not defined"
+		exit 1
+	fi
+
+	if [ -z "${RSYNCPATH}" -a -z "${DO_NOT_UPLOAD}" ]; then
+		echo ">>> ERROR: RSYNCPATH is not defined"
+		exit 1
+	fi
+
+	if [ -z "${RSYNCLOGS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+		echo ">>> ERROR: RSYNCLOGS is not defined"
+		exit 1
+	fi
+fi
+
 if [ $# -gt 1 ]; then
 	echo "ERROR: Too many arguments given."
 	echo
@@ -290,6 +330,20 @@ else
 fi
 
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
+
+if [ -n "${SNAPSHOTS}" ]; then
+	echo "" > $SNAPSHOTSLOGFILE
+	echo "" > $SNAPSHOTSLASTUPDATE
+
+	snapshots_rotate_logfile
+
+	snapshots_update_status ">>> Starting snapshot build operations"
+
+	if pkg update -r ${PRODUCT_NAME} >/dev/null 2>&1; then
+		snapshots_update_status ">>> Updating builder packages... "
+		pkg upgrade -r ${PRODUCT_NAME} -y -q >/dev/null 2>&1
+	fi
+fi
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
@@ -364,8 +418,19 @@ done
 echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
 wait
 
-echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-ls -lah ${IMAGES_FINAL_DIR}
+if [ -n "${SNAPSHOTS}" ]; then
+	snapshots_copy_to_staging_iso_updates
+	snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+	# SCP files to snapshot web hosting area
+	if [ -z "${DO_NOT_UPLOAD}" ]; then
+		snapshots_scp_files
+	fi
+	# Alert the world that we have some snapshots ready.
+	snapshots_update_status ">>> Builder run is complete."
+else
+	echo ">>> ${IMAGES_FINAL_DIR} now contains:"
+	ls -lah ${IMAGES_FINAL_DIR}
+fi
 
 set -e
 # Run final finish routines

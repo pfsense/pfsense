@@ -368,7 +368,7 @@ $group->add(new Form_Input(
 	'Source tracking timeout',
 	'number',
 	$pconfig['srctrack'],
-	['placeholder' => 1400]
+	['placeholder' => 0]
 ))->setHelp('Set the source tracking timeout for sticky connections. By default '.
 	'this is 0, so source tracking is removed as soon as the state expires. '.
 	'Setting this timeout higher will cause the source/destination relationship '.
@@ -382,7 +382,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable default gateway switching',
 	$pconfig['gw_switch_default']
 ))->setHelp('If the default gateway goes down, switch the default gateway to '.
-	'another available one. This is not enabled by default, as it"s unnecessary in '.
+	'another available one. This is not enabled by default, as it\'s unnecessary in '.
 	'most all scenarios, which instead use gateway groups.');
 
 $form->add($section);

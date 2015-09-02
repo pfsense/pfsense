@@ -229,13 +229,13 @@ if ($_POST) {
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
-			$reqdfieldsn[] = gettext("Authentication port value");
+			$reqdfieldsn[] = gettext("Authentication port");
 		}
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
-			$reqdfieldsn[] = gettext("Accounting port value");
+			$reqdfieldsn[] = gettext("Accounting port");
 		}
 
 		if (!isset($id)) {
@@ -452,7 +452,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ldap_host']
 ))->setHelp('NOTE: When using SSL, this hostname MUST match the Common Name '.
-	'(CN) of the LDAP server"s SSL Certificate.');
+	'(CN) of the LDAP server\'s SSL Certificate.');
 
 $section->addInput(new Form_Input(
 	'ldap_port',
@@ -497,18 +497,26 @@ $section->addInput(new Form_Select(
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
 
-$section->addInput(new Form_Select(
+$group = new Form_Group('Search scope');
+
+$SSF = new Form_Select(
 	'ldap_scope',
-	'Search scope: Level',
+	'Level',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
-));
+);
 
-$section->addInput(new Form_Input(
+$SSB = new Form_Input(
 	'ldap_basedn',
 	'Base DN',
 	'text',
 	$pconfig['ldap_basedn']
+);
+
+
+$section->addInput(new Form_StaticText(
+	'Search scope',
+	'Level ' . $SSF . '<br />' . 'Base DN' . $SSB
 ));
 
 $group = new Form_Group('Authentication containers');
@@ -647,7 +655,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'radius_auth_port',
-	'Authentication port value',
+	'Authentication port',
 	'number',
 	$pconfig['radius_auth_port']
 ));

@@ -637,12 +637,12 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php
 		if ($cainternal == "YES"): ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
-								<?=gettext("Add or Import CRLl")?>
+								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
 		else: ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
-								<?=gettext("Add or Import CRLl")?>
+								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
 		endif; ?>
@@ -662,7 +662,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<td><?=($inuse) ? "YES" : "NO"; ?></td>
 						<td>
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-success">
-								<?=gettext("Export CRL")?>"
+								<?=gettext("Export CRL")?>
 							</a>
 <?php
 				if ($internal): ?>

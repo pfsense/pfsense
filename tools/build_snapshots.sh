@@ -165,8 +165,8 @@ dobuilds() {
 copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
-			FILENAMEFULL="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-${DATESTRING}.img.gz"
-			FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-upgrade-${DATESTRING}.img.gz"
+			FILENAMEFULL="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}${TIMESTAMP_SUFFIX}.img.gz"
+			FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-upgrade${TIMESTAMP_SUFFIX}.img.gz"
 			mkdir -p $STAGINGAREA/nanobsd
 			mkdir -p $STAGINGAREA/nanobsdupdates
 
@@ -218,7 +218,9 @@ copy_to_staging_iso_updates() {
 	cp ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
 	# NOTE: Updates need a file with output similar to date output
 	# Use the file generated at start of dobuilds() to be consistent on times
-	cp $BUILTDATESTRINGFILE $STAGINGAREA/version 2>/dev/null
+	if [ -z "${_IS_RELEASE}" ]; then
+		cp $BUILTDATESTRINGFILE $STAGINGAREA/version 2>/dev/null
+	fi
 }
 
 scp_files() {
@@ -275,13 +277,13 @@ scp_files() {
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-upgrade-${DATESTRING}.img.gz"
+		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-upgrade${TIMESTAMP_SUFFIX}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
 			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
 			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-vga-upgrade-${DATESTRING}.img.gz"
+		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-vga-upgrade${TIMESTAMP_SUFFIX}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
 			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
@@ -371,6 +373,7 @@ else
 		# Override it here to have continuous builds with proper labels
 		rm -f $DATESTRINGFILE
 		rm -f $BUILTDATESTRINGFILE
+		unset TIMESTAMP_SUFFIX
 		unset DATESTRING
 		unset BUILTDATESTRING
 		unset ISOPATH

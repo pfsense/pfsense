@@ -380,9 +380,9 @@ print_flags() {
 	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
-	printf "                 OVADISKSIZE: %s\n" $OVADISKSIZE
-	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
-	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
+	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
+	printf "   OVA_FIRST_PART_SIZE_IN_GB: %s\n" $OVA_FIRST_PART_SIZE_IN_GB
+	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -549,8 +549,8 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-${DATESTRING}.img"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade-${DATESTRING}.img"
+		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}${TIMESTAMP_SUFFIX}.img"
+		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade${TIMESTAMP_SUFFIX}.img"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -794,14 +794,15 @@ create_ova_image() {
 
 	# Fill fstab
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
-	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 
 	# Create / partition
+	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
-		-s ${OVA_FIRST_PART_SIZE} \
+		-s ${OVA_FIRST_PART_SIZE_IN_GB}g \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
 
@@ -809,95 +810,109 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
-	# Create vmdk file
+	# Create raw disk
+	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
 	mkimg \
 		-s gpt \
-		-f vmdk \
+		-f raw \
 		-b /boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
-		-o ${OVA_TMP}/${OVFVMDK} 2>&1 >> ${LOGFILE}
+		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFRAW} ]; then
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
-		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
-		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
 	# We don't need it anymore
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
+	# Convert raw to vmdk
+	echo -n ">>> Creating vmdk disk... " | tee -a ${LOGFILE}
+	vmdktool -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
+
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
+		fi
+		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
+			rm -f ${OVA_TMP}/${OVFVMDK}
+		fi
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	echo "Done!" | tee -a ${LOGFILE}
+
+	rm -f ${OVA_TMP}/i${OVFRAW}
+
 	ova_setup_ovf_template
 
-	# We repack the file with a more universal xml file that
-	# works in both virtual box and esx server
+	echo -n ">>> Writing final ova image... " | tee -a ${LOGFILE}
+	# Create OVA file for vmware
 	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
+	echo "Done!" | tee -a ${LOGFILE}
 	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
-
-	gzip -qf ${OVAPATH} &
 
 	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
 # called from create_ova_image
 ova_setup_ovf_template() {
-	if [ -f ${OVFTEMPLATE} ]; then
-		cp ${OVFTEMPLATE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	else
+	if [ ! -f ${OVFTEMPLATE} ]; then
 		echo ">>> ERROR: OVF template file (${OVFTEMPLATE}) not found."
 		print_error_pfS
 	fi
 
-	file_search_replace PRODUCT_VERSION $PRODUCT_VERSION ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	file_search_replace PRODUCT_URL $PRODUCT_URL ${OVA_TMP}/${PRODUCT_NAME}.ovf
-
-	local BUILDPLATFORM=$(uname -p)
-	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
-	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
-	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
-	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	file_search_replace REFERENCESSIZE ${REFERENCESSIZE} ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
 	#  OperatingSystemSection (${PRODUCT_NAME}.ovf)
 	#  42   FreeBSD 32-Bit
 	#  78   FreeBSD 64-Bit
-	if [ "$BUILDPLATFORM" = "i386" ]; then
-		file_search_replace '"101"' '"42"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD' ${OVA_TMP}/${PRODUCT_NAME}.ovf
+	if [ "${TARGET}" = "amd64" ]; then
+		local _os_id="78"
+		local _os_type="freebsd64Guest"
+		local _os_descr="FreeBSD 64-Bit"
+	elif [ "${TARGET}" = "i386" ]; then
+		local _os_id="42"
+		local _os_type="freebsdGuest"
+		local _os_descr="FreeBSD"
+	else
+		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
+		print_error_pfS
 	fi
-	if [ "$BUILDPLATFORM" = "amd64" ]; then
-		file_search_replace '"101"' '"78"' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-		file_search_replace 'FreeBSD XX-Bit' 'FreeBSD 64-Bit' ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	fi
-	file_search_replace DISKSECTIONPOPULATEDSIZE $POPULATEDSIZEBYTES ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
-	# 10737418240 = 10GB
-	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to 10737254400..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONALLOCATIONUNITS $OVA_DISKSECTIONALLOCATIONUNITS ${OVA_TMP}/${PRODUCT_NAME}.ovf
-	echo ">>> Setting DISKSECTIONCAPACITY to 10737418240..." | tee -a ${LOGFILE}
-	file_search_replace DISKSECTIONCAPACITY $OVADISKSIZE ${OVA_TMP}/${PRODUCT_NAME}.ovf
-}
 
-# called from create_ova_image
-# This routine will replace a string in a file
-file_search_replace() {
-	local SEARCH="$1"
-	local REPLACE="$2"
-	local FILENAME="$3"
+	local POPULATED_SIZE=$(du -d0 -k $FINAL_CHROOT_DIR | cut -f1)
+	local POPULATED_SIZE_IN_BYTES=$((${POPULATED_SIZE}*1024))
+	local VMDK_FILE_SIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
 
-	if [ -f "${FILENAME}" ]; then
-		sed -i '' -e "s/${SEARCH}/${REPLACE}/g" ${FILENAME}
-	fi
+	sed \
+		-e "s,%%VMDK_FILE_SIZE%%,${VMDK_FILE_SIZE},g" \
+		-e "s,%%VMDK_DISK_CAPACITY_IN_GB%%,${VMDK_DISK_CAPACITY_IN_GB},g" \
+		-e "s,%%POPULATED_SIZE_IN_BYTES%%,${POPULATED_SIZE_IN_BYTES},g" \
+		-e "s,%%OS_ID%%,${_os_id},g" \
+		-e "s,%%OS_TYPE%%,${_os_type},g" \
+		-e "s,%%OS_DESCR%%,${_os_descr},g" \
+		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
+		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
+		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/license.txt" \
+		-e "/^%%PRODUCT_LICENSE%%/d" \
+		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }
 
 # Cleans up previous builds
@@ -1022,6 +1037,14 @@ clone_to_staging_area() {
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
+
+	# Change default interface names to match vmware driver
+	sed -i '' -e 's,em0,vmx0,' -e 's,em1,vmx1,' ${DEFAULTCONF}
+	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore default values to be used by serial package
+	sed -i '' -e 's,vmx0,em0,' -e 's,vmx1,em1,' ${DEFAULTCONF}
+
 	# Activate serial console in config.xml
 	# If it was there before, clear the setting to be sure we don't add it twice.
 	sed -i "" -e "/		<enableserial\/>/d" ${DEFAULTCONF}
@@ -1083,6 +1106,8 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickserial" -o \
 	     "${1}" = "memstickadi" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
+	elif [ "${1}" = "ova" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
 	fi

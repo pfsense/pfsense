@@ -105,7 +105,7 @@ fi
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
-export PRODUCT_URL=${PRODUCT_VERSION:-""}
+export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then
@@ -155,6 +155,9 @@ export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
 # Path to kernel files being built
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 
+# Do not touch builder /usr/obj
+export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
+
 # Controls how many concurrent make processes are run for each stage
 _CPUS=""
 if [ -z "${NO_MAKEJ}" ]; then
@@ -196,17 +199,18 @@ export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"768M"}
 export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}
 # / partition to be used by mkimg
 export OVFUFS=${OVFUFS:-"${PRODUCT_NAME}-disk1.ufs"}
+# Raw disk to be converted to vmdk
+export OVFRAW=${OVFRAW:-"${PRODUCT_NAME}-disk1.raw"}
 # On disk name of VMDK file included in OVA
 export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}-disk1.vmdk"}
-# 10 gigabyte on disk VMDK size
-export OVADISKSIZE=${OVADISKSIZE:-"10737418240"}
-# first partition size (freebsd-ufs) GPT
-export OVA_FIRST_PART_SIZE=${OVA_FIRST_PART_SIZE:-"$((8*1024*1024*1024))"}
-# swap partition size (freebsd-swap) GPT -
-# remaining space of 10G-8G - 128 block beginning/loader
-export OVA_SWAP_PART_SIZE=${OVA_SWAP_PART_SIZE:-"4193725"}
-# 10737254400 = 10240MB = virtual box vmdk file size XXX grab this value from vbox creation
-export OVA_DISKSECTIONALLOCATIONUNITS=${OVA_DISKSECTIONALLOCATIONUNITS:-"10737254400"}
+# 8 gigabyte on disk VMDK size
+export VMDK_DISK_CAPACITY_IN_GB=${VMDK_DISK_CAPACITY_IN_GB:-"8"}
+# first partition size (freebsd-ufs)
+export OVA_FIRST_PART_SIZE_IN_GB=${OVA_FIRST_PART_SIZE_IN_GB:-"6"}
+# swap partition size (freebsd-swap)
+export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"2"}
+# Calculate real swap size, removing 128 blocks (65536 bytes) beggining/loader
+export OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
 # Temporary place to save files
 export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}
 # end of OVF
@@ -232,42 +236,27 @@ export NANO_BOOT0CFG="-o packet -s 1 -m 3"
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
-_BUILDER_EPOCH=$(date +"%s")
 export DATESTRINGFILE=${DATESTRINGFILE:-"$SCRATCHDIR/version.snapshots"}
-if [ "${DATESTRING}" = "" ]; then
-	if [ -f $DATESTRINGFILE ]; then
-		# If the file is more than 30 minutes old regenerate it
-		TMPDATESTRINGFILE=$(($_BUILDER_EPOCH - `stat -f %m $DATESTRINGFILE`))
-		if [ -z "${_USE_OLD_DATESTRING}" -a $TMPDATESTRINGFILE -gt 1800 ]; then
-			export DATESTRING=`date "+%Y%m%d-%H%M"`
-		else
-			export DATESTRING=`cat $DATESTRINGFILE`
-		fi
-		unset TMPDATESTRINGFILE
+if [ -z "${DATESTRING}" ]; then
+	if [ -f "${DATESTRINGFILE}" -a -n "${_USE_OLD_DATESTRING}" ]; then
+		export DATESTRING=$(cat $DATESTRINGFILE)
 	else
-		export DATESTRING=`date "+%Y%m%d-%H%M"`
+		export DATESTRING=$(date "+%Y%m%d-%H%M")
 	fi
-	echo "$DATESTRING" > $DATESTRINGFILE
 fi
+echo "$DATESTRING" > $DATESTRINGFILE
 
 # NOTE: Date string is placed on the final image etc folder to help detect new updates
 #       The file is used for sharing the same value with build_snapshots.sh
 export BUILTDATESTRINGFILE=${BUILTDATESTRINGFILE:-"$SCRATCHDIR/version.buildtime"}
-if [ "${BUILTDATESTRING}" = "" ]; then
-	if [ -f $BUILTDATESTRINGFILE ]; then
-		# If the file is more than 30 minutes old regenerate it
-		TMPBUILTDATESTRINGFILE=$(($_BUILDER_EPOCH - `stat -f %m $BUILTDATESTRINGFILE`))
-		if [ $TMPBUILTDATESTRINGFILE -gt 1800 ]; then
-			export BUILTDATESTRING=`date "+%a %b %d %T %Z %Y"`
-		else
-			export BUILTDATESTRING=`cat $BUILTDATESTRINGFILE`
-		fi
-		unset TMPBUILTDATESTRINGFILE
+if [ -z "${BUILTDATESTRING}" ]; then
+	if [ -f "${BUILTDATESTRINGFILE}" -a -n "${_USE_OLD_DATESTRING}" ]; then
+		export BUILTDATESTRING=$(cat $BUILTDATESTRINGFILE)
 	else
-		export BUILTDATESTRING=`date "+%a %b %d %T %Z %Y"`
+		export BUILTDATESTRING=$(date "+%a %b %d %T %Z %Y")
 	fi
-	echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 fi
+echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"tank"}
@@ -285,9 +274,15 @@ export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
+if echo "${PRODUCT_VERSION}" | grep -q -- '-RELEASE'; then
+	export _IS_RELEASE=yes
+else
+	unset _IS_RELEASE
+fi
+
 # Define base package version, based on date for snaps
 CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
-if echo "${PRODUCT_VERSION}" | grep -qv -- '-RELEASE'; then
+if [ -n "${_IS_RELEASE}" ]; then
 	CORE_PKG_VERSION="${CORE_PKG_VERSION}.${DATESTRING}"
 fi
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/core_pkg"}
@@ -303,15 +298,21 @@ export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 #export custom_package_list=""
 
 # General builder output filenames
+if [ -n "${_IS_RELEASE}" ]; then
+	export TIMESTAMP_SUFFIX=""
+else
+	export TIMESTAMP_SUFFIX="-${DATESTRING}"
+fi
+
 export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}
-export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.iso"}
-export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
-export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-serial-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
-export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.img"}
-export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.ova"}
+export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.iso"}
+export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
+export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-serial-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
+export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
+export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.ova"}
 
 # set full-update update filename
-export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}-${DATESTRING}.tgz"}
+export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}-Full-Update-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.tgz"}
 
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}

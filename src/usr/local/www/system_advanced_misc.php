@@ -465,7 +465,7 @@ $section->addInput(new Form_Select(
 	'crypto_hardware',
 	'Cryptographic Hardware',
 	$pconfig['crypto_hardware'],
-	$crypto_modules
+	['' => gettext('None')] + $crypto_modules
 ))->setHelp('A cryptographic '.
 	'accelerator module will use hardware support to speed up some cryptographic '.
 	'functions on systems which have the chip. Do not enable this option if you have '.

@@ -153,6 +153,21 @@ if (isset($_POST['dellall_x'])) {
 	}
 }
 
+if ($_POST['act'] == "delcert") {
+
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
+	}
+
+	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
+	$certdeleted = $certdeleted['descr'];
+	unset($a_user[$id]['cert'][$_POST['certid']]);
+	write_config();
+	$_POST['act'] = "edit";
+	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+}
+
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -259,15 +274,8 @@ if ($_POST['save']) {
 		if ($a_user[$id] && !empty($_POST['privid'])) {
 			foreach ($_POST['privid'] as $i)
 				unset($a_user[$id]['priv'][$i]);
+
 			local_user_set($a_user[$id]);
-			write_config();
-		}
-
-		// This used to be a separate act=delcert
-		if ($a_user[$id] && !empty($_POST['certid'])) {
-			foreach ($_POST['certid'] as $i)
-				unset($a_user[$id]['cert'][$i]);
-
 			write_config();
 		}
 
@@ -392,12 +400,7 @@ function build_priv_table() {
 
 	return($privhtml);
 }
-/*
-<input type="image" name="delcert[]" width="17" height="17" border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
-		onclick="document.getElementById('certid').value='<?=$i;?>';
-		document.getElementById('userid').value='<?=$id;?>';
-		document.getElementById('act').value='<?php echo "delcert";?>'; " title="<?=gettext("delete cert");?>" />
-*/												
+
 function build_cert_table() {
 	global $a_user, $id;
 
@@ -407,7 +410,7 @@ function build_cert_table() {
 	$certhtml .=			'<tr>';
 	$certhtml .=				'<th>' . gettext('Name') . '</th>';
 	$certhtml .=				'<th>' . gettext('CA') . '</th>';
-	$certhtml .=                '<th></th>';
+	$certhtml .=				'<th></th>';
 	$certhtml .=			'</tr>';
 	$certhtml .=		'</thead>';
 	$certhtml .=		'<tbody>';
@@ -424,10 +427,8 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
-			$certhtml .=			'<a name="delcert[]" class="btn btn-xs btn-danger" onclick="document.getElementById(\'certid\').value=\'' . $i. '\';';
-			$certhtml .=			'document.getElementById(\'userid\').value=\'' . $i . '\';';
-			$certhtml .=			'document.getElementById(\'act\').value=\'' . 'delcert' . '\';"' .  'title="';
-			$certhtml .=            gettext('Do you really want to remove this certificate association? (Certificate will not be deleted)') . '")' . '">Delete</a>'; 
+			$certhtml .=			'<a id="delcert' . $i .'" class="btn btn-xs btn-warning" title="';
+			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '">Delete</a>';
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
 			$i++;
@@ -451,8 +452,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -530,7 +532,6 @@ require('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "new" || $act == "edit" || $input_errors):
-
 
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -876,7 +877,6 @@ events.push(function(){
 	$("#movetodisabled").prop('type','button');
 	$("#movetoenabled").prop('type','button');
 
-
 	// On click . .
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
@@ -892,6 +892,15 @@ events.push(function(){
 
 	$("#showkey").click(function() {
 		hideInput('authorizedkeys', !this.checked);
+	});
+
+	$('[id^=delcert]').click(function(event) {
+		if(confirm(event.target.title)) {
+			$('#certid').val(event.target.id.match(/\d+$/)[0]);
+			$('#userid').val('<?=$id;?>');
+			$('#act').val('delcert');
+			$('form').submit();
+		}
 	});
 
 	// On page load . .

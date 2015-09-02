@@ -285,7 +285,7 @@ CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
 if [ -n "${_IS_RELEASE}" ]; then
 	CORE_PKG_VERSION="${CORE_PKG_VERSION}.${DATESTRING}"
 fi
-export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/core_pkg"}
+export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core/All"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 # Package overlay. This gives people a chance to build product
@@ -318,3 +318,11 @@ export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRO
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}
 export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 export RSYNCLOGS=${RSYNCLOGS:-"/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}"}
+export RSYNCKBYTELIMIT=${RSYNCKBYTELIMIT:-"248000"}
+
+# staging area used on snapshots build
+STAGINGAREA=${STAGINGAREA:-"${SCRATCHDIR}/staging"}
+mkdir -p ${STAGINGAREA}
+
+export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
+export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}

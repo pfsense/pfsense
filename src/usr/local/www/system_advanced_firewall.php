@@ -441,7 +441,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Note: This converts %s into a routing only platform!<br/>'.
 	'Note: This will also turn off NAT! If you only want to disable NAT, '.
 	'and not firewall rules, visit the <a href="firewall_nat_out.php">Outbound '.
-	'NAT</a>page.', [$g["product_name"]]);
+	'NAT</a> page.', [$g["product_name"]]);
 
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
@@ -484,7 +484,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maximumstates'],
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
-))->setHelp('Maximum number of connections to hold in the firewall state table.. '.
+))->setHelp('Maximum number of connections to hold in the firewall state table. '.
 	'<br/>Note: Leave this blank for the default. On your system the default '.
 	'size is: %d', [pfsense_default_state_size()]);
 
@@ -495,7 +495,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumtableentries'],
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
-	'sshlockout, snort, etc, combined..<br/>Note: Leave this blank for the '.
+	'sshlockout, snort, etc, combined.<br/>Note: Leave this blank for the '.
 	'default. On your system the default size is: %d',
 	[pfsense_default_table_entries_size()]);
 
@@ -641,7 +641,7 @@ if (count($config['interfaces']) > 1)
 		'Automatic create outbound NAT rules that direct traffic back out to the same subnet it originated from.',
 		isset($config['system']['enablenatreflectionhelper'])
 	))->setHelp('Required for full functionality of the pure NAT mode of NAT '.
-		'Reflection for port forwards or NAT Reflection for 1:1 NAT.Note: This only works '.
+		'Reflection for port forwards or NAT Reflection for 1:1 NAT. Note: This only works '.
 		'for assigned interfaces.  Other interfaces require manually creating the '.
 		'outbound NAT rules that direct the reply packets back through the router.');
 

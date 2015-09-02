@@ -4,54 +4,54 @@
 	diag_logs_settings.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004-9 Scott Ullrich
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004-9 Scott Ullrich
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 
@@ -104,9 +104,9 @@ if (!$pconfig['nentries']) {
 
 function is_valid_syslog_server($target) {
 	return (is_ipaddr($target)
-	    || is_ipaddrwithport($target)
-	    || is_hostname($target)
-	    || is_hostnamewithport($target));
+		|| is_ipaddrwithport($target)
+		|| is_hostname($target)
+		|| is_hostnamewithport($target));
 }
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
@@ -212,14 +212,14 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Settings"));
 include("head.inc");
 
-$logfilesizeHelp =  gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
+$logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
 					'<br /><br />' .
 					gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. ") .
 					gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly.") . '<br /><br />' .
 					gettext("Disk space currently used by log files is: ") . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
 					gettext(" Remaining disk space for log files: ") . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
 
-$remoteloghelp =    gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses.") .
+$remoteloghelp =	gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses.") .
 					gettext("If you pick a single IP, remote syslog severs must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
 					"<br /><br />" .
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
@@ -349,7 +349,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Remote Logging',
 	'Send log messages to remote syslog server',
 	$pconfig['enable']
-))->toggles('.toggle-remote .panel-body .form-group:not(:first-child)');
+));
 
 $section->addInput(new Form_Select(
 	'sourceip',
@@ -363,10 +363,12 @@ $section->addInput(new Form_Select(
 	'IP Protocol',
 	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp('This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
+))->setHelp('This option is only used when a non-default address is chosen as the source above. ' .
+			'This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
 
 // Group collapses/appears based on 'enable' checkbox above
 $group = new Form_Group('Remote log servers');
+$group->addClass('remotelogging');
 
 $group->add(new Form_Input(
 	'remoteserver',
@@ -395,6 +397,8 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $group = new Form_MultiCheckboxGroup('Remote Syslog Contents');
+$group->addClass('remotelogging');
+
 $group->add(new Form_MultiCheckbox(
 	'logall',
 	null,
@@ -478,6 +482,22 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+
+	function hideSelect(id, hide) {
+		if(hide)
+			$('#' + id).parent('div').parent('div').addClass('hidden');
+		else
+			$('#' + id).parent('div').parent('div').removeClass('hidden');
+	}
+
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
 	function hideInput(id, hide) {
 		if(hide)
 			$('#' + id).parent().addClass('hidden');
@@ -509,8 +529,19 @@ events.push(function(){
 		disableEverything();
 	});
 
+	 $('#enable').click(function () {
+		hideClass('remotelogging', !this.checked);
+		hideSelect('sourceip', !this.checked);
+		hideSelect('ipproto', !this.checked);
+	});
+
+
+
 	// On page load . .
 	disableEverything();
+	hideClass('remotelogging', !$('#enable').prop('checked'));
+	hideSelect('sourceip', !$('#enable').prop('checked'));
+	hideSelect('ipproto', !$('#enable').prop('checked'));
 });
 //]]>
 </script>

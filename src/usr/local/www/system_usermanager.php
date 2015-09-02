@@ -2,42 +2,61 @@
 /* $Id$ */
 /*
 	system_usermanager.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	part of pfSense
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	All rights reserved.
-
-	Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
-	All rights reserved.
-
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  2008 Shrew Soft Inc.
+ *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE: auth
@@ -132,6 +151,21 @@ if (isset($_POST['dellall_x'])) {
 		$savemsg = gettext("Selected users removed successfully!");
 		write_config($savemsg);
 	}
+}
+
+if ($_POST['act'] == "delcert") {
+
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
+	}
+
+	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
+	$certdeleted = $certdeleted['descr'];
+	unset($a_user[$id]['cert'][$_POST['certid']]);
+	write_config();
+	$_POST['act'] = "edit";
+	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
 }
 
 if ($_POST['save']) {
@@ -240,15 +274,8 @@ if ($_POST['save']) {
 		if ($a_user[$id] && !empty($_POST['privid'])) {
 			foreach ($_POST['privid'] as $i)
 				unset($a_user[$id]['priv'][$i]);
+
 			local_user_set($a_user[$id]);
-			write_config();
-		}
-
-		// This used to be a separate act=delcert
-		if ($a_user[$id] && !empty($_POST['certid'])) {
-			foreach ($_POST['certid'] as $i)
-				unset($a_user[$id]['cert'][$i]);
-
 			write_config();
 		}
 
@@ -347,9 +374,11 @@ function build_priv_table() {
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
 	$privhtml .=		'<thead>';
-	$privhtml .=			'<th>' . gettext('Inherited from') . '</th>';
-	$privhtml .=			'<th>' . gettext('Name') . '</th>';
-	$privhtml .=			'<th>' . gettext('Description') . '</th>';
+	$privhtml .=			'<tr>';
+	$privhtml .=				'<th>' . gettext('Inherited from') . '</th>';
+	$privhtml .=				'<th>' . gettext('Name') . '</th>';
+	$privhtml .=				'<th>' . gettext('Description') . '</th>';
+	$privhtml .=			'</tr>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
@@ -378,8 +407,11 @@ function build_cert_table() {
 	$certhtml = '<div class="table-responsive">';
 	$certhtml .=	'<table class="table table-striped table-hover table-condensed">';
 	$certhtml .=		'<thead>';
-	$certhtml .=			'<th>' . gettext('Name') . '</th>';
-	$certhtml .=			'<th>' . gettext('CA') . '</th>';
+	$certhtml .=			'<tr>';
+	$certhtml .=				'<th>' . gettext('Name') . '</th>';
+	$certhtml .=				'<th>' . gettext('CA') . '</th>';
+	$certhtml .=				'<th></th>';
+	$certhtml .=			'</tr>';
 	$certhtml .=		'</thead>';
 	$certhtml .=		'<tbody>';
 
@@ -387,11 +419,21 @@ function build_cert_table() {
 	if (is_array($a_cert)) {
 		$i = 0;
 		foreach ($a_cert as $certref) {
+			$cert = lookup_cert($certref);
+			$ca = lookup_ca($cert['caref']);
+			$revokedstr =	is_cert_revoked($cert) ? '<b> Revoked</b>':'';
+
 			$certhtml .=	'<tr>';
-			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . is_cert_revoked($cert) ? '<b> Revoked</b>':'' . '</td>';
+			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
+			$certhtml .=		'<td>';
+			$certhtml .=			'<a id="delcert' . $i .'" class="btn btn-xs btn-warning" title="';
+			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '">Delete</a>';
+			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
+			$i++;
 		}
+
 	}
 
 	$certhtml .=		'</tbody>';
@@ -410,8 +452,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -489,7 +532,6 @@ require('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "new" || $act == "edit" || $input_errors):
-
 
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -597,7 +639,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
-	// Make a list of all the groups configured on the system, and a list of 
+	// Make a list of all the groups configured on the system, and a list of
 	// those which this user is a member of
 	$systemGroups = array();
 	$usersGroups = array();
@@ -605,10 +647,12 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$usergid = [$pconfig['usernamefld']];
 
 	foreach ($config['system']['group'] as $Ggroup) {
-		if(($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member']))
-			$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
-		else
-			$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
+		if($Ggroup['name'] != "all") {
+			if(($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member']))
+				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
+			else
+				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
+		}
 	}
 
 	$group->add(new Form_Select(
@@ -833,7 +877,6 @@ events.push(function(){
 	$("#movetodisabled").prop('type','button');
 	$("#movetoenabled").prop('type','button');
 
-
 	// On click . .
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
@@ -849,6 +892,15 @@ events.push(function(){
 
 	$("#showkey").click(function() {
 		hideInput('authorizedkeys', !this.checked);
+	});
+
+	$('[id^=delcert]').click(function(event) {
+		if(confirm(event.target.title)) {
+			$('#certid').val(event.target.id.match(/\d+$/)[0]);
+			$('#userid').val('<?=$id;?>');
+			$('#act').val('delcert');
+			$('form').submit();
+		}
 	});
 
 	// On page load . .

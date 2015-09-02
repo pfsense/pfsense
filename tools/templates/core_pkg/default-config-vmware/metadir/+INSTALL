@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+if [ ! -f /cf/conf/config.xml ]; then
+	cp /conf.default/config.xml /cf/conf/config.xml
+fi
+
+if [ ! -L /conf ]; then
+	ln -sf /cf/conf /conf
+fi
+
+exit 0

@@ -1,0 +1,15 @@
+name: "%%PRODUCT_NAME%%-default-config-vmware"
+version: "%%VERSION%%"
+origin: "security/%%PRODUCT_NAME%%-default-config"
+comment: <<EOD
+%%PRODUCT_NAME%% default config (vmware)
+EOD
+maintainer: development@pfsense.org
+prefix: /
+deps: {
+
+}
+categories [ security,  ]
+licenselogic: single
+licenses: [ BSD2CLAUSE,  ]
+options: {  }

@@ -1193,7 +1193,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'proto',
 	'Protocol',
-	$pconfig['ipprotocol'],
+	$pconfig['proto'],
 	array(
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
@@ -1211,7 +1211,7 @@ $section->addInput(new Form_Select(
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
-))->setHelp('Choose which IP protocol this rule should match. In most cases, you should specify TCP	 here.');
+))->setHelp('Choose which IP protocol this rule should match.');
 
 $section->addInput(new Form_Select(
 	'icmptype',
@@ -1294,7 +1294,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		))->removeClass('btn-primary');
 	}
 
-	$portValues = ['any' => 'any', '' => '(other)'];
+	$portValues = ['' => '(other)', 'any' => 'any'];
 
 	foreach ($wkports as $port => $portName)
 		$portValues[$port] = $portName.' ('. $port .')';
@@ -1477,17 +1477,10 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 3600]
 ))->setHelp('State Timeout in seconds (TCP only)');
 
-//$form->add($section);
-//$section = new Form_Section('TCP Flags');
-//$section->addClass('tcpflags');
-
 $section->addInput(new Form_StaticText(
 	'TCP Flags',
 	build_flag_table()
 ))->setHelp('Use this to choose TCP flags that must be set or cleared for this rule to match.');
-
-// $form->add($section);
-// $section = new Form_Section('State Type');
 
 $section->addInput(new Form_Checkbox(
 	'nopfsync',

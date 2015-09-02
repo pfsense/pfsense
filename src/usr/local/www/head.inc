@@ -323,7 +323,7 @@ if(! $g['disablehelpmenu']) {
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
 			<?php endforeach?>
-				<?php if(are_notices_pending()):?>
+				<?php if(false ): ?> // are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>

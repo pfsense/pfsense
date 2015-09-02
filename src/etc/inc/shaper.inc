@@ -233,7 +233,7 @@ function get_interface_bandwidth($object) {
 	$altq =& $altq_list_queues[$int];
 	if ($altq) {
 		$bw_3 = $altq->GetBandwidth();
-		$bw_3 = $bw_3 *	 get_bandwidthtype_scale($altq->GetBwscale());
+		$bw_3 = $bw_3 * get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
 	} else {
 		return 0;
@@ -550,7 +550,7 @@ class altq_root_queue {
 
 	function &find_parentqueue($interface, $qname) {
 		if ($qname == $interface) {
-			$result =  NULL;
+			$result = NULL;
 		} else if ($this->queues[$qname]) {
 			$result = $this;
 		} else if ($this->GetScheduler() <> "PRIQ") {
@@ -570,7 +570,7 @@ class altq_root_queue {
 		$tree .= "\">" . $shaperIFlist[$this->GetInterface()] . "</a>";
 		if (is_array($this->queues)) {
 			$tree .= "<ul>";
-			foreach ($this->queues as $q)  {
+			foreach ($this->queues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -609,7 +609,7 @@ class altq_root_queue {
 	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
 			$default = false;
-			$rules = " altq on	" . get_real_interface($this->GetInterface());
+			$rules = " altq on " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
 				$rules .= " ".strtolower($this->GetScheduler());
 			}
@@ -650,7 +650,7 @@ class altq_root_queue {
 			}
 			$frule .= $rules;
 		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
-			$rules = " altq on	" . get_real_interface($this->GetInterface());
+			$rules = " altq on " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
 				$rules .= " ".strtolower($this->GetScheduler());
 			}
@@ -1126,7 +1126,7 @@ class priq_queue {
 			$input_errors[] = "Bandwidth cannot be negative.";
 		}
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
-			($data['priority'] < 1) || ($data['priority'] > 15))) {
+		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
@@ -1766,7 +1766,7 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q)  {
+		foreach ($this->subqueues as $q) {
 			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
 				$q->delete_queue();
 		}
@@ -1840,10 +1840,10 @@ class hfsc_queue extends priq_queue {
 		*/
 		}
 
-		if ($data['upperlimit1'] <> "" &&  $data['upperlimit2'] == "") {
+		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
 			$input_errors[] = gettext("upperlimit service curve defined but missing (d) value");
 		}
-		if ($data['upperlimit2'] <> "" &&  $data['upperlimit1'] == "") {
+		if ($data['upperlimit2'] <> "" && $data['upperlimit1'] == "") {
 			$input_errors[] = gettext("upperlimit service curve defined but missing initial bandwidth (m1) value");
 		}
 		if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1'])) {
@@ -1869,10 +1869,10 @@ class hfsc_queue extends priq_queue {
 			}
 		}
 		*/
-		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "") {
+		if ($data['linkshare1'] <> "" && $data['linkshare2'] == "") {
 			$input_errors[] = gettext("linkshare service curve defined but missing (d) value");
 		}
-		if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "") {
+		if ($data['linkshare2'] <> "" && $data['linkshare1'] == "") {
 			$input_errors[] = gettext("linkshare service curve defined but missing initial bandwidth (m1) value");
 		}
 		if ($data['linkshare1'] <> "" && !is_valid_shaperbw($data['linkshare1'])) {
@@ -1884,10 +1884,10 @@ class hfsc_queue extends priq_queue {
 		if ($data['linkshare3'] <> "" && !is_valid_shaperbw($data['linkshare3'])) {
 			$input_errors[] = gettext("linkshare m2 value needs to be Kb, Mb, Gb, or %");
 		}
-		if ($data['realtime1'] <> "" &&	 $data['realtime2'] == "") {
+		if ($data['realtime1'] <> "" && $data['realtime2'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing (d) value");
 		}
-		if ($data['realtime2'] <> "" &&	 $data['realtime1'] == "") {
+		if ($data['realtime2'] <> "" && $data['realtime1'] == "") {
 			$input_errors[] = gettext("realtime service curve defined but missing initial bandwidth (m1) value");
 		}
 
@@ -1995,7 +1995,7 @@ class hfsc_queue extends priq_queue {
 		$tree .= " >" . $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -2061,13 +2061,13 @@ class hfsc_queue extends priq_queue {
 				$default = true;
 			}
 
-			if ($this->GetRealtime() <> "")	 {
+			if ($this->GetRealtime() <> "") {
 				if ($comma) {
 					$pfq_rule .= " , ";
 				}
-				if ($this->GetR_m1()  <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "") {
+				if ($this->GetR_m1() <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime (".$this->GetR_m1() . ", " . $this->GetR_d().", ". $this->GetR_m2() .") ";
-				} else	if ($this->GetR_m2() <> "") {
+				} else if ($this->GetR_m2() <> "") {
 					$pfq_rule .= " realtime " . $this->GetR_m2();
 				}
 				$comma = 1;
@@ -2641,7 +2641,7 @@ class cbq_queue extends priq_queue {
 		$tree .= " >" . $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -2977,7 +2977,7 @@ class fairq_queue extends priq_queue {
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
 		}
 		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() ||
-			$this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
+		    $this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
 			$pfq_rule .= " fairq ( ";
 			$tmpvalue = trim($this->GetRed());
 			if (!empty($tmpvalue)) {
@@ -3070,13 +3070,13 @@ class fairq_queue extends priq_queue {
 		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
 		$tmpvalue = trim($this->GetBuckets());
 		if (!empty($tmpvalue)) {
-			$form .=  $this->GetBuckets();
+			$form .= $this->GetBuckets();
 		}
 		$form .= "\" /> " . gettext("Number of buckets available.") . "<br /></td></tr>";
 		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
 		$tmpvalue = trim($this->GetHogs());
 		if (!empty($tmpvalue)) {
-			$form .=  $this->GetHogs();
+			$form .= $this->GetHogs();
 		}
 		$form .= "\" /> " . gettext("Bandwidth limit for hosts to not saturate link.") . "<br /></td></tr>";
 		$form .= "</table></td></tr>";
@@ -3278,12 +3278,12 @@ class dummynet_class {
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
-			($data['plr'] < 0) || ($data['plr'] > 1))) {
-				$input_errors[] = gettext("Plr must be a value between 0 and 1.");
+		    ($data['plr'] < 0) || ($data['plr'] > 1))) {
+			$input_errors[] = gettext("Plr must be a value between 0 and 1.");
 		}
 		if ($data['buckets'] && (!is_numeric($data['buckets']) ||
-			($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
-				$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
+		    ($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
+			$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Queue limit must be an integer");
@@ -3562,7 +3562,7 @@ class dnpipe_class extends dummynet_class {
 		$tree .= $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
-			foreach ($this->subqueues as $q)  {
+			foreach ($this->subqueues as $q) {
 				$tree .= $q->build_tree();
 			}
 			$tree .= "</ul>";
@@ -3995,7 +3995,7 @@ class dnqueue_class extends dummynet_class {
 		parent::validate_input($data, $input_errors);
 
 		if ($data['weight'] && ((!is_numeric($data['weight'])) ||
-			($data['weight'] < 1 && $data['weight'] > 100))) {
+		    ($data['weight'] < 1 && $data['weight'] > 100))) {
 			$input_errors[] = gettext("Weight must be an integer between 1 and 100.");
 		}
 	}
@@ -4669,7 +4669,7 @@ function read_layer7_config() {
 			continue; /* XXX: grrrrrr at php */
 		}
 		$root =& new layer7();
-		$root->ReadConfig($conf['name'],$conf);
+		$root->ReadConfig($conf['name'], $conf);
 		$layer7_rules_list[$root->GetRName()] = &$root;
 	}
 }
@@ -4710,8 +4710,8 @@ function generate_layer7_files() {
 
 			$rules = $l7rules->build_l7_rules();
 
-			$fp = fopen($path,'w');
-			fwrite($fp,$rules);
+			$fp = fopen($path, 'w');
+			fwrite($fp, $rules);
 			fclose($fp);
 		}
 	}
@@ -4966,7 +4966,7 @@ function read_dummynet_config() {
 	$dummynet_pipe_list = array();
 
 	if (!is_array($config['dnshaper']['queue']) ||
-		!count($config['dnshaper']['queue'])) {
+	    !count($config['dnshaper']['queue'])) {
 		return;
 	}
 
@@ -5002,7 +5002,7 @@ function get_interface_list_to_show() {
 	foreach ($shaperIFlist as $shif => $shDescr) {
 		if ($altq_list_queues[$shif]) {
 			continue;
-		} else	{
+		} else {
 			if (!is_altq_capable(get_real_interface($shif))) {
 				continue;
 			}

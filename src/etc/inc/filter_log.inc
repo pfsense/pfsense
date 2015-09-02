@@ -74,7 +74,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$flent = parse_filter_line($logent);
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) ||
-				(($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
+			    (($flent != "") && (is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
 				$counter++;
 				$filterlog[] = $flent;
 			}
@@ -86,7 +86,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 function escape_filter_regex($filtertext) {
 	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
-	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".	 */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".  */
 	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
 }
 
@@ -156,7 +156,7 @@ function parse_filter_line($line) {
 	$flent['anchor'] = $rule_data[$field++];
 	$flent['tracker'] = $rule_data[$field++];
 	$flent['realint'] = $rule_data[$field++];
-	$flent['interface']	 = convert_real_interface_to_friendly_descr($flent['realint']);
+	$flent['interface'] = convert_real_interface_to_friendly_descr($flent['realint']);
 	$flent['reason'] = $rule_data[$field++];
 	$flent['act'] = $rule_data[$field++];
 	$flent['direction'] = $rule_data[$field++];
@@ -198,7 +198,7 @@ function parse_filter_line($line) {
 				$flent['ack'] = $rule_data[$field++];
 				$flent['window'] = $rule_data[$field++];
 				$flent['urg'] = $rule_data[$field++];
-				$flent['options'] = explode(";",$rule_data[$field++]);
+				$flent['options'] = explode(";", $rule_data[$field++]);
 			}
 		} else if ($flent['protoid'] == '1') { // ICMP
 			$flent['src'] = $flent['srcip'];
@@ -261,7 +261,7 @@ function parse_filter_line($line) {
 		}
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule number: %s.	Please report to mailing list or forum."), $flent['rulenum']));
+			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
 		}
 		return "";
 	}
@@ -271,7 +271,7 @@ function parse_filter_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s.	 Please report to mailing list or forum."), $errline));
+			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $errline));
 		}
 		return "";
 	}
@@ -382,11 +382,11 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 	if ($type == "rdr") {
 		$ruleString = $buffer_rules_rdr[$lookup_key];
 		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
-		$rulename = substr($ruleString,0,30);
+		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		list(,$rulename,) = explode("\"",$ruleString);
-		$rulename = str_replace("USER_RULE: ",'<img src="/themes/'.$g['theme'].'/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
+		list(,$rulename,) = explode("\"", $ruleString);
+		$rulename = str_replace("USER_RULE: ", '<img src="/themes/' . $g['theme'] . '/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ', $rulename);
 	}
 	return "{$rulename} ({$lookup_key})";
 }
@@ -413,9 +413,9 @@ function handle_ajax($nentries, $tail = 50) {
 		if ($_POST['lastsawtime']) {
 			$lastsawtime = $_POST['lastsawtime'];
 		}
-		/*	compare lastsawrule's time stamp to filter logs.
-		 *	afterwards return the newer records so that client
-		 *	can update AJAX interface screen.
+		/*  compare lastsawrule's time stamp to filter logs.
+		 *  afterwards return the newer records so that client
+		 *  can update AJAX interface screen.
 		 */
 		$new_rules = "";
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);

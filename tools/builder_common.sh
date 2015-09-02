@@ -159,7 +159,7 @@ prestage_on_ram_setup() {
 	else
 		echo "######################################################################################"
 		echo
-		echo ">>> Builder has more than 1.4GiB RAM enabling memory disks"
+		echo ">>> Builder has more than 2GiB RAM enabling memory disks"
 		echo ">>> WARNING: Remember to remove these memory disks by running $0 --disable-memorydisks"
 		echo
 		echo "######################################################################################"

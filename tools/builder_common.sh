@@ -55,8 +55,8 @@ lc() {
 }
 
 git_last_commit() {
-	CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
-	CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
+	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+	export CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
 	echo ">>> Last known commit $CURRENT_AUTHOR - $CURRENT_COMMIT"
 	echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
 }

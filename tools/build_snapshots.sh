@@ -92,13 +92,6 @@ mkdir -p $STAGINGAREA
 echo "" > $SNAPSHOTSLOGFILE
 echo "" > $SNAPSHOTSLASTUPDATE
 
-git_last_commit() {
-	if [ -d "${1}/.git" ]; then
-		git -C "${1}" pull -q
-		git -C "${1}" log -1 --format='%H'
-	fi
-}
-
 # This routine is called in between runs. We
 # will sleep for a bit and check for new commits
 # in between sleeping for short durations.
@@ -106,7 +99,9 @@ sleep_between_runs() {
 	COUNTER=0
 	while [ $COUNTER -lt $maxsleepvalue ]; do
 		sleep 60
-		CURRENT_COMMIT=$(git_last_commit "${BUILDER_ROOT}")
+		# Update this repo
+		git -C "${BUILDER_ROOT}" pull -q
+		git_last_commit
 		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
 			update_status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
 			COUNTER=$(($maxsleepvalue + 60))

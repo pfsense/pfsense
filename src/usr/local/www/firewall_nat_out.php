@@ -334,7 +334,7 @@ $tab_array[] = array(gettext("Outbound"), true, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

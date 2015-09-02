@@ -143,7 +143,7 @@ function build_parent_list() {
 $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

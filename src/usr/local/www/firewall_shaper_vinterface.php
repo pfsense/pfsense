@@ -67,7 +67,7 @@
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");

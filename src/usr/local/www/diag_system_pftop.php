@@ -120,7 +120,7 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form(false);
 $form->addGlobal(new Form_Input(
 	'getactivity',

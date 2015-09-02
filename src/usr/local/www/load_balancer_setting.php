@@ -120,7 +120,7 @@ $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
 $tab_array[] = array(gettext("Settings"), true, "load_balancer_setting.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

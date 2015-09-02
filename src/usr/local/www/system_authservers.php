@@ -407,7 +407,7 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 	exit;
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $form->setAction('system_authservers.php?act=edit');
 $form->addGlobal(new Form_Input(

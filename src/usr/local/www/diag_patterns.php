@@ -101,7 +101,7 @@ include("head.inc");
 if($ulmsg)
 	print_info_box($ulmsg, $class);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form($buttonlabel);
 

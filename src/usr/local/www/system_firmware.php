@@ -240,7 +240,7 @@ if ($sig_warning && !$input_errors) {
 } else {
 	// This is where the work gets done so Forms.classes will be used from this point
 	if (!is_subsystem_dirty('firmwarelock')) {
-		require('classes/Form.class.php');
+		require_once('classes/Form.class.php');
 
 		if (!is_subsystem_dirty('rebootreq')) {
 			// Provide a button to enable firmware upgrades. Upgrades should be disabled on initial page load

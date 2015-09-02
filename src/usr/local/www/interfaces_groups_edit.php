@@ -206,7 +206,7 @@ $tab_array[9]  = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Interface Group Edit');
 

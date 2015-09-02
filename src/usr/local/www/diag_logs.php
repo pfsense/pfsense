@@ -124,7 +124,7 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(false);
 

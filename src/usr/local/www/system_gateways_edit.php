@@ -670,7 +670,7 @@ events.push(function(){
 </script>
 <?php
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 
 /* If this is a system gateway we need this var */

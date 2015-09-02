@@ -359,7 +359,7 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -410,6 +410,7 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 require_once('classes/Form.class.php');
 $form = new Form;
 $form->setAction('system_authservers.php?act=edit');
+
 $form->addGlobal(new Form_Input(
 	'userid',
 	null,
@@ -426,18 +427,12 @@ $section->addInput($input = new Form_Input(
 	$pconfig['name']
 ));
 
-if ($act == 'edit')
-	$input->setReadonly();
-
 $section->addInput($input = new Form_Select(
 	'type',
 	'Type',
 	$pconfig['type'],
 	$auth_server_types
 ))->toggles();
-
-if ($act == 'edit')
-	$input->setDisabled();
 
 $form->add($section);
 $section = new Form_Section('LDAP Server Settings');
@@ -715,6 +710,14 @@ events.push(function(){
 	// On page load . .
 	ldap_tmplchange();
 
+<?php
+	if($act == 'edit') {
+?>
+		$('#type').prop("disabled", true);
+		$('#name').prop("disabled", true);
+<?php
+	}
+?>
 	// On click . .
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();

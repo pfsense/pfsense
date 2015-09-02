@@ -358,6 +358,7 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+	
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -771,8 +772,14 @@ events.push(function(){
 	// On page load . .
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
+<?php
+	if(!$input_errors) {
+?>
 	$("#Select").prop('type','button');
-	
+<?php
+	}
+?>
+		
 	if($('#ldap_port').val() == "")
 		set_ldap_port();
 

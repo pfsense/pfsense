@@ -118,8 +118,6 @@ if ($act == "del") {
 	}
 }
 
-print_r($_POST);
-
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;

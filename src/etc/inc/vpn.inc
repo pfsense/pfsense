@@ -419,6 +419,7 @@ install_routes = no
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
 {$ifacesuse}
+{$makebeforebreak}
 {$charon_retransmit}
 
 # And two loggers using syslog. The subsections define the facility to log

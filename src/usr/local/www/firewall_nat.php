@@ -267,14 +267,14 @@ foreach ($a_nat as $natent):
 	);
 
 	/* if user does not have access to edit an interface skip on to the next record */
-	if(!have_natpfruleint_access($natent['interface']))
+	if (!have_natpfruleint_access($natent['interface']))
 		continue;
 ?>
 					
 					<tr id="fr<?=$nnats?>">
 						<td>
 <?php
-	if($natent['associated-rule-id'] == "pass"):
+	if ($natent['associated-rule-id'] == "pass"):
 ?>
 							<i class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
@@ -428,7 +428,7 @@ events.push(function() {
 </script>
 <?php
 
-if(count($a_nat) > 0) {
+if (count($a_nat) > 0) {
 ?>
 <!-- Legend -->
 <div>

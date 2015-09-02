@@ -101,7 +101,7 @@ if ($_GET['act'] == "del") {
 		}
 
 		if ($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete Schedule.	 Currently in use by %s"), $referenced_by);
+			$savemsg = sprintf(gettext("Cannot delete Schedule. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_schedules[$_GET['id']]);
 			write_config();
@@ -146,7 +146,7 @@ foreach ($a_schedules as $schedule):
 					<td>
 <?php
 	$first = true;
-	foreach($schedule['timerange'] as $timerange) {
+	foreach ($schedule['timerange'] as $timerange) {
 		$tempFriendlyTime = "";
 		$tempID = "";
 		$firstprint = false;
@@ -164,11 +164,11 @@ foreach ($a_schedules as $schedule):
 
 			if ($timerange['month']) {
 				$tempmontharray = explode(",", $timerange['month']);
-				$tempdayarray = explode(",",$timerange['day']);
+				$tempdayarray = explode(",", $timerange['day']);
 				$arraycounter = 0;
 				$firstDayFound = false;
 				$firstPrint = false;
-				foreach ($tempmontharray as $monthtmp){
+				foreach ($tempmontharray as $monthtmp) {
 					$month = $tempmontharray[$arraycounter];
 					$day = $tempdayarray[$arraycounter];
 
@@ -182,7 +182,7 @@ foreach ($a_schedules as $schedule):
 					$nextDay = $tempdayarray[$arraycounter+1];
 					$currentDay++;
 
-					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
 						if ($firstPrint)
 							$dayFriendly .= "<br />";
 
@@ -208,8 +208,8 @@ foreach ($a_schedules as $schedule):
 				$nextDay = "";
 				$counter = 0;
 
-				foreach ($tempFriendlyDayArray as $day){
-					if ($day != ""){
+				foreach ($tempFriendlyDayArray as $day) {
+					if ($day != "") {
 						if (!$firstDayFound)
 						{
 							$firstDay = $tempFriendlyDayArray[$counter];
@@ -221,7 +221,7 @@ foreach ($a_schedules as $schedule):
 						$nextDay = $tempFriendlyDayArray[$counter+1];
 						$currentDay++;
 
-						if ($currentDay != $nextDay){
+						if ($currentDay != $nextDay) {
 							if ($firstprint)
 								$dayFriendly .= "<br />";
 
@@ -269,7 +269,7 @@ endforeach;
 	</div>
 </div>
 
-<?=($i > 0) ? gettext(CLOCK . ' Indicates that the scedule is currently active.'):''?>
+<?=($i > 0) ? gettext(CLOCK . ' Indicates that the schedule is currently active.'):''?>
 
 <nav class="action-buttons">
 	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>

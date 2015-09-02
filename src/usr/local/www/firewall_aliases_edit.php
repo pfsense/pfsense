@@ -110,8 +110,8 @@ if ($_POST) {
 
 $adrs = count($_POST['address']);
 
-for($idx=0; $idx<$adrs; $idx++) {
-	if($_POST['address'][$idx] == "")
+for ($idx = 0; $idx < $adrs; $idx++) {
+	if ($_POST['address'][$idx] == "")
 		unset($_POST['address'][$idx]);
 }
 
@@ -260,9 +260,9 @@ if ($_POST) {
 				download_file($post_address, $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
-				if(stristr($post_address, ".tgz"))
+				if (stristr($post_address, ".tgz"))
 					process_alias_tgz($temp_filename);
-				else if(stristr($post_address, ".zip"))
+				else if (stristr($post_address, ".zip"))
 					process_alias_unzip($temp_filename);
 
 				if (!isset($alias['aliasurl'])) {
@@ -312,47 +312,75 @@ if ($_POST) {
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
 		// They can also put an IP range.
 		// This loop expands out that stuff so it can easily be validated.
-			foreach ($_POST['address'] as $idx => $post_address) {
-				if ($post_address != "") {
+		foreach ($_POST['address'] as $idx => $post_address) {
+			if ($post_address != "") {
 
-					if ((strpos($post_address, "||") === false) && (substr($post_address, 0, 1) != "|") && (substr($post_address, -1, 1) != "|")) {
-						$detail_text = $post_address;
-					} else {
-						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
-						/* and put in the output array so the text is at least redisplayed for the user. */
-						$detail_text = preg_replace('/\|\|+/', '|', trim($post_address, "|"));
-						if (!$desc_fmt_err_found) {
-							$input_errors[] = $vertical_bar_err_text;
-							$desc_fmt_err_found = true;
-						}
-					}
+				if ((strpos($post_address, "||") === false) && (substr($post_address, 0, 1) != "|") && (substr($post_address, -1, 1) != "|")) {
+					$detail_text = $post_address;
 				} else {
-					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
+					/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
+					/* and put in the output array so the text is at least redisplayed for the user. */
+					$detail_text = preg_replace('/\|\|+/', '|', trim($post_address, "|"));
+					if (!$desc_fmt_err_found) {
+						$input_errors[] = $vertical_bar_err_text;
+						$desc_fmt_err_found = true;
+					}
 				}
-				
-				$address_items = explode(" ", trim($post_address));
-				foreach ($address_items as $address_item) {
-					$iprange_type = is_iprange($address_item);
+			} else {
+				$detail_text = sprintf(gettext("Entry added %s"), date('r'));
+			}
+			
+			$address_items = explode(" ", trim($post_address));
+			foreach ($address_items as $address_item) {
+				$iprange_type = is_iprange($address_item);
 
-					if ($iprange_type == 4) {
-						list($startip, $endip) = explode('-', $address_item);
-						if ($_POST['type'] == "network") {
-							// For network type aliases, expand an IPv4 range into an array of subnets.
-							$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-							foreach ($rangesubnets as $rangesubnet) {
-								if ($alias_address_count > $max_alias_addresses) {
-									break;
-								}
-								list($address_part, $subnet_part) = explode("/", $rangesubnet);
-								$input_addresses[] = $address_part;
-								$input_address_subnet[] = $subnet_part;
+				if ($iprange_type == 4) {
+					list($startip, $endip) = explode('-', $address_item);
+					if ($_POST['type'] == "network") {
+						// For network type aliases, expand an IPv4 range into an array of subnets.
+						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+						foreach ($rangesubnets as $rangesubnet) {
+							if ($alias_address_count > $max_alias_addresses) {
+								break;
+							}
+							list($address_part, $subnet_part) = explode("/", $rangesubnet);
+							$input_addresses[] = $address_part;
+							$input_address_subnet[] = $subnet_part;
+							$final_address_details[] = $detail_text;
+							$alias_address_count++;
+						}
+					} else {
+						// For host type aliases, expand an IPv4 range into a list of individual IPv4 addresses.
+						$rangeaddresses = ip_range_to_address_array($startip, $endip, $max_alias_addresses - $alias_address_count);
+						if (is_array($rangeaddresses)) {
+							foreach ($rangeaddresses as $rangeaddress) {
+								$input_addresses[] = $rangeaddress;
+								$input_address_subnet[] = "";
 								$final_address_details[] = $detail_text;
 								$alias_address_count++;
 							}
 						} else {
-							// For host type aliases, expand an IPv4 range into a list of individual IPv4 addresses.
-							$rangeaddresses = ip_range_to_address_array($startip, $endip, $max_alias_addresses - $alias_address_count);
-							if (is_array($rangeaddresses)) {
+							$input_errors[] = sprintf(gettext('Range is too large to expand into individual host IP addresses (%s)'), $address_item);
+							$input_errors[] = sprintf(gettext('The maximum number of entries in an alias is %s'), $max_alias_addresses);
+							// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
+							$input_addresses[] = $address_item;
+							$input_address_subnet[] = "";
+							$final_address_details[] = $detail_text;
+						}
+					}
+				} else if ($iprange_type == 6) {
+					$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $address_item);
+					// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
+					$input_addresses[] = $address_item;
+					$input_address_subnet[] = "";
+					$final_address_details[] = $detail_text;
+				} else {
+					$subnet_type = is_subnet($address_item);
+					if (($_POST['type'] == "host") && $subnet_type) {
+						if ($subnet_type == 4) {
+							// For host type aliases, if the user enters an IPv4 subnet, expand it into a list of individual IPv4 addresses.
+							if (subnet_size($address_item) <= ($max_alias_addresses - $alias_address_count)) {
+								$rangeaddresses = subnetv4_expand($address_item);
 								foreach ($rangeaddresses as $rangeaddress) {
 									$input_addresses[] = $rangeaddress;
 									$input_address_subnet[] = "";
@@ -360,75 +388,47 @@ if ($_POST) {
 									$alias_address_count++;
 								}
 							} else {
-								$input_errors[] = sprintf(gettext('Range is too large to expand into individual host IP addresses (%s)'), $address_item);
+								$input_errors[] = sprintf(gettext('Subnet is too large to expand into individual host IP addresses (%s)'), $address_item);
 								$input_errors[] = sprintf(gettext('The maximum number of entries in an alias is %s'), $max_alias_addresses);
 								// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
 								$input_addresses[] = $address_item;
 								$input_address_subnet[] = "";
 								$final_address_details[] = $detail_text;
 							}
+						} else {
+							$input_errors[] = sprintf(gettext('IPv6 subnets are not supported in host aliases (%s)'), $address_item);
+							// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
+							$input_addresses[] = $address_item;
+							$input_address_subnet[] = "";
+							$final_address_details[] = $detail_text;
 						}
-					} else if ($iprange_type == 6) {
-						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $address_item);
-						// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
-						$input_addresses[] = $address_item;
-						$input_address_subnet[] = "";
-						$final_address_details[] = $detail_text;
 					} else {
-						$subnet_type = is_subnet($address_item);
-						if (($_POST['type'] == "host") && $subnet_type) {
-							if ($subnet_type == 4) {
-								// For host type aliases, if the user enters an IPv4 subnet, expand it into a list of individual IPv4 addresses.
-								if (subnet_size($address_item) <= ($max_alias_addresses - $alias_address_count)) {
-									$rangeaddresses = subnetv4_expand($address_item);
-									foreach ($rangeaddresses as $rangeaddress) {
-										$input_addresses[] = $rangeaddress;
-										$input_address_subnet[] = "";
-										$final_address_details[] = $detail_text;
-										$alias_address_count++;
-									}
-								} else {
-									$input_errors[] = sprintf(gettext('Subnet is too large to expand into individual host IP addresses (%s)'), $address_item);
-									$input_errors[] = sprintf(gettext('The maximum number of entries in an alias is %s'), $max_alias_addresses);
-									// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
-									$input_addresses[] = $address_item;
-									$input_address_subnet[] = "";
-									$final_address_details[] = $detail_text;
-								}
+						list($address_part, $subnet_part) = explode("/", $address_item);
+						if (!empty($subnet_part)) {
+							if (is_subnet($address_item)) {
+								$input_addresses[] = $address_part;
+								$input_address_subnet[] = $subnet_part;
 							} else {
-								$input_errors[] = sprintf(gettext('IPv6 subnets are not supported in host aliases (%s)'), $address_item);
-								// Put the user-entered data in the output anyway, so it will be re-displayed for correction.
+								// The user typed something like "1.2.3.444/24" or "1.2.3.0/36" or similar rubbish.
+								// Feed it through without splitting it apart, then it will be caught by the validation loop below.
 								$input_addresses[] = $address_item;
 								$input_address_subnet[] = "";
-								$final_address_details[] = $detail_text;
 							}
 						} else {
-							list($address_part, $subnet_part) = explode("/", $address_item);
-							if (!empty($subnet_part)) {
-								if (is_subnet($address_item)) {
-									$input_addresses[] = $address_part;
-									$input_address_subnet[] = $subnet_part;
-								} else {
-									// The user typed something like "1.2.3.444/24" or "1.2.3.0/36" or similar rubbish.
-									// Feed it through without splitting it apart, then it will be caught by the validation loop below.
-									$input_addresses[] = $address_item;
-									$input_address_subnet[] = "";
-								}
-							} else {
-								$input_addresses[] = $address_part;
-								$input_address_subnet[] = $_POST["address_subnet"][$idx];
-							}
-							
-							$final_address_details[] = $detail_text;
-							$alias_address_count++;
+							$input_addresses[] = $address_part;
+							$input_address_subnet[] = $_POST["address_subnet"][$idx];
 						}
-					}
-					if ($alias_address_count > $max_alias_addresses) {
-						$input_errors[] = sprintf(gettext('The maximum number of entries in an alias has been exceeded (%s)'), $max_alias_addresses);
-						break;
+						
+						$final_address_details[] = $detail_text;
+						$alias_address_count++;
 					}
 				}
+				if ($alias_address_count > $max_alias_addresses) {
+					$input_errors[] = sprintf(gettext('The maximum number of entries in an alias has been exceeded (%s)'), $max_alias_addresses);
+					break;
+				}
 			}
+		}
 
 		// Validate the input data expanded above.
 		foreach ($input_addresses as $idx => $input_address) {

@@ -73,7 +73,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if($_GET['reset'] != "") {
+if ($_GET['reset'] != "") {
 	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }

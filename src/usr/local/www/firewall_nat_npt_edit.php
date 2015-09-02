@@ -180,36 +180,36 @@ function build_if_list() {
 	global $ifdisp;
 
 	foreach ($ifdisp as $if => $ifdesc) {
-		if(have_ruleint_access($if))
+		if (have_ruleint_access($if))
 			$interfaces[$if] = $ifdesc;
 	}
 
 	if ($config['l2tp']['mode'] == "server")
-		if(have_ruleint_access("l2tp"))
+		if (have_ruleint_access("l2tp"))
 			$interfaces['l2tp'] = "L2TP VPN";
 
 	if ($config['pptpd']['mode'] == "server")
-		if(have_ruleint_access("pptp"))
+		if (have_ruleint_access("pptp"))
 			$interfaces['pptp'] = "PPTP VPN";
 
 	if ($config['pppoe']['mode'] == "server")
-		if(have_ruleint_access("pppoe"))
+		if (have_ruleint_access("pppoe"))
 			$interfaces['pppoe'] = "PPPoE Server";
 
 	/* add ipsec interfaces */
 	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
-		if(have_ruleint_access("enc0"))
+		if (have_ruleint_access("enc0"))
 			$interfaces["enc0"] = "IPsec";
 	}
 
 	/* add openvpn/tun interfaces */
-	if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 		$interfaces["openvpn"] = "OpenVPN";
 
 	return($interfaces);
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)

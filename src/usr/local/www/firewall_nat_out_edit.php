@@ -465,15 +465,15 @@ $section->addInput(new Form_Checkbox(
 $iflist = get_configured_interface_with_descr(false, true);
 
 foreach ($iflist as $if => $ifdesc)
-	if(have_ruleint_access($if))
+	if (have_ruleint_access($if))
 		$interfaces[$if] = $ifdesc;
 
 if ($config['l2tp']['mode'] == "server")
-	if(have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp"))
 		$interfaces['l2tp'] = "L2TP VPN";
 
 if ($config['pptpd']['mode'] == "server")
-	if(have_ruleint_access("pptp"))
+	if (have_ruleint_access("pptp"))
 		$interfaces['pptp'] = "PPTP VPN";
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
@@ -481,11 +481,11 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 
 /* add ipsec interfaces */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if(have_ruleint_access("enc0"))
+	if (have_ruleint_access("enc0"))
 		$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 	$interfaces["openvpn"] = "OpenVPN";
 
 $section->addInput(new Form_Select(
@@ -669,14 +669,14 @@ $has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['upda
 if ($has_created_time || $has_updated_time) {
 	$section = new Form_Section('Rule Information');
 
-	if($has_created_time) {
+	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
 			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext("by") . $a_out[$id]['created']['username']
 		));
 	}
 
-	if($has_updated_time) {
+	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
 			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext("by") . $a_out[$id]['updated']['username']
@@ -697,7 +697,7 @@ events.push(function(){
 
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent().parent('div').addClass('hidden');
 		else
 			$('#' + id).parent().parent('div').removeClass('hidden');
@@ -706,7 +706,7 @@ events.push(function(){
 	// Hides the <div> in which the specified group input element lives so that the input,
 	// its label and help text are hidden
 	function hideGroupInput(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent('div').addClass('hidden');
 		else
 			$('#' + id).parent('div').removeClass('hidden');
@@ -714,7 +714,7 @@ events.push(function(){
 
 	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 	function hideCheckbox(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent().parent().parent('div').addClass('hidden');
 		else
 			$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -727,7 +727,7 @@ events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
@@ -735,14 +735,14 @@ events.push(function(){
 
 	// Hides all elements of the specified class assigned to a group. This will usually be a group
 	function hideGroupClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).parent().parent().parent().hide();
 		else
 			$('.' + s_class).parent().parent().parent().show();
 	}
 
 	function staticportchange() {
-		if($('#staticnatport').prop('checked'))	 {
+		if ($('#staticnatport').prop('checked'))	 {
 			$('#natport').val("");
 			disableInput('natport' , true);
 		} else {
@@ -751,7 +751,7 @@ events.push(function(){
 	}
 
 	function sourcesel_change() {
-		if($('#source_type').find(":selected").val() == "network") {
+		if ($('#source_type').find(":selected").val() == "network") {
 			disableInput('source', false);
 			disableInput('source_subnet', false);
 		}
@@ -764,7 +764,7 @@ events.push(function(){
 	}
 
 	function typesel_change() {
-		if($('#destination_type').find(":selected").val() == "network") {
+		if ($('#destination_type').find(":selected").val() == "network") {
 			disableInput('destination', false);
 			disableInput('destination_subnet', false);
 		}
@@ -781,7 +781,7 @@ events.push(function(){
 	}
 
 	function proto_change() {
-		if( ($('#protocol').find(":selected").index() > 0) && ($('#protocol').find(":selected").index() <= 3) ) {
+		if (($('#protocol').find(":selected").index() > 0) && ($('#protocol').find(":selected").index() <= 3)) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);

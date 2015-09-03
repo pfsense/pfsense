@@ -288,22 +288,22 @@ if [ "${BUILDACTION}" != "images" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-	if [ -z "${RSYNCIP}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${RSYNCIP}" ]; then
 		echo ">>> ERROR: RSYNCIP is not defined"
 		exit 1
 	fi
 
-	if [ -z "${RSYNCUSER}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${RSYNCUSER}" ]; then
 		echo ">>> ERROR: RSYNCUSER is not defined"
 		exit 1
 	fi
 
-	if [ -z "${RSYNCPATH}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${RSYNCPATH}" ]; then
 		echo ">>> ERROR: RSYNCPATH is not defined"
 		exit 1
 	fi
 
-	if [ -z "${RSYNCLOGS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${RSYNCLOGS}" ]; then
 		echo ">>> ERROR: RSYNCLOGS is not defined"
 		exit 1
 	fi

@@ -61,6 +61,21 @@ git_last_commit() {
 	echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
 }
 
+# Create core pkg repository
+core_pkg_create_repo() {
+	if [ ! -d "${CORE_PKG_PATH}/All" ]; then
+		return
+	fi
+
+	echo -n ">>> Creating core packages repository... "
+	if pkg repo -q -o "${CORE_PKG_PATH}" "${CORE_PKG_PATH}/All"; then
+		echo "Done!"
+	else
+		echo "Failed!"
+		print_error_pfS
+	fi
+}
+
 # Create core pkg (base, kernel)
 core_pkg_create() {
 	local _template="${1}"

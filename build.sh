@@ -415,6 +415,8 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	fi
 done
 
+core_pkg_create_repo
+
 echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
 wait
 

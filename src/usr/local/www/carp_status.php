@@ -79,7 +79,7 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
-print('Status: ' . $status); print('<br />');
+$status = intval($status);
 
 if ($_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
@@ -159,21 +159,6 @@ include("head.inc");
 if ($savemsg) 
 	print_info_box($savemsg, 'success');
 
-if ($carp_detected_problems > 0) {
-	print_info_box(
-		gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
-		gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
-		gettext("Search the") .
-		" <a href=\"/diag_logs.php?filtertext=carp%3A+demoted+by\">" .
-		gettext("system log") .
-		"</a> " .
-		gettext("for CARP demotion-related events.") . "<br/><br/>" .
-		'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
-		gettext("Reset CARP Demotion Status") .
-		'" />', 'danger'
-	);
-}
-
 $carpcount = 0;
 if(is_array($config['virtualip']['vip'])) {
 	foreach($config['virtualip']['vip'] as $carp) {
@@ -205,9 +190,26 @@ if ($carpcount == 0) {
 		$carp_enabled = true;
 	else
 		$carp_enabled = false;
+	
+	// SAdly this needs to be here so that it is inside the form
+	if ($carp_detected_problems > 0) {
+		print_info_box(
+			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
+			gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
+			gettext("Search the") .
+			" <a href=\"/diag_logs.php?filtertext=carp%3A+demoted+by\">" .
+			gettext("system log") .
+			"</a> " .
+			gettext("for CARP demotion-related events.") . "<br/><br/>" .
+			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
+			gettext("Reset CARP Demotion Status") .
+			'" />', 'danger'
+		);
+	}
+
 ?>
 	<input type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
-	<input type="submit" class="btn btn-info" name="carp_maintenancemode" value="<?=($config["virtualip_carp_maintenancemode"] ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
+	<input type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
 	
 	<br /><br />
 	
@@ -253,7 +255,7 @@ if ($carpcount == 0) {
 <?php }?>
 				</tbody>
 			</table>
-		</div
+		</div>
 	</div>
 </form>
 

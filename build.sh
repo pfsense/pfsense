@@ -288,7 +288,19 @@ if [ "${BUILDACTION}" != "images" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-	for _var in RSYNCIP RSYNCUSER RSYNCPATH RSYNCLOGS; do
+	_required=" \
+		RSYNCIP \
+		RSYNCUSER \
+		RSYNCPATH \
+		RSYNCLOGS \
+		PKG_RSYNC_HOSTNAME \
+		PKG_RSYNC_USERNAME \
+		PKG_RSYNC_SSH_PORT \
+		PKG_RSYNC_DESTDIR \
+		PKG_REPO_SERVER \
+		PKG_REPO_CONF_BRANCH"
+
+	for _var in "${_required}"; do
 		eval "_value=\${$_var}"
 		if [ -z "${_value}" ]; then
 			echo ">>> ERROR: ${_var} is not defined"

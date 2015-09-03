@@ -80,10 +80,11 @@ unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
 $status = intval($status);
-if ($_POST['carp_maintenancemode'] <> "") {
+if ($_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
-if ($_POST['disablecarp'] <> "") {
+
+if ($_POST['disablecarp'] != "") {
 	if ($status > 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if (is_array($config['virtualip']['vip'])) {
@@ -152,12 +153,12 @@ if (!empty($_POST['resetdemotion'])) {
 
 $pgtitle = array(gettext("Status"), gettext("CARP"));
 $shortcut_section = "carp";
-include("head.inc");
-?>
-<form action="carp_status.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg); ?>
 
-<?PHP if ($carp_detected_problems > 0) {
+include("head.inc");
+if ($savemsg) 
+	print_info_box($savemsg, 'success');
+
+if ($carp_detected_problems > 0) {
 	print_info_box(
 		gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
 		gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
@@ -165,15 +166,13 @@ include("head.inc");
 		" <a href=\"/diag_logs.php?filtertext=carp%3A+demoted+by\">" .
 		gettext("system log") .
 		"</a> " .
-		gettext("for CARP demotion-related events.") . "<br/>" .
-		"<input type=\"submit\" name=\"resetdemotion\" id=\"resetdemotion\" value=\"" .
+		gettext("for CARP demotion-related events.") . "<br/><br/>" .
+		'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 		gettext("Reset CARP Demotion Status") .
-		"\" />"
+		'" />', 'danger'
 	);
+}
 
-} ?>
-
-<?php
 $carpcount = 0;
 if(is_array($config['virtualip']['vip'])) {
 	foreach($config['virtualip']['vip'] as $carp) {
@@ -183,25 +182,41 @@ if(is_array($config['virtualip']['vip'])) {
 		}
 	}
 }
-if ($carpcount > 0):
-	$carp_enabled = ($status > 0);
+
+
+// If $carpcount > 0 display buttons then display table
+// otherwise display error box and quit
+
 ?>
-	<input type="submit" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
-	<input type="submit" name="carp_maintenancemode" value="<?=($config["virtualip_carp_maintenancemode"] ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
-<?php elseif ($carpcount == 0): ?>
-	<div class="alert alert-info" role="alert">
-		<p>
-			<?=gettext("Could not locate any defined CARP interfaces.")?><br/>
-			<a href="system_hasync.php" class="alert-link"><?=gettext("You can configure high availability sync settings here")?></a>.
-		</p>
-	</div>
-<?php else: ?>
-<table>
-	<tr>
-		<td><?=gettext("CARP Interface")?></td>
-		<td><?=gettext("Virtual IP")?></td>
-		<td><?=gettext("Status")?></td>
-	</tr>
+
+<?php
+if ($carpcount == 0) {
+	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
+				   '<a href="system_hasync.php" class="alert-link">' . 
+				   gettext("You can configure high availability sync settings here") .
+				   '</a>');
+} else
+{
+?>
+<form action="carp_status.php" method="post">
+
+	<input type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
+	<input type="submit" class="btn btn-info" name="carp_maintenancemode" value="<?=($config["virtualip_carp_maintenancemode"] ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
+	
+	<br /><br />
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Servers')?></h2></div>
+			<div class="panel-body table-responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("CARP Interface")?></th>
+							<th><?=gettext("Virtual IP")?></th>
+							<th><?=gettext("Status")?></th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
 	foreach($config['virtualip']['vip'] as $carp) {
 		if ($carp['mode'] != "carp")
@@ -222,23 +237,31 @@ if ($carpcount > 0):
 			}
 		}
 ?>
-	<tr>
-		<td>
-			<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
-			<td><?=$ipaddress?></td>
-			<td><i class="icon icon-<?=$icon?>">$status</i></td>
-	</tr>
+					<tr>
+						<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
+						<td><?=$ipaddress?></td>
+						<td><i class="icon icon-<?=$icon?>"></i>&nbsp;<?=$status?></td>
+					</tr>
 <?php }?>
-</table>
+				</tbody>
+			</table>
+		</div
+	</div>
 </form>
-<?php endif?>
 
-<h4><?=gettext("pfSync nodes")?></h4>
-<ul>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync nodes')?></h2></div>
+	<div class="panel-body">
+		<ul>
 <?php
 	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node)
-		echo '<li>'. $node .'</li>';
+				echo '<li>'. $node .'</li>';
 ?>
-</ul>
+		</ul>
+	</div>
+</div>
 
-<?php include("foot.inc")?>
+<?php
+}
+
+include("foot.inc");

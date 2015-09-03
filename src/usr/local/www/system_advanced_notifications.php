@@ -286,7 +286,7 @@ $section->addInput(new Form_Checkbox(
 	'in place to function.');
 
 $section->addInput(new Form_Input(
-	'mtpipaddress',
+	'smtpipaddress',
 	'E-Mail server',
 	'text',
 	$pconfig['smtpipaddress']

@@ -574,7 +574,7 @@ $section->addInput(new Form_Input(
 	'dhcpbackup',
 	'Periodic DHCP Leases Backup',
 	'number',
-	$config['system']['rrdbackup'],
+	$config['system']['dhcpbackup'],
 	['min' => 1, 'max' => 24, 'placeholder' => 'frequency between 1 and 24 hours']
 ))->setHelp('This will periodically backup the DHCP leases so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.

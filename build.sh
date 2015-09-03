@@ -300,7 +300,7 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 		PKG_REPO_SERVER \
 		PKG_REPO_CONF_BRANCH"
 
-	for _var in "${_required}"; do
+	for _var in ${_required}; do
 		eval "_value=\${$_var}"
 		if [ -z "${_value}" ]; then
 			echo ">>> ERROR: ${_var} is not defined"

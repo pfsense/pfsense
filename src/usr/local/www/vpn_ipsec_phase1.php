@@ -620,8 +620,9 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 
-        if ($input_errors)
-                print_input_errors($input_errors);
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");

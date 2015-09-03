@@ -117,8 +117,8 @@ core_pkg_create() {
 		rm -f ${_plist}.tmp ${plist}.exclude
 	fi
 
-	mkdir -p ${CORE_PKG_PATH}
-	if ! pkg create -o ${CORE_PKG_PATH} -p ${_plist} -r ${_root} -m ${_metadir}; then
+	mkdir -p ${CORE_PKG_PATH}/All
+	if ! pkg create -o ${CORE_PKG_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
 		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
 		print_error_pfS
 	fi
@@ -245,7 +245,7 @@ build_all_kernels() {
 			print_error_pfS
 		fi
 
-		if [ -n "${NO_BUILDKERNEL:-}" -a -f "${CORE_PKG_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
+		if [ -n "${NO_BUILDKERNEL:-}" -a -f "${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
@@ -292,10 +292,10 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
-		cp ${CORE_PKG_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
+		cp ${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
-				_EXTRA_KERNEL_PATH=${CORE_PKG_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
+				_EXTRA_KERNEL_PATH=${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
 				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
 					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
 					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
@@ -1100,7 +1100,7 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
+		cp ${CORE_PKG_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
 	if [ "${1}" = "nanobsd" -o \
@@ -1455,12 +1455,12 @@ pkg_chroot_add() {
 		print_error_pfS
 	fi
 
-	if [ ! -f ${CORE_PKG_PATH}/${_pkg} ]; then
+	if [ ! -f ${CORE_PKG_PATH}/All/${_pkg} ]; then
 		echo ">>> ERROR: Package ${_pkg} not found"
 		print_error_pfS
 	fi
 
-	cp ${CORE_PKG_PATH}/${_pkg} ${_target}
+	cp ${CORE_PKG_PATH}/All/${_pkg} ${_target}
 	pkg_chroot ${_target} add /${_pkg}
 	rm -f ${_target}/${_pkg}
 }

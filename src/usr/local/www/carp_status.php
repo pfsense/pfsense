@@ -79,7 +79,8 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
-$status = intval($status);
+print('Status: ' . $status); print('<br />');
+
 if ($_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
@@ -199,7 +200,12 @@ if ($carpcount == 0) {
 {
 ?>
 <form action="carp_status.php" method="post">
-
+<?php
+	if($status > 0)
+		$carp_enabled = true;
+	else
+		$carp_enabled = false;
+?>
 	<input type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
 	<input type="submit" class="btn btn-info" name="carp_maintenancemode" value="<?=($config["virtualip_carp_maintenancemode"] ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
 	
@@ -221,9 +227,11 @@ if ($carpcount == 0) {
 	foreach($config['virtualip']['vip'] as $carp) {
 		if ($carp['mode'] != "carp")
 			continue;
+			
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
+		
 		if($carp_enabled == false) {
 			$icon = 'remove-sign';
 			$status = "DISABLED";

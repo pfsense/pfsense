@@ -184,7 +184,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	} else if ($a_ppps[$pppid]['type'] == "pptp" || $a_ppps[$pppid]['type'] == "l2tp") {
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
-		$pconfig['pptp_local'] = explode(",", $a_ppps[$pppid]['localip']);
+		$pconfig['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
 		$pconfig['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
 		$pconfig['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
 		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
@@ -574,20 +574,20 @@ if ($_POST['apply']) {
 			break;
 		case "pptp":
 			if ($_POST['pptp_dialondemand']) {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local0 pptp_subnet0 pptp_remote0 pptp_dialondemand pptp_idletimeout");
 				$reqdfieldsn = array(gettext("PPTP username"), gettext("PPTP password"), gettext("PPTP local IP address"), gettext("PPTP subnet"), gettext("PPTP remote IP address"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local0 pptp_subnet0 pptp_remote0");
 				$reqdfieldsn = array(gettext("PPTP username"), gettext("PPTP password"), gettext("PPTP local IP address"), gettext("PPTP subnet"), gettext("PPTP remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "l2tp":
 			if ($_POST['pptp_dialondemand']) {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote pptp_dialondemand pptp_idletimeout");
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote0 pptp_dialondemand pptp_idletimeout");
 				$reqdfieldsn = array(gettext("L2TP username"), gettext("L2TP password"), gettext("L2TP remote IP address"), gettext("Dial on demand"), gettext("Idle timeout value"));
 			} else {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote");
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote0");
 				$reqdfieldsn = array(gettext("L2TP username"), gettext("L2TP password"), gettext("L2TP remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -775,13 +775,13 @@ if ($_POST['apply']) {
 	if ($_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
 	}
-	if (($_POST['pptp_local'] && !is_ipaddrv4($_POST['pptp_local']))) {
+	if (($_POST['pptp_local0'] && !is_ipaddrv4($_POST['pptp_local0']))) {
 		$input_errors[] = gettext("A valid PPTP local IP address must be specified.");
 	}
-	if (($_POST['pptp_subnet'] && !is_numeric($_POST['pptp_subnet']))) {
+	if (($_POST['pptp_subnet0'] && !is_numeric($_POST['pptp_subnet0']))) {
 		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
 	}
-	if (($_POST['pptp_remote'] && !is_ipaddrv4($_POST['pptp_remote']) && !is_hostname($_POST['gateway'][$iface]))) {
+	if (($_POST['pptp_remote0'] && !is_ipaddrv4($_POST['pptp_remote0']) && !is_hostname($_POST['gateway'][$iface]))) {
 		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	}
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) {
@@ -971,6 +971,12 @@ if ($_POST['apply']) {
 		}
 	}
 	if (!$input_errors) {
+		// These 3 fields can be a list of multiple data items when used for MLPPP.
+		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries
+		$poriginal['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
+		$poriginal['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
+		$poriginal['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
+
 		if ($wancfg['ipaddr'] != $_POST['type']) {
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
@@ -1196,9 +1202,13 @@ if ($_POST['apply']) {
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
 				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
-				$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
-				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
-				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
+				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
+				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
+				$a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);
+				$poriginal['pptp_subnet'][0] = $_POST['pptp_subnet0'];
+				$a_ppps[$pppid]['subnet'] = implode(',', $poriginal['pptp_subnet']);
+				$poriginal['pptp_remote'][0] = $_POST['pptp_remote0'];
+				$a_ppps[$pppid]['gateway'] = implode(',', $poriginal['pptp_remote']);
 				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 				if (!empty($_POST['pptp_idletimeout'])) {
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
@@ -3114,9 +3124,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Local IP address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20" value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>" />
+											<input name="pptp_local0" type="text" class="formfld unknown" id="pptp_local0" size="20" value="<?=htmlspecialchars($pconfig['pptp_localip'][0]);?>" />
 											/
-											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
+											<select name="pptp_subnet0" class="formselect" id="pptp_subnet0">
 												<?php for ($i = 31; $i > 0; $i--): ?>
 													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected=\"selected\""; ?>>
 														<?=$i;?>
@@ -3128,7 +3138,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote IP address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>" />
+											<input name="pptp_remote0" type="text" class="formfld unknown" id="pptp_remote0" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>" />
 										</td>
 									</tr>
 									<tr>
@@ -3149,6 +3159,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
+												<?php if (isset($pconfig['pptp_localip'][1]) || isset($pconfig['pptp_subnet'][1]) || isset($pconfig['pptp_remote'][1])): ?>
+													<?=gettext("There are additional Local and Remote IP addresses defined for MLPPP.");?><br />
+												<?php endif; ?>
 												<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here");?></a>
 												<?=gettext("for additional PPTP and L2TP configuration options. Save first if you made changes.");?>
 											</td>

@@ -327,6 +327,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.');
 
+$form->add($section);
+
+$section = new Form_Section('Sounds');
+
 $section->addInput(new Form_Checkbox(
 	'disablebeep',
 	'Startup/Shutdown Sound',

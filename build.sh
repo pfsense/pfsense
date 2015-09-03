@@ -288,25 +288,25 @@ if [ "${BUILDACTION}" != "images" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-	if [ -z "${RSYNCIP}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCIP is not defined"
-		exit 1
-	fi
+	_required=" \
+		RSYNCIP \
+		RSYNCUSER \
+		RSYNCPATH \
+		RSYNCLOGS \
+		PKG_RSYNC_HOSTNAME \
+		PKG_RSYNC_USERNAME \
+		PKG_RSYNC_SSH_PORT \
+		PKG_RSYNC_DESTDIR \
+		PKG_REPO_SERVER \
+		PKG_REPO_CONF_BRANCH"
 
-	if [ -z "${RSYNCUSER}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCUSER is not defined"
-		exit 1
-	fi
-
-	if [ -z "${RSYNCPATH}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCPATH is not defined"
-		exit 1
-	fi
-
-	if [ -z "${RSYNCLOGS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCLOGS is not defined"
-		exit 1
-	fi
+	for _var in ${_required}; do
+		eval "_value=\${$_var}"
+		if [ -z "${_value}" ]; then
+			echo ">>> ERROR: ${_var} is not defined"
+			exit 1
+		fi
+	done
 fi
 
 if [ $# -gt 1 ]; then
@@ -415,6 +415,8 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	fi
 done
 
+core_pkg_create_repo
+
 echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
 wait
 
@@ -427,10 +429,10 @@ if [ -n "${SNAPSHOTS}" ]; then
 	fi
 	# Alert the world that we have some snapshots ready.
 	snapshots_update_status ">>> Builder run is complete."
-else
-	echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-	ls -lah ${IMAGES_FINAL_DIR}
 fi
+
+echo ">>> ${IMAGES_FINAL_DIR} now contains:"
+ls -lah ${IMAGES_FINAL_DIR}
 
 set -e
 # Run final finish routines

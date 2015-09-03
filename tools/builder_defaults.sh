@@ -285,7 +285,7 @@ CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
 if [ -n "${_IS_RELEASE}" ]; then
 	CORE_PKG_VERSION="${CORE_PKG_VERSION}.${DATESTRING}"
 fi
-export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core/All"}
+export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 # Package overlay. This gives people a chance to build product

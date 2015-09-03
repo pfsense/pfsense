@@ -1,0 +1,428 @@
+#!/usr/local/bin/php-cgi -f
+<?php
+/*
+	rc.bootup
+	part of pfSense by Scott Ullrich
+	originally based on m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2004-2009 Scott Ullrich <sullrich@pfsense.org>.
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2009 Erik Kristensen
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+function rescue_detect_keypress() {
+	// How long do you want the script to wait before moving on (in seconds)
+	$timeout=9;
+	echo "\n";
+	echo "[ Press R to enter recovery mode or ]\n";
+	echo "[  press I to launch the installer  ]\n\n";
+	echo "(R)ecovery mode can assist by rescuing config.xml\n";
+	echo "from a broken hard disk installation, etc.\n\n";
+	echo "(I)nstaller will be invoked\n\n";
+	echo "Timeout before auto boot continues (seconds): {$timeout}";
+	$key = null;
+	exec("/bin/stty erase " . chr(8));
+	while (!in_array($key, array("r", "R", "i", "I"))) {
+		echo chr(8) . "{$timeout}";
+		`/bin/stty -icanon min 0 time 25`;
+		$key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
+		`/bin/stty icanon`;
+		// Decrement our timeout value
+		$timeout--;
+		// If we have reached 0 exit and continue on
+		if ($timeout == 0) {
+			break;
+		}
+	}
+	// If R or I was pressed do our logic here
+	if (in_array($key, array("r", "R"))) {
+		putenv("TERM=cons25");
+		echo "\n\nRecovery mode selected...\n";
+		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer rescue");
+	} else {
+		putenv("TERM=cons25");
+		echo "\n\nInstaller mode selected...\n";
+		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	}
+
+	passthru("/etc/rc.reboot");
+	exit;
+}
+
+echo " done.\n";
+
+echo "Initializing...";
+echo ".";
+require_once("/etc/inc/globals.inc");
+echo ".";
+require_once("/etc/inc/led.inc");
+led_normalize();
+echo ".";
+if (led_count() >= 3) {
+	led_kitt();
+}
+
+/* let the other functions know we're booting */
+$pkg_interface = 'console';
+$g['booting'] = true;
+
+/* parse the configuration and include all functions used below */
+require_once("/etc/inc/config.inc");
+echo ".";
+require_once("/etc/inc/config.console.inc");
+echo ".";
+require_once("/etc/inc/auth.inc");
+echo ".";
+require_once("/etc/inc/functions.inc");
+echo ".";
+require_once("/etc/inc/filter.inc");
+echo ".";
+require_once("/etc/inc/shaper.inc");
+echo ".";
+require_once("/etc/inc/ipsec.inc");
+echo ".";
+require_once("/etc/inc/vpn.inc");
+echo ".";
+require_once("/etc/inc/openvpn.inc");
+echo ".";
+require_once("/etc/inc/captiveportal.inc");
+echo ".";
+require_once("/etc/inc/rrd.inc");
+echo ".";
+require_once("/etc/inc/pfsense-utils.inc");
+echo ".";
+
+/* get system memory amount */
+$memory = get_memory();
+$physmem = $memory[0];
+$realmem = $memory[1];
+echo " done.\n";
+
+conf_mount_rw();
+
+/* save dmesg output to file */
+system_dmesg_save();
+
+/* check whether config reset is desired (via hardware button on WRAP/ALIX) */
+system_check_reset_button();
+
+/* remove previous firmware upgrade if present */
+if (file_exists("/root/firmware.tgz")) {
+	unlink("/root/firmware.tgz");
+}
+
+/* start devd (dhclient now uses it) */
+echo "Starting device manager (devd)...";
+mute_kernel_msgs();
+start_devd();
+set_device_perms();
+unmute_kernel_msgs();
+echo "done.\n";
+
+// Display rescue configuration option
+if ($g['platform'] == "cdrom") {
+	rescue_detect_keypress();
+}
+
+echo "Loading configuration...";
+parse_config_bootup();
+echo "done.\n";
+
+/*
+ *	Determine if we need to throw a interface exception
+ *	and ask the user to reassign interfaces.  This will
+ *	avoid a reboot and that is a good thing.
+ */
+while (is_interface_mismatch() == true) {
+	led_assigninterfaces();
+	if (isset($config['revision'])) {
+		if (file_exists("{$g['tmp_path']}/missing_interfaces")) {
+			echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
+		}
+		echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+	} else {
+		echo "\nDefault interfaces not found -- Running interface assignment option.\n";
+	}
+	$ifaces = get_interface_list();
+	if (is_array($ifaces)) {
+		foreach ($ifaces as $iface => $ifdata) {
+			interfaces_bring_up($iface);
+		}
+	}
+	set_networking_interfaces_ports();
+	led_kitt();
+}
+
+/* convert config and clean backups */
+echo "Updating configuration...";
+convert_config();
+echo "done.\n";
+
+echo "Cleaning backup cache...";
+cleanup_backupcache(true);
+echo "done.\n";
+
+/* read in /etc/sysctl.conf and set values if needed */
+echo "Setting up extended sysctls...";
+system_setup_sysctl();
+echo "done.\n";
+
+/* enable optional crypto modules */
+load_crypto();
+
+/* enable optional thermal sensor modules */
+load_thermal_hardware();
+
+/* run any early shell commands specified in config.xml */
+system_do_shell_commands(1);
+
+/* set up our timezone */
+system_timezone_configure();
+
+/* set up our hostname */
+system_hostname_configure();
+
+/* make hosts file */
+system_hosts_generate();
+
+/* configure loopback interface */
+interfaces_loopback_configure();
+
+/* start syslogd */
+system_syslogd_start();
+
+echo "Starting Secure Shell Services...";
+send_event("service reload sshd");
+echo "done.\n";
+
+/* setup polling */
+echo "Setting up polling defaults...";
+setup_polling();
+echo "done.\n";
+
+/* setup interface microcode which improves tcp/ip speed */
+echo "Setting up interfaces microcode...";
+setup_microcode();
+echo "done.\n";
+
+/* set up interfaces */
+if (!$debugging) {
+	mute_kernel_msgs();
+}
+interfaces_configure();
+interfaces_sync_setup();
+if (!$debugging) {
+	unmute_kernel_msgs();
+}
+
+/* re-make hosts file after configuring interfaces */
+system_hosts_generate();
+
+/* start OpenVPN server & clients */
+echo "Syncing OpenVPN settings...";
+openvpn_resync_all();
+echo "done.\n";
+
+/* generate resolv.conf */
+system_resolvconf_generate();
+
+/* setup altq + pf */
+filter_configure_sync();
+
+/* start pflog */
+echo "Starting PFLOG...";
+filter_pflog_start();
+echo "done.\n";
+
+/* reconfigure our gateway monitor */
+echo "Setting up gateway monitors...";
+setup_gateways_monitor();
+echo "done.\n";
+
+echo "Synchronizing user settings...";
+local_sync_accounts();
+echo "done.\n";
+
+if ($realmem > 0 and $realmem < 65) {
+	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
+	/* start webConfigurator up on final pass */
+	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
+} else {
+	/* start web server */
+	system_webgui_start();
+}
+
+/* configure cron service */
+echo "Configuring CRON...";
+configure_cron();
+echo "done.\n";
+
+/* set up static routes */
+system_routing_configure();
+
+/* enable routing */
+system_routing_enable();
+
+/* start dnsmasq service */
+services_dnsmasq_configure();
+
+/* start unbound service */
+services_unbound_configure();
+
+/* Do an initial time sync */
+echo "Starting NTP time client...";
+/* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
+system_ntp_configure(false);
+mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
+echo "done.\n";
+
+/* start load balancer daemon */
+relayd_configure();
+
+/* configure console menu */
+system_console_configure();
+
+/* start DHCP service */
+services_dhcpd_configure();
+
+/* start dhcpleases dhcp hosts leases program */
+system_dhcpleases_configure();
+
+/* start DHCP relay */
+services_dhcrelay_configure();
+
+/* start DHCP6 relay */
+services_dhcrelay6_configure();
+
+/* dyndns service updates */
+send_event("service reload dyndnsall");
+
+/* Run a filter configure now that most all services have started */
+filter_configure_sync();
+
+/* setup pppoe and pptp */
+vpn_setup();
+
+/* start the captive portal */
+captiveportal_configure();
+
+/* start Voucher support */
+voucher_configure();
+
+/* run any shell commands specified in config.xml */
+system_do_shell_commands();
+
+/* start IPsec tunnels */
+$ipsec_dynamic_hosts = vpn_ipsec_configure();
+
+/* start SNMP service */
+services_snmpd_configure();
+
+/* power down hard drive if needed/set */
+system_set_harddisk_standby();
+
+/* lock down console if necessary */
+reload_ttys();
+
+/* load graphing functions */
+enable_rrd_graphing();
+
+/* enable watchdog if supported */
+enable_watchdog();
+
+/* if <system><afterbootupshellcmd> exists, execute the command */
+if ($config['system']['afterbootupshellcmd'] <> "") {
+	echo "Running afterbootupshellcmd {$config['system']['afterbootupshellcmd']}\n";
+	mwexec($config['system']['afterbootupshellcmd']);
+}
+
+if ($physmem < $g['minimum_ram_warning']) {
+	require_once("/etc/inc/notices.inc");
+	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	set_sysctl(array(
+		"net.inet.tcp.recvspace" => "4096",
+		"net.inet.tcp.sendspace" => "4096"
+	));
+}
+
+/* if we are operating at 1000 then increase timeouts.
+   this was never accounted for after moving to 1000 hz */
+$kern_hz = get_single_sysctl('kern.clockrate');
+$kern_hz = substr($kern_hz, strpos($kern_hz, "hz = ") + 5);
+$kern_hz = substr($kern_hz, 0, strpos($kern_hz, ","));
+if ($kern_hz == "1000") {
+	set_single_sysctl("net.inet.tcp.rexmit_min" , "30");
+}
+
+/* start the igmpproxy daemon */
+services_igmpproxy_configure();
+
+/* start the upnp daemon if it is enabled */
+upnp_start();
+
+/* If powerd is enabled, lets launch it */
+activate_powerd();
+
+/* Set preferred protocol */
+prefer_ipv4_or_ipv6();
+
+/* Remove the old shutdown binary if we kept it. */
+if (file_exists("/sbin/shutdown.old")) {
+	@unlink("/sbin/shutdown.old");
+}
+
+/* Resync / Reinstall packages if need be */
+if (file_exists('/conf/needs_package_sync')) {
+	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
+		require_once("pkg-utils.inc");
+		if ($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+			mark_subsystem_dirty('packagelock');
+			pkg_reinstall_all();
+			clear_subsystem_dirty('packagelock');
+		}
+	}
+	@unlink('/conf/needs_package_sync');
+}
+
+/* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
+   fail to route syslog messages properly on both IPv4 and IPv6 */
+system_syslogd_start();
+
+/* done */
+unset($g['booting']);
+@unlink("{$g['varrun_path']}/booting");
+
+/* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
+if ($ipsec_dynamic_hosts) {
+	vpn_ipsec_configure();
+}
+if ($ipsec_dynamic_hosts || !empty($filterdns)) {
+	filter_configure();
+}
+
+led_normalize();
+
+conf_mount_ro();
+
+?>

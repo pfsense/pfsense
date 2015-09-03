@@ -1,4 +1,7 @@
 .DS_Store
 _notes/
+/tmp/
+/logs/
+/build.conf
 # Ignore Vim swap files
 .*.swp

@@ -1,0 +1,28 @@
+#!/usr/local/bin/php-cgi -f
+
+<?php
+
+require("config.inc");
+require("functions.inc");
+require("shaper.inc");
+require("captiveportal.inc");
+require_once("rrd.inc");
+
+echo "Restarting webConfigurator...";
+
+sigkillbyname("lighttpd", "KILL");
+
+while (is_process_running("lighttpd")) {
+	echo '.';
+	sleep(1);
+}
+
+system_webgui_start();
+
+captiveportal_init_webgui();
+
+enable_rrd_graphing();
+
+echo " done.\n\n";
+
+?>

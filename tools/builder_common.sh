@@ -1592,7 +1592,7 @@ finish() {
 pkg_repo_rsync() {
 	local _repo_path="${1}"
 
-	if [ -z "${DO_NOT_UPLOAD}" -o -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
+	if [ -n "${DO_NOT_UPLOAD}" -o -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
 		return
 	fi
 

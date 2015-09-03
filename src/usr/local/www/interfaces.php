@@ -2569,7 +2569,7 @@ $section->addInput(new Form_Select(
 	['' => 'Disabled', 'custom' => 'Custom', 'preset' => 'Pre-set']
 ))->setHelp('Select a reset timing type');
 
-$group = new Form_Group('Custom reest');
+$group = new Form_Group('Custom reset');
 
 $group->add(new Form_Input(
 	'pppoe_resethour',

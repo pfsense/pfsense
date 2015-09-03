@@ -484,6 +484,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 }
 
 function get_service_control_links($service, $addname = false) {
+	global $g;
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
 

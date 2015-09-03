@@ -373,7 +373,7 @@ $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (!isset($id)) {
@@ -526,7 +526,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						</td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?")?>')">
-								<img src="/themes/<?= $g['theme']?>/images/icons/icon_x.gif" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>" />
+								<i class="icon-large icon-remove-sign" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>"></i>
 							</a>
 						</td>
 					</tr>

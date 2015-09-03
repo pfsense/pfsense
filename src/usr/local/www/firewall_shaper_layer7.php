@@ -67,7 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -98,7 +98,7 @@ read_layer7_config();
 
 $sform = new Form(false);
 
-if($_GET['reset'] != "") {
+if ($_GET['reset'] != "") {
 	// kill all ipfw-classifyd processes
 	mwexec("killall -9 ipfw-classifyd");
 	exit;
@@ -134,7 +134,7 @@ if ($_GET) {
 		break;
 		case "show":
 			$show_proto_form = true;
-			if($container) {
+			if ($container) {
 				$sform = $container->build_form();
 			}
 			else {
@@ -155,7 +155,7 @@ if ($_POST) {
 	$show_proto_form = true;
 	unset($input_errors);
 
-	if($_POST['Submit']) {
+	if ($_POST['Submit']) {
 
 		if (isset($layer7_rules_list[$name])) {
 			$l7r = $layer7_rules_list[$name];
@@ -225,7 +225,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('shaper');
 
-		if($container) {
+		if ($container) {
 			$sform = $container->build_form();
 		} else {
 			$show_proto_form = false;
@@ -245,7 +245,7 @@ if ($_POST) {
 	}
 }
 
-if(!$_GET && !$_POST) {
+if (!$_GET && !$_POST) {
 	$show_proto_form = false;
 	$dfltmsg = true;
 }
@@ -325,12 +325,12 @@ function fillStructure() {
 	var name;
 	<?php foreach ($avail_structures as $key => $struct) { ?>
 		name = "<?= $struct; ?>";
-		if(name == "queue") {
-		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
+		if (name == "queue") {
+		  if (js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
 		}
 		else {
-		  if(name == "limiter") {
-			if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
+		  if (name == "limiter") {
+			if (js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
 		  }
 		  else structure += "<option value=" + name + ">" + name + "<\/option>"; //action
 		}
@@ -394,8 +394,8 @@ function addRow(table_id) {
 	initial_count[table_id] = rows_count;
   }
   // determining real count of added fields
-  var tFielsNum =  rows_count - initial_count[table_id];
-  if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
+  var tFielsNum = rows_count - initial_count[table_id];
+  if (rows_limit != 0 && tFielsNum >= rows_limit) return false;
 
   var remove = '<a class="btn  btn-default" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)">Remove<\/a>';
 
@@ -441,13 +441,13 @@ function build_l7table() {
 	$tbl .= '<thead><tr><th>Protocol</th><th>Structure</th><th>Behavior</th></tr></thead>';
 	$tbl .= '<tbody>';
 
-	if($container) {
-		foreach($container->rsets as $l7rule) {
+	if ($container) {
+		foreach ($container->rsets as $l7rule) {
 
 			$tbl .= '<tr><td>';
 			$tbl .= '<select name="protocol[]" class="form-control">';
 
-			foreach($avail_protos as $proto):
+			foreach ($avail_protos as $proto):
 				$tbl .= '<option value="' . $proto . '"';
 
 				if ($proto == $l7rule->GetRProtocol())
@@ -460,9 +460,9 @@ function build_l7table() {
 			$tbl .= '</select></td><td>';
 			$tbl .= '<select name="structure[]" class="form-control" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
 
-			foreach($avail_structures as $struct) {
-				if($struct == "queue") {
-					if(!empty($avail_behaviours_altq)) {
+			foreach ($avail_structures as $struct) {
+				if ($struct == "queue") {
+					if (!empty($avail_behaviours_altq)) {
 						$tbl .= '<option value="' . $struct . '"';
 						if ($struct == $l7rule->GetRStructure())
 							$tbl .= ' selected="selected"';
@@ -471,8 +471,8 @@ function build_l7table() {
 						}
 					}
 					else {
-						if($struct == "limiter") {
-							if(!empty($avail_behaviours_limiter)) {
+						if ($struct == "limiter") {
+							if (!empty($avail_behaviours_limiter)) {
 								$tbl .= '<option value="' . $struct . '"';
 								if ($struct == $l7rule->GetRStructure())
 									$tbl .= ' selected="selected"';
@@ -481,7 +481,7 @@ function build_l7table() {
 							}
 						}
 						else {
-							if($struct == "action") {
+							if ($struct == "action") {
 								$tbl .= '<option value="' . $struct . '"';
 								if ($struct == $l7rule->GetRStructure())
 									$tbl .= ' selected="selected"';
@@ -496,8 +496,8 @@ function build_l7table() {
 
 			$tbl .= '<select name="behaviour[]" class="form-control">';
 
-			if($l7rule->GetRStructure() == "action"):
-				foreach($avail_behaviours_action as $behaviour):
+			if ($l7rule->GetRStructure() == "action"):
+				foreach ($avail_behaviours_action as $behaviour):
 					$tbl .= '<option value="' . $behaviour . '"';
 					if ($behaviour == $l7rule->GetRBehaviour())
 						$tbl .= ' selected="selected"';
@@ -510,8 +510,8 @@ function build_l7table() {
 
 			endif;
 
-			if($l7rule->GetRStructure() == "queue"):
-				foreach($avail_behaviours_altq as $behaviour):
+			if ($l7rule->GetRStructure() == "queue"):
+				foreach ($avail_behaviours_altq as $behaviour):
 
 					$tbl .= '<option value="' . $behaviour	. '"';
 					if ($behaviour == $l7rule->GetRBehaviour())
@@ -525,8 +525,8 @@ function build_l7table() {
 
 			endif;
 
-			if($l7rule->GetRStructure() == "limiter"):
-				foreach($avail_behaviours_limiter as $behaviour):
+			if ($l7rule->GetRStructure() == "limiter"):
+				foreach ($avail_behaviours_limiter as $behaviour):
 					$tbl .= '<option value="' . $behaviour . '"';
 					if ($behaviour == $l7rule->GetRBehaviour())
 						$tbl .= ' selected="selected"';
@@ -574,7 +574,7 @@ $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
 // Create a StaticText control and populate it with the rules table
-if(!$dfltmsg) {
+if (!$dfltmsg) {
 	$section = new Form_Section('Add one (or more) rules');
 
 	$section->addInput(new Form_StaticText(
@@ -599,7 +599,7 @@ if(!$dfltmsg) {
 				</div>
 				<div class="col-sm-10">
 <?php
-if($dfltmsg)
+if ($dfltmsg)
 	print_info_box($output_form = $dn_default_shaper_msg . $default_layer7shaper_msg);
 else
 	print($sform);

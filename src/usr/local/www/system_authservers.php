@@ -358,8 +358,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+	
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -407,9 +408,10 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 	exit;
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $form->setAction('system_authservers.php?act=edit');
+
 $form->addGlobal(new Form_Input(
 	'userid',
 	null,
@@ -426,9 +428,6 @@ $section->addInput($input = new Form_Input(
 	$pconfig['name']
 ));
 
-if ($act == 'edit')
-	$input->setReadonly();
-
 $section->addInput($input = new Form_Select(
 	'type',
 	'Type',
@@ -436,10 +435,9 @@ $section->addInput($input = new Form_Select(
 	$auth_server_types
 ))->toggles();
 
-if ($act == 'edit')
-	$input->setDisabled();
-
 $form->add($section);
+
+// ==== LDAP settings =========================================================
 $section = new Form_Section('LDAP Server Settings');
 $section->addClass('toggle-ldap collapse');
 
@@ -531,9 +529,10 @@ $group->add(new Form_Input(
 #FIXME
 $group->add(new Form_Button(
 	'Select',
-	'Select a container',
-	'/system_usermanager_settings_ldapacpicker.php?port=389&host=192.168.1.1&scope=one&basedn=CN=pfsense&binddn=&bindpw=&urltype=TCP%20-%20Standard&proto=3&authcn=OU=Staff&cert='
-));
+	'Select a container'
+//	'/system_usermanager_settings_ldapacpicker.php?port=389&host=192.168.1.1&scope=one&basedn=CN=pfsense&binddn=&bindpw=&urltype=TCP%20-%20Standard&proto=3&authcn=OU=Staff&cert='
+))->removeClass('btn-primary')->addClass('btn-default');
+
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
@@ -559,16 +558,18 @@ $section->addInput(new Form_Checkbox(
 	'Bind anonymous',
 	'Use anonymous binds to resolve distinguished names',
 	$pconfig['ldap_anon']
-))->toggles('.toggle-anon');
+));
 
 $group = new Form_Group('Bind credentials');
-$group->addClass('toggle-anon collapse');
+$group->addClass('ldapanon');
+
 $group->add(new Form_Input(
 	'ldap_binddn',
 	'User DN:',
 	'text',
 	$pconfig['ldap_binddn']
 ));
+
 $group->add(new Form_Input(
 	'ldap_bindpw',
 	'Password',
@@ -629,6 +630,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('e.g. user@host becomes user when unchecked.');
 
 $form->add($section);
+
+// ==== RADIUS section ========================================================
 $section = new Form_Section('Radius Server Settings');
 $section->addClass('toggle-radius collapse');
 
@@ -694,6 +697,60 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+	function select_clicked() {
+		if (document.getElementById("ldap_port").value == '' ||
+		    document.getElementById("ldap_host").value == '' ||
+		    document.getElementById("ldap_scope").value == '' ||
+		    document.getElementById("ldap_basedn").value == '' ||
+		    document.getElementById("ldapauthcontainers").value == '') {
+			alert("<?=gettext("Please fill the required values.");?>");
+			return;
+		}
+		
+		if (!document.getElementById("ldap_anon").checked) {
+			if (document.getElementById("ldap_binddn").value == '' ||
+			    document.getElementById("ldap_bindpw").value == '') {
+				alert("<?=gettext("Please fill the bind username/password.");?>");
+				return;
+			}
+		}
+		var url = 'system_usermanager_settings_ldapacpicker.php?';
+		url += 'port=' + document.getElementById("ldap_port").value;
+		url += '&host=' + document.getElementById("ldap_host").value;
+		url += '&scope=' + document.getElementById("ldap_scope").value;
+		url += '&basedn=' + document.getElementById("ldap_basedn").value;
+		url += '&binddn=' + document.getElementById("ldap_binddn").value;
+		url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
+		url += '&urltype=' + document.getElementById("ldap_urltype").value;
+		url += '&proto=' + document.getElementById("ldap_protver").value;
+		url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
+		<?php if (count($a_ca) > 0): ?>
+			url += '&cert=' + document.getElementById("ldap_caref").value;
+		<?php else: ?>
+			url += '&cert=';
+		<?php endif; ?>
+	
+		var oWin = window.open(url, "pfSensePop", "width=620,height=400,top=150,left=150");
+		if (oWin == null || typeof(oWin) == "undefined") {
+			alert("<?=gettext('Popup blocker detected.  Action aborted.');?>");
+		}
+	}
+	
+	function set_ldap_port() {
+        if($('#ldap_urltype').find(":selected").index() == 0)
+			$('#ldap_port').val('389');
+		else
+			$('#ldap_port').val('636');		
+	}
+	
+    // Hides all elements of the specified class. This will usually be a section
+    function hideClass(s_class, hide) {
+        if(hide)
+            $('.' + s_class).hide();
+        else
+            $('.' + s_class).show();
+    }
+    
 	function ldap_tmplchange() {
 		switch ($('#ldap_tmpltype').find(":selected").index()) {
 <?php
@@ -714,11 +771,44 @@ events.push(function(){
 
 	// On page load . .
 	ldap_tmplchange();
+	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
+	$("#Select").prop('type','button');
 
+		
+	if($('#ldap_port').val() == "")
+		set_ldap_port();
+
+<?php
+	if($act == 'edit') {
+?>
+		$('#type option:not(:selected)').each(function(){
+ 			$(this).attr('disabled', 'disabled');
+		});
+		
+<?php
+		if(!$input_errors) {
+?>	
+		$('#name').prop("readonly", true);
+<?php
+		}
+	}
+?>
 	// On click . .
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();
 	});
+
+    $('#ldap_anon').click(function () {
+        hideClass('ldapanon', this.checked);
+    });
+    
+	$('#ldap_urltype').on('change', function() {
+		set_ldap_port();
+    }); 
+    
+    $('#Select').click(function () {
+        select_clicked();
+    });   
 });
 //]]>
 </script>

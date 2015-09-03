@@ -213,7 +213,7 @@ else if (!$resolved && $type)
 if ($createdalias)
 	print('<div class="alert alert-success" role="alert">'.gettext("Alias was created/updated successfully").'</div>');
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form('Lookup');
 $section = new Form_Section('DNS Lookup');

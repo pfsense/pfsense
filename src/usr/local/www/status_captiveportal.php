@@ -120,7 +120,7 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 if (count($a_cp) >	1) {
 	$form = new Form();

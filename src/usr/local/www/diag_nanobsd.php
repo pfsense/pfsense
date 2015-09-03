@@ -146,7 +146,7 @@ print_info_box("The options on this page are intended for use by advanced users 
 if ($savemsg)
 	print_info_box($savemsg, $class);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(false);
 

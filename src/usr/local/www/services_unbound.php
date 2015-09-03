@@ -241,7 +241,7 @@ $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_adva
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -436,7 +436,7 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a href="services_unbound.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="services_unbound_host_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
 						<a href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
 					</td>
 				</tr>

@@ -67,13 +67,13 @@
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if($_GET['reset'] != "") {
+if ($_GET['reset'] != "") {
 	mwexec("/usr/bin/killall -9 pfctl");
 	exit;
 }
@@ -293,40 +293,40 @@ if ($_POST) {
 		} else
 			$input_errors[] = gettext("Could not add new queue.");
 	} else if ($_POST['apply']) {
-			write_config();
+		write_config();
 
-			$retval = 0;
-			$retval = filter_configure();
+		$retval = 0;
+		$retval = filter_configure();
+		$savemsg = get_std_save_message($retval);
+
+		if (stristr($retval, "error") != true)
 			$savemsg = get_std_save_message($retval);
-
-			if (stristr($retval, "error") != true)
-					$savemsg = get_std_save_message($retval);
-			else
-					$savemsg = $retval;
+		else
+			$savemsg = $retval;
 
 		/* XXX: TODO Make dummynet pretty graphs */
 		//	enable_rrd_graphing();
 
-			clear_subsystem_dirty('shaper');
+		clear_subsystem_dirty('shaper');
 
-			if ($queue) {
-				$sform = $queue->build_form();
-				$dontshow = false;
-			}
-			else {
-				$output_form .= $dn_default_shaper_message;
-				$dontshow = true;
-			}
+		if ($queue) {
+			$sform = $queue->build_form();
+			$dontshow = false;
+		}
+		else {
+			$output_form .= $dn_default_shaper_message;
+			$dontshow = true;
+		}
 
 	} else if ($queue) {
-				$queue->validate_input($_POST, $input_errors);
-				if (!$input_errors) {
+		$queue->validate_input($_POST, $input_errors);
+		if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
 			$dontshow = false;
-				}
+		}
 		read_dummynet_config();
 		$sform = $queue->build_form();
 	} else	{
@@ -335,20 +335,20 @@ if ($_POST) {
 	}
 }
 
-if(!$_POST && !$_GET) {
+if (!$_POST && !$_GET) {
 	$dfltmsg = true;
 	$dontshow = true;
 }
 
 if ($queue) {
 	if ($queue->GetEnabled())
-			$can_enable = true;
+		$can_enable = true;
 	else
-			$can_enable = false;
+		$can_enable = false;
 	if ($queue->CanHaveChildren()) {
 		$can_add = true;
 	} else
-			$can_add = false;
+		$can_add = false;
 }
 
 $tree = "<ul class=\"tree\" >";
@@ -418,13 +418,13 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 
-if($dfltmsg)
+if ($dfltmsg)
 	print_info_box($dn_default_shaper_msg);
 else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
-			if($queue)
+			if ($queue)
 				$url = 'href="firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
 			else
 				$url = 'firewall_shaper.php?pipe='. $pipe . '&action=add';
@@ -436,7 +436,7 @@ else {
 			))->removeClass('btn-default')->addClass('btn-success');
 		}
 
-		if($queue)
+		if ($queue)
 			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
 		else
 			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';

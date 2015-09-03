@@ -216,7 +216,7 @@ $Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 if ($filterfieldsarray['interface'] == "All")
 	$interface = "";
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(new Form_Button(
@@ -370,7 +370,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 	else
 		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
 
-		printf(gettext(" (Maximum %s)"),$nentries)
+	printf(gettext(" (Maximum %s)"), $nentries);
 ?>
 		</h2>
 	</div>
@@ -420,7 +420,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 					<?=htmlspecialchars($filterent['interface'])?>
 				</td>
 <?php
-			  if ($config['syslog']['filterdescriptions'] === "1") {
+		if ($config['syslog']['filterdescriptions'] === "1") {
 ?>
 				<td>
 					<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>

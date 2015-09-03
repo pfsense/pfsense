@@ -151,7 +151,7 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 // These two inputs appear inthe original file. Don't know what they are for
 // but they are here just in case.

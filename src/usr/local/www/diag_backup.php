@@ -632,7 +632,7 @@ $tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
 $tab_array[] = array(gettext("Backup/Restore"), true, "diag_backup.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form(false);
 

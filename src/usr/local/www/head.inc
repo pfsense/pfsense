@@ -335,6 +335,8 @@ if(! $g['disablehelpmenu']) {
 
 					$modal_notices = new Modal('Notices', 'notices', 'large');
 
+/*
+FIXME: addFooter does not exist
 					$modal_notices->addFooter(new Form_Button(
 						'close',
 						'Close',
@@ -346,7 +348,7 @@ if(! $g['disablehelpmenu']) {
 						'Mark all as read',
 						'/?closenotice=all'
 					))->addClass('btn-primary')->removeClass('btn-default');
-
+*/
 					$noticeCategories = $notice['category'];
 					foreach($notices as $time => $notice) {
 						if (!isset($noticeCategories[$notice['category']])) {
@@ -369,7 +371,10 @@ if(! $g['disablehelpmenu']) {
 						}
 						$html .= '</ul>';
 					}
+/*
+FIXME: addHtml does not exist
 					$modal_notices->addHtml($html);
+*/
 					print $modal_notices;
 
 				endif;

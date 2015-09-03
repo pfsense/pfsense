@@ -67,7 +67,7 @@
 ##|*MATCH=firewall_shaper.php*
 ##|-PRIV
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 require("guiconfig.inc");
 require_once("functions.inc");
@@ -75,7 +75,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
-if($_GET['reset'] != "") {
+if ($_GET['reset'] != "") {
 	/* XXX: Huh, why are we killing php? */
 	mwexec("killall -9 pfctl php");
 	exit;
@@ -382,7 +382,7 @@ if ($_POST) {
 	mwexec("killall qstats");
 }
 
-if(!$_POST && !$_GET){
+if (!$_POST && !$_GET) {
 	$dfltmsg = true;
 	$dontshow = true;
 }
@@ -465,13 +465,13 @@ if (count($altq_list_queues) > 0) {
 				<td>
 <?php
 
-if($dfltmsg)
+if ($dfltmsg)
 	print_info_box($default_shaper_msg);
 else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
-			if($queue)
+			if ($queue)
 				$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=add';
 			else
 				$url = 'firewall_shaper.php?interface='. $interface . '&action=add';
@@ -483,7 +483,7 @@ else {
 			))->removeClass('btn-default')->addClass('btn-success');
 		}
 
-		if($queue)
+		if ($queue)
 			$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=delete';
 		else
 			$url = 'firewall_shaper.php?interface='. $interface . '&action=delete';

@@ -219,7 +219,7 @@ if ($local_ip == false) {
 		<div class="container">
 			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 <?php
-	if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 		$nifty_background = "#999";
 		print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
 	}

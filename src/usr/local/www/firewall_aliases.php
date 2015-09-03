@@ -127,7 +127,7 @@ if ($_GET['act'] == "del") {
 		// Alias in an alias
 		find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Load Balancer
-		find_alias_reference(array('load_balancer', 'lbpool'),		 array('port'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('load_balancer', 'lbpool'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		find_alias_reference(array('load_balancer', 'virtual_server'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
@@ -194,10 +194,10 @@ if (is_subsystem_dirty('aliases'))
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 
 $tab_array = array();
-$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
-$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-$tab_array[] = array(gettext("URLs"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
-$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
+$tab_array[] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
+$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
+$tab_array[] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
+$tab_array[] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 display_top_tabs($tab_array);
 
 ?>
@@ -213,24 +213,24 @@ display_top_tabs($tab_array);
 	<tbody>
 <?php
 	asort($a_aliases);
-	foreach ($a_aliases as $i=> $alias):
+	foreach ($a_aliases as $i => $alias):
 		unset ($show_alias);
-		switch ($tab){
+		switch ($tab) {
 		case "all":
 			$show_alias= true;
 			break;
 		case "ip":
 		case "host":
 		case "network":
-			if (preg_match("/(host|network)/",$alias["type"]))
+			if (preg_match("/(host|network)/", $alias["type"]))
 				$show_alias= true;
 			break;
 		case "url":
-			if (preg_match("/(url)/i",$alias["type"]))
+			if (preg_match("/(url)/i", $alias["type"]))
 				$show_alias= true;
 			break;
 		case "port":
-			if($alias["type"] == "port")
+			if ($alias["type"] == "port")
 				$show_alias= true;
 			break;
 		}
@@ -245,10 +245,10 @@ display_top_tabs($tab_array);
 	if ($alias["url"]) {
 		echo $alias["url"] . "<br />";
 	} else {
-		if(is_array($alias["aliasurl"])) {
+		if (is_array($alias["aliasurl"])) {
 			$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 			echo $aliasurls;
-			if(count($aliasurls) > 10) {
+			if (count($aliasurls) > 10) {
 				echo "&hellip;<br />";
 			}
 			echo "<br />\n";
@@ -256,7 +256,7 @@ display_top_tabs($tab_array);
 		$tmpaddr = explode(" ", $alias['address']);
 		$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 		echo $addresses;
-		if(count($tmpaddr) > 10) {
+		if (count($tmpaddr) > 10) {
 			echo '&hellip;';
 		}
 	}

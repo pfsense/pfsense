@@ -86,16 +86,16 @@ function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
-		(isset($rule_config['disablereplyto'])) ||
-		($rule_config['tag'] != "") ||
-		($rule_config['tagged'] != "") ||
-		($rule_config['max'] != "") ||
-		($rule_config['max-src-nodes'] != "") ||
-		($rule_config['max-src-conn'] != "") ||
-		($rule_config['max-src-states'] != "") ||
-		($rule_config['max-src-conn-rate'] != "") ||
-		($rule_config['max-src-conn-rates'] != "") ||
-		($rule_config['statetimeout'] != "")) {
+	    (isset($rule_config['disablereplyto'])) ||
+	    ($rule_config['tag'] != "") ||
+	    ($rule_config['tagged'] != "") ||
+	    ($rule_config['max'] != "") ||
+	    ($rule_config['max-src-nodes'] != "") ||
+	    ($rule_config['max-src-conn'] != "") ||
+	    ($rule_config['max-src-states'] != "") ||
+	    ($rule_config['max-src-conn-rate'] != "") ||
+	    ($rule_config['max-src-conn-rates'] != "") ||
+	    ($rule_config['statetimeout'] != "")) {
 		return true;
 	}
 	return false;
@@ -450,12 +450,12 @@ if ($_POST) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-		(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-		(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -493,7 +493,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
-			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 		}
 	}
@@ -507,7 +507,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
-			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 		}
 	}
@@ -702,7 +702,7 @@ if ($_POST) {
 	}
 
 	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) ||
-		(($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
+	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
 		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 	}
 
@@ -1000,7 +1000,7 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Edit Firewall rule');
 
@@ -1085,9 +1085,9 @@ $edit_disabled = isset($pconfig['associated-rule-id']);
 if ($edit_disabled)
 {
 	$extra = '';
-	foreach( $config['nat']['rule'] as $index => $nat_rule )
+	foreach ($config['nat']['rule'] as $index => $nat_rule)
 	{
-		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id'] )
+		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id'])
 			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
 	}
 
@@ -1143,7 +1143,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 	$interfaces["openvpn"] = "OpenVPN";
 
 $section->addInput($input = new Form_Select(
@@ -1245,8 +1245,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if (is_specialnet($pconfig[$type]))
 		$ruleType = 'network';
 	elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
-			(is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
-			(is_alias($pconfig[$type])))
+	        (is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
+	        (is_alias($pconfig[$type])))
 		$ruleType = 'single';
 
 	$ruleValues = array(
@@ -1287,7 +1287,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	$section->add($group);
 
-	if($type == 'src') {
+	if ($type == 'src') {
 		$section->addInput(new Form_Button(
 			'btnsrcadv',
 			'Show advanced'
@@ -1336,14 +1336,14 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src')
 		$group->setHelp('Specify the source port or port range for this rule. This is '.
 			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any.</b> You can leave the "To" field '.
+			'should usually be <b>any</b>). You can leave the "To" field '.
 			'empty if you only want to filter a single port.');
 	else
 		$group->setHelp('Specify the destination port or port range for this rule. ' .
 			'You can leave the "To" field empty if you only want to filter a '.
 			'single port.');
 
-	$group->addClass( ($type == 'src') ? 'srcprtr':'dstprtr');
+	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
 	$form->add($section);
 }
@@ -1662,7 +1662,7 @@ events.push(function(){
 
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent().parent('div').addClass('hidden');
 		else
 			$('#' + id).parent().parent('div').removeClass('hidden');
@@ -1671,7 +1671,7 @@ events.push(function(){
 	// Hides the <div> in which the specified group input element lives so that the input,
 	// its label and help text are hidden
 	function hideGroupInput(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent('div').addClass('hidden');
 		else
 			$('#' + id).parent('div').removeClass('hidden');
@@ -1679,7 +1679,7 @@ events.push(function(){
 
 	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 	function hideCheckbox(id, hide) {
-		if(hide)
+		if (hide)
 			$('#' + id).parent().parent().parent('div').addClass('hidden');
 		else
 			$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -1692,7 +1692,7 @@ events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
@@ -1700,7 +1700,7 @@ events.push(function(){
 
 	// Hides all elements of the specified class assigned to a group. This will usually be a group
 	function hideGroupClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).parent().parent().parent().hide();
 		else
 			$('.' + s_class).parent().parent().parent().show();
@@ -1753,7 +1753,7 @@ events.push(function(){
 			disableInput('dstbeginport', true);
 			disableInput('dstendport', true);
 		} else {
-			if( editenabled ) {
+			if (editenabled) {
 				disableInput('srcbeginport', false);
 				disableInput('srcendport', false);
 				disableInput('dstbeginport', false);
@@ -1769,7 +1769,7 @@ events.push(function(){
 	}
 
 	function typesel_change() {
-		if( editenabled ) {
+		if (editenabled) {
 			switch ($('#srctype').find(":selected").index()) {
 				case 1: // single
 					disableInput('src', false);
@@ -1833,11 +1833,11 @@ events.push(function(){
 
 		ext_change();
 
-		if($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
-			if($('#ipprotocol').find(":selected").index() == 0) { // IPv4
+		if ($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
+			if ($('#ipprotocol').find(":selected").index() == 0) { // IPv4
 				hideInput('icmptype', false);
 				hideInput('icmp6type', true);
-			} else if($('#ipprotocol').find(":selected").index() == 1) { // IPv6
+			} else if ($('#ipprotocol').find(":selected").index() == 1) { // IPv6
 				hideInput('icmptype', true);
 				hideInput('icmp6type', false);
 			} else { // IPv4 + IPv6
@@ -1849,7 +1849,7 @@ events.push(function(){
 			hideInput('icmp6type', true);
 		}
 
-		if($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
+		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
 			hideClass('srcprtr', false);
 		} else {
@@ -1925,12 +1925,12 @@ events.push(function(){
 	$('#toggle-advanced').click(function() {
 		optionsvisible = 1;
 		hideClass('advanced-options', false);
-		if($('#tcpflags_any').prop('checked'))
+		if ($('#tcpflags_any').prop('checked'))
 			$('.table-flags').addClass('hidden');
 	});
 
 	$('#tcpflags_any').click(function () {
-		if(this.checked)
+		if (this.checked)
 			$('.table-flags').addClass('hidden');
 		else
 			$('.table-flags').removeClass('hidden');
@@ -1944,7 +1944,7 @@ events.push(function(){
 	function setOptText(target, val) {
 		var dispstr = '<font color="green">';
 
-		if(val == 'keep state')
+		if (val == 'keep state')
 			dispstr += 'Keep: works with all IP protocols</font>';
 		else if (val == 'sloppy state')
 			dispstr += 'Sloppy: works with all IP protocols';

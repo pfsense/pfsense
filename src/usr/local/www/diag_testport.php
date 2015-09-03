@@ -235,7 +235,7 @@ else {
 			print('<div class="alert alert-danger" role="alert">'.gettext('Connection failed.').'</div>');
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form('Test');
 

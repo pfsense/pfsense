@@ -152,10 +152,10 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 				$found = false;
 				foreach ($a_out as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
-						$rule['source']['network'] == $natent['source']['network'] &&
-						$rule['dstport'] == $natent['dstport'] &&
-						$rule['target'] == $natent['target'] &&
-						$rule['descr'] == $natent['descr']) {
+					    $rule['source']['network'] == $natent['source']['network'] &&
+					    $rule['dstport'] == $natent['dstport'] &&
+					    $rule['target'] == $natent['target'] &&
+					    $rule['descr'] == $natent['descr']) {
 						$found = true;
 						break;
 					}
@@ -269,16 +269,16 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-function rule_popup($src,$srcport,$dst,$dstport){
-	global $config,$g;
+function rule_popup($src, $srcport, $dst, $dstport) {
+	global $config, $g;
 	$aliases_array = array();
 	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		$descriptions = array ();
 
-		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
+		foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
 			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
 
-			switch ($alias_name['type']){
+			switch ($alias_name['type']) {
 				case "port":
 					$width="250";
 					break;
@@ -303,7 +303,7 @@ function rule_popup($src,$srcport,$dst,$dstport){
 				$descriptions['srcport_end'] = $span_end;
 			}
 
-			if ($alias_name['name'] == $dst ) {
+			if ($alias_name['name'] == $dst) {
 				$descriptions['dst'] = $span_begin;
 				$descriptions['dst_end'] = $span_end;
 			}
@@ -318,7 +318,7 @@ function rule_popup($src,$srcport,$dst,$dstport){
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"));
+$pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
 include("head.inc");
 
 if ($savemsg)
@@ -334,7 +334,7 @@ $tab_array[] = array(gettext("Outbound"), true, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -411,11 +411,11 @@ print($form);
 
 
 				$alias = rule_columns_with_alias(
-				$natent['source']['address'],
-				pprint_port($natent['source']['port']),
-				$natent['destination']['address'],
-				pprint_port($natent['destination']['port'])
-	);
+					$natent['source']['address'],
+					pprint_port($natent['source']['port']),
+					$natent['destination']['address'],
+					pprint_port($natent['destination']['port'])
+				);
 ?>
 					<tr id="fr<?=$i?>">
 						<td>
@@ -464,9 +464,9 @@ print($form);
 						<td>
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-						if (!$natent['sourceport'])
+						if (!$natent['sourceport']) {
 							echo "*";
-						else {
+						} else {
 						
 							if (isset($alias['srcport'])):
 ?>
@@ -487,9 +487,9 @@ print($form);
 
 						<td>
 <?php
-						if (isset($natent['destination']['any']))
+						if (isset($natent['destination']['any'])) {
 							echo "*";
-						else {
+						} else {
 							if (isset($natent['destination']['not']))
 								echo "!&nbsp;";
 								
@@ -515,9 +515,9 @@ print($form);
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 
-						if (!$natent['dstport'])
+						if (!$natent['dstport']) {
 							echo "*";
-						else {
+						} else {
 							if (isset($alias['dstport'])):
 ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
@@ -560,7 +560,7 @@ print($form);
 
 						<td>
 <?php
-						if(isset($natent['staticnatport']))
+						if (isset($natent['staticnatport']))
 							echo gettext("YES");
 						else
 							echo gettext("NO");
@@ -594,10 +594,10 @@ print($form);
 
 <?php
 if ($mode == "automatic" || $mode == "hybrid"):
-	if(empty($FilterIflist))
+	if (empty($FilterIflist))
 		filter_generate_optcfg_array();
 
-	if(empty($GatewaysList))
+	if (empty($GatewaysList))
 		filter_generate_gateways();
 
 	$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
@@ -646,14 +646,14 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						</td>
 						<td>
 <?php
-		if (isset($natent['destination']['any']))
+		if (isset($natent['destination']['any'])) {
 			echo "*";
-		else {
+		} else {
 			if (isset($natent['destination']['not']))
 				echo "!&nbsp;";
 
 			echo $natent['destination']['address'];
-							}
+		}
 ?>
 						</td>
 						<td>
@@ -687,7 +687,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						</td>
 						<td>
 <?php
-		if(isset($natent['staticnatport']))
+		if (isset($natent['staticnatport']))
 			echo gettext("YES");
 		else
 			echo gettext("NO");
@@ -709,8 +709,8 @@ endif;
 
 <div>
 <?php
-	print_info_box(gettext('If automatic outbound NAT selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
-							'on "Mappings" section of this page are ignored.' . '<br />' .
+	print_info_box(gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
+							'on the "Mappings" section of this page are ignored.' . '<br />' .
 							'If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings you specify on this page ' .
 							'will be used.' . '<br />' .
 							'If hybrid outbound NAT is selected, mappings you specify on this page will be used, followed by the automatically generated ones.' . '<br />' .

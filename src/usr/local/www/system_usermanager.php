@@ -528,7 +528,7 @@ foreach($a_user as $i => $userent):
 	exit;
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "new" || $act == "edit" || $input_errors):

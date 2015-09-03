@@ -111,7 +111,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 	return;
 }
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");

@@ -539,7 +539,7 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form();
 

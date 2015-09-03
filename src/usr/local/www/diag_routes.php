@@ -105,7 +105,7 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form('Update');
 $form->addGlobal(new Form_Input(

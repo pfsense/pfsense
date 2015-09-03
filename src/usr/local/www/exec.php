@@ -142,8 +142,6 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 	puts("   );");
 }
 ?>
-	// Set pointer to end of recall buffer.
-	var intRecallPtr = arrRecallBuffer.length-1;
 
 	// Set pointer to end of recall buffer.
 	var intRecallPtr = arrRecallBuffer.length-1;
@@ -298,5 +296,5 @@ if (!isBlank($_POST['txtCommand'])):?>
 <?php
 include("foot.inc");
 
-if ($_POST)
+if($_POST)
 	conf_mount_ro();

@@ -71,7 +71,7 @@ $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test
 $tab_array[] = array(gettext("Expire Vouchers"), true, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 
 $form = new Form;
 

@@ -764,7 +764,7 @@ function upgrade_042_to_043() {
 	$gateways = array();
 	$i = 0;
 	foreach ($iflist as $ifname => $interface) {
-		if (! interface_has_gateway($ifname)) {
+		if (!interface_has_gateway($ifname)) {
 			continue;
 		}
 		$config['gateways']['gateway_item'][$i] = array();
@@ -1108,7 +1108,7 @@ function upgrade_046_to_047() {
 				$type = $tunnel['local-subnet']['network'];
 			}
 			if ($tunnel['local-subnet']['address']) {
-				list($address,$netbits) = explode("/",$tunnel['local-subnet']['address']);
+				list($address, $netbits) = explode("/", $tunnel['local-subnet']['address']);
 				if (is_null($netbits)) {
 					$type = "address";
 				} else {
@@ -1118,18 +1118,18 @@ function upgrade_046_to_047() {
 
 			switch ($type) {
 				case "address":
-					$ph2ent['localid'] = array('type' => $type,'address' => $address);
+					$ph2ent['localid'] = array('type' => $type, 'address' => $address);
 					break;
 				case "network":
-					$ph2ent['localid'] = array('type' => $type,'address' => $address,'netbits' => $netbits);
+					$ph2ent['localid'] = array('type' => $type, 'address' => $address, 'netbits' => $netbits);
 					break;
 				default:
 					$ph2ent['localid'] = array('type' => $type);
 					break;
 			}
 
-			list($address,$netbits) = explode("/",$tunnel['remote-subnet']);
-			$ph2ent['remoteid'] = array('type' => 'network','address' => $address,'netbits' => $netbits);
+			list($address, $netbits) = explode("/", $tunnel['remote-subnet']);
+			$ph2ent['remoteid'] = array('type' => 'network', 'address' => $address, 'netbits' => $netbits);
 
 			$ph2ent['protocol'] = $tunnel['p2']['protocol'];
 
@@ -1428,7 +1428,7 @@ function upgrade_048_to_049() {
 		$group['member'] = array();
 		foreach ($config['system']['user'] as & $user) {
 			$groupnames = explode(",", $user['groupname']);
-			if (in_array($group['name'],$groupnames)) {
+			if (in_array($group['name'], $groupnames)) {
 				$group['member'][] = $user['uid'];
 			}
 		}
@@ -1450,7 +1450,7 @@ function upgrade_048_to_049() {
 	/* insert new all group */
 	$groups = Array();
 	$groups[] = $all;
-	$groups = array_merge($config['system']['group'],$groups);
+	$groups = array_merge($config['system']['group'], $groups);
 	$config['system']['group'] = $groups;
 }
 
@@ -1705,7 +1705,7 @@ function upgrade_051_to_052() {
 				$tmpstr = "";
 				foreach ($tmpcstmopts as $tmpcstmopt) {
 					$tmpstr = str_replace(" ", "", $tmpcstmopt);
-					if (substr($tmpstr,0 ,6) == "devtun") {
+					if (substr($tmpstr, 0, 6) == "devtun") {
 						$assigned_if = substr($tmpstr, 3);
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
@@ -1810,7 +1810,7 @@ function upgrade_051_to_052() {
 				$tmpstr = "";
 				foreach ($tmpcstmopts as $tmpcstmopt) {
 					$tmpstr = str_replace(" ", "", $tmpcstmopt);
-					if (substr($tmpstr,0 ,6) == "devtun") {
+					if (substr($tmpstr, 0, 6) == "devtun") {
 						$assigned_if = substr($tmpstr, 3);
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
@@ -1988,7 +1988,7 @@ function upgrade_053_to_054() {
 		$gateway_group_arr = array();
 		$gateways = return_gateways_array();
 		$group_name_changes = array();
-		if (! is_array($config['gateways']['gateway_item'])) {
+		if (!is_array($config['gateways']['gateway_item'])) {
 			$config['gateways']['gateway_item'] = array();
 		}
 
@@ -2440,7 +2440,7 @@ function upgrade_062_to_063() {
 
 function upgrade_063_to_064() {
 	global $config;
-	$j=0;
+	$j = 0;
 	$ifcfg = &$config['interfaces'];
 
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
@@ -2473,7 +2473,7 @@ function upgrade_063_to_064() {
 			if (isset($ifinfo['ptpid'])) {
 				continue;
 			}
-			$ppp['ptpid'] =  $j;
+			$ppp['ptpid'] = $j;
 			$ppp['type'] = $ifinfo['ipaddr'];
 			$ppp['if'] = $ifinfo['ipaddr'].$j;
 			$ppp['ports'] = $ifinfo['if'];

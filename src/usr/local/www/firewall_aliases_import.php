@@ -93,7 +93,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if($_POST['aliasimport'] != "") {
+if ($_POST['aliasimport'] != "") {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
 
@@ -196,7 +196,7 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
+require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Alias details');
 

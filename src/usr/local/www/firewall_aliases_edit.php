@@ -4,62 +4,62 @@
 	firewall_aliases_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004 Scott Ullrich
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004 Scott Ullrich
  *	Copyright (c)  2009 Ermal Luçi
  *	Copyright (c)  2010 Jim Pingle
  *	originally part of m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 /*
-	pfSense_BUILDER_BINARIES:	/bin/rm	/bin/mkdir	/usr/bin/fetch
-	pfSense_MODULE:	aliases
+	pfSense_BUILDER_BINARIES:	/bin/rm /bin/mkdir	/usr/bin/fetch
+	pfSense_MODULE: aliases
 */
 
 ##|+PRIV
@@ -73,7 +73,6 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("util.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
 
@@ -108,13 +107,6 @@ if ($_POST) {
 	$origname = $_POST['origname'];
 }
 
-$adrs = count($_POST['address']);
-
-for($idx=0; $idx<$adrs; $idx++) {
-	if($_POST['address'][$idx] == "")
-		unset($_POST['address'][$idx]);
-}
-
 // Debugging
 if ($debug) {
 	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
@@ -126,9 +118,10 @@ function alias_same_type($name, $type) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
-			    in_array($alias['type'], array("host", "network"))) {
+				in_array($alias['type'], array("host", "network"))) {
 				return true;
 			}
+
 			if ($type == $alias['type']) {
 				return true;
 			} else {
@@ -156,7 +149,6 @@ if (isset($id) && $a_aliases[$id]) {
 
 	if (preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
-
 		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];
 	}
 	if ($a_aliases[$id]['aliasurl'] <> "") {
@@ -223,24 +215,24 @@ if ($_POST) {
 		$address = "";
 
 		/* item is a url table type */
-		if ($_POST['address'][0]) {
+		if ($_POST['address0']) {
 			/* fetch down and add in */
-			$_POST['address'][0] = trim($_POST['address'][0]);
-			$address[] = $_POST['address'][0];
-			$alias['url'] = $_POST['address'][0];
-			$alias['updatefreq'] = $_POST['frequency'][0] ? $_POST['frequency'][0] : 7;
+			$_POST['address0'] = trim($_POST['address0']);
+			$address[] = $_POST['address0'];
+			$alias['url'] = $_POST['address0'];
+			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
 			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data.");
 			}
-			if ($_POST["detail"][0] != "") {
-				if ((strpos($_POST["detail"][0], "||") === false) && (substr($_POST["detail"][0], 0, 1) != "|") && (substr($_POST["detail"][0], -1, 1) != "|")) {
-					$final_address_details[] = $_POST["detail"][0];
+			if ($_POST["detail0"] <> "") {
+				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {
+					$final_address_details[] = $_POST["detail0"];
 				} else {
 					/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
 					/* and put in the output array so the text is at least redisplayed for the user. */
-					$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail"][0], "|"));
+					$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail0"], "|"));
 					$input_errors[] = $vertical_bar_err_text;
 				}
 			} else {
@@ -251,32 +243,35 @@ if ($_POST) {
 		$desc_fmt_err_found = false;
 
 		/* item is a url type */
-			foreach ($_POST['address'] as $idx => $post_address) {
+		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
+			$_POST['address' . $x] = trim($_POST['address' . $x]);
+			if ($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink_if_exists($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($post_address, $temp_filename . "/aliases", $verify_ssl);
+				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
-				if(stristr($post_address, ".tgz"))
+				if (stristr($_POST['address' . $x], ".tgz")) {
 					process_alias_tgz($temp_filename);
-				else if(stristr($post_address, ".zip"))
+				} else if (stristr($_POST['address' . $x], ".zip")) {
 					process_alias_unzip($temp_filename);
+				}
 
 				if (!isset($alias['aliasurl'])) {
 					$alias['aliasurl'] = array();
 				}
 
-				$alias['aliasurl'][] = $post_address;
-				if ($_POST['detail'][$idx] != "") {
-					if ((strpos($_POST['detail'][$idx], "||") === false) && (substr($_POST['detail'][$idx], 0, 1) != "|") && (substr($_POST['detail'][$idx], -1, 1) != "|")) {
-						$final_address_details[] = $_POST['detail'][$idx];
+				$alias['aliasurl'][] = $_POST['address' . $x];
+				if ($_POST["detail{$x}"] <> "") {
+					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
+						$final_address_details[] = $_POST["detail{$x}"];
 					} else {
 						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
 						/* and put in the output array so the text is at least redisplayed for the user. */
-						$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST['detail'][$idx], "|"));
+						$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail{$x}"], "|"));
 						if (!$desc_fmt_err_found) {
 							$input_errors[] = $vertical_bar_err_text;
 							$desc_fmt_err_found = true;
@@ -290,13 +285,14 @@ if ($_POST) {
 					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 3000);
 					if ($address == null) {
 						/* nothing was found */
-						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $post_address);
+						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
 					}
 					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
-					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $post_address);
+					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
 				}
 			}
+		}
 		unset($desc_fmt_err_found);
 		if ($_POST['type'] == "url_ports") {
 			$address = group_ports($address);
@@ -312,15 +308,15 @@ if ($_POST) {
 		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
 		// They can also put an IP range.
 		// This loop expands out that stuff so it can easily be validated.
-			foreach ($_POST['address'] as $idx => $post_address) {
-				if ($post_address != "") {
-
-					if ((strpos($post_address, "||") === false) && (substr($post_address, 0, 1) != "|") && (substr($post_address, -1, 1) != "|")) {
-						$detail_text = $post_address;
+		for ($x = 0; $x < ($max_alias_addresses - 1); $x++) {
+			if ($_POST["address{$x}"] <> "") {
+				if ($_POST["detail{$x}"] <> "") {
+					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
+						$detail_text = $_POST["detail{$x}"];
 					} else {
 						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
 						/* and put in the output array so the text is at least redisplayed for the user. */
-						$detail_text = preg_replace('/\|\|+/', '|', trim($post_address, "|"));
+						$detail_text = preg_replace('/\|\|+/', '|', trim($_POST["detail{$x}"], "|"));
 						if (!$desc_fmt_err_found) {
 							$input_errors[] = $vertical_bar_err_text;
 							$desc_fmt_err_found = true;
@@ -329,11 +325,9 @@ if ($_POST) {
 				} else {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
-				
-				$address_items = explode(" ", trim($post_address));
+				$address_items = explode(" ", trim($_POST["address{$x}"]));
 				foreach ($address_items as $address_item) {
 					$iprange_type = is_iprange($address_item);
-
 					if ($iprange_type == 4) {
 						list($startip, $endip) = explode('-', $address_item);
 						if ($_POST['type'] == "network") {
@@ -416,9 +410,8 @@ if ($_POST) {
 								}
 							} else {
 								$input_addresses[] = $address_part;
-								$input_address_subnet[] = $_POST["address_subnet"][$idx];
+								$input_address_subnet[] = $_POST["address_subnet{$x}"];
 							}
-							
 							$final_address_details[] = $detail_text;
 							$alias_address_count++;
 						}
@@ -429,6 +422,7 @@ if ($_POST) {
 					}
 				}
 			}
+		}
 
 		// Validate the input data expanded above.
 		foreach ($input_addresses as $idx => $input_address) {
@@ -436,7 +430,7 @@ if ($_POST) {
 				if (!alias_same_type($input_address, $_POST['type'])) {
 					// But alias type network can include alias type urltable. Feature#1603.
 					if (!($_POST['type'] == 'network' &&
-					    preg_match("/urltable/i", alias_get_type($input_address)))) {
+						preg_match("/urltable/i", alias_get_type($input_address)))) {
 						$wrongaliases .= " " . $input_address;
 					}
 				}
@@ -446,7 +440,7 @@ if ($_POST) {
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 				if (is_subnet($input_address) ||
-				    (!is_ipaddr($input_address) && !is_hostname($input_address))) {
+					(!is_ipaddr($input_address) && !is_hostname($input_address))) {
 					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $_POST['type']);
 				}
 			}
@@ -477,10 +471,10 @@ if ($_POST) {
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = implode("||", $final_address_details);
 
-		/*   Check to see if alias name needs to be
-		 *   renamed on referenced rules and such
+		/*	 Check to see if alias name needs to be
+		 *	 renamed on referenced rules and such
 		 */
-		if ($_POST['name'] != $_POST['origname']) {
+		if ($_POST['name'] <> $_POST['origname']) {
 			// Firewall rules
 			update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $_POST['name'], $origname);
 			update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
@@ -498,11 +492,11 @@ if ($_POST) {
 			//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $_POST['name'], $origname);
 			update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $_POST['name'], $origname);
 			// NAT Outbound Rules
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('dstport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'advancedoutbound', 'rule'), array('target'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $_POST['name'], $origname);
+			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $_POST['name'], $origname);
 			// Alias in an alias
 			update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $_POST['name'], $origname);
 		}
@@ -510,13 +504,11 @@ if ($_POST) {
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_write_config");
 
 		if (isset($id) && $a_aliases[$id]) {
-			if ($a_aliases[$id]['name'] != $alias['name']) {
+			if ($a_aliases[$id]['name'] <> $alias['name']) {
 				foreach ($a_aliases as $aliasid => $aliasd) {
-
-					if ($aliasd['address'] != "") {
+					if ($aliasd['address'] <> "") {
 						$tmpdirty = false;
 						$tmpaddr = explode(" ", $aliasd['address']);
-						
 						foreach ($tmpaddr as $tmpidx => $tmpalias) {
 							if ($tmpalias == $a_aliases[$id]['name']) {
 								$tmpaddr[$tmpidx] = $alias['name'];
@@ -547,6 +539,7 @@ if ($_POST) {
 			header("Location: firewall_aliases.php");
 		}
 		exit;
+
 	} else {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
@@ -561,30 +554,39 @@ if ($_POST) {
 	}
 }
 
+
 include("head.inc");
 
-$network_str = gettext("Network or FQDN");
-$networks_str = gettext("Network(s)");
-$cidr_str = gettext("CIDR");
-$description_str = gettext("Description");
-$hosts_str = gettext("Host(s)");
-$ip_str = gettext("IP or FQDN");
-$ports_str = gettext("Port(s)");
-$port_str = gettext("Port");
-$url_str = gettext("URL (IPs)");
-$url_ports_str = gettext("URL (Ports)");
-$urltable_str = gettext("URL Table (IPs)");
-$urltable_ports_str = gettext("URL Table (Ports)");
-$update_freq_str = gettext("Update Freq. (days)");
+$section_str = array(
+	'network' => gettext("Network(s)"),
+	'host'	=> gettext("Host(s)"),
+	'port' => gettext("Port(s)"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL Table (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)")
+	);
+
+$label_str = array(
+	'network' => gettext("Network or FQDN"),
+	'host'	=> gettext("IP or FQDN"),
+	'port' => gettext("Port"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)")
+	);
 
 $help = array(
 	'network' => "Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.",
 	'host' => "Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used. You may also enter an IP range such as 192.168.1.1-192.168.1.10 or a small subnet such as 192.168.1.16/28 and a list of individual IP addresses will be generated.",
-	'port' => "Enter as many ports as you wish.  Port ranges can be expressed by separating with a colon.",
+	'port' => "Enter as many ports as you wish.	 Port ranges can be expressed by separating with a colon.",
 	'url' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000).",
 	'url_ports' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000).",
-	'urltable' => "Enter a single URL containing a large number of IPs and/or Subnets. After saving we will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers.",
-	'urltable_ports' => "Enter a single URL containing a list of Port numbers and/or Port ranges. After saving we will download the URL.",
+	'urltable' => "Enter a single URL containing a large number of IPs and/or Subnets. After saving we will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers." . "<br /><b>The value after the \"/\" is the " .
+				  "update frequency in days.</b>",
+	'urltable_ports' => "Enter a single URL containing a list of Port numbers and/or Port ranges. After saving we will download the URL." . "<br /><b>The value after the \"/\" is the " .
+						 "update frequency in days.</b>"
 );
 
 $types = array(
@@ -665,116 +667,258 @@ $section->addInput(new Form_Select(
 	'Type',
 	isset($pconfig['type']) ? $pconfig['type'] : $tab,
 	$types
-))->toggles();
+));
 
 $form->add($section);
 
-foreach ($types as $type => $typeName)
-{
-	$section = new Form_Section('Details for '. $typeName);
-	$section->addClass('toggle-'.$type.' collapse');
+$section = new Form_Section($section_str[$tab]);
+// Make somewhere to park the help text, and give it a class so we can update it later
+$section->addInput(new Form_StaticText(
+	'Hint',
+	'<span class="helptext">' . $help[$tab] . '</span>'
+));
 
-	// Texts are rather long; don't repeat for every input
-	$section->addInput(new Form_StaticText('', $help[$type]));
-
-	// Only include values for the correct type
-	if (isset($pconfig['type']) && $type == $pconfig['type']) {
-		$addresses = explode(' ', $pconfig['address']);
-		$details = explode('||', $pconfig['detail']);
-	}
-	else {
-		// When creating a new entry show at least one input
-		$addresses = array('');
-		$details = array();
-	}
-
-	foreach ($addresses as $idx => $address)
-	{
-		$address_subnet = '';
-		if (($pconfig['type'] != 'host') && is_subnet($address))
-			list($address, $address_subnet) = explode('/', $address);
-
-		if (substr($type, 0, 3) == 'url') {
-			$group = new Form_Group('URL to download');
-
-			$group->add(new Form_Input(
-				'address',
-				'URL to download',
-				'url',
-				$address
-			));
-
-			if (in_array($type, ['urltable', 'urltable_ports']))
-			{
-				$group->add(new Form_Input(
-					'frequency',
-					'Update frequency (days)',
-					'number',
-					$address_subnet,
-					['min' => 1]
-				));
-			}
-		}
-		elseif ($type == 'port') {
-			$group = new Form_Group('Port(s)');
-			$group->add(new Form_Input(
-				'address',
-				'Port',
-				$address
-			));
-			
-			$group->add(new Form_Input(
-				'detail',
-				'Description (not parsed)',
-				'text',
-				$details[$idx]
-			));
-		}
-		else {
-			$group = new Form_Group('IP or FQDN');
-
-			$grpaddress = new Form_IpAddress(
-				'address',
-				'IP or FQDN',
-				$address
-			);
-			
-			$grpaddress->addMask(address_subnet, $pconfig['address_subnet']);
-				
-			$group->add($grpaddress);
-			
-			$group->add(new Form_Input(
-				'detail',
-				'Description (not parsed)',
-				'text',
-				$details[$idx]
-			));
-		}
-
-		$group->enableDuplication();
-		$section->add($group);
-	}
-
-	$form->add($section);
+// If no addresses have been defined, we'll make up a blank set
+if ($pconfig['address'] == "") {
+	$pconfig['address'] = '';
+	$pconfig['address_subnet'] = '';
+	$pconfig['detail'] = '';
 }
+
+$counter = 0;
+$addresses = explode(" ", $pconfig['address']);
+$details = explode("||", $pconfig['detail']);
+
+while ($counter < count($addresses)) {
+	if (($pconfig['type'] != "host") && is_subnet($addresses[$counter])) {
+		list($address, $address_subnet) = explode("/", $addresses[$counter]);
+	} else {
+		$address = $addresses[$counter];
+		$address_subnet = "";
+	}
+
+	$group = new Form_Group($counter == 0 ? $label_str[$tab]:'');
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'address' . $counter,
+		null,
+		$address
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4);
+
+	$group->add(new Form_Input(
+		'detail' . $counter,
+		null,
+		'text',
+		$details[$counter]
+	))->setHelp('Description')->setWidth(4);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+
+	$section->add($group);
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add'
+))->removeClass('btn-primary')->addClass('btn-success');
+
+$form->add($section);
 
 print $form;
 ?>
 
 <script>
-//<![CDATA[   
-events.push(function(){   
-    
-    // Disable address_subnet if type == 'host'
-    
-    $("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
-   
-    $('#type').on('change', function() {
-    	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
-    });
+//<![CDATA[
+events.push(function(){
 
+	function setMasks() {
+		// Find all ipaddress masks and make dynamic based on address family of input
+		$('span.pfIpMask + select').each(function (idx, select){
+			var input = $(select).prevAll('input[type=text]');
+
+			input.on('change', function(e){
+				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+				if (!isV6)
+					max = 32;
+
+				if (input.val() == "")
+					return;
+
+				while (select.options.length > max)
+					select.remove(0);
+
+				if (select.options.length < max)
+				{
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+				}
+			});
+
+			// Fire immediately
+			input.change();
+		});
+	}
+
+	// Complicated function to move all help text associated with this input id to the same id
+	// on the row above. That way if you delete the last row, you don't lose the help
+	function moveHelpText(id) {
+		$('#' + id).parent('div').parent('div').find('input').each(function() {	 // For each <span></span>
+			var fromId = this.id;
+			var toId = decrStringInt(fromId);
+			var helpSpan;
+
+			if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
+
+				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+				if($(helpSpan).hasClass('help-block')) {
+					if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
+						$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
+					else
+						$('#' + decrStringInt(fromId)).after(helpSpan);
+				}
+			}
+		});
+	}
+
+	// Increment the number at the end of the string
+	function bumpStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
+
+	  return newStr || str;
+	}
+
+	// Decrement the number at the end of the string
+	function decrStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
+
+	  return newStr || str;
+	}
+
+	// Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
+	// gaps, but I do :)
+	function renumber() {
+		var idx = 0;
+
+		$('.repeatable').each(function() {
+
+			$(this).find('input').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
+
+			$(this).find('select').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
+
+			$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
+
+			idx++;
+		});
+	}
+
+	function delete_row(row) {
+		$('#' + row).parent('div').parent('div').remove();
+		renumber();
+	}
+
+	function add_row() {
+		// Find the lst repeatable group
+		var lastRepeatableGroup = $('.repeatable:last');
+
+		// Clone it
+		var newGroup = lastRepeatableGroup.clone(true);
+
+		// Increment the suffix number for each input elemnt in the new group
+		$(newGroup).find('input').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			if(!$(this).is('[id^=delete]'))
+				$(this).val('');
+		});
+
+		// Do the same for selectors
+		$(newGroup).find('select').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			// If this selector lists mask bits, we need it to be reset to all 128 options
+			// and no items selected, so that automatic v4/v6 selection still works
+			if($(this).is('[id^=address_subnet]')) {
+				$(this).empty();
+				for(idx=128; idx>0; idx--) {
+					$(this).append($('<option>', {
+						value: idx,
+						text: idx
+					}));
+				}
+			}
+		});
+
+		// And for "for" tags
+		$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+		$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+
+		// Insert the updated/cloned row
+		$(lastRepeatableGroup).after(newGroup);
+
+		// Delete any help text from the group we have cloned
+		$(lastRepeatableGroup).find('.help-block').each(function() {
+			$(this).remove();
+		});
+
+		setMasks();
+	}
+
+	// These are action buttons, not submit buttons
+	$('[id^=addrow]').prop('type','button');
+	$('[id^=delete]').prop('type','button');
+
+	// on click . .
+	$('[id^=addrow]').click(function() {
+		add_row();
+	});
+
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			moveHelpText(event.target.id);
+			delete_row(event.target.id);
+		}
+		else
+			alert('<?php echo gettext("You may not delet the last one!")?>');
+	});
+
+	$('#type').on('change', function() {
+		var tab = $(this).find('option:selected').val();
+		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
+
+		// Set the help text to match the tab
+		var helparray = <?php echo json_encode($help); ?>;
+		$('.helptext').html(helparray[tab]);
+
+		// Set the section heading by tab type
+		var sectionstr = <?php echo json_encode($section_str); ?>;
+		$('.panel-title:last').text(sectionstr[tab]);
+
+		// Set the input field label by tab
+		var labelstr = <?php echo json_encode($label_str); ?>;
+		$('.repeatable:first').find('label').text(labelstr[tab]);
+	});
+
+	// Disable address_subnet if type == 'host'
+	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
 });
-//]]>  
+//]]>
 </script>
 
 <?php

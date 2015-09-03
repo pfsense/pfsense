@@ -22,12 +22,12 @@
  *	3. All advertising materials mentioning features or use of this software
  *		must display the following acknowledgment:
  *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/)."
  *
  *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
+ *		endorse or promote products derived from this software without
+ *		prior written permission. For written permission, please contact
+ *		coreteam@pfsense.org.
  *
  *	5. Products derived from this software may not be called "pfSense"
  *		nor may "pfSense" appear in their names without prior written
@@ -37,7 +37,7 @@
  *		acknowledgment:
  *
  *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	for use in the pfSense software distribution (http://www.pfsense.org/)."
  *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

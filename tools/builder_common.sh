@@ -1589,6 +1589,32 @@ finish() {
 	echo ">>> Operation $0 has ended at $(date)"
 }
 
+pkg_repo_rsync() {
+	local _repo_path="${1}"
+
+	if [ -z "${DO_NOT_UPLOAD}" -o -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
+		return
+	fi
+
+	if [ -z "${LOGFILE}" ]; then
+		local _logfile="/dev/null"
+	else
+		local _logfile="${LOGFILE}"
+	fi
+
+	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
+	if script -aq ${_logfile} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+		--timeout=60 --delete-delay ${_repo_path} \
+		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+	then
+		echo "Done!" | tee -a ${_logfile}
+	else
+		echo "Failed!" | tee -a ${_logfile}
+		echo ">>> ERROR: An error occurred sending repo to remote hostname"
+		print_error_pfS
+	fi
+}
+
 poudriere_create_patch() {
 	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${GIT_REPO_BRANCH_OR_TAG}.patch"
 
@@ -1896,20 +1922,7 @@ poudriere_bulk() {
 		fi
 
 		# ./ is intentional, it's a rsync trick to make it chdir to directory before send it
-		REPO_PATH="/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
-		if [ -z "${DO_NOT_UPLOAD}" -a -d "${REPO_PATH}" ]; then
-			echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${LOGFILE}
-			if script -aq ${LOGFILE} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
-				--timeout=60 --delete-delay ${REPO_PATH} \
-				${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
-			then
-				echo "Done!" | tee -a ${LOGFILE}
-			else
-				echo "Failed!" | tee -a ${LOGFILE}
-				echo ">>> ERROR: An error occurred sending repo to remote hostname"
-				print_error_pfS
-			fi
-		fi
+		pkg_repo_rsync "/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
 }
 

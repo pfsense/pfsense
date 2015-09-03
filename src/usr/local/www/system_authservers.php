@@ -544,10 +544,11 @@ $section->addInput(new Form_Checkbox(
 	'Extended query',
 	'Enable extended query',
 	$pconfig['ldap_extended_enabled']
-))->toggles('.toggle-extended');
+));
 
 $group = new Form_Group('Query');
-$group->addClass('toggle-extended collapse');
+$group->addClass('extended');
+
 $group->add(new Form_Input(
 	'ldap_extended_query',
 	'Query',
@@ -777,7 +778,7 @@ events.push(function(){
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	$("#Select").prop('type','button');
-
+	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
 
 	if($('#ldap_port').val() == "")
 		set_ldap_port();
@@ -813,6 +814,11 @@ events.push(function(){
 	$('#Select').click(function () {
 		select_clicked();
 	});
+	
+	$('#ldap_extended_enabled').click(function () {
+		hideClass('extended', !this.checked);
+	});
+	
 });
 //]]>
 </script>

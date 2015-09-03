@@ -2157,7 +2157,7 @@ $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_script',
 	'Scripts',
 	'text',
-	$pconfig['adv_dhcp6_interface_statement_request_options']
+	$pconfig['adv_dhcp6_interface_statement_script']
 ))->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.' . '<br />' .
 			'[/[dirname/[.../]]filename[.ext]].');
 	

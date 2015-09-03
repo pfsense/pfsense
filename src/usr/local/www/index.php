@@ -127,8 +127,8 @@ if (!is_array($config['widgets'])) {
 if ($_POST && $_POST['sequence']) {
 	$config['widgets']['sequence'] = rtrim($_POST['sequence'], ',');
 
-	foreach($widgets as $widgetname => $widgetconfig){
-		if ($_POST[$widgetname . '-config']){
+	foreach ($widgets as $widgetname => $widgetconfig) {
+		if ($_POST[$widgetname . '-config']) {
 			$config['widgets'][$widgetname . '-config'] = $_POST[$name . '-config'];
 		}
 	}
@@ -143,16 +143,16 @@ require_once('includes/functions.inc.php');
 
 ## Check to see if we have a swap space,
 ## if true, display, if false, hide it ...
-if(file_exists("/usr/sbin/swapinfo")) {
+if (file_exists("/usr/sbin/swapinfo")) {
 	$swapinfo = `/usr/sbin/swapinfo`;
-	if(stristr($swapinfo,'%') == true) $showswap=true;
+	if (stristr($swapinfo, '%') == true) $showswap=true;
 }
 
 ## User recently restored his config.
 ## If packages are installed lets resync
-if(file_exists('/conf/needs_package_sync')) {
-	if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+if (file_exists('/conf/needs_package_sync')) {
+	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
+		if ($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
 			## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
 			## the package reinstall page. That is about to be done by the boot script anyway.
 			## The code in head.inc will put up a notice to the user.
@@ -170,7 +170,7 @@ if(file_exists('/conf/needs_package_sync')) {
 
 ## If it is the first time webConfigurator has been
 ## accessed since initial install show this stuff.
-if(file_exists('/conf/trigger_initial_wizard')) {
+if (file_exists('/conf/trigger_initial_wizard')) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -183,10 +183,10 @@ if(file_exists('/conf/trigger_initial_wizard')) {
 	<div id="jumbotron">
 		<div class="container">
 			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-				<p><?=sprintf(gettext("Welcome to %s!\n"),$g['product_name'])?></p>
+				<p><?=sprintf(gettext("Welcome to %s!\n"), $g['product_name'])?></p>
 				<p><?=gettext("One moment while we start the initial setup wizard.")?></p>
 				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."),$g['product_name'])?></p>
+				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
 			</div>
 		</div>
 	</div>
@@ -241,8 +241,8 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	$widgets = $widgetsfromconfig + $widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig
-	foreach($widgets as $widgetname => $widgetconfig){
-		if ($config['widgets'][$name . '-config']){
+	foreach ($widgets as $widgetname => $widgetconfig) {
+		if ($config['widgets'][$name . '-config']) {
 			$pconfig[$name . '-config'] = $config['widgets'][$name . '-config'];
 		}
 	}
@@ -283,7 +283,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Available Widgets"); ?></h2></div>
 	<div class="panel-body">
-<?php foreach($widgets as $widgetname => $widgetconfig): ?>
+<?php foreach ($widgets as $widgetname => $widgetconfig): ?>
 	<?php if ($widgetconfig['display'] == 'none'): ?>
 		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>

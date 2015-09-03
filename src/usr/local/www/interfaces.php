@@ -477,7 +477,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||
-						isset($config['dhcpdv6'][$ifapply]['enable'])) {
+					    isset($config['dhcpdv6'][$ifapply]['enable'])) {
 						services_dhcpd_configure();
 					}
 				}
@@ -683,8 +683,8 @@ if ($_POST['apply']) {
 							continue;
 						}
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
-							$config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
-							$config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
+						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
+						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}
@@ -789,12 +789,12 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	}
 	if ($_POST['pppoe_resethour'] != "" && !is_numericint($_POST['pppoe_resethour']) &&
-		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
-			$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
+	    $_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <= 23) {
+		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
 	}
 	if ($_POST['pppoe_resetminute'] != "" && !is_numericint($_POST['pppoe_resetminute']) &&
-		$_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
-			$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
+	    $_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <= 59) {
+		$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
 	}
 	if ($_POST['pppoe_resetdate'] != "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
@@ -1677,7 +1677,7 @@ $closehead = false;
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -2363,7 +2363,7 @@ $section->addInput(new Form_Select(
 	'prefix-6rd-v4plen',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['prefix-6rd-v4plen'],
-	array_combine(range(0, 32), range(0,32))
+	array_combine(range(0, 32), range(0, 32))
 ))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');	
 
 $form->add($section);

@@ -2024,6 +2024,12 @@ snapshots_scp_files() {
 	if [ -z "${RSYNC_COPY_ARGUMENTS:-}" ]; then
 		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60 --bwlimit=${RSYNCKBYTELIMIT}" #--bwlimit=50
 	fi
+
+	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
+	# Add ./ before last directory, it's rsync trick to make it chdir to parent directory before send
+	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	snapshots_update_status ">>> Finished copying core pkg repo"
+
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"
 
 	rm -f $SCRATCHDIR/ssh-snapshots*

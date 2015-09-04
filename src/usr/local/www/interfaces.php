@@ -1877,7 +1877,7 @@ $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
 	'IPv6 address',
 	$pconfig['ipaddrv6']
-))->addMask('subnetv6', $pconfig['sunbetv6'], 128);
+))->addMask('subnetv6', $pconfig['subnetv6'], 128);
 
 $group = new Form_Group('IPv6 Upstream gateway');
 

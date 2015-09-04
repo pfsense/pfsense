@@ -1942,7 +1942,7 @@ snapshots_update_status() {
 		# Only update every minute
 		if [ "$LU" != "$CT" ]; then
 			ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCLOGS}"
-			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNC_LOGS}/build.log
+			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log
 			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
 		fi
 	fi
@@ -1952,7 +1952,7 @@ snapshots_update_status() {
 # the snapshot www server (real time logs)
 snapshots_rotate_logfile() {
 	if [ -n "$MASTER_BUILDER_SSH_LOG_DEST" -a -z "${DO_NOT_UPLOAD}" ]; then
-		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNC_LOGS}/build.log.old
+		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log.old
 	fi
 
 	# Cleanup log file

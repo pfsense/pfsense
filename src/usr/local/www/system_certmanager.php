@@ -597,9 +597,9 @@ foreach($a_cert as $i => $cert):
 ?>
 		<tr>
 			<td>
-				<?=$name?>
+				<?=$name?><br />
 				<?php if ($cert['type']): ?>
-					<i><?=$cert_types[$cert['type']]?></i>
+					<i><?=$cert_types[$cert['type']]?></i><br />
 				<?php endif?>
 				<?php if (is_array($purpose)): ?>
 					CA: <b><?=$purpose['ca']?></b>, Server: <b><?=$purpose['server']?></b>

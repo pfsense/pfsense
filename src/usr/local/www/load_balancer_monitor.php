@@ -82,7 +82,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -121,7 +121,7 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 $idx = 0;
-foreach($a_monitor as $monitor) {
+foreach ($a_monitor as $monitor) {
 ?>
 					<tr>
 						<td>

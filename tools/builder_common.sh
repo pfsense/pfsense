@@ -1951,12 +1951,14 @@ snapshots_update_status() {
 # Copy the current log file to $filename.old on
 # the snapshot www server (real time logs)
 snapshots_rotate_logfile() {
-	if [ -n "$MASTER_BUILDER_SSH_LOG_DEST" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
 		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log.old
 	fi
 
 	# Cleanup log file
-	echo "" > $SNAPSHOTSLOGFILE
+	rm -f $SNAPSHOTSLOGFILE;    touch $SNAPSHOTSLOGFILE
+	rm -f $SNAPSHOTSLASTUPDATE; touch $SNAPSHOTSLASTUPDATE
+
 }
 
 snapshots_copy_to_staging_nanobsd() {

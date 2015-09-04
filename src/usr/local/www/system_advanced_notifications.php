@@ -335,10 +335,11 @@ $section->addInput(new Form_Input(
 
 // This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(
-	'emanresuptms',
+	'smtpusername',
 	'Notification E-Mail auth username (optional)',
 	'text',
-	$pconfig['smtpusername']
+	$pconfig['smtpusername'],
+	['autocomplete' => 'off']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
 $section->addInput(new Form_Input(
@@ -370,20 +371,5 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 print($form);
-?>
-<script>
-//<![CDATA[
-events.push(function(){
-	// Change the name and ID of the 'emanresuptms' field back to 'smtpusername' in an attempt
-	// to prevent the browser from autofilling the field
-	$('form').submit(function(){
-		var elem = $('#emanresuptms');
-		elem.attr('name', 'smtpusername');
-		elem.attr('id', 'smtpusername');
 
-	}); 
-});
-//]]>
-</script>
-<?php
 include("foot.inc");

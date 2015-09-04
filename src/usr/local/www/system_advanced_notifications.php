@@ -192,7 +192,7 @@ if ($_POST) {
 		}
 	}
 
-	if (isset($_POST['test-smtp'])) {
+	if (isset($_POST['test-smtp'])) {	
 		// Send test message via smtp
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
@@ -266,11 +266,11 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the password of the remote growl notification device.');
 
 $section->addInput(new Form_Input(
-	'test_growl',
+	'test-growl',
 	'Test Growl',
 	'submit',
 	'Test Growl settings'
-))->setHelp('A test notification will be sent even if the service is '.
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.');
 
 $form->add($section);
@@ -350,11 +350,11 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the e-mail address password for SMTP authentication.');
 
 $section->addInput(new Form_Input(
-	'test_smtp',
+	'test-smtp',
 	'Test SMTP',
 	'submit',
 	'Test SMTP settings'
-))->setHelp('A test notification will be sent even if the service is '.
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.');
 
 $form->add($section);

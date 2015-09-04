@@ -175,7 +175,7 @@ $section->addInput(new Form_Checkbox(
 	'Reverse Address Lookup',
 	'',
 	$resolve
-))->setHelp('When checked, traceroute will attempt to perform a PTR lookup to locate hostnames for hops along the path. Will slow down the process as it has to wait for DNS replies.');
+))->setHelp('When checked, traceroute will attempt to perform a PTR lookup to locate hostnames for hops along the path. This will slow down the process as it has to wait for DNS replies.');
 
 $section->addInput(new Form_Checkbox(
 	'useicmp',
@@ -193,17 +193,17 @@ if (!$input_errors && $do_traceroute) {
 	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
 	$n = isset($resolve) ? "" : "-n";
 
-			$command = "/usr/sbin/traceroute";
-			if ($ipproto == "ipv6") {
-				$command .= "6";
-				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-			} else {
-				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-			}
+	$command = "/usr/sbin/traceroute";
+	if ($ipproto == "ipv6") {
+		$command .= "6";
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+	} else {
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+	}
 
-			if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-				$srcip = "-s " . escapeshellarg($ifaddr);
-			}
+	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+		$srcip = "-s " . escapeshellarg($ifaddr);
+	}
 
 	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 ?>

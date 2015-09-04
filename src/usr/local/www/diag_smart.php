@@ -118,7 +118,7 @@ $tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SER
 $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
 display_top_tabs($tab_array);
 
-switch($action) {
+switch ($action) {
 	// Testing devices
 	case 'test':
 	{
@@ -219,7 +219,7 @@ switch($action) {
 	// Config changes, users email in xml config and write changes to smartd.conf
 	case 'config':
 	{
-		if(isset($_POST['test']))	{
+		if (isset($_POST['test'])) {
 
 // FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
 			$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
@@ -227,7 +227,7 @@ switch($action) {
 			smartmonctl("start");
 			$style = 'warning';
 		}
-		else if(isset($_POST['save']))
+		else if (isset($_POST['save']))
 		{
 			$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 			write_config();
@@ -235,7 +235,7 @@ switch($action) {
 			// Don't know what all this means, but it adds the config changed header when config is saved
 			$retval = 0;
 			config_lock();
-			if(stristr($retval, "error") != true) {
+			if (stristr($retval, "error") != true) {
 				$savemsg = get_std_save_message($retval);
 				$style = 'success';
 				}
@@ -253,7 +253,7 @@ switch($action) {
 			shell_exec("/usr/bin/killall -HUP smartd");
 		}
 
-	// Was the config changed? if so , print the message
+	// Was the config changed? if so, print the message
 	if ($savemsg)
 		print_info_box($savemsg, $style);
 
@@ -273,7 +273,7 @@ switch($action) {
 
 	$form->add($section);
 
-	if(!empty($pconfig['smartmonemail'])) {
+	if (!empty($pconfig['smartmonemail'])) {
 		$form->addGlobal(new Form_Button(
 			'test',
 			'Send test email'

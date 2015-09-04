@@ -73,7 +73,7 @@ $buttonlabel = gettext("Upload Pattern file");
 
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
 if (($_POST['submit'] == $buttonlabel) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
-	if(fileExtension($_FILES['ulfile']['name'])) {
+	if (fileExtension($_FILES['ulfile']['name'])) {
 		if (!is_array($config['l7shaper']['custom_pat']))
 			$config['l7shaper']['custom_pat'] = array();
 
@@ -98,7 +98,7 @@ function fileExtension($nameFile) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Add layer7 pattern"));
 include("head.inc");
 
-if($ulmsg)
+if ($ulmsg)
 	print_info_box($ulmsg, $class);
 
 require_once('classes/Form.class.php');

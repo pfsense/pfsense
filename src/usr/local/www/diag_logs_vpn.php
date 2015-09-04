@@ -213,7 +213,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 					</tbody>
 				</table>
 <?php
-			if($rows == 0)
+			if ($rows == 0)
 				print_info_box('No logs to display');
 ?>
 		</div>
@@ -223,7 +223,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 		<pre>
 <?php
-		if(dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
+		if (dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
 			print('No logs to display');
 ?>
 		</pre>

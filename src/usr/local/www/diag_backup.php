@@ -594,9 +594,9 @@ function build_area_list($showall) {
 
 	$list = array("" => gettext("All"));
 
-	if($showall)
+	if ($showall) {
 		return($list + $areas);
-	else {
+	} else {
 		foreach ($areas as $area => $areaname) {
 			if ($area === "rrddata" || check_and_returnif_section_exists($area) == true) {
 				$list[$area] = $areaname;

@@ -160,8 +160,8 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $carpcount = 0;
-if(is_array($config['virtualip']['vip'])) {
-	foreach($config['virtualip']['vip'] as $carp) {
+if (is_array($config['virtualip']['vip'])) {
+	foreach ($config['virtualip']['vip'] as $carp) {
 		if ($carp['mode'] == "carp") {
 			$carpcount++;
 			break;
@@ -226,9 +226,10 @@ if ($carpcount == 0) {
 					</thead>
 					<tbody>
 <?php
-	foreach($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp")
+	foreach ($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp") {
 			continue;
+		}
 			
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
@@ -238,11 +239,11 @@ if ($carpcount == 0) {
 			$icon = 'remove-sign';
 			$status = "DISABLED";
 		} else {
-			if($status == "MASTER") {
+			if ($status == "MASTER") {
 				$icon = 'ok-sign';
-			} else if($status == "BACKUP") {
+			} else if ($status == "BACKUP") {
 				$icon = 'ok-circle';
-			} else if($status == "INIT") {
+			} else if ($status == "INIT") {
 				$icon = 'question-sign';
 			}
 		}
@@ -264,8 +265,9 @@ if ($carpcount == 0) {
 	<div class="panel-body">
 		<ul>
 <?php
-	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node)
-				echo '<li>'. $node .'</li>';
+	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node) {
+		echo '<li>'. $node .'</li>';
+	}
 ?>
 		</ul>
 	</div>

@@ -88,7 +88,7 @@ if ($_REQUEST['delete']) {
 	exit;
 }
 
-if($_POST['deleteall']) {
+if ($_POST['deleteall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if (is_array($entries)) {
 		foreach ($entries as $entryA) {
@@ -98,23 +98,23 @@ if($_POST['deleteall']) {
 	}
 }
 
-if(($tablename == "bogons") || ($tablename == "bogonsv6")) {
+if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
 	$bogons = true;
 
-	if($_POST['Download']) {
+	if ($_POST['Download']) {
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		$maxtimetowait = 0;
 		$loading = true;
-		while($loading == true) {
+		while ($loading == true) {
 			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-			if($isrunning == "")
+			if ($isrunning == "")
 				$loading = false;
 			$maxtimetowait++;
-			if($maxtimetowait > 89)
+			if ($maxtimetowait > 89)
 				$loading = false;
 			sleep(1);
 		}
-		if($maxtimetowait < 90)
+		if ($maxtimetowait < 90)
 			$savemsg = gettext("The bogons database has been updated.");
 	}
 }

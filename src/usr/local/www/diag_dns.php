@@ -91,9 +91,9 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 		$resolved = array();
 		exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
 		$isfirst = true;
-		foreach($resolved as $re) {
-			if($re != "") {
-				if(!$isfirst)
+		foreach ($resolved as $re) {
+			if ($re != "") {
+				if (!$isfirst)
 					$addresses .= " ";
 				$addresses .= rtrim($re) . "/32";
 				$isfirst = false;

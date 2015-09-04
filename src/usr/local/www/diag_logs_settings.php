@@ -189,9 +189,9 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-			($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-			($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-			($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
+		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+		    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 			$retval |= filter_configure();
 		}
 
@@ -366,7 +366,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. ' .
 			'This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
 
-// Group colapses/appears based on 'enable' checkbox above
+// Group collapses/appears based on 'enable' checkbox above
 $group = new Form_Group('Remote log servers');
 $group->addClass('remotelogging');
 

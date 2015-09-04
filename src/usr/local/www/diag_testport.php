@@ -66,8 +66,8 @@
 ##|*MATCH=diag_testport.php*
 ##|-PRIV
 
-// Calling netcat and parsing hte results has been moved to the if ($_POST) section so that the results are known
-// before we draw the form and any resulting error messages will allear in the correct place
+// Calling netcat and parsing the results has been moved to the if ($_POST) section so that the results are known
+// before we draw the form and any resulting error messages will appear in the correct place
 
 $allowautocomplete = true;
 
@@ -118,7 +118,7 @@ if ($_POST || $_REQUEST['host']) {
 	$showtext = isset($_REQUEST['showtext']);
 	$ipprotocol = $_REQUEST['ipprotocol'];
 
-	if ( $do_testport ) {
+	if ($do_testport) {
 ?>
 		<script type="text/javascript">
 			//<![CDATA[
@@ -209,27 +209,27 @@ if ($_POST || $_REQUEST['host']) {
 
 include("head.inc");
 
-// Handle the display of all messages here wher the user can readily see them
+// Handle the display of all messages here where the user can readily see them
 if ($input_errors)
 	print_input_errors($input_errors);
 else {
 	// New page
-	if(empty($result) && $retval != 0 && !$showtext) {
+	if (empty($result) && $retval != 0 && !$showtext) {
 	    print('<div class="alert alert-warning" role="alert">This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
 	          ' This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.</div>');
 	}
 
 	// Good host & port
-	if($retval == 0 && $do_testport == 1)	{
-		if(!$showtext)
+	if ($retval == 0 && $do_testport == 1)	{
+		if (!$showtext)
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful").'</div>');
 		else
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from the host will be shown below the form.</div>');
 	}
 
 	// netcat exit value != 0
-	if($retval != 0 && !empty($result))
-		if($showtext)
+	if ($retval != 0 && !empty($result))
+		if ($showtext)
 			print('<div class="alert alert-danger" role="alert">'.gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.').'</div>');
 		else
 			print('<div class="alert alert-danger" role="alert">'.gettext('Connection failed.').'</div>');
@@ -290,7 +290,7 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
-if($ncoutput && !empty($result) && $showtext && $retval == 0): ?>
+if ($ncoutput && !empty($result) && $showtext && $retval == 0): ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h2 class="panel-title">Received Remote Text</h2>

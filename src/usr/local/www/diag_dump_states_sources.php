@@ -69,8 +69,8 @@
 require_once("guiconfig.inc");
 
 /* handle AJAX operations */
-if($_POST['action']) {
-	if($_POST['action'] == "remove") {
+if ($_POST['action']) {
+	if ($_POST['action'] == "remove") {
 		if (is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_POST['srcip']) . " -K " . escapeshellarg($_POST['dstip']));
 			echo htmlentities("|{$_GET['srcip']}|{$_POST['dstip']}|{$retval}|");
@@ -82,15 +82,14 @@ if($_POST['action']) {
 }
 
 /* get our states */
-if($_POST['filter']) {
+if ($_POST['filter']) {
 	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
-}
-else {
+} else {
 	exec("/sbin/pfctl -s Sources", $sources);
 }
 
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show Source Tracking"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Show Source Tracking"));
 include("head.inc");
 
 $tab_array = array();

@@ -154,7 +154,7 @@ include("head.inc");
 						?>
 						<?=$mac?>
 
-						<? if(isset($mac_man[$mac_hi])):?>
+						<? if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
 						<?endif?>
 
@@ -164,7 +164,7 @@ include("head.inc");
 					</td>
 					<td>
 						<?php
-						if(isset($hwif[$entry['interface']]))
+						if (isset($hwif[$entry['interface']]))
 							echo $hwif[$entry['interface']];
 						else
 							echo $entry['interface'];

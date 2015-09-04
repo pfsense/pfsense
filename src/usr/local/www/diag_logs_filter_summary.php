@@ -121,7 +121,7 @@ function stat_block($summary, $stat, $num) {
 				}
 			}
 
-			if(!is_ipaddr($outstr))
+			if (!is_ipaddr($outstr))
 				print('<tr><td>' . $outstr . '</td><td>' . $summary[$stat][$k[$i]] . '</td><td></td></tr>');
 		}
 	}
@@ -173,11 +173,11 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 	$total = 0;
 	$numentries = 0;
 
-	for ($i=0; $i < $num; $i++) {
+	for ($i = 0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
-			if($i > 0)
+			if ($i > 0)
 				print(",\r\n");
 
 			print("{");
@@ -298,7 +298,7 @@ print_info_box($infomsg);
 <?php
 
 $chartnum=0;
-foreach(array_keys($fields) as $field) {
+foreach (array_keys($fields) as $field) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=$fields[$field]?></h2></div>

@@ -359,7 +359,7 @@ if ($_POST) {
 if($_POST && $input_errors) {
 	$pconfig = $_POST;
 	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
-	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
+	$pconfig['ldap_template'] = $_POST['ldap_tmpltype'];
 }
 
 

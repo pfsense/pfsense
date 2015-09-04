@@ -177,8 +177,8 @@ if ($_POST) {
 
 		write_config();
 		
-//		pfSenseHeader("system_advanced_notifications.php");
-//		return;
+		pfSenseHeader("system_advanced_notifications.php");
+		return;
 
 	}
 
@@ -333,8 +333,9 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the e-mail address that you would like email '.
 	'notifications sent to.');
 
+// This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(
-	'smtpusername',
+	'emanresuptms',
 	'Notification E-Mail auth username (optional)',
 	'text',
 	$pconfig['smtpusername']
@@ -369,5 +370,20 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 print($form);
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+	// Change the name and ID of the 'emanresuptms' field back to 'smtpusername' in an attempt
+	// to prevent the browser from autofilling the field
+	$('form').submit(function(){
+		var elem = $('#emanresuptms');
+		elem.attr('name', 'smtpusername');
+		elem.attr('id', 'smtpusername');
 
+	}); 
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

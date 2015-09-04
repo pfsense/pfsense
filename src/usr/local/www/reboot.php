@@ -56,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</div>
 <?php
 
-	if (DEBUG)
-	   print("Not actually rebooting (DEBUG is set true)");
-	else
+	if (DEBUG) {
+		print("Not actually rebooting (DEBUG is set true)");
+	} else {
 		system_reboot();
+	}
 
 } else {
 

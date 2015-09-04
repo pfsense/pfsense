@@ -160,7 +160,7 @@ include("head.inc");
 											$selected = "selected=\"selected\"";
 										}
 ?>
-										<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+										<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=htmlspecialchars($auth_server['name']);?></option>
 <?php
 									endforeach;
 ?>

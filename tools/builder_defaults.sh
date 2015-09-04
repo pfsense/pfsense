@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# build.sh
+# builder_defaults.sh
 #
 # Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
 #
@@ -274,17 +274,32 @@ export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
-if echo "${PRODUCT_VERSION}" | grep -q -- '-RELEASE'; then
-	export _IS_RELEASE=yes
-else
-	unset _IS_RELEASE
-fi
+unset _IS_RELEASE
+unset CORE_PKG_DATESTRING
+export TIMESTAMP_SUFFIX="-${DATESTRING}"
+# pkg doesn't like - as version separator, use . instead
+export PKG_DATESTRING=$(echo "${DATESTRING}" | sed 's,-,.,g')
+case "${PRODUCT_VERSION##*-}" in
+	RELEASE)
+		export _IS_RELEASE=yes
+		unset TIMESTAMP_SUFFIX
+		;;
+	ALPHA|DEVELOPMENT)
+		export CORE_PKG_DATESTRING=".a.${PKG_DATESTRING}"
+		;;
+	BETA)
+		export CORE_PKG_DATESTRING=".b.${PKG_DATESTRING}"
+		;;
+	RC)
+		export CORE_PKG_DATESTRING=".r.${PKG_DATESTRING}"
+		;;
+	*)
+		echo ">>> ERROR: Invalid PRODUCT_VERSION format ${PRODUCT_VERSION}"
+		exit 1
+esac
 
 # Define base package version, based on date for snaps
-CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
-if [ -n "${_IS_RELEASE}" ]; then
-	CORE_PKG_VERSION="${CORE_PKG_VERSION}.${DATESTRING}"
-fi
+export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
@@ -298,12 +313,6 @@ export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 #export custom_package_list=""
 
 # General builder output filenames
-if [ -n "${_IS_RELEASE}" ]; then
-	export TIMESTAMP_SUFFIX=""
-else
-	export TIMESTAMP_SUFFIX="-${DATESTRING}"
-fi
-
 export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}
 export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-LiveCD-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.iso"}
 export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-memstick-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}

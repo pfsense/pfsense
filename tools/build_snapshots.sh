@@ -88,11 +88,11 @@ git_last_commit
 while [ /bin/true ]; do
 	BUILDCOUNTER=$((${BUILDCOUNTER}+1))
 
-	${BUILDER_ROOT}/build.sh --clean-builder | while read LINE; do
+	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
 	done
 
-	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots | while read LINE; do
+	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
 	done
 
@@ -105,7 +105,8 @@ while [ /bin/true ]; do
 	[ -z "${LAST_COMMIT}" ] \
 		&& export LAST_COMMIT=${CURRENT_COMMIT}
 
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs.  Last known commit ${LAST_COMMIT}"
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)."
 	sleep $minsleepvalue
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."

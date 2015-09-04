@@ -106,7 +106,7 @@ $section->addInput(new Form_Input(
 	'Package Repository URL',
 	'text',
 	$curcfg['xmlrpcbaseurl'] ? $curcfg['xmlrpcbaseurl'] : $g['']
-))->setHelp(sprintf("This is where %s will check for packages when the",$g['product_name']) .
+))->setHelp(sprintf("This is where %s will check for packages when the", $g['product_name']) .
 			'<a href="pkg_mgr.php">' . ' ' . 'System: Packages' . ' </a>' . 'page is viewed.');
 
 $form->add($section);

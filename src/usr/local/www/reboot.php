@@ -44,7 +44,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
 include("head.inc");
 
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</div>
 <?php
 
-	if(DEBUG)
+	if (DEBUG)
 	   print("Not actually rebooting (DEBUG is set true)");
 	else
 		system_reboot();

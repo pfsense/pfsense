@@ -57,8 +57,8 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-if(is_array($config['installedpackages']['package'])) {
-	foreach($config['installedpackages']['package'] as $instpkg) {
+if (is_array($config['installedpackages']['package'])) {
+	foreach ($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
@@ -84,7 +84,7 @@ $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-if(!is_array($config['installedpackages']['package'])):?>
+if (!is_array($config['installedpackages']['package'])):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
@@ -103,34 +103,34 @@ if(!is_array($config['installedpackages']['package'])):?>
 	<tbody>
 <?php
 	$instpkgs = array();
-	foreach($config['installedpackages']['package'] as $instpkg) {
+	foreach ($config['installedpackages']['package'] as $instpkg) {
 		$instpkgs[] = $instpkg['name'];
 	}
 	natcasesort($instpkgs);
 
 	foreach ($instpkgs as $index => $pkgname):
 		$pkg = $config['installedpackages']['package'][$index];
-		if(!$pkg['name'])
+		if (!$pkg['name'])
 			continue;
 
 		// get history/changelog git dir
-		$commit_dir=explode("/",$pkg['config_file']);
-		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+		$commit_dir = explode("/", $pkg['config_file']);
+		$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 		#check package version
 		$latest_package = $currentvers[$pkg['name']]['version'];
 		if ($latest_package) {
 			// we're running a newer version of the package
-			if(strcmp($pkg['version'], $latest_package) > 0) {
+			if (strcmp($pkg['version'], $latest_package) > 0) {
 				$status = 'Newer then available ('. $latest_package .')';
 				$statusicon = 'exclamation';
 			}
 			// we're running an older version of the package
-			if(strcmp($pkg['version'], $latest_package) < 0) {
+			if (strcmp($pkg['version'], $latest_package) < 0) {
 				$status = 'Upgrade available to '.$latest_package;
 				$statusicon = 'plus';
 			}
 			// we're running the current version
-			if(!strcmp($pkg['version'], $latest_package)) {
+			if (!strcmp($pkg['version'], $latest_package)) {
 				$status = 'Up-to-date';
 				$statusicon = 'ok';
 			}
@@ -166,7 +166,7 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="btn btn-danger">remove</a>
 			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="btn btn-info">reinstall</a>
 			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$pkg['name']?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
-<?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
+<?php if (!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
 			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-default">info</a>
 <?php endif;?>
 		</td>

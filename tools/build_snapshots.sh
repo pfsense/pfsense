@@ -88,11 +88,11 @@ git_last_commit
 while [ /bin/true ]; do
 	BUILDCOUNTER=$((${BUILDCOUNTER}+1))
 
-	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read LINE; do
+	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
 	done
 
-	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots 2>&1) | while read LINE; do
+	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
 	done
 

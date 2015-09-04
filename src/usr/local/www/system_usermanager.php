@@ -804,29 +804,26 @@ endif;
 // ==== Paste a key for the new user
 $section = new Form_Section('Keys');
 
-$section->addInput(new Form_Textarea(
-	'authorizedkeys',
-	'Authorized keys',
-	$pconfig['authorizedkeys']
-))->setHelp('Paste an authorized keys file here.');
-
-$group = new Form_Group('IPsec Pre-Shared Key');
-
-$group->add(new Form_Input(
-	'ipsecpsk',
-	'IPsec Pre-Shared Key',
-	'text',
-	$pconfig['ipsecpsk']
-));
-
-$group->add(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'showkey',
 	'Authorized keys',
 	'Click to paste an authorized key',
 	false
 ));
 
-$section->add($group);
+$section->addInput(new Form_Textarea(
+	'authorizedkeys',
+	'Authorized keys',
+	$pconfig['authorizedkeys']
+))->setHelp('Paste an authorized keys file here.');
+
+$section->addInput(new Form_Input(
+	'ipsecpsk',
+	'IPsec Pre-Shared Key',
+	'text',
+	$pconfig['ipsecpsk']
+));
+
 $form->add($section);
 
 print $form;
@@ -850,6 +847,14 @@ events.push(function(){
 			$('#' + id).parent().parent('div').removeClass('hidden');
 	}
 
+    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
+    function hideCheckbox(id, hide) {
+        if(hide)
+            $('#' + id).parent().parent().parent('div').addClass('hidden');
+        else
+            $('#' + id).parent().parent().parent('div').removeClass('hidden');
+    }
+    
 	// Select every option in the specified multiselect
 	function AllServers(id, selectAll) {
 	   for (i = 0; i < id.length; i++)	   {
@@ -891,7 +896,8 @@ events.push(function(){
 	});
 
 	$("#showkey").click(function() {
-		hideInput('authorizedkeys', !this.checked);
+		hideInput('authorizedkeys', false);
+		hideCheckbox('showkey', true);
 	});
 
 	$('[id^=delcert]').click(function(event) {

@@ -862,7 +862,7 @@ events.push(function(){
 		var len = From.length;
 		var option;
 
-		if(len > 1) {
+		if(len > 0) {
 			for(i=0; i<len; i++) {
 				if(From.eq(i).is(':selected')) {
 					option = From.eq(i).val();

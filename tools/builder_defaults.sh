@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# build.sh
+# builder_defaults.sh
 #
 # Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
 #

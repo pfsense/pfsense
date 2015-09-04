@@ -105,7 +105,8 @@ while [ /bin/true ]; do
 	[ -z "${LAST_COMMIT}" ] \
 		&& export LAST_COMMIT=${CURRENT_COMMIT}
 
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs.  Last known commit ${LAST_COMMIT}"
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)."
 	sleep $minsleepvalue
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."

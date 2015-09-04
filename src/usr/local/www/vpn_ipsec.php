@@ -260,7 +260,7 @@ display_top_tabs($tab_array);
 	}
 ?>
 
-<h2>Rules</h2>
+<h2>Tunnels</h2>
 
 <form method="post">
 <div class="table-responsive">

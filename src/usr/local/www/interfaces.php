@@ -1677,7 +1677,7 @@ $closehead = false;
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -1877,7 +1877,7 @@ $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
 	'IPv6 address',
 	$pconfig['ipaddrv6']
-))->addMask('subnetv6', $pconfig['sunbetv6'], 128);
+))->addMask('subnetv6', $pconfig['subnetv6'], 128);
 
 $group = new Form_Group('IPv6 Upstream gateway');
 
@@ -2009,7 +2009,7 @@ $group = new Form_Group('Presets');
 $group->add(new Form_Checkbox(
 	'adv_dhcp_pt_values',
 	null,
-	'Free BDS default',
+	'Free BSD default',
 	null,
 	'DHCP'
 ))->displayAsRadio();
@@ -2157,7 +2157,7 @@ $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_script',
 	'Scripts',
 	'text',
-	$pconfig['adv_dhcp6_interface_statement_request_options']
+	$pconfig['adv_dhcp6_interface_statement_script']
 ))->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.' . '<br />' .
 			'[/[dirname/[.../]]filename[.ext]].');
 
@@ -2356,14 +2356,14 @@ $section->addInput(new Form_Input(
 	'gateway-6rd',
 	'6RD Border relay',
 	'text',
-	$pconfig['prefix-6rd']
+	$pconfig['gateway-6rd']
 ))->sethelp('6RD IPv4 gateway address assigned by your ISP');
 
 $section->addInput(new Form_Select(
 	'prefix-6rd-v4plen',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['prefix-6rd-v4plen'],
-	array_combine(range(0, 32), range(0,32))
+	array_combine(range(0, 32), range(0, 32))
 ))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');
 
 $form->add($section);
@@ -2467,7 +2467,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_password']
 ));
 
-if($pconfig['type'] == 'ppp') {
+if ($pconfig['type'] == 'ppp') {
 	$section->addInput(new Form_Input(
 		'phone',
 		'Phone number',
@@ -2569,7 +2569,7 @@ $section->addInput(new Form_Select(
 	['' => 'Disabled', 'custom' => 'Custom', 'preset' => 'Pre-set']
 ))->setHelp('Select a reset timing type');
 
-$group = new Form_Group('Custom reest');
+$group = new Form_Group('Custom resest');
 
 $group->add(new Form_Input(
 	'pppoe_resethour',
@@ -2612,7 +2612,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 0 * * 0")',
+	'Reset at each week ("0 0 * * 0")',
 	$pconfig['pppoe_weekly'],
 	'weekly'
 ))->displayAsRadio();
@@ -2620,7 +2620,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 0 * * *")',
+	'Reset at each day ("0 0 * * *")',
 	$pconfig['pppoe_daily'],
 	'daily'
 ))->displayAsRadio();
@@ -2628,7 +2628,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 * * * *")',
+	'Reset at each hour ("0 * * * *")',
 	$pconfig['pppoe_hourly'],
 	'hourly'
 ))->displayAsRadio();
@@ -2725,13 +2725,13 @@ if (isset($wancfg['wireless'])) {
 
 	$mode_list = ['auto' => 'Auto'];
 
-	if(is_array($wl_modes)) {
+	if (is_array($wl_modes)) {
 		foreach ($wl_modes as $wl_standard => $wl_channels) {
 			$mode_list[$wl_standard] = '802.' . $wl_standard;
 		}
 	}
 
-	if(count($mode_list) == 1)
+	if (count($mode_list) == 1)
 		$mode_list[''] = '';
 
 	$section->addInput(new Form_Select(
@@ -2761,7 +2761,7 @@ if (isset($wancfg['wireless'])) {
 
 	$mode_list = ['0' => 'Auto'];
 
-	if(is_array($wl_modes)) {
+	if (is_array($wl_modes)) {
 		foreach ($wl_modes as $wl_standard => $wl_channels) {
 			if ($wl_standard == "11g") {
 				$wl_standard = "11b/g";
@@ -2839,7 +2839,7 @@ if (isset($wancfg['wireless'])) {
 
 	$domain_list = array("" => 'Default');
 
-	if(is_array($wl_regdomains)) {
+	if (is_array($wl_regdomains)) {
 		foreach ($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
 			$domain_list[$wl_regdomains_attr[$wl_regdomain_key]['ID']] = $wl_regdomain['name'];
 		}
@@ -2854,7 +2854,7 @@ if (isset($wancfg['wireless'])) {
 
 	$country_list = array('' => 'Default');
 
-	if(is_array($wl_countries)) {
+	if (is_array($wl_countries)) {
 		foreach ($wl_countries as $wl_country_key => $wl_country) {
 			$country_list[	$wl_countries_attr[$wl_country_key]['ID']  ] = $wl_country['name'] ; //. ' -- (' . $wl_countries_attr[$wl_country_key]['ID'] . ', ' . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']);
 		}
@@ -3720,4 +3720,4 @@ events.push(function(){
 	</script>
 
 
-	<?php include("foot.inc");
+<?php include("foot.inc");

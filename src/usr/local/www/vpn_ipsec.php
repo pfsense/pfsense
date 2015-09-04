@@ -1,35 +1,59 @@
 <?php
 /*
 	vpn_ipsec.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	part of pfSense
-
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec
@@ -70,7 +94,7 @@ if ($_POST) {
 				clear_subsystem_dirty('ipsec');
 			}
 		}
-	} else if ($_POST['save']) {
+	} else if ($_POST['submit'] == 'Save') {
 		$pconfig = $_POST;
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
@@ -260,25 +284,28 @@ display_top_tabs($tab_array);
 	}
 ?>
 
-<h2>Tunnels</h2>
-
 <form method="post">
-<div class="table-responsive">
-	<table class="table table-striped table-hover">
-		<thead>
-			<tr>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th><?=gettext("IKE"); ?></th>
-				<th><?=gettext("Remote Gateway"); ?></th>
-				<th><?=gettext("Mode"); ?></th>
-				<th><?=gettext("P1 Protocol"); ?></th>
-				<th><?=gettext("P1 Transforms"); ?></th>
-				<th><?=gettext("P1 Description"); ?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
+	<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"";?> />&nbsp;&nbsp;<?=gettext("Enable IPsec")?><br /><br />
+	<input name="submit" type="submit" class="btn btn-sm btn-primary" value="<?=gettext("Save"); ?>" /><br /><br />
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPSec tunnels')?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
+						<th>&nbsp;</th>
+						<th><?=gettext("IKE"); ?></th>
+						<th><?=gettext("Remote Gateway"); ?></th>
+						<th><?=gettext("Mode"); ?></th>
+						<th><?=gettext("P1 Protocol"); ?></th>
+						<th><?=gettext("P1 Transforms"); ?></th>
+						<th><?=gettext("P1 Description"); ?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
 	$iconfn = "pass";
@@ -289,22 +316,22 @@ display_top_tabs($tab_array);
 		$iconfn .= "_d";
 	}
 ?>
-			<tr id="fr<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
-				<td>
-					<input type="checkbox" id="frc<?=$i?>" name="p1entry[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" />
-				</td>
-				<td>
-					<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled' ? 'enable' : 'disable') ?></button>
-				</td>
-				<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+					<tr id="fr<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
+						<td>
+							<input type="checkbox" id="frc<?=$i?>" name="p1entry[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" />
+						</td>
+						<td>
+							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled' ? 'enable' : 'disable') ?></button>
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
 				echo "V1";
 			else
 				echo "V2";
 ?>
-				</td>
-				<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						</td>
+						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
 			if ($ph1ent['interface']) {
 				$iflabels = get_configured_interface_with_descr();
@@ -354,26 +381,26 @@ display_top_tabs($tab_array);
 					echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
 			}
 ?>
-				</td>
-				<td>
-					<?=$p1_halgos[$ph1ent['hash-algorithm']]?>
-				</td>
-				<td>
-					<?=htmlspecialchars($ph1ent['descr'])?>
-				</td>
-				<td>
+						</td>
+						<td>
+							<?=$p1_halgos[$ph1ent['hash-algorithm']]?>
+						</td>
+						<td>
+							<?=htmlspecialchars($ph1ent['descr'])?>
+						</td>
+						<td>
 					<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
 					<button class="btn btn-xs btn-default" type="submit" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("move selected entries before this")?></button>
-					<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("edit phase1 entry"); ?>">edit</a>
-					<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>">delete</button>
+							<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("edit phase1 entry"); ?>">edit</a>
+							<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>">delete</button>
 		<?php if (!isset($ph1ent['mobile'])): ?>
 					<a class="btn btn-xs btn-success" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("copy phase1 entry"); ?>">copy</a>
 		<?php endif; ?>
-				</td>
-			</tr>
-			<tr class="<?= $entryStatus ?>">
-				<td colspan="2"></td>
-				<td colspan="7" class="contains-table">
+						</td>
+					</tr>
+					<tr class="<?= $entryStatus ?>">
+						<td colspan="2"></td>
+						<td colspan="7" class="contains-table">
 <?php
 			if (isset($_POST["tdph2-{$i}-visible"]))
 				$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
@@ -512,19 +539,20 @@ display_top_tabs($tab_array);
 <?php
 							endif;
 ?>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</td>
-			</tr>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
 <?php
 					$i++;
-				endforeach;  // $a_phase1 as $ph1ent
+				endforeach;	 // $a_phase1 as $ph1ent
 ?>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <nav class="action-buttons">

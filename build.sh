@@ -201,8 +201,8 @@ while test "$1" != ""; do
 			;;
 		--snapshot-update-status)
 			shift
-			[ -n "${1}" ] \
-				&& snapshot_status_message="${1}"
+			snapshot_status_message="${1}"
+			BUILDACTION="snapshot_status_message"
 			;;
 		*)
 			usage
@@ -223,7 +223,7 @@ if [ -n "${var_to_print}"  ]; then
 fi
 
 # Update snapshot status and exit
-if [ -n "${snapshot_status_message}"  ]; then
+if [ "${BUILDACTION}" = "snapshot_status_message" ]; then
 	export SNAPSHOTS=1
 	snapshots_update_status "${snapshot_status_message}"
 	exit 0

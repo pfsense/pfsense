@@ -332,8 +332,8 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -n "${SNAPSHOTS}" ]; then
-	echo "" > $SNAPSHOTSLOGFILE
-	echo "" > $SNAPSHOTSLASTUPDATE
+	rm -f $SNAPSHOTSLOGFILE;    touch $SNAPSHOTSLOGFILE
+	rm -f $SNAPSHOTSLASTUPDATE; touch $SNAPSHOTSLASTUPDATE
 
 	snapshots_rotate_logfile
 

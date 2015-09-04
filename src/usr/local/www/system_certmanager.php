@@ -293,15 +293,25 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
-			foreach ($_POST['altname_value'] as $idx => $value) {
-				if (empty($value))
-					continue;
+			foreach ($_POST as $key => $value) {
+				$entry = '';
+				if (!substr_compare('altname_type', $key, 0, 12)) {
+					$entry = substr($key, 12);
+					$field = 'type';
+				}
+				elseif (!substr_compare('altname_value', $key, 0, 13)) {
+					$entry = substr($key, 13);
+					$field = 'value';
+				}
 
-				$altnames[$idx] = array(
-					'type' => $_POST['altname_type'][$idx],
-					'value' => $value
-				);
+
+
+				if (ctype_digit($entry)) {
+					$entry++;
+					$altnames[$entry][$field] = $value;
+				}
 			}
+
 			$pconfig['altnames']['item'] = $altnames;
 
 			/* Input validation for subjectAltNames */
@@ -408,15 +418,17 @@ if ($_POST) {
 						'organizationName' => $pconfig['dn_organization'],
 						'emailAddress' => $pconfig['dn_email'],
 						'commonName' => $pconfig['dn_commonname']);
+
 					if (count($altnames)) {
 						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
 							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
 						}
+
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
 						while ($ssl_err = openssl_error_string()) {
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -453,6 +465,7 @@ if ($_POST) {
 				} else {
 					$a_cert[] = $cert;
 				}
+
 				if (isset($a_user) && isset($userid)) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
 				}
@@ -883,8 +896,6 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'e.g. internal-ca']
 ));
 
-$group = new Form_Group('Alternative Names');
-
 if (empty($pconfig['altnames']['item']))
 {
 	$pconfig['altnames']['item'] = array(
@@ -892,10 +903,15 @@ if (empty($pconfig['altnames']['item']))
 	);
 }
 
-foreach ($pconfig['altnames']['item'] as $item)
-{
+$counter = 0;
+$numrows = count($pconfig['altnames']['item']) - 1;
+
+foreach ($pconfig['altnames']['item'] as $item) {
+
+	$group = new Form_Group($counter == 0 ? 'Alternative Names':'');
+
 	$group->add(new Form_Select(
-		'altname_type',
+		'altname_type' . $counter,
 		'Type',
 		$item['type'],
 		array(
@@ -904,19 +920,31 @@ foreach ($pconfig['altnames']['item'] as $item)
 			'URI' => 'URI',
 			'email' => 'email address',
 		)
-	));
+	))->setHelp(($counter == $numrows) ? 'Type':null);
 
 	$group->add(new Form_Input(
-		'altname_value',
-		'Type',
+		'altname_value' . $counter,
+		null,
 		'text',
 		$item['value']
-	));
+	))->setHelp(($counter == $numrows) ? 'Value':null);
 
-	$group->enableDuplication();
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+
+	$group->addClass('repeatable');
+
+	$section->add($group);
+
+	$counter++;
 }
 
-$section->add($group);
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add'
+))->removeClass('btn-primary')->addClass('btn-success');
 
 $form->add($section);
 $section = new Form_Section('External Signing Request');
@@ -1023,6 +1051,168 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+
+	function setMasks() {
+		// Find all ipaddress masks and make dynamic based on address family of input
+		$('span.pfIpMask + select').each(function (idx, select){
+			var input = $(select).prevAll('input[type=text]');
+
+			input.on('change', function(e){
+				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+				if (!isV6)
+					max = 32;
+
+				if (input.val() == "")
+					return;
+
+				while (select.options.length > max)
+					select.remove(0);
+
+				if (select.options.length < max)
+				{
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+				}
+			});
+
+			// Fire immediately
+			input.change();
+		});
+	}
+
+	// Complicated function to move all help text associated with this input id to the same id
+	// on the row above. That way if you delete the last row, you don't lose the help
+	function moveHelpText(id) {
+		$('#' + id).parent('div').parent('div').find('input').each(function() {	 // For each <span></span>
+			var fromId = this.id;
+			var toId = decrStringInt(fromId);
+			var helpSpan;
+
+			if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
+
+				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+				if($(helpSpan).hasClass('help-block')) {
+					if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
+						$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
+					else
+						$('#' + decrStringInt(fromId)).after(helpSpan);
+				}
+			}
+		});
+	}
+
+	// Increment the number at the end of the string
+	function bumpStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
+
+	  return newStr || str;
+	}
+
+	// Decrement the number at the end of the string
+	function decrStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
+
+	  return newStr || str;
+	}
+
+	// Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
+	// gaps, but I do :)
+	function renumber() {
+		var idx = 0;
+
+		$('.repeatable').each(function() {
+
+			$(this).find('input').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
+
+			$(this).find('select').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
+
+			$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
+
+			idx++;
+		});
+	}
+
+	function delete_row(row) {
+		$('#' + row).parent('div').parent('div').remove();
+		renumber();
+	}
+
+	function add_row() {
+		// Find the lst repeatable group
+		var lastRepeatableGroup = $('.repeatable:last');
+
+		// Clone it
+		var newGroup = lastRepeatableGroup.clone(true);
+
+		// Increment the suffix number for each input elemnt in the new group
+		$(newGroup).find('input').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			if(!$(this).is('[id^=delete]'))
+				$(this).val('');
+		});
+
+		// Do the same for selectors
+		$(newGroup).find('select').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			// If this selector lists mask bits, we need it to be reset to all 128 options
+			// and no items selected, so that automatic v4/v6 selection still works
+			if($(this).is('[id^=address_subnet]')) {
+				$(this).empty();
+				for(idx=128; idx>0; idx--) {
+					$(this).append($('<option>', {
+						value: idx,
+						text: idx
+					}));
+				}
+			}
+		});
+
+		// And for "for" tags
+		$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+		$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+
+		// Insert the updated/cloned row
+		$(lastRepeatableGroup).after(newGroup);
+
+		// Delete any help text from the group we have cloned
+		$(lastRepeatableGroup).find('.help-block').each(function() {
+			$(this).remove();
+		});
+
+		setMasks();
+	}
+
+	// These are action buttons, not submit buttons
+	$('[id^=addrow]').prop('type','button');
+	$('[id^=delete]').prop('type','button');
+
+	// on click . .
+	$('[id^=addrow]').click(function() {
+		add_row();
+	});
+
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			moveHelpText(event.target.id);
+			delete_row(event.target.id);
+		}
+		else
+			alert('<?php echo gettext("You may not delet the last one!")?>');
+	});
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {
 

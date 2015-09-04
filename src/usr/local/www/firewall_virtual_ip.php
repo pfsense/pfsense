@@ -282,12 +282,12 @@ else if ($savemsg)
 else if (is_subsystem_dirty('vip'))
 	print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 
-/* active tabs */
+/* active tabs 
 $tab_array = array();
 $tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
-// $tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");
+ $tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");
 display_top_tabs($tab_array);
-
+*/
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual IP Address')?></h2></div>

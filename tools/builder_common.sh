@@ -2032,8 +2032,6 @@ snapshots_scp_files() {
 
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"
 
-	rm -f $SCRATCHDIR/ssh-snapshots*
-
 	# Ensure directory(s) are available
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/livecd_installer"
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"

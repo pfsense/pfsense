@@ -813,9 +813,9 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Textarea(
 	'authorizedkeys',
-	'Authorized keys',
+	'Authorized SSH Keys',
 	$pconfig['authorizedkeys']
-))->setHelp('Paste an authorized keys file here.');
+))->setHelp('Enter authorized SSH keys for this user');
 
 $section->addInput(new Form_Input(
 	'ipsecpsk',
@@ -911,7 +911,8 @@ events.push(function(){
 
 	// On page load . .
    hideClass('cert-options', true);
-   hideInput('authorizedkeys', true);
+//   hideInput('authorizedkeys', true);
+	hideCheckbox('showkey', true);
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function(){

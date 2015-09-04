@@ -314,13 +314,13 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply",$value="", $showapply=false, $class="alert-warning") {
+function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning") {
 	global $g;
 
-	if(strpos($class, "alert-") !== 0)
+	if (strpos($class, "alert-") !== 0)
 		$class = 'alert-' . $class;
 
-	if(empty($value)) {
+	if (empty($value)) {
 		$value = gettext("Apply changes");
 	}
 
@@ -558,7 +558,7 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	if(!is_array($title))
+	if (!is_array($title))
 		return '<h1 class="page-header">' . $title . '</h1>';
 
 	$heading = '<h1 class="page-header">' . end($title) . '</h1>';
@@ -625,19 +625,19 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
-	if(is_array($grepfor))
+	if (is_array($grepfor))
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
-	if(is_array($grepinvert))
+	if (is_array($grepinvert))
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	if (is_dir($logfile)) {
 		$logarr = array("File $logfile is a directory.");
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
-		if($config['system']['disablesyslogclog']) {
+		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if(isset($config['system']['usefifolog']))
+			if (isset($config['system']['usefifolog']))
 				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 			else
 				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
@@ -651,7 +651,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		$logent = preg_split("/\s+/", $logent, 6);
 
 		if ($withorig) {
-				if(isset($config['system']['usefifolog'])) {
+				if (isset($config['system']['usefifolog'])) {
 					$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
 					$entry_text = htmlspecialchars($logent[5]);
 				} else {
@@ -1075,18 +1075,18 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 	foreach ($tab_array as $ta)
 		$tabcharcount = $tabcharcount + strlen($ta[0]);
 
-	if($no_drop_down == true) {
+	if ($no_drop_down == true) {
 		$tabcharcount = 0;
 		unset($tab_array_char_limit);
 	}
 
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
-	if($tabcharcount > $tab_array_char_limit): ?>
+	if ($tabcharcount > $tab_array_char_limit): ?>
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
-			if($ta[1]=="true")
+			if ($ta[1] == "true")
 				$selected = " selected=\"selected\"";
 			else
 				$selected = "";
@@ -1177,14 +1177,14 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
-function rule_columns_with_alias($src, $srcport, $dst, $dstport){
+function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 	global $config;
 
 	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias']))
 		return;
 
 	$columns = array();
-	foreach ($config['aliases']['alias'] as $alias_id => $alias_name){
+	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
 		if ($alias_name['name'] == $src)
 			$columns['src'] = $alias_id;
 		elseif ($alias_name['name'] == $srcport)
@@ -1198,7 +1198,7 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport){
 	}
 }
 
-function form_output_row($name, $label, $content){
+function form_output_row($name, $label, $content) {
 var_dump($content);die;
 ?>
 <div class="form-group">

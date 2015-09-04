@@ -810,7 +810,7 @@ if ($savemsg)
 									if (in_array($auth_server_key, $authmodes))
 										$selected = "selected=\"selected\"";
 							?>
-								<option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+								<option value="<?=htmlspecialchars($auth_server_key);?>" <?=$selected;?>><?=htmlspecialchars($auth_server['name']);?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>

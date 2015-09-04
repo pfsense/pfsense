@@ -152,7 +152,7 @@ include("head.inc");
 										if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
 											$selected = "selected=\"selected\"";
 ?>
-										<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+										<option value="<?=htmlspecialchars($auth_server['name']);?>" <?=$selected;?>><?=htmlspecialchars($auth_server['name']);?></option>
 <?php
 									endforeach;
 ?>

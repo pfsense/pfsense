@@ -393,7 +393,7 @@ function login_banner_change() {
 									$selected = "";
 									if (in_array($auth_server['name'], $authmodes))
 										$selected = "selected=\"selected\"";
-									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
+									echo "<option value=\"" . htmlspecialchars($auth_server['name']). "\" {$selected}>" . htmlspecialchars($auth_server['name']). "</option>\n";
 								}
 							?>
 							</select>

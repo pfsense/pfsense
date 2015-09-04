@@ -620,6 +620,10 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
 $tab_array[] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
@@ -898,11 +902,6 @@ if (isset($pconfig['ealgo']['keylen']))
 
 
 <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
-
-<?php
-	if ($input_errors)
-		print_input_errors($input_errors);
-?>
 
 <script type="text/javascript">
 //<![CDATA[

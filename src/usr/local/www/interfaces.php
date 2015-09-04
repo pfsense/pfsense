@@ -4,61 +4,61 @@
 	interfaces.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004-2008 Scott Ullrich
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004-2008 Scott Ullrich
  *	Copyright (c) 2006 Daniel S. Haischt
  *	Copyright (c) 2008-2010 Ermal Luçi
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
+ *	1. Redistributions of source code must retain the above copyright notice,
  *	  this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
+ *	2. Redistributions in binary form must reproduce the above copyright
  *	  notice, this list of conditions and the following disclaimer in
  *	  the documentation and/or other materials provided with the
- *	  distribution. 
+ *	  distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *	3. All advertising materials mentioning features or use of this software
  *	  must display the following acknowledgment:
  *	  "This product includes software developed by the pfSense Project
- *	   for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	   for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
  *	   endorse or promote products derived from this software without
  *	   prior written permission. For written permission, please contact
  *	   coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
+ *	5. Products derived from this software may not be called "pfSense"
  *	  nor may "pfSense" appear in their names without prior written
  *	  permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
+ *	6. Redistributions of any form whatsoever must retain the following
  *	  acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
  *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/arp
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -1543,7 +1543,7 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa']['wpa_strict_rekey'] = true;
 	} else if (isset($wancfg['wireless']['wpa']['wpa_strict_rekey'])) {
 		unset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
-	}	
+	}
 	if ($_POST['debug_mode'] == "yes") {
 		$wancfg['wireless']['wpa']['debug_mode'] = true;
 	} else if (isset($wancfg['wireless']['wpa']['debug_mode'])) {
@@ -1643,7 +1643,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = sprintf(gettext("Unable to change mode to %s.  You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
+			$input_errors[] = sprintf(gettext("Unable to change mode to %s.	 You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
 		}
@@ -1681,28 +1681,28 @@ $mymac = str_replace("\n","",$mymac);
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
-	
-	$list = [""  =>  "Default (no preference, typically autoselect)", 
-			 " " =>  "------- Media Supported by this interface -------"
+
+	$list = [""	 =>	 "Default (no preference, typically autoselect)",
+			 " " =>	 "------- Media Supported by this interface -------"
 			];
-			
+
 	foreach ($mediaopts_list as $mediaopt) {
 		$list[$mediaopt] = $mediaopt;
 	}
-	
+
 	return($list);
 }
 
 function build_gateway_list() {
 	global $a_gateways;
-	
+
 	$list = array("none" => "None");
 	foreach ($a_gateways as $gateway) {
 		if (($gateway['interface'] == $if) && (is_ipaddrv4($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
 	}
-	
+
 	return($list);
 }
 
@@ -1710,12 +1710,12 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if (is_subsystem_dirty('interfaces'))
-	print_info_box_np(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" . 
+	print_info_box_np(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
 					  gettext("You must apply the changes in order for them to take effect. Don't forget to adjust the DHCP Server range if needed after applying."));
-	
-if ($savemsg) 
+
+if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 
@@ -1775,7 +1775,7 @@ $btnmymac->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $group = new Form_Group('MAC controls');
 $group->add($macaddress);
 // $group->add($btnmymac);
-$group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' . 
+$group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .
 				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank');
 $section->add($group);
 
@@ -1804,7 +1804,7 @@ if (count($mediaopts_list) > 0) {
 	))->setHelp('Here you can explicitly set speed and duplex mode for this interface.' . '<br />' .
 				'WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');
 }
-						
+
 $form->add($section);
 
 $section = new Form_Section('Static IPv4 configuration');
@@ -1895,7 +1895,7 @@ $group->add(new Form_Button(
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none". ');
-				
+
 $group = new Form_group('IPv6 upstream gateway');
 
 $group->add(new Form_Checkbox(
@@ -2040,7 +2040,7 @@ $group->add(new Form_Checkbox(
 
 $group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.' . '<br />' .
 				'<a href="http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">' . 'See here more information' . '</a>');
-				
+
 $section->add($group);
 
 $form->add($section);
@@ -2052,7 +2052,7 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp_send_options']
-))->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.  [option declaration [, ...]]' . '<br />' .
+))->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
 			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
 			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
 			'Some ISPs may require certain options be or not be sent.');
@@ -2070,14 +2070,14 @@ $section->addInput(new Form_Input(
 	'Request options',
 	'text',
 	$pconfig['adv_dhcp_require_options']
-))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.  [option [, ...]]');
+))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.	 [option [, ...]]');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_option_modifiers',
 	'Option modifiers',
 	'text',
 	$pconfig['adv_dhcp_option_modifiers']
-))->sethelp('The values in this field are DHCP option modifiers applied to obtained DHCP lease.  [modifier option declaration [, ...]]' . '<br />' .
+))->sethelp('The values in this field are DHCP option modifiers applied to obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
 			'modifiers: (default, supersede, prepend, append)');
 
 $section->addInput(new Form_Input(
@@ -2085,7 +2085,7 @@ $section->addInput(new Form_Input(
 	'Option modifiers',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
-))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.  [/[dirname/[.../]]filename[.ext]]' . '<br />' .
+))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
 			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
 			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
 			'Some ISPs may require certain options be or not be sent.');
@@ -2114,7 +2114,7 @@ $section->addInput(new Form_Select(
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['dhcp6-ia-pd-len'],
 	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
-))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');	
+))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');
 
 $section->addInput(new Form_Checkbox(
 	'dhcp6-ia-pd-send-hint',
@@ -2140,7 +2140,7 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_send_options']
-))->sethelp('DHCP send options to be sent when requesting a DHCP lease.  [option declaration [, ...]]' . '<br />' .
+))->sethelp('DHCP send options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
 			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
 			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
 			'Some DHCP services may require certain options be or not be sent.');
@@ -2150,9 +2150,9 @@ $section->addInput(new Form_Input(
 	'Request Options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_request_options']
-))->sethelp('DHCP request options to be sent when requesting a DHCP lease.  [option [, ...]]' . '<br />' .
+))->sethelp('DHCP request options to be sent when requesting a DHCP lease.	[option [, ...]]' . '<br />' .
 			'Some DHCP services may require certain options be or not be requested.');
-	
+
 $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_script',
 	'Scripts',
@@ -2160,7 +2160,7 @@ $section->addInput(new Form_Input(
 	$pconfig['adv_dhcp6_interface_statement_request_options']
 ))->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.' . '<br />' .
 			'[/[dirname/[.../]]filename[.ext]].');
-	
+
 $group = new Form_Group('Identity Association Statement');
 
 $group->add(new Form_Checkbox(
@@ -2169,7 +2169,7 @@ $group->add(new Form_Checkbox(
 	'Non-Temporary Address Allocation',
 	false
 ));
-	
+
 $group->add(new Form_Input(
 	'adv_dhcp6_id_assoc_statement_address_id',
 	null,
@@ -2199,7 +2199,7 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-// Prefix delegation	
+// Prefix delegation
 $group = new Form_Group('');
 
 $group->add(new Form_Checkbox(
@@ -2208,7 +2208,7 @@ $group->add(new Form_Checkbox(
 	'Prefix Delegation ',
 	false
 ));
-	
+
 $group->add(new Form_Input(
 	'adv_dhcp6_id_assoc_statement_prefix_id',
 	null,
@@ -2336,7 +2336,7 @@ $section->addInput(new Form_Input(
 	'Configuration File Override',
 	'text',
 	$pconfig['adv_dhcp6_config_file_override_path']
-))->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.  [/[dirname/[.../]]filename[.ext]]' . '<br />' .
+))->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
 			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
 			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
 			'Some ISPs may require certain options be or not be sent.');
@@ -2364,7 +2364,7 @@ $section->addInput(new Form_Select(
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['prefix-6rd-v4plen'],
 	array_combine(range(0, 32), range(0,32))
-))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');	
+))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');
 
 $form->add($section);
 
@@ -2373,10 +2373,10 @@ $section = new Form_Section('Track IPv6 Interface');
 
 function build_ipv6interface_list() {
 	$list = array('' => '');
-	
+
 	$interfaces = get_configured_interface_with_descr(false, true);
 	$dynv6ifs = array();
-	
+
 	foreach ($interfaces as $iface => $ifacename) {
 		switch ($config['interfaces'][$iface]['ipaddrv6']) {
 			case "6to4":
@@ -2394,7 +2394,7 @@ function build_ipv6interface_list() {
 
 	foreach ($dynv6ifs as $iface => $ifacedata) {
 		$list[$iface] = $ifacedata['name'];
-		
+
 		$section->addInput(new Form_Input(
 			'ipv6-num-prefix-ids-' . $iface,
 			null,
@@ -2402,7 +2402,7 @@ function build_ipv6interface_list() {
 			$ifacedata['ipv6_num_prefix_ids']
 		));
 	}
-	
+
 	return($list);
 }
 
@@ -2425,7 +2425,7 @@ $section->addInput(new Form_Input(
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
 ))->setHelp('The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
-		
+
 $form->add($section);
 
 /// PPP section
@@ -2485,9 +2485,9 @@ $section->addInput(new Form_Input(
 
 function build_port_list() {
 	$list = array('' => '');
-	
+
 	$portlist = glob("/dev/cua*");
-	$modems   = glob("/dev/modem*");
+	$modems	  = glob("/dev/modem*");
 	$portlist = array_merge($portlist, $modems);
 
 	foreach ($portlist as $port) {
@@ -2497,16 +2497,16 @@ function build_port_list() {
 
 	$list[trim($port)] = $port;
 	}
-	
-	return($list);											
-}	
+
+	return($list);
+}
 $section->addInput(new Form_Select(
 	'port',
 	'Modem port',
 	$pconfig['port'],
 	build_port_list()
 ));
-	
+
 if (isset($pconfig['pppid'])) {
 	$section->addInput(new Form_StaticText(
 		'Advanced PPP',
@@ -2516,9 +2516,9 @@ if (isset($pconfig['pppid'])) {
 	$section->addInput(new Form_StaticText(
 		'Advanced PPP',
 		'<a href="/interfaces_ppps_edit.php" class="navlnk">' . gettext("Click here to create a PPP configuration") . '</a>'
-	));	
-}		
-				
+	));
+}
+
 $form->add($section);
 
 // PPPoE configuration
@@ -2644,7 +2644,7 @@ if (isset($pconfig['pppid'])) {
 	$section->addInput(new Form_StaticText(
 		'Advanced and MLPPP',
 		'<a href="/interfaces_ppps_edit.php" class="navlnk">Click here for additional PPPoE configuration options and for MLPPP configuration.</a>'
-	));	
+	));
 }
 
 $form->add($section);
@@ -2684,7 +2684,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Dial-On-Demand mode ',
 	$pconfig['pptp_dialondemand'],
 	'enable'
-))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. ' . 
+))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. ' .
 			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
 
 $section->addInput(new Form_Input(
@@ -2695,7 +2695,7 @@ $section->addInput(new Form_Input(
 	[min => 0]
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
-			
+
 if (isset($pconfig['pppid'])) {
 	$section->addInput(new Form_StaticText(
 		'Advanced and MLPPP',
@@ -2705,575 +2705,472 @@ if (isset($pconfig['pppid'])) {
 	$section->addInput(new Form_StaticText(
 		'Advanced and MLPPP',
 		'<a href="/interfaces_ppps_edit.php" class="navlnk">Click here for additional PPTP and L2TP configuration options.</a>'
-	));	
+	));
 }
 
 $form->add($section);
 
 // Wireless interface
-if (true || isset($wancfg['wireless'])) { // DEBUG
+if (isset($wancfg['wireless'])) {
 
-$section = new Form_Section('Common wireless configuration - Settings apply to all wireless networks on ' . $wlanbaseif . '.');
+	$section = new Form_Section('Common wireless configuration - Settings apply to all wireless networks on ' . $wlanbaseif . '.');
+
+	$section->addInput(new Form_Checkbox(
+		'persistcommonwireless',
+		'Persist common settings',
+		'Preserve common wireless configuration through interface deletions and reassignments.',
+		$pconfig['persistcommonwireless'],
+		'yes'
+	));
+
+	$mode_list = ['auto' => 'Auto'];
+
+	if(is_array($wl_modes)) {
+		foreach ($wl_modes as $wl_standard => $wl_channels) {
+			$mode_list[$wl_standard] = '802.' . $wl_standard;
+		}
+	}
+
+	if(count($mode_list) == 1)
+		$mode_list[''] = '';
+
+	$section->addInput(new Form_Select(
+		'standard',
+		'Standard',
+		($pconfig['standard'] == "") ? "11ng":$pconfig['standard'],
+		$mode_list
+	));
+
+	if (isset($wl_modes['11g'])) {
+		$section->addInput(new Form_Select(
+			'protmode',
+			'802.11g OFDM Protection Mode',
+			$pconfig['protmode'],
+			['off' => 'Off', 'cts' => 'CTS to self', 'rtscts' => 'RTS and CTS']
+		))->setHelp('For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.');
+	}
+	else
+	{
+		$section->addInput(new Form_Input(
+			'protmode',
+			null,
+			'hidden',
+			'off'
+		));
+	}
+
+	$mode_list = ['0' => 'Auto'];
+
+	if(is_array($wl_modes)) {
+		foreach ($wl_modes as $wl_standard => $wl_channels) {
+			if ($wl_standard == "11g") {
+				$wl_standard = "11b/g";
+			} else if ($wl_standard == "11ng") {
+				$wl_standard = "11b/g/n";
+			} else if ($wl_standard == "11na") {
+				$wl_standard = "11a/n";
+			}
+
+			foreach ($wl_channels as $wl_channel) {
+				if (isset($wl_chaninfo[$wl_channel])) {
+					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel;
+				} else {
+					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel . ' (' . $wl_chaninfo[$wl_channel][1] . ' @ ' . $wl_chaninfo[$wl_channel][2] . ' / ' . $wl_chaninfo[$wl_channel][3] . ')';
+				}
+			}
+		}
+	}
+	$section->addInput(new Form_Select(
+		'channel',
+		'Channel',
+		$pconfig['channel'],
+		$mode_list
+	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
+				'Not all channels may be supported by your card.  Auto may override the wireless standard selected above.');
+
+	if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
+		$group = new Form_Group('Antenna Settings');
+
+		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])) {
+			$group->add(new Form_Select(
+				'diversity',
+				null,
+				$pconfig['diversity'],
+				['' => 'Default', '0' => 'Off', '1' => 'On']
+			))->setHelp('Diversity');
+		}
+
+		if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])) {
+			$group->add(new Form_Select(
+				'txantenna',
+				null,
+				$pconfig['txantenna'],
+				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
+			))->setHelp('Transmit antenna');
+		}
+
+		if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
+			$group->add(new Form_Select(
+				'rxantenna',
+				null,
+				$pconfig['rxantenna'],
+				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
+			))->setHelp('Receive antenna');
+		}
+
+		$group->setHelp('Note: The antenna numbers do not always match up with the labels on the card.');
+
+		$section->add($group);
+	}
+
+	if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])) {
+			$section->addInput(new Form_Input(
+				'distance',
+				'Distance setting (meters)',
+				'test',
+				$pconfig['distance']
+			))->setHelp('This field can be used to tune ACK/CTS timers to fit the distance between AP and Client');
+	}
+
+	$form->add($section);
+
+	// Regulatory settings
+	$section = new Form_Section('Regulatory settings');
+
+	$domain_list = array("" => 'Default');
+
+	if(is_array($wl_regdomains)) {
+		foreach ($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
+			$domain_list[$wl_regdomains_attr[$wl_regdomain_key]['ID']] = $wl_regdomain['name'];
+		}
+	}
+
+	$section->addInput(new Form_Select(
+		'regdomain',
+		'Regulatory domain',
+		$pconfig['regdomain'],
+		$domain_list
+	))->setHelp('Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work');
+
+	$country_list = array('' => 'Default');
+
+	if(is_array($wl_countries)) {
+		foreach ($wl_countries as $wl_country_key => $wl_country) {
+			$country_list[	$wl_countries_attr[$wl_country_key]['ID']  ] = $wl_country['name'] ; //. ' -- (' . $wl_countries_attr[$wl_country_key]['ID'] . ', ' . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']);
+		}
+	}
+
+	$section->addInput(new Form_Select(
+		'regcountry',
+		'Country',
+		$pconfig['regcountry'],
+		$country_list
+	))->setHelp('Any country setting other than "Default" will override the regulatory domain setting');
+
+	$section->addInput(new Form_Select(
+		'reglocation',
+		'Location',
+		$pconfig['reglocation'],
+		['' => 'Default', 'indoor' => 'Indoor', 'outdoor' => 'Outdoor', 'anywhere' => 'Anywhere']
+	))->setHelp('These settings may affect which channels are available and the maximum transmit power allowed on those channels. ' .
+				'Using the correct settings to comply with local regulatory requirements is recommended.' . '<br />' .
+				'All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  ' .
+				'Some of the regulatory domains or country codes may not be allowed by some cards.	' .
+				'These settings may not be able to add additional channels that are not already supported.');
+
+	$form->add($section);
+
+	$section = new Form_Section('Network-specific wireless configuration');
+
+	$section->addInput(new Form_Select(
+		'mode',
+		'Mode',
+		$pconfig['mode'],
+		['bss' => 'Infrastructure (BSS)', 'adhoc' => 'Ad-hoc (IBSS)', 'hostap' => 'Access Point']
+	));
+
+	$section->addInput(new Form_Input(
+		'ssid',
+		'SSID',
+		'text',
+		$pconfig['ssid']
+	));
+
+	if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])) {
+		$section->addInput(new Form_Select(
+			'puremode',
+			'Minimum wireless standard',
+			$pconfig['puremode'],
+			['any' => 'Any', '11g' => '802.11g', '11n' => '802.11n']
+		))->setHelp('When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)');
+	} elseif (isset($wl_modes['11g'])) {
+		$section->addInput(new Form_Checkbox(
+			'puremode',
+			'802.11g only',
+			'Preserve common wireless configuration through interface deletions and reassignments.',
+			$pconfig['puremode'],
+			'11g'
+		))->setHelp('When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)');
+	}
+
+	$section->addInput(new Form_Checkbox(
+		'apbridge_enable',
+		'Allow intra-BSS communication',
+		'Allow packets to pass between wireless clients directly when operating as an access point',
+		$pconfig['apbridge_enable'],
+		'yes'
+	))->setHelp('Disabling the internal bridging is useful when traffic is to be processed with packet filtering');
+
+	$section->addInput(new Form_Checkbox(
+		'wme_enable',
+		'Enable WME',
+		'Force the card to use WME (wireless QoS)',
+		$pconfig['wme_enable'],
+		'yes'
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'hidessid_enable',
+		'Hide SSID',
+		'Force the card to NOT broadcast its SSID (This may cause problems for some clients)',
+		$pconfig['hidessid_enable'],
+		'yes'
+	));
+
+	$form->add($section);
+
+	// WEP Section
+	$section = new Form_Section('WEP');
+
+	$section->addInput(new Form_Checkbox(
+		'wep_enable',
+		'Enable',
+		'Enable WEP',
+		$pconfig['wep_enable'],
+		'yes'
+	));
+
+	for($idx=1; $idx <= 4; $idx++) {
+		$group = new Form_Group('Key' . $idx);
+
+		$group->add(new Form_Input(
+			'key' . $idx,
+			null,
+			'text',
+			$pconfig['key' . $idx]
+		));
+
+		$group->add(new Form_Checkbox(
+			'txkey',
+			null,
+			null,
+			$pconfig['wep_enable'],
+			$idx
+		))->displayAsRadio()->setHelp($idx == 4 ? 'Tx key':'');
+
+		$section->add($group);
+	}
+
+	$section->addInput(new Form_StaticText(
+		null,
+		'<span class="help-block">' .
+		gettext('40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by "0x"') . '<br />' .
+		gettext('104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by "0x"') .
+		'</span>'
+	));
+
+	$form->add($section);
+
+	$section = new Form_Section('WPA');
+
+	$section->addInput(new Form_Checkbox(
+		'wep_wpa',
+		'WEnable',
+		'Enable WPA',
+		$pconfig['wpa_enable'],
+		'yes'
+	));
+
+	$section->addInput(new Form_Input(
+		'passphrase',
+		'WPA Pre-Shared Key',
+		'text',
+		$pconfig['passphrase']
+	))->setHelp('WPA Passphrase must be between 8 and 63 characters long');
+
+	$section->addInput(new Form_Select(
+		'wpa_mode',
+		'WPA mode',
+		$pconfig['wpa_mode'],
+		['1' => 'WPA', '2' => 'WPA2', '3' => 'Both']
+	));
+
+	$section->addInput(new Form_Select(
+		'wpa_key_mgmt',
+		'WPA Key Management Mode',
+		$pconfig['wpa_key_mgmt'],
+		['WPA-PSK' => 'Pre-Shared Key', 'WPA-EAP' => 'Extensible Authentication Protocol', 'WPA-PSK WPA-EAP' => 'Both']
+	));
+
+	$section->addInput(new Form_Select(
+		'auth_algs',
+		'Authentication',
+		$pconfig['auth_algs'],
+		['1' => 'Open System Authentication', '2' => 'Shared Key Authentication', '3' => 'Both']
+	))->setHelp('Shared Key Authentication requires WEP');
+
+	$section->addInput(new Form_Select(
+		'wpa_pairwise',
+		'WPA Pairwise',
+		$pconfig['wpa_pairwise'],
+		['CCMP TKIP' => 'Both', 'CCMP' => 'AES (recommended)', 'TKIP' => 'TKIP']
+	));
+
+	$section->addInput(new Form_Input(
+		'wpa_group_rekey',
+		'WPA Pre-Shared Key',
+		'number',
+		$pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60",
+		['min' => '1', 'max' => 9999]
+	))->setHelp('Specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time');
+
+	$section->addInput(new Form_Input(
+		'wpa_gmk_rekey',
+		'Master Key Regeneration',
+		'number',
+		$pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600",
+		['min' => '1', 'max' => 9999]
+	))->setHelp('Specified in seconds. Allowed values are 1-9999. Must be longer than Key Rotation time');
+
+	$section->addInput(new Form_Checkbox(
+		'wpa_strict_rekey',
+		'Strict Key Regeneration',
+		'Force the AP to rekey whenever a client disassociates',
+		$pconfig['wpa_strict_rekey'],
+		'yes'
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'ieee8021x',
+		'IEEE802.1X',
+		'Enable 802.1X authentication',
+		$pconfig['ieee8021x'],
+		'yes'
+	))->setHelp('This option requires that the "Enable WPA box" is checked');
+
+	$group = new Form_Group('Primary 802.1X server');
+
+	$group->add(new Form_IpAddress(
+		'auth_server_addr',
+		'IP Address',
+		$pconfig['auth_server_addr']
+	))->setHelp('IP address.  (Commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)');
+
+	$group->add(new Form_Input(
+		'auth_server_port',
+		'Port',
+		'number',
+		$pconfig['auth_server_port']
+	))->setHelp('Server port. Leave blank for the default port 1812');
+
+	$group->add(new Form_Input(
+		'auth_server_shared_secret',
+		'Shared secret',
+		'number',
+		$pconfig['auth_server_shared_secret']
+	))->setHelp('Shared secret');
+
+	$section->add($group);
+
+	$group = new Form_Group('Secondary 802.1X server');
+
+	$group->add(new Form_IpAddress(
+		'auth_server_addr2',
+		'IP Address',
+		$pconfig['auth_server_addr2']
+	))->setHelp('IP address.  (Commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)');
+
+	$group->add(new Form_Input(
+		'auth_server_port2',
+		'Port',
+		'number',
+		$pconfig['auth_server_port2']
+	))->setHelp('Server port. Leave blank for the default port 1812');
+
+	$group->add(new Form_Input(
+		'auth_server_shared_secret2',
+		'Shared secret',
+		'number',
+		$pconfig['auth_server_shared_secret2']
+	))->setHelp('Shared secret');
+
+	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'rsn_preauth',
+		'Authentication Roaming Preauth',
+		null,
+		$pconfig['rsn_preauth'],
+		'yes'
+	));
+
+	$form->add($section);
+}
+
+$section = new Form_Section('Private networks');
+
+$section->addInput(new Form_Checkbox(
+	'blockpriv',
+	'Block private networks',
+	'',
+	$pconfig['blockpriv'],
+	'yes'
+))->setHelp('Blocks traffic from IP addresses that are reserved for private networks per RFC 1918 (10/8, 172.16/12, 192.168/16) ' .
+			' as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network ' .
+			'lies in such a private address space, too.');
+
+	$section->addInput(new Form_Checkbox(
+	'blockbogons',
+	'Block bogon networks',
+	'',
+	$pconfig['blockbogons'],
+	'yes'
+))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
+			'never appear in the Internet routing table, and so should not appear as the source address in any packets you receive.' . '<br />' .
+			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Input(
+	'if',
+	null,
+	'hidden',
+	$if
+));
+
+if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
+	$form->addGlobal(new Form_Input(
+		'ppp_port',
+		null,
+		'hidden',
+		$pconfig['port']
+	));
 }
+
+$form->addGlobal(new Form_Input(
+	'ptpid',
+	null,
+	'hidden',
+	$pconfig['ptpid']
+));
 
 print($form);
 ?>
-	<form action="interfaces.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabs">
 
-						<?php
-							/* Wireless interface? */
-							if (isset($wancfg['wireless'])):
-						?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Common wireless configuration - Settings apply to all wireless networks on"); ?><?=$wlanbaseif?>.</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Persist common settings")?></td>
-							<td class="vtable">
-								<input name="persistcommonwireless" type="checkbox" value="yes" class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked=\"checked\""?> />
-								<br /><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments.")?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncellreq"><?=gettext("Standard"); ?></td>
-							<td class="vtable">
-							<select name="standard" class="formselect" id="standard">
-								<?php
-								$rowIndex = 0;
-								echo "<option ";
-								if ($pconfig['standard'] == "auto") {
-									echo "selected=\"selected\" ";
-								}
-								echo "value=\"auto\">auto</option>\n";
-								foreach ($wl_modes as $wl_standard => $wl_channels) {
-									$rowIndex++;
-									echo "<option ";
-									if ($pconfig['standard'] == "$wl_standard") {
-										echo "selected=\"selected\" ";
-									}
-									if ($pconfig['standard'] == "") {
-										if ($wl_standard == "11ng") {
-											echo "selected=\"selected\" ";
-										}
-									}
-									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
-								}
-								if ($rowIndex == 0) {
-									echo "<option></option>";
-								}
-								?>
-							</select>
-							</td>
-						</tr>
-						<?php if (isset($wl_modes['11g'])): ?>
-						<tr>
-							<td valign="top" class="vncellreq">802.11g OFDM <?=gettext("Protection Mode"); ?></td>
-							<td class="vtable">
-								<select name="protmode" class="formselect" id="protmode">
-									<option <?php if ($pconfig['protmode'] == 'off') echo "selected=\"selected\""?> value="off"><?=gettext("Protection mode off"); ?></option>
-									<option <?php if ($pconfig['protmode'] == 'cts') echo "selected=\"selected\""?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
-									<option <?php if ($pconfig['protmode'] == 'rtscts') echo "selected=\"selected\""?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
-								</select>
-								<br />
-								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network."); ?>
-								<br />
-							</td>
-						</tr>
-						<?php else: ?>
-						<input name="protmode" type="hidden" id="protmode" value="off" />
-						<?php endif; ?>
-						<?php /* txpower is disabled because of issues with it.
-						<tr>
-							<td valign="top" class="vncellreq"><?=gettext("Transmit power"); ?></td>
-							<td class="vtable">
-								<select name="txpower" class="formselect" id="txpower">
-									<?
-									for ($x = 99; $x > 0; $x--) {
-										if ($pconfig["txpower"] == $x) {
-											$SELECTED = " selected=\"selected\"";
-										} else {
-											$SELECTED = "";
-										}
-										echo "<option {$SELECTED}>{$x}</option>\n";
-									}
-									?>
-								</select><br />
-								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adapters support changing the transmit power setting."); ?>
-							</td>
-						</tr>*/
-						?>
-						<tr>
-							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
-							<td class="vtable">
-								<select name="channel" class="formselect" id="channel">
-									<option <?php if ($pconfig['channel'] == 0) echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
-									<?php
-									foreach ($wl_modes as $wl_standard => $wl_channels) {
-										if ($wl_standard == "11g") {
-											$wl_standard = "11b/g";
-										} else if ($wl_standard == "11ng") {
-											$wl_standard = "11b/g/n";
-										} else if ($wl_standard == "11na") {
-											$wl_standard = "11a/n";
-										}
-										foreach ($wl_channels as $wl_channel) {
-											echo "<option ";
-											if ($pconfig['channel'] == "$wl_channel") {
-												echo "selected=\"selected\" ";
-											}
-											echo "value=\"$wl_channel\">$wl_standard - $wl_channel";
-											if (isset($wl_chaninfo[$wl_channel])) {
-												echo " ({$wl_chaninfo[$wl_channel][1]} @ {$wl_chaninfo[$wl_channel][2]} / {$wl_chaninfo[$wl_channel][3]})";
-											}
-											echo "</option>\n";
-										}
-									}
-									?>
-								</select>
-								<br />
-								<?=gettext("Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)"); ?>
-								<br />
-								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above."); ?>
-							</td>
-						</tr>
-						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Antenna settings"); ?></td>
-							<td class="vtable">
-								<table border="0" cellpadding="0" cellspacing="0" summary="antenna settings">
-									<tr>
-										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])): ?>
-										<td>
-											<?=gettext("Diversity"); ?><br />
-											<select name="diversity" class="formselect" id="diversity">
-												<option <?php if (!isset($pconfig['diversity'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['diversity'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Off"); ?></option>
-												<option <?php if ($pconfig['diversity'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("On"); ?></option>
-											</select>
-										</td>
-										<td>&nbsp;&nbsp;</td>
-										<?php endif; ?>
-										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])): ?>
-										<td>
-											<?=gettext("Transmit antenna"); ?><br />
-											<select name="txantenna" class="formselect" id="txantenna">
-												<option <?php if (!isset($pconfig['txantenna'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '2') echo "selected=\"selected\""; ?> value="2"><?=gettext("#2"); ?></option>
-											</select>
-										</td>
-										<td>&nbsp;&nbsp;</td>
-										<?php endif; ?>
-										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
-										<td>
-											<?=gettext("Receive antenna"); ?><br />
-											<select name="rxantenna" class="formselect" id="rxantenna">
-												<option <?php if (!isset($pconfig['rxantenna'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '2') echo "selected=\"selected\""; ?> value="2"><?=gettext("#2"); ?></option>
-											</select>
-										</td>
-										<?php endif; ?>
-									</tr>
-								</table>
-								<br />
-								<?=gettext("Note: The antenna numbers do not always match up with the labels on the card."); ?>
-							</td>
-						</tr>
-						<?php endif; ?>
-						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])): ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>
-							<td class="vtable">
-								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance'])?>" />
-								<br />
-								<?=gettext("Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client"); ?><br />
-								<?=gettext("(measured in meters)"); ?>
-							</td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Regulatory settings"); ?></td>
-							<td class="vtable">
-								<?=gettext("Regulatory domain"); ?><br />
-								<select name="regdomain" class="formselect" id="regdomain">
-									<option <?php if (empty($pconfig['regdomain'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-									<?php
-									foreach ($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
-										echo "<option ";
-										if ($pconfig['regdomain'] == $wl_regdomains_attr[$wl_regdomain_key]['ID']) {
-											echo "selected=\"selected\" ";
-										}
-										echo "value=\"{$wl_regdomains_attr[$wl_regdomain_key]['ID']}\">{$wl_regdomain['name']}</option>\n";
-									}
-									?>
-								</select>
-								<br />
-								<?=gettext("Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work."); ?>
-								<br /><br />
-								<?=gettext("Country (listed with country code and regulatory domain)"); ?><br />
-								<select name="regcountry" class="formselect" id="regcountry">
-									<option <?php if (empty($pconfig['regcountry'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-									<?php
-									foreach ($wl_countries as $wl_country_key => $wl_country) {
-										echo "<option ";
-										if ($pconfig['regcountry'] == $wl_countries_attr[$wl_country_key]['ID']) {
-											echo "selected=\"selected\" ";
-										}
-										echo "value=\"{$wl_countries_attr[$wl_country_key]['ID']}\">{$wl_country['name']} -- ({$wl_countries_attr[$wl_country_key]['ID']}, " . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']) . ")</option>\n";
-									}
-									?>
-								</select>
-								<br />
-								<?=gettext("Note: Any country setting other than \"Default\" will override the regulatory domain setting"); ?>.
-								<br /><br />
-								<?=gettext("Location"); ?><br />
-								<select name="reglocation" class="formselect" id="reglocation">
-									<option <?php if (empty($pconfig['reglocation'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'indoor') echo "selected=\"selected\""; ?> value="indoor"><?=gettext("Indoor"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'outdoor') echo "selected=\"selected\""; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'anywhere') echo "selected=\"selected\""; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
-								</select>
-								<br /><br />
-								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended."); ?>
-								<br />
-								<?=gettext("Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" height="16"></td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Network-specific wireless configuration")?></td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
-							<td class="vtable">
-								<select name="mode" class="formselect" id="mode">
-									<option <?php if ($pconfig['mode'] == 'bss') echo "selected=\"selected\""?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
-									<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected=\"selected\""?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
-									<option <?php if ($pconfig['mode'] == 'hostap') echo "selected=\"selected\""?> value="hostap"><?=gettext("Access Point"); ?></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
-							<td class="vtable">
-								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>" />
-								<br />
-								<?=gettext("Note: Only required in Access Point mode. If left blank in Ad-hoc or Infrastructure mode, this interface will connect to any available SSID"); ?>
-							</td>
-						</tr>
-						<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Minimum wireless standard"); ?></td>
-							<td class="vtable">
-								<select name="puremode" class="formselect" id="puremode">
-									<option <?php if ($pconfig['puremode'] == 'any') echo "selected=\"selected\""?> value="any"><?=gettext("Any"); ?></option>
-									<?php if (isset($wl_modes['11g'])): ?>
-									<option <?php if ($pconfig['puremode'] == '11g') echo "selected=\"selected\""?> value="11g"><?=gettext("802.11g"); ?></option>
-									<?php endif; ?>
-									<option <?php if ($pconfig['puremode'] == '11n') echo "selected=\"selected\""?> value="11n"><?=gettext("802.11n"); ?></option>
-								</select>
-								<br />
-								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)."); ?>
-							</td>
-						</tr>
-						<?php elseif (isset($wl_modes['11g'])): ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("802.11g only"); ?></td>
-							<td class="vtable">
-								<input name="puremode" type="checkbox" value="11g" class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked=\"checked\""?> />
-								<br /><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)."); ?>
-							</td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Allow intra-BSS communication"); ?></td>
-							<td class="vtable">
-								<input name="apbridge_enable" type="checkbox" value="yes" class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked=\"checked\""?> />
-								<br />
-								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly."); ?>
-								<br />
-								<?=gettext("Disabling the internal bridging is useful when traffic is to be processed with packet filtering."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
-							<td class="vtable">
-								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked=\"checked\""?> />
-								<br /><?=gettext("Setting this option will force the card to use WME (wireless QoS)."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Enable Hide SSID"); ?></td>
-							<td class="vtable">
-								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked=\"checked\""?> />
-								<br />
-								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
-								<br />
-								<?=gettext("(this might create problems for some clients)."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("WEP"); ?></td>
-							<td class="vtable">
-								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked=\"checked\""; ?> />
-								<strong><?=gettext("Enable WEP"); ?></strong>
-								<table border="0" cellspacing="0" cellpadding="0" summary="wep">
-									<tr>
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>
-										<td>&nbsp;<?=gettext("TX key"); ?>&nbsp;</td>
-									</tr>
-									<tr>
-										<td><?=gettext("Key 1:"); ?>&nbsp;&nbsp;</td>
-										<td>
-											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1'])?>" />
-										</td>
-										<td align="center">
-											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked=\"checked\""?> />
-										</td>
-									</tr>
-									<tr>
-										<td><?=gettext("Key 2:"); ?>&nbsp;&nbsp;</td>
-										<td>
-											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2'])?>" />
-										</td>
-										<td align="center">
-											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked=\"checked\""?> />
-										</td>
-									</tr>
-									<tr>
-										<td><?=gettext("Key 3:"); ?>&nbsp;&nbsp;</td>
-										<td>
-											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3'])?>" />
-										</td>
-										<td align="center">
-											<input name="txkey" type="radio" value="3" <?php if ($pconfig['txkey'] == 3) echo "checked=\"checked\""?> />
-										</td>
-									</tr>
-									<tr>
-										<td><?=gettext("Key 4:"); ?>&nbsp;&nbsp;</td>
-										<td>
-											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4'])?>" />
-										</td>
-										<td align="center">
-											<input name="txkey" type="radio" value="4" <?php if ($pconfig['txkey'] == 4) echo "checked=\"checked\""?> />
-										</td>
-									</tr>
-								</table>
-								<br />
-								<?=gettext("40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by '0x'."); ?><br />
-								<?=gettext("104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("WPA"); ?></td>
-							<td class="vtable">
-								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked=\"checked\""; ?> />
-								<strong><?=gettext("Enable WPA"); ?></strong>
-								<br /><br />
-								<table border="0" cellspacing="0" cellpadding="0" summary="wpa">
-									<tr>
-										<td>&nbsp;</td>
-										<td>&nbsp;<?=gettext("WPA Pre-Shared Key"); ?>&nbsp;</td>
-									</tr>
-									<tr>
-										<td><?=gettext("PSK:"); ?>&nbsp;&nbsp;</td>
-										<td>
-											<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase'])?>" />
-										</td>
-									</tr>
-								</table>
-								<br /><?=gettext("WPA Passphrase must be between 8 and 63 characters long."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("WPA Mode"); ?></td>
-							<td class="vtable">
-								<select name="wpa_mode" class="formselect" id="wpa_mode">
-									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected=\"selected\""?> value="1"><?=gettext("WPA"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '2' || !isset($pconfig['wpa_mode'])) echo "selected=\"selected\""?> value="2"><?=gettext("WPA2"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected=\"selected\""?> value="3"><?=gettext("Both"); ?></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("WPA Key Management Mode"); ?></td>
-							<td class="vtable">
-								<select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected=\"selected\""?> value="WPA-PSK"><?=gettext("Pre-Shared Key"); ?></option>
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected=\"selected\""?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected=\"selected\""?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
-							<td class="vtable">
-								<select name="auth_algs" class="formselect" id="auth_algs">
-									<option <?php if ($pconfig['auth_algs'] == '1') echo "selected=\"selected\""?> value="1"><?=gettext("Open System Authentication"); ?></option>
-									<option <?php if ($pconfig['auth_algs'] == '2') echo "selected=\"selected\""?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
-									<option <?php if ($pconfig['auth_algs'] == '3') echo "selected=\"selected\""?> value="3"><?=gettext("Both"); ?></option>
-								</select>
-								<br /><?=gettext("Note: Shared Key Authentication requires WEP."); ?><br />
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("WPA Pairwise"); ?></td>
-							<td class="vtable">
-								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected=\"selected\""?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP' || !isset($pconfig['wpa_pairwise'])) echo "selected=\"selected\""?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected=\"selected\""?> value="TKIP"><?=gettext("TKIP"); ?></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
-							<td class="vtable">
-								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?=htmlspecialchars($pconfig['wpa_group_rekey']) ? $pconfig['wpa_group_rekey'] : "60"?>" />
-								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
-							<td class="vtable">
-								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?=htmlspecialchars($pconfig['wpa_gmk_rekey']) ? $pconfig['wpa_gmk_rekey'] : "3600"?>" />
-								<br /><?=gettext("Specified in seconds. Allowed values are 1-9999. Must be longer than Key Rotation time."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
-							<td class="vtable">
-								<input name="wpa_strict_rekey" type="checkbox" value="yes" class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked=\"checked\""; ?> />
-								<br /><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
-							<td class="vtable">
-								<input name="ieee8021x" type="checkbox" value="yes" class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked=\"checked\""?> />
-								<br /><?=gettext("Setting this option will enable 802.1X authentication."); ?>
-								<br /><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span><?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server IP Address"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_addr" id="auth_server_addr" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr'])?>" />
-								<br /><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Port"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port'])?>" />
-								<br /><?=gettext("Leave blank for the default port 1812."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Shared Secret"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret'])?>" />
-								<br />
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server IP Address"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_addr2" id="auth_server_addr2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr2'])?>" />
-								<br /><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2'])?>" />
-								<br /><?=gettext("Leave blank for the default port 1812."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Shared Secret"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_shared_secret2" id="auth_server_shared_secret2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret2'])?>" />
-								<br />
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
-							<td class="vtable">
-								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked=\"checked\""; ?> />
-								<br />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" height="16"></td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Private networks"); ?></td>
-						</tr>
-						<tr>
-							<td valign="middle" class="vncell">&nbsp;</td>
-							<td class="vtable">
-								<a name="rfc1918"></a>
-								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked=\"checked\""; ?> />
-								<strong><?=gettext("Block private networks"); ?></strong><br />
-								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
-								"for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
-								<?=gettext("well as loopback addresses (127/8)."); ?>&nbsp;&nbsp; <?=gettext("You should generally " .
-								"leave this option turned on, unless your WAN network lies in such " .
-								"a private address space, too."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="middle" class="vncell">&nbsp;</td>
-							<td class="vtable">
-								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked=\"checked\""; ?> />
-								<strong><?=gettext("Block bogon networks"); ?></strong><br />
-								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
-								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;
-								<?=gettext("Bogons are prefixes that should never appear in the Internet routing table, " .
-								"and obviously should not appear as the source address in any packets you receive."); ?>
-								<br /><br />
-								<?=gettext("Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.")?>
-							</td>
-						</tr>
-					</table><!-- End "allcfg" table -->
-					</div><!-- End "allcfg" div -->
-
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="buttons">
-						<tr>
-							<td width="22%" valign="top">
-								&nbsp;
-							</td>
-							<td width="78%">
-								<br />
-								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel")?>" onclick="window.location.href='<?=$referer?>'" />
-								<input name="referer" type="hidden" value="<?=$referer?>" />
-								<input name="if" type="hidden" id="if" value="<?=htmlspecialchars($if)?>" />
-								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
-								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port'])?>" />
-								<?php endif; ?>
-								<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid'])?>" />
-							</td>
-						</tr>
-					</table>
-
-	</form>
-	
 <script type="text/javascript">
 	//<![CDATA[
-events.push(function(){	
-	
+events.push(function(){
+
 /*
 	function updateType(t) {
 		switch (t) {
@@ -3309,7 +3206,7 @@ events.push(function(){
 			jQuery('#'+t).show();
 		}
 	}
-	
+
 	function updateTypeSix(t) {
 		if (!isNaN(t[0])) t = '_' + t;
 		switch (t) {
@@ -3552,7 +3449,7 @@ events.push(function(){
 					success: save_callback
 				});
 		}
-		
+
 		function hide_add_gatewaysave_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
 			jQuery('#statusv6').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> One moment please...');
@@ -3575,7 +3472,7 @@ events.push(function(){
 					success: save_callback_v6
 				});
 		}
-		
+
 		function addOption(selectbox, text, value)
 		{
 			var optn = document.createElement("OPTION");
@@ -3585,7 +3482,7 @@ events.push(function(){
 			selectbox.prop('selectedIndex', selectbox.children().length - 1);
 			jQuery('#notebox').html("<p><strong><?=gettext("NOTE:"); ?><\/strong><?=gettext("You can manage Gateways"); ?><a target='_blank' href='system_gateways.php'><?=gettext("here"); ?><\/a>.<\/p>");
 		}
-		
+
 		function addOption_v6(selectbox, text, value)
 		{
 			var optn = document.createElement("OPTION");
@@ -3595,7 +3492,7 @@ events.push(function(){
 			selectbox.prop('selectedIndex', selectbox.children().length - 1);
 			jQuery('#noteboxv6').html("<p><strong><?=gettext("NOTE:"); ?><\/strong><?=gettext("You can manage Gateways"); ?><a target='_blank' href='system_gateways.php'><?=gettext("here"); ?><\/a>.<\/p>");
 		}
-		
+
 		function report_failure(request, textStatus, errorThrown) {
 			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 				alert(request.responseText);
@@ -3604,7 +3501,7 @@ events.push(function(){
 			}
 			hide_add_gateway();
 		}
-		
+
 		function report_failure_v6(request, textStatus, errorThrown) {
 			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 				alert(request.responseText);
@@ -3613,7 +3510,7 @@ events.push(function(){
 			}
 			hide_add_gateway_v6();
 		}
-		
+
 		function save_callback(response) {
 			if (response) {
 				document.getElementById("addgateway").style.display = 'none';
@@ -3627,13 +3524,13 @@ events.push(function(){
 				report_failure();
 			}
 		}
-		
+
 		function show_advanced_media() {
 			document.getElementById("showadvmediabox").innerHTML='';
 			aodiv = document.getElementById('showmediaadv');
 			aodiv.style.display = "block";
 		}
-		
+
 		function save_callback_v6(response_v6) {
 			if (response_v6) {
 				document.getElementById("addgatewayv6").style.display = 'none';
@@ -3647,8 +3544,8 @@ events.push(function(){
 				report_failure_v6();
 			}
 		}
-		
-		
+
+
 	function customdhcpptcheckradiobuton(T, BUTTON) {
 		for (var i = 0; i < T.length; i++) {
 			T[i].checked = false;
@@ -3691,7 +3588,7 @@ events.push(function(){
 
 		if (document.iform.adv_dhcp_config_file_override.checked) {
 			show_hide_adv_dhcp('none', 'none', '');
-		} else if (document.iform.adv_dhcp_config_advanced.checked)	{
+		} else if (document.iform.adv_dhcp_config_advanced.checked) {
 			show_hide_adv_dhcp('', '', 'none');
 		} else {
 			show_hide_adv_dhcp('', 'none', 'none');
@@ -3771,7 +3668,7 @@ events.push(function(){
 				document.iform.adv_dhcp6_id_assoc_statement_prefix_enable.checked = true;
 			}
 			show_adv_dhcp6_config(document.iform.adv_dhcp6_id_assoc_statement_prefix_enable);
-									
+
 	function show_hide_adv_dhcp(basic, advanced, override) {
 
 		document.getElementById("show_basic_dhcphostname").style.display = basic;
@@ -3796,7 +3693,7 @@ events.push(function(){
 		document.iform.adv_dhcp_config_file_override.checked = true;
 	}
 	show_adv_dhcp_config(document.iform.adv_dhcp_config_file_override);
-*/																					
+*/
 	// Make the ‘Copy My MAC’ button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
 
@@ -3804,7 +3701,7 @@ events.push(function(){
 	$("#btnmymac").click(function() {
 		$('#mac').val('<?=$mymac?>');
 	});
-	
+
 	$('#country').on('change', function() {
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&country=' + this.value + '&type=' + $('#type').val();
 	});
@@ -3812,7 +3709,7 @@ events.push(function(){
 	$('#provider').on('change', function() {
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&provider=' + this.value + '&type=' + $('#type').val() + '&country=' + $('#country').val();
 	});
-	
+
 <?php
 		echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
@@ -3823,4 +3720,4 @@ events.push(function(){
 	</script>
 
 
-	<?php include("foot.inc"); 
+	<?php include("foot.inc");

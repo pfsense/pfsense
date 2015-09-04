@@ -197,6 +197,7 @@ if ($_POST) {
 			"name type ldap_host ldap_port " .
 			"ldap_urltype ldap_protver ldap_scope " .
 			"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
+
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Type"),
@@ -352,13 +353,16 @@ if ($_POST) {
 
 		pfSenseHeader("system_authservers.php");
 	}
+	else {
+		$pconfig = $_POST;	// Restore the form contents so the user doesn't have to re-eneter it
+	}
 }
 
 include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -540,10 +544,11 @@ $section->addInput(new Form_Checkbox(
 	'Extended query',
 	'Enable extended query',
 	$pconfig['ldap_extended_enabled']
-))->toggles('.toggle-extended');
+));
 
 $group = new Form_Group('Query');
-$group->addClass('toggle-extended collapse');
+$group->addClass('extended');
+
 $group->add(new Form_Input(
 	'ldap_extended_query',
 	'Query',
@@ -699,17 +704,17 @@ print $form;
 events.push(function(){
 	function select_clicked() {
 		if (document.getElementById("ldap_port").value == '' ||
-		    document.getElementById("ldap_host").value == '' ||
-		    document.getElementById("ldap_scope").value == '' ||
-		    document.getElementById("ldap_basedn").value == '' ||
-		    document.getElementById("ldapauthcontainers").value == '') {
+			document.getElementById("ldap_host").value == '' ||
+			document.getElementById("ldap_scope").value == '' ||
+			document.getElementById("ldap_basedn").value == '' ||
+			document.getElementById("ldapauthcontainers").value == '') {
 			alert("<?=gettext("Please fill the required values.");?>");
 			return;
 		}
-		
+
 		if (!document.getElementById("ldap_anon").checked) {
 			if (document.getElementById("ldap_binddn").value == '' ||
-			    document.getElementById("ldap_bindpw").value == '') {
+				document.getElementById("ldap_bindpw").value == '') {
 				alert("<?=gettext("Please fill the bind username/password.");?>");
 				return;
 			}
@@ -729,28 +734,28 @@ events.push(function(){
 		<?php else: ?>
 			url += '&cert=';
 		<?php endif; ?>
-	
+
 		var oWin = window.open(url, "pfSensePop", "width=620,height=400,top=150,left=150");
 		if (oWin == null || typeof(oWin) == "undefined") {
-			alert("<?=gettext('Popup blocker detected.  Action aborted.');?>");
+			alert("<?=gettext('Popup blocker detected.	Action aborted.');?>");
 		}
 	}
-	
+
 	function set_ldap_port() {
-        if($('#ldap_urltype').find(":selected").index() == 0)
+		if($('#ldap_urltype').find(":selected").index() == 0)
 			$('#ldap_port').val('389');
 		else
-			$('#ldap_port').val('636');		
+			$('#ldap_port').val('636');
 	}
-	
-    // Hides all elements of the specified class. This will usually be a section
-    function hideClass(s_class, hide) {
-        if(hide)
-            $('.' + s_class).hide();
-        else
-            $('.' + s_class).show();
-    }
-    
+
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
 	function ldap_tmplchange() {
 		switch ($('#ldap_tmpltype').find(":selected").index()) {
 <?php
@@ -773,8 +778,8 @@ events.push(function(){
 	ldap_tmplchange();
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	$("#Select").prop('type','button');
+	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
 
-		
 	if($('#ldap_port').val() == "")
 		set_ldap_port();
 
@@ -782,12 +787,12 @@ events.push(function(){
 	if($act == 'edit') {
 ?>
 		$('#type option:not(:selected)').each(function(){
- 			$(this).attr('disabled', 'disabled');
+			$(this).attr('disabled', 'disabled');
 		});
-		
+
 <?php
 		if(!$input_errors) {
-?>	
+?>
 		$('#name').prop("readonly", true);
 <?php
 		}
@@ -798,17 +803,22 @@ events.push(function(){
 		ldap_tmplchange();
 	});
 
-    $('#ldap_anon').click(function () {
-        hideClass('ldapanon', this.checked);
-    });
-    
+	$('#ldap_anon').click(function () {
+		hideClass('ldapanon', this.checked);
+	});
+
 	$('#ldap_urltype').on('change', function() {
 		set_ldap_port();
-    }); 
-    
-    $('#Select').click(function () {
-        select_clicked();
-    });   
+	});
+
+	$('#Select').click(function () {
+		select_clicked();
+	});
+	
+	$('#ldap_extended_enabled').click(function () {
+		hideClass('extended', !this.checked);
+	});
+	
 });
 //]]>
 </script>

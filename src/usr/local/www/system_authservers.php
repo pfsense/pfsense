@@ -779,7 +779,11 @@ events.push(function(){
 	}
 
 	// On page load . .
+	
+<?php if ($act != 'edit') : ?>
 	ldap_tmplchange();
+<?php endif; ?>
+
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	$("#Select").prop('type','button');
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));

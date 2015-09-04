@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ "${2}" = "POST-INSTALL" ]; then
+	exit 0
+fi
+
+if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
+	echo "===> ERROR: base tarball not found!"
+	exit 1
+fi
+
+echo "===> Removing schg flag from base files"
+
+# Cleanup schg flags
+chflags -R noschg \
+	/bin \
+	/sbin \
+	/usr/bin \
+	/usr/sbin \
+	/libexec \
+	/lib \
+	/usr/lib >/dev/null 2>&1
+
+echo "===> Extracting new base tarball"
+
+# Install new base files
+tar -C / -xJPUf /usr/local/share/%%PRODUCT_NAME%%/base.txz
+
+exit $?

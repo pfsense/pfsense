@@ -282,7 +282,7 @@ fi
 
 # Define base package version, based on date for snaps
 CORE_PKG_VERSION=${PRODUCT_VERSION%%-*}
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -z "${_IS_RELEASE}" ]; then
 	CORE_PKG_VERSION="${CORE_PKG_VERSION}.${DATESTRING}"
 fi
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}

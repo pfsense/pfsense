@@ -532,7 +532,7 @@ $group->add(new Form_IpAddress(
 	'localid_address',
 	null,
 	$pconfig['localid_address']
-))->setHelp('Address')->addMask(localid_netbits, $pconfig['localid_netbits']);
+))->setHelp('Address')->addVPNMask(localid_netbits, $pconfig['localid_netbits']);
 
 $section->add($group);
 
@@ -557,7 +557,7 @@ $group->add(new Form_IpAddress(
 	'natlocalid_address',
 	null,
 	$pconfig['localid_address']
-))->setHelp('Address')->addMask(natlocalid_netbits, $pconfig['natlocalid_netbits']);
+))->setHelp('Address')->addVPNMask(natlocalid_netbits, $pconfig['natlocalid_netbits']);
 
 $group->setHelp('If NAT/BINAT is required on this network specify the address to be translated');
 $section->add($group);
@@ -576,7 +576,7 @@ $group->add(new Form_IpAddress(
 	'remoteid_address',
 	null,
 	$pconfig['remoteid_address']
-))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits']);
+))->setHelp('Address')->addVPNMask(remoteid_netbits, $pconfig['remoteid_netbits']);
 
 $section->add($group);
 

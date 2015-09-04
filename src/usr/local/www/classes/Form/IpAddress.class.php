@@ -50,6 +50,19 @@ class Form_IpAddress extends Form_Input
 		return $this;
 	}
 
+	// Masks on vpn_ipsec* pages allow a mask of '0'
+	public function addVPNMask($name, $value, $max = 128)
+	{
+		$this->_mask = new Form_Select(
+			$name,
+			null,
+			$value,
+			array_combine(range($max, 0), range($max, 0))
+		);
+
+		return $this;
+	}
+	
 	public function setIsRepeated()
 	{
 		if (isset($this->_mask))

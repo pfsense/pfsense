@@ -353,10 +353,15 @@ if ($_POST) {
 
 		pfSenseHeader("system_authservers.php");
 	}
-	else {
-		$pconfig = $_POST;	// Restore the form contents so the user doesn't have to re-eneter it
-	}
 }
+
+// On error, restore the form contents so the user doesn't have to re-eneter it
+if($_POST && $input_errors) {
+	$pconfig = $_POST;
+	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
+	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
+}
+
 
 include("head.inc");
 
@@ -530,11 +535,10 @@ $group->add(new Form_Input(
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
 	'base dn above or you can specify full container path containing a dc= '.
 	'component.<br/>Example: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers');
-#FIXME
+
 $group->add(new Form_Button(
 	'Select',
 	'Select a container'
-//	'/system_usermanager_settings_ldapacpicker.php?port=389&host=192.168.1.1&scope=one&basedn=CN=pfsense&binddn=&bindpw=&urltype=TCP%20-%20Standard&proto=3&authcn=OU=Staff&cert='
 ))->removeClass('btn-primary')->addClass('btn-default');
 
 $section->add($group);
@@ -814,11 +818,11 @@ events.push(function(){
 	$('#Select').click(function () {
 		select_clicked();
 	});
-	
+
 	$('#ldap_extended_enabled').click(function () {
 		hideClass('extended', !this.checked);
 	});
-	
+
 });
 //]]>
 </script>

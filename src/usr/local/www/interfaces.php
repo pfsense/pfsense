@@ -2356,7 +2356,7 @@ $section->addInput(new Form_Input(
 	'gateway-6rd',
 	'6RD Border relay',
 	'text',
-	$pconfig['prefix-6rd']
+	$pconfig['gateway-6rd']
 ))->sethelp('6RD IPv4 gateway address assigned by your ISP');
 
 $section->addInput(new Form_Select(

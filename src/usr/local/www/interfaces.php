@@ -1677,7 +1677,7 @@ $closehead = false;
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -2363,7 +2363,7 @@ $section->addInput(new Form_Select(
 	'prefix-6rd-v4plen',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['prefix-6rd-v4plen'],
-	array_combine(range(0, 32), range(0,32))
+	array_combine(range(0, 32), range(0, 32))
 ))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');
 
 $form->add($section);
@@ -2467,7 +2467,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_password']
 ));
 
-if($pconfig['type'] == 'ppp') {
+if ($pconfig['type'] == 'ppp') {
 	$section->addInput(new Form_Input(
 		'phone',
 		'Phone number',
@@ -2725,13 +2725,13 @@ if (isset($wancfg['wireless'])) {
 
 	$mode_list = ['auto' => 'Auto'];
 
-	if(is_array($wl_modes)) {
+	if (is_array($wl_modes)) {
 		foreach ($wl_modes as $wl_standard => $wl_channels) {
 			$mode_list[$wl_standard] = '802.' . $wl_standard;
 		}
 	}
 
-	if(count($mode_list) == 1)
+	if (count($mode_list) == 1)
 		$mode_list[''] = '';
 
 	$section->addInput(new Form_Select(
@@ -2761,7 +2761,7 @@ if (isset($wancfg['wireless'])) {
 
 	$mode_list = ['0' => 'Auto'];
 
-	if(is_array($wl_modes)) {
+	if (is_array($wl_modes)) {
 		foreach ($wl_modes as $wl_standard => $wl_channels) {
 			if ($wl_standard == "11g") {
 				$wl_standard = "11b/g";
@@ -2839,7 +2839,7 @@ if (isset($wancfg['wireless'])) {
 
 	$domain_list = array("" => 'Default');
 
-	if(is_array($wl_regdomains)) {
+	if (is_array($wl_regdomains)) {
 		foreach ($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
 			$domain_list[$wl_regdomains_attr[$wl_regdomain_key]['ID']] = $wl_regdomain['name'];
 		}
@@ -2854,7 +2854,7 @@ if (isset($wancfg['wireless'])) {
 
 	$country_list = array('' => 'Default');
 
-	if(is_array($wl_countries)) {
+	if (is_array($wl_countries)) {
 		foreach ($wl_countries as $wl_country_key => $wl_country) {
 			$country_list[	$wl_countries_attr[$wl_country_key]['ID']  ] = $wl_country['name'] ; //. ' -- (' . $wl_countries_attr[$wl_country_key]['ID'] . ', ' . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']);
 		}

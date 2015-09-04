@@ -167,13 +167,13 @@ function build_parent_list() {
 		}
 	}
 
-	if($count > 0)
+	if ($count > 0)
 		return($parentlist);
 	else
 		return(array('0' => gettext('None available')));
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)

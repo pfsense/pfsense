@@ -113,7 +113,7 @@ print_info_box(gettext('Interface Groups allow you to setup rules for multiple i
 		unset($iflist);
 		$memberses = implode(", ", $memberses_arr);
 		echo $memberses;
-		if(count($members_arr) >= 10) {
+		if (count($members_arr) >= 10) {
 			echo '&hellip;';
 		}
 ?>

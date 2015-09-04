@@ -145,7 +145,7 @@ function build_parent_list() {
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GIF"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIF"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require_once('classes/Form.class.php');
@@ -171,13 +171,13 @@ $section->addInput(new Form_IpAddress(
 	'tunnel-local-addr',
 	'GIF tunnel local address',
 	$pconfig['tunnel-local-addr']
-))->setHelp('Local gif tunnel endpoint.');
+))->setHelp('Local GIF tunnel endpoint.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-remote-addr',
 	'GIF tunnel remote address',
 	$pconfig['tunnel-remote-addr']
-))->setHelp('Remote GIF address endpoint.');
+))->setHelp('Remote GIF tunnel endpoint.');
 
 $section->addInput(new Form_Select(
 	'tunnel-remote-net',

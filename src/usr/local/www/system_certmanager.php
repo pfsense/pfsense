@@ -234,6 +234,13 @@ if ($act == "csr") {
 }
 
 if ($_POST) {
+	
+	// This is just the blank altername name that is added for display purposes. We don't want to validate/save it
+	if($_POST['altname_value0']  == "") {
+		unset($_POST['altname_type0']);
+		unset($_POST['altname_value0']);
+	}
+	
 	if ($_POST['save'] == gettext("Save")) {
 		$input_errors = array();
 		$pconfig = $_POST;
@@ -304,10 +311,8 @@ if ($_POST) {
 					$field = 'value';
 				}
 
-
-
 				if (ctype_digit($entry)) {
-					$entry++;
+					$entry++;	// Pre-bootstrap code is one-indexed, but the bootstrap code is 0-indexed
 					$altnames[$entry][$field] = $value;
 				}
 			}
@@ -546,8 +551,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+	
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
@@ -1213,6 +1219,7 @@ events.push(function(){
 		else
 			alert('<?php echo gettext("You may not delet the last one!")?>');
 	});
+
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {
 

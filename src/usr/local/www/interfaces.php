@@ -2612,7 +2612,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 0 * * 0")',
+	'Reset at each week ("0 0 * * 0")',
 	$pconfig['pppoe_weekly'],
 	'weekly'
 ))->displayAsRadio();
@@ -2620,7 +2620,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 0 * * *")',
+	'Reset at each day ("0 0 * * *")',
 	$pconfig['pppoe_daily'],
 	'daily'
 ))->displayAsRadio();
@@ -2628,7 +2628,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
 	null,
-	'Reset at each month ("0 * * * *")',
+	'Reset at each hour ("0 * * * *")',
 	$pconfig['pppoe_hourly'],
 	'hourly'
 ))->displayAsRadio();

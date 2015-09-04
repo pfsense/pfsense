@@ -1300,7 +1300,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$portValues[$port] = $portName.' ('. $port .')';
 
 	$group = new Form_Group($name .' port range');
-	$group->addClass('srcportrange');
+
+	$group->addClass($type . 'portrange');
 
 	$group->add(new Form_Select(
 		$type .'beginport',
@@ -1816,7 +1817,7 @@ events.push(function(){
 			hideClass('tcpflags', true);
 		}
 
-		// Disable OS knob if the proto is not TCP.
+		// Disable OS if the proto is not TCP.
 		if ($('#proto').find(":selected").index() < 1) {
 			disableInput('os', false);
 		} else {
@@ -1849,7 +1850,7 @@ events.push(function(){
 			hideInput('icmp6type', true);
 		}
 
-		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
+		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
 			hideClass('srcprtr', false);
 		} else {
@@ -1867,16 +1868,19 @@ events.push(function(){
 	}
 
 	// On initial page load
-	ext_change();
-	typesel_change();
 	proto_change();
+
+	ext_change();
+
+	typesel_change();
+
 	hideClass('advanced-options', true);
 	hideClass('srcportrange', true);
-
+	
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		show_source_port_range();
 	<?php endif; ?>
-
+	
 	// Make it a regular button, not a submit
 	$('#toggle-advanced').prop('type','button');
 	$("#btnsrcadv").prop('type','button');

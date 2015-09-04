@@ -287,10 +287,10 @@ case "${PRODUCT_VERSION##*-}" in
 	ALPHA|DEVELOPMENT)
 		export CORE_PKG_DATESTRING=".a.${PKG_DATESTRING}"
 		;;
-	BETA)
+	BETA*)
 		export CORE_PKG_DATESTRING=".b.${PKG_DATESTRING}"
 		;;
-	RC)
+	RC*)
 		export CORE_PKG_DATESTRING=".r.${PKG_DATESTRING}"
 		;;
 	*)

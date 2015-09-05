@@ -727,7 +727,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['localauth_priv']
 ));
 
-$group = new Form_Group('Radius protocol');
+$group = new Form_Group('RADIUS protocol');
 
 $group->add(new Form_Checkbox(
 	'radius_protocol',

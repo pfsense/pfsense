@@ -221,7 +221,7 @@ else :
 endif;
 ?>
 	<nav class="action-buttons">
-		<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+		<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
 	</nav>
 </div>
 

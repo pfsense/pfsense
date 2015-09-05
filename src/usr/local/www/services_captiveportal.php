@@ -566,9 +566,8 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maxprocperip'],
 	['min' => '0', 'max' => '100']
-))->setHelp('Timits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
-			'to the captive portal, but rather how many users can load the portal page or authenticate at the same time! ' .
-			'Possible setting allowed is: minimum 4 connections per client IP address, with a total maximum of 100 connections.');
+))->setHelp('Limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
+			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.'); 
 
 $section->addInput(new Form_Input(
 	'idletimeout',
@@ -644,7 +643,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable MAC filtering',
 	$pconfig['nomacfilter']
 ))->setHelp('If enabled no attempts will be made to ensure that the MAC address of clients stays the same while they are logged in. ' .
-			'This is required when the MAC address of the client cannot be determined (usually because there are routers betweenpfSenseand the clients). ' .
+			'This is required when the MAC address of the client cannot be determined (usually because there are routers between pfSense and the clients). ' .
 			'If this is enabled, RADIUS MAC authentication cannot be used.');
 
 $section->addInput(new Form_Checkbox(
@@ -652,7 +651,7 @@ $section->addInput(new Form_Checkbox(
 	'Pass-through MAC Auto Entry',
 	'Enable Pass-through MAC automatic additions',
 	$pconfig['passthrumacadd']
-))->setHelp(sprintf('If this enabled a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
+))->setHelp(sprintf('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry you either have to log in and remove it manually from the ' .
 			'%s or send a POST from another system.'  .
 			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>'));

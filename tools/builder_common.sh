@@ -1663,9 +1663,9 @@ poudriere_possible_archs() {
 
 	if [ -n "${ARCH_LIST}" ]; then
 		local _found=0
-		for _desired_arch in "${ARCH_LIST}"; do
+		for _desired_arch in ${ARCH_LIST}; do
 			_found=0
-			for _possible_arch in "${_archs}"; do
+			for _possible_arch in ${_archs}; do
 				if [ "${_desired_arch}" = "${_possible_arch}" ]; then
 					_found=1
 					break

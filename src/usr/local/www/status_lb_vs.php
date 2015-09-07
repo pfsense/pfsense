@@ -124,10 +124,18 @@ else {
 				if(!COLOR)
 					$bgcolor = WHITE;
 ?>
+<<<<<<< HEAD
 				<td bgcolor="<?=$bgcolor?>">
 					<?=$rdr_a[$vsent['name']]['status']?>
 				</td>
 				<td>
+=======
+					</td>
+					<td class="listbg" >
+						<?=htmlspecialchars($vsent['descr'];)?>
+					</td>
+				</tr>
+>>>>>>> Encode load balancer pool description to avoid XSS
 <?php
 					if (!empty($rdr_a[$vsent['name']]['total'])) { ?>
 						Total Sessions: <?=$rdr_a[$vsent['name']]['total']?><br>/><?php

@@ -155,8 +155,10 @@ print_error_pfS() {
 		echo "Log saved on ${LOGFILE}" && \
 		tail -n20 ${LOGFILE} >&2
 	echo
-	echo "Press enter to continue."
-	read ans
+	if [ -z "${NOT_INTERACTIVE}" ]; then
+		echo "Press enter to continue."
+		read ans
+	fi
 	kill $$
 	exit 1
 }

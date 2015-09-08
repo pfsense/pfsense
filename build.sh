@@ -71,8 +71,8 @@ usage() {
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports - Update poudriere ports tree"
-	echo "		--update-pkg-repo - Rebuild necessary ports on poudriere and update pkg repo"
+	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
 	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
@@ -87,6 +87,7 @@ unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
 unset SNAPSHOTS
+unset ARCH_LIST
 BUILDACTION="images"
 
 # Maybe use options for nocleans etc?
@@ -169,17 +170,15 @@ while test "$1" != ""; do
 			;;
 		--update-poudriere-jails)
 			BUILDACTION="update_poudriere_jails"
+			;;
+		-a)
 			shift
-			unset ARCH_LIST
-			if [ "${1}" = "-a" ]; then
-				shift
-				if [ $# -eq 0 ]; then
-					echo "-a needs extra parameter."
-					echo
-					usage
-				fi
-				export ARCH_LIST="${1}"
+			if [ $# -eq 0 ]; then
+				echo "-a needs extra parameter."
+				echo
+				usage
 			fi
+			export ARCH_LIST="${1}"
 			;;
 		--update-poudriere-ports)
 			BUILDACTION="update_poudriere_ports"

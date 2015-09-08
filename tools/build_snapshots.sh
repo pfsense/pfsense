@@ -30,6 +30,11 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Use an env var to let build.sh know we are running build_snapshots.sh
+# This will avoid build.sh to run in interactive mode and wait a key
+# to be pressed when something goes wrong
+export NOT_INTERACTIVE=1
+
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 

@@ -68,7 +68,7 @@ core_pkg_create_repo() {
 	fi
 
 	echo -n ">>> Creating core packages repository... "
-	if pkg repo -q -o "${CORE_PKG_PATH}" "${CORE_PKG_PATH}/All"; then
+	if pkg repo -q "${CORE_PKG_PATH}"; then
 		echo "Done!"
 	else
 		echo "Failed!"
@@ -155,8 +155,10 @@ print_error_pfS() {
 		echo "Log saved on ${LOGFILE}" && \
 		tail -n20 ${LOGFILE} >&2
 	echo
-	echo "Press enter to continue."
-	read ans
+	if [ -z "${NOT_INTERACTIVE}" ]; then
+		echo "Press enter to continue."
+		read ans
+	fi
 	kill $$
 	exit 1
 }
@@ -1661,6 +1663,24 @@ poudriere_possible_archs() {
 		fi
 	fi
 
+	if [ -n "${ARCH_LIST}" ]; then
+		local _found=0
+		for _desired_arch in ${ARCH_LIST}; do
+			_found=0
+			for _possible_arch in ${_archs}; do
+				if [ "${_desired_arch}" = "${_possible_arch}" ]; then
+					_found=1
+					break
+				fi
+			done
+			if [ ${_found} -eq 0 ]; then
+				echo ">>> ERROR: Impossible to build for arch: ${_desired_arch}"
+				print_error_pfS
+			fi
+		done
+		_archs="${ARCH_LIST}"
+	fi
+
 	echo ${_archs}
 }
 
@@ -1824,20 +1844,6 @@ poudriere_update_jails() {
 
 	local native_xtools=""
 	for jail_arch in ${_archs}; do
-		local _run=0
-		if [ -n "${ARCH_LIST}" ]; then
-			for _arch in ${ARCH_LIST}; do
-				if [ "${jail_arch##*.}" = "${_arch}" ]; then
-					_run=1
-				fi
-			done
-		else
-			_run=1
-		fi
-
-		[ ${_run} -eq 0 ] \
-			&& continue
-
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
 		if ! poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
@@ -2071,7 +2077,7 @@ snapshots_scp_files() {
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
 		${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	for i in "${FLASH_SIZE}"
+	for i in ${FLASH_SIZE}
 	do
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"

@@ -38,31 +38,19 @@ class Form_IpAddress extends Form_Input
 		$this->_attributes['pattern'] = '[a-f0-9:.]*';
 	}
 
-	public function addMask($name, $value, $max = 128)
+	// $min is provided to allow for VPN masks in which '0' is valid
+	public function addMask($name, $value, $max = 128, $min = 1)
 	{
 		$this->_mask = new Form_Select(
 			$name,
 			null,
 			$value,
-			array_combine(range($max, 1), range($max, 1))
+			array_combine(range($max, $min), range($max, $min))
 		);
 
 		return $this;
 	}
 
-	// Masks on vpn_ipsec* pages allow a mask of '0'
-	public function addVPNMask($name, $value, $max = 128)
-	{
-		$this->_mask = new Form_Select(
-			$name,
-			null,
-			$value,
-			array_combine(range($max, 0), range($max, 0))
-		);
-
-		return $this;
-	}
-	
 	public function setIsRepeated()
 	{
 		if (isset($this->_mask))

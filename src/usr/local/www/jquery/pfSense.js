@@ -95,9 +95,10 @@ $(function() {
 		});
 	})();
 
+	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPvd addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
-
+			
 		input.on('change', function(e){
 			var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
 			if (!isV6)
@@ -106,11 +107,11 @@ $(function() {
 			if (input.val() == "")
 				return;
 
-			while (select.options.length > max)
+			// Eat all of the options with a value greater than max. We don't want them to be available 
+			while (select.options[0].value > max)
 				select.remove(0);
-
-			if (select.options.length < max)
-			{
+			
+			if (select.options.length < max) {
 				for (var i=select.options.length; i<=max; i++)
 					select.options.add(new Option(i, i), 0);
 			}

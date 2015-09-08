@@ -1720,6 +1720,7 @@ if ($savemsg)
 
 
 require_once('classes/Form.class.php');
+require_once('classes/Modal.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -1828,49 +1829,55 @@ $group->add(new Form_Select(
 $group->add(new Form_Button(
 	'addgw',
 	'Add a new gateway'
-))->removeClass('btn-primary');
+))->removeClass('btn-primary')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+
+/*
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalHorizontal">
+    Launch Horizontal Form
+</button>
+*/
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none". ');
 
 $section->add($group);
 
-$group = new Form_group('New gateway');
+$form->add($section);
 
-$group->add(new Form_Checkbox(
+$modal = new Modal('New gateway', 'newgateway');
+
+$modal->addInput(new Form_Checkbox(
 	'defaultgw',
 	null,
 	'Default gateway',
 	($if == "wan" || $if == "WAN")
 ));
 
-$group->add(new Form_Input(
+$modal->addInput(new Form_Input(
 	'name',
 	'Gateway name',
 	'text',
 	$wancfg['descr'] . "GW"
 ))->setHelp('Name');
 
-$group->add(new Form_IpAddress(
+$modal->addInput(new Form_IpAddress(
 	'gatewayip',
 	'Gateway IPv4',
 	null
 ))->setHelp('IP address');
 
-$group->add(new Form_Input(
+$modal->addInput(new Form_Input(
 	'gatewaydescr',
 	'Description',
 	'text'
 ))->setHelp('Description');
 
-$group->add(new Form_Button(
+$modal->addInput(new Form_Button(
 	'add',
 	'Add'
 ))->removeClass('btn-primary')->addClass('btn-success');
 
-$section->add($group);
-
-$form->add($section);
+$form->add($modal);
 
 $section = new Form_Section('Static IPv6 configuration');
 $section->addClass('staticv6');
@@ -2416,12 +2423,10 @@ function build_ipv6interface_list() {
 	return($list);
 }
 
-
-
 $section->addInput(new Form_Select(
-	'prefix-6rd-v4plen',
+	'track6-interface',
 	'IPv6 Interface',
-	$pconfig['prefix-6rd-v4plen'],
+	$pconfig['track6-interface'],
 	build_ipv6interface_list()
 ))->setHelp('selects the dynamic IPv6 WAN interface to track for configuration');
 
@@ -2434,8 +2439,15 @@ $section->addInput(new Form_Input(
 	'IPv6 Prefix ID',
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
-))->setHelp('The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
+))->setHelp('<span id="track6-prefix-id-range"></span>The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
 
+$section->addInput(new Form_Input(
+	'track6-prefix-id-max' . $iface,
+	null,
+	'hidden',
+	0
+));
+		
 $form->add($section);
 
 /// PPP section
@@ -2582,6 +2594,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select a reset timing type');
 
 $group = new Form_Group('Custom resest');
+$group->addClass('pppoecustom');
 
 $group->add(new Form_Input(
 	'pppoe_resethour',
@@ -2612,6 +2625,7 @@ $group->setHelp('If you leave the date field empty, the reset will be executed e
 $section->add($group);
 
 $group = new Form_MultiCheckboxGroup('cron based reset');
+$group->addClass('pppoepreset');
 
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',
@@ -2662,7 +2676,7 @@ if (isset($pconfig['pppid'])) {
 $form->add($section);
 
 // PPTP & L2TP Configuration section
-$section = new Form_Section('PPTP/L2TP Configuraion');
+$section = new Form_Section('PPTP/L2TP Configuration');
 $section->addClass('pptp');
 
 $section->addInput(new Form_Input(
@@ -3222,7 +3236,9 @@ events.push(function(){
 	}
 
 	function updateTypeSix(t) {
-		if (!isNaN(t[0])) t = '_' + t;
+		if (!isNaN(t[0])) 
+			t = '_' + t;
+		
 		switch (t) {
 			case "none": {
 				jQuery('.staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
@@ -3249,41 +3265,44 @@ events.push(function(){
 				break;
 			}
 			case "track6": {
-				jQuery('.none, .dhcp6, .staticv6, .6rd, ._6to4, .slaac').hide();
+				jQuery('.none, .dhcp6, .staticv6, .6rd, .6to4, .slaac').hide();
 				update_track6_prefix();
 				break;
 			}
 		}
+		
 		if (t != "l2tp" && t != "pptp") {
 			jQuery('.'+t).show();
-		}
-	}
-/*
-	function show_allcfg(obj) {
-		if (obj.checked) {
-			jQuery('#allcfg').show();
-		} else {
-			jQuery('#allcfg').hide();
 		}
 	}
 
 	function show_reset_settings(reset_type) {
 		if (reset_type == 'preset') {
-			jQuery('#pppoepresetwrap').show();
-			jQuery('#pppoecustomwrap').hide();
+			jQuery('.pppoepreset').show();
+			jQuery('.pppoecustom').hide();
 		} else if (reset_type == 'custom') {
-			jQuery('#pppoecustomwrap').show();
-			jQuery('#pppoepresetwrap').hide();
+			jQuery('.pppoecustom').show();
+			jQuery('.pppoepreset').hide();
 		} else {
-			jQuery('#pppoecustomwrap').hide();
-			jQuery('#pppoepresetwrap').hide();
+			jQuery('.pppoecustom').hide();
+			jQuery('.pppoepreset').hide();
 		}
 	}
 
-	function show_mon_config() {
-		jQuery("#showmonbox").html('');
-		jQuery('#showmon').css('display', 'block');
+	function update_track6_prefix() {
+		var iface = jQuery("#track6-interface").val();
+		if (iface == null) {
+			return;
+		}
+		var track6_prefix_ids = jQuery('#ipv6-num-prefix-ids-' + iface).val();
+		if (track6_prefix_ids == null) {
+			return;
+		}
+		
+		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
+		jQuery('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
 	}
+/*
 
 	function openwindow(url) {
 		var oWin = window.open(url, "pfSensePop", "width=620,height=400,top=150,left=150");
@@ -3383,23 +3402,12 @@ events.push(function(){
 		});
 	}
 
-	function update_track6_prefix() {
-		var iface = jQuery("#track6-interface").val();
-		if (iface == null) {
-			return;
-		}
-		var track6_prefix_ids = jQuery('#ipv6-num-prefix-ids-' + iface).val();
-		if (track6_prefix_ids == null) {
-			return;
-		}
-		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
-		jQuery('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
-	}
 
 		var gatewayip;
 		var name;
 		var gatewayipv6;
 		var namev6;
+		
 		function show_add_gateway() {
 			document.getElementById("addgateway").style.display = '';
 			document.getElementById("addgwbox").style.display = 'none';
@@ -3410,6 +3418,7 @@ events.push(function(){
 			document.getElementById("gwcancel").style.display = '';
 			jQuery('#notebox').html("");
 		}
+		
 		function show_add_gateway_v6() {
 			document.getElementById("addgatewayv6").style.display = '';
 			document.getElementById("addgwboxv6").style.display = 'none';
@@ -3721,7 +3730,9 @@ events.push(function(){
 	// On page load . .
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
-
+	show_reset_settings($('#pppoe-reset-type').val());
+	$("#addgw").prop('type' ,'button');
+	
 	// On click . .
    $('#type').on('change', function() {
 		updateType( this.value );
@@ -3731,14 +3742,17 @@ events.push(function(){
 		updateTypeSix( this.value );
 	});
 
-<?php
-//		echo "show_allcfg(document.iform.enable);";
-//		echo "updateType('{$pconfig['type']}');\n";
-//		echo "updateTypeSix('{$pconfig['type6']}');\n";
-?>
+   $('#pppoe-reset-type').on('change', function() {
+		show_reset_settings( this.value );
 	});
-	//]]>
-	</script>
+
+    $("#addgw").click(function() {
+        $('#notebox').html('<h4>What?</h4>');
+    });	
+
+});
+//]]>
+</script>
 
 
 <?php include("foot.inc");

@@ -37,7 +37,7 @@ class Modal extends Form_Section
 	{
 		$element = Form_Element::__toString();
 		$title = htmlspecialchars(gettext($this->_title));
-		$body = implode('', $this->_groups);
+		$html = implode('', $this->_groups);
 		$footer = implode('', $this->_global);
 		$modalClass = $this->_isLarge ? 'modal-lg' : 'modal-sm';
 

@@ -68,7 +68,7 @@ core_pkg_create_repo() {
 	fi
 
 	echo -n ">>> Creating core packages repository... "
-	if pkg repo -q -o "${CORE_PKG_PATH}" "${CORE_PKG_PATH}/All"; then
+	if pkg repo -q "${CORE_PKG_PATH}"; then
 		echo "Done!"
 	else
 		echo "Failed!"

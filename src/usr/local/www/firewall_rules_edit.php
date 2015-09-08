@@ -1765,6 +1765,7 @@ events.push(function(){
 
 	function show_source_port_range() {
 		if (portsenabled) {
+			hideInput('btnsrcadv', true);
 			hideClass('srcprtr', false);
 		}
 	}

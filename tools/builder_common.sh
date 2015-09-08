@@ -2077,7 +2077,7 @@ snapshots_scp_files() {
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
 		${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	for i in "${FLASH_SIZE}"
+	for i in ${FLASH_SIZE}
 	do
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"

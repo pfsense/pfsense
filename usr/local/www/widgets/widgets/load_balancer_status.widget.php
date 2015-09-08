@@ -140,7 +140,7 @@ if (!$nentries)
 		</table>
 		</td>
 		<td class="listbg" >
-			<font color="#FFFFFF"><?=$vsent['descr'];?></font>
+			<font color="#FFFFFF"><?=htmlspecialchars($vsent['descr']);?></font>
 		</td>
 	</tr>
 	<?php $i++; endforeach; ?>

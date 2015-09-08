@@ -69,6 +69,8 @@ if (isset($id) && $a_vs[$id]) {
 $changedesc = gettext("Load Balancer: Virtual Server:") . " ";
 $changecount = 0;
 
+$allowed_protocols = array("tcp", "dns");
+
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -106,6 +108,10 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("%s is not a valid IP address, IPv4 subnet, or alias."), $_POST['ipaddr']);
 	else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64)
 		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
+
+	if (!in_array($_POST['relay_protocol'], $allowed_protocols)) {
+		$input_errors[] = gettext("The submitted relay protocol is not valid.");
+	}
 
 	if ((strtolower($_POST['relay_protocol']) == "dns") && !empty($_POST['sitedown']))
 		$input_errors[] = gettext("You cannot select a Fall Back Pool when using the DNS relay protocol.");

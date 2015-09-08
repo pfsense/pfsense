@@ -87,6 +87,8 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 }
 for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	if($a_vs[$i]) {
+		$a_vs[$i]['mode'] = htmlspecialchars($a_vs[$i]['mode']);
+		$a_vs[$i]['relay_protocol'] = htmlspecialchars($a_vs[$i]['relay_protocol']);
 		$a_vs[$i]['poolname'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['poolname']]}\">" . htmlspecialchars($a_vs[$i]['poolname']) . "</a>";
 		if ($a_vs[$i]['sitedown'] != '') {
 			$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">" . htmlspecialchars($a_vs[$i]['sitedown']) . "</a>";

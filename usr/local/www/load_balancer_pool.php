@@ -92,8 +92,10 @@ for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 	$mondex[$config['load_balancer']['monitor_type'][$i]['name']] = $i;
 }
 for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+	$a_pool[$i]['mode'] = htmlspecialchars($a_pool[$i]['mode']);
 	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">" . htmlspecialchars($a_pool[$i]['monitor']) . "</a>";
 }
+
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
 $shortcut_section = "relayd";

@@ -1808,6 +1808,7 @@ if (count($mediaopts_list) > 0) {
 $form->add($section);
 
 $section = new Form_Section('Static IPv4 configuration');
+$section->addClass('staticv4');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
@@ -1872,6 +1873,7 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('Static IPv6 configuration');
+$section->addClass('staticv6');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
@@ -1936,6 +1938,7 @@ $form->add($section);
 // ==== DHCP client configuration =============================
 
 $section = new Form_Section('DHCP client configuration');
+$section->addClass('dhcp');
 
 $section->addInput(new Form_Input(
 	'dhcphostname',
@@ -2046,6 +2049,7 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('Lease Requirements and Requests');
+$section->addClass('dhcp dhcpadvanced');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_send_options',
@@ -2095,6 +2099,8 @@ $form->add($section);
 // DHCP6 client config
 
 $section = new Form_Section('DHCP6 client configuration');
+$section->addClass('dhcp6');
+
 $section->addInput(new Form_Checkbox(
 	'dhcp6usev4iface',
 	'Use IPv4 connectivity as parent interface',
@@ -2128,6 +2134,8 @@ $form->add($section);
 // DHCP6 client config - Advanced
 
 $section = new Form_Section('Advanced DHCP6 client configuration');
+$section->addClass('dhcp6 dhcp6advanced');
+
 $section->addInput(new Form_Checkbox(
 	'adv_dhcp6_interface_statement_information_only_enable',
 	'Information only',
@@ -2344,6 +2352,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 $section = new Form_Section('6RD Configuration');
+$section->addClass('6rd');
 
 $section->addInput(new Form_Input(
 	'prefix-6rd',
@@ -2370,6 +2379,7 @@ $form->add($section);
 
 // Track IPv6 ointerface section
 $section = new Form_Section('Track IPv6 Interface');
+$section->addClass('track6');
 
 function build_ipv6interface_list() {
 	$list = array('' => '');
@@ -2431,6 +2441,7 @@ $form->add($section);
 /// PPP section
 
 $section = new Form_Section('PPP Configuration');
+$section->addClass('ppp');
 
 $section->addInput(new Form_Select(
 	'country',
@@ -2523,6 +2534,7 @@ $form->add($section);
 
 // PPPoE configuration
 $section = new Form_Section('PPPoE Configuration');
+$section->addClass('pppoe');
 
 $section->addInput(new Form_Input(
 	'pppoe_username',
@@ -2651,6 +2663,7 @@ $form->add($section);
 
 // PPTP & L2TP Configuration section
 $section = new Form_Section('PPTP/L2TP Configuraion');
+$section->addClass('pptp');
 
 $section->addInput(new Form_Input(
 	'pptp_username',
@@ -2780,6 +2793,7 @@ if (isset($wancfg['wireless'])) {
 			}
 		}
 	}
+
 	$section->addInput(new Form_Select(
 		'channel',
 		'Channel',
@@ -3171,39 +3185,39 @@ print($form);
 	//<![CDATA[
 events.push(function(){
 
-/*
 	function updateType(t) {
 		switch (t) {
 			case "none": {
-				jQuery('#staticv4, #dhcp, #pppoe, #pptp, #ppp').hide();
+				jQuery('.staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				jQuery('#none, #dhcp, #pppoe, #pptp, #ppp').hide();
+				jQuery('.none, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				jQuery('#none, #staticv4, #pppoe, #pptp, #ppp').hide();
+				jQuery('.none, .staticv4, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "ppp": {
-				jQuery('#none, #staticv4, #dhcp, #pptp, #pppoe').hide();
+				jQuery('.none, .staticv4, .dhcp, .pptp, .pppoe').hide();
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				jQuery('#none, #staticv4, #dhcp, #pptp, #ppp').hide();
+				jQuery('.none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				jQuery('#none, #staticv4, #dhcp, #pppoe, #ppp').hide();
-				jQuery('#pptp').show();
+				jQuery('.none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				jQuery('.pptp').show();
 				break;
 			}
 		}
+
 		if (t != "l2tp" && t != "pptp") {
-			jQuery('#'+t).show();
+			jQuery('.'+t).show();
 		}
 	}
 
@@ -3211,40 +3225,40 @@ events.push(function(){
 		if (!isNaN(t[0])) t = '_' + t;
 		switch (t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #_6rd, #_6to4, #track6, #slaac').hide();
+				jQuery('.staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #_6rd, #_6to4, #track6, #slaac').hide();
+				jQuery('.none, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "slaac": {
-				jQuery('#none, #staticv6, #_6rd, #_6to4, #track6, #dhcp6').hide();
+				jQuery('.none, .staticv6, .6rd, ._6to4, .track6, .dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #_6rd, #_6to4, #track6, #slaac').hide();
+				jQuery('.none, .staticv6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "_6rd": {
-				jQuery('#none, #dhcp6, #staticv6, #_6to4, #track6, #slaac').hide();
+				jQuery('.none, .dhcp6, .staticv6, .6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "_6to4": {
-				jQuery('#none, #dhcp6, #staticv6, #_6rd, #track6, #slaac').hide();
+				jQuery('.none, .dhcp6, .staticv6, .6rd, .track6, .slaac').hide();
 				break;
 			}
 			case "track6": {
-				jQuery('#none, #dhcp6, #staticv6, #_6rd, #_6to4, #slaac').hide();
+				jQuery('.none, .dhcp6, .staticv6, .6rd, ._6to4, .slaac').hide();
 				update_track6_prefix();
 				break;
 			}
 		}
 		if (t != "l2tp" && t != "pptp") {
-			jQuery('#'+t).show();
+			jQuery('.'+t).show();
 		}
 	}
-
+/*
 	function show_allcfg(obj) {
 		if (obj.checked) {
 			jQuery('#allcfg').show();
@@ -3694,13 +3708,7 @@ events.push(function(){
 	}
 	show_adv_dhcp_config(document.iform.adv_dhcp_config_file_override);
 */
-	// Make the ‘Copy My MAC’ button a plain button, not a submit button
-	$("#btnmymac").prop('type','button');
 
-	// On click, copy the hidden 'mymac' text to the 'mac' input
-	$("#btnmymac").click(function() {
-		$('#mac').val('<?=$mymac?>');
-	});
 
 	$('#country').on('change', function() {
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&country=' + this.value + '&type=' + $('#type').val();
@@ -3710,11 +3718,24 @@ events.push(function(){
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&provider=' + this.value + '&type=' + $('#type').val() + '&country=' + $('#country').val();
 	});
 
+	// On page load . .
+	updateType($('#type').val());
+	updateTypeSix($('#type6').val());
+
+	// On click . .
+   $('#type').on('change', function() {
+		updateType( this.value );
+	});
+
+   $('#type6').on('change', function() {
+		updateTypeSix( this.value );
+	});
+
 <?php
-		echo "show_allcfg(document.iform.enable);";
-		echo "updateType('{$pconfig['type']}');\n";
-		echo "updateTypeSix('{$pconfig['type6']}');\n";
-		?>
+//		echo "show_allcfg(document.iform.enable);";
+//		echo "updateType('{$pconfig['type']}');\n";
+//		echo "updateTypeSix('{$pconfig['type6']}');\n";
+?>
 	});
 	//]]>
 	</script>

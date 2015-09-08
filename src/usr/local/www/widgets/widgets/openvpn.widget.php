@@ -128,7 +128,7 @@ $clients = openvpn_get_active_clients();
 <table>
 	<tr>
 		<td colspan="6" class="listtopic">
-			<?=$server['name'];?> Client connections
+			<?=htmlspecialchars($server['name']);?> Client connections
 		</td>
 	</tr>
 	<tr>

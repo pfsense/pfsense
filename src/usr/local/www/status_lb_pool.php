@@ -208,7 +208,7 @@ if ($_POST) {
 						<?php echo $pool['monitor']; ?>
 					</td>
 					<td class="listbg" >
-						<?=$pool['descr'];?>
+						<?=htmlspecialchars($pool['descr'];)?>
 					</td>
 				</tr>
 <?php

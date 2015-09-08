@@ -140,7 +140,7 @@ include("head.inc");
 ?>
 					</td>
 					<td class="listbg" >
-						<?=$vsent['descr'];?>
+						<?=htmlspecialchars($vsent['descr'];)?>
 					</td>
 				</tr>
 <?php

@@ -1831,24 +1831,20 @@ $group->add(new Form_Button(
 	'Add a new gateway'
 ))->removeClass('btn-primary')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
-/*
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalHorizontal">
-    Launch Horizontal Form
-</button>
-*/
-
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none". ');
+				'On local LANs the upstream gateway should be "none".' .
+				gettext('You can manage gateways by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>');
 
 $section->add($group);
 
 $form->add($section);
 
-$modal = new Modal('New gateway', 'newgateway');
+// Add new gateway modal pop-up
+$modal = new Modal('New gateway', 'newgateway', 'large');
 
 $modal->addInput(new Form_Checkbox(
 	'defaultgw',
-	null,
+	'Default',
 	'Default gateway',
 	($if == "wan" || $if == "WAN")
 ));
@@ -1858,24 +1854,38 @@ $modal->addInput(new Form_Input(
 	'Gateway name',
 	'text',
 	$wancfg['descr'] . "GW"
-))->setHelp('Name');
+));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip',
 	'Gateway IPv4',
 	null
-))->setHelp('IP address');
+));
 
 $modal->addInput(new Form_Input(
 	'gatewaydescr',
 	'Description',
 	'text'
-))->setHelp('Description');
+));
 
-$modal->addInput(new Form_Button(
+$btnaddgw = new Form_Button(
 	'add',
 	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+);
+
+$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
+
+$btncnxgw = new Form_Button(
+	'cnx',
+	'Cancel'
+);
+
+$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
+
+$modal->addInput(new Form_StaticText(
+	null,
+	$btnaddgw . $btncnxgw
+));
 
 $form->add($modal);
 
@@ -2447,7 +2457,7 @@ $section->addInput(new Form_Input(
 	'hidden',
 	0
 ));
-		
+
 $form->add($section);
 
 /// PPP section
@@ -3236,9 +3246,9 @@ events.push(function(){
 	}
 
 	function updateTypeSix(t) {
-		if (!isNaN(t[0])) 
+		if (!isNaN(t[0]))
 			t = '_' + t;
-		
+
 		switch (t) {
 			case "none": {
 				jQuery('.staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
@@ -3270,7 +3280,7 @@ events.push(function(){
 				break;
 			}
 		}
-		
+
 		if (t != "l2tp" && t != "pptp") {
 			jQuery('.'+t).show();
 		}
@@ -3298,9 +3308,64 @@ events.push(function(){
 		if (track6_prefix_ids == null) {
 			return;
 		}
-		
+
 		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
 		jQuery('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
+	}
+
+	// Create the new gateway from the data entered in the modal pop-up
+	function hide_add_gatewaysave() {
+
+		var iface = jQuery('#if').val();
+		name = jQuery('#name').val();
+		var descr = jQuery('#gatewaydescr').val();
+		gatewayip = jQuery('#gatewayip').val();
+
+		var defaultgw = '';
+		if (jQuery('#defaultgw').is(':checked')) {
+			defaultgw = '&defaultgw=on';
+		}
+
+		var url = "system_gateways_edit.php";
+		var pars = 'isAjax=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+		jQuery.ajax(
+			url,
+			{
+				type: 'post',
+				data: pars,
+				error: report_failure,
+				complete: save_callback
+			});
+		}
+
+	function save_callback(response) {
+		if (response) {
+			var gwtext = escape(name) + " - " + gatewayip;
+			addOption(jQuery('#gateway'), gwtext, name);
+		} else {
+			report_failure();
+		}
+
+		$("#newgateway").modal('hide');
+	}
+
+	function report_failure(request, textStatus, errorThrown) {
+		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
+			alert(request.responseText);
+		} else {
+			alert("Sorry, we could not create your IPv4 gateway at this time.");
+		}
+
+		$("#newgateway").modal('hide');
+	}
+
+	function addOption(selectbox, text, value)
+	{
+		var optn = document.createElement("OPTION");
+		optn.text = text;
+		optn.value = value;
+		selectbox.append(optn);
+		selectbox.prop('selectedIndex', selectbox.children().length - 1);
 	}
 /*
 
@@ -3402,23 +3467,10 @@ events.push(function(){
 		});
 	}
 
-
-		var gatewayip;
-		var name;
 		var gatewayipv6;
 		var namev6;
-		
-		function show_add_gateway() {
-			document.getElementById("addgateway").style.display = '';
-			document.getElementById("addgwbox").style.display = 'none';
-			document.getElementById("gateway").style.display = 'none';
-			document.getElementById("save").style.display = 'none';
-			document.getElementById("cancel").style.display = 'none';
-			document.getElementById("gwsave").style.display = '';
-			document.getElementById("gwcancel").style.display = '';
-			jQuery('#notebox').html("");
-		}
-		
+
+
 		function show_add_gateway_v6() {
 			document.getElementById("addgatewayv6").style.display = '';
 			document.getElementById("addgwboxv6").style.display = 'none';
@@ -3429,16 +3481,7 @@ events.push(function(){
 			document.getElementById("gwcancel").style.display = '';
 			jQuery('#noteboxv6').html("");
 		}
-		function hide_add_gateway() {
-			document.getElementById("addgateway").style.display = 'none';
-			document.getElementById("addgwbox").style.display = '';
-			document.getElementById("gateway").style.display = '';
-			document.getElementById("save").style.display = '';
-			document.getElementById("cancel").style.display = '';
-			document.getElementById("gwsave").style.display = '';
-			document.getElementById("gwcancel").style.display = '';
-			jQuery('#status').html('');
-		}
+
 		function hide_add_gateway_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
 			document.getElementById("addgwboxv6").style.display = '';
@@ -3449,29 +3492,7 @@ events.push(function(){
 			document.getElementById("gwcancel").style.display = '';
 			jQuery('#statusv6').html('');
 		}
-		function hide_add_gatewaysave() {
-			document.getElementById("addgateway").style.display = 'none';
-			jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> One moment please...');
-			var iface = jQuery('#if').val();
-			name = jQuery('#name').val();
-			var descr = jQuery('#gatewaydescr').val();
-			gatewayip = jQuery('#gatewayip').val();
 
-			var defaultgw = '';
-			if (jQuery('#defaultgw').is(':checked')) {
-				defaultgw = '&defaultgw=on';
-			}
-			var url = "system_gateways_edit.php";
-			var pars = 'isAjax=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-			jQuery.ajax(
-				url,
-				{
-					type: 'post',
-					data: pars,
-					error: report_failure,
-					success: save_callback
-				});
-		}
 
 		function hide_add_gatewaysave_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
@@ -3496,15 +3517,6 @@ events.push(function(){
 				});
 		}
 
-		function addOption(selectbox, text, value)
-		{
-			var optn = document.createElement("OPTION");
-			optn.text = text;
-			optn.value = value;
-			selectbox.append(optn);
-			selectbox.prop('selectedIndex', selectbox.children().length - 1);
-			jQuery('#notebox').html("<p><strong><?=gettext("NOTE:"); ?><\/strong><?=gettext("You can manage Gateways"); ?><a target='_blank' href='system_gateways.php'><?=gettext("here"); ?><\/a>.<\/p>");
-		}
 
 		function addOption_v6(selectbox, text, value)
 		{
@@ -3516,14 +3528,7 @@ events.push(function(){
 			jQuery('#noteboxv6').html("<p><strong><?=gettext("NOTE:"); ?><\/strong><?=gettext("You can manage Gateways"); ?><a target='_blank' href='system_gateways.php'><?=gettext("here"); ?><\/a>.<\/p>");
 		}
 
-		function report_failure(request, textStatus, errorThrown) {
-			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
-				alert(request.responseText);
-			} else {
-				alert("Sorry, we could not create your IPv4 gateway at this time.");
-			}
-			hide_add_gateway();
-		}
+
 
 		function report_failure_v6(request, textStatus, errorThrown) {
 			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
@@ -3534,19 +3539,6 @@ events.push(function(){
 			hide_add_gateway_v6();
 		}
 
-		function save_callback(response) {
-			if (response) {
-				document.getElementById("addgateway").style.display = 'none';
-				hide_add_gateway();
-				var gwtext = escape(name) + " - " + gatewayip;
-				addOption(jQuery('#gateway'), gwtext, name);
-				// Auto submit form?
-				//document.iform.submit();
-				//jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader /">');
-			} else {
-				report_failure();
-			}
-		}
 
 		function show_advanced_media() {
 			document.getElementById("showadvmediabox").innerHTML='';
@@ -3731,8 +3723,10 @@ events.push(function(){
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
 	show_reset_settings($('#pppoe-reset-type').val());
+	$("#add").prop('type' ,'button');
+	$("#cnx").prop('type' ,'button');
 	$("#addgw").prop('type' ,'button');
-	
+
 	// On click . .
    $('#type').on('change', function() {
 		updateType( this.value );
@@ -3746,9 +3740,13 @@ events.push(function(){
 		show_reset_settings( this.value );
 	});
 
-    $("#addgw").click(function() {
-        $('#notebox').html('<h4>What?</h4>');
-    });	
+	$("#add").click(function() {
+		hide_add_gatewaysave();
+	});
+
+	$("#cnx").click(function() {
+		$("#newgateway").modal('hide');
+	});
 
 });
 //]]>

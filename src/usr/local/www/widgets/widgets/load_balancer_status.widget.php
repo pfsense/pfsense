@@ -149,7 +149,7 @@ if (!$nentries) {
 ?>
 			</table>
 		</td>
-		<td><?=$vsent['descr'];?></td>
+		<td><?=htmlspecialchars($vsent['descr']);?></td>
 	</tr>
 	<?php endforeach; ?>
 </tbody>

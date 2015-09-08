@@ -140,7 +140,7 @@ else {
 					} ?>
 				</td>
 				<td>
-					<?=$vsent['descr']?>
+					<?=htmlspecialchars($vsent['descr'])?>
 				</td>
 			</tr>
 

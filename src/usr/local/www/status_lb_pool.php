@@ -233,7 +233,7 @@ foreach ($a_pool as $pool):
 							<?=$pool['monitor']; ?>
 						</td>
 						<td>
-							<?=$pool['descr']?>
+							<?=htmlspecialchars($pool['descr'])?>
 						</td>
 					</tr>
 <?php

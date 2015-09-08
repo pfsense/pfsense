@@ -147,7 +147,7 @@ foreach($a_pool as $pool) {
 							<?=$pool['name']?>
 						</td>
 						<td>
-							<?=$pool['mode']?>
+							<?=htmlspecialchars($pool['mode'])?>
 						</td>
 						<td>
 <?php
@@ -167,7 +167,7 @@ foreach($a_pool as $pool) {
 							<?=$pool['monitor']?>
 						</td>
 						<td>
-							<?=$pool['descr']?>
+							<?=htmlspecialchars($pool['descr'])?>
 						</td>
 						<td>
 							<a href="load_balancer_pool_edit.php?id=<?=$idx?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>

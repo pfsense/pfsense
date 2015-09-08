@@ -71,6 +71,8 @@ if (isset($id) && $a_pool[$id]) {
 $changedesc = gettext("Load Balancer: Pool:") . " ";
 $changecount = 0;
 
+$allowed_modes = array("loadbalance", "failover");
+
 if ($_POST) {
 	$changecount++;
 
@@ -106,6 +108,10 @@ if ($_POST) {
 	// May as well use is_port as we want a positive integer and such.
 	if (!empty($_POST['retry']) && !is_port($_POST['retry']))
 		$input_errors[] = gettext("The retry value must be an integer between 1 and 65535.");
+
+	if (!in_array($_POST['mode'], $allowed_modes)) {
+		$input_errors[] = gettext("The submitted mode is not valid.");
+	}
 
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {

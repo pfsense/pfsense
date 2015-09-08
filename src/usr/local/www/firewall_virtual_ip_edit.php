@@ -515,7 +515,6 @@ events.push(function(){
 
 		if(mode == 'ipalias') {
 			$('#address_note').html("<?=$ipaliashelp?>");
-			disableInput('subnet_bits', false);
 			$('#type').val('single');
 
 		}
@@ -524,19 +523,19 @@ events.push(function(){
 			disableInput('vhid', false);
 			disableInput('advbase', false);
 			disableInput('advskew', false);
-			disableInput('subnet_bits', false);
 			disableInput('password', false);
 			$('#type').val('single');
 		}
 		else if(mode == 'proxyarp') {
 			$('#address_note').html("<?=$proxyarphelp?>");
 			disableInput('type', false);
-			disableInput('subnet_bits', $('#type').val() == 'single');
 		}
 		else {
 			$('#address_note').html('');
 			disableInput('type', false);
 		}
+
+		disableInput('subnet_bits', ($('#type').val() == 'single'));
 	}
 
 	// When radio buttons are clicked . .

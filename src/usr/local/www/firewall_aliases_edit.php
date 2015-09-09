@@ -880,10 +880,30 @@ events.push(function(){
 		setMasks();
 	}
 
+	function typechange() {
+		var tab = $('#type').find('option:selected').val();
+		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
+
+		// Set the help text to match the tab
+		var helparray = <?php echo json_encode($help); ?>;
+		$('.helptext').html(helparray[tab]);
+
+		// Set the section heading by tab type
+		var sectionstr = <?php echo json_encode($section_str); ?>;
+		$('.panel-title:last').text(sectionstr[tab]);
+
+		// Set the input field label by tab
+		var labelstr = <?php echo json_encode($label_str); ?>;
+		$('.repeatable:first').find('label').text(labelstr[tab]);	
+	}
+	
 	// These are action buttons, not submit buttons
 	$('[id^=addrow]').prop('type','button');
 	$('[id^=delete]').prop('type','button');
 
+	// On load . .
+	typechange();
+	
 	// on click . .
 	$('[id^=addrow]').click(function() {
 		add_row();
@@ -899,20 +919,7 @@ events.push(function(){
 	});
 
 	$('#type').on('change', function() {
-		var tab = $(this).find('option:selected').val();
-		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
-
-		// Set the help text to match the tab
-		var helparray = <?php echo json_encode($help); ?>;
-		$('.helptext').html(helparray[tab]);
-
-		// Set the section heading by tab type
-		var sectionstr = <?php echo json_encode($section_str); ?>;
-		$('.panel-title:last').text(sectionstr[tab]);
-
-		// Set the input field label by tab
-		var labelstr = <?php echo json_encode($label_str); ?>;
-		$('.repeatable:first').find('label').text(labelstr[tab]);
+		typechange();
 	});
 
 	// Disable address_subnet if type == 'host'

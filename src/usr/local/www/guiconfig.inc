@@ -135,6 +135,7 @@ $firewall_rules_dscp_types = array(
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
+	'openvpn_PAM' => "OpenVPN PAM Plugin",
 	'radius' => "Radius");
 
 $ldap_urltypes = array(

@@ -72,15 +72,14 @@ ini_set('output_buffering', 'true');
 // Start buffering with a cache size of 100000
 ob_start(null, "1000");
 
-
 ## Load Essential Includes
 require_once('guiconfig.inc');
 require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
-if (isset($_REQUEST['closenotice'])) {
-	close_notice($_REQUEST['closenotice']);
+if (isset($_GET['closenotice'])) {
+	close_notice($_GET['closenotice']);
 	echo get_menu_messages();
 	exit;
 }

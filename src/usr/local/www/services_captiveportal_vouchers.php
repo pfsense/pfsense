@@ -1,32 +1,59 @@
 <?php
 /*
 	services_captiveportal_vouchers.php
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c) 2 007 Marcel Wiget <mwiget@mac.com>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/bin/openssl
 	pfSense_MODULE: captiveportal
@@ -104,7 +131,7 @@ if (!isset($config['voucher'][$cpzone]['checksumbits'])) {
 	$config['voucher'][$cpzone]['checksumbits'] = 5;
 }
 if (!isset($config['voucher'][$cpzone]['magic'])) {
-	$config['voucher'][$cpzone]['magic'] = rand();   // anything slightly random will do
+	$config['voucher'][$cpzone]['magic'] = rand();	 // anything slightly random will do
 }
 if (!isset($config['voucher'][$cpzone]['exponent'])) {
 	while (true) {
@@ -292,13 +319,13 @@ if ($_POST) {
 			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
 			$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
 			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
-			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
+				$newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
 
 				$protocol = "http";
 				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-				    $config['system']['webgui']['protocol'] == "https") {
+					$config['system']['webgui']['protocol'] == "https") {
 					$protocol = "https";
 				}
 				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443") {
@@ -387,6 +414,7 @@ EOF;
 				}
 			}
 		}
+
 		if (!$input_errors) {
 			header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 			exit;
@@ -446,7 +474,7 @@ foreach($a_roll as $rollent):
 							<?=htmlspecialchars($rollent['descr']); ?>&nbsp;
 						</td>
 						<td>
-							<!-- These buttons are hidden/shown on checking hte 'enable' checkbox -->
+							<!-- These buttons are hidden/shown on checking the 'enable' checkbox -->
 							<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i; ?>" class="btn btn-info btn-xs"><?=gettext("Edit")?></a>
 							<a href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
 							<a href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=csv&amp;id=<?=$i; ?>" class="btn btn-success btn-xs" data-toggle="tooltip" title="Generate vouchers for this roll to a .csv file""><?=gettext("Generate")?></a>
@@ -462,9 +490,10 @@ endforeach;
 	</div>
 </div>
 <?php
+
 if ($pconfig['enable']) : ?>
 	<nav class="action-buttons">
-		<a href="services_captiveportal_vouchers_edit.php?zone=<?$cpzone?>" class="btn btn-success"><?=gettext("Add Voucher")?></a>
+		<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>" class="btn btn-success"><?=gettext("Add Voucher")?></a>
 	</nav>
 <?php
 endif;

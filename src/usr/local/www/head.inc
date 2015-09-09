@@ -1,8 +1,59 @@
 <?php
 /*
-	pfSense_MODULE:	header
+	pfSense_MODULE: head.inc
 */
-
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
+ 
 require_once("globals.inc");
 require_once("functions.inc");
 require_once("shortcuts.inc");
@@ -230,7 +281,7 @@ if (count($config['interfaces']) > 1) {
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
-	    preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
+		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -293,7 +344,7 @@ if (!$g['disablehelpmenu']) {
 	if ($g['product_name'] == "pfSense") {
 		$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
 	}
-	
+
 	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
 	$help_menu[] = array(gettext("Documentation"), "https://www.pfsense.org/j.php?jumpto=doc");
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
@@ -319,15 +370,15 @@ if (!$g['disablehelpmenu']) {
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
 			<?php foreach ([
-					['name' => 'System',      'menu' => $system_menu,      'href' => null],
+					['name' => 'System',	  'menu' => $system_menu,	   'href' => null],
 					['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
-					['name' => 'Firewall',    'menu' => $firewall_menu,    'href' => null],
-					['name' => 'Services',    'menu' => $services_menu,    'href' => null],
-					['name' => 'VPN',         'menu' => $vpn_menu,         'href' => null],
-					['name' => 'Status',      'menu' => $status_menu,      'href' => null],
+					['name' => 'Firewall',	  'menu' => $firewall_menu,	   'href' => null],
+					['name' => 'Services',	  'menu' => $services_menu,	   'href' => null],
+					['name' => 'VPN',		  'menu' => $vpn_menu,		   'href' => null],
+					['name' => 'Status',	  'menu' => $status_menu,	   'href' => null],
 					['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
-					['name' => 'Gold',        'menu' => $gold_menu,        'href' => '_blank'],
-					['name' => 'Help',        'menu' => $help_menu,        'href' => '_blank']
+					['name' => 'Gold',		  'menu' => $gold_menu,		   'href' => '_blank'],
+					['name' => 'Help',		  'menu' => $help_menu,		   'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
@@ -340,123 +391,22 @@ if (!$g['disablehelpmenu']) {
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
 			<?php endforeach?>
-				<?php if (false): ?> // are_notices_pending()):?>
+				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>
 							<span class="badge"><?=count($notices)?></span>
 						</a>
 					</li>
-					<?php
-					require_once('classes/Modal.class.php');
-
-					$modal_notices = new Modal('Notices', 'notices', 'large');
-
-/*
-FIXME: addFooter does not exist
-					$modal_notices->addFooter(new Form_Button(
-						'close',
-						'Close',
-						''
-					))->setAttribute('data-dismiss', 'modal');
-
-					$modal_notices->addFooter(new Form_Button(
-						'mark_all_as_read',
-						'Mark all as read',
-						'/?closenotice=all'
-					))->addClass('btn-primary')->removeClass('btn-default');
-*/
-					$noticeCategories = $notice['category'];
-					foreach ($notices as $time => $notice) {
-						if (!isset($noticeCategories[$notice['category']])) {
-							$noticeCategories[ $notice['category'] ] = array();
-						}
-						$notice['time'] = $time;
-						array_push($noticeCategories[$notice['category']], $notice);
-					}
-
-					foreach ($noticeCategories as $category => $catNotices) {
-						$html .= "<h4>{$category}</h4>";
-						$html .= '<ul>';
-						foreach ($catNotices as $notice) {
-							$html .= '<li>';
-							if (!empty($notice['url'])) {
-								$html .= "<a href=\"{$notice['url']}\">{$notice['id']}</a> - ";
-							}
-							$html .= "{$notice['notice']}<i> @ " . date('Y-m-d H:i:s', $notice['time']) . '</i>';
-							$html .= '</li>';
-						}
-						$html .= '</ul>';
-					}
-/*
-FIXME: addHtml does not exist
-					$modal_notices->addHtml($html);
-*/
-					print $modal_notices;
-
+<?php
 				endif;
-				?>
+
+?>
 			</ul>
 		</div>
 	</div>
-
-<?php if (are_notices_pending()):?>
-	<div class="modal fade" id="notices" role="dialog" aria-labelledby="noticesTitle" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-
-					<h3 class="modal-title" id="myModalLabel">Notices</h3>
-				</div>
-
-				<div class="modal-body">
-<?php
-$noticeCategories = array();
-
-if(is_array($notices)) {
-	foreach ($notices as $time => $notice)
-	{
-		if (!isset($noticeCategories[ $notice['category'] ]))
-			$noticeCategories[ $notice['category'] ] = array();
-	
-		$notice['time'] = $time;
-		array_push($noticeCategories[ $notice['category'] ], $notice);
-	}
-}
-
-foreach ($noticeCategories as $category => $catNotices):?>
-	<h4><?=$category?></h4>
-	<ul>
-<?php
-	foreach ($catNotices as $notice):
-?>
-	<li>
-		<b>
-<?php if (!empty($notice['url'])):?>
-		<a href="<?=$notice['url']?>"><?=$notice['id']?></a> -
-<?php endif;?>
-		</b>
-		<?=$notice['notice']?>
-		<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
-	</li>
-<?php 	endforeach;?>
-</ul>
-<?php endforeach;?>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<a type="button" class="btn btn-primary" href="/?closenotice=all">Mark all as read</a>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php endif; ?>
-
 </nav>
+
 <div class="container">
 	<header class="header">
 		<?=genhtmltitle($pgtitle)?>
@@ -508,7 +458,7 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 
 $pgtitle_output = true;
 
-/*  If this page is being remotely managed then do not allow the loading of the contents. */
+/*	If this page is being remotely managed then do not allow the loading of the contents. */
 if ($config['remote_managed_pages']['item']) {
 	foreach ($config['remote_managed_pages']['item'] as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
@@ -518,3 +468,63 @@ if ($config['remote_managed_pages']['item']) {
 		}
 	}
 }
+
+// Modal notices window
+// The notices modal needs to be outside of hte page display div or things get messy
+if (are_notices_pending()):?>
+
+<div id="notices" class="modal fade" role="dialog">
+	<div class="mopdal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+
+				<h3 class="modal-title" id="myModalLabel">Notices</h3>
+			</div>
+
+			<div class="modal-body">
+<?php
+	$noticeCategories = array();
+
+	if(is_array($notices)) {
+		foreach ($notices as $time => $notice)
+		{
+			if (!isset($noticeCategories[ $notice['category'] ]))
+				$noticeCategories[ $notice['category'] ] = array();
+
+			$notice['time'] = $time;
+			array_push($noticeCategories[ $notice['category'] ], $notice);
+		}
+	}
+
+	foreach ($noticeCategories as $category => $catNotices):?>
+				<h4><?=$category?></h4>
+				<ul>
+<?php
+	foreach ($catNotices as $notice):
+?>
+					<li>
+						<b>
+<?php if (!empty($notice['url'])):?>
+							<a href="<?=$notice['url']?>"><?=$notice['id']?></a> -
+<?php endif;?>
+						</b>
+						<?=$notice['notice']?>
+						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
+					</li>
+<?php	endforeach;?>
+				</ul>
+<?php endforeach;?>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<a type="button" class="btn btn-primary" href="/?closenotice=all">Mark all as read</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php endif;

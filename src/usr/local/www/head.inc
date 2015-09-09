@@ -470,7 +470,7 @@ if ($config['remote_managed_pages']['item']) {
 }
 
 // Modal notices window
-// The notices modal needs to be outside of hte page display div or things get messy
+// The notices modal needs to be outside of the page display div or things get messy
 if (are_notices_pending()):?>
 
 <div id="notices" class="modal fade" role="dialog">

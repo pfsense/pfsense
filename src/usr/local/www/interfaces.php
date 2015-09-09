@@ -2135,6 +2135,20 @@ $section = new Form_Section('DHCP6 client configuration');
 $section->addClass('dhcp6');
 
 $section->addInput(new Form_Checkbox(
+	'dhcp6adv',
+	'Advanced',
+	'Show DHCPv6 advanced options',
+	$pconfig['adv_dhcp6_config_advanced']
+));
+
+$section->addInput(new Form_Checkbox(
+	'adv_dhcp6_config_file_override',
+	'Config file override',
+	'Override the configuration from this file',
+	$pconfig['adv_dhcp6_config_file_override']
+));
+
+$section->addInput(new Form_Checkbox(
 	'dhcp6usev4iface',
 	'Use IPv4 connectivity as parent interface',
 	'Request a IPv6 prefix/information through the IPv4 connectivity link',
@@ -2162,18 +2176,28 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dhcp6-ia-pd-send-hint']
 ));
 
+$section->addInput(new Form_Input(
+	'adv_dhcp6_config_file_override_path',
+	'Configuration File Override',
+	'text',
+	$pconfig['adv_dhcp6_config_file_override_path']
+))->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
+			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
+			'Some ISPs may require certain options be or not be sent.');
+
 $form->add($section);
 
 // DHCP6 client config - Advanced
 
 $section = new Form_Section('Advanced DHCP6 client configuration');
-$section->addClass('dhcp6 dhcp6advanced');
+$section->addClass('dhcp6advanced');
 
 $section->addInput(new Form_Checkbox(
 	'adv_dhcp6_interface_statement_information_only_enable',
 	'Information only',
 	null,
-	false
+	$pconfig['adv_dhcp6_interface_statement_information_only_enable']
 ));
 
 $section->addInput(new Form_Input(
@@ -2208,7 +2232,7 @@ $group->add(new Form_Checkbox(
 	'adv_dhcp6_id_assoc_statement_address_enable',
 	null,
 	'Non-Temporary Address Allocation',
-	false
+	$pconfig['adv_dhcp6_id_assoc_statement_address_enable']
 ));
 
 $group->add(new Form_Input(
@@ -2247,7 +2271,7 @@ $group->add(new Form_Checkbox(
 	'adv_dhcp6_id_assoc_statement_prefix_enable',
 	null,
 	'Prefix Delegation ',
-	false
+	$pconfig['adv_dhcp6_id_assoc_statement_prefix_enable']
 ));
 
 $group->add(new Form_Input(
@@ -2371,16 +2395,6 @@ $group->add(new Form_Input(
 ))->sethelp('Expire');
 
 $section->add($group);
-
-$section->addInput(new Form_Input(
-	'adv_dhcp6_config_file_override_path',
-	'Configuration File Override',
-	'text',
-	$pconfig['adv_dhcp6_config_file_override_path']
-))->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
 
 $form->add($section);
 
@@ -2516,24 +2530,23 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_password']
 ));
 
-if ($pconfig['type'] == 'ppp') {
-	$section->addInput(new Form_Input(
-		'phone',
-		'Phone number',
-		'text',
-		$pconfig['phone']
-	))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks');
-}
+$section->addInput(new Form_Input(
+	'phone',
+	'Phone number',
+	'text',
+	$pconfig['phone']
+))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks');
 
 $section->addInput(new Form_Input(
 	'apn',
-	'Access Point Name (APN)',
+	'Access Point Name',
 	'text',
 	$pconfig['apn']
 ));
 
+
 function build_port_list() {
-	$list = array('' => '');
+	$list = array("" => "None");
 
 	$portlist = glob("/dev/cua*");
 	$modems	  = glob("/dev/modem*");
@@ -2549,24 +2562,19 @@ function build_port_list() {
 
 	return($list);
 }
+
 $section->addInput(new Form_Select(
 	'port',
-	'Modem port',
+	"Modem port",
 	$pconfig['port'],
 	build_port_list()
 ));
 
-if (isset($pconfig['pppid'])) {
-	$section->addInput(new Form_StaticText(
-		'Advanced PPP',
-		'<a href="/interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']). '" class="navlnk">' . gettext("Click here to edit PPP configuration") . '</a>'
-	));
-}	else {
-	$section->addInput(new Form_StaticText(
-		'Advanced PPP',
-		'<a href="/interfaces_ppps_edit.php" class="navlnk">' . gettext("Click here to create a PPP configuration") . '</a>'
-	));
-}
+$section->addInput(new Form_Button(
+	'btnadvppp',
+	'Advanced PPP',
+	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php'
+))->setHelp('Create a new PPP configuration');
 
 $form->add($section);
 
@@ -3222,42 +3230,42 @@ print($form);
 ?>
 
 <script type="text/javascript">
-	//<![CDATA[
+//<![CDATA[
 events.push(function(){
 
 	function updateType(t) {
 		switch (t) {
 			case "none": {
-				jQuery('.staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				jQuery('.none, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.none, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				jQuery('.none, .staticv4, .pppoe, .pptp, .ppp').hide();
+				$('.none, .staticv4, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "ppp": {
-				jQuery('.none, .staticv4, .dhcp, .pptp, .pppoe').hide();
+				$('.none, .staticv4, .dhcp, .pptp, .pppoe').hide();
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				jQuery('.none, .staticv4, .dhcp, .pptp, .ppp').hide();
+				$('.none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				jQuery('.none, .staticv4, .dhcp, .pppoe, .ppp').hide();
-				jQuery('.pptp').show();
+				$('.none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				$('.pptp').show();
 				break;
 			}
 		}
 
 		if (t != "l2tp" && t != "pptp") {
-			jQuery('.'+t).show();
+			$('.'+t).show();
 		}
 	}
 
@@ -3267,84 +3275,84 @@ events.push(function(){
 
 		switch (t) {
 			case "none": {
-				jQuery('.staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('.none, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "slaac": {
-				jQuery('.none, .staticv6, .6rd, ._6to4, .track6, .dhcp6').hide();
+				$('.dhcp6advanced, .none, .staticv6, .6rd, ._6to4, .track6, .dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('.none, .staticv6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .staticv6, .6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "_6rd": {
-				jQuery('.none, .dhcp6, .staticv6, .6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "_6to4": {
-				jQuery('.none, .dhcp6, .staticv6, .6rd, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6rd, .track6, .slaac').hide();
 				break;
 			}
 			case "track6": {
-				jQuery('.none, .dhcp6, .staticv6, .6rd, .6to4, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6rd, .6to4, .slaac').hide();
 				update_track6_prefix();
 				break;
 			}
 		}
 
 		if (t != "l2tp" && t != "pptp") {
-			jQuery('.'+t).show();
+			$('.'+t).show();
 		}
 	}
 
 	function show_reset_settings(reset_type) {
 		if (reset_type == 'preset') {
-			jQuery('.pppoepreset').show();
-			jQuery('.pppoecustom').hide();
+			$('.pppoepreset').show();
+			$('.pppoecustom').hide();
 		} else if (reset_type == 'custom') {
-			jQuery('.pppoecustom').show();
-			jQuery('.pppoepreset').hide();
+			$('.pppoecustom').show();
+			$('.pppoepreset').hide();
 		} else {
-			jQuery('.pppoecustom').hide();
-			jQuery('.pppoepreset').hide();
+			$('.pppoecustom').hide();
+			$('.pppoepreset').hide();
 		}
 	}
 
 	function update_track6_prefix() {
-		var iface = jQuery("#track6-interface").val();
+		var iface = $("#track6-interface").val();
 		if (iface == null) {
 			return;
 		}
 
-		var track6_prefix_ids = jQuery('#ipv6-num-prefix-ids-' + iface).val();
+		var track6_prefix_ids = $('#ipv6-num-prefix-ids-' + iface).val();
 		if (track6_prefix_ids == null) {
 			return;
 		}
 
 		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
-		jQuery('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
+		$('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
 	}
 
 	// Create the new gateway from the data entered in the modal pop-up
 	function hide_add_gatewaysave() {
-		var iface = jQuery('#if').val();
-		name = jQuery('#name').val();
-		var descr = jQuery('#gatewaydescr').val();
-		gatewayip = jQuery('#gatewayip').val();
+		var iface = $('#if').val();
+		name = $('#name').val();
+		var descr = $('#gatewaydescr').val();
+		gatewayip = $('#gatewayip').val();
 
 		var defaultgw = '';
-		if (jQuery('#defaultgw').is(':checked')) {
+		if ($('#defaultgw').is(':checked')) {
 			defaultgw = '&defaultgw=on';
 		}
 
 		var url = "system_gateways_edit.php";
 		var pars = 'isAjax=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		jQuery.ajax(
+		$.ajax(
 			url,
 			{
 				type: 'post',
@@ -3357,7 +3365,7 @@ events.push(function(){
 	function save_callback(response) {
 		if (response) {
 			var gwtext = escape(name) + " - " + gatewayip;
-			addOption(jQuery('#gateway'), gwtext, name);
+			addOption($('#gateway'), gwtext, name);
 		} else {
 			report_failure();
 		}
@@ -3386,17 +3394,17 @@ events.push(function(){
 
 	function hide_add_gatewaysave_v6() {
 
-		var iface = jQuery('#if').val();
-		name = jQuery('#namev6').val();
-		var descr = jQuery('#gatewaydescrv6').val();
-		gatewayip = jQuery('#gatewayipv6').val();
+		var iface = $('#if').val();
+		name = $('#namev6').val();
+		var descr = $('#gatewaydescrv6').val();
+		gatewayip = $('#gatewayipv6').val();
 		var defaultgw = '';
-		if (jQuery('#defaultgwv6').is(':checked')) {
+		if ($('#defaultgwv6').is(':checked')) {
 			defaultgw = '&defaultgw=on';
 		}
 		var url_v6 = "system_gateways_edit.php";
 		var pars_v6 = 'isAjax=true&ipprotocol=inet6' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		jQuery.ajax(
+		$.ajax(
 			url_v6,
 			{
 				type: 'post',
@@ -3430,7 +3438,7 @@ events.push(function(){
 		if (response_v6) {
 
 			var gwtext_v6 = escape(name) + " - " + gatewayip;
-			addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
+			addOption_v6($('#gatewayv6'), gwtext_v6, name);
 		} else {
 			report_failure_v6();
 		}
@@ -3440,10 +3448,10 @@ events.push(function(){
 
 	function country_list() {
 
-		jQuery('#country').children().remove();
-		jQuery('#provider_list').children().remove();
-		jQuery('#providerplan').children().remove();
-		jQuery.ajax("getserviceproviders.php",{
+		$('#country').children().remove();
+		$('#provider_list').children().remove();
+		$('#providerplan').children().remove();
+		$.ajax("getserviceproviders.php",{
 			success: function(response) {
 
 				var responseTextArr = response.split("\n");
@@ -3461,11 +3469,11 @@ events.push(function(){
 	}
 
 	function providers_list() {
-		jQuery('#provider_list').children().remove();
-		jQuery('#providerplan').children().remove();
-		jQuery.ajax("getserviceproviders.php",{
+		$('#provider_list').children().remove();
+		$('#providerplan').children().remove();
+		$.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val()},
+			data: {country : $('#country').val()},
 			success: function(response) {
 				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
@@ -3480,10 +3488,10 @@ events.push(function(){
 	}
 
 	function providerplan_list() {
-		jQuery('#providerplan').children().remove();
-		jQuery.ajax("getserviceproviders.php",{
+		$('#providerplan').children().remove();
+		$.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val()},
+			data: {country : $('#country').val(), provider : $('#provider_list').val()},
 			success: function(response) {
 				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
@@ -3507,180 +3515,66 @@ events.push(function(){
 		});
 	}
 
-/*
-
 	function prefill_provider() {
-		jQuery.ajax("getserviceproviders.php",{
+		$.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val(), plan : jQuery('#providerplan').val()},
+			data: {country : $('#country').val(), provider : $('#provider_list').val(), plan : $('#providerplan').val()},
 			success: function(data, textStatus, response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
-				jQuery('#ppp_username').val('');
-				jQuery('#ppp_password').val('');
+				$('#ppp_username').val('');
+				$('#ppp_password').val('');
 				if (provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
-					jQuery('#phone').val('#777');
-					jQuery('#apn').val('');
+					$('#phone').val('#777');
+					$('#apn').val('');
 				} else {
-					jQuery('#phone').val('*99#');
-					jQuery('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
+					$('#phone').val('*99#');
+					$('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
 				ppp_username = provider.getElementsByTagName('ppp_username')[0].firstChild.data;
 				ppp_password = provider.getElementsByTagName('ppp_password')[0].firstChild.data;
-				jQuery('#ppp_username').val(ppp_username);
-				jQuery('#ppp_password').val(ppp_password);
+				$('#ppp_username').val(ppp_username);
+				$('#ppp_password').val(ppp_password);
 			}
 		});
 	}
 
-	function customdhcpptcheckradiobuton(T, BUTTON) {
-		for (var i = 0; i < T.length; i++) {
-			T[i].checked = false;
-			if (T[i].value == BUTTON) T[i].checked = true;
-		}
-		T.value = BUTTON;
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
 	}
 
-	function customdhcpptsetvalues(T, FORM) {
-		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
-		if (T.value == "DHCP")		customdhcpptsetvaluesnow(T, FORM, "60", "300", "0", "10", "120", "10");
-		if (T.value == "pfSense")	customdhcpptsetvaluesnow(T, FORM, "60", "15", "0", "", "", "1");
-		if (T.value == "SavedCfg")	customdhcpptsetvaluesnow(T, FORM, "<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout'])?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry'])?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout'])?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot'])?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff'])?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval'])?>");
-		if (T.value == "Clear")		customdhcpptsetvaluesnow(T, FORM, "", "", "", "", "", "");
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
 	}
 
-	function customdhcpptsetvaluesnow(T, FORM, timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
-		FORM.adv_dhcp_pt_timeout.value = timeout;
-		FORM.adv_dhcp_pt_retry.value = retry;
-		FORM.adv_dhcp_pt_select_timeout.value = selecttimeout;
-		FORM.adv_dhcp_pt_reboot.value = reboot;
-		FORM.adv_dhcp_pt_backoff_cutoff.value = backoffcutoff;
-		FORM.adv_dhcp_pt_initial_interval.value = initialinterval;
-
-		FORM.adv_dhcp_pt_values.value = T.value;
+	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
+	function hideCheckbox(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent().parent('div').removeClass('hidden');
 	}
 
-	<!-- Set the adv_dhcp_pt_values radio button from saved config -->
-	var RADIOBUTTON_VALUE = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values'])?>";
-	if (RADIOBUTTON_VALUE == "") RADIOBUTTON_VALUE = "SavedCfg";
-	//customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, RADIOBUTTON_VALUE);
+	function show_dhcp6adv() {
+		var ovr = $('#adv_dhcp6_config_file_override').prop('checked');
+		var adv = $('#dhcp6adv').prop('checked');
 
-	function show_adv_dhcp_config(T) {
+		hideCheckbox('dhcp6usev4iface', ovr);
+		hideCheckbox('dhcp6prefixonly', ovr);
+		hideInput('dhcp6-ia-pd-len', ovr);
+		hideCheckbox('dhcp6-ia-pd-send-hint', ovr);
+		hideInput('adv_dhcp6_config_file_override_path', !ovr);
 
-		if (T.checked) {
-			T.value = "Selected";
-		} else {
-			T.value = "";
-		}
-
-		if (document.iform.adv_dhcp_config_file_override.checked) {
-			show_hide_adv_dhcp('none', 'none', '');
-		} else if (document.iform.adv_dhcp_config_advanced.checked) {
-			show_hide_adv_dhcp('', '', 'none');
-		} else {
-			show_hide_adv_dhcp('', 'none', 'none');
-		}
+		hideClass('dhcp6advanced', !adv || ovr);
 	}
-
-		function show_adv_dhcp6_config(T) {
-
-			if (T.checked) {
-				T.value = "Selected";
-			} else {
-				T.value = "";
-			}
-
-			if (document.iform.adv_dhcp6_config_file_override.checked) {
-				show_hide_adv_dhcp6('none', 'none', '');
-			} else if (document.iform.adv_dhcp6_config_advanced.checked) {
-				show_hide_adv_dhcp6('none', '', 'none');
-			} else {
-				show_hide_adv_dhcp6('', 'none', 'none');
-			}
-		}
-
-		function show_hide_adv_dhcp6(basic, advanced, override) {
-				document.getElementById("basicdhcp6_use_pppoeinterface").style.display = basic;
-				document.getElementById("basicdhcp6_show_dhcp6_prefix_delegation_size").style.display = basic;
-				document.getElementById("basicdhcp6_show_dhcp6_prefix_send_hint").style.display = basic;
-				document.getElementById("basicdhcp6_show_dhcp6_prefix_only").style.display = basic;
-
-				document.getElementById("show_adv_dhcp6_interface_statement").style.display = advanced;
-				document.getElementById("show_adv_dhcp6_id_assoc_statement").style.display = advanced;
-
-				document.getElementById("show_adv_dhcp6_id_assoc_statement_address").style.display = 'none';
-				if (document.iform.adv_dhcp6_id_assoc_statement_address_enable.checked) {
-					document.getElementById("show_adv_dhcp6_id_assoc_statement_address").style.display = advanced;
-				}
-
-				document.getElementById("show_adv_dhcp6_id_assoc_statement_prefix").style.display = 'none';
-				document.getElementById("show_adv_dhcp6_prefix_interface_statement").style.display = 'none';
-				if (document.iform.adv_dhcp6_id_assoc_statement_prefix_enable.checked) {
-					document.getElementById("show_adv_dhcp6_id_assoc_statement_prefix").style.display = advanced;
-					document.getElementById("show_adv_dhcp6_prefix_interface_statement").style.display = advanced;
-				}
-
-				document.getElementById("show_adv_dhcp6_authentication_statement").style.display = advanced;
-				document.getElementById("show_adv_dhcp6_key_info_statement").style.display = advanced;
-
-				document.getElementById("show_adv_dhcp6_config_file_override").style.display = override;
-			}
-
-			<!-- Set the adv_dhcp6_config_advanced checkbox from saved config -->
-			if ("<?=htmlspecialchars($pconfig['adv_dhcp6_config_advanced'])?>" == "Selected") {
-				document.iform.adv_dhcp6_config_advanced.checked = true;
-			}
-			show_adv_dhcp6_config(document.iform.adv_dhcp6_config_advanced);
-
-			<!-- Set the adv_dhcp6_config_file_override checkbox from saved config -->
-			if ("<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override'])?>" == "Selected") {
-				document.iform.adv_dhcp6_config_file_override.checked = true;
-			}
-			show_adv_dhcp6_config(document.iform.adv_dhcp6_config_file_override);
-
-			<!-- Set the adv_dhcp6_interface_statement_information_only_enable checkbox from saved config -->
-			if ("<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_information_only_enable'])?>" == "Selected") {
-				document.iform.adv_dhcp6_interface_statement_information_only_enable.checked = true;
-			}
-			show_adv_dhcp6_config(document.iform.adv_dhcp6_interface_statement_information_only_enable);
-
-			<!-- Set the adv_dhcp6_id_assoc_statement_address_enable checkbox from saved config -->
-			if ("<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address_enable'])?>" == "Selected") {
-				document.iform.adv_dhcp6_id_assoc_statement_address_enable.checked = true;
-			}
-			show_adv_dhcp6_config(document.iform.adv_dhcp6_id_assoc_statement_address_enable);
-
-			<!-- Set the adv_dhcp6_id_assoc_statement_prefix_enable checkbox from saved config -->
-			if ("<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix_enable'])?>" == "Selected") {
-				document.iform.adv_dhcp6_id_assoc_statement_prefix_enable.checked = true;
-			}
-			show_adv_dhcp6_config(document.iform.adv_dhcp6_id_assoc_statement_prefix_enable);
-
-	function show_hide_adv_dhcp(basic, advanced, override) {
-
-		document.getElementById("show_basic_dhcphostname").style.display = basic;
-		document.getElementById("show_basic_dhcpalias-address").style.display = basic;
-		document.getElementById("show_basic_dhcprejectlease").style.display = basic;
-
-		document.getElementById("show_adv_dhcp_protocol_timing").style.display = advanced;
-		document.getElementById("show_adv_dhcp_lease_requirements_and_requests").style.display = advanced;
-		document.getElementById("show_adv_dhcp_option_modifiers").style.display = advanced;
-
-		document.getElementById("show_adv_dhcp_config_file_override").style.display = override;
-	}
-
-	<!-- Set the adv_dhcp_config_advanced checkbox from saved config -->
-	if ("<?=htmlspecialchars($pconfig['adv_dhcp_config_advanced'])?>" == "Selected") {
-		document.iform.adv_dhcp_config_advanced.checked = true;
-	}
-	show_adv_dhcp_config(document.iform.adv_dhcp_config_advanced);
-
-	<!-- Set the adv_dhcp_config_file_override checkbox from saved config -->
-	if ("<?=htmlspecialchars($pconfig['adv_dhcp_config_file_override'])?>" == "Selected") {
-		document.iform.adv_dhcp_config_file_override.checked = true;
-	}
-	show_adv_dhcp_config(document.iform.adv_dhcp_config_file_override);
-*/
 
 	// On page load . .
 	updateType($('#type').val());
@@ -3692,6 +3586,8 @@ events.push(function(){
 	$("#add6").prop('type' ,'button');
 	$("#cnx6").prop('type' ,'button');
 	$("#addgw6").prop('type' ,'button');
+	hideClass('dhcp6advanced', true);
+	show_dhcp6adv();
 
 	// On click . .
    $('#type').on('change', function() {
@@ -3729,9 +3625,21 @@ events.push(function(){
 	$('#provider_list').on('change', function() {
 		providerplan_list();
 	});
+
+	$('#providerplan').on('change', function() {
+		prefill_provider();
+	});
+
+	$('#dhcp6adv').click(function () {
+		show_dhcp6adv();
+	});
+
+	$('#adv_dhcp6_config_file_override').click(function () {
+		show_dhcp6adv();
+	});
+
 });
 //]]>
 </script>
-
 
 <?php include("foot.inc");

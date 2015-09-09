@@ -51,14 +51,14 @@ class Modal extends Form_Section
 					</button>
 					<h3 class="modal-title">{$title}</h3>
 				</div>
-				<form class="form-horizontal" action="" method="post">
+<!--				<form class="form-horizontal" action="" method="post"> -->
 					<div class="modal-body">
 						{$html}
 					</div>
 					<div class="modal-footer">
 						{$footer}
 					</div>
-				</form>
+<!--				</form> -->
 			</div>
 		</div>
 	</div>

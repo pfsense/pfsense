@@ -398,13 +398,16 @@ FIXME: addHtml does not exist
 				<div class="modal-body">
 <?php
 $noticeCategories = array();
-foreach ($notices as $time => $notice)
-{
-	if (!isset($noticeCategories[ $notice['category'] ]))
-		$noticeCategories[ $notice['category'] ] = array();
 
-	$notice['time'] = $time;
-	array_push($noticeCategories[ $notice['category'] ], $notice);
+if(is_array($notices)) {
+	foreach ($notices as $time => $notice)
+	{
+		if (!isset($noticeCategories[ $notice['category'] ]))
+			$noticeCategories[ $notice['category'] ] = array();
+	
+		$notice['time'] = $time;
+		array_push($noticeCategories[ $notice['category'] ], $notice);
+	}
 }
 
 foreach ($noticeCategories as $category => $catNotices):?>

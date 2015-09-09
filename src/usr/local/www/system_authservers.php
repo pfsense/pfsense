@@ -365,9 +365,9 @@ function server_typechange(typ) {
 	// makes it easier to add more later
 	//
 	<?php
-		foreach ($a_server as $server):
+		foreach ($auth_server_types as $typename => $typedesc):
 	?>
-			document.getElementById("<?=$server['type'];?>").style.display="none";
+			document.getElementById("<?=$typename;?>").style.display="none";
 	<?php
 		endforeach;
 	?>
@@ -772,7 +772,8 @@ function select_clicked() {
 							</td>
 						</tr>
 					</table>
-
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="openvpn_PAM" style="display:none" summary="">
+					</table>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="radius" style="display:none" summary="">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>

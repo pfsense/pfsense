@@ -266,10 +266,6 @@ if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
 
-if [ ! -d /cf/conf/backup/ ]; then
-	/bin/mkdir -p /cf/conf/backup/
-fi
-
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 

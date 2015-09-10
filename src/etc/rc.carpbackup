@@ -53,7 +53,7 @@ $carp_iface = "{$friendly}_vip{$vhid}";
 
 if(is_array($vips)) {
 	foreach ($vips as $vip) {
-		$notificationmsg = sprintf('Carp cluster member "{$friendly_descr)(%2$s): {$vip["subnet"]} (%1$s)" has resumed the state "BACKUP" for vhid %s', $argument, $vip['descr'], $vhid);
+		$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "BACKUP" for vhid %3$s', $argument, $friendly_descr, $vhid);
 	
 		notify_via_smtp($notificationmsg);
 		notify_via_growl($notificationmsg);

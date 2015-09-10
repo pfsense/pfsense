@@ -166,10 +166,6 @@ elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
-	# Ensure that PBI packages can be persistent across reboots
-	/bin/mkdir -p /root/var/db/pbi
-	/bin/rm -rf /var/db/pbi
-	/bin/ln -s /root/var/db/pbi/ /var/db/pbi
 else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
@@ -179,17 +175,7 @@ else
 		# User must have just disabled RAM disks, move these back into place.
 		/bin/mkdir -p /var/db/pkg
 		/bin/mv /root/var/db/pkg /var/db/pkg
-		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pbi /var/db/pbi
 	fi
-fi
-
-# Copy PBI keys
-if ls /usr/local/share/pbi-keys/*.ssl >/dev/null 2>&1; then
-	if [ ! -d "/var/db/pbi/keys" ]; then
-		mkdir -p /var/db/pbi/keys
-	fi
-	cp -f /usr/local/share/pbi-keys/*.ssl /var/db/pbi/keys
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

@@ -522,7 +522,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name} -q");
+	exec("/usr/sbin/pw {$un}lock {$user_name} -q 2>/dev/null");
 
 	conf_mount_ro();
 }

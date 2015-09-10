@@ -697,6 +697,8 @@ require_once('classes/Form.class.php');
 $form = new Form();
 
 if($act=="new" || $act=="edit") :
+
+
 	$section = new Form_Section('General Information');
 
 	$section->addInput(new Form_checkbox(
@@ -767,19 +769,38 @@ if($act=="new" || $act=="edit") :
 		$pconfig['tls']
 	))->setHelp('Paste your shared key here');
 
-	$section->addInput(new Form_Select(
-		'caref',
-		'Peer Certifiacte Authority',
-		$pconfig['caref'],
-		count($a_ca) ? array_combine($a_ca, $a_ca) : ['' => 'None']
-		))->setHelp(count($a_ca) ? '':sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
-
-	$section->addInput(new Form_Select(
-		'crlref',
-		'Peer Certifiacte Revocation list',
-		$pconfig['crlref'],
-		build_crl_list()
-		))->setHelp(count($a_crl) ? '':sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
+	if (count($a_ca)) {
+		
+		$list = array();
+		foreach ($a_ca as $ca)
+			$list[$ca['refid']] = $ca['descr'];
+			
+		$section->addInput(new Form_Select(
+			'caref',
+			'Peer Certifiacte Authority',
+			$pconfig['caref'],
+			$list
+		));
+	} else {
+		$section->addInput(new Form_StaticText(
+			'Peer Certifiacte Authority',
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+		));
+	}
+			 
+	if (count($a_crl)) {			
+		$section->addInput(new Form_Select(
+			'crlref',
+			'Peer Certificate Revocation list',
+			$pconfig['crlref'],
+			build_crl_list()
+		));
+	} else {
+		$section->addInput(new Form_StaticText(
+			'Peer Certificate Revocation list',
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+		));
+	}
 
 	$section->addInput(new Form_Select(
 		'certref',
@@ -1256,7 +1277,7 @@ endif;
 
 // Note:
 // The following *_change() functions were converted from Javascript/DOM to JQuery but otherwise
-// mostly left unchanged. The logic on this form is complex andthis works!
+// mostly left unchanged. The logic on this form is complex and this works!
 ?>
 
 <script type="text/javascript">

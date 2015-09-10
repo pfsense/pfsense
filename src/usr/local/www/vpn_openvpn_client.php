@@ -613,20 +613,39 @@ if($act=="new" || $act=="edit") :
 		$pconfig['tls']
 	))->setHelp('Paste your shared key here');
 
-	$section->addInput(new Form_Select(
-		'caref',
-		'Peer Certifiacte Authority',
-		$pconfig['caref'],
-		count($a_ca) ? array_combine($a_ca, $a_ca) : ['' => 'None']
-		))->setHelp(count($a_ca) ? '':sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
-
-	$section->addInput(new Form_Select(
-		'certref',
-		'Peer Certifiacte Authority',
-		$pconfig['certref'],
-		build_cert_list()
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
-
+	if (count($a_ca)) {
+		
+		$list = array();
+		foreach ($a_ca as $ca)
+			$list[$ca['refid']] = $ca['descr'];
+			
+		$section->addInput(new Form_Select(
+			'caref',
+			'Peer Certifiacte Authority',
+			$pconfig['caref'],
+			$list
+		));
+	} else {
+		$section->addInput(new Form_StaticText(
+			'Peer Certifiacte Authority',
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+		));
+	}
+			 
+	if (count($a_crl)) {			
+		$section->addInput(new Form_Select(
+			'crlref',
+			'Peer Certificate Revocation list',
+			$pconfig['crlref'],
+			build_crl_list()
+		));
+	} else {
+		$section->addInput(new Form_StaticText(
+			'Peer Certificate Revocation list',
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+		));
+	}
+	
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_checkbox(
 			'autokey_enable',

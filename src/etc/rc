@@ -332,6 +332,12 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
+# Finish update
+if [ -f /cf/conf/upgrade_in_progress ]; then
+	echo "Running second stage of upgrade process..."
+	/usr/local/sbin/pfsense-upgrade.sh -y
+fi
+
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt

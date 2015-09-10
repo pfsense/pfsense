@@ -1170,11 +1170,19 @@ function alias_info_popup($alias_id) {
 
 		$content .= '<ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
 	}
+<<<<<<< HEAD
 
 	if (strlen($alias['descr']) >= $maxlength)
 		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
 
 	return $content;
+=======
+	$item_text = ($counter > 1 ? "items" : "item");
+	$alias_descr_substr = htmlspecialchars($alias_descr_substr);
+	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
+	$strlength = strlen ($alias_caption);
+	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
+>>>>>>> Encode alias description
 }
 
 function rule_columns_with_alias($src, $srcport, $dst, $dstport) {

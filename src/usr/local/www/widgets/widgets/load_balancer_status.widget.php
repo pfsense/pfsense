@@ -149,7 +149,13 @@ if (!$nentries) {
 ?>
 			</table>
 		</td>
+<<<<<<< HEAD
 		<td><?=htmlspecialchars($vsent['descr']);?></td>
+=======
+		<td class="listbg" >
+			<font color="#FFFFFF"><?=htmlspecialchars($vsent['descr']);?></font>
+		</td>
+>>>>>>> Encode load balancer pool description to avoid XSS
 	</tr>
 	<?php endforeach; ?>
 </tbody>

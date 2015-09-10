@@ -128,7 +128,11 @@ $clients = openvpn_get_active_clients();
 <table>
 	<tr>
 		<td colspan="6" class="listtopic">
+<<<<<<< HEAD
 			<?=htmlspecialchars($server['name']);?> Client connections
+=======
+			<?=htmlspecialchars($server['name'];)?> Client connections
+>>>>>>> Encode OpenVPN server description to avoid XSS
 		</td>
 	</tr>
 	<tr>

@@ -227,6 +227,7 @@ foreach ($a_pool as $pool):
 			}
 		}
 ?>
+<<<<<<< HEAD
 							</table>
 						</td>
 						<td >
@@ -236,6 +237,17 @@ foreach ($a_pool as $pool):
 							<?=htmlspecialchars($pool['descr'])?>
 						</td>
 					</tr>
+=======
+						</table>
+					</td>
+					<td class="listr" >
+						<?php echo $pool['monitor']; ?>
+					</td>
+					<td class="listbg" >
+						<?=htmlspecialchars($pool['descr'];)?>
+					</td>
+				</tr>
+>>>>>>> Encode load balancer pool description to avoid XSS
 <?php
 endforeach;
 ?>

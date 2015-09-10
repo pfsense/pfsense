@@ -413,7 +413,11 @@ done
 
 core_pkg_create_repo
 
-echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
+if [ -n "${SNAPSHOTS}" ]; then
+	snapshots_update_status ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+else
+	echo ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+fi
 wait
 
 if [ -n "${SNAPSHOTS}" ]; then

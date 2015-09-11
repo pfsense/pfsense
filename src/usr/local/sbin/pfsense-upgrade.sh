@@ -229,7 +229,6 @@ second_step() {
 unset need_reboot
 if [ ! -f "${upgrade_in_progress}" ]; then
 	first_step
-else
 	need_reboot=1
 fi
 

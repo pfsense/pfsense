@@ -1,32 +1,59 @@
 <?php
 /*
 	vpn_openvpn_server.php
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-server
@@ -193,9 +220,9 @@ if ($_GET['act'] == "edit") {
 		$pconfig['dns_server4'] = $a_server[$id]['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
-		    $pconfig['dns_server2'] ||
-		    $pconfig['dns_server3'] ||
-		    $pconfig['dns_server4']) {
+			$pconfig['dns_server2'] ||
+			$pconfig['dns_server3'] ||
+			$pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
@@ -203,7 +230,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['ntp_server2'] = $a_server[$id]['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
-		    $pconfig['ntp_server2']) {
+			$pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
@@ -215,7 +242,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['wins_server2'] = $a_server[$id]['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
-		    $pconfig['wins_server2']) {
+			$pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
@@ -317,14 +344,14 @@ if ($_POST) {
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
+			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
+			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 		}
 	}
@@ -403,7 +430,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
 		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) ||
-		    (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
+			(!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
 		}
 		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start']))) {
@@ -770,11 +797,11 @@ if($act=="new" || $act=="edit") :
 	))->setHelp('Paste your shared key here');
 
 	if (count($a_ca)) {
-		
+
 		$list = array();
 		foreach ($a_ca as $ca)
 			$list[$ca['refid']] = $ca['descr'];
-			
+
 		$section->addInput(new Form_Select(
 			'caref',
 			'Peer Certifiacte Authority',
@@ -787,8 +814,8 @@ if($act=="new" || $act=="edit") :
 			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
 		));
 	}
-			 
-	if (count($a_crl)) {			
+
+	if (count($a_crl)) {
 		$section->addInput(new Form_Select(
 			'crlref',
 			'Peer Certificate Revocation list',
@@ -899,9 +926,9 @@ if($act=="new" || $act=="edit") :
 	));
 
 	$section->addInput(new Form_Select(
-		'serberbridge_inerface',
+		'serverbridge_interface',
 		'Bridge Interface',
-		$pconfig['serberbridge_inerface'],
+		$pconfig['serverbridge_interface'],
 		build_bridge_list()
 		))->setHelp('The interface to which this tap instance will be bridged. This is not done automatically. You must assign this ' .
 						'interface and create the bridge separately. This setting controls which existing IP address and subnet ' .

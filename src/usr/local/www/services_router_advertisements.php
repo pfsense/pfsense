@@ -388,7 +388,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('The RA server can optionally provide a domain search list. Use the semicolon character as separator ');
 
 $section->addInput(new Form_Checkbox(
-	'rasamednsasdhcp6e',
+	'rasamednsasdhcp6',
 	'Settings',
 	'Use same settings as DHCPv6 server',
 	$pconfig['rasamednsasdhcp6']

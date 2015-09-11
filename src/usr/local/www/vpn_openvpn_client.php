@@ -621,13 +621,13 @@ if($act=="new" || $act=="edit") :
 			
 		$section->addInput(new Form_Select(
 			'caref',
-			'Peer Certifiacte Authority',
+			'Peer Certificate Authority',
 			$pconfig['caref'],
 			$list
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
-			'Peer Certifiacte Authority',
+			'Peer Certificate Authority',
 			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
 		));
 	}

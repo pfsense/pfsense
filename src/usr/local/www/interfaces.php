@@ -3063,7 +3063,7 @@ if (isset($wancfg['wireless'])) {
 	$section->addInput(new Form_Select(
 		'wpa_mode',
 		'WPA mode',
-		$pconfig['wpa_mode'],
+		(isset($pconfig['wpa_mode'])) ? $pconfig['wpa_mode']: '2',
 		['1' => 'WPA', '2' => 'WPA2', '3' => 'Both']
 	));
 
@@ -3084,7 +3084,7 @@ if (isset($wancfg['wireless'])) {
 	$section->addInput(new Form_Select(
 		'wpa_pairwise',
 		'WPA Pairwise',
-		$pconfig['wpa_pairwise'],
+		(isset($pconfig['wpa_pairwise'])) ? $pconfig['wpa_pairwise']:'CCMP',
 		['CCMP TKIP' => 'Both', 'CCMP' => 'AES (recommended)', 'TKIP' => 'TKIP']
 	));
 

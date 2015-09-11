@@ -290,7 +290,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'relay_protocol',
-	'Relay protocol',
+	'Relay Protocol',
 	$pconfig['relay_protocol'],
 	['tcp' => 'TCP', 'dns' => 'DNS']
 ));

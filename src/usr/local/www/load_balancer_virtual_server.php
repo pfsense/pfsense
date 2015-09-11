@@ -175,7 +175,7 @@ if(!empty($a_vs)) {
 						<td><?=htmlspecialchars($a_v['ipaddr'])?></td>
 						<td><?=htmlspecialchars($a_v['port'])?></td>
 						<td><?=$a_v['poolname']?></td>
-						<td><?=htmlspecialchars($a_v['sitedown'])?></td>
+						<td><?=$a_v['sitedown']?></td>
 						<td><?=htmlspecialchars($a_v['descr'])?></td>
 						<td>
 							<a type="button" class="btn btn-info btn-xs" href="load_balancer_virtual_server_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>

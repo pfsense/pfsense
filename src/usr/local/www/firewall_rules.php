@@ -275,8 +275,8 @@ if($_POST['action'] == "ShowRuleStates") {
 				$state_count++;
 				$resp .= "<tr>{$td2}{$mcon[1]}</td>{$td2}{$mcon[2]}{$mcon[3]}{$mcon[4]}</td>{$td2}{$mcon[5]}</td>";
 			} elseif (preg_match("/age.*, (\S+) pkts, (\S+) bytes, rule (\d+)/",$line,$mrule)) {
-				list($pkt1,$pkt2)=split(":",$mrule[1],2);
-				list($bt1,$bt2)=split(":",$mrule[2],2);
+				list($pkt1,$pkt2)=explode(":",$mrule[1],2);
+				list($bt1,$bt2)=explode(":",$mrule[2],2);
 				$resp .= "{$td2}".bd_nice_number($pkt1)." / ".bd_nice_number($pkt2)."</td>{$td2}".bd_nice_number($bt1)." / ".bd_nice_number($bt2)."</td></tr>";
 			}
 		}

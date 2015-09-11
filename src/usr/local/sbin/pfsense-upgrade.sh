@@ -52,16 +52,6 @@ if [ -f "${logfile}" ]; then
 	rm -f ${logfile}
 fi
 
-_echo() {
-	local _n=""
-	if [ "${1}" = "-n" ]; then
-		shift
-		_n="-n"
-	fi
-
-	echo ${_n} "${1}" | tee -a ${logfile}
-}
-
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
@@ -95,6 +85,16 @@ done
 
 usage() {
 	_echo "Usage: $(basename ${0}) [-d] [-y] [-c]"
+}
+
+_echo() {
+	local _n=""
+	if [ "${1}" = "-n" ]; then
+		shift
+		_n="-n"
+	fi
+
+	echo ${_n} "${1}" | tee -a ${logfile}
 }
 
 _exec() {

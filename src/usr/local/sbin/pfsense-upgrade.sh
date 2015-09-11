@@ -46,6 +46,22 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
+logfile=/cf/conf/upgrade_log.txt
+
+if [ -f "${logfile}" ]; then
+	rm -f ${logfile}
+fi
+
+_echo() {
+	local _n=""
+	if [ "${1}" = "-n" ]; then
+		shift
+		_n="-n"
+	fi
+
+	echo ${_n} "${1}" | tee -a ${logfile}
+}
+
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
@@ -56,7 +72,7 @@ firmwarelock=/var/run/firmwarelock.dirty
 upgrade_in_progress="/cf/conf/upgrade_in_progress"
 
 if [ -f "${firmwarelock}" ]; then
-	echo "ERROR: Another upgrade is running... aborting."
+	_echo "ERROR: Another upgrade is running... aborting."
 	exit 0
 fi
 
@@ -78,7 +94,7 @@ while getopts dys opt; do
 done
 
 usage() {
-	echo "Usage: $(basename ${0}) [-d] [-y] [-c]"
+	_echo "Usage: $(basename ${0}) [-d] [-y] [-c]"
 }
 
 _exec() {
@@ -96,22 +112,22 @@ _exec() {
 		_stdout=''
 	fi
 
-	echo -n ">>> ${_msg}... "
+	_echo -n ">>> ${_msg}... "
 	if [ -z "${_stdout}" ]; then
-		echo ""
-		${_cmd} 2>&1
+		_echo ""
+		${_cmd} 2>&1 | tee -a ${logfile}
 	else
-		${_cmd} >${_stdout} 2>&1
+		${_cmd} >${_stdout} 2>&1 | tee -a ${logfile}
 	fi
 	local _result=$?
 
 	if [ ${_result} -eq 0 -o -n "${_ignore_result}" ]; then
 		[ -n "${_stdout}" ] \
-			&& echo "done."
+			&& _echo "done."
 		return 0
 	else
 		[ -n "${_stdout}" ] \
-			&& echo "failed."
+			&& _echo "failed."
 		return 1
 	fi
 }
@@ -132,21 +148,21 @@ first_step() {
 	kernel_pkg=$(pkg query %n $(pkg info pfSense-kernel-\*))
 
 	if [ -z "${kernel_pkg}" ]; then
-		echo "ERROR: It was not possible to identify which pfSense kernel is installed"
+		_echo "ERROR: It was not possible to identify which pfSense kernel is installed"
 		exit 1
 	fi
 
 	kernel_local=$(pkg query %v ${kernel_pkg})
 
 	if [ -z "${kernel_local}" ]; then
-		echo "ERROR: It was not possible to determine pfSense kernel local version"
+		_echo "ERROR: It was not possible to determine pfSense kernel local version"
 		exit 1
 	fi
 
 	kernel_remote=$(pkg rquery %v ${kernel_pkg})
 
 	if [ -z "${kernel_remote}" ]; then
-		echo "ERROR: It was not possible to determine pfSense kernel remote version"
+		_echo "ERROR: It was not possible to determine pfSense kernel remote version"
 		exit 1
 	fi
 
@@ -160,40 +176,40 @@ first_step() {
 	elif [ "${kernel_version_compare}" = "=" ]; then
 		kernel_update=0
 	elif [ "${kernel_version_compare}" = ">" ]; then
-		echo "ERROR: You are using a newer kernel version than remote repository"
+		_echo "ERROR: You are using a newer kernel version than remote repository"
 		exit 1
 	else
-		echo "ERROR: Error comparing pfSense kernel local and remote versions"
+		_echo "ERROR: Error comparing pfSense kernel local and remote versions"
 		exit 1
 	fi
 
 	# XXX find a samrter way to do it
 	l=$(pkg upgrade -Unq | wc -l)
 	if [ ${l} -eq 1 ]; then
-		echo "Your packages are up to date"
+		_echo "Your packages are up to date"
 		exit 0
 	fi
 
 	if [ -z "${yes}" ]; then
 		# Show user which packages are going to be upgraded
-		pkg upgrade -Unq
+		pkg upgrade -Unq 2>&1 | tee -a ${logfile}
 
-		echo ""
+		_echo ""
 		if [ ${kernel_update} -eq 1 ]; then
-			echo "**** WARNING ****"
-			echo "Reboot will be required!!"
+			_echo "**** WARNING ****"
+			_echo "Reboot will be required!!"
 		fi
-		echo -n "Proceed with upgrade? (y/N) "
+		_echo -n "Proceed with upgrade? (y/N) "
 		read answer
 		if [ "${answer}" != "y" ]; then
-			echo "Aborting..."
+			_echo "Aborting..."
 			exit 0
 		fi
 	fi
 
-	echo ">>> Downloading packages..."
-	if ! pkg upgrade -UF; then
-		echo "ERROR: It was not possible to download packages"
+	_echo ">>> Downloading packages..."
+	if ! pkg upgrade -UF 2>&1 | tee -a ${logfile}; then
+		_echo "ERROR: It was not possible to download packages"
 		exit 1
 	fi
 
@@ -205,15 +221,15 @@ first_step() {
 	if [ ${kernel_update} -eq 1 ]; then
 		_exec "pkg upgrade -U ${kernel_pkg}" "Upgrading pfSense krenel"
 		touch ${upgrade_in_progress}
-		echo "Rebooting..."
+		_echo "Rebooting..."
 		reboot
 	fi
 }
 
 second_step() {
-	echo "Upgrading necessary packages..."
-	if ! pkg upgrade -U; then
-		echo "ERROR: An error occurred when upgrade was running..."
+	_echo "Upgrading necessary packages..."
+	if ! pkg upgrade -U 2>&1 | tee -a ${logfile}; then
+		_echo "ERROR: An error occurred when upgrade was running..."
 		exit 1
 	fi
 
@@ -235,7 +251,7 @@ fi
 second_step
 
 if [ -n "${need_reboot}" ]; then
-	echo "Rebooting..."
+	_echo "Rebooting..."
 	reboot
 fi
 

@@ -269,6 +269,7 @@ fi
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
+
 # Remove old nameserver resolution files
 /bin/rm -f /var/etc/nameserver*
 

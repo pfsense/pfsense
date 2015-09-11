@@ -46,12 +46,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-logfile=/cf/conf/upgrade_log.txt
-
-if [ -f "${logfile}" ]; then
-	rm -f ${logfile}
-fi
-
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
@@ -246,8 +240,14 @@ second_step() {
 	rm -f ${firmwarelock}
 }
 
+logfile=/cf/conf/upgrade_log.txt
+
 unset need_reboot
 if [ ! -f "${upgrade_in_progress}" ]; then
+	if [ -f "${logfile}" ]; then
+		rm -f ${logfile}
+	fi
+
 	first_step
 	need_reboot=1
 fi

@@ -290,7 +290,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'relay_protocol',
-	'Fall-back Pool',
+	'Relay protocol',
 	$pconfig['relay_protocol'],
 	['tcp' => 'TCP', 'dns' => 'DNS']
 ));

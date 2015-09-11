@@ -3026,7 +3026,7 @@ if (isset($wancfg['wireless'])) {
 			'txkey',
 			null,
 			null,
-			$pconfig['wep_enable'],
+			$pconfig['txkey'],
 			$idx
 		))->displayAsRadio()->setHelp($idx == 4 ? 'Tx key':'');
 
@@ -3046,8 +3046,8 @@ if (isset($wancfg['wireless'])) {
 	$section = new Form_Section('WPA');
 
 	$section->addInput(new Form_Checkbox(
-		'wep_wpa',
-		'WEnable',
+		'wpa_enable',
+		'Enable',
 		'Enable WPA',
 		$pconfig['wpa_enable'],
 		'yes'

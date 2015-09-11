@@ -178,3 +178,15 @@ form .btn + .btn {
     *border-right-width: 2px;
     *border-bottom-width: 2px;
 }
+
+/** Disable the autocomplete helper text */
+.ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}

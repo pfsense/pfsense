@@ -1249,7 +1249,18 @@ events.push(function(){
 	typesel_change();
 	proto_change();
 	nordr_change();
-
+	
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	
+	$('#localip, #ser, #dst').autocomplete({
+		source: addressarray
+	});
+	
+	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, localbeginport_cust').autocomplete({
+		source: customarray
+	});
 });
 //]]>
 </script>

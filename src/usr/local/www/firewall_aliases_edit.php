@@ -878,6 +878,10 @@ events.push(function(){
 		});
 
 		setMasks();
+
+		$('[id^=address]').autocomplete({
+			source: addressarray
+		});
 	}
 
 	function typechange() {
@@ -894,16 +898,23 @@ events.push(function(){
 
 		// Set the input field label by tab
 		var labelstr = <?php echo json_encode($label_str); ?>;
-		$('.repeatable:first').find('label').text(labelstr[tab]);	
+		$('.repeatable:first').find('label').text(labelstr[tab]);
 	}
-	
+
 	// These are action buttons, not submit buttons
 	$('[id^=addrow]').prop('type','button');
 	$('[id^=delete]').prop('type','button');
 
 	// On load . .
 	typechange();
-	
+
+	// Autocomplete
+	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
+
+	$('[id^=address]').autocomplete({
+		source: addressarray
+	});
+
 	// on click . .
 	$('[id^=addrow]').click(function() {
 		add_row();

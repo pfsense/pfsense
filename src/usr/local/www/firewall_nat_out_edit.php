@@ -844,6 +844,17 @@ events.push(function(){
 	proto_change();
 	poolopts_change();
 
+    // --------- Autocomplete -----------------------------------------------------------------------------------------
+    var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+
+    $('#localip, #source').autocomplete({
+        source: addressarray
+    });
+
+    $('#dstbeginport_cust, #sourceport, #destination, #dstport').autocomplete({
+        source: customarray
+    });
 });
 //]]>
 </script>

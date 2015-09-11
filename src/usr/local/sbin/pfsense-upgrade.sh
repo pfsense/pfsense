@@ -49,6 +49,9 @@
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
+# Disable automatic update
+export REPO_AUTOUPDATE=false
+
 # Firmware lock subsystem
 firmwarelock=/var/run/firmwarelock.dirty
 
@@ -182,7 +185,7 @@ first_step() {
 	fi
 
 	# XXX find a samrter way to do it
-	l=$(pkg upgrade -Unq | wc -l)
+	l=$(pkg upgrade -nq | wc -l)
 	if [ ${l} -eq 1 ]; then
 		_echo "Your packages are up to date"
 		exit 0
@@ -190,7 +193,7 @@ first_step() {
 
 	if [ -z "${yes}" ]; then
 		# Show user which packages are going to be upgraded
-		pkg upgrade -Unq 2>&1 | tee -a ${logfile}
+		pkg upgrade -nq 2>&1 | tee -a ${logfile}
 
 		_echo ""
 		if [ ${kernel_update} -eq 1 ]; then
@@ -206,7 +209,7 @@ first_step() {
 	fi
 
 	_echo ">>> Downloading packages..."
-	if ! pkg upgrade -UF 2>&1 | tee -a ${logfile}; then
+	if ! pkg upgrade -F 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: It was not possible to download packages"
 		exit 1
 	fi
@@ -217,7 +220,7 @@ first_step() {
 
 	# First upgrade kernel and reboot
 	if [ ${kernel_update} -eq 1 ]; then
-		_exec "pkg upgrade -U ${kernel_pkg}" "Upgrading pfSense krenel"
+		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense krenel"
 		touch ${upgrade_in_progress}
 		_echo "Rebooting..."
 		reboot
@@ -226,7 +229,7 @@ first_step() {
 
 second_step() {
 	_echo "Upgrading necessary packages..."
-	if ! pkg upgrade -U 2>&1 | tee -a ${logfile}; then
+	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: An error occurred when upgrade was running..."
 		exit 1
 	fi

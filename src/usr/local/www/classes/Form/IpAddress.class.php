@@ -58,7 +58,7 @@ class Form_IpAddress extends Form_Input
 
 		return parent::setIsRepeated();
 	}
-
+	
 	protected function _getInput()
 	{
 		$input = parent::_getInput();

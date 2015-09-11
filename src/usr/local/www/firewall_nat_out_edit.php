@@ -517,14 +517,13 @@ $group->add(new Form_IpAddress(
 	'source',
 	null,
 	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.');
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[0-9, a-z, A-Z and .');
 
 $group->add(new Form_Input(
 	'sourceport',
 	null,
-	'number',
-	$pconfig['sourceport'],
-	['min' => '1', 'max' => '65536']
+	'text',
+	$pconfig['sourceport']
 ))->setHelp('Port')->setWidth('2');
 
 $section->add($group);
@@ -542,14 +541,13 @@ $group->add(new Form_IpAddress(
 	'destination',
 	null,
 	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[0-9, a-z, A-Z and .');
 
 $group->add(new Form_Input(
 	'dstport',
 	null,
-	'number',
-	$pconfig['dstport'],
-	['min' => '1', 'max' => '65536']
+	'text',
+	$pconfig['dstport']
 ))->setHelp('Port')->setWidth('2');
 
 $section->add($group);
@@ -848,7 +846,7 @@ events.push(function(){
     var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
     var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-    $('#localip, #source').autocomplete({
+    $('#destination, #source').autocomplete({
         source: addressarray
     });
 

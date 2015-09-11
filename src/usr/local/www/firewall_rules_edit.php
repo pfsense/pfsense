@@ -1283,7 +1283,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$type,
 		$name .' Address',
 		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask']);
+	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[0-9, a-z, A-Z and .');
 
 	$section->add($group);
 
@@ -1313,10 +1313,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Input(
 		$type .'beginport_cust',
 		null,//$name .' port begin custom',
-		'number',
-		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport']),
-		['min' => 1, 'max' => 65535]
-	))->setHelp('Custom');;
+		'text',
+		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport'])
+	))->setHelp('Custom');
 
 	$group->add(new Form_Select(
 		$type .'endport',
@@ -1328,9 +1327,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Input(
 		$type .'endport_cust',
 		null,//$name .' port end custom',
-		'number',
-		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport']),
-		['min' => 1, 'max' => 65535]
+		'text',
+		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
 

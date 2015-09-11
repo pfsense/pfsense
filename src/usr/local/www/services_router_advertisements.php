@@ -95,7 +95,7 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") . ".</b></p>" .
+	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses") . ".</b></p>" .
 		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 }
 
@@ -377,7 +377,7 @@ for($idx=1; $idx=<4; $idx++) {
 		'radns' . $idx,
 		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(

@@ -2857,7 +2857,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'diversity',
 				null,
-				$pconfig['diversity'],
+				(isset($pconfig['diversity'])) ? $pconfig['diversity']:'',
 				['' => 'Default', '0' => 'Off', '1' => 'On']
 			))->setHelp('Diversity');
 		}
@@ -2866,7 +2866,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'txantenna',
 				null,
-				$pconfig['txantenna'],
+				(isset($pconfig['txantenna'])) ? $pconfig['txantenna']:'',
 				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
 			))->setHelp('Transmit antenna');
 		}
@@ -2875,7 +2875,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'rxantenna',
 				null,
-				$pconfig['rxantenna'],
+				(isset($pconfig['rxantenna'])) ? $pconfig['rxantenna']:'',
 				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
 			))->setHelp('Receive antenna');
 		}

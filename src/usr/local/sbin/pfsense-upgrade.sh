@@ -94,6 +94,10 @@ _echo() {
 		_n="-n"
 	fi
 
+	if [ -z "${logfile}" ]; then
+		logfile=/dev/null
+	fi
+
 	echo ${_n} "${1}" | tee -a ${logfile}
 }
 

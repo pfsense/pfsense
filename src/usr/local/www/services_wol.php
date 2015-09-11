@@ -122,9 +122,10 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"), gettext("Wake on LAN"));
 include("head.inc");
 
-?>
+print_info_box(gettext('This service can be used to wake up (power on) computers by sending special') . ' "' . gettext('Magic Packets') . '"<br />' . 
+			   gettext('The NIC in the computer that is to be woken up must support Wake on LAN and must be properly configured (WOL cable, BIOS settings).'));
 
-<p><?=gettext("This service can be used to wake up (power on) computers by sending special") . '\'' . gettext("Magic Packets") . '\'' . gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ")?></p>
+?>
 
 <?php
 

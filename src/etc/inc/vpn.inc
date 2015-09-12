@@ -375,6 +375,20 @@ function vpn_ipsec_configure($restart = false) {
 		$makebeforebreak = 'make_before_break = yes';
 	}
 
+	$charon_retransmit = '';
+	if (isset($config['ipsec']['retransmit_tries'])) {
+		$charon_retransmit .= 'retransmit_tries = ' . $config['ipsec']['retransmit_tries'] . "\n";
+	}
+
+	if (isset($config['ipsec']['retransmit_timeout'])) {
+		$charon_retransmit .= 'retransmit_timeout = ' . $config['ipsec']['retransmit_timeout'] . "\n";
+	}
+
+	if (isset($config['ipsec']['retransmit_base'])) {
+		$charon_retransmit .= 'retransmit_base = ' . $config['ipsec']['retransmit_base'] . "\n";
+	}
+
+
 	if (isset($config['ipsec']['enableinterfacesuse'])) {
 		if (!empty($ifacesuse)) {
 			$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
@@ -406,6 +420,7 @@ install_routes = no
 cisco_unity = {$unity_enabled}
 {$ifacesuse}
 {$makebeforebreak}
+{$charon_retransmit}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.

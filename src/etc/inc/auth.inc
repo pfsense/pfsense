@@ -1466,6 +1466,11 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 				$authenticated = true;
 			}
 			break;
+		case 'openvpn_PAM':
+			// In the openvpn flow, authenticate_user does not get called until after the
+			// openvpn-plugin-auth-pam.so is executed, so if PAM saz the user is OK, trust that
+			$authenticated = true;
+			break;
 		case 'radius':
 			if (radius_backed($username, $password, $authcfg, $attributes)) {
 				$authenticated = true;

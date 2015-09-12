@@ -123,6 +123,11 @@ if ($act == "edit") {
 			}
 		}
 
+		if ($pconfig['type'] == "openvpn_PAM") {
+			// Nothing special yet, might want to set a warning popup to make sure they know 
+			// PAM auth is their responsibility to setup
+		}
+
 		if ($pconfig['type'] == "radius") {
 			$pconfig['radius_host'] = $a_server[$id]['host'];
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
@@ -189,6 +194,15 @@ if ($_POST) {
 			$reqdfieldsn[] = gettext("Bind user DN");
 			$reqdfieldsn[] = gettext("Bind Password");
 		}
+	}
+
+	if ($pconfig['type'] == "openvpn_PAM") {
+		$reqdfields = explode(" ",
+			"name type");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Type"));
+
 	}
 
 	if ($pconfig['type'] == "radius") {
@@ -285,6 +299,10 @@ if ($_POST) {
 			}
 		}
 
+		if ($pconfig['type'] == "openvpn_PAM") {
+			// Nothing special yet, just another no-op
+		}
+
 		if ($server['type'] == "radius") {
 
 			$server['host'] = $pconfig['radius_host'];
@@ -342,17 +360,18 @@ function server_typechange(typ) {
 		idx = document.getElementById("type").selectedIndex;
 		typ = document.getElementById("type").options[idx].value;
 	}
-
-	switch (typ) {
-		case "ldap":
-			document.getElementById("ldap").style.display="";
-			document.getElementById("radius").style.display="none";
-			break;
-		case "radius":
-			document.getElementById("ldap").style.display="none";
-			document.getElementById("radius").style.display="";
-			break;
-	}
+	//
+	// Reset display attribute on all auth_server types, then display the one we want, 
+	// makes it easier to add more later
+	//
+	<?php
+		foreach ($auth_server_types as $typename => $typedesc):
+	?>
+			document.getElementById("<?=$typename;?>").style.display="none";
+	<?php
+		endforeach;
+	?>
+	document.getElementById(typ).style.display="";
 }
 
 function ldap_urlchange() {
@@ -753,7 +772,8 @@ function select_clicked() {
 							</td>
 						</tr>
 					</table>
-
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="openvpn_PAM" style="display:none" summary="">
+					</table>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="radius" style="display:none" summary="">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>

@@ -471,7 +471,7 @@ function services_dhcpdv4_configure() {
 			}
 		}
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_var'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
 		}
 	}

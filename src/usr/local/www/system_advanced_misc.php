@@ -65,7 +65,8 @@ $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
-$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
+$pconfig['use_mfs_tmp'] = isset($config['system']['use_mfs_tmp']);
+$pconfig['use_mfs_var'] = isset($config['system']['use_mfs_var']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
@@ -251,10 +252,16 @@ if ($_POST) {
 			unset($config['system']['apinger_debug']);
 		}
 
-		if ($_POST['use_mfs_tmpvar'] == "yes") {
-			$config['system']['use_mfs_tmpvar'] = true;
+		if ($_POST['use_mfs_tmp'] == "yes") {
+			$config['system']['use_mfs_tmp'] = true;
 		} else {
-			unset($config['system']['use_mfs_tmpvar']);
+			unset($config['system']['use_mfs_tmp']);
+		}
+
+		if ($_POST['use_mfs_var'] == "yes") {
+			$config['system']['use_mfs_var'] = true;
+		} else {
+			unset($config['system']['use_mfs_var']);
 		}
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
@@ -316,14 +323,19 @@ function sticky_checked(obj) {
 		jQuery('#srctrack').attr('disabled', 'true');
 	}
 }
-function tmpvar_checked(obj) {
+function tmp_checked(obj) {
 	if (obj.checked) {
 		jQuery('#use_mfs_tmp_size').attr('disabled', false);
+	} else {
+		jQuery('#use_mfs_tmp_size').attr('disabled', 'true');
+	}
+}
+function var_checked(obj) {
+	if (obj.checked) {
 		jQuery('#use_mfs_var_size').attr('disabled', false);
 		jQuery('#rrdbackup').attr('disabled', false);
 		jQuery('#dhcpbackup').attr('disabled', false);
 	} else {
-		jQuery('#use_mfs_tmp_size').attr('disabled', 'true');
 		jQuery('#use_mfs_var_size').attr('disabled', 'true');
 		jQuery('#rrdbackup').attr('disabled', 'true');
 		jQuery('#dhcpbackup').attr('disabled', 'true');
@@ -605,19 +617,28 @@ function tmpvar_checked(obj) {
 							</tr>
 							<?php if ($g['platform'] == "pfSense"): ?>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disks"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disk for /tmp"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="use_mfs_tmpvar" type="checkbox" id="use_mfs_tmpvar" value="yes" <?php if ($pconfig['use_mfs_tmpvar']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
-									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br />
-									<?=gettext("Set this if you wish to use /tmp and /var as RAM disks (memory file system disks) on a full install " .
-										"rather than use the hard disk. Setting this will cause the data in /tmp and /var to be lost at reboot, including log data. RRD and DHCP Leases will be retained."); ?>
+									<input name="use_mfs_tmp" type="checkbox" id="use_mfs_tmp" value="yes" <?php if ($pconfig['use_mfs_tmp']) echo "checked=\"checked\""; ?> onclick="tmp_checked(this)" />
+									<strong><?=gettext("Use memory file system for /tmp"); ?></strong><br />
+									<?=gettext("Set this if you wish to use /tmp as a RAM disk (memory file system disk) on a full install rather than use the hard disk. " .
+										"Setting this will cause the data in /tmp to be lost at reboot."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disk for /var"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="use_mfs_var" type="checkbox" id="use_mfs_var" value="yes" <?php if ($pconfig['use_mfs_var']) echo "checked=\"checked\""; ?> onclick="var_checked(this)" />
+									<strong><?=gettext("Use memory file system for /var"); ?></strong><br />
+									<?=gettext("Set this if you wish to use /var as a RAM disk (memory file system disk) on a full install rather than use the hard disk. " .
+										"Setting this will cause the data in /var to be lost at reboot, including log data. RRD and DHCP Leases will be retained."); ?>
 								</td>
 							</tr>
 							<?php endif; ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("/tmp RAM Disk Size"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="use_mfs_tmp_size" id="use_mfs_tmp_size" value="<?php if ($pconfig['use_mfs_tmp_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_tmp_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<input name="use_mfs_tmp_size" id="use_mfs_tmp_size" value="<?php if ($pconfig['use_mfs_tmp_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_tmp_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmp'] == false)) echo "disabled=\"disabled\""; ?> /> MB
 									<br />
 									<?=gettext("Set the size, in MB, for the /tmp RAM disk. " .
 										"Leave blank for 40MB. Do not set lower than 40."); ?>
@@ -626,7 +647,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("/var RAM Disk Size"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="use_mfs_var_size" id="use_mfs_var_size" value="<?php if ($pconfig['use_mfs_var_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_var_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<input name="use_mfs_var_size" id="use_mfs_var_size" value="<?php if ($pconfig['use_mfs_var_size'] <> "") echo htmlspecialchars($pconfig['use_mfs_var_size']); ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_var'] == false)) echo "disabled=\"disabled\""; ?> /> MB
 									<br />
 									<?=gettext("Set the size, in MB, for the /var RAM disk. " .
 										"Leave blank for 60MB. Do not set lower than 60."); ?>
@@ -636,7 +657,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic RRD Backup");?></td>
 								<td width="78%" class="vtable">
 									<?=gettext("Frequency:");?>
-									<select name="rrdbackup" id="rrdbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
+									<select name="rrdbackup" id="rrdbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_var'] == false)) echo "disabled=\"disabled\""; ?> >
 										<option value='0' <?php if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected='selected'"; ?>><?=gettext("Disable"); ?></option>
 									<?php for ($x=1; $x<=24; $x++) { ?>
 										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
@@ -652,7 +673,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic DHCP Leases Backup");?></td>
 								<td width="78%" class="vtable">
 									<?=gettext("Frequency:");?>
-									<select name="dhcpbackup" id="dhcpbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
+									<select name="dhcpbackup" id="dhcpbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_var'] == false)) echo "disabled=\"disabled\""; ?> >
 										<option value='0' <?php if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected='selected'"; ?>><?=gettext("Disable"); ?></option>
 									<?php for ($x=1; $x<=24; $x++) { ?>
 										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>

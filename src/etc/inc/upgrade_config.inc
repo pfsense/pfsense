@@ -3860,6 +3860,12 @@ function upgrade_120_to_121() {
 			unset($user['nt-hash']);
 		}
 	}
+
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$config['system']['use_mfs_tmp'] = true;
+		$config['system']['use_mfs_var'] = true;
+		unset($config['system']['use_mfs_tmpvar']);
+	}
 }
 
 ?>

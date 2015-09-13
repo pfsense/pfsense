@@ -128,11 +128,10 @@ $pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues")
 $shortcut_section = "trafficshaper";
 include("head.inc");
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<body>
 <?php
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
-	echo gettext("Traffic shaping is not configured.");
+	print_info_box(gettext("Traffic shaping is not configured."));
 	include("fend.inc");
 	echo "</body></html>";
 	exit;
@@ -161,33 +160,38 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 	});
 //]]>
 </script>
-<?php endif; ?>
-<table width="100%" border="1" cellpadding="0" cellspacing="0" summary="status queues">
-<?php if ($error): ?>
-	<tr><td><?php echo $error; ?></td></tr>
-<?php else: ?>
-	<tr>
-		<td class="listhdr"><?=gettext("Queue"); ?></td>
-		<td class="listhdr">
-			<?=gettext("Statistics"); ?>
-			<select id="selStatistic">
-				<option value="0">PPS</option>
-				<option value="1">Bandwidth</option>
-			</select>
-		</td>
-		<td class="listhdr" width="1%"><?=gettext("PPS"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Bandwidth"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Borrows"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Suspends"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Drops"); ?></td>
-		<td class="listhdr" width="1%"><?=gettext("Length"); ?></td>
-	</tr>
+<?php endif; 
+
+if ($error): 
+	print_info_box($error);
+else: ?>
+	<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Status Queues"); ?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>  
+						<th><?=gettext("Queue"); ?></th>
+						<th><?=gettext("Statistics"); ?>
+							<select id="selStatistic">
+								<option value="0">PPS</option>
+								<option value="1">Bandwidth</option>
+							</select>
+						</th>
+						<th><?=gettext("PPS"); ?></th>
+						<th><?=gettext("Bandwidth"); ?></th>
+						<th><?=gettext("Borrows"); ?></th>
+						<th><?=gettext("Suspends"); ?></th>
+						<th><?=gettext("Drops"); ?></th>
+						<th><?=gettext("Length"); ?></th>
+					</tr>
+				</thead>	
 <?php
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
 	processQueues($altqstats, 0, "");
 ?>
 <?php endif; ?>
-</table>
+			</table>
 <p>
 	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br />
 	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br />
@@ -229,11 +233,11 @@ function processQueues($altqstats, $level, $parent_name) {
 			}
 		}
 		if ($prev_if != $q['interface']) {
-			echo "<tr><td colspan=\"8\" style=\"padding: 2px;\"><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
+			echo "<tr><td><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
 			$prev_if = $q['interface'];
 		}
 ?>
-		<tr class="<?php echo $parent_name?>">
+		<tr>
 			<td bgcolor="#<?php echo $row_background?>" style="padding-left: <?php echo $level * 20?>px;">
 				<font color="#000000">
 					<?

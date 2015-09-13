@@ -595,7 +595,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	));
 
 	if ($ro)
-		$input->setDisabled();
+		$input->setReadonly();
 
 	$form->addGlobal(new Form_Input(
 		'oldusername',

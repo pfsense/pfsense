@@ -86,16 +86,16 @@ function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
-	    (isset($rule_config['disablereplyto'])) ||
-	    ($rule_config['tag'] != "") ||
-	    ($rule_config['tagged'] != "") ||
-	    ($rule_config['max'] != "") ||
-	    ($rule_config['max-src-nodes'] != "") ||
-	    ($rule_config['max-src-conn'] != "") ||
-	    ($rule_config['max-src-states'] != "") ||
-	    ($rule_config['max-src-conn-rate'] != "") ||
-	    ($rule_config['max-src-conn-rates'] != "") ||
-	    ($rule_config['statetimeout'] != "")) {
+		(isset($rule_config['disablereplyto'])) ||
+		($rule_config['tag'] != "") ||
+		($rule_config['tagged'] != "") ||
+		($rule_config['max'] != "") ||
+		($rule_config['max-src-nodes'] != "") ||
+		($rule_config['max-src-conn'] != "") ||
+		($rule_config['max-src-states'] != "") ||
+		($rule_config['max-src-conn-rate'] != "") ||
+		($rule_config['max-src-conn-rates'] != "") ||
+		($rule_config['statetimeout'] != "")) {
 		return true;
 	}
 	return false;
@@ -450,12 +450,12 @@ if ($_POST) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+		(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+		(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -493,7 +493,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
-		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
+			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 		}
 	}
@@ -507,7 +507,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
-		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
+			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 		}
 	}
@@ -702,7 +702,7 @@ if ($_POST) {
 	}
 
 	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) ||
-	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
+		(($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
 		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 	}
 
@@ -1245,8 +1245,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if (is_specialnet($pconfig[$type]))
 		$ruleType = 'network';
 	elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
-	        (is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
-	        (is_alias($pconfig[$type])))
+			(is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
+			(is_alias($pconfig[$type])))
 		$ruleType = 'single';
 
 	$ruleValues = array(
@@ -1283,7 +1283,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$type,
 		$name .' Address',
 		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask']);
+	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[0-9, a-z, A-Z and .');
 
 	$section->add($group);
 
@@ -1313,10 +1313,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Input(
 		$type .'beginport_cust',
 		null,//$name .' port begin custom',
-		'number',
-		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport']),
-		['min' => 1, 'max' => 65535]
-	))->setHelp('Custom');;
+		'text',
+		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport'])
+	))->setHelp('Custom');
 
 	$group->add(new Form_Select(
 		$type .'endport',
@@ -1328,9 +1327,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Input(
 		$type .'endport_cust',
 		null,//$name .' port end custom',
-		'number',
-		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport']),
-		['min' => 1, 'max' => 65535]
+		'text',
+		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
 
@@ -1877,11 +1875,11 @@ events.push(function(){
 
 	hideClass('advanced-options', true);
 	hideClass('srcportrange', true);
-	
+
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		show_source_port_range();
 	<?php endif; ?>
-	
+
 	// Make it a regular button, not a submit
 	$('#toggle-advanced').prop('type','button');
 	$("#btnsrcadv").prop('type','button');
@@ -1969,6 +1967,18 @@ events.push(function(){
 
 	// At page load . .
 	setOptText('statetype', $('#statetype').val())
+
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+
+	$('#src, #dst').autocomplete({
+		source: addressarray
+	});
+
+	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust').autocomplete({
+		source: customarray
+	});
 });
 //]]>
 </script>

@@ -290,7 +290,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'relay_protocol',
-	'Fall-back Pool',
+	'Relay Protocol',
 	$pconfig['relay_protocol'],
 	['tcp' => 'TCP', 'dns' => 'DNS']
 ));
@@ -308,5 +308,23 @@ $form->add($section);
 print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+    // --------- Autocomplete -----------------------------------------------------------------------------------------
+    var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
+    $('#ipaddr').autocomplete({
+        source: addressarray
+    });
+
+    $('#port').autocomplete({
+        source: customarray
+    });
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

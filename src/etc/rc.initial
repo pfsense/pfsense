@@ -128,7 +128,7 @@ case ${opmode} in
 	/usr/local/sbin/pfSsh.php
 	;;
 13)
-	php -f /etc/rc.initial.firmware_update
+	/bin/sh /usr/local/sbin/pfsense-upgrade.sh
 	;;
 14)
 	php -f /etc/rc.initial.toggle_sshd

@@ -736,7 +736,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'srcbeginport_cust',
 	null,
-	'number',
+	'text',
 	$pconfig['srcbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -751,7 +751,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'srcendport_cust',
 	null,
-	'number',
+	'text',
 	$pconfig['srcendport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -792,7 +792,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstbeginport_cust',
 	null,
-	'number',
+	'text',
 	$pconfig['dstbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -807,7 +807,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstendport_cust',
 	null,
-	'number',
+	'text',
 	$pconfig['dstendport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -849,7 +849,7 @@ $group->setHelp('Specify the port on the machine with the IP address entered abo
 $group->add(new Form_Input(
 	'localbeginport_cust',
 	null,
-	'number',
+	'text',
 	$pconfig['localbeginport'],
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -1249,7 +1249,18 @@ events.push(function(){
 	typesel_change();
 	proto_change();
 	nordr_change();
-
+	
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	
+	$('#localip, #ser, #dst').autocomplete({
+		source: addressarray
+	});
+	
+	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, localbeginport_cust').autocomplete({
+		source: customarray
+	});
 });
 //]]>
 </script>

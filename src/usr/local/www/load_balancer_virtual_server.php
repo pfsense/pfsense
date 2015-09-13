@@ -175,12 +175,12 @@ if(!empty($a_vs)) {
 						<td><?=htmlspecialchars($a_v['ipaddr'])?></td>
 						<td><?=htmlspecialchars($a_v['port'])?></td>
 						<td><?=$a_v['poolname']?></td>
-						<td><?=htmlspecialchars($a_v['sitedown'])?></td>
+						<td><?=$a_v['sitedown']?></td>
 						<td><?=htmlspecialchars($a_v['descr'])?></td>
 						<td>
 							<a type="button" class="btn btn-info btn-xs" href="load_balancer_virtual_server_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
 							<a type="button" class="btn btn-warning btn-xs" href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"><?=gettext('Copy')?></a>
-							<a type="button" class="btn btn-danger btn-xs" href="load_balancer_virtual_server_edit.php?act=del&id=<?=$i?>"><?=gettext('Del')?></a>
+							<a type="button" class="btn btn-danger btn-xs" href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"><?=gettext('Del')?></a>
 						</td>
 					</tr>
 <?php

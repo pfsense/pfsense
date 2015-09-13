@@ -95,7 +95,7 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") . ".</b></p>" .
+	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses") . ".</b></p>" .
 		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 }
 
@@ -372,12 +372,12 @@ $form->add($section);
 
 $section = new Form_Section('DNS Configuration');
 
-for($idx=0; $idx<4; $idx++) {
+for($idx=1; $idx=<4; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
-		'Server ' . ($idx + 1),
+		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setHelp($idx < 3 ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(
@@ -388,7 +388,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('The RA server can optionally provide a domain search list. Use the semicolon character as separator ');
 
 $section->addInput(new Form_Checkbox(
-	'rasamednsasdhcp6e',
+	'rasamednsasdhcp6',
 	'Settings',
 	'Use same settings as DHCPv6 server',
 	$pconfig['rasamednsasdhcp6']
@@ -571,6 +571,14 @@ events.push(function(){
 		else
 			alert('<?php echo gettext("You may not delete the last one!")?>');
 	});
+
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+
+	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
+		source: addressarray
+	});
+
 });
 //]]>
 </script>

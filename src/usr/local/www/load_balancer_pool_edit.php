@@ -448,5 +448,20 @@ if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup') {
 $form->add($section);
 
 print($form);
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+	
+    // --------- Autocomplete -----------------------------------------------------------------------------------------
+    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
+    $('#port').autocomplete({
+        source: customarray
+    });
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");

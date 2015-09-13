@@ -78,6 +78,7 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+define("ALLOWWEP", false);
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
@@ -443,19 +444,24 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['ext_wpa_sw'] = $wancfg['wireless']['wpa']['ext_wpa_sw'];
 		$pconfig['wpa_enable'] = isset($wancfg['wireless']['wpa']['enable']);
 	}
-	$pconfig['wep_enable'] = isset($wancfg['wireless']['wep']['enable']);
+
 	$pconfig['mac_acl'] = $wancfg['wireless']['mac_acl'];
-	if (is_array($wancfg['wireless']['wep']) && is_array($wancfg['wireless']['wep']['key'])) {
-		$i = 1;
-		foreach ($wancfg['wireless']['wep']['key'] as $wepkey) {
-			$pconfig['key' . $i] = $wepkey['value'];
-			if (isset($wepkey['txkey'])) {
-				$pconfig['txkey'] = $i;
+
+	if(ALLOWWEP) {
+		$pconfig['wep_enable'] = isset($wancfg['wireless']['wep']['enable']);
+
+		if (is_array($wancfg['wireless']['wep']) && is_array($wancfg['wireless']['wep']['key'])) {
+			$i = 1;
+			foreach ($wancfg['wireless']['wep']['key'] as $wepkey) {
+				$pconfig['key' . $i] = $wepkey['value'];
+				if (isset($wepkey['txkey'])) {
+					$pconfig['txkey'] = $i;
+				}
+				$i++;
 			}
-			$i++;
-		}
-		if (!isset($wepkey['txkey'])) {
-			$pconfig['txkey'] = 1;
+			if (!isset($wepkey['txkey'])) {
+				$pconfig['txkey'] = 1;
+			}
 		}
 	}
 }
@@ -942,43 +948,52 @@ if ($_POST['apply']) {
 		if (!empty($_POST['protmode']) && !in_array($_POST['protmode'], array("off", "cts", "rtscts"))) {
 			$input_errors[] = gettext("Invalid option chosen for OFDM Protection Mode");
 		}
-		/* loop through keys and enforce size */
-		for ($i = 1; $i <= 4; $i++) {
-			if ($_POST['key' . $i]) {
-				/* 64 bit */
-				if (strlen($_POST['key' . $i]) == 5) {
-					continue;
-				}
-				if (strlen($_POST['key' . $i]) == 10) {
-					/* hex key */
-					if (stristr($_POST['key' . $i], "0x") == false) {
-						$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+
+		if(ALLOWWEP) {
+			/* loop through keys and enforce size */
+			for ($i = 1; $i <= 4; $i++) {
+				if ($_POST['key' . $i]) {
+					/* 64 bit */
+					if (strlen($_POST['key' . $i]) == 5) {
+						continue;
 					}
-					continue;
-				}
-				if (strlen($_POST['key' . $i]) == 12) {
-					/* hex key */
-					if (stristr($_POST['key' . $i], "0x") == false) {
-						$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+
+					if (strlen($_POST['key' . $i]) == 10) {
+						/* hex key */
+						if (stristr($_POST['key' . $i], "0x") == false) {
+							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+						}
+						continue;
 					}
-					continue;
-				}
-				/* 128 bit */
-				if (strlen($_POST['key' . $i]) == 13) {
-					continue;
-				}
-				if (strlen($_POST['key' . $i]) == 26) {
-					/* hex key */
-					if (stristr($_POST['key' . $i], "0x") == false) {
-						$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+
+					if (strlen($_POST['key' . $i]) == 12) {
+						/* hex key */
+						if (stristr($_POST['key' . $i], "0x") == false) {
+							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+						}
+						continue;
 					}
-					continue;
+
+					/* 128 bit */
+					if (strlen($_POST['key' . $i]) == 13) {
+						continue;
+					}
+
+					if (strlen($_POST['key' . $i]) == 26) {
+						/* hex key */
+						if (stristr($_POST['key' . $i], "0x") == false) {
+							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+						}
+						continue;
+					}
+
+					if (strlen($_POST['key' . $i]) == 28) {
+						continue;
+					}
+
+					$input_errors[] = gettext("Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key.");
+					break;
 				}
-				if (strlen($_POST['key' . $i]) == 28) {
-					continue;
-				}
-				$input_errors[] = gettext("Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key.");
-				break;
 			}
 		}
 
@@ -988,6 +1003,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("The WPA passphrase must be between 8 and 63 characters long.");
 			}
 		}
+
 		if ($_POST['wpa_enable'] == "yes") {
 			if (empty($_POST['passphrase']) && stristr($_POST['wpa_key_mgmt'], "WPA-PSK")) {
 				$input_errors[] = gettext("A WPA Passphrase must be specified when WPA PSK is enabled.");
@@ -1554,14 +1570,18 @@ function handle_wireless_post() {
 	} else if (isset($wancfg['wireless']['wpa']['enable'])) {
 		unset($wancfg['wireless']['wpa']['enable']);
 	}
-	if ($_POST['wep_enable'] == "yes") {
-		if (!is_array($wancfg['wireless']['wep'])) {
-			$wancfg['wireless']['wep'] = array();
+
+	if(ALLOWWEP) {
+		if ($_POST['wep_enable'] == "yes") {
+			if (!is_array($wancfg['wireless']['wep'])) {
+				$wancfg['wireless']['wep'] = array();
+			}
+			$wancfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
+		} else if (isset($wancfg['wireless']['wep'])) {
+			unset($wancfg['wireless']['wep']);
 		}
-		$wancfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
-	} else if (isset($wancfg['wireless']['wep'])) {
-		unset($wancfg['wireless']['wep']);
 	}
+
 	if ($_POST['wme_enable'] == "yes") {
 		if (!is_array($wancfg['wireless']['wme'])) {
 			$wancfg['wireless']['wme'] = array();
@@ -1604,17 +1624,21 @@ function handle_wireless_post() {
 	} else if (isset($wancfg['wireless']['turbo']['enable'])) {
 		unset($wancfg['wireless']['turbo']['enable']);
 	}
-	$wancfg['wireless']['wep']['key'] = array();
-	for ($i = 1; $i <= 4; $i++) {
-		if ($_POST['key' . $i]) {
-			$newkey = array();
-			$newkey['value'] = $_POST['key' . $i];
-			if ($_POST['txkey'] == $i) {
-				$newkey['txkey'] = true;
+
+	if(ALLOWWEP) {
+		$wancfg['wireless']['wep']['key'] = array();
+		for ($i = 1; $i <= 4; $i++) {
+			if ($_POST['key' . $i]) {
+				$newkey = array();
+				$newkey['value'] = $_POST['key' . $i];
+				if ($_POST['txkey'] == $i) {
+					$newkey['txkey'] = true;
+				}
+				$wancfg['wireless']['wep']['key'][] = $newkey;
 			}
-			$wancfg['wireless']['wep']['key'][] = $newkey;
 		}
 	}
+
 	interface_sync_wireless_clones($wancfg, true);
 }
 
@@ -2857,7 +2881,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'diversity',
 				null,
-				$pconfig['diversity'],
+				(isset($pconfig['diversity'])) ? $pconfig['diversity']:'',
 				['' => 'Default', '0' => 'Off', '1' => 'On']
 			))->setHelp('Diversity');
 		}
@@ -2866,7 +2890,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'txantenna',
 				null,
-				$pconfig['txantenna'],
+				(isset($pconfig['txantenna'])) ? $pconfig['txantenna']:'',
 				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
 			))->setHelp('Transmit antenna');
 		}
@@ -2875,7 +2899,7 @@ if (isset($wancfg['wireless'])) {
 			$group->add(new Form_Select(
 				'rxantenna',
 				null,
-				$pconfig['rxantenna'],
+				(isset($pconfig['rxantenna'])) ? $pconfig['rxantenna']:'',
 				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
 			))->setHelp('Receive antenna');
 		}
@@ -3001,53 +3025,56 @@ if (isset($wancfg['wireless'])) {
 
 	$form->add($section);
 
-	// WEP Section
-	$section = new Form_Section('WEP');
+	if(ALLOWWEP) {
+		// WEP Section
+		$section = new Form_Section('WEP');
 
-	$section->addInput(new Form_Checkbox(
-		'wep_enable',
-		'Enable',
-		'Enable WEP',
-		$pconfig['wep_enable'],
-		'yes'
-	));
-
-	for($idx=1; $idx <= 4; $idx++) {
-		$group = new Form_Group('Key' . $idx);
-
-		$group->add(new Form_Input(
-			'key' . $idx,
-			null,
-			'text',
-			$pconfig['key' . $idx]
+		$section->addInput(new Form_Checkbox(
+			'wep_enable',
+			'Enable',
+			'Enable WEP',
+			$pconfig['wep_enable'],
+			'yes'
 		));
 
-		$group->add(new Form_Checkbox(
-			'txkey',
-			null,
-			null,
-			$pconfig['wep_enable'],
-			$idx
-		))->displayAsRadio()->setHelp($idx == 4 ? 'Tx key':'');
+		for($idx=1; $idx <= 4; $idx++) {
+			$group = new Form_Group('Key' . $idx);
 
-		$section->add($group);
+			$group->add(new Form_Input(
+				'key' . $idx,
+				null,
+				'text',
+				$pconfig['key' . $idx]
+			));
+
+			$group->add(new Form_Checkbox(
+				'txkey',
+				null,
+				null,
+				$pconfig['txkey'],
+				$idx
+			))->displayAsRadio()->setHelp($idx == 4 ? 'Tx key':'');
+
+			$section->add($group);
+		}
+
+		$section->addInput(new Form_StaticText(
+			null,
+			'<span class="help-block">' .
+			gettext('40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by "0x"') . '<br />' .
+			gettext('104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by "0x"') .
+			'</span>'
+		));
+
+		$form->add($section);
 	}
 
-	$section->addInput(new Form_StaticText(
-		null,
-		'<span class="help-block">' .
-		gettext('40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by "0x"') . '<br />' .
-		gettext('104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by "0x"') .
-		'</span>'
-	));
-
-	$form->add($section);
-
+	// WPA Section
 	$section = new Form_Section('WPA');
 
 	$section->addInput(new Form_Checkbox(
-		'wep_wpa',
-		'WEnable',
+		'wpa_enable',
+		'Enable',
 		'Enable WPA',
 		$pconfig['wpa_enable'],
 		'yes'
@@ -3063,7 +3090,7 @@ if (isset($wancfg['wireless'])) {
 	$section->addInput(new Form_Select(
 		'wpa_mode',
 		'WPA mode',
-		$pconfig['wpa_mode'],
+		(isset($pconfig['wpa_mode'])) ? $pconfig['wpa_mode']: '2',
 		['1' => 'WPA', '2' => 'WPA2', '3' => 'Both']
 	));
 
@@ -3074,17 +3101,26 @@ if (isset($wancfg['wireless'])) {
 		['WPA-PSK' => 'Pre-Shared Key', 'WPA-EAP' => 'Extensible Authentication Protocol', 'WPA-PSK WPA-EAP' => 'Both']
 	));
 
-	$section->addInput(new Form_Select(
-		'auth_algs',
-		'Authentication',
-		$pconfig['auth_algs'],
-		['1' => 'Open System Authentication', '2' => 'Shared Key Authentication', '3' => 'Both']
-	))->setHelp('Shared Key Authentication requires WEP');
+	if(ALLOWWEP) {
+		$section->addInput(new Form_Select(
+			'auth_algs',
+			'Authentication',
+			$pconfig['auth_algs'],
+			['1' => 'Open System Authentication', '2' => 'Shared Key Authentication', '3' => 'Both']
+		))->setHelp('Shared Key Authentication requires WEP');
+	} else {
+		$section->addInput(new Form_Input(
+			'auth_algs',
+			null,
+			'hidden',
+			'1'
+		));;
+	}
 
 	$section->addInput(new Form_Select(
 		'wpa_pairwise',
 		'WPA Pairwise',
-		$pconfig['wpa_pairwise'],
+		(isset($pconfig['wpa_pairwise'])) ? $pconfig['wpa_pairwise']:'CCMP',
 		['CCMP TKIP' => 'Both', 'CCMP' => 'AES (recommended)', 'TKIP' => 'TKIP']
 	));
 

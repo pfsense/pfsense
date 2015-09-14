@@ -143,8 +143,10 @@ if ($act == "edit") {
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
 			$pconfig['ldap_attr_group'] = $a_server[$id]['ldap_attr_group'];
 			$pconfig['ldap_attr_member'] = $a_server[$id]['ldap_attr_member'];
+			$pconfig['ldap_attr_groupobj'] = $a_server[$id]['ldap_attr_groupobj'];
 			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
 			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
+			$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
 
 			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
 				$pconfig['ldap_anon'] = true;
@@ -296,6 +298,9 @@ if ($_POST) {
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
+
+			$server['ldap_attr_groupobj'] = empty($pconfig['ldap_attr_groupobj']) ? "posixGroup" : $pconfig['ldap_attr_groupobj'];
+
 			if ($pconfig['ldap_utf8'] == "yes") {
 				$server['ldap_utf8'] = true;
 			} else {
@@ -305,6 +310,11 @@ if ($_POST) {
 				$server['ldap_nostrip_at'] = true;
 			} else {
 				unset($server['ldap_nostrip_at']);
+			}
+			if ($pconfig['ldap_rfc2307'] == "yes") {
+				$server['ldap_rfc2307'] = true;
+			} else {
+				unset($server['ldap_rfc2307']);
 			}
 
 
@@ -639,6 +649,24 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ldap_attr_member']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'ldap_rfc2307',
+	'RFC 2307 Groups',
+	'LDAP Server uses RFC 2307 style group membership',
+	$pconfig['ldap_rfc2307']
+))->setHelp('RFC 2307 style group membership has members listed on the group '.
+	'object rather than using groups listed on user object. Leave unchecked '.
+	'for Active Directory style group membership (RFC 2307bis).');
+
+$section->addInput(new Form_Input(
+	'ldap_attr_groupobj',
+	'Group Object Class',
+	'text',
+	$pconfig['ldap_attr_groupobj'],
+	['placeholder' => 'posixGroup']
+))->setHelp('Object class used for groups in RFC2307 mode. '.
+	'Typically "posixGroup" or "group".');
 
 $section->addInput(new Form_Checkbox(
 	'ldap_utf8',

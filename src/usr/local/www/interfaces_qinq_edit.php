@@ -295,7 +295,7 @@ if ($members != "")
 else
 	$item = array('');
 
-foreach($item as $ww) {
+foreach ($item as $ww) {
 	$member = $item[$counter];
 
 	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');

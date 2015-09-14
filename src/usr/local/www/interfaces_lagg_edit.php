@@ -214,7 +214,7 @@ function build_member_list() {
 	return($memberlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("LAGG"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require_once('classes/Form.class.php');

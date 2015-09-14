@@ -140,7 +140,7 @@ function build_parent_list() {
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GRE"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 require_once('classes/Form.class.php');
@@ -172,7 +172,7 @@ $section->addInput(new Form_IpAddress(
 	'tunnel-remote-addr',
 	'GRE tunnel remote address',
 	$pconfig['tunnel-remote-addr']
-))->setHelp('Remote GRE address endpoint.');
+))->setHelp('Remote GRE tunnel endpoint.');
 
 $section->addInput(new Form_Select(
 	'tunnel-remote-net',

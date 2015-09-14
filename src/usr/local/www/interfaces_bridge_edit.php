@@ -322,7 +322,7 @@ function build_port_list($selecton) {
 	return($portlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Bridge"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -346,7 +346,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Interfaces participating in the bridge');
 
 $section->addInput(new Form_Input(
-	'Descr',
+	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
@@ -364,7 +364,7 @@ $form->add($section);
 $section = new Form_Section('Advanced Configuration');
 
 // Set initial toggle state manually for now
-if($pconfig['showadvanced'])
+if ($pconfig['showadvanced'])
 	$section->addClass('toggle-advanced in');
 else
 	$section->addClass('toggle-advanced collapse');
@@ -467,7 +467,7 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if($pconfig['showadvanced'])
+if ($pconfig['showadvanced'])
 	$section->addClass('toggle-advanced in');
 else
 	$section->addClass('toggle-advanced collapse');
@@ -488,7 +488,7 @@ $section->addInput(new Form_Select(
 	$edgelist['selected'],
 	$edgelist['list'],
 	true
-))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP).' .
+))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP). ' .
 			'STP is used to detect and remove loops in a network topology.');
 
 $section->addInput(new Form_Input(
@@ -513,7 +513,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['hellotime'],
 	['placeholder' => 2, 'min' => 1, 'max' => 2, 'step' => '0.1']
-))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode.' .
+))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode. ' .
 			'The default is 2 seconds. The minimum is 1 second and the maximum is 2 seconds.');
 
 $section->addInput(new Form_Input(

@@ -51,8 +51,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').val(''); //removeAttr('value');
-//			clone.find('*').removeAttr('value');
+			clone.find('*').val('');
 			clone.appendTo(group.parent());
 		});
 
@@ -81,8 +80,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').removeAttr('value');
-//			clone.find('*').val('');			
+			clone.find('*').removeAttr('value');			
 			clone.appendTo(group.parent());
 		});
 
@@ -122,8 +120,15 @@ $(function() {
 	});
 	
 	// Add confirm to all btn-danger buttons
+	// Use element title in the confirmation message, or if not available
+	// the element value
 	$('.btn-danger').on('click', function(e){
-		var q = 'Are you sure you wish to '+ $.trim(this.textContent) +'?';
+		var msg = $.trim(this.textContent);
+		
+		if(!msg)
+			var msg = $.trim(this.value);
+			
+		var q = 'Are you sure you wish to '+ msg +'?';
 
 		if ($(this).attr('title') != undefined)
 			q = $(this).attr('title')+'?';

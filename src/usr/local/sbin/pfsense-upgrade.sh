@@ -223,7 +223,7 @@ first_step() {
 		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense kernel"
 		touch ${upgrade_in_progress}
 		_echo "Rebooting..."
-		reboot
+		/etc/rc.reboot
 	fi
 }
 
@@ -259,7 +259,7 @@ second_step
 
 if [ -n "${need_reboot}" ]; then
 	_echo "Rebooting..."
-	reboot
+	/etc/rc.reboot
 fi
 
 exit 0

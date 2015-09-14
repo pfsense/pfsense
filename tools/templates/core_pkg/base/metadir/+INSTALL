@@ -26,4 +26,31 @@ echo "===> Extracting new base tarball"
 # Install new base files
 tar -C / -xJPUf /usr/local/share/%%PRODUCT_NAME%%/base.txz
 
-exit $?
+echo "===> Removing static obsoleted files"
+
+# Set IFS to \n to deal with filenames containing spaces
+oIFS=${IFS}
+IFS="
+"
+
+PLATFORM=$(cat /etc/platform)
+
+# Process obsolete files
+if [ "${PLATFORM}" != "nanobsd" -a -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
+	for f in $(cat /etc/%%PRODUCT_NAME%%.obsoletedfiles); do
+		if [ -n "${f}" -a -d "${f}" ]; then
+			chflags -R noschg "${f}"
+			rm -rf "${f}"
+		elif [ -n "${f}" -a -f "${f}" ]; then
+			chflags noschg "${f}"
+			rm -f "${f}"
+		elif [ -n "${f}" -a -L "${f}" ]; then
+			rm -f "${f}"
+		fi
+	done
+fi
+
+# Restore IFS
+IFS=${oIFS}
+
+exit 0

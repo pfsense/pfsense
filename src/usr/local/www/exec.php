@@ -255,7 +255,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
 		<div class="panel-body">
-			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4"/>
+			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
 			<br /><br />
 			<input name="submit" type="submit"	class="btn btn-default btn-sm" id="download" value="<?=gettext("Download"); ?>" />
 		</div>

@@ -81,12 +81,12 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name mode port monitor servers");
-	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Mode"), gettext("Port"), gettext("Monitor"), gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
+	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
 
@@ -114,7 +114,7 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['servers'])) {
-		foreach($pconfig['servers'] as $svrent) {
+		foreach ($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
 				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"enabled\" list)."), $svrent);
 			}
@@ -125,7 +125,7 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['serversdisabled'])) {
-		foreach($pconfig['serversdisabled'] as $svrent) {
+		foreach ($pconfig['serversdisabled'] as $svrent) {
 			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
 				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"disabled\" list)."), $svrent);
 			}
@@ -137,7 +137,7 @@ if ($_POST) {
 
 	$m = array();
 
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
+	for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
 		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
 
 	if (!isset($m[$_POST['monitor']]))
@@ -145,10 +145,10 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$poolent = array();
-		if(isset($id) && $a_pool[$id])
+		if (isset($id) && $a_pool[$id])
 			$poolent = $a_pool[$id];
 
-		if($poolent['name'] != "")
+		if ($poolent['name'] != "")
 			$changedesc .= sprintf(gettext(" modified '%s' pool:"), $poolent['name']);
 
 		update_if_changed("name", $poolent['name'], $_POST['name']);
@@ -181,7 +181,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -208,9 +208,9 @@ events.push(function(){
 		var len = From.length;
 		var option;
 
-		if(len > 1) {
-			for(i=0; i<len; i++) {
-				if(From.eq(i).is(':selected')) {
+		if (len > 1) {
+			for (i = 0; i < len; i++) {
+				if (From.eq(i).is(':selected')) {
 					option = From.eq(i).val();
 					To.append(new Option(option, option));
 					From.eq(i).remove();
@@ -224,7 +224,7 @@ events.push(function(){
 		if ($("#mode").val() == "failover") {
 			disableInput('movetoenabled', $('[name="servers[]"] option').length > 0);
 		} else {
-			disableInput('movetoenabled',false);
+			disableInput('movetoenabled', false);
 		}
 	}
 
@@ -237,8 +237,8 @@ events.push(function(){
 		var len = $('[name="servers[]"] option').length;
 		var option;
 
-		if(len > 1) {
-			for(i=len-1; i>0; i--) {
+		if (len > 1) {
+			for (i = len-1; i > 0; i--) {
 				option = $('[name="servers[]"] option').eq(i).val();
 				$('[name="serversdisabled[]"]').append(new Option(option, option));
 				$('[name="servers[]"] option').eq(i).remove();

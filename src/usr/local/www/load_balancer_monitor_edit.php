@@ -222,14 +222,14 @@ events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
 	}
 
 	// Hide all sections except 't'
-	function updateType(t){
+	function updateType(t) {
 		switch(t) {
 	<?php
 		/* OK, so this is sick using php to generate javascript, but it needed to be done */

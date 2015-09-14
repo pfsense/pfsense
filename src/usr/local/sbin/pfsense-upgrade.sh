@@ -220,7 +220,7 @@ first_step() {
 
 	# First upgrade kernel and reboot
 	if [ ${kernel_update} -eq 1 ]; then
-		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense krenel"
+		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense kernel"
 		touch ${upgrade_in_progress}
 		_echo "Rebooting..."
 		reboot

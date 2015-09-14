@@ -55,15 +55,19 @@ require_once("functions.inc");
 $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
+if (is_dir($output_path)) {
+	unlink_if_exists("{$output_path}/*");
+	@rmdir($output_path);
+}
+unlink_if_exists($output_file);
+mkdir($output_path);
+
 function doCmdT($title, $command) {
 	global $output_path, $output_file;
 	/* Fixup output directory */
 
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
 	echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
-	echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"" . $title . "\">\n";
-	echo "\t<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
-	echo "\t<tr>\n\t\t<td class=\"listlr\">\n\t\t\t<pre>";		/* no newline after pre */
 
 	print('<div class="panel panel-default">');
 	print(	  '<div class="panel-heading">' . $title . '</div>');
@@ -86,6 +90,7 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<ipsecpsk>.*?<\\/ipsecpsk>/", "<ipsecpsk>xxxxx</ipsecpsk>", $line);
 				$line = preg_replace("/<md5-hash>.*?<\\/md5-hash>/", "<md5-hash>xxxxx</md5-hash>", $line);
 				$line = preg_replace("/<md5password>.*?<\\/md5password>/", "<md5password>xxxxx</md5password>", $line);
+				$line = preg_replace("/<nt-hash>.*?<\\/nt-hash>/", "<nt-hash>xxxxx</nt-hash>", $line);
 				$line = preg_replace("/<radius_secret>.*?<\\/radius_secret>/", "<radius_secret>xxxxx</radius_secret>", $line);
 				$line = preg_replace("/<ldap_bindpw>.*?<\\/ldap_bindpw>/", "<ldap_bindpw>xxxxx</ldap_bindpw>", $line);
 				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
@@ -158,32 +163,58 @@ function execCmds() {
 global $g, $config;
 
 /* Set up all of the commands we want to execute. */
-defCmdT("System uptime","uptime");
-defCmdT("Interfaces","/sbin/ifconfig -a");
-defCmdT("PF Info","/sbin/pfctl -s info");
-defCmdT("Routing tables","netstat -nr");
-defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
-defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
+/* System stats/info */
+defCmdT("System uptime","/usr/bin/uptime");
+defCmdT("Interfaces","/sbin/ifconfig -a");
+defCmdT("Interface Statistics","/usr/bin/netstat -ni");
+defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
+defCmdT("Processes","/bin/ps xauww");
+defCmdT("Mounted Filesystems", "/sbin/mount");
+defCmdT("Free Disk Space","/bin/df -hi");
+defCmdT("Routing tables","/usr/bin/netstat -nWr");
+defCmdT("Mbuf Usage","/usr/bin/netstat -mb");
+defCmdT("VMStat", "/usr/bin/vmstat -afimsz");
+defCmdT("Sockets", "/usr/bin/sockstat");
+
+/* Firewall rules and info */
+defCmdT("Generated Ruleset","/bin/cat {$g['tmp_path']}/rules.debug");
+defCmdT("Generated Ruleset Limiters","/bin/cat {$g['tmp_path']}/rules.limiter");
+defCmdT("Generated Ruleset Limits","/bin/cat {$g['tmp_path']}/rules.limits");
+defCmdT("pf NAT Rules", "/sbin/pfctl -vvsn");
+defCmdT("pf Firewall Rules", "/sbin/pfctl -vvsr");
+defCmdT("pf Tables","/sbin/pfctl -vs Tables");
+defCmdT("pf State Table Contents", "/sbin/pfctl -ss");
+defCmdT("pf Info", "/sbin/pfctl -si");
+defCmdT("pf Show All", "/sbin/pfctl -sa");
+defCmdT("pf Queues","/sbin/pfctl -s queue -v");
+defCmdT("pf OSFP","/sbin/pfctl -s osfp");
+defCmdT("pfsync stats","/usr/bin/netstat -s -ppfsync");
+defCmdT("pftop Default","/usr/local/sbin/pftop -a -b");
+defCmdT("pftop Long","/usr/local/sbin/pftop -w 150 -a -b -v long");
+defCmdT("pftop Queue","/usr/local/sbin/pftop -w 150 -a -b -v queue");
+defCmdT("pftop Rules","/usr/local/sbin/pftop -w 150 -a -b -v rules");
+defCmdT("pftop Size","/usr/local/sbin/pftop -w 150 -a -b -v size");
+defCmdT("pftop Speed","/usr/local/sbin/pftop -w 150 -a -b -v speed");
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
-		if (isset($cpdata['enable'])) {
-			defCmdT("IPFW rules for {$cpdata['zoneid']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
-		}
+		if (isset($cpdata['enable']))
+			defCmdT("IPFW rules for {$cpdata['zone']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
 	}
 }
 
 /* Configuration Files */
-defCmdT("Contents of /var/run", "/bin/ls /var/run");
-defCmdT("Contents of /conf", "/bin/ls /conf");
-defCmdT("config.xml", "dumpconfigxml");
-defCmdT("resolv.conf", "/bin/cat /etc/resolv.conf");
-defCmdT("DHCP Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
-defCmdT("DHCPv6 Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
-defCmdT("strongSwan config", "/bin/cat /var/etc/ipsec/strongswan.conf");
-defCmdT("IPsec config", "/bin/cat /var/etc/ipsec/ipsec.conf");
-defCmdT("SPD", "/sbin/setkey -DP");
-defCmdT("SAD", "/sbin/setkey -D");
+defCmdT("Contents of var run", "/bin/ls /var/run");
+defCmdT("Contents of conf", "/bin/ls /conf");
+defCmdT("config.xml","dumpconfigxml");
+defCmdT("resolv.conf","/bin/cat /etc/resolv.conf");
+defCmdT("DHCP Configuration","/bin/cat /var/dhcpd/etc/dhcpd.conf");
+defCmdT("DHCPv6 Configuration","/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
+defCmdT("strongSwan config","/bin/cat /var/etc/ipsec/strongswan.conf");
+defCmdT("IPsec config","/bin/cat /var/etc/ipsec/ipsec.conf");
+defCmdT("IPsec Status","/usr/local/sbin/ipsec statusall");
+defCmdT("SPD","/sbin/setkey -DP");
+defCmdT("SAD","/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
 	defCmdT("Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
 }
@@ -202,19 +233,21 @@ if (file_exists("/var/etc/apinger.conf")) {
 if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
 }
-if (isset($config['system']['usefifolog'])) {
-	defCmdT("last 200 system log entries", "/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
-	defCmdT("last 50 filter log entries", "/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
+if(isset($config['system']['usefifolog']))  {
+	defCmdT("last 500 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 500");
+	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 100 IPsec log entries","/usr/sbin/fifolog_reader /var/log/ipsec.log 2>&1 | tail -n 100");
 } else {
-	defCmdT("last 200 system log entries", "/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
-	defCmdT("last 50 filter log entries", "/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 500 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 500");
+	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 100 IPsec log entries","/usr/local/sbin/clog /var/log/ipsec.log 2>&1 | tail -n 100");
 }
 if (file_exists("/tmp/PHP_errors.log")) {
 	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");
 }
-defCmdT("System Message Buffer", "/sbin/dmesg -a");
-defCmdT("System Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
-defCmdT("sysctl values", "/sbin/sysctl -a");
+defCmdT("System Message Buffer","/sbin/dmesg -a");
+defCmdT("System Message Buffer (Boot)","/bin/cat /var/log/dmesg.boot");
+defCmdT("sysctl values","/sbin/sysctl -a");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
@@ -222,9 +255,11 @@ $currentDate = $dateOutput[0];
 $pgtitle = array("{$g['product_name']}", "status");
 include("head.inc");
 
-print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, maybe also IP addresses) before posting " .
-					   "information from this page in public places (like mailing lists)") . '<br />' .
-			   gettext("Passwords in config.xml have been automatically removed"));
+print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting " .
+			   "information from this page in public places (like mailing lists)") . '<br />' .
+		gettext("Common password fields in config.xml have been automatically redacted.") . '<br />' .
+		gettext("When the page has finished loading, the output will be stored in {$output_file}. It may be downloaded via scp or ") .
+		"<a href=\"/exec.php?dlPath={$output_file}\">" . gettext("Diagnostics > Command Prompt") . '</a>');
 
 listCmds();
 execCmds();

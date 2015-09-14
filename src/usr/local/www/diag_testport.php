@@ -139,7 +139,15 @@ if ($_POST || $_REQUEST['host']) {
 
 		/* Attempt to determine the interface address, if possible. Else try both. */
 		if (is_ipaddrv4($host)) {
-			$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
+			if ($sourceip == "any") {
+				$ifaddr = "";
+			} else {
+				if (is_ipaddr($sourceip)) {
+					$ifaddr = $sourceip;
+				} else {
+					$ifaddr = get_interface_ip($sourceip);
+				}
+			}
 			$nc_args .= ' -4';
 		} elseif (is_ipaddrv6($host)) {
 			if ($sourceip == "any")

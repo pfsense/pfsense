@@ -830,6 +830,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
 		$ldapver = $authcfg['ldap_protver'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 		if (empty($ldapbndun) || empty($ldapbindpw)) {
 			$ldapanon = true;
 		} else {
@@ -861,6 +862,8 @@ function ldap_test_bind($authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
@@ -911,6 +914,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 	} else {
 		return false;
 	}
@@ -940,6 +944,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
@@ -1037,6 +1043,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 	} else {
 		return false;
 	}
@@ -1064,6 +1071,8 @@ function ldap_get_groups($username, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	/* bind as user that has rights to read group attributes */
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
@@ -1172,6 +1181,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		$ldapver = $authcfg['ldap_protver'];
 		$ldapname = $authcfg['name'];
 		$ldapscope = $authcfg['ldap_scope'];
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
 	} else {
 		return false;
 	}
@@ -1194,6 +1204,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
+	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
+	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	/* Make sure we can connect to LDAP */
 	$error = false;

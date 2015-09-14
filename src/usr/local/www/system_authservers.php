@@ -130,6 +130,7 @@ if ($act == "edit") {
 			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
 			$pconfig['ldap_host'] = $a_server[$id]['host'];
 			$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
+			$pconfig['ldap_timeout'] = $a_server[$id]['ldap_timeout'];
 			$pconfig['ldap_urltype'] = $a_server[$id]['ldap_urltype'];
 			$pconfig['ldap_protver'] = $a_server[$id]['ldap_protver'];
 			$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
@@ -255,8 +256,11 @@ if ($_POST) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 	}
 
-	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && !empty($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0)))) {
-		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
+	if (($pconfig['type'] == "ldap") || ($pconfig['type'] == "radius")) {
+		$to_field = "{$pconfig['type']}_timeout";
+		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {
+			$input_errors[] = sprintf(gettext("%s Timeout value must be numeric and positive."), strtoupper($pconfig['type']));
+		}
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -310,6 +314,12 @@ if ($_POST) {
 			} else {
 				unset($server['ldap_binddn']);
 				unset($server['ldap_bindpw']);
+			}
+
+			if ($pconfig['ldap_timeout']) {
+				$server['ldap_timeout'] = $pconfig['ldap_timeout'];
+			} else {
+				$server['ldap_timeout'] = 25;
 			}
 		}
 
@@ -502,6 +512,14 @@ $section->addInput(new Form_Select(
 	$pconfig['ldap_protver'],
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
+
+$section->addInput(new Form_Input(
+	'ldap_timeout',
+	'Server Timeout',
+	'number',
+	$pconfig['ldap_timeout'],
+	['placeholder' => 25]
+))->setHelp('Timeout for LDAP operations (seconds)');
 
 $group = new Form_Group('Search scope');
 

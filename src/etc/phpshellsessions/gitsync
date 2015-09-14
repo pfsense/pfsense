@@ -146,6 +146,7 @@ $found = false;
 foreach ($branches as $branchname => $branchdesc) {
 	if ($branchname == $branch) {
 		$found = true;
+		break;
 	}
 }
 if (!$found) {

@@ -419,7 +419,7 @@ print($form);
 				);
 ?>
 
-					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>

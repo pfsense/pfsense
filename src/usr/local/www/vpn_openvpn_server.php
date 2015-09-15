@@ -804,7 +804,7 @@ if($act=="new" || $act=="edit") :
 
 		$section->addInput(new Form_Select(
 			'caref',
-			'Peer Certifiacte Authority',
+			'Peer Certificate Authority',
 			$pconfig['caref'],
 			$list
 		));
@@ -831,7 +831,7 @@ if($act=="new" || $act=="edit") :
 
 	$section->addInput(new Form_Select(
 		'certref',
-		'Peer Certifiacte Authority',
+		'Peer Certificate Authority',
 		$pconfig['certref'],
 		build_cert_list()
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));

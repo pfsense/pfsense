@@ -477,7 +477,7 @@ foreach($a_roll as $rollent):
 							<!-- These buttons are hidden/shown on checking the 'enable' checkbox -->
 							<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i; ?>" class="btn btn-info btn-xs"><?=gettext("Edit")?></a>
 							<a href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
-							<a href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=csv&amp;id=<?=$i; ?>" class="btn btn-success btn-xs" data-toggle="tooltip" title="Generate vouchers for this roll to a .csv file""><?=gettext("Generate")?></a>
+							<a href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=csv&amp;id=<?=$i; ?>" class="btn btn-success btn-xs" data-toggle="tooltip" title="Export vouchers for this roll to a .csv file""><?=gettext("Export")?></a>
 						</td>
 					</tr>
 <?php

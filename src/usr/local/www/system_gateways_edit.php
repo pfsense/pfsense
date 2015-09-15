@@ -785,12 +785,18 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
-$section->addInput(new Form_Checkbox(
-	'showadv',
-	'Advanced options',
-	'Show the advanced options',
-	false
-))->toggles('.advanced-options');
+$btnadvanced = new Form_Button(
+	'toggle-advanced',
+	'Advanced options'
+);
+
+$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
+$btnadvanced->removeClass('btn-primary')->addClass('btn-info');
+
+$section->addInput(new Form_StaticText(
+	null,
+	$btnadvanced
+));
 
 $form->add($section);
 $section = new Form_Section('Advanced');

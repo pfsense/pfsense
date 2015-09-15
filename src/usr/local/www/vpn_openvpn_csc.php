@@ -485,8 +485,8 @@ if($act=="new" || $act=="edit"):
 	// are nested toggles
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
-		'Netbios Option',
-		'Enable Netbios over TCP/IP',
+		'NetBIOS Options',
+		'Enable NetBIOS over TCP/IP',
 		$pconfig['netbios_enable']
 	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled. ');
 

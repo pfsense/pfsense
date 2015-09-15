@@ -2069,7 +2069,7 @@ $group = new Form_Group('Presets');
 $group->add(new Form_Checkbox(
 	'adv_dhcp_pt_values',
 	null,
-	'Free BSD default',
+	'FreeBSD default',
 	null,
 	'DHCP'
 ))->displayAsRadio();

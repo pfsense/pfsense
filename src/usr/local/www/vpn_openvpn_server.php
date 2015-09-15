@@ -1144,11 +1144,11 @@ if($act=="new" || $act=="edit") :
 
 	$form->add($section);
 
-	$section = new Form_Section('Netbios Options');
+	$section = new Form_Section('NetBIOS Options');
 
 	$section->addInput(new Form_checkbox(
 		'netbios_enable',
-		'Netbios enable',
+		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
 		$pconfig['ntp_server_enable']
 	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled');

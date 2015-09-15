@@ -368,10 +368,10 @@ for ($i=1; $i<5; $i++)
 	$group = new Form_Group('DNS Server ' . $i);
 
 	$group->add(new Form_Input(
-		'dns['.$i.']',
+		'dns' . $i,
 		'DNS Server',
 		'text',
-		$pconfig['dns'.$i]
+		$pconfig['dns'. $i]
 	))->setHelp(($i == 4) ? 'Address':null);
 
 	$help = "Enter IP addresses to be used by the system for DNS resolution. " .
@@ -393,9 +393,9 @@ for ($i=1; $i<5; $i++)
 		}
 
 		$group->add(new Form_Select(
-			'gateway',
+			'dns' . $i . 'gw',
 			'Gateway',
-			$pconfig['dns'.$i.'gw'],
+			$pconfig['dns' . $i . 'gw'],
 			$options
 		))->setHelp(($i == 4) ? 'Gateway':null);;
 

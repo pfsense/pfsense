@@ -29,13 +29,7 @@
 PLATFORM=`/bin/cat /etc/platform`
 MIN_REALMEM_FOR_OPCACHE=512
 
-if [ -d /usr/local/lib/php/20121212 ]; then
-	EXTENSIONSDIR="/usr/local/lib/php/20121212/"
-elif [ -d /usr/local/lib/php/20090626 ]; then
-	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
-else
-	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
-fi
+EXTENSIONSDIR="/usr/local/lib/php/20131226/"
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then

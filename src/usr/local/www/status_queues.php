@@ -103,15 +103,14 @@ if ($_REQUEST['getactivity']) {
 	$finscript = "";
 	foreach ($statistics as $q) {
 		if ($stat_type == "0") {
-			$packet_s = round(150 * (1 - $q->pps / $bigger_stat), 0);
+			$packet_s = round(100 * ($q->pps / $bigger_stat), 0);
 		} else {
-			$packet_s = round(150 * (1 - $q->bandwidth / $bigger_stat), 0);
+			$packet_s = round(100 * ($q->bandwidth / $bigger_stat), 0);
 		}
 		if ($packet_s < 0) {
 			$packet_s = 0;
 		}
-		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
-		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (150 - $packet_s) . "');";
+		$finscript .= "jQuery('#queue{$q->queuename}width').css('width','{$packet_s}%');";
 		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
@@ -129,6 +128,7 @@ $shortcut_section = "trafficshaper";
 include("head.inc");
 ?>
 <body>
+<script src="/jquery/jquery-1.11.2.min.js"></script>
 <?php
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
@@ -192,11 +192,14 @@ else: ?>
 ?>
 <?php endif; ?>
 			</table>
-<p>
-	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br />
-	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br />
-	<?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
-</p>
+</br>
+
+<?php 
+
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data"));
+
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 	function StatsShowHide(classname) {
@@ -241,6 +244,9 @@ function processQueues($altqstats, $level, $parent_name) {
 			<td bgcolor="#<?php echo $row_background?>" style="padding-left: <?php echo $level * 20?>px;">
 				<font color="#000000">
 					<?
+					if (is_array($q['queue'])) {
+						echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
+					}
 					if (strstr($q['name'], "root_")) {
 						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
 					} else {
@@ -252,13 +258,9 @@ function processQueues($altqstats, $level, $parent_name) {
 <?php
 		$cpuUsage = 0;
 		echo "<td bgcolor=\"#{$row_background}\">";
-		echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
-		echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
-		echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
-		echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='middle' alt='' /> ";
-		if (is_array($q['queue'])) {
-			echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
-		}
+		echo "<div class='progress' style='height: 7px;width: 170px;'>
+				<div class='progress-bar' role='progressbar' name='queue{$q['name']}{$q['interface']}width' id='queue{$q['name']}{$q['interface']}width' aria-valuenow='70' aria-valuemin='0' aria-valuemax='100' style='width: ".  ($cpuUsage*100)/150 ."%;'></div>
+			  </div>";
 		echo " </td>";
 		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
 		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";

@@ -464,20 +464,20 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
-		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
-		$output .= "\" alt=\"status\" />&nbsp;";
+		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
+		$output .= ($smallicon) ? "icon icon-play" : "icon icon-large icon-play";
+		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
 		}
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
-		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
-		$output .= "\" alt=\"status\" />&nbsp;";
+		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
+		$output .= ($smallicon) ? "icon icon-remove" : "icon icon-large icon-remove";
+		$output .= "\" ></i></a>";
 		if ($withtext) {
-			$output .= "&nbsp;<font color=\"white\">{$statustext}</font>";
+			$output .= "&nbsp;" . $statustext;
 		}
 	}
 	return $output;
@@ -490,10 +490,10 @@ function get_service_control_links($service, $addname = false) {
 
 	switch ($service['name']) {
 		case "openvpn":
-			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'].'.&amp;vpnmode='.$service['mode'].'.&amp;id='.$service['vpnid'].'">';
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'].'&amp;vpnmode='.$service['mode'].'&amp;id='.$service['vpnid'].'">';
 		break;
 		case "captiveportal":
-			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'].'.&amp;zone='.$service['zone'].'">';
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'].'&amp;zone='.$service['zone'].'">';
 		break;
 		default:
 			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'].'">';

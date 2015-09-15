@@ -163,10 +163,11 @@ include("head.inc"); ?>
 					</tr>
 				</thead>
 				<tbody>
-			
-<?php
-		foreach ($server['conns'] as $conn):
-?>
+					
+					<?php
+							echo sizeof($server['conns']);
+							foreach ($server['conns'] as $conn):
+					?>
 					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
 						<td><?=$conn['common_name'];?></td>
 						<td><?=$conn['remote_host'];?></td>
@@ -175,15 +176,17 @@ include("head.inc"); ?>
 						<td><?=format_bytes($conn['bytes_sent']);?></td>
 						<td><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
-							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif"
+							<a
 							   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>" alt="delete" />
+							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
+							<i class="icon icon-remove"></i>
+							</a>
 						</td>
 					</tr>
-<?php
-		endforeach;
-?>
+					<?php
+							endforeach;
+					?>
 				</tbody>
 				<tfoot>
 					<tr>
@@ -366,7 +369,7 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
- 	print_info_box("<br /><b>" . gettext("NOTE") . ":</b> " . gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
+ 	print_info_box(gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

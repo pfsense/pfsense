@@ -85,21 +85,27 @@ if (!is_array($config['nat']['outbound']['rule'])) {
 
 $a_out = &$config['nat']['outbound']['rule'];
 
-/* update rule order, POST[rule] is an array of ordered IDs */
-if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-	$a_out_new = array();
+// update rule order, POST[rule] is an array of ordered IDs
+// All rule are 'checked' before posting
+if (isset($_POST['order-store'])) {
+	if(is_array($_POST['rule']) && !empty($_POST['rule'])) {
 
-	// if a rule is not in POST[rule], it has been deleted by the user
-	foreach ($_POST['rule'] as $id)
-		$a_out_new[] = $a_out[$id];
+		$a_out_new = array();
 
-	$a_out = $a_out_new;
+		// if a rule is not in POST[rule], it has been deleted by the user
+		foreach ($_POST['rule'] as $id) {
+			$a_out_new[] = $a_out[$id];
+		}
 
-	if (write_config())
-		mark_subsystem_dirty('filter');
+		$a_out = $a_out_new;
 
-	header("Location: firewall_nat_out.php");
-	exit;
+		if (write_config())
+			mark_subsystem_dirty('natconf');
+
+		header("Location: firewall_nat_out.php");
+		exit;
+
+	}
 }
 
 if (!isset($config['nat']['outbound']['mode']))
@@ -175,30 +181,41 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	if (write_config()) {
 		mark_subsystem_dirty('natconf');
 	}
+
 	header("Location: firewall_nat_out.php");
 	exit;
 }
 
+//	Delete a single rule/map
 if ($_GET['act'] == "del") {
+
 	if ($a_out[$_GET['id']]) {
 		unset($a_out[$_GET['id']]);
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 		}
-		header("Location: firewall_nat_out.php");
-		exit;
+
+	header("Location: firewall_nat_out.php");
+	exit;
 	}
 }
 
+// Delete multiple maps Only checked rules will be in the
+// POST
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
+	print('Deleting rows<br />');
+
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		foreach ($_POST['rule'] as $rulei) {
+			print('Deleting ' . $rulei . '<br />');
 			unset($a_out[$rulei]);
 		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 		}
+
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -213,108 +230,9 @@ if (isset($_POST['del_x'])) {
 		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
 			mark_subsystem_dirty('natconf');
 		}
+
 		header("Location: firewall_nat_out.php");
 		exit;
-	}
-} else {
-	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
-	unset($movebtn);
-	foreach ($_POST as $pn => $pd) {
-		if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
-			$movebtn = $matches[1];
-			break;
-		}
-	}
-	/* move selected rules before this rule */
-	if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_out_new = array();
-
-		/* copy all rules < $movebtn and not selected */
-		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['rule'])) {
-				$a_out_new[] = $a_out[$i];
-			}
-		}
-
-		/* copy all selected rules */
-		for ($i = 0; $i < count($a_out); $i++) {
-			if ($i == $movebtn) {
-				continue;
-			}
-			if (in_array($i, $_POST['rule'])) {
-				$a_out_new[] = $a_out[$i];
-			}
-		}
-
-		/* copy $movebtn rule */
-		if ($movebtn < count($a_out)) {
-			$a_out_new[] = $a_out[$movebtn];
-		}
-
-		/* copy all rules > $movebtn and not selected */
-		for ($i = $movebtn+1; $i < count($a_out); $i++) {
-			if (!in_array($i, $_POST['rule'])) {
-				$a_out_new[] = $a_out[$i];
-			}
-		}
-		if (count($a_out_new) > 0) {
-			$a_out = $a_out_new;
-		}
-
-		if (write_config()) {
-			mark_subsystem_dirty('natconf');
-		}
-		header("Location: firewall_nat_out.php");
-		exit;
-	}
-}
-
-function rule_popup($src, $srcport, $dst, $dstport) {
-	global $config, $g;
-	$aliases_array = array();
-	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
-		$descriptions = array ();
-
-		foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
-			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
-
-			switch ($alias_name['type']) {
-				case "port":
-					$width="250";
-					break;
-				case "urltable":
-					$width="500";
-					break;
-				default:
-					$width="350";
-
-					break;
-			}
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g['theme']}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-			$span_end = "</u></span>";
-
-			if ($alias_name['name'] == $src) {
-				$descriptions['src'] = $span_begin;
-				$descriptions['src_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $srcport) {
-				$descriptions['srcport'] = $span_begin;
-				$descriptions['srcport_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $dst) {
-				$descriptions['dst'] = $span_begin;
-				$descriptions['dst_end'] = $span_end;
-			}
-
-			if ($alias_name['name'] == $dstport) {
-				$descriptions['dstport'] = $span_begin;
-				$descriptions['dstport_end'] = $span_end;
-			}
-		}
-
-		return $descriptions;
 	}
 }
 
@@ -404,6 +322,7 @@ print($form);
 				<tbody class="user-entries">
 <?php
 			$i = 0;
+
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
@@ -419,7 +338,7 @@ print($form);
 				);
 ?>
 
-					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -428,7 +347,7 @@ print($form);
 <?php
 					if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>"title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 <?php
 					else:
 ?>
@@ -442,7 +361,6 @@ print($form);
 						</td>
 
 						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']))?>
 						</td>
 
@@ -594,9 +512,9 @@ print($form);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>&nbsp;
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
-		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>&nbsp;
+		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>"	 />
+		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled" name="order-store" />
 	</nav>
 
 <?php
@@ -628,6 +546,8 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						<th><?=gettext("Description")?></th>
 
 					</tr>
+				</thead>
+				<tbody>
 <?php
 	foreach ($automatic_rules as $natent):
 ?>
@@ -761,6 +681,11 @@ events.push(function() {
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 		}
+	});
+
+	// Check all of the rule checkboxes so that their values are posted
+	$('#order-store').click(function () {
+	   $('[id^=frc]').prop('checked', true);
 	});
 });
 </script>

@@ -80,20 +80,22 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-	$a_nat_new = array();
+if($_POST['order-store']) {
+	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+		$a_nat_new = array();
 
-	// if a rule is not in POST[rule], it has been deleted by the user
-	foreach ($_POST['rule'] as $id)
-		$a_nat_new[] = $a_nat[$id];
+		// if a rule is not in POST[rule], it has been deleted by the user
+		foreach ($_POST['rule'] as $id)
+			$a_nat_new[] = $a_nat[$id];
 
-	$a_nat = $a_nat_new;
+		$a_nat = $a_nat_new;
 
-	if (write_config())
-		mark_subsystem_dirty('filter');
+		if (write_config())
+			mark_subsystem_dirty('filter');
 
-	header("Location: firewall_nat.php");
-	exit;
+		header("Location: firewall_nat.php");
+		exit;
+	}
 }
 
 /* if a custom message has been passed along, lets process it */
@@ -102,7 +104,6 @@ if ($_GET['savemsg']) {
 }
 
 if ($_POST) {
-
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -154,63 +155,17 @@ if (isset($_POST['del_x'])) {
 
 				mark_subsystem_dirty('filter');
 			}
+
 			unset($a_nat[$rulei]);
 		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 		}
+
 		header("Location: firewall_nat.php");
 		exit;
 	}
-
-} else {
-		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
-		unset($movebtn);
-		foreach ($_POST as $pn => $pd) {
-			if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
-				$movebtn = $matches[1];
-				break;
-			}
-		}
-		/* move selected rules before this rule */
-		if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
-			$a_nat_new = array();
-
-			/* copy all rules < $movebtn and not selected */
-			for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['rule'])) {
-					$a_nat_new[] = $a_nat[$i];
-				}
-			}
-
-			/* copy all selected rules */
-			for ($i = 0; $i < count($a_nat); $i++) {
-				if ($i == $movebtn) {
-					continue;
-				}
-				if (in_array($i, $_POST['rule'])) {
-					$a_nat_new[] = $a_nat[$i];
-				}
-			}
-
-			/* copy $movebtn rule */
-			if ($movebtn < count($a_nat)) {
-				$a_nat_new[] = $a_nat[$movebtn];
-			}
-
-			/* copy all rules > $movebtn and not selected */
-			for ($i = $movebtn+1; $i < count($a_nat); $i++) {
-				if (!in_array($i, $_POST['rule'])) {
-					$a_nat_new[] = $a_nat[$i];
-				}
-			}
-			$a_nat = $a_nat_new;
-			if (write_config()) {
-				mark_subsystem_dirty('natconf');
-			}
-			header("Location: firewall_nat.php");
-			exit;
-		}
 }
 
 $closehead = false;
@@ -301,7 +256,6 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td>
-							<input type="hidden" name="rule[]" value="<?=$i?>" />
 							<?=$textss?><?=strtoupper($natent['protocol'])?><?=$textse?>
 						</td>
 
@@ -415,8 +369,8 @@ endforeach;
 
 	<div class="pull-right">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
-		<input name="del" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"  />
-		<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="<?=gettext("Save changes")?>" disabled="disabled" />
+		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
+		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="<?=gettext("Save changes")?>" disabled="disabled" />
 	</div>
 </form>
 
@@ -453,6 +407,11 @@ events.push(function() {
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 		}
+	});
+
+	// Check all of the rule checkboxes so that their values are posted
+	$('#order-store').click(function () {
+	   $('[id^=frc]').prop('checked', true);
 	});
 });
 </script>

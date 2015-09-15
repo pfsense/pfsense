@@ -189,7 +189,8 @@ $shortcut_section = "aliases";
 include("head.inc");
 
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
+
 if (is_subsystem_dirty('aliases'))
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 

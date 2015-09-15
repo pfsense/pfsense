@@ -157,13 +157,6 @@ $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"))
 $shortcut_section = "firewall";
 include("head.inc");
 
-/*
-&#x1f539; = "Resolve" (Small blue diamond)
-&#x23ec; = "Easyrule add to block list" (Double down arrow)
-&#x23eb; = "Easyrule add to pass list" (Double up arrow)
-&#x25ba; = "out" (simple right arrow)
-*/
-
 function build_if_list() {
 	$iflist = get_configured_interface_with_descr(false, true);
 	//$iflist = get_interface_list();
@@ -445,17 +438,20 @@ if (!isset($config['syslog']['rawfilter'])) {
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 ?>
 				<td>
-					<a onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>" alt="Reverse Resolve with DNS"/>
-					&#x1f539;</a>
-					<a href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" alt="Easy Rule: Add to Block List" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
-					&#x23ec;</a>
+					<i class="icon icon-map-marker" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>" alt="Reverse Resolve with DNS"/>
+					</i>
+
+					<i class="icon icon-download" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" alt="Easy Rule: Add to Block List" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
+					</i>
+
 					<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 				</td>
 				<td>
-					<a onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>" class="ICON-<?= $dst_htmlclass; ?>" alt="Reverse Resolve with DNS"/>
-					&#x1f539;</a>
-					<a href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
-					&#x23eb</a>
+					<i class="icon icon-map-marker" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>" class="ICON-<?= $dst_htmlclass; ?>" alt="Reverse Resolve with DNS"/>
+					</i>
+
+					<i class="icon icon-upload" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
+					</i>
 					<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 				</td>
 <?php
@@ -505,7 +501,8 @@ else
 <?php
 
 print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
-	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
+	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR' . '<br />' .
+	'<i class="icon icon-download"></i> = Add to block list., <i class="icon icon-upload"></i> = Pass traffic, <i class="icon icon-map-marker"></i> = Resolve');
 
 ?>
 
@@ -518,82 +515,81 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 //]]>
 </script>
 
+<?php include("foot.inc");
+?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	function resolve_with_ajax(ip_to_resolve) {
-		var url = "/diag_logs_filter.php";
 
-		jQuery.ajax(
-			url,
-			{
-				method: 'post',
-				dataType: 'json',
-				data: {
-					resolve: ip_to_resolve,
-					},
-				complete: resolve_ip_callback
-			});
+function resolve_with_ajax(ip_to_resolve) {
+	var url = "/diag_logs_filter.php";
 
-	}
+	jQuery.ajax(
+		url,
+		{
+			method: 'post',
+			dataType: 'json',
+			data: {
+				resolve: ip_to_resolve,
+				},
+			complete: resolve_ip_callback
+		});
 
-	function resolve_ip_callback(transport) {
-		var response = jQuery.parseJSON(transport.responseText);
-		var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
-		var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
+}
 
-		jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
-		jQuery('img.ICON-' + resolve_class).removeAttr('title');
-		jQuery('img.ICON-' + resolve_class).removeAttr('alt');
-		jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
-		jQuery('img.ICON-' + resolve_class).prop('onclick', null);
-		  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
-	}
+function resolve_ip_callback(transport) {
+	var response = jQuery.parseJSON(transport.responseText);
+	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
+	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
-	// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
-	function htmlspecialchars(str) {
-		return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-	}
+	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
+	jQuery('img.ICON-' + resolve_class).removeAttr('title');
+	jQuery('img.ICON-' + resolve_class).removeAttr('alt');
+	jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
+	jQuery('img.ICON-' + resolve_class).prop('onclick', null);
+	  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
+}
 
-	if (typeof getURL == 'undefined') {
-		getURL = function(url, callback) {
-			if (!url)
-				throw 'No URL for getURL';
+// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+function htmlspecialchars(str) {
+	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+if (typeof getURL == 'undefined') {
+	getURL = function(url, callback) {
+		if (!url)
+			throw 'No URL for getURL';
+		try {
+			if (typeof callback.operationComplete == 'function')
+				callback = callback.operationComplete;
+		} catch (e) {}
+			if (typeof callback != 'function')
+				throw 'No callback function for getURL';
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+			http_request = new XMLHttpRequest();
+		}
+		else if (typeof ActiveXObject != 'undefined') {
 			try {
-				if (typeof callback.operationComplete == 'function')
-					callback = callback.operationComplete;
-			} catch (e) {}
-				if (typeof callback != 'function')
-					throw 'No callback function for getURL';
-			var http_request = null;
-			if (typeof XMLHttpRequest != 'undefined') {
-				http_request = new XMLHttpRequest();
-			}
-			else if (typeof ActiveXObject != 'undefined') {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
 				try {
-					http_request = new ActiveXObject('Msxml2.XMLHTTP');
-				} catch (e) {
-					try {
-						http_request = new ActiveXObject('Microsoft.XMLHTTP');
-					} catch (e) {}
-				}
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
 			}
-			if (!http_request)
-				throw 'Both getURL and XMLHttpRequest are undefined';
-			http_request.onreadystatechange = function() {
-				if (http_request.readyState == 4) {
-					callback( { success : true,
-					  content : http_request.responseText,
-					  contentType : http_request.getResponseHeader("Content-Type") } );
-				}
-			};
-			http_request.open('GET', url, true);
-			http_request.send(null);
+		}
+		if (!http_request)
+			throw 'Both getURL and XMLHttpRequest are undefined';
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
+				  content : http_request.responseText,
+				  contentType : http_request.getResponseHeader("Content-Type") } );
+			}
 		};
-	}
+		http_request.open('GET', url, true);
+		http_request.send(null);
+	};
+}
 
-});
 //]]>
 </script>
-
-<?php include("foot.inc");

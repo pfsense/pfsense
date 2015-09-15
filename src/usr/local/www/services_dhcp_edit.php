@@ -491,7 +491,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['dns1'],
-	['placeholder' => 'DNS1 1']
+	['placeholder' => 'DNS 1']
 ));
 
 $group->add(new Form_Input(

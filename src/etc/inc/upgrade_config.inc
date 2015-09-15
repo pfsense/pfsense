@@ -3871,20 +3871,20 @@ function upgrade_121_to_122() {
 
 	// Cleanup firewall rules
 	if (isset($config['filter']['rule']) && is_array($config['filter']['rule'])) {
-		$rules =& $config['filter']['rules'];
+		$rules =& $config['filter']['rule'];
 		$last_rule = count($rules) - 1;
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
-			if (isset($rules['interface']) && $rules['interface'] == 'pptp') {
-				unset($rules[$i]);
+			if (isset($rules[$i]['interface']) && $rules[$i]['interface'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
 				continue;
 			}
-			if (isset($rules['source']['network']) && $rules['source']['network'] == 'pptp') {
-				unset($rules[$i]);
+			if (isset($rules[$i]['source']['network']) && $rules[$i]['source']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
 				continue;
 			}
-			if (isset($rules['destination']['network']) && $rules['destination']['network'] == 'pptp') {
-				unset($rules[$i]);
+			if (isset($rules[$i]['destination']['network']) && $rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
 				continue;
 			}
 		}
@@ -3893,19 +3893,19 @@ function upgrade_121_to_122() {
 	// Cleanup 1:1 NAT rules
 	if (isset($config['nat']['onetoone']) && is_array($config['nat']['onetoone'])) {
 		$onetoone =& $config['nat']['onetoone'];
-		$last_rule = count($onetone) - 1;
+		$last_rule = count($onetoone) - 1;
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
-			if (isset($onetoone['interface']) && $onetoone['interface'] == 'pptp') {
-				unset($onetoone[$i]);
+			if (isset($onetoone[$i]['interface']) && $onetoone[$i]['interface'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
 				continue;
 			}
-			if (isset($onetoone['source']['network']) && $onetoone['source']['network'] == 'pptp') {
-				unset($onetoone[$i]);
+			if (isset($onetoone[$i]['source']['network']) && $onetoone[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
 				continue;
 			}
-			if (isset($onetoone['destination']['network']) && $onetoone['destination']['network'] == 'pptp') {
-				unset($onetoone[$i]);
+			if (isset($onetoone[$i]['destination']['network']) && $onetoone[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
 				continue;
 			}
 		}
@@ -3917,8 +3917,8 @@ function upgrade_121_to_122() {
 		$last_rule = count($npt) - 1;
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
-			if (isset($npt['interface']) && $npt['interface'] == 'pptp') {
-				unset($npt[$i]);
+			if (isset($npt[$i]['interface']) && $npt[$i]['interface'] == 'pptp') {
+				unset($config['nat']['npt'][$i]);
 				continue;
 			}
 		}
@@ -3926,20 +3926,20 @@ function upgrade_121_to_122() {
 
 	// Cleanup Port-forward NAT rules
 	if (isset($config['nat']['rule']) && is_array($config['nat']['rule'])) {
-		$nat_rules =& $config['nat']['rules'];
+		$nat_rules =& $config['nat']['rule'];
 		$last_rule = count($nat_rules) - 1;
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
-			if (isset($nat_rules['interface']) && $nat_rules['interface'] == 'pptp') {
-				unset($nat_rules[$i]);
+			if (isset($nat_rules[$i]['interface']) && $nat_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
 				continue;
 			}
-			if (isset($nat_rules['source']['network']) && $nat_rules['source']['network'] == 'pptp') {
-				unset($nat_rules[$i]);
+			if (isset($nat_rules[$i]['source']['network']) && $nat_rules[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
 				continue;
 			}
-			if (isset($nat_rules['destination']['network']) && $nat_rules['destination']['network'] == 'pptp') {
-				unset($nat_rules[$i]);
+			if (isset($nat_rules[$i]['destination']['network']) && $nat_rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
 				continue;
 			}
 		}
@@ -3947,12 +3947,12 @@ function upgrade_121_to_122() {
 
 	// Cleanup Port-forward NAT rules
 	if (isset($config['nat']['outbound']['rule']) && is_array($config['nat']['outbound']['rule'])) {
-		$out_rules =& $config['nat']['outbound']['rules'];
+		$out_rules =& $config['nat']['outbound']['rule'];
 		$last_rule = count($out_rules) - 1;
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
-			if (isset($out_rules['interface']) && $out_rules['interface'] == 'pptp') {
-				unset($out_rules[$i]);
+			if (isset($out_rules[$i]['interface']) && $out_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['outbound']['rule'][$i]);
 				continue;
 			}
 		}

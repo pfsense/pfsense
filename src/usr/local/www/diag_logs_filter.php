@@ -168,9 +168,6 @@ function build_if_list() {
 	if ($config['l2tp']['mode'] == "server")
 		$interfaces['l2tp'] = "L2TP VPN";
 
-	if ($config['pptpd']['mode'] == "server")
-		$interfaces['pptp'] = "PPTP VPN";
-
 	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 		$interfaces['pppoe'] = "PPPoE Server";
 

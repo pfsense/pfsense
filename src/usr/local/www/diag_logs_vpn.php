@@ -69,7 +69,7 @@
 ##|-PRIV
 
 
-$vpns = array('pptp' => 'PPTP', 'poes' => 'PPPoE', 'l2tp' => 'L2TP');
+$vpns = array('poes' => 'PPPoE', 'l2tp' => 'L2TP');
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"));
 require("guiconfig.inc");
@@ -85,7 +85,7 @@ if (htmlspecialchars($_POST['vpntype'])) {
 } elseif (htmlspecialchars($_GET['vpntype'])) {
 	$vpntype = htmlspecialchars($_GET['vpntype']);
 } else {
-	$vpntype = "pptp";
+	$vpntype = "poes";
 }
 if (htmlspecialchars($_POST['mode'])) {
 	$mode = htmlspecialchars($_POST['mode']);
@@ -95,9 +95,6 @@ if (htmlspecialchars($_POST['mode'])) {
 	$mode = "login";
 }
 switch ($vpntype) {
-	case 'pptp':
-		$logname = "pptps";
-		break;
 	case 'poes':
 		$logname = "poes";
 		break;
@@ -168,12 +165,6 @@ $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-$tab_array[] = array(gettext("PPTP Logins"),
-			(($vpntype == "pptp") && ($mode != "raw")),
-			"/diag_logs_vpn.php?vpntype=pptp");
-$tab_array[] = array(gettext("PPTP Raw"),
-			(($vpntype == "pptp") && ($mode == "raw")),
-			"/diag_logs_vpn.php?vpntype=pptp&amp;mode=raw");
 $tab_array[] = array(gettext("PPPoE Logins"),
 			(($vpntype == "poes") && ($mode != "raw")),
 			"/diag_logs_vpn.php?vpntype=poes");

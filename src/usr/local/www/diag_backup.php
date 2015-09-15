@@ -579,7 +579,6 @@ function build_area_list($showall) {
 		"nat" => gettext("NAT"),
 		"openvpn" => gettext("OpenVPN"),
 		"installedpackages" => gettext("Package Manager"),
-		"pptpd" => gettext("PPTP Server"),
 		"rrddata" => gettext("RRD Data"),
 		"cron" => gettext("Scheduled Tasks"),
 		"syslog" => gettext("Syslog"),

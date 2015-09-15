@@ -282,9 +282,6 @@ function build_srctype_list() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if (have_ruleint_access("pptp"))
-		$list['pptp'] = 'PPTP clients';
-
 	if (have_ruleint_access("pppoe"))
 		$list['pppoe'] = 'PPPoE clients';
 
@@ -321,9 +318,6 @@ function build_dsttype_list() {
 
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
-
-	if (have_ruleint_access("pptp"))
-		$list['pptp'] = 'PPTP clients';
 
 	if (have_ruleint_access("pppoe"))
 		$list['pppoe'] = 'PPPoE clients';
@@ -408,10 +402,6 @@ foreach ($iflist as $if => $ifdesc)
 if ($config['l2tp']['mode'] == "server")
 	if (have_ruleint_access("l2tp"))
 		$interfaces['l2tp'] = "L2TP VPN";
-
-if ($config['pptpd']['mode'] == "server")
-	if (have_ruleint_access("pptp"))
-		$interfaces['pptp'] = "PPTP VPN";
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";

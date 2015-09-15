@@ -43,10 +43,6 @@ function easyrule_find_rule_interface($int) {
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(false, true);
 
-	if ($config['pptpd']['mode'] == "server") {
-		$iflist['pptp'] = "PPTP VPN";
-	}
-
 	if ($config['pppoe']['mode'] == "server") {
 		$iflist['pppoe'] = "PPPoE Server";
 	}

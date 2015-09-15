@@ -2832,13 +2832,6 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	}
 
 	if ($check_localip) {
-		if (is_array($config['pptpd']) && !empty($config['pptpd']['localip']) && (strcasecmp($ipaddr, $config['pptpd']['localip']) == 0)) {
-			$where_entry = array();
-			$where_entry['if'] = 'pptp';
-			$where_entry['ip_or_subnet'] = $config['pptpd']['localip'];
-			$where_configured[] = $where_entry;
-		}
-
 		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
 			$where_entry = array();
 			$where_entry['if'] = 'l2tp';

@@ -126,12 +126,6 @@ if ($config['l2tp']['mode'] == "server") {
 	}
 }
 
-if ($config['pptpd']['mode'] == "server") {
-	if (have_ruleint_access("pptp")) {
-		$iflist['pptp'] = "PPTP VPN";
-	}
-}
-
 if (is_array($config['pppoes']['pppoe'])) {
 	foreach ($config['pppoes']['pppoe'] as $pppoes) {
 		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {

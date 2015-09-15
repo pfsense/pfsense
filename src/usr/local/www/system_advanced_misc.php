@@ -507,9 +507,9 @@ $section = new Form_Section('Gateway Monitoring');
 $section->addInput(new Form_Checkbox(
 	'kill_states',
 	'State Killing on Gateway Failure',
-	'Flush states for a gateway that goes down',
+	'Flush all states when a gateway goes down',
 	$pconfig['kill_states']
-))->setHelp('The monitoring process will flush states for a gateway that goes down '.
+))->setHelp('The monitoring process will flush all states when a gateway goes down '.
 	'if this box is not checked. Check this box to disable this behavior.');
 
 $section->addInput(new Form_Checkbox(

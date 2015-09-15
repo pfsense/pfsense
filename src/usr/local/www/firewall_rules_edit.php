@@ -1581,7 +1581,7 @@ $group->add(new Form_Select(
 	$pconfig['pdnpipe'],
 	array('' => 'none') + array_keys($dnqlist)
 ));
-
+ 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'you have also selected In. The Out selection is applied to traffic leaving '.
 	'the interface where the rule is created, In is applied to traffic coming '.
@@ -1593,6 +1593,7 @@ $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '
 $group = new Form_Group('Ackqueue / Queue');
 
 $qlist = array_keys($qlist);
+
 foreach ($qlist as $idx => $q)
 {
 	if (isset($ifdisp[$q]))
@@ -1602,15 +1603,15 @@ foreach ($qlist as $idx => $q)
 $group->add(new Form_Select(
 	'ackqueue',
 	'Ackqueue',
-	$pconfig['ackqueue'],
-	$qlist
+	($qselected) ? $pconfig['ackqueue']:'',
+	['' => 'None'] + $qlist
 ));
 
 $group->add(new Form_Select(
 	'defaultqueue',
 	'Default Queue',
-	$pconfig['defaultqueue'],
-	$qlist
+	($qselected) ? $pconfig['defaultqueue']:'',
+	['' => 'None'] + $qlist
 ));
 
 $section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.

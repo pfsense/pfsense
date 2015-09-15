@@ -313,7 +313,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'pppoe_subnet',
-	'Subnet netask',
+	'Subnet mask',
 	$pconfig['pppoe_subnet'],
 	array_combine(range(0, 32, 1), range(0, 32, 1))
 ))->setHelp('Hint: 24 is 255.255.255.0');
@@ -362,7 +362,7 @@ $section->addInput(new Form_IpAddress(
 $section->addInput(new Form_Checkbox(
 	'radiusenable',
 	'RADIUS',
-	'Use a Radius Server for authentication',
+	'Use a RADIUS Server for authentication',
 	$pconfig['radiusenable']
 ))->setHelp('All users will be authenticated using the RADIUS server specified below. The local user database ' .
 			'will not be used');
@@ -370,7 +370,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'radacct_enable',
 	null,
-	'Enable Radius Accounting',
+	'Enable RADIUS Accounting',
 	$pconfig['radacct_enable']
 ))->setHelp('Sends accounting packets to the RADIUS server');
 
@@ -469,9 +469,6 @@ $section->addInput(new Form_Input(
 
 $counter = 0;
 $usernames = $pconfig['username'];
-
-//DEBUG
-$usernames = 'sbeaver:TXlQYXNzd2Q=:192.168.1.1 smith:TXlQYXNzd2Q=:192.168.2.1 sjones:TXlQYXNzd2Q=:192.168.3.1 salpha:TXlQYXNzd2Q=:192.168.4.1';
 
 if($addrow)
 	$usernames .= ' ::';

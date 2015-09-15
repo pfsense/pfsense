@@ -236,7 +236,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		);
 	}
 
-	##add widgets that may not be in the saved configuration, in case they are to be displayed later
+	// add widgets that may not be in the saved configuration, in case they are to be displayed later
 	$widgets = $widgetsfromconfig + $widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig

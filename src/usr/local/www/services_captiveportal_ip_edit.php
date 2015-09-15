@@ -224,7 +224,7 @@ $section->addInput(new Form_Select(
 	'Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
-))->setHelp('Use "From" to always allow aaccess to an address through the captive portal (without authentication). ' .
+))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .
 			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname.');
 
 $section->addInput(new Form_Input(

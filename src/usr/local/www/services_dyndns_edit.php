@@ -275,9 +275,9 @@ $section->addInput(new Form_Input(
 	'Hostname',
 	'text',
 	$pconfig['host']
-))->setHelp('Enter the complete host/domain name. example: myhost.dyndns.org'.
-			'he.net tunnelbroker: Enter your tunnel ID'.
-			'GleSYS: Enter your record ID'.
+))->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
+			'he.net tunnelbroker: Enter your tunnel ID' . '<br />' .
+			'GleSYS: Enter your record ID' . '<br />' .
 			'DNSimple: Enter only the domain name.');
 
 $section->addInput(new Form_Input(
@@ -285,8 +285,8 @@ $section->addInput(new Form_Input(
 	'MX',
 	'text',
 	$pconfig['mx']
-))->setHelp('Note: With DynDNS service you can only use a hostname, not an IP address.'.
-			'Set this option only if you need a special MX record. Not	all services support this.');
+))->setHelp('Note: With DynDNS service you can only use a hostname, not an IP address. '.
+			'Set this option only if you need a special MX record. Not all services support this.');
 
 $section->addInput(new Form_Checkbox(
 	'wildcard',
@@ -331,7 +331,7 @@ $section->addInput(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['passwordfld']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.' . '<br />' .
+))->setHelp('FreeDNS (freedns.afraid.org): Enter your "Authentication Token" provided by FreeDNS.' . '<br />' .
 			'Route 53: Enter your Secret Access Key.' . '<br />' .
 			'GleSYS: Enter your API key.' . '<br />' .
 			'DNSimple: Enter your API token.');

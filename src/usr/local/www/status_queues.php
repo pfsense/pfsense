@@ -259,7 +259,7 @@ function processQueues($altqstats, $level, $parent_name) {
 		$cpuUsage = 0;
 		echo "<td bgcolor=\"#{$row_background}\">";
 		echo "<div class='progress' style='height: 7px;width: 170px;'>
-				<div class='progress-bar' role='progressbar' name='queue{$q['name']}{$q['interface']}width' id='queue{$q['name']}{$q['interface']}width' aria-valuenow='70' aria-valuemin='0' aria-valuemax='100' style='width: ".  ($cpuUsage*100)/150 ."%;'></div>
+				<div class='progress-bar' role='progressbar' name='queue{$q['name']}{$q['interface']}width' id='queue{$q['name']}{$q['interface']}width' aria-valuenow='70' aria-valuemin='0' aria-valuemax='100' style='width: ".  ($cpuUsage*100) ."%;'></div>
 			  </div>";
 		echo " </td>";
 		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";

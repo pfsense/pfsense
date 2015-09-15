@@ -165,7 +165,6 @@ include("head.inc"); ?>
 				<tbody>
 					
 					<?php
-							echo sizeof($server['conns']);
 							foreach ($server['conns'] as $conn):
 					?>
 					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">

@@ -3414,12 +3414,15 @@ EOD;
 		$tracker = $saved_tracker;
 		switch ($oc['type6']) {
 			case "6rd":
+			    if (is_ipaddrv4($config['interfaces'][$on]['gateway-6rd'])) {
 				$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6RD border relay in
 pass in {$log['pass']} on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6rd on {$oc['descr']}")}"
 pass out {$log['pass']} on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
+			    }
+
 				/* XXX: Really need to allow 6rd traffic coming in for v6 this is against default behaviour! */
 				if (0 && is_ipaddrv6($oc['ipv6'])) {
 					$ipfrules .= <<<EOD

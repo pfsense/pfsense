@@ -75,7 +75,7 @@ include("head.inc");
 			<input type="submit" class="btn btn-success" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
 <?php
 if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-		<	 input type="submit" class="btn btn-default" value="Force Config Sync" name="syncfilter" id="syncfilter" />
+		<input type="submit" class="btn btn-default" value="Force Config Sync" name="syncfilter" id="syncfilter" />
 <?php
 endif;
 ?>

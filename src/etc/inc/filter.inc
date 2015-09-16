@@ -1305,7 +1305,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 					break;
 				}
 			}
-			if(!empty($ifsubnet_ip) && !in_array($subnet, $no_reflect_from)) {
+			if (!empty($ifsubnet_ip) && !in_array($subnet, $no_reflect_from)) {
 				$subnets = array($subnet);
 				/* Find static routes that also need to be referenced in the NAT rule */
 				foreach ($route_table as $rtentry) {

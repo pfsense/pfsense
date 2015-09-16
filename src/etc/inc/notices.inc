@@ -80,6 +80,9 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 				'category'	=> $category,
 				'priority'	=> $priority,
 			);
+	while (isset($queue[$queuekey])) {
+		$queuekey++;
+	}
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
 	if (!$queueout) {

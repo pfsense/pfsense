@@ -1404,6 +1404,7 @@ events.push(function(){
 				break;
 		}
 
+		tuntap_change();
 		gwredir_change();
 	}
 
@@ -1525,6 +1526,7 @@ events.push(function(){
 
 				if (!p2p) {
 					hideCheckbox('serverbridge_dhcp', false);
+					disableInput('serverbridge_dhcp', false);
 					hideInput('serverbridge_interface', false);
 					hideInput('serverbridge_dhcp_start', false);
 					hideInput('serverbridge_dhcp_end', false);
@@ -1642,7 +1644,7 @@ events.push(function(){
 	});
 
 	 // Tun/tap mode
-	$('#dev_mode').click(function () {
+	$('#dev_mode, #serverbridge_dhcp').click(function () {
 		tuntap_change();
 	});
 

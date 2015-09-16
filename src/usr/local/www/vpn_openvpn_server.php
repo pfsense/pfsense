@@ -1367,7 +1367,7 @@ events.push(function(){
 				hideInput('local_network', true);
 				hideInput('local_networkv6', true);
 				hideInput('authmode', true);
-				hideInput('client2client', true);
+				hideCheckbox('client2client', true);
 				break;
 			case "p2p_tls":
 				hideClass('advanced', true);
@@ -1377,7 +1377,7 @@ events.push(function(){
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideInput('authmode', true);
-				hideInput('client2client', true);
+				hideCheckbox('client2client', true);
 				break;
 			case "server_user":
 			case "server_tls_user":
@@ -1388,7 +1388,7 @@ events.push(function(){
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideInput('authmode', false);
-				hideInput('client2client', false);
+				hideCheckbox('client2client', false);
 				break;
 			case "server_tls":
 				hideInput('authmode', true);
@@ -1400,7 +1400,7 @@ events.push(function(){
 				hideInput('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
-				hideInput('client2client', false);
+				hideCheckbox('client2client', false);
 				break;
 		}
 

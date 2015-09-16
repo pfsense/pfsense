@@ -178,7 +178,7 @@ $group = new Form_MultiCheckboxGroup('Select options to sync');
 $group->add(new Form_MultiCheckbox(
 	'synchronizeusers',
 	'Synchronize Users and Groups',
-	'Sync the users and groups over ',
+	'User manager users and groups',
 	($pconfig['synchronizeusers'] === 'on'),
 	'on'
 ));
@@ -186,7 +186,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeauthservers',
 	'Synchronize Auth Servers',
-	'Sync the authentication servers (e.g. LDAP, RADIUS) over ',
+	'Authentication servers (e.g. LDAP, RADIUS)',
 	($pconfig['synchronizeauthservers'] === 'on'),
 	'on'
 ));
@@ -194,7 +194,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizecerts',
 	'Synchronize Certificates',
-	'Sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over  ',
+	'Certificate Authorities, Certificates, and Certificate Revocation Lists',
 	($pconfig['synchronizecerts'] === 'on'),
 	'on'
 ));
@@ -202,7 +202,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizerules',
 	'Synchronize Rules',
-	'Sync the firewall rules ',
+	'Firewall rules ',
 	($pconfig['synchronizerules'] === 'on'),
 	'on'
 ));
@@ -210,23 +210,23 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeschedules',
 	'Synchronize Firewall schedules',
-	'Sync the firewall schedules ',
+	'Firewall schedules ',
 	($pconfig['synchronizeschedules'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizealiases',
-	'Synchronize Firewall aliasas',
-	'Sync the firewall aliasas ',
-	($pconfig['synchronizealiasas'] === 'on'),
+	'Synchronize Firewall aliases',
+	'Firewall aliases ',
+	($pconfig['synchronizealiases'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizenat',
 	'Synchronize NAT',
-	'Sync NAT rules ',
+	'NAT configuration ',
 	($pconfig['synchronizenat'] === 'on'),
 	'on'
 ));
@@ -234,7 +234,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeipsec',
 	'Synchronize IPsec',
-	'Automatically IPsec configuration ',
+	'IPsec configuration ',
 	($pconfig['synchronizeipsec'] === 'on'),
 	'on'
 ));
@@ -242,7 +242,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
 	'Synchronize OpenVPN',
-	'Automatically OpenVPN configuration ',
+	'OpenVPN configuration ',
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));
@@ -250,7 +250,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizedhcpd',
 	'Synchronize DHCPD',
-	'Sync DHCP Server settings ',
+	'DHCP Server settings ',
 	($pconfig['synchronizedhcpd'] === 'on'),
 	'on'
 ));
@@ -258,7 +258,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizewol',
 	'Synchronize Wake on LAN',
-	'Sync WoL Server settings ',
+	'WoL Server settings ',
 	($pconfig['synchronizewol'] === 'on'),
 	'on'
 ));
@@ -266,7 +266,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizestaticroutes',
 	'Synchronize Static Routes',
-	'Sync Static Route configuration ',
+	'Static Route configuration ',
 	($pconfig['synchronizestaticroutes'] === 'on'),
 	'on'
 ));
@@ -274,7 +274,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizelb',
 	'Synchronize Load Balancer',
-	'Sync Load Balancer configuration ',
+	'Load Balancer configuration ',
 	($pconfig['synchronizelb'] === 'on'),
 	'on'
 ));
@@ -282,7 +282,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizevirtualip',
 	'Synchronize Virtual IPs',
-	'Sync Virtual IPs ',
+	'Virtual IPs ',
 	($pconfig['synchronizevirtualip'] === 'on'),
 	'on'
 ));
@@ -290,7 +290,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaper',
 	'Synchronize traffic shaper (queues)',
-	'Sync the Traffic Shaper configuration ',
+	'Traffic Shaper configuration ',
 	($pconfig['synchronizetrafficshaper'] === 'on'),
 	'on'
 ));
@@ -298,7 +298,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaperlimiter',
 	'Synchronize traffic shaper (limiter)',
-	'Sync the Traffic Shaper configuration for limiters ',
+	'Traffic Shaper Limiters configuration ',
 	($pconfig['synchronizetrafficshaperlimiter'] === 'on'),
 	'on'
 ));
@@ -306,7 +306,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaperlayer7',
 	'Synchronize traffic shaper (layer 7)',
-	'Sync the Traffic Shaper configuration for layer 7 ',
+	'Traffic Shaper Layer 7 configuration ',
 	($pconfig['synchronizetrafficshaperlayer7'] === 'on'),
 	'on'
 ));
@@ -314,7 +314,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizednsforwarder',
 	'Synchronize traffic shaper (Forwarder/Resolver)',
-	'Sync the DNS Forwarder and DNS Resolver configurations ',
+	'DNS Forwarder and DNS Resolver configurations ',
 	($pconfig['synchronizednsforwarder'] === 'on'),
 	'on'
 ));
@@ -322,7 +322,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizecaptiveportal',
 	'Synchronize Captive Portal)',
-	'Sync the Captive Portal configurations ',
+	'Captive Portal ',
 	($pconfig['synchronizecaptiveportal'] === 'on'),
 	'on'
 ));

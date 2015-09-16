@@ -272,7 +272,7 @@ events.push(function(){
 	$("#removedisabled").click(function() {
 		$('[name="serversdisabled[]"] option:selected').remove();
 	});
-	
+
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="servers[]"] option'), $('[name="serversdisabled[]"]'));
 	});
@@ -390,11 +390,20 @@ $section = new Form_Section('Current pool members');
 
 $group = new Form_Group('Members');
 
+$list = array();
+
+if (is_array($pconfig['serversdisabled'])) {
+	foreach ($pconfig['serversdisabled'] as $svrent) {
+		if ($svrent != '')
+			$list[$svrent] = $svrent;
+	}
+}
+
 $group->add(new Form_Select(
 	'serversdisabled',
 	null,
 	$pconfig['serversdisabled'],
-	is_array($pconfig['serversdisabled']) ? array_combine($pconfig['serversdisabled'], $pconfig['serversdisabled']) : array(),
+	$list,
 	true
 ))->setHelp('Disabled');
 
@@ -452,13 +461,13 @@ print($form);
 <script>
 //<![CDATA[
 events.push(function(){
-	
-    // --------- Autocomplete -----------------------------------------------------------------------------------------
-    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-    $('#port').autocomplete({
-        source: customarray
-    });
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+
+	$('#port').autocomplete({
+		source: customarray
+	});
 });
 //]]>
 </script>

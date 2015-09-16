@@ -2313,7 +2313,9 @@ function filter_generate_user_rule_arr($rule) {
 	$line = filter_generate_user_rule($rule);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
-	if ($rule['descr'] != "" and $line != "") {
+	if ($rule['tracker'] != "" and $line != "") {
+		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['tracker']}") . "\"";
+	} elseif ($rule['descr'] != "" and $line != "") {
 		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['descr']}") . "\"";
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";

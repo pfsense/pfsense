@@ -494,7 +494,7 @@ events.push(function(){
 			delete_row(event.target.id);
 		}
 		else
-			alert('<?php echo gettext("You may not delet the last one!")?>');
+			alert('<?php echo gettext("You may not delete the last one!")?>');
 	});
 });
 //]]>

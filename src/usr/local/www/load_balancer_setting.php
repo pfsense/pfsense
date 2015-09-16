@@ -145,7 +145,7 @@ $section->addInput(new Form_Input(
 	'Prefork',
 	'text',
 	$pconfig['prefork']
-))->setHelp('Number of processes used by relayd for dns protocol. Leave blank to use the default value of 5 processes');
+))->setHelp('Number of processes forked in advance by relayd. Leave blank to use the default value of 5 processes');
 
 $form->add($section);
 print($form);

@@ -4863,7 +4863,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 		case 'pptp':
 		case 'ppp':
 			if ($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6')
-				$realif = get_real_interface($interface, "inet6", true);
+				$realif = get_real_interface($interface, "inet6", false);
 			break;
 		}
 	}

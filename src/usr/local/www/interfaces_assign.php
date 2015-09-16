@@ -206,7 +206,7 @@ if (is_array($config['openvpn'])) {
 	}
 }
 
-if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
+if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
 	foreach ($config['interfaces'] as $ifname => $ifdata) {
@@ -378,13 +378,9 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 		enable_rrd_graphing();
 	}
 } else {
-	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 	unset($delbtn);
-	foreach ($_POST as $pn => $pd) {
-		if (preg_match("/del_(.+)_x/", $pn, $matches)) {
-			$delbtn = $matches[1];
-		}
-	}
+	if (!empty($_POST['del']))
+		$delbtn = key($_POST['del']);
 
 	if (isset($delbtn)) {
 		$id = $delbtn;
@@ -469,14 +465,7 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
 	}
 }
-?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-
-<form action="interfaces_assign.php" method="post" name="iform" id="iform">
-
-<?php
 if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
 	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
@@ -486,112 +475,85 @@ if (file_exists("/tmp/reload_interfaces")) {
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
-if ($input_errors) {
-	print_input_errors($input_errors);
-}
-?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces assign">
-	<tr><td class="tabnavtbl">
-<?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-	$tab_array[7] = array(gettext("GRE"), false, "interfaces_gre.php");
-	$tab_array[8] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[9] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
-	display_top_tabs($tab_array);
+if ($input_errors)
+	print_input_errors($input_errors);
+
+$tab_array = array();
+$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
+$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[7] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[8] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[9] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+display_top_tabs($tab_array);
 ?>
-	</td></tr>
-	<tr><td>
-		<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-				<tr>
-					<td class="listhdrr"><?=gettext("Interface"); ?></td>
-					<td class="listhdr"><?=gettext("Network port"); ?></td>
-					<td class="list">&nbsp;</td>
-				</tr>
+<form action="interfaces_assign.php" method="post">
+	<div class="table-responsive">
+	<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th><?=gettext("Interface")?></th>
+			<th><?=gettext("Network port")?></th>
+		</tr>
+	</thead>
+	<tbody>
 <?php
-			foreach ($config['interfaces'] as $ifname => $iface):
-				if ($iface['descr']) {
-					$ifdescr = $iface['descr'];
-				} else {
-					$ifdescr = strtoupper($ifname);
-				}
+	foreach ($config['interfaces'] as $ifname => $iface):
+		if ($iface['descr'])
+			$ifdescr = $iface['descr'];
+		else
+			$ifdescr = strtoupper($ifname);
 ?>
-				<tr>
-					<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
-					<td valign="middle" class="listr">
-						<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
-<?php
-						foreach ($portlist as $portname => $portinfo):
+		<tr>
+			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
+			<td>
+				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
+<?php foreach ($portlist as $portname => $portinfo):?>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+						<?=interface_assign_description($portinfo, $portname)?>
+					</option>
+<?php endforeach;?>
+				</select>
+			</td>
+			<td>
+<?php if ($ifname != 'wan'):?>
+				<input type="submit" name="del[<?=$ifname?>]" class="btn btn-danger" value="<?=gettext("delete interface")?>"/>
+<?php endif;?>
+			</td>
+		</tr>
+<?php endforeach;
+	if (count($config['interfaces']) < count($portlist)):
 ?>
-							<option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
-								<?=interface_assign_description($portinfo, $portname);?>
-							</option>
-<?php
-						endforeach;
-?>
-						</select>
-					</td>
-					<td valign="middle" class="list">
-<?php
-					if ($ifname != 'wan'):
-?>
-						<input name="del_<?=$ifname;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
-							title="<?=gettext("delete interface");?>"
-							type="image" style="height:17;width:17;border:0"
-							onclick="return confirm('<?=gettext("Do you really want to delete this interface?"); ?>')" />
-<?php
-					endif;
-?>
-					</td>
-				</tr>
-<?php
-			endforeach;
-			if (count($config['interfaces']) < count($portlist)):
-?>
-				<tr>
-					<td class="list">
-						<strong><?=gettext("Available network ports:");?></strong>
-					</td>
-					<td class="list">
-						<select name="if_add" id="if_add">
-<?php
-						foreach ($unused_portlist as $portname => $portinfo):
-?>
-							<option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
-								<?=interface_assign_description($portinfo, $portname);?>
-							</option>
-<?php
-						endforeach;
-?>
-						</select>
-					</td>
-					<td class="list">
-						<input name="add" type="image" src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" style="width:17;height:17;border:0" title="<?=gettext("add selected interface");?>" />
-					</td>
-				</tr>
-<?php
-			endif;
-?>
-			</table>
-		</div>
-		<br />
-		<div id='savediv' style='display:none'>
-			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
-		</div>
-		<ul>
-			<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
-		</ul>
-	</td></tr>
-</table>
+		<tr>
+			<th>
+				<?=gettext("Available network ports:")?>
+			</th>
+			<td>
+				<select name="if_add" id="if_add" class="form-control">
+<?php foreach ($unused_portlist as $portname => $portinfo):?>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+						<?=interface_assign_description($portinfo, $portname)?>
+					</option>
+<?php endforeach;?>
+				</select>
+			</td>
+			<td>
+				<input type="submit" name="add" title="<?=gettext("add selected interface")?>" value="add interface" class="btn btn-success" />
+			</td>
+		</tr>
+<?php endif;?>
+		</tbody>
+	</table>
+	</div>
+
+	<input name="Submit" type="submit" class="btn btn-default" value="<?=gettext("Save")?>" /><br /><br />
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
+
+<?php include("foot.inc")?>

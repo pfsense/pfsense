@@ -2,36 +2,61 @@
 /* $Id$ */
 /*
 	load_balancer_virtual_server_edit.php
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -71,6 +96,8 @@ if (isset($id) && $a_vs[$id]) {
 $changedesc = gettext("Load Balancer: Virtual Server:") . " ";
 $changecount = 0;
 
+$allowed_protocols = array("tcp", "dns");
+
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -93,7 +120,7 @@ if ($_POST) {
 
 	for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id)) {
-			$input_errors[] = gettext("This virtual server name has already been used.  Virtual server names must be unique.");
+			$input_errors[] = gettext("This virtual server name has already been used.	Virtual server names must be unique.");
 		}
 	}
 
@@ -113,6 +140,10 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("%s is not a valid IP address, IPv4 subnet, or alias."), $_POST['ipaddr']);
 	} else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64) {
 		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
+	}
+
+	if (!in_array($_POST['relay_protocol'], $allowed_protocols)) {
+		$input_errors[] = gettext("The submitted relay protocol is not valid.");
 	}
 
 	if ((strtolower($_POST['relay_protocol']) == "dns") && !empty($_POST['sitedown'])) {
@@ -169,147 +200,131 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Edit Load Balancer - Virtual Server entry');
+
+$section->addInput(new Form_Input(
+	'name',
+	'Name',
+	'text',
+	$pconfig['name']
+));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+));
+
+
+$section->addInput(new Form_IpAddress(
+	'ipaddr',
+	'IP Address',
+	$pconfig['ipaddr']
+))->setHelp('This is normally the WAN IP address that you would like the server to listen on. ' .
+			'All connections to this IP and port will be forwarded to the pool cluster. ' .
+			'You may also specify a host alias listed in Firewall -&gt; Aliases here.');
+
+$section->addInput(new Form_Input(
+	'port',
+	'Port',
+	'number',
+	$pconfig['port']
+))->setHelp('Port that the clients will connect to. All connections to this port will be forwarded to the pool cluster. ' .
+			'If left blank listening ports from the pool will be used.' .
+			'You may also specify a port alias listed in Firewall -&gt; Aliases here.');
+
+if (count($config['load_balancer']['lbpool']) == 0) {
+	$section->addInput(new Form_StaticText(
+		'Virtual Server Pool',
+		'Please add a pool on the "Pools" tab to use this feature. '
+	));
+} else {
+
+	$list = array();
+	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+		$list[$config['load_balancer']['lbpool'][$i]['name']] = $config['load_balancer']['lbpool'][$i]['name'];
+	}
+
+	$section->addInput(new Form_Select(
+		'poolname',
+		'Virtual Server Pool',
+		$pconfig['poolname'],
+		$list
+	));
+}
+
+if (count($config['load_balancer']['lbpool']) == 0) {
+	$section->addInput(new Form_StaticText(
+		'Fall-back Pool',
+		'Please add a pool on the "Pools" tab to use this feature. '
+	));
+} else {
+
+	$list = array();
+	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+		$list[$config['load_balancer']['lbpool'][$i]['name']] = $config['load_balancer']['lbpool'][$i]['name'];
+	}
+
+	$section->addInput(new Form_Select(
+		'sitedown',
+		'Fall-back Pool',
+		$pconfig['sitedown'],
+		$list
+	));
+}
+
+$section->addInput(new Form_Input(
+	'mode',
+	null,
+	'hidden',
+	'redirect_mode'
+));
+
+$section->addInput(new Form_Select(
+	'relay_protocol',
+	'Relay Protocol',
+	$pconfig['relay_protocol'],
+	['tcp' => 'TCP', 'dns' => 'DNS']
+));
+
+if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup') {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
 ?>
+<script>
+//<![CDATA[
+events.push(function(){
+    // --------- Autocomplete -----------------------------------------------------------------------------------------
+    var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
+    $('#ipaddr').autocomplete({
+        source: addressarray
+    });
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="load balancer server entry">
-		<tr>
-			<td colspan="3" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Virtual Server entry"); ?></td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if (isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?> size="32" maxlength="32" />
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if (isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?> size="64" />
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input class="formfldalias" id="ipaddr" name="ipaddr" type="text" <?if (isset($pconfig['ipaddr'])) echo "value=\"" . htmlspecialchars($pconfig['ipaddr']) . "\"";?> size="39" maxlength="39" />
-				<br /><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
-				<br /><?=gettext("You may also specify a host alias listed in Firewall -&gt; Aliases here."); ?>
-				<script type="text/javascript">
-					//<![CDATA[
-						var host_aliases = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
-						var oTextbox1 = new AutoSuggestControl(document.getElementById("ipaddr"), new StateSuggestions(host_aliases));
-					//]]>
-				</script>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncell"><?=gettext("Port"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input class="formfldalias" name="port" id="port" type="text" <?if (isset($pconfig['port'])) echo "value=\"" . htmlspecialchars($pconfig['port']) . "\"";?> size="16" maxlength="16" />
-				<br /><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
-				<br /><?=gettext("If left blank, listening ports from the pool will be used."); ?>
-				<br /><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
-				<script type="text/javascript">
-					//<![CDATA[
-						var port_aliases = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
-						var oTextbox2 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(port_aliases));
-					//]]>
-				</script>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Virtual Server Pool"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-			<?php if (count($config['load_balancer']['lbpool']) == 0): ?>
-				<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
-			<?php else: ?>
-				<select id="poolname" name="poolname">
-			<?php
-				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-					$selected = "";
-					if ($config['load_balancer']['lbpool'][$i]['name'] == $pconfig['poolname']) {
-						$selected = " selected=\"selected\"";
-					}
-					echo "<option value=\"" . htmlspecialchars($config['load_balancer']['lbpool'][$i]['name']) . "\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
-				}
-			?>
-				</select>
-			<?php endif; ?>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Fall Back Pool"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-			<?php if (count($config['load_balancer']['lbpool']) == 0): ?>
-				<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
-			<?php else: ?>
-				<select id="sitedown" name="sitedown">
-					<option value=""<?=htmlspecialchars($pconfig['sitedown']) == '' ? ' selected' : ''?>><?=gettext("none"); ?></option>
-					<?php
-						for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-							$selected = "";
-							if ($config['load_balancer']['lbpool'][$i]['name'] == $pconfig['sitedown']) {
-								$selected = " selected=\"selected\"";
-							}
-							echo "<option value=\"" . htmlspecialchars($config['load_balancer']['lbpool'][$i]['name']) . "\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
-						}
-					?>
-				</select>
-				<br /><?=gettext("The server pool to which clients will be redirected if *ALL* servers in the Virtual Server Pool are offline."); ?>
-				<br /><?=gettext("This option is NOT compatible with the DNS relay protocol."); ?>
-			<?php endif; ?>
-			</td>
-		</tr>
-		<tr style="display:none;"><td><input type="hidden" name="mode" value="redirect_mode" /></td></tr>
-<!--
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Mode</td>
-			<td width="78%" class="vtable" colspan="2">
-				<input id="redirect_mode" type="radio" name="mode" value="redirect"<?=htmlspecialchars($pconfig['mode']) == 'redirect' ? ' checked="checked"': ''?> /> Redirect
-				<input id="relay_mode" type="radio" name="mode" value="relay"<?=htmlspecialchars($pconfig['mode']) == 'relay' ? ' checked="checked"': ''?> /> Relay
-				<br />
-			</td>
-		</tr>
--->
-		<tr id="relay" align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Relay Protocol"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<select id="relay_protocol" name="relay_protocol">
-				<?php
-					$lb_def_protos = array("tcp", "dns");
-					foreach ($lb_def_protos as $lb_proto) {
-						$selected = "";
-						if ($pconfig['relay_protocol'] == $lb_proto) {
-							$selected = " selected=\"selected\"";
-						}
-						echo "<option value=\"{$lb_proto}\"{$selected}>{$lb_proto}</option>";
-					}
-				?>
-				</select>
-				<br />
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top">&nbsp;</td>
-			<td align="left" valign="bottom" width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<br />
-<span class="red"><strong><?=gettext("Note:"); ?></strong></span> <?=gettext("Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up."); ?>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+    $('#port').autocomplete({
+        source: customarray
+    });
+});
+//]]>
+</script>
+<?php
+include("foot.inc");

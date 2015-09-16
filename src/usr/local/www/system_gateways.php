@@ -2,35 +2,61 @@
 /* $Id$ */
 /*
 	system_gateways.php
-	part of pfSense (https://www.pfsense.org)
-
-	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -214,223 +240,95 @@ $shortcut_section = "gateways";
 
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+	
+if (is_subsystem_dirty('staticroutes'))
+	print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="system_gateways.php" method="post">
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
-<?php endif; ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system gatewyas">
-		<tr>
-			<td>
-<?php
-			$tab_array = array();
-			$tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
-			$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
-			$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
-			display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
+$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
+$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
+display_top_tabs($tab_array);
+
 ?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-					<tr id="frheader">
-						<td width="2%" class="list">&nbsp;</td>
-						<td width="2%" class="list">&nbsp;</td>
-						<td width="15%" class="listhdrr"><?=gettext("Name"); ?></td>
-						<td width="10%" class="listhdrr"><?=gettext("Interface"); ?></td>
-						<td width="15%" class="listhdrr"><?=gettext("Gateway"); ?></td>
-						<td width="15%" class="listhdrr"><?=gettext("Monitor IP"); ?></td>
-						<td width="31%" class="listhdr"><?=gettext("Description"); ?></td>
-						<td width="10%" class="list">
-							<table border="0" cellspacing="0" cellpadding="1" summary="add">
-								<tr>
-									<td width="17"></td>
-									<td>
-										<a href="system_gateways_edit.php">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
+<table class="table">
+<thead>
+	<tr>
+		<th></th>
+		<th><?=gettext("Name")?></th>
+		<th><?=gettext("Interface")?></th>
+		<th><?=gettext("Gateway")?></th>
+		<th><?=gettext("Monitor IP")?></th>
+		<th><?=gettext("Description")?></th>
+		<th></th>
+	</tr>
+</thead>
+<tbody>
 <?php
-				$textse = "</span>";
-				$i = 0;
-				foreach ($a_gateways as $gateway):
-					if (isset($gateway['disabled']) || isset($gateway['inactive'])) {
-						$textss = "<span class=\"gray\">";
-						$iconfn = "pass_d";
-					} else {
-						$textss = "<span>";
-						$iconfn = "pass";
-					}
+foreach ($a_gateways as $i => $gateway):
+	if (isset($gateway['inactive']))
+		$icon = 'icon-remove-circle';
+	elseif (isset($gateway['disabled']))
+		$icon = 'icon-ban-circle';
+	else
+		$icon = 'icon-ok-circle';
+
+	if (isset($gateway['inactive']))
+		$title = gettext("This gateway is inactive because interface is missing");
+	else
+		$title = '';
 ?>
-					<tr valign="top" id="fr<?=$i;?>">
-						<td class="listt">
+	<tr<?=($icon != 'icon-ok-circle')? ' class="disabled"' : ''?>>
+		<td title="<?=$title?>"><i class="icon <?=$icon?>"></i></td>
+		<td>
+			<?=$gateway['name']?>
 <?php
-						if (is_numeric($gateway['attribute'])):
+			if (isset($gateway['defaultgw']))
+				echo " <strong>(default)</strong>";
 ?>
-							<input type="checkbox" id="frc<?=$i;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
+		</td>
+		<td>
+			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
+		</td>
+		<td>
+			<?=$gateway['gateway']?>
+		</td>
+		<td>
+			<?=htmlspecialchars($gateway['monitor'])?>
+		</td>
+		<td>
+			<?=htmlspecialchars($gateway['descr'])?>
+		</td>
+		<td>
+			<a class="btn btn-xs btn-primary" href="system_gateways_edit.php?id=<?=$i?>">
+				edit
+			</a>
+			<a class="btn btn-xs btn-default" href="system_gateways_edit.php?dup=<?=$i?>">
+				copy
+			</a>
+<? if (is_numeric($gateway['attribute'])): ?>
+			<a class="btn btn-xs btn-danger" href="system_gateways.php?act=del&amp;id=<?=$i?>">
+				delete
+			</a>
+			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">
+				toggle
+			</a>
+<? endif?>
+		</td>
+	</tr>
+<? endforeach?>
+</tbody>
+</table>
+
+<nav class="action-buttons">
+	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
+		<?=gettext("Add new gateway");?>
+	</a>
+</nav>
 <?php
-						else:
-?>
-							&nbsp;
-<?php
-						endif;
-?>
-						</td>
-						<td class="listt" align="center">
-<?php
-						if (isset($gateway['inactive'])):
-?>
-							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject_d.gif" width="11" height="11" border="0"
-								title="<?=gettext("This gateway is inactive because interface is missing");?>" alt="icon" />
-<?php
-						elseif (is_numeric($gateway['attribute'])):
-?>
-							<a href="?act=toggle&amp;id=<?=$i;?>">
-								<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0"
-									title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
-							</a>
-<?php
-						else:
-?>
-							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0"
-								title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
-<?php
-						endif;
-?>
-						</td>
-						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-							echo $textss;
-							echo $gateway['name'];
-							if (isset($gateway['defaultgw'])) {
-								echo " <strong>(default)</strong>";
-							}
-							echo $textse;
-?>
-						</td>
-						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-							echo $textss;
-							echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
-							echo $textse;
-?>
-						</td>
-						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-							echo $textss;
-							echo $gateway['gateway'] . " ";
-							echo $textse;
-?>
-						</td>
-						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-							echo $textss;
-							echo htmlspecialchars($gateway['monitor']) . " ";
-							echo $textse;
-?>
-						</td>
-<?php
-					if (is_numeric($gateway['attribute'])):
-?>
-						<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-					else:
-?>
-						<td class="listbgns" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-<?php
-					endif;
-							echo $textss;
-							echo htmlspecialchars($gateway['descr']) . "&nbsp;";
-							echo $textse;
-?>
-						</td>
-						<td valign="middle" class="list nowrap">
-							<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-								<tr>
-									<td>
-										<a href="system_gateways_edit.php?id=<?=$i;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" />
-										</a>
-									</td>
-<?php
-								if (is_numeric($gateway['attribute'])):
-?>
-									<td>
-										<a href="system_gateways.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway?"); ?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-										</a>
-									</td>
-<?php
-								else:
-?>
-									<td width='17'></td>
-<?php
-								endif;
-?>
-								</tr>
-								<tr>
-									<td width="17"></td>
-									<td>
-										<a href="system_gateways_edit.php?dup=<?=$i;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-<?php
-					$i++;
-				endforeach;
-?>
-					<tr>
-						<td class="list" colspan="7"></td>
-						<td class="list">
-							<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-								<tr>
-									<td>
-<?php
-									if ($i == 0):
-?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17"
-											title="<?=gettext("delete selected items");?>" border="0" alt="delete" />
-<?php
-									else:
-?>
-										<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
-											style="width:17;height:17" title="<?=gettext("delete selected items");?>"
-											onclick="return confirm('<?=gettext("Do you really want to delete the selected gateway items?");?>')" />
-<?php
-									endif;
-?>
-									</td>
-									<td>
-										<a href="system_gateways_edit.php">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+include("foot.inc");

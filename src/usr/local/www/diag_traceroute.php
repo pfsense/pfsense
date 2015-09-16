@@ -1,37 +1,63 @@
 <?php
 /*
 	diag_traceroute.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>
+ *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -47,13 +73,23 @@ $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Traceroute"));
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php
-
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
+
+$pconfig['ttl'] = DEFAULT_TTL;
+$pconfig['ipproto'] = 'IPv4';
+$pconfig['sourceip'] = 'Any';
+
+function create_sourceaddresslist() {
+	$list = array('any' => 'Any');
+
+	$sourceips = get_possible_traffic_source_addresses(true);
+
+	foreach ($sourceips as $sipvalue => $sipname)
+		$list[$sipname[value]] = $sipname[name];
+
+	return($list);
+}
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
@@ -76,14 +112,18 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 	}
 
-	if (!$input_errors) {
-		$sourceip = $_REQUEST['sourceip'];
-		$do_traceroute = true;
-		$ttl = $_REQUEST['ttl'];
-		$resolve = $_REQUEST['resolve'];
-	}
+	if (!$input_errors)
+		$host = $_REQUEST['host'];
+
+	$sourceip = $_REQUEST['sourceip'];
+	$do_traceroute = true;
+	$ttl = $_REQUEST['ttl'];
+	$resolve = $_REQUEST['resolve'];
+	$useicmp = $_REQUEST['useicmp'];
+
 } else {
-	$resolve = true;
+	$resolve = false;
+	$useicmp = false;
 }
 
 if (!isset($do_traceroute)) {
@@ -92,127 +132,94 @@ if (!isset($do_traceroute)) {
 	$ttl = DEFAULT_TTL;
 }
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form('Traceroute');
+
+$section = new Form_Section('Traceroute');
+
+$section->addInput(new Form_Input(
+	'host',
+	'Hostname',
+	'text',
+	$host,
+	['placeholder' => 'Hostname to trace.']
+));
+
+$section->addInput(new Form_Select(
+	'ipproto',
+	'IP Protocol',
+	$pconfig['protocol'],
+	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
+))->setHelp('Select the protocol to use');
+
+$section->addInput(new Form_Select(
+	'sourceip',
+	'Source Address',
+	$pconfig['source'],
+	create_sourceaddresslist()
+))->setHelp('Select source address for the trace');
+
+$section->addInput(new Form_Select(
+	'ttl',
+	'Maximum nuber of hops',
+	$ttl,
+	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
+))->setHelp('Select the maximum number of network hops to trace');
+
+$section->addInput(new Form_Checkbox(
+	'resolve',
+	'Reverse Address Lookup',
+	'',
+	$resolve
+))->setHelp('When checked, traceroute will attempt to perform a PTR lookup to locate hostnames for hops along the path. This will slow down the process as it has to wait for DNS replies.');
+
+$section->addInput(new Form_Checkbox(
+	'useicmp',
+	gettext("Use ICMP"),
+	'',
+	$useicmp
+))->setHelp('By default, traceroute uses UDP but that may be blocked by some routers. Check this box to use ICMP instead, which may succeed. ');
+
+$form->add($section);
+print $form;
+
+/* Show the traceroute results */
+if (!$input_errors && $do_traceroute) {
+
+	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
+	$n = isset($resolve) ? "" : "-n";
+
+	$command = "/usr/sbin/traceroute";
+	if ($ipproto == "ipv6") {
+		$command .= "6";
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+	} else {
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+	}
+
+	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+		$srcip = "-s " . escapeshellarg($ifaddr);
+	}
+
+	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="diag_traceroute.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="diag traceroute">
-	<tr>
-		<td colspan="2" valign="top" class="listtopic"><?=gettext("Traceroute");?></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
-		<td width="78%" class="vtable">
-			<?=$mandfldhtml;?><input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
-		<td width="78%" class="vtable">
-			<select name="ipproto" class="formselect">
-				<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
-				<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
-		<td width="78%" class="vtable">
-			<select name="sourceip" class="formselect">
-				<option value="">Any</option>
-			<?php   $sourceips = get_possible_traffic_source_addresses(true);
-				foreach ($sourceips as $sipvalue => $sipname):
-					$selected = "";
-					if (!link_interface_to_bridge($sipvalue) && ($sipvalue == $sourceip)) {
-						$selected = "selected=\"selected\"";
-					}
-			?>
-				<option value="<?=$sipvalue;?>" <?=$selected;?>>
-					<?=htmlspecialchars($sipname);?>
-				</option>
-				<?php endforeach; ?>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Maximum number of hops");?></td>
-		<td width="78%" class="vtable">
-			<select name="ttl" class="formfld" id="ttl">
-				<?php for ($i = 1; $i <= MAX_TTL; $i++): ?>
-					<option value="<?=$i;?>" <?php if ($i == $ttl) echo "selected=\"selected\""; ?>><?=$i;?></option>
-				<?php endfor; ?>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Reverse Address Lookup");?></td>
-		<td width="78%" class="vtable">
-			<input name="resolve" type="checkbox"<?php echo (!isset($resolve) ? "" : " checked=\"checked\""); ?> />
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
-		<td width="78%" class="vtable">
-			<input name="useicmp" type="checkbox"<?php if ($_REQUEST['useicmp']) echo " checked=\"checked\""; ?> />
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top">&nbsp;</td>
-		<td width="78%">
-			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Traceroute");?>" />
-		</td>
-	</tr>
-	<tr>
-		<td valign="top" colspan="2">
-		<span class="vexpl">
-			<span class="red"><b><?=gettext("Note: ");?></b></span>
-			<?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?>
-			<br /><br />
-			<?=gettext("Using a source interface/IP address that does not match selected type (IPv4, IPv6) will result in an error or empty output.");?>
-		</span>
-		</td>
-	</tr>
-	<tr>
-		<td valign="top" colspan="2">
-		<?php
-		if ($do_traceroute) {
-			echo "<font face=\"terminal\" size=\"2\">\n";
-			echo "<strong>" . gettext("Traceroute output:") . "</strong><br />\n";
-			ob_end_flush();
-		?>
-			<script type="text/javascript">
-			//<![CDATA[
-			window.onload=function() {
-				document.getElementById("tracerouteCaptured").wrap='off';
-			}
-			//]]>
-			</script>
-		<?php
-			echo "<textarea id=\"tracerouteCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
-			$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
-			$n = isset($resolve) ? "" : "-n";
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
+		<div class="panel-body">
+<?php
+		if ($result = shell_exec($cmd))
+			print(nl2br($result));
+		else
+			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
+?>
+		</div>
+	</div>
+<?php
+}
 
-			$command = "/usr/sbin/traceroute";
-			if ($ipproto == "ipv6") {
-				$command .= "6";
-				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-			} else {
-				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-			}
-
-			if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-				$srcip = "-s " . escapeshellarg($ifaddr);
-			}
-
-			$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
-
-			//echo "Traceroute command: {$cmd}\n";
-			system($cmd);
-			echo "</textarea>&nbsp;</font>";
-		} ?>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");
+?>

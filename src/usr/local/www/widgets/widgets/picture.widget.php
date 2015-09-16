@@ -70,27 +70,15 @@ if ($_POST) {
 }
 
 ?>
+<a href="/widgets/widgets/picture.widget.php?getpic=true" target="_blank">
+	<img width="100%" height="100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
+</a>
 
-<input type="hidden" id="picture-config" name="picture-config" value="" />
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div class="panel-footer collapse">
 
-<div id="picture-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/picture.widget.php" method="post" name="picture_widget_iform" enctype="multipart/form-data">
-		<input name="pictfile" type="file" class="formbtn" id="pictfile" size="20" />
-		<input id="picture_widget_submit" name="picture_widget_submit" type="submit" class="formbtn" value="Upload" />
-	</form>
-</div>
-
-<div id="picture-widgets" style="padding: 5px">
-	<a href='/widgets/widgets/picture.widget.php?getpic=true' target='_blank'>
-		<img border="0" width="100%" height="100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
-	</a>
-</div>
-
-<!-- needed to show the settings widget icon -->
-<script type="text/javascript">
-//<![CDATA[
-	selectIntLink = "picture-configure";
-	textlink = document.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
-</script>
+<form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
+	<label for="pictfile">New picture: </label>
+	<input name="pictfile" type="file" class="form-control" />
+	<button type="submit" class="btn btn-default">Upload</button>
+</form>

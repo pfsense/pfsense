@@ -34,7 +34,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -70,8 +70,8 @@ $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 
 $a_cert =& $config['cert'];
-
 $certs_available = false;
+
 if (is_array($a_cert) && count($a_cert)) {
 	$certs_available = true;
 }
@@ -123,7 +123,6 @@ if ($_POST) {
 	flush();
 
 	if (!$input_errors) {
-
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}
@@ -137,14 +136,14 @@ if ($_POST) {
 			$restart_webgui = true;
 		}
 
-		if ($_POST['disablehttpredirect'] == "yes") {
+		if ($_POST['webgui-redirect'] == "yes") {
 			$config['system']['webgui']['disablehttpredirect'] = true;
 			$restart_webgui = true;
 		} else {
 			unset($config['system']['webgui']['disablehttpredirect']);
 			$restart_webgui = true;
 		}
-		if ($_POST['quietlogin'] == "yes") {
+		if ($_POST['webgui-login-messages'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {
 			unset($config['system']['webgui']['quietlogin']);
@@ -232,8 +231,8 @@ if ($_POST) {
 		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-		    ($sshd_port != $config['system']['ssh']['port'])) {
+			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+			($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
 
@@ -286,359 +285,275 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
-function prot_change() {
+$tab_array = array();
+$tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
+$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+display_top_tabs($tab_array);
 
-	if (document.iform.https_proto.checked) {
-		document.getElementById("ssl_opts").style.display="";
-	} else {
-		document.getElementById("ssl_opts").style.display="none";
-	}
+?><div id="container"><?php
+
+require_once('classes/Form.class.php');
+$form = new Form;
+$section = new Form_Section('WebConfigurator');
+$group = new Form_Group('Protocol');
+
+$group->add(new Form_Checkbox(
+	'webguiproto',
+	'Protocol',
+	'HTTP',
+	($pconfig['webguiproto']=='http'),
+	'http'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'webguiproto',
+	'Protocol',
+	'HTTPS',
+	($pconfig['webguiproto']=='https'),
+	'https'
+))->displayAsRadio();
+
+$group->setHelp($certs_available ? '':'No Certificates have been defined. You must '.
+	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.
+	'a Certificate before SSL can be enabled.');
+
+$section->add($group);
+
+$values = array();
+foreach($a_cert as $cert)
+	$values[ $cert['refid'] ] = $cert['descr'];
+
+$section->addInput($input = new Form_Select(
+	'ssl-certref',
+	'SSL Certificate',
+	$pconfig['ssl-certref'],
+	$values
+));
+
+$section->addInput(new Form_Input(
+	'webguiport',
+	'TCP port',
+	'number',
+	$config['system']['webgui']['port'],
+	['min' => 1, 'max' => 65535]
+))->setHelp('Enter a custom port number for the webConfigurator '.
+	'above if you want to override the default (80 for HTTP, 443 '.
+	'for HTTPS). Changes will take effect immediately after save.');
+
+$section->addInput(new Form_Input(
+	'max_procs',
+	'Max Processes',
+	'number',
+	$pconfig['max_procs']
+))->setHelp('Enter the number of webConfigurator processes you '.
+	'want to run. This defaults to 2. Increasing this will allow more '.
+	'users/browsers to access the GUI concurrently.');
+
+$section->addInput(new Form_Checkbox(
+	'disablehttpredirect',
+	'WebGUI redirect',
+	'Disable webConfigurator redirect rule',
+	$pconfig['disablehttpredirect']
+))->setHelp('When this is unchecked, access to the webConfigurator '.
+	'is always permitted even on port 80, regardless of the listening port configured. '.
+	'Check this box to disable this automatically added redirect rule.');
+
+$section->addInput(new Form_Checkbox(
+	'loginautocomplete',
+	'WebGUI Login Autocomplete',
+	'Enable webConfigurator login autocomplete',
+	$pconfig['loginautocomplete']
+))->setHelp('When this is checked, login credentials for the webConfigurator may '.
+	'be saved by the browser. While convenient, some security standards require this '.
+	'to be disabled. Check this box to enable autocomplete on the login form so that '.
+	'browsers will prompt to save credentials (NOTE: Some browsers do not respect '.
+	'this option).');
+
+$section->addInput(new Form_Checkbox(
+	'quietlogin',
+	'WebGUI login messages',
+	'Disable logging of webConfigurator successful logins',
+	$pconfig['quietlogin']
+))->setHelp('When this is checked, successful logins to the webConfigurator will '.
+	'not be logged.');
+
+if ($config['interfaces']['lan'])
+	$lockout_interface = "LAN";
+else
+	$lockout_interface = "WAN";
+
+$section->addInput(new Form_Checkbox(
+	'noantilockout',
+	'Anti-lockout',
+	'Disable webConfigurator anti-lockout rule',
+	$pconfig['noantilockout']
+))->setHelp('When this is '.
+	'unchecked, access to the webConfigurator on the %s interface is always '.
+	'permitted, regardless of the user-defined firewall rule set. Check this box to '.
+	'disable this automatically added rule, so access to the webConfigurator is '.
+	'controlled by the user-defined firewall rules (ensure you have a firewall rule '.
+	'in place that allows you in, or you will lock yourself out!)<em>Hint: the &quot;Set interface(s) IP address&quot; '.
+	'option in the console menu resets this setting as well.</em>', [$lockout_interface]);
+
+$section->addInput(new Form_Checkbox(
+	'nodnsrebindcheck',
+	'DNS Rebind Check',
+	'Disable DNS Rebinding Checks',
+	$pconfig['nodnsrebindcheck']
+))->setHelp('When this is unchecked, your system is protected against <a '.
+	'href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. '.
+	'This blocks private IP responses from your configured DNS servers. Check this '.
+	'box to disable this protection if it interferes with webConfigurator access or '.
+	'name resolution in your environment.');
+
+$section->addInput(new Form_Input(
+	'althostnames',
+	'Alternate Hostnames',
+	'text',
+	htmlspecialchars($pconfig['althostnames'])
+))->setHelp('Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks. Here '.
+	'you can specify alternate hostnames by which the router may be queried, to '.
+	'bypass the DNS Rebinding Attack checks. Separate hostnames with spaces.');
+
+$section->addInput(new Form_Checkbox(
+	'nohttpreferercheck',
+	'Browser HTTP_REFERER enforcement',
+	'Disable HTTP_REFERER enforcement check',
+	$pconfig['nohttpreferercheck']
+))->setHelp('When this is unchecked, access to the webConfigurator is protected '.
+	'against HTTP_REFERER redirection attempts. Check this box to disable this '.
+	'protection if you find that it interferes with webConfigurator access in certain '.
+	'corner cases such as using external scripts to interact with this system. More '.
+	'information on HTTP_REFERER is available from <a target="_blank" '.
+	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
+
+$section->addInput(new Form_Checkbox(
+	'pagenamefirst',
+	'Browser tab text',
+	'Display page name first in browser tab',
+	$pconfig['pagenamefirst']
+))->setHelp('When this is unchecked, the browser tab shows the host name followed '.
+	'by the current page. Check this box to display the current page followed by the '.
+	'host name.');
+
+$form->add($section);
+$section = new Form_Section('Secure Shell');
+
+$section->addInput(new Form_Checkbox(
+	'enablesshd',
+	'Secure Shell Server',
+	'Enable Secure Shell',
+	isset($pconfig['enablesshd'])
+));
+
+$section->addInput(new Form_Checkbox(
+	'sshdkeyonly',
+	'Authentication Method',
+	'Disable password login for Secure Shell (RSA/DSA key only)',
+	$pconfig['sshdkeyonly']
+))->setHelp('When enabled, authorized keys need to be configured for each <a '.
+	'href="system_usermanager.php">user</a> that has been granted secure shell '.
+	'access.');
+
+$section->addInput(new Form_Input(
+	'sshport',
+	'SSH port',
+	'number',
+	$pconfig['sshport'],
+	['min' => 1, 'max' => 65535, 'placeholder' => 22]
+))->setHelp('Note: Leave this blank for the default of 22.');
+
+
+if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom"))
+{
+	$form->add($section);
+	$section = new Form_Section('Serial Communications');
+
+	$section->addInput(new Form_Checkbox(
+		'enableserial',
+		'Serial Terminal',
+		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
+		isset($pconfig['enableserial'])
+	))->setHelp('Note:	This will redirect the console output and messages to '.
+		'the serial port. You can still access the console menu from the internal video '.
+		'card/keyboard. A<b>null modem</b>serial cable or adapter is required to use the '.
+		'serial console.');
+
+	$section->addInput(new Form_Select(
+		'serialspeed',
+		'Serial Speed',
+		$pconfig['serialspeed'],
+		array(115200, 57600, 38400, 19200, 14400, 9600)
+	))->setHelp('Allows selection of different speeds for the serial console port.');
+
+	$section->addInput(new Form_Select(
+		'primaryconsole',
+		'Primary Console',
+		$pconfig['primaryconsole'],
+		array(
+			'serial' => 'Serial Console',
+			'video' => 'VGA Console',
+		)
+	))->setHelp('Select the preferred console if multiple consoles are present. '.
+		'The preferred console will show pfSense boot script output. All consoles '.
+		'display OS boot messages, console messages, and the console menu.');
 }
 
+$form->add($section);
+$section = new Form_Section('Console Options');
+
+$section->addInput(new Form_Checkbox(
+	'disableconsolemenu',
+	'Console menu',
+	'Password protect the console menu',
+	$pconfig['disableconsolemenu']
+));
+
+$form->add($section);
+print $form;
+
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
+	}
+
+	// On page load . .
+	hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+
+	// On click . .
+	 $('[id=webguiproto]').click(function () {
+		hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+	});
+});
 //]]>
 </script>
-<?php
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-?>
-	<form action="system_advanced_admin.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced admin">
-			<tr>
-				<td>
-					<?php
-						$tab_array = array();
-						$tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
-						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
-						$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
-						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
-						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
-						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
-						display_top_tabs($tab_array);
-					?>
-				</td>
-			</tr>
-			<tr>
-				<td id="mainarea">
-					<div class="tabcont">
-						<span class="vexpl">
-							<span class="red">
-								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
-							</span>
-							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-							<br />
-						</span>
-						<br />
-						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("webConfigurator"); ?></td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Protocol"); ?></td>
-								<td width="78%" class="vtable">
-									<?php
-										if ($pconfig['webguiproto'] == "http") {
-											$http_chk = "checked=\"checked\"";
-										}
-										if ($pconfig['webguiproto'] == "https") {
-											$https_chk = "checked=\"checked\"";
-										}
-										if (!$certs_available) {
-											$https_disabled = "disabled=\"disabled\"";
-										}
-									?>
-									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onclick="prot_change()" />
-									<?=gettext("HTTP"); ?>
-									&nbsp;&nbsp;&nbsp;
-									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onclick="prot_change()" />
-									<?=gettext("HTTPS"); ?>
-									<?php if (!$certs_available): ?>
-									<br />
-									<?=gettext("No Certificates have been defined. You must"); ?>
-									<a href="system_certmanager.php"><?=gettext("Create or Import"); ?></a>
-									<?=gettext("a Certificate before SSL can be enabled."); ?>
-									<?php endif; ?>
-								</td>
-							</tr>
-							<tr id="ssl_opts">
-								<td width="22%" valign="top" class="vncell"><?=gettext("SSL Certificate"); ?></td>
-								<td width="78%" class="vtable">
-									<select name="ssl-certref" id="ssl-certref" class="formselect">
-										<?php
-											foreach ($a_cert as $cert):
-												$selected = "";
-												if ($pconfig['ssl-certref'] == $cert['refid']) {
-													$selected = "selected=\"selected\"";
-												}
-										?>
-										<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=htmlspecialchars($cert['descr']);?></option>
-										<?php
-											endforeach;
-											if (!count($a_cert)) {
-												echo "<option></option>";
-											}
-										?>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td valign="top" class="vncell"><?=gettext("TCP port"); ?></td>
-								<td class="vtable">
-									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>" />
-									<br />
-									<span class="vexpl">
-										<?=gettext("Enter a custom port number for the webConfigurator " .
-										"above if you want to override the default (80 for HTTP, 443 " .
-										"for HTTPS). Changes will take effect immediately after save."); ?>
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td valign="top" class="vncell"><?=gettext("Max Processes"); ?></td>
-								<td class="vtable">
-									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" size="5" value="<?=htmlspecialchars($pconfig['max_procs']);?>" />
-									<br />
-									<span class="vexpl">
-										<?=gettext("Enter the number of webConfigurator processes you " .
-										"want to run. This defaults to 2. Increasing this will allow more " .
-										"users/browsers to access the GUI concurrently."); ?>
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI redirect"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
-									<br />
-									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
-									"is always permitted even on port 80, regardless of the listening port configured. " .
-									"Check this box to disable this automatically added redirect rule. ");
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI Login Autocomplete"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="loginautocomplete" type="checkbox" id="loginautocomplete" value="yes" <?php if ($pconfig['loginautocomplete']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Enable webConfigurator login autocomplete"); ?></strong>
-									<br />
-									<?php echo gettext("When this is checked, login credentials for the webConfigurator " .
-									"may be saved by the browser. While convenient, some security standards require this to be disabled. " .
-									"Check this box to enable autocomplete on the login form so that browsers will prompt to save credentials (NOTE: Some browsers do not respect this option). ");
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI login messages"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable logging of webConfigurator successful logins"); ?></strong>
-									<br />
-									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
-									"will not be logged.");
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Anti-lockout"); ?></td>
-								<td width="78%" class="vtable">
-									<?php
-										if ($config['interfaces']['lan']) {
-											$lockout_interface = "LAN";
-										} else {
-											$lockout_interface = "WAN";
-										}
-									?>
-									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
-									<br />
-									<?php printf(gettext("When this is unchecked, access to the webConfigurator " .
-									"on the %s interface is always permitted, regardless of the user-defined firewall " .
-									"rule set. Check this box to disable this automatically added rule, so access " .
-									"to the webConfigurator is controlled by the user-defined firewall rules " .
-									"(ensure you have a firewall rule in place that allows you in, or you will " .
-									"lock yourself out!)"), $lockout_interface); ?>
-									<em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; option in the console menu resets this setting as well."); ?> </em>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("DNS Rebind Check"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable DNS Rebinding Checks"); ?></strong>
-									<br />
-									<?php echo gettext("When this is unchecked, your system " .
-									"is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. " .
-									"This blocks private IP responses from your configured DNS servers. Check this box to disable this protection if it interferes with " .
-									"webConfigurator access or name resolution in your environment. "); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Alternate Hostnames"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
-									<br />
-									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
-									<br />
-									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " .
-									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Browser HTTP_REFERER enforcement"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="nohttpreferercheck" type="checkbox" id="nohttpreferercheck" value="yes" <?php if ($pconfig['nohttpreferercheck']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable HTTP_REFERER enforcement check"); ?></strong>
-									<br />
-									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
-									"is protected against HTTP_REFERER redirection attempts. " .
-									"Check this box to disable this protection if you find that it interferes with " .
-									"webConfigurator access in certain corner cases such as using external scripts to interact with this system. More information on HTTP_REFERER is available from <a target='_blank' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Browser tab text"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="pagenamefirst" type="checkbox" id="pagenamefirst" value="yes" <?php if ($pconfig['pagenamefirst']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Display page name first in browser tab"); ?></strong>
-									<br />
-									<?php echo gettext("When this is unchecked, the browser tab shows the host name followed by the current page. "); ?>
-									<br />
-									<?php echo gettext("Check this box to display the current page followed by the host name."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Secure Shell"); ?></td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Secure Shell Server"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Enable Secure Shell"); ?></strong>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Method"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable password login for Secure Shell (RSA/DSA key only)"); ?></strong>
-									<br />
-									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
-									<a href="system_usermanager.php"><?=gettext("user"); ?></a>
-									<?=gettext("that has been granted secure shell access."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("SSH port"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="sshport" type="text" id="sshport" value="<?php echo htmlspecialchars($pconfig['sshport']); ?>" />
-									<br />
-									<span class="vexpl"><?=gettext("Note: Leave this blank for the default of 22."); ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
-							</tr>
-							<?php if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom")): ?>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below."); ?></strong>
-									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
-								</td>
-							</tr>
-							<?php endif; ?>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Speed")?></td>
-								<td width="78%" class="vtable">
-									<select name="serialspeed" id="serialspeed" class="formselect">
-										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected=\"selected\"";?>>115200</option>
-										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
-										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
-										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
-										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
-										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
-									</select> bps
-									<br /><?=gettext("Allows selection of different speeds for the serial console port."); ?>
-								</td>
-							</tr>
-							<?php if (!$g['primaryconsole_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || !isset($g['enableserial_force']))): ?>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Primary Console")?></td>
-								<td width="78%" class="vtable">
-									<select name="primaryconsole" id="primaryconsole" class="formselect">
-										<option value="serial" <?php if ($pconfig['primaryconsole'] == "serial") echo "selected=\"selected\"";?>>Serial Console</option>
-										<option value="video" <?php if ($pconfig['primaryconsole'] == "video") echo "selected=\"selected\"";?>>VGA Console</option>
-									</select>
-									<br /><?=gettext("Select the preferred console if multiple consoles are present. The preferred console will show pfSense boot script output. All consoles display OS boot messages, console messages, and the console menu."); ?>
-								</td>
-							</tr>
-							<?php endif; ?>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Console Options"); ?></td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Console menu"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Password protect the console menu"); ?></strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
-							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
-		</table>
-	</form>
-	<script type="text/javascript">
-	//<![CDATA[
-		prot_change();
-	//]]>
-	</script>
-
-<?php include("fend.inc"); ?>
-<?php
-	if ($restart_webgui) {
-		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
-	}
-?>
-</body>
-</html>
 
 <?php
-if ($restart_sshd) {
+include("foot.inc");
 
+if ($restart_webgui)
+	echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
+
+if ($restart_sshd)
+{
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
@@ -647,11 +562,11 @@ if ($restart_sshd) {
 		send_event("service restart sshd");
 	}
 }
-if ($restart_webgui) {
+
+if ($restart_webgui)
+{
 	ob_flush();
 	flush();
 	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 	send_event("service restart webgui");
 }
-
-?>

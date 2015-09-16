@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnsupdate
+	pfSense_MODULE: dnsupdate
 */
 
 require("guiconfig.inc");
@@ -132,145 +132,164 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("RFC 2136 client"), gettext("Edit"));
 include("head.inc");
 
-?>
+require_once('classes/Form.class.php');
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<form action="services_rfc2136_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="rfs2136 edit">
-		<tr>
-			<td colspan="2" valign="top" class="optsect_t">
-				<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="title">
-					<tr>
-						<td class="optsect_s">
-							<strong><?=gettext("RFC 2136 client");?></strong>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
-			<td width="78%" class="vtable">
-				<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>
-			<td width="78%" class="vtable">
-				<select name="interface" class="formselect" id="interface">
-				<?php
-					$iflist = get_configured_interface_with_descr();
-					foreach ($iflist as $if => $ifdesc):?>
-					<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected=\"selected\"";?>><?=$ifdesc;?></option>
-				<?php
-					endforeach;
-				?>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
-			<td width="78%" class="vtable">
-				<input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>" />
-				<br /><span>Fully qualified hostname of the host to be updated</span>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("TTL"); ?></td>
-			<td class="vtable">
-				<input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>" />
-				<?=gettext("seconds");?>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Key name");?></td>
-			<td class="vtable">
-				<input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>" />
-				<br />
-				<?=gettext("This must match the setting on the DNS server.");?>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Key type");?> </td>
-			<td class="vtable">
-				<input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked=\"checked\""; ?> /> <?=gettext("Zone");?> &nbsp;
-				<input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked=\"checked\""; ?> /> <?=gettext("Host");?> &nbsp;
-				<input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked=\"checked\""; ?> /><?=gettext(" User");?>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Key");?></td>
-			<td class="vtable">
-				<input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>" />
-				<br />
-				<?=gettext("Paste an HMAC-MD5 key here.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Server");?></td>
-			<td width="78%" class="vtable">
-				<input name="server" type="text" class="formfld unknown" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>" />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
-			<td width="78%" class="vtable">
-				<input name="usetcp" type="checkbox" id="usetcp" value="<?=gettext("yes");?>" <?php if ($pconfig['usetcp']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Use TCP instead of UDP");?></strong>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Use Public IP");?></td>
-			<td width="78%" class="vtable">
-				<input name="usepublicip" type="checkbox" id="usepublicip" value="<?=gettext("yes");?>" <?php if ($pconfig['usepublicip']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("If the interface IP is private, attempt to fetch and use the public IP instead.");?></strong>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Record Type");?> </td>
-			<td class="vtable">
-				<input name="recordtype" type="radio" value="A" <?php if ($pconfig['recordtype'] == "A") echo "checked=\"checked\""; ?> /> <?=gettext("A (IPv4)");?> &nbsp;
-				<input name="recordtype" type="radio" value="AAAA" <?php if ($pconfig['recordtype'] == "AAAA") echo "checked=\"checked\""; ?> /> <?=gettext("AAAA (IPv6)");?> &nbsp;
-				<input name="recordtype" type="radio" value="both" <?php if ($pconfig['recordtype'] == "both") echo "checked=\"checked\""; ?> /> <?=gettext("Both");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-				<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save &amp; Force Update");?>" onclick="enable_change(true)" />
-				<?php if (isset($id) && $a_rfc2136[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<span class="vexpl">
-					<span class="red">
-						<strong>
-							<?=gettext("Note:");?><br />
-						</strong>
-					</span>
-					<?php printf(gettext("You must configure a DNS server in %sSystem: " .
-						"General setup %sor allow the DNS server list to be overridden " .
-						"by DHCP/PPP on WAN for dynamic DNS updates to work."), '<a href="system.php">', '</a>');?>
-				</span>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+$form = new Form;
+
+$section = new Form_Section('RFC 2136 client');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	null,
+	$pconfig['enable']
+));
+
+$optionlist = array();
+$iflist = get_configured_interface_with_descr();
+
+foreach ($iflist as $ifnam => $ifdescr)
+	$optionlist[$ifnam] = $ifdescr;
+
+$section->addInput(new Form_Select(
+	'ifname',
+	'Interface',
+	$pconfig['ifname'],
+	$optionlist
+));
+
+$section->addInput(new Form_Input(
+	'host',
+	'Hostname',
+	'text',
+	$pconfig['host']
+))->setHelp('Fully qualified hostname of the host to be updated');
+
+$section->addInput(new Form_Input(
+	'ttl',
+	'TTL (seconds)',
+	'number',
+	$pconfig['ttl']
+));
+
+$section->addInput(new Form_Input(
+	'keyname',
+	'Key name',
+	'text',
+	$pconfig['keyname']
+))->setHelp('This must match the setting on the DNS server.');
+
+$group = new Form_Group('Key Type');
+
+$group->add(new Form_Checkbox(
+	'keytype',
+	'Key Type',
+	'Zone',
+	($pconfig['keytype']=='zone'),
+	'zone'
+))->displayAsRadio();
+
+$group->add($input = new Form_Checkbox(
+	'keytype',
+	'Key Type',
+	'Host',
+	($pconfig['keytype']=='host'),
+	'host'
+))->displayAsRadio();
+
+$group->add($input = new Form_Checkbox(
+	'keytype',
+	'Key Type',
+	'User',
+	($pconfig['keytype']=='user'),
+	'user'
+))->displayAsRadio();
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'keydata',
+	'Key',
+	'text',
+	$pconfig['keydata']
+))->setHelp('Paste an HMAC-MD5 key here.');
+
+$section->addInput(new Form_Input(
+	'server',
+	'Server',
+	'text',
+	$pconfig['server']
+));
+
+$section->addInput(new Form_Checkbox(
+	'usetcp',
+	'Protocol',
+	'Use TCP instead of UDP',
+	$pconfig['usetcp']
+));
+
+$section->addInput(new Form_Checkbox(
+	'usepublicip',
+	'Use public IP',
+	'If the interface IP is private, attempt to fetch and use the public IP instead.',
+	$pconfig['usepublicip']
+));
+
+$group = new Form_Group('Record Type');
+
+$group->add(new Form_Checkbox(
+	'recordtype',
+	'Record Type',
+	'A (IPv4)',
+	($pconfig['keytype']=='A'),
+	'A'
+))->displayAsRadio();
+
+$group->add($input = new Form_Checkbox(
+	'recordtype',
+	'Record Type',
+	'AAAA (IPv6)',
+	($pconfig['keytype']=='AAAA'),
+	'AAAA'
+))->displayAsRadio();
+
+$group->add($input = new Form_Checkbox(
+	'recordtype',
+	'Record Type',
+	'Both',
+	($pconfig['keytype']=='both'),
+	'both'
+))->displayAsRadio();
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+if (isset($id) && $a_rfc2136[$id]){
+    	$section->addInput(new Form_Input(
+    	'id',
+    	null,
+    	'hidden',
+    	$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+print_info_box(sprintf('You must configure a DNS server in %sSystem: ' .
+					'General setup %sor allow the DNS server list to be overridden ' .
+					'by DHCP/PPP on WAN for dynamic DNS updates to work.','<a href="system.php">', '</a>'));
+
+include("foot.inc");

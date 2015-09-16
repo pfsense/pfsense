@@ -33,7 +33,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar
-	pfSense_MODULE:	firmware
+	pfSense_MODULE: firmware
 */
 
 ##|+PRIV
@@ -104,14 +104,9 @@ function file_upload_error_message($error_code) {
 if (is_subsystem_dirty('firmwarelock')) {
 	$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Manual Update"));
 	include("head.inc");
-	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
-	echo "<div>\n";
-	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "</p><p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='update' /></p>");
-	echo "</div>\n";
-	include("fend.inc");
-	echo "</body>";
-	echo "</html>";
+	print_info_box(gettext("An upgrade is currently in progress. The firewall will reboot when the operation is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='update' /></p>");
+	include("foot.inc");
 	exit;
 }
 
@@ -208,136 +203,129 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 $pgtitle = array(gettext("System"), gettext("Firmware"));
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form action="system_firmware.php" method="post" enctype="multipart/form-data">
-<?php
-	/* Construct an upload_id for this session */
-	if (!session_id()) {
-		$upload_id = uniqid();
-	} else {
-		$upload_id = session_id();
-	}
-?>
-<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" />
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
-<?php
-	if ($sig_warning && !$input_errors):
-		$sig_warning = "<strong>" . $sig_warning . "</strong><br />" . gettext("This means that the image you uploaded " .
-			"is not an official/supported image and may lead to unexpected behavior or security " .
-			"compromises. Only install images that come from sources that you trust, and make sure " .
-			"that the image has not been tampered with.") . "<br /><br />" .
-			gettext("Do you want to install this image anyway (on your own risk)?");
-		print_info_box($sig_warning);
-		if (stristr($_FILES['ulfile']['name'], "nanobsd")) {
-			echo "<input type='hidden' name='isnano' id='isnano' value='yes' />\n";
-		}
-?>
-<input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" <?=gettext("Yes");?> " />
-<input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" <?=gettext("No"); ?> " />
-<?php
-	else:
-		if (!is_subsystem_dirty('firmwarelock')):
-?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware">
-		<tr>
-			<td>
-<?php
-			$tab_array = array();
-			$tab_array[] = array(gettext("Manual Update"), true, "system_firmware.php");
-			$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
-			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-			if ($g['hidedownloadbackup'] == false) {
-				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-			}
-			display_top_tabs($tab_array);
-?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] . " " . gettext("Manual Upgrade"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-						<td width="78%" class="vtable">
-<?php
-			if (!is_subsystem_dirty('rebootreq')):
-				if (!is_subsystem_dirty('firmware')):
-?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>" />
-							<br />
-							<?php printf(gettext('Click "Enable firmware upload" to begin.'), $g['firmware_update_text']);?>
-							<br />
-<?php
-				else:
-?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>" />
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-						<td width="78%" class="vtable">
-							<?php
-								if ($g['platform'] == "nanobsd") {
-									$type = "*.img.gz";
-								} else {
-									$type = "*.tgz";
-								}
-							?>
-							<strong><?=gettext("Firmware image file ($type):");?> </strong>
-							<input name="ulfile" type="file" class="formfld" />
-							<br />
-							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
-							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade' /> <?=gettext("Perform full backup prior to upgrade");?>
-							<br />
-							<?php endif; ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>" />
-							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
-<?php
-				endif;
-			else:
-?>
-							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
-<?php
-			endif;
-?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-						<?php if (is_subsystem_dirty('firmware')): ?>
-							<span class="vexpl">
-								<span class="red">
-									<strong>
-										<?=gettext("Warning:");?><br />
-									</strong>
-								</span>
-								<?=gettext("DO NOT abort the firmware upgrade once it " .
-									"has started. The firewall will reboot automatically after " .
-									"storing the new firmware. The configuration will be maintained.");?>
-							</span>
-						<?php endif; ?>
-						</td>
-					</tr>
-				</table>
-				</div>
-			</td>
-		</tr>
-	</table>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<?php
-		endif;
-	endif;
+if ($savemsg)
+	print_info_box($savemsg);
+
+if ($fwinfo != "")
+	print_info_box($fwinfo);
+
+$tab_array = array();
+$tab_array[] = array(gettext("Manual Update"), true, "system_firmware.php");
+$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+if($g['hidedownloadbackup'] == false)
+	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+
+display_top_tabs($tab_array);
+
+// For a simple yes/no we can use an HTML form
+if ($sig_warning && !$input_errors) {
+	$sig_warning = gettext("The image you uploaded " .
+		"is not an official/supported image and may lead to unexpected behavior or security " .
+		"compromises. Only install images that come from sources that you trust, and make sure ".
+		"that the image has not been tampered with.") . "<br /><br />".
+		gettext("Do you want to install this image anyway (on your own risk)?");
+
+	print_info_box($sig_warning);
 ?>
-<?php include("fend.inc"); ?>
-</form>
-</body>
-</html>
+	<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+		<input name="sig_override" type="submit" class="btn btn-danger" id="sig_override" value=" <?=gettext("Yes");?> " />
+		<input name="sig_no" type="submit" class="btn btn-default" id="sig_no" value=" <?=gettext("No"); ?> " />
+	</form>
+<?php
+
+} else {
+	// This is where the work gets done so Forms.classes will be used from this point
+	if (!is_subsystem_dirty('firmwarelock')) {
+		require_once('classes/Form.class.php');
+
+		if (!is_subsystem_dirty('rebootreq')) {
+			// Provide a button to enable firmware upgrades. Upgrades should be disabled on initial page load
+			if (!is_subsystem_dirty('firmware') || !$_POST || $_POST['save']) {
+				$enablebtn = new Form_Button(
+					'Submit',
+					'Enable firmware upload'
+					);
+
+				$enablebtn->addClass('btn-warning');
+				$form = new Form($enablebtn);
+				$section = new Form_Section('Invoke ' . $g['product_name'] .' Manual Upgrade');
+				$section->addInput(new Form_StaticText('Enable', 'Click the "Enable firmware upload" button below to begin.'));
+			}
+			else {
+				// Upgrades are now enabled
+				$form = new Form('Disable firmware upload');
+
+				$form->setMultipartEncoding();
+
+				$section = new Form_Section('Perform ' . $g['product_name'] .' Manual Upgrade');
+
+				if (!session_id())
+					$upload_id = uniqid();
+				else
+					$upload_id = session_id();
+
+				$section->addInput(new Form_Input(
+					'UPLOAD_IDENTIFIER',
+					'',
+					'hidden',
+					$upload_id
+					));
+
+				if(stristr($_FILES['ulfile']['name'],"nanobsd")) {
+					$section->addInput(new Form_Input(
+						'isnano',
+						'',
+						'hidden',
+						'yes'
+						));
+				}
+
+				if ($g['platform'] == "nanobsd")
+					$type = "*.img.gz";
+				else
+					$type = "*.tgz";
+
+				$filepicker = new Form_Input(
+					'ulfile',
+					'File to upload (' . $type . ')',
+					'file',
+					''
+				);
+
+				$section->addInput($filepicker)->setHelp('Choose the file you wish to upload');
+
+				if ($g['hidebackupbeforeupgrade'] === false) {
+					$section->addInput(new Form_Checkbox(
+						'backupbeforeupgrade',
+						Backup,
+						'Perform a full backup prior to upgrade',
+						false
+					));
+				}
+
+				$section->addInput(new Form_Button(
+					'submit',
+					'Upgrade firmware'
+				))->addClass('btn-danger btn-sm')->setHelp('Click the "Upgrade firmware" button above to start the upgrade process');
+			}
+
+			$form->add($section);
+			print($form);
+		}
+	}
+	else {
+		print_info_box('<strong>' . gettext("You must reboot the system before you can upgrade the firmware.") . '</strong>');
+	}
+
+	if (is_subsystem_dirty('firmware') && !is_subsystem_dirty('firmwarelock')) {
+		print_info_box('<strong>' . gettext("DO NOT ") . '</strong>' . gettext('abort the firmware upgrade once it ' .
+			'has started. The firewall will reboot automatically after ' .
+			'storing the new firmware. The configuration will be maintained.'));
+	}
+}
+
+include("foot.inc"); ?>

@@ -2,35 +2,58 @@
 /* $Id$ */
 /*
 	diag_logs.php
-	Copyright (C) 2004-2009 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2009 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
 	pfSense_MODULE:	system
@@ -45,7 +68,13 @@
 
 require("guiconfig.inc");
 
-$system_logfile = "{$g['varlog_path']}/system.log";
+// The logs to display are specified in a GET argument. Default to 'system' logs
+if (!$_GET['logfile'])
+	$logfile = 'system';
+else
+	$logfile = $_GET['logfile'];
+
+$system_logfile = "{$g['varlog_path']}/{$logfile}.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries) {
@@ -71,75 +100,76 @@ if ($filtertext) {
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("General"));
 include("head.inc");
 
-?>
+$tab_array = array();
+$tab_array[] = array(gettext("System"), ($logfile == 'system'), "diag_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "diag_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+display_top_tabs($tab_array);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs system">
-	<tr>
-		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("System"), true, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless')))	 {
+	$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/diag_logs.php");
+	$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/diag_logs.php?logfile=gateways");
+	$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/diag_logs.php?logfile=routing");
+	$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/diag_logs.php?logfile=resolver");
+	$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/diag_logs.php?logfile=wireless");
+	display_top_tabs($tab_array, false, 'nav nav-tabs');
+}
+
+require_once('classes/Form.class.php');
+
+$form = new Form(false);
+
+$section = new Form_Section('Log file filter');
+
+$section->addInput(new Form_Input(
+	'filtertext',
+	'Filter',
+	'text',
+	$filtertext,
+	['placeholder' => 'Filter text']
+));
+
+$form->addGlobal(new Form_Button(
+	'filtersubmit',
+	'Filter'
+))->removeClass('btn-primary')->addClass('btn-default')->addClass('btn-sm');
+
+$form->addGlobal(new Form_Button(
+	'clear',
+	'Clear log'
+))->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+
+$form->add($section);
+print $form;
+
+if ($logfile == 'dhcpd')
+	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
+
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabnavtbl">
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
+	<pre>
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("General"), true, "/diag_logs.php");
-	$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
-	$tab_array[] = array(gettext("Routing"), false, "/diag_logs_routing.php");
-	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
-	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
-	display_top_tabs($tab_array);
+	if (($logfile == 'resolver') || ($logfile == 'system'))
+		$inverse = array("ppp");
+	else
+		$inverse = null;
+
+	if ($filtertext)
+		dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
+	else
+		dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-				<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"), $nentries); ?></td>
-				</tr>
-				<?php
-					if ($filtertext) {
-						dump_clog($system_logfile, $nentries, true, array("$filtertext"), array("ppp"));
-					} else {
-						dump_clog($system_logfile, $nentries, true, array(), array("ppp"));
-					}
-				?>
-				<tr>
-					<td align="left" valign="top">
-						<form id="filterform" name="filterform" action="diag_logs.php" method="post" style="margin-top: 14px;">
-							<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
-						</form>
-					</td>
-					<td align="right" valign="top" >
-						<form id="clearform" name="clearform" action="diag_logs.php" method="post" style="margin-top: 14px;">
-							<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
-							<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-						</form>
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+	</pre>
+</div>
+
+<?php include("foot.inc"); ?>

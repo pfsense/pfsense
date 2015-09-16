@@ -1,34 +1,61 @@
 <?php
 /*
 	system_crlmanager.php
-
-	Copyright (C) 2010 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2010 Jim Pingle
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	certificate_manager
+	pfSense_MODULE: certificate_manager
 */
 
 ##|+PRIV
@@ -161,7 +188,7 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
-			// refresh IPsec and OpenVPN CRLs 
+			// refresh IPsec and OpenVPN CRLs
 			openvpn_refresh_crls();
 			vpn_ipsec_configure();
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
@@ -191,7 +218,7 @@ if ($act == "delcert") {
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
 		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
-		// refresh IPsec and OpenVPN CRLs 
+		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
@@ -263,7 +290,7 @@ if ($_POST) {
 		}
 
 		write_config("Saved CRL {$crl['descr']}");
-		// refresh IPsec and OpenVPN CRLs 
+		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
@@ -273,8 +300,6 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -296,427 +321,408 @@ function method_change() {
 
 //]]>
 </script>
+
 <?php
-	if ($input_errors) {
-		print_input_errors($input_errors);
+
+function build_method_list() {
+	global $_GET, $crl_methods;
+
+	$list = array();
+
+	foreach($crl_methods as $method => $desc) {
+		if (($_GET['importonly'] == "yes") && ($method != "existing"))
+			continue;
+
+		$list[$method] = $desc;
 	}
-	if ($savemsg) {
-		print_info_box($savemsg);
+
+	return($list);
+}
+
+function build_ca_list() {
+	global $a_ca;
+
+	$list = array();
+
+	foreach($a_ca as $ca)
+		$list[$ca['refid']] = $ca['descr'];
+
+	return($list);
+}
+
+function build_cacert_list() {
+	global $ca_certs;
+
+	$list = array();
+
+	foreach($ca_certs as $cert)
+		$list[$cert['refid']] = $cert['descr'];
+
+	return($list);
+}
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'sucess');
+
+$tab_array = array();
+$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
+$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
+$tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+if ($act == "new" || $act == gettext("Save") || $input_errors) {
+	if (!isset($id)) {
+		$form = new Form();
+
+		$section = new Form_Section('Create new revocation list');
+
+		$section->addInput(new Form_Select(
+			'method',
+			'Method',
+			$pconfig['method'],
+			build_method_list()
+		));
+
 	}
-?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="CRL manager">
-	<tr>
-		<td>
-		<?php
-			$tab_array = array();
-			$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-			$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
-			$tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
-			display_top_tabs($tab_array);
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td id="mainarea">
-			<div class="tabcont">
 
+	$section->addInput(new Form_Input(
+		'descr',
+		'Descriptive name',
+		'text',
+		$pconfig['descr']
+	));
+
+	$section->addInput(new Form_Select(
+		'caref',
+		'Certificate Authority',
+		$pconfig['caref'],
+		build_ca_list()
+	));
+
+	$form->add($section);
+
+	$section = new Form_Section('Existing Certificate Revocation List');
+	$section->addClass('existing');
+
+	$section->addInput(new Form_Textarea(
+		'crltext',
+		'CRL data',
+		$pconfig['crltext']
+		))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
+
+	$form->add($section);
+
+	$section = new Form_Section('Internal Certificate Revocation List');
+	$section->addClass('internal');
+
+	$section->addInput(new Form_Input(
+		'lifetime',
+		'Lifetime (Days)',
+		'number',
+		$pconfig['lifetime'],
+		[max => '9999']
+	));
+
+	$section->addInput(new Form_Input(
+		'serial',
+		'Serial',
+		'number',
+		$pconfig['serial'],
+		[min => '0', max => '9999']
+	));
+
+	$form->add($section);
+
+	if (isset($id) && $thiscrl) {
+		$section->addInput(new Form_Input(
+			'id',
+			null,
+			'hidden',
+			$id
+		));
+	}
+
+	print($form);
+
+} elseif ($act == "editimported") {
+
+	$form = new Form();
+
+	$section = new Form_Section('Edit Imported Certificate Revocation List');
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'Descriptive name',
+		'text',
+		$pconfig['descr']
+	));
+
+	$section->addInput(new Form_Textarea(
+		'crltext',
+		'CRL data',
+		$pconfig['crltext']
+	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
+
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+
+	$section->addInput(new Form_Input(
+		'act',
+		null,
+		'hidden',
+		'editimported'
+	));
+
+	$form->add($section);
+
+	print($form);
+
+} elseif ($act == "edit") {
+	$crl = $thiscrl;
+
+	$form = new Form(false);
+?>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']?></h2></div>
+		<div class="panel-body table-responsive">
 <?php
-	if ($act == "new" || $act == gettext("Save") || $input_errors):
+	if (!is_array($crl['cert']) || (count($crl['cert']) == 0))
+		print_info_box(gettext("No Certificates Found for this CRL."), 'danger');
+	else {
 ?>
-
-				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<?php if (!isset($id)): ?>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
-							<td width="78%" class="vtable">
-								<select name='method' id='method' class="formselect" onchange='method_change()'>
-								<?php
-									$rowIndex = 0;
-									foreach ($crl_methods as $method => $desc):
-										if (($_GET['importonly'] == "yes") && ($method != "existing")) {
-											continue;
-										}
-										$selected = "";
-										if ($pconfig['method'] == $method) {
-											$selected = "selected=\"selected\"";
-										}
-										$rowIndex++;
-								?>
-									<option value="<?=$method;?>" <?=$selected;?>><?=$desc;?></option>
-								<?php
-									endforeach;
-									if ($rowIndex == 0) {
-										echo "<option></option>";
-									}
-								?>
-								</select>
-							</td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Authority");?></td>
-							<td width="78%" class="vtable">
-								<select name='caref' id='caref' class="formselect">
-								<?php
-									$rowIndex = 0;
-									foreach ($a_ca as $ca):
-										$selected = "";
-										if ($pconfig['caref'] == $ca['refid']) {
-											$selected = "selected=\"selected\"";
-										}
-										$rowIndex++;
-								?>
-									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=htmlspecialchars($ca['descr']);?></option>
-								<?php
-									endforeach;
-									if ($rowIndex == 0) {
-										echo "<option></option>";
-									}
-								?>
-								</select>
-							</td>
-						</tr>
-					</table>
-
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing" summary="existing">
-						<tr>
-							<td colspan="2" class="list" height="12"></td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Existing Certificate Revocation List");?></td>
-						</tr>
-
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
-							<td width="78%" class="vtable">
-								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=$pconfig['crltext'];?></textarea>
-								<br />
-								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?>
-							</td>
-						</tr>
-					</table>
-
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal" summary="internal">
-						<tr>
-							<td colspan="2" class="list" height="12"></td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Internal Certificate Revocation List");?></td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
-							<td width="78%" class="vtable">
-								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-								<?=gettext("days");?><br />
-								<?=gettext("Default: 9999");?>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial");?></td>
-							<td width="78%" class="vtable">
-								<input name="serial" type="text" class="formfld unknown" id="serial" size="5" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
-								<br />
-								<?=gettext("Default: 0");?>
-							</td>
-						</tr>
-					</table>
-
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="save">
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-								<?php if (isset($id) && $thiscrl): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-								<?php endif;?>
-							</td>
-						</tr>
-					</table>
-				</form>
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Certificate Name")?></th>
+						<th><?=gettext("Revocation Reason")?></th>
+						<th><?=gettext("Revoked At")?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
-	elseif ($act == "editimported"):
-		$crl = $thiscrl;
+		foreach($crl['cert'] as $i => $cert):
+			$name = htmlspecialchars($cert['descr']);
 ?>
-				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="editimported" summary="import">
-						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Imported Certificate Revocation List");?></td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($crl['descr']);?>"/>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
-							<td width="78%" class="vtable">
-								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=base64_decode($crl['text']);?></textarea>
-								<br />
-								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?></td>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-								<input name="act" type="hidden" value="editimported" />
-							</td>
-						</tr>
-					</table>
-				</form>
-
-<?php
-	elseif ($act == "edit"):
-		$crl = $thiscrl;
-?>
-				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="revoke">
-					<thead>
-					<tr>
-						<th width="90%" class="listhdrr" colspan="3"><b><?php echo gettext("Currently Revoked Certificates for CRL") . ': ' . htmlspecialchars($crl['descr']); ?></b></th>
-						<th width="10%" class="list"></th>
-					</tr>
-					<tr>
-						<th width="30%" class="listhdrr"><b><?php echo gettext("Certificate Name")?></b></th>
-						<th width="30%" class="listhdrr"><b><?php echo gettext("Revocation Reason")?></b></th>
-						<th width="30%" class="listhdrr"><b><?php echo gettext("Revoked At")?></b></th>
-						<th width="10%" class="list"></th>
-					</tr>
-					</thead>
-					<tbody>
-				<?php /* List Certs on CRL */
-					if (!is_array($crl['cert']) || (count($crl['cert']) == 0)):
-				?>
-					<tr>
-						<td class="listlr" colspan="3">
-							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CRL."); ?>
-						</td>
-						<td class="list">&nbsp;</td>
-					</tr>
-				<?php
-					else:
-						foreach ($crl['cert'] as $i => $cert):
-							$name = htmlspecialchars($cert['descr']);
-				 ?>
 					<tr>
 						<td class="listlr">
-							<?php echo $name; ?>
+							<?=$name; ?>
 						</td>
 						<td class="listlr">
-							<?php echo $openssl_crl_status[$cert["reason"]]; ?>
+							<?=$openssl_crl_status[$cert["reason"]]; ?>
 						</td>
 						<td class="listlr">
-							<?php echo date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
+							<?=date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&amp;id=<?php echo $crl['refid']; ?>&amp;certref=<?php echo $cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete this certificate from the CRL ");?>" alt="<?=gettext("Delete this certificate from the CRL ");?>" width="17" height="17" border="0" />
+							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?")?>')">
+								<i class="icon-large icon-remove-sign" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>"></i>
 							</a>
 						</td>
 					</tr>
-				<?php
-						endforeach;
-					endif;
-				?>
-				<?php /* Drop-down with other certs from this CA. */
-					// Map Certs to CAs in one pass
-					$ca_certs = array();
-					foreach ($a_cert as $cert) {
-						if ($cert['caref'] == $crl['caref']) {
-							$ca_certs[] = $cert;
-						}
-					}
-					if (count($ca_certs) == 0): ?>
-					<tr>
-						<td class="listlr" colspan="3">
-							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CA."); ?>
-						</td>
-						<td class="list">&nbsp;</td>
-					</tr>
-				<?php
-					else:
-				?>
-					<tr>
-						<td class="listlr" colspan="3" align="center">
-							<b><?php echo gettext("Choose a Certificate to Revoke"); ?></b>:
-							<select name='certref' id='certref' class="formselect">
-				<?php	$rowIndex = 0;
-						foreach ($ca_certs as $cert):
-							$rowIndex++;
-				?>
-								<option value="<?=$cert['refid'];?>"><?=htmlspecialchars($cert['descr'])?></option>
-				<?php
-						endforeach;
-						if ($rowIndex == 0) {
-							echo "<option></option>";
-						}
-				?>
-							</select>
-							<b><?php echo gettext("Reason");?></b>:
-							<select name='crlreason' id='crlreason' class="formselect">
-				<?php	$rowIndex = 0;
-						foreach ($openssl_crl_status as $code => $reason):
-							$rowIndex++;
-				?>
-								<option value="<?= $code ?>"><?= htmlspecialchars($reason) ?></option>
-				<?php
-						endforeach;
-						if ($rowIndex == 0) {
-							echo "<option></option>";
-						}
-				?>
-							</select>
-							<input name="act" type="hidden" value="addcert" />
-							<input name="crlref" type="hidden" value="<?=$crl['refid'];?>" />
-							<input name="id" type="hidden" value="<?=$crl['refid'];?>" />
-							<input id="submit" name="add" type="submit" class="formbtn" value="<?=gettext("Add"); ?>" />
-						</td>
-						<td class="list">&nbsp;</td>
-					</tr>
-				<?php
-					endif;
-				?>
-					</tbody>
-				</table>
-				</form>
 <?php
-	else:
+		endforeach;
 ?>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ocpms">
-					<thead>
-					<tr>
-						<td width="35%" class="listhdrr"><?=gettext("Name");?></td>
-						<td width="10%" class="listhdrr"><?=gettext("Internal");?></td>
-						<td width="35%" class="listhdrr"><?=gettext("Certificates");?></td>
-						<td width="10%" class="listhdrr"><?=gettext("In Use");?></td>
-						<td width="10%" class="list"></td>
-					</tr>
-					</thead>
-					<tfoot>
-					<tr>
-						<td colspan="5">
-							<p>
-								<?=gettext("Additional Certificate Revocation Lists can be added here.");?>
-							</p>
-						</td>
-					</tr>
-					</tfoot>
-					<tbody>
-				<?php
-					$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
-					// Map CRLs to CAs in one pass
-					$ca_crl_map = array();
-					foreach ($a_crl as $crl) {
-						$ca_crl_map[$crl['caref']][] = $crl['refid'];
-					}
-
-					$i = 0;
-					foreach ($a_ca as $ca):
-						$name = htmlspecialchars($ca['descr']);
-
-						if ($ca['prv']) {
-							$cainternal = "YES";
-						} else {
-							$cainternal = "NO";
-						}
-				?>
-					<tr>
-						<td class="listlr" colspan="4">
-							<table border="0" cellpadding="0" cellspacing="0" summary="icon">
-								<tr>
-									<td align="left" valign="middle">
-										<img src="<?=$caimg;?>" alt="CA" title="CA" border="0" height="16" width="16" />
-									</td>
-									<td align="left" valign="middle">
-										<?=$name;?>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<td class="list">
-						<?php if ($cainternal == "YES"): ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?php echo $ca['refid']; ?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Add or Import CRL for %s"), htmlspecialchars($ca['descr']));?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
-							</a>
-						<?php else: ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?php echo $ca['refid']; ?>&amp;importonly=yes">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Import CRL for %s"), htmlspecialchars($ca['descr']));?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
-							</a>
-						<?php endif; ?>
-						</td>
-					</tr>
-						<?php
-						if (is_array($ca_crl_map[$ca['refid']])):
-							foreach ($ca_crl_map[$ca['refid']] as $crl):
-								$tmpcrl = lookup_crl($crl);
-								$internal = is_crl_internal($tmpcrl);
-								$inuse = crl_in_use($tmpcrl['refid']);
-						?>
-					<tr>
-						<td class="listlr"><?php echo htmlspecialchars($tmpcrl['descr']); ?></td>
-						<td class="listr"><?php echo ($internal) ? "YES" : "NO"; ?></td>
-						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
-						<td valign="middle" class="list nowrap">
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
-							</a>
-							<?php if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
-							</a>
-							<?php else: ?>
-							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
-							</a>
-							<?php endif; ?>
-							<?php if (!$inuse): ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['descr']) . ')';?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']); ?>" width="17" height="17" border="0" />
-							</a>
-							<?php endif; ?>
-						</td>
-					</tr>
-						<?php
-								$i++;
-							endforeach;
-						endif;
-						?>
-					<tr>
-						<td colspan="5">&nbsp;</td>
-					</tr>
-				<?php
-						$i++;
-					endforeach;
-				?>
-					</tbody>
-				</table>
-
+				</tbody>
+			</table>
+<?php } ?>
+		</div>
+	</div>
 <?php
-	endif;
+
+	$ca_certs = array();
+	foreach($a_cert as $cert)
+		if ($cert['caref'] == $crl['caref'])
+			$ca_certs[] = $cert;
+
+	if (count($ca_certs) == 0)
+		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
+	else
+
+	$section = new Form_Section('Choose a certificate to revoke');
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Select(
+		'certref',
+		null,
+		$pconfig['certref'],
+		build_cacert_list()
+		))->setWidth(4)->setHelp('Certificate');
+
+	$group->add(new Form_Select(
+		'crlreason',
+		null,
+		-1,
+		$openssl_crl_status
+		))->setHelp('Reason');
+
+	$group->add(new Form_Button(
+		'submit',
+		'Add'
+		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+
+	$section->add($group);
+
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$crl['refid']
+	));
+
+	$section->addInput(new Form_Input(
+		'act',
+		null,
+		'hidden',
+		'addcert'
+	));
+
+	$section->addInput(new Form_Input(
+		'crlref',
+		null,
+		'hidden',
+		$crl['refid']
+	));
+
+	$form->add($section);
+	print($form);
+} else {
 ?>
 
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc");?>
-<script type="text/javascript">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Additional Certificate Revocation Lists")?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Internal")?></th>
+						<th><?=gettext("Certificates")?></th>
+						<th><?=gettext("In Use")?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+	$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
+	// Map CRLs to CAs in one pass
+	$ca_crl_map = array();
+	foreach($a_crl as $crl)
+		$ca_crl_map[$crl['caref']][] = $crl['refid'];
+
+	$i = 0;
+	foreach($a_ca as $ca):
+		$name = htmlspecialchars($ca['descr']);
+
+		if($ca['prv']) {
+			$cainternal = "YES";
+		} else
+			$cainternal = "NO";
+?>
+					<tr>
+						<td colspan="4">
+							<?=$name?>
+						</td>
+						<td>
+<?php
+		if ($cainternal == "YES"): ?>
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
+								<?=gettext("Add or Import CRL")?>
+							</a>
+<?php
+		else: ?>
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
+								<?=gettext("Add or Import CRL")?>
+							</a>
+<?php
+		endif; ?>
+						</td>
+					</tr>
+<?php
+		if (is_array($ca_crl_map[$ca['refid']])):
+			foreach($ca_crl_map[$ca['refid']] as $crl):
+				$tmpcrl = lookup_crl($crl);
+				$internal = is_crl_internal($tmpcrl);
+				$inuse = crl_in_use($tmpcrl['refid']);
+?>
+					<tr>
+						<td><?=$tmpcrl['descr']; ?></td>
+						<td><?=($internal) ? "YES" : "NO"; ?></td>
+						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
+						<td><?=($inuse) ? "YES" : "NO"; ?></td>
+						<td>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-success">
+								<?=gettext("Export CRL")?>
+							</a>
+<?php
+				if ($internal): ?>
+							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
+								<?=gettext("Edit CRL")?>
+							</a>
+<?php
+				else: ?>
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
+								<?=gettext("Edit CRL")?>
+							</a>
+<?php			endif;
+				if (!$inuse): ?>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-danger">
+								<?=gettext("Delete CRL")?>
+							</a>
+<?php
+				endif; ?>
+						</td>
+					</tr>
+<?php
+				$i++;
+				endforeach;
+			endif;
+			$i++;
+		endforeach;
+?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+
+<?php
+}
+?>
+
+<script>
 //<![CDATA[
+events.push(function(){
 
-method_change();
+	// Hides all elements of the specified class. This will usually be a section or group
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
 
+	// When the 'method" selector is changed, we show/hide certain sections
+	$('#method').on('change', function() {
+		hideClass('internal', ($('#method').val() == 'existing'));
+		hideClass('existing', ($('#method').val() == 'internal'));
+	});
+
+	hideClass('internal', ($('#method').val() == 'existing'));
+	hideClass('existing', ($('#method').val() == 'internal'));
+});
 //]]>
 </script>
 
-</body>
-</html>
+<?php include("foot.inc");
+

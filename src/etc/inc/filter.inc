@@ -1133,21 +1133,6 @@ function filter_generate_optcfg_array() {
 		$FilterIflist[$if] = $oic;
 	}
 
-	if ($config['pptpd']['mode'] == "server" || $config['pptpd']['mode'] == "redir") {
-		$oic = array();
-		$oic['if'] = 'pptp';
-		$oic['descr'] = 'pptp';
-		$oic['ip'] = $config['pptpd']['localip'];
-		$oic['sa'] = $config['pptpd']['remoteip'];
-		$oic['mode'] = $config['pptpd']['mode'];
-		$oic['virtual'] = true;
-		if ($config['pptpd']['pptp_subnet'] <> "") {
-			$oic['sn'] = $config['pptpd']['pptp_subnet'];
-		} else {
-			$oic['sn'] = "32";
-		}
-		$FilterIflist['pptp'] = $oic;
-	}
 	if ($config['l2tp']['mode'] == "server") {
 		$oic = array();
 		$oic['if'] = 'l2tp';
@@ -1604,22 +1589,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 				}
 				unset($if_subnets);
 			}
-		}
-	}
-
-	/* PPTP subnet */
-	if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
-		if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units'])) {
-			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
-				long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
-		} else {
-			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
-				long2ip32(ip2long($config['pptpd']['remoteip'])));
-		}
-
-		foreach ($pptp_subnets as $subnet) {
-			$tonathosts[] = $subnet;
-			$descriptions[] = gettext("PPTP server");
 		}
 	}
 
@@ -2315,15 +2284,6 @@ function filter_nat_rules_generate() {
 	}
 	fclose($inetd_fd);		// Close file handle
 
-	if (isset($config['pptpd']['mode']) && ($config['pptpd']['mode'] != "off")) {
-		if ($config['pptpd']['mode'] == "redir") {
-			$pptpdtarget = $config['pptpd']['redir'];
-			$natrules .= "# PPTP\n";
-			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> {$pptpdtarget}\n";
-			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
-		}
-	}
-
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= "# UPnPd rdr anchor\n";
@@ -2521,11 +2481,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					case '(self)':
 						$src = "(self)";
 						break;
-					case 'pptp':
-						$pptpsav6 = gen_subnetv6($FilterIflist['pptp']['sav6'], $FilterIflist['pptp']['snv6']);
-						$pptpsnv6 = $FilterIflist['pptp']['snv6'];
-						$src = "{$pptpsav6}/{$pptpsnv6}";
-						break;
 					case 'pppoe':
 						if (is_array($FilterIflist['pppoe'])) {
 							$pppoesav6 = gen_subnetv6($FilterIflist['pppoe'][0]['ipv6'], $FilterIflist['pppoe'][0]['snv6']);
@@ -2562,22 +2517,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						break;
 					case '(self)':
 						$src = "(self)";
-						break;
-					case 'pptp':
-						if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units'])) {
-							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
-						} else {
-							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
-						}
-						if (empty($pptp_subnets)) {
-							return "";
-						}
-						if (isset($rule[$target]['not'])) {
-							array_walk($pptp_subnets, function (&$value, $key) {
-								$value="!{$value}";
-							});
-						}
-						$src = "{ " . implode(" ", $pptp_subnets) . " }";
 						break;
 					case 'pppoe':
 						/* XXX: This needs to be fixed somehow! */
@@ -2630,7 +2569,6 @@ function filter_generate_user_rule($rule) {
 		return "# rule " . $rule['descr'] . " disabled \n";
 	}
 	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
-	$pptpdcfg = $config['pptpd'];
 	$int = "";
 	$aline = array();
 
@@ -2666,12 +2604,6 @@ function filter_generate_user_rule($rule) {
 		$aline['interface'] = " on \$" . $FilterIflist[$rule['interface']]['descr'] . " ";
 	}
 	$ifcfg = $FilterIflist[$rule['interface']];
-	if ($pptpdcfg['mode'] != "server") {
-		if (($rule['source']['network'] == "pptp") ||
-		    ($rule['destination']['network'] == "pptp")) {
-			return "# source network or destination network == pptp on " . $rule['descr'];
-		}
-	}
 
 	switch ($rule['ipprotocol']) {
 		case "inet":
@@ -2731,16 +2663,12 @@ function filter_generate_user_rule($rule) {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
-			} else if ($rule['interface'] <> "pptp") {
-				log_error(sprintf(gettext("Could not find IPv6 gateway for interface (%s)."), $rule['interface']));
 			}
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else if ($rule['interface'] <> "pptp") {
-				log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
-			}
+			} 
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
@@ -3083,8 +3011,6 @@ function filter_rules_generate() {
 		echo "filter_rules_generate() being called $mt\n";
 	}
 
-	$pptpdcfg = $config['pptpd'];
-
 	$ipfrules = "";
 	$ipfrules .= discover_pkg_rules("pfearly");
 
@@ -3414,12 +3340,15 @@ EOD;
 		$tracker = $saved_tracker;
 		switch ($oc['type6']) {
 			case "6rd":
+			    if (is_ipaddrv4($config['interfaces'][$on]['gateway-6rd'])) {
 				$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6RD border relay in
 pass in {$log['pass']} on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6rd on {$oc['descr']}")}"
 pass out {$log['pass']} on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
+			    }
+
 				/* XXX: Really need to allow 6rd traffic coming in for v6 this is against default behaviour! */
 				if (0 && is_ipaddrv6($oc['ipv6'])) {
 					$ipfrules .= <<<EOD
@@ -3560,31 +3489,6 @@ pass in {$log['pass']} quick on {$wanif} proto tcp from any to ({$wanif}) port {
 EOD;
 		}
 		unset($alports);
-	}
-
-	$saved_tracker += 10;
-	$tracker = $saved_tracker;
-	/* PPTPd enabled? */
-	if ($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off") && !isset($config['system']['disablevpnrules'])) {
-		if ($pptpdcfg['mode'] == "server") {
-			$pptpdtarget = get_interface_ip();
-		} else {
-			$pptpdtarget = $pptpdcfg['redir'];
-		}
-		if (is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
-			$ipfrules .= <<<EOD
-# PPTPd rules
-pass in {$log['pass']} on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 tracker {$increment_tracker($tracker)} modulate state label "{$fix_rule_label("allow pptpd {$pptpdtarget}")}"
-pass in {$log['pass']} on \${$FilterIflist['wan']['descr']} proto gre from any to any tracker {$increment_tracker($tracker)} keep state label "allow gre pptpd"
-
-EOD;
-
-		} else {
-			/*	  this shouldnt ever happen but instead of breaking the clients ruleset
-			 *	  log an error.
-			 */
-			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
-		}
 	}
 
 	$saved_tracker += 10;

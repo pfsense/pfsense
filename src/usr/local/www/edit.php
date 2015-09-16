@@ -1,31 +1,58 @@
 <?php
 /*
 	edit.php
-	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
 	pfSense_MODULE:	shell
 */
@@ -46,24 +73,25 @@ if ($_POST['action']) {
 	switch ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
-				echo "|5|" . gettext("No file name specified") . ".|";
+				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} elseif (is_dir($_POST['file'])) {
-				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
+				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
 			} elseif (!is_file($_POST['file'])) {
-				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
+				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if ($data === false) {
-					echo "|1|" . gettext("Failed to read file") . ".|";
+					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
-					echo "|0|{$_POST['file']}|{$data}|";
+					print("|0|{$_POST['file']}|{$data}|");
 				}
 			}
 			exit;
+
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
-				echo "|" . gettext("No file name specified") . ".|";
+				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -76,11 +104,11 @@ if ($_POST['action']) {
 					disable_security_checks();
 				}
 				if ($ret === false) {
-					echo "|" . gettext("Failed to write file") . ".|";
-				} elseif ($ret <> strlen($_POST['data'])) {
-					echo "|" . gettext("Error while writing file") . ".|";
+					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to write file") . '</div>' . '|');
+				} elseif ($ret != strlen($_POST['data'])) {
+					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Error while writing file") . '</div>' . '|');
 				} else {
-					echo "|" . gettext("File successfully saved") . ".|";
+					print('|' . '<div class="alert alert-success" role="alert">' . gettext("File saved successfully") . '</div>' . '|');
 				}
 			}
 			exit;
@@ -88,25 +116,45 @@ if ($_POST['action']) {
 	exit;
 }
 
-$closehead = false;
 require("head.inc");
-outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
-outputJavaScriptFileInline("filebrowser/browser.js");
-outputJavaScriptFileInline("javascript/base64.js");
-
 ?>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<!-- file status box -->
+<div style="display:none; background:#eeeeee;" id="fileStatusBox">
+		<strong id="fileStatus"></strong>
+</div>
 
-<script type="text/javascript">
-//<![CDATA[
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a file from the filesystem")?></h2></div>
+	<div class="panel-body">
+		<form>
+			<input type="text" class="form-control" id="fbTarget"/>
+			<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
+			<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
+			<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+		</form>
+
+		<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
+
+		<div style="background:#eeeeee;" id="fileOutput">
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function(){
+				document.getElementById("fileContent").wrap='off';
+			}
+			//]]>
+			</script>
+			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
+		</div>
+
+	</div>
+</div>
+
+<script>
 	function loadFile() {
-		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
+		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
-
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
 				data: "action=load&file=" + jQuery("#fbTarget").val(),
 				complete: loadComplete
@@ -121,37 +169,27 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 		if (values.shift() == "0") {
 			var file = values.shift();
-			var fileContent = Base64.decode(values.join("|"));
-			jQuery("#fileStatus").html("<?=gettext("File successfully loaded"); ?>.");
+			var fileContent = window.atob(values.join("|"));
+
 			jQuery("#fileContent").val(fileContent);
-
-			var lang = "none";
-			if (file.indexOf(".php") > 0) lang = "php";
-			else if (file.indexOf(".inc") > 0) lang = "php";
-			else if (file.indexOf(".xml") > 0) lang = "xml";
-			else if (file.indexOf(".js") > 0) lang = "js";
-			else if (file.indexOf(".css") > 0) lang = "css";
-
-			if (jQuery("#highlight").checked && lang != "none") {
-				jQuery("fileContent").prop("className", lang + ":showcolumns");
-				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
-			}
-		} else {
+		}
+		else {
 			jQuery("#fileStatus").html(values[0]);
 			jQuery("#fileContent").val("");
 		}
+
 		jQuery("#fileContent").show(1000);
 	}
 
 	function saveFile(file) {
-		jQuery("#fileStatus").html("<?=gettext("Saving file"); ?> ...");
+		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
 
 		var fileContent = Base64.encode(jQuery("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g, "%2B");
 
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
 				data: "action=save&file=" + jQuery("#fbTarget").val() +
 							"&data=" + fileContent,
@@ -162,93 +200,15 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	}
-//]]>
-</script>
-
-<!-- file status box -->
-<div style="display:none; background:#eeeeee;" id="fileStatusBox">
-	<div class="vexpl" style="padding-left:15px;">
-		<strong id="fileStatus"></strong>
-	</div>
-</div>
-
-<br />
-
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="file editor">
-	<tr>
-		<td class="tabcont" align="center">
-
-<!-- controls -->
-<table width="100%" cellpadding="9" cellspacing="9" summary="controls">
-	<tr>
-		<td align="center" class="list">
-			<?=gettext("Save / Load from path"); ?>:
-			<input type="text"   class="formfld file" id="fbTarget"         size="45" />
-			<input type="button" class="formbtn"      onclick="loadFile();" value="<?=gettext('Load');?>" />
-			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />
-			<input type="button" class="formbtn"      onclick="saveFile();" value="<?=gettext('Save');?>" />
-			<br />
-			<?php
-			/*
-			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");
-			*/
-			?>
-		</td>
-	</tr>
-</table>
-
-<!-- filebrowser -->
-<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
-
-<!-- file viewer/editor -->
-<table width="100%" summary="file editor">
-	<tr>
-		<td valign="top">
-			<div style="background:#eeeeee;" id="fileOutput">
-				<script type="text/javascript">
-				//<![CDATA[
-				window.onload=function() {
-					document.getElementById("fileContent").wrap='off';
-				}
-				//]]>
-				</script>
-				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" cols=""></textarea>
-			</div>
-		</td>
-	</tr>
-</table>
-
-		</td>
-	</tr>
-</table>
-
-<script type="text/javascript" src="/code-syntax-highlighter/shCore.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushCss.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
-<script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
-<script type="text/javascript">
-//<![CDATA[
-	jQuery(window).load(
-		function() {
-			jQuery("#fbTarget").focus();
-
-			NiftyCheck();
-			Rounded("div#fileStatusBox", "all", "#ffffff", "#eeeeee", "smooth");
-		}
-	);
 
 	<?php if ($_GET['action'] == "load"): ?>
-		jQuery(window).load(
-			function() {
-				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path']);?>");
-				loadFile();
-			}
-		);
+		events.push(function() {
+			jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			loadFile();
+		});
 	<?php endif; ?>
-//]]>
 </script>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc");
+
+outputJavaScriptFileInline("filebrowser/browser.js");

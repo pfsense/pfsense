@@ -2,39 +2,65 @@
 /* $Id$ */
 /*
 	diag_logs_filter.php
-	part of pfSense
-	Copyright (C) 2004-2009 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2009 Manuel Kasper <mk@neon1.net>,
-	Jim Pingle jim@pingle.org
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004-2009 Scott Ullrich
+ *	Copyright (c) 2003-2009 Manuel Kasper <mk@neon1.net>
+ *	Jim Pingle jim@pingle.org
+ *	originally based on m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
+
 /*
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 ##|+PRIV
@@ -82,6 +108,7 @@ if ($rulenum) {
 }
 
 $filtersubmit = getGETPOSTsettingvalue('filtersubmit', null);
+
 if ($filtersubmit) {
 	$interfacefilter = getGETPOSTsettingvalue('interface', null);
 	$filtertext = getGETPOSTsettingvalue('filtertext', "");
@@ -89,6 +116,7 @@ if ($filtersubmit) {
 }
 
 $filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
+
 if ($filterlogentries_submit) {
 	$filterfieldsarray = array();
 
@@ -129,347 +157,373 @@ $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"))
 $shortcut_section = "firewall";
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter">
-	<tr>
-		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabnavtbl">
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Normal View"), true, "/diag_logs_filter.php");
-	$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
-	$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" style="sortableMultirow:<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
-				<tr>
-					<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
-						<div id="filterlogentries_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>">
-						<form id="filterlogentries" name="filterlogentries" action="diag_logs_filter.php" method="post">
-						<?php
-							$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
-							if ($filterfieldsarray['interface'] == "All") $interface = "";
-						?>
-							<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="action">
-								<tr>
-									<td rowspan="2">
-										<div align="center"><?=gettext("Action");?></div>
-										<div align="left">
-											<input id="actpass" name="actpass" type="checkbox" value="Pass" <?php if (in_arrayi('Pass', $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
-											<input id="actblock" name="actblock" type="checkbox" value="Block" <?php if (in_arrayi('Block', $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
-										</div>
-									</td>
-									<td>
-										<div align="center"><?=gettext("Time");?></div>
-										<div align="center"><input id="filterlogentries_time" name="filterlogentries_time" class="formfld search" type="text" size="12" value="<?= htmlspecialchars($filterfieldsarray['time']) ?>" /></div>
-									</td>
-									<td>
-										<div align="center"><?=gettext("Source IP Address");?></div>
-										<div align="center"><input id="filterlogentries_sourceipaddress" name="filterlogentries_sourceipaddress" class="formfld search" type="text" size="35" value="<?= htmlspecialchars($filterfieldsarray['srcip']) ?>" /></div>
-									</td>
-									<td>
-										<div align="center"><?=gettext("Source Port");?></div>
-										<div align="center"><input id="filterlogentries_sourceport" name="filterlogentries_sourceport" class="formfld search" type="text" size="10" value="<?= htmlspecialchars($filterfieldsarray['srcport']) ?>" /></div>
-									</td>
-									<td>
-										<div align="center"><?=gettext("Protocol");?></div>
-										<div align="center"><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= htmlspecialchars($filterfieldsarray['proto']) ?>" /></div>
-									</td>
-									<td>
-										<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
-										<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
-									</td>
-								</tr>
-								<tr>
-									<td valign="top">
-										<div align="center"><?=gettext("Interface");?></div>
-										<div align="center"><input id="filterlogentries_interfaces" name="filterlogentries_interfaces" class="formfld search" type="text" size="12" value="<?= htmlspecialchars($filterfieldsarray['interface']) ?>" /></div>
-									</td>
-									<td valign="top">
-										<div align="center"><?=gettext("Destination IP Address");?></div>
-										<div align="center"><input id="filterlogentries_destinationipaddress" name="filterlogentries_destinationipaddress" class="formfld search" type="text" size="35" value="<?= htmlspecialchars($filterfieldsarray['dstip']) ?>" /></div>
-									</td>
-									<td valign="top">
-										<div align="center"><?=gettext("Destination Port");?></div>
-										<div align="center"><input id="filterlogentries_destinationport" name="filterlogentries_destinationport" class="formfld search" type="text" size="10" value="<?= htmlspecialchars($filterfieldsarray['dstport']) ?>" /></div>
-									</td>
-									<td valign="top">
-										<div align="center"><?=gettext("Protocol Flags");?></div>
-										<div align="center"><input id="filterlogentries_protocolflags" name="filterlogentries_protocolflags" class="formfld search" type="text" size="5" value="<?= htmlspecialchars($filterfieldsarray['tcpflags']) ?>" /></div>
-									</td>
-									<td valign="bottom">
-										<div align="center"><input id="filterlogentries_submit" name="filterlogentries_submit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" /></div>
-									</td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="5">
-										<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
-										<?=gettext("Precede with exclamation (!) as first character to exclude match.");?>&nbsp;&nbsp;
-									</td>
-								</tr>
-							</table>
-						</form>
-						</div>
-						<div id="filterform_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>">
-						<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
-							<table width="0%" border="0" cellpadding="0" cellspacing="0" summary="firewall log">
-								<tr>
-									<td>
-										<div align="center" style="vertical-align:top;"><?=gettext("Interface");?></div>
-										<div align="center" style="vertical-align:top;">
-											<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
-												<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
-<?php
+function build_if_list() {
 	$iflist = get_configured_interface_with_descr(false, true);
 	//$iflist = get_interface_list();
 	// Allow extending of the firewall edit interfaces
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
-	foreach ($iflist as $if => $ifdesc) {
+	foreach ($iflist as $if => $ifdesc)
 		$interfaces[$if] = $ifdesc;
-	}
 
-	if ($config['l2tp']['mode'] == "server") {
+	if ($config['l2tp']['mode'] == "server")
 		$interfaces['l2tp'] = "L2TP VPN";
-	}
 
-	if ($config['pptpd']['mode'] == "server") {
-		$interfaces['pptp'] = "PPTP VPN";
-	}
-
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 		$interfaces['pppoe'] = "PPPoE Server";
-	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
 		$interfaces["enc0"] = "IPsec";
-	}
 
 	/* add openvpn/tun interfaces */
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 		$interfaces["openvpn"] = "OpenVPN";
+
+	return($interfaces);
+}
+
+$tab_array = array();
+$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+display_top_tabs($tab_array);
+
+$tab_array = array();
+$tab_array[] = array(gettext("Normal View"), true, "/diag_logs_filter.php");
+$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
+$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
+display_top_tabs($tab_array, false, 'nav nav-tabs');
+
+$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
+if ($filterfieldsarray['interface'] == "All")
+	$interface = "";
+
+require_once('classes/Form.class.php');
+
+if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
+	$form = new Form(new Form_Button(
+		'filterlogentries_submit',
+		'Filter'
+	));
+
+	$section = new Form_Section('Advanced Log Filter');
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'filterlogentries_sourceipaddress',
+		null,
+		'text',
+		$filterfieldsarray['srcip']
+	))->setHelp('Source IP Address');
+
+	$group->add(new Form_Input(
+		'filterlogentries_destinationipaddress',
+		null,
+		'text',
+		$filterfieldsarray['dstip']
+	))->setHelp('Destination IP Address');
+
+	$section->add($group);
+	$group = new Form_Group('');
+
+	$group->add(new Form_Checkbox(
+		'actpass',
+		'Pass',
+		'Pass',
+		in_arrayi('Pass', $Include_Act)
+	));
+
+	$group->add(new Form_Input(
+		'filterlogentries_time',
+		null,
+		'text',
+		$filterfieldsarray['time']
+	))->setHelp('Time');
+
+	$group->add(new Form_Input(
+		'filterlogentries_sourceport',
+		null,
+		'text',
+		$filterfieldsarray['srcport']
+	))->setHelp('Source Port');
+
+	$group->add(new Form_Input(
+		'filterlogentries_protocol',
+		null,
+		'text',
+		$filterfieldsarray['proto']
+	))->setHelp('Protocol');
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'text',
+		$filterlogentries_qty
+	))->setHelp('Quantity');
+
+	$section->add($group);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Checkbox(
+		'actblock',
+		'Block',
+		'Block',
+		in_arrayi('Block', $Include_Act)
+	));
+
+	$group->add(new Form_Input(
+		'filterlogentries_interfaces',
+		null,
+		'text',
+		$filterfieldsarray['interface']
+	))->setHelp('Interface');
+
+	$group->add(new Form_Input(
+		'filterlogentries_destinationport',
+		null,
+		'text',
+		$filterfieldsarray['dstport']
+	))->setHelp('Destination Port');
+
+	$group->add(new Form_Input(
+		'filterlogentries_protocolflags',
+		null,
+		'text',
+		$filterfieldsarray['tcpflags']
+	))->setHelp('Protocol Flags');
+}
+else { // Simple log filter form
+	$form = new Form(new Form_Button(
+		'filtersubmit',
+		'Filter'
+	));
+	$section = new Form_Section('Log Filter');
+
+	$section->addInput(new Form_Select(
+		'filterdescriptions',
+		'Where to show rule descriptions',
+		$interfacefilter,
+		build_if_list()
+	));
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'filtertext',
+		null,
+		'text',
+		$filtertext
+	))->setHelp('Filter Expression');
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'text',
+		$filterlogentries_qty
+	))->setHelp('Quantity');
+}
+
+$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . 'Regular expression reference</a> Precede with exclamation (!) to exclude match.');
+$section->add($group);
+$form->add($section);
+print($form);
+
+// Now the forms are complete we can draw the log table and its controls
+if (!isset($config['syslog']['rawfilter'])) {
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	if ($iflist[$interfacefilter])
+		$interfacefilter = $iflist[$interfacefilter];
+
+	if ($filterlogentries_submit)
+		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filterfieldsarray);
+	else
+		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+?>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	if ((!$filtertext) && (!$filterfieldsarray))
+		printf(gettext("Last %s firewall log entries."), count($filterlog));
+	else
+		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
+
+	printf(gettext(" (Maximum %s)"), $nentries);
+?>
+		</h2>
+	</div>
+	<div class="panel-body">
+	   <div class="table-responsive">
+		<table class="table table striped table-hover table-compact">
+			<tr>
+				<th><?=gettext("Act")?></th>
+				<th><?=gettext("Time")?></th>
+				<th><?=gettext("IF")?></th>
+<?php
+	if ($config['syslog']['filterdescriptions'] === "1") {
+?>
+					<th>
+						<?=gettext("Rule")?>
+					</th>
+<?php
 	}
+?>
+				<th><?=gettext("Source")?></th>
+				<th><?=gettext("Destination")?></th>
+				<th><?=gettext("Proto")?></th>
+			</tr>
+<?php
+	if ($config['syslog']['filterdescriptions'])
+		buffer_rules_load();
 
-	foreach ($interfaces as $iface => $ifacename):
+	foreach ($filterlog as $filterent) {
 ?>
-												<option value="<?=$iface;?>" <?=($iface == $interfacefilter)?"selected=\"selected\"":"";?>><?=htmlspecialchars($ifacename);?></option>
+			<tr>
+				<td>
+					<a data-toggle="tooltip" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" class="btn btn-xs btn-info" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
+					<?=gettext('Block')?></a>
 <?php
-	endforeach;
+		if ($filterent['count'])
+			echo $filterent['count'];
 ?>
-											</select>
-										</div>
-									</td>
-									<td>
-										<div align="center" style="vertical-align:top;"><?=gettext("Filter expression");?></div>
-										<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?= htmlspecialchars($filtertext) ?>" /></div>
-									</td>
-									<td>
-										<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
-										<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
-									</td>
-									<td>
-										<div align="center" style="vertical-align:top;">&nbsp;</div>
-										<div align="center" style="vertical-align:top;"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
-									</td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="2">
-										<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
-									</td>
-								</tr>
-							</table>
-						</form>
-						</div>
-						<div style="float: right; vertical-align:middle">
-							<br />
-							<?php if (!isset($config['syslog']['rawfilter']) && (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2")):?>
-								<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
-							<?php endif;?>
-						</div>
-					</td>
-				</tr>
+				</td>
+				<td>
+					<?=htmlspecialchars($filterent['time'])?>
+				</td>
+				<td>
 <?php
-	if (!isset($config['syslog']['rawfilter'])):
-		$iflist = get_configured_interface_with_descr(false, true);
-		if ($iflist[$interfacefilter]) {
-			$interfacefilter = $iflist[$interfacefilter];
+					if ($filterent['direction'] == "out")
+						print('&#x25ba;' . ' ');
+?>
+					<?=htmlspecialchars($filterent['interface'])?>
+				</td>
+<?php
+		if ($config['syslog']['filterdescriptions'] === "1") {
+?>
+				<td>
+					<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
+				</td>
+<?php
 		}
-		if ($filterlogentries_submit) {
-			$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filterfieldsarray);
+
+		$int = strtolower($filterent['interface']);
+		$proto = strtolower($filterent['proto']);
+
+		if ($filterent['version'] == '6') {
+			$ipproto = "inet6";
+			$filterent['srcip'] = "[{$filterent['srcip']}]";
+			$filterent['dstip'] = "[{$filterent['dstip']}]";
 		} else {
-			$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+			$ipproto = "inet";
 		}
+
+		$srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
+		$src_htmlclass = str_replace(array('.', ':'), '-', $filterent['srcip']);
+		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
+		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
+?>
+				<td>
+					<i class="icon icon-map-marker" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>" alt="Reverse Resolve with DNS"/>
+					</i>
+
+					<i class="icon icon-download" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" alt="Easy Rule: Add to Block List" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
+					</i>
+
+					<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
+				</td>
+				<td>
+					<i class="icon icon-map-marker" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>" class="ICON-<?= $dst_htmlclass; ?>" alt="Reverse Resolve with DNS"/>
+					</i>
+
+					<i class="icon icon-upload" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
+					</i>
+					<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
+				</td>
+<?php
+		if ($filterent['proto'] == "TCP")
+			$filterent['proto'] .= ":{$filterent['tcpflags']}";
+?>
+				<td><?=htmlspecialchars($filterent['proto'])?></td>
+			</tr>
+<?php
+		if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2") {
 ?>
 				<tr>
-					<td colspan="<?=$config['syslog']['filterdescriptions'] === "1"?7:6?>" class="listtopic">
+					<td colspan="2" />
+					<td colspan="4"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act'])?></td>
+				</tr>
 <?php
-		if ((!$filtertext) && (!$filterfieldsarray)) {
-			printf(gettext("Last %s firewall log entries."), count($filterlog));
-		} else {
-			echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
 		}
-		printf(gettext("Max(%s)"), $nentries);
+	} // e-o-foreach
+	buffer_rules_clear();
+}
+else
+{
 ?>
-					</td>
-				</tr>
-				<tr class="sortableHeaderRowIdentifier">
-					<td width="10%" class="listhdrr"><?=gettext("Act");?></td>
-					<td width="10%" class="listhdrr"><?=gettext("Time");?></td>
-					<td width="15%" class="listhdrr"><?=gettext("If");?></td>
-					<?php if ($config['syslog']['filterdescriptions'] === "1"):?>
-						<td width="10%" class="listhdrr"><?=gettext("Rule");?></td>
-					<?php endif;?>
-					<td width="25%" class="listhdrr"><?=gettext("Source");?></td>
-					<td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
-					<td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
-				</tr>
+			<tr>
+				<td colspan="2">
+					<?php printf(gettext("Last %s firewall log entries"),$nentries)?>
+				</td>
+			</tr>
 <?php
-		if ($config['syslog']['filterdescriptions']) {
-			buffer_rules_load();
-		}
-		$rowIndex = 0;
-		foreach ($filterlog as $filterent):
-			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-			$rowIndex++;
+	if ($filtertext)
+		dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
+	else
+		dump_clog($filter_logfile, $nentries);
+}
 ?>
-				<tr class="<?=$evenRowClass?>">
-					<td class="listMRlr nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
-						<center>
-							<a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
-								<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" />
-								<?php if ($filterent['count']) echo $filterent['count'];?>
-							</a>
-						</center>
-					</td>
-					<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
-					<td class="listMRr nowrap">
-						<?php if ($filterent['direction'] == "out"): ?>
-						<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/out.gif" alt="Direction=OUT" title="Direction=OUT"/>
-						<?php endif; ?>
-						<?php echo htmlspecialchars($filterent['interface']);?>
-					</td>
-<?php
-			if ($config['syslog']['filterdescriptions'] === "1") {
-				echo("<td class=\"listMRr nowrap\">" . find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act']) . "</td>");
-			}
+		</table>
+		</div>
+	</div>
+</div>
 
-			$int = strtolower($filterent['interface']);
-			$proto = strtolower($filterent['proto']);
-			if ($filterent['version'] == '6') {
-				$ipproto = "inet6";
-				$filterent['srcip'] = "[{$filterent['srcip']}]";
-				$filterent['dstip'] = "[{$filterent['dstip']}]";
-			} else {
-				$ipproto = "inet";
-			}
+<p>
+	<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+		<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+	</form>
+</p>
 
-			$srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
-			$src_htmlclass = str_replace(array('.', ':'), '-', $filterent['srcip']);
-			$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
-			$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
-?>
-					<td class="listMRr nowrap">
-						<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $src_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>
-						<a href="easyrule.php?<?php echo "action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List");?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
-							<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_block_add.gif" alt="Icon Easy Rule: Add to Block List" />
-						</a>
-						<?php echo $srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>';?>
-					</td>
-					<td class="listMRr nowrap">
-						<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $dst_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>
-						<a href="easyrule.php?<?php echo "action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
-							<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif" alt="Icon Easy Rule: Pass this traffic" />
-						</a>
-						<?php echo $dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>';?>
-					</td>
 <?php
-			if ($filterent['proto'] == "TCP") {
-				$filterent['proto'] .= ":{$filterent['tcpflags']}";
-			}
-?>
-					<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
-				</tr>
-<?php
-			if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):
-?>
-				<tr class="<?=$evenRowClass?>">
-					<td colspan="2" class="listMRDescriptionL listMRlr" />
-					<td colspan="4" class="listMRDescriptionR listMRr nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act']);?></td>
-				</tr>
-<?php
-			endif;
-		endforeach;
-		buffer_rules_clear();
-	else:
-?>
-				<tr>
-					<td colspan="2" class="listtopic">
-						<?php printf(gettext("Last %s firewall log entries"), $nentries);?>
-					</td>
-				</tr>
-<?php
-		if ($filtertext) {
-			dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
-		} else {
-			dump_clog($filter_logfile, $nentries);
-		}
-	endif;
-?>
-				<tr>
-					<td align="left" valign="top" colspan="3">
-						<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-							<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
-						</form>
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
 
-<p><span class="vexpl"><a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, W - CWR</span></p>
+print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
+	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR' . '<br />' .
+	'<i class="icon icon-download"></i> = Add to block list., <i class="icon icon-upload"></i> = Pass traffic, <i class="icon icon-map-marker"></i> = Resolve');
 
-<?php include("fend.inc"); ?>
+?>
 
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
 //<![CDATA[
+	function outputrule(req) {
+		alert(req.content);
+	}
+//]]>
+</script>
+
+<?php include("foot.inc");
+?>
+<script type="text/javascript">
+//<![CDATA[
+
 function resolve_with_ajax(ip_to_resolve) {
 	var url = "/diag_logs_filter.php";
 
 	jQuery.ajax(
 		url,
 		{
-			type: 'post',
+			method: 'post',
 			dataType: 'json',
 			data: {
 				resolve: ip_to_resolve,
@@ -496,8 +550,43 @@ function resolve_ip_callback(transport) {
 function htmlspecialchars(str) {
 	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
+
+if (typeof getURL == 'undefined') {
+	getURL = function(url, callback) {
+		if (!url)
+			throw 'No URL for getURL';
+		try {
+			if (typeof callback.operationComplete == 'function')
+				callback = callback.operationComplete;
+		} catch (e) {}
+			if (typeof callback != 'function')
+				throw 'No callback function for getURL';
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+			http_request = new XMLHttpRequest();
+		}
+		else if (typeof ActiveXObject != 'undefined') {
+			try {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				try {
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
+			}
+		}
+		if (!http_request)
+			throw 'Both getURL and XMLHttpRequest are undefined';
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
+				  content : http_request.responseText,
+				  contentType : http_request.getResponseHeader("Content-Type") } );
+			}
+		};
+		http_request.open('GET', url, true);
+		http_request.send(null);
+	};
+}
+
 //]]>
 </script>
-
-</body>
-</html>

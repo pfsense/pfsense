@@ -43,13 +43,13 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 $ifdescrs = get_configured_interface_with_descr();
 ?>
 
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="interfaces">
+<table class="table table-striped table-hover">
 <?php
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 
 	if ($ifinfo['ppplink']) {
-		$icon = '3g';
+		$icon = 'headphones';
 	} else if (is_interface_wireless($ifdescr)) {
 		if ($ifinfo['status'] == "associated") {
 			$icon = 'wlan';
@@ -80,44 +80,28 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	}
 ?>
 	<tr>
-		<td class="vncellt" rowspan="2">
-			<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer; white-space:nowrap">
-				<img src="./themes/<?=$g['theme'];?>/images/icons/icon_<?=$icon;?>.gif" alt="<?=$icon;?>" />
-				<u><?=htmlspecialchars($ifname);?></u>
-			</span>
-<?php
-		if ($ifinfo['dhcplink']) {
-			echo "<br />(DHCP)";
-		}
-?>
+		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
+			<i class="icon icon-<?=$icon?>"></i>
+			<a href="/interfaces.php?if=<?=$ifdescr?>">
+				<?=htmlspecialchars($ifname);?>
+			</a>
 		</td>
-<?php
-	if ($known_status):
-?>
-		<td rowspan="2" class="listr" align="center">
-			<div id="<?php echo $ifname . "-up";?>" style="display:<?=$up_display;?>" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" />
-			</div>
-			<div id="<?php echo $ifname . "-down";?>" style="display:<?=$down_display;?>" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" />
-			</div>
-			<div id="<?php echo $ifname . "-block";?>" style="display:<?=$block_display;?>" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="block" />
-			</div>
+		<td>
+			<?php if (isset($status)):?>
+				<i class="icon icon-<?=status?>-circle" alt="<?=htmlspecialchars($ifinfo['status'])?>"></i>
+			<?php else: ?>
+				<?=htmlspecialchars($ifinfo['status'])?>
+			<?php endif; ?>
 		</td>
-<?php
-	else:
-		echo htmlspecialchars($ifinfo['status']);
-	endif;
-?>
-		<td class="listr">
-			<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+		<td>
+			<?=htmlspecialchars($ifinfo['media']);?>
 		</td>
-	</tr>
-	<tr>
-		<td class="listr">
-			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong><?php if ($ifinfo['ipaddr']) echo "<br />";?></div>
-			<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </strong></div>
+		<td<?=($ifinfo['dhcplink'] ? ' title="via dhcp"':'')?>>
+			<?php if (empty($addresses)): ?>
+				n/a
+			<?php else: ?>
+				<?= implode('<br />', $addresses)?>
+			<?php endif; ?>
 		</td>
 	</tr>
 <?php

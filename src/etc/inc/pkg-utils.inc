@@ -569,8 +569,8 @@ function install_package_xml($package_name) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 
 		uninstall_package($package_name);
@@ -691,8 +691,8 @@ function install_package_xml($package_name) {
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 
 		uninstall_package($package_name);
@@ -748,8 +748,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		ob_flush();
 		sleep(1);

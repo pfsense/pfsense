@@ -62,27 +62,28 @@ if ($_REQUEST['getupdatestatus']) {
 		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	}
 
-	if (empty($remote_version)) {
-		echo "<br /><br />Unable to check for updates.";
-	} else {
+	if(empty($remote_version))
+		echo "<i>Unable to check for updates</i>";
+	else {
 		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
+		$current_installed_version = trim(file_get_contents("/etc/version"));
 
-		if (!$remote_version) {
-			echo "<br /><br />Unable to check for updates.";
-		} else {
+		if(!$remote_version) {
+			echo "<i>Unable to check for updates</i>";
+		}
+		else {
 			$needs_system_upgrade = false;
 			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
 			if ($version_compare == -1) {
-				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-				echo "\n<script type=\"text/javascript\">\n";
-				echo "//<![CDATA[\n";
-				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);\n";
-				echo "//]]>\n";
-				echo "</script>\n";
+?>
+<div class="alert alert-warning" role="alert">
+	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
+</div>
+<?php
 			} elseif ($version_compare == 1) {
-				echo "<br />You are on a later version than the official release.";
+				echo "You are on a later version than the official release.";
 			} else {
-				echo "<br />You are on the latest version.";
+				echo "You are on the latest version.";
 			}
 		}
 	}
@@ -92,57 +93,35 @@ if ($_REQUEST['getupdatestatus']) {
 $curcfg = $config['system']['firmware'];
 
 $filesystems = get_mounted_filesystems();
-
 ?>
-<script type="text/javascript">
-//<![CDATA[
-	jQuery(function() {
-		jQuery("#statePB").progressbar( { value: <?php echo get_pfstate(true); ?> } );
-		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
-		jQuery("#cpuPB").progressbar( { value:false } );
-		jQuery("#memUsagePB").progressbar( { value: <?php echo mem_usage(); ?> } );
 
-<?PHP $d = 0; ?>
-<?PHP foreach ($filesystems as $fs): ?>
-		jQuery("#diskUsagePB<?php echo $d++; ?>").progressbar( { value: <?php echo $fs['percent_used']; ?> } );
-<?PHP endforeach; ?>
-
-		<?php if ($showswap == true): ?>
-			jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
-		<?php endif; ?>
-		<?php if (get_temp() != ""): ?>
-                	jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
-		<?php endif; ?>
-	});
-//]]>
-</script>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="system information">
+<table class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Name");?></td>
-			<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
+			<th><?=gettext("Name");?></td>
+			<td><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
 		</tr>
 		<tr>
-			<td width="25%" valign="top" class="vncellt"><?=gettext("Version");?></td>
-			<td width="75%" class="listr">
-				<strong><?=$g['product_version']?></strong>
+			<th><?=gettext("Version");?></th>
+			<td>
+				<strong><?php readfile("/etc/version"); ?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
-		<?php if (!$g['hideuname']): ?>
-		<br />
-		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
-		<?php endif; ?>
-		<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-		<div id='updatestatus'><br /><?php echo gettext("Obtaining update status"); ?> ...</div>
-		<?php endif; ?>
+			<?php if(!$g['hideuname']): ?>
+				<br />
+				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
+			<?php endif; ?>
+			<br/><br/>
+			<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
+				<div id='updatestatus'><?php echo gettext("Obtaining update status"); ?> ...</div>
+			<?php endif; ?>
 			</td>
 		</tr>
 		<?php if (!$g['hideplatform']): ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Platform");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("Platform");?></td>
+			<td>
 				<?=htmlspecialchars($g['platform']);?>
 				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
 					echo " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")";
@@ -159,9 +138,9 @@ $filesystems = get_mounted_filesystems();
 			$rw = is_writable("/") ? "(rw)" : "(ro)";
 			?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("NanoBSD Boot Slice");?></td>
-			<td width="75%" class="listr">
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?> <?php echo $rw; ?>
+			<th><?=gettext("NanoBSD Boot Slice");?></td>
+			<td>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
 				<br /><br />Next Boot:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
@@ -170,11 +149,8 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("CPU Type");?></td>
-			<td width="75%" class="listr">
-			<?php
-				echo (htmlspecialchars(get_single_sysctl("hw.model")));
-			?>
+			<th><?=gettext("CPU Type");?></td>
+			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
 			$cpucount = get_cpu_count();
@@ -186,65 +162,69 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($hwcrypto): ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Hardware crypto");?></td>
-			<td width="75%" class="listr"><?=htmlspecialchars($hwcrypto);?></td>
+			<th><?=gettext("Hardware crypto");?></td>
+			<td><?=htmlspecialchars($hwcrypto);?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Uptime");?></td>
-			<td width="75%" class="listr" id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
+			<th><?=gettext("Uptime");?></td>
+			<td id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
 		</tr>
-        <tr>
-            <td width="25%" class="vncellt"><?=gettext("Current date/time");?></td>
-            <td width="75%" class="listr">
-                <div id="datetime"><?= date("D M j G:i:s T Y"); ?></div>
-            </td>
-        </tr>
 		<tr>
-			<td width="30%" class="vncellt"><?=gettext("DNS server(s)");?></td>
-			<td width="70%" class="listr">
-			<?php
-				$dns_servers = get_dns_servers();
-				foreach ($dns_servers as $dns) {
-					echo "{$dns}<br />";
-				}
-			?>
-			</td>
+			<th><?=gettext("Current date/time");?></td>
+			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
+		</tr>
+		<tr>
+			<th><?=gettext("DNS server(s)");?></td>
+			<td>
+				<ul>
+				<?php
+					$dns_servers = get_dns_servers();
+					foreach($dns_servers as $dns) {
+						echo "<li>{$dns}</li>";
+					}
+				?>
+				</ul>
+		</td>
 		</tr>
 		<?php if ($config['revision']): ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Last config change");?></td>
-			<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
+			<th><?=gettext("Last config change");?></td>
+			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("State table size");?></td>
-			<td width="75%" class="listr">
-				<?php
-					$pfstatetext = get_pfstate();
+			<th><?=gettext("State table size");?></td>
+			<td>
+				<?php	$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
-				<div id="statePB"></div>
-				<span id="pfstateusagemeter"><?= $pfstateusage.'%'; ?></span> (<span id="pfstate"><?= htmlspecialchars($pfstatetext); ?></span>)
-		    	<br />
-		    	<a href="diag_dump_states.php"><?=gettext("Show states");?></a>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
+						<span><?=$pfstateusage?>% (<?= htmlspecialchars($pfstatetext)?>)</span>
+					</div>
+				</div>
+				<a href="diag_dump_states.php"><?=gettext("Show states");?></a>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("MBUF Usage");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("MBUF Usage");?></td>
+			<td>
 				<?php
 					$mbufstext = get_mbuf();
 					$mbufusage = get_mbuf(true);
 				?>
-				<div id="mbufPB"></div>
-				<span id="mbufusagemeter"><?= $mbufusage.'%'; ?></span> (<span id="mbuf"><?= $mbufstext ?></span>)
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
+						<span><?=$mbufusage?>% (<?= htmlspecialchars($mbufstext)?>)</span>
+					</div>
+				</div>
 			</td>
 		</tr>
 		<?php if (get_temp() != ""): ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Temperature");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("Temperature");?></td>
+			<td>
 				<?php $TempMeter = $temp = get_temp(); ?>
 				<div id="tempPB"></div>
 				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
@@ -252,74 +232,84 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Load average");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("Load average");?></td>
+			<td>
 			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("CPU usage");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("CPU usage");?></td>
+			<td>
 				<div id="cpuPB"></div>
 				<span id="cpumeter">(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Memory usage");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("Memory usage");?></td>
+			<td>
 				<?php $memUsage = mem_usage(); ?>
-				<div id="memUsagePB"></div>
-				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+						<span><?=$memUsage?>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
+					</div>
+				</div>
 			</td>
 		</tr>
 		<?php if ($showswap == true): ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("SWAP usage");?></td>
-			<td width="75%" class="listr">
+			<th><?=gettext("SWAP usage");?></td>
+			<td>
 				<?php $swapusage = swap_usage(); ?>
-				<div id="swapUsagePB"></div>
-				<span id="swapusagemeter"><?= $swapusage.'%'; ?></span> of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
+						<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
+					</div>
+				</div>
 			</td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt"><?=gettext("Disk usage");?></td>
-			<td width="75%" class="listr">
-			<?php $d = 0; ?>
-			<?php foreach ($filesystems as $fs): ?>
-				<div id="diskUsagePB<?php echo $d; ?>"></div>
-				<?php if (substr(basename($fs['device']), 0, 2) == "md") $fs['type'] .= " in RAM"; ?>
-				<?php echo "{$fs['mountpoint']} ({$fs['type']})";?>: <span id="diskusagemeter<?php echo $d++ ?>"><?= $fs['percent_used'].'%'; ?></span> of <?PHP echo $fs['total_size'];?>
-				<br />
-			<?php endforeach; ?>
+			<th><?=gettext("Disk usage");?></td>
+			<td>
+				<table class="table">
+<?PHP foreach ($filesystems as $fs): ?>
+				<tr>
+					<th><?=$fs['mountpoint']?></th>
+					<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
+					<td><?=$fs['total_size']?></td>
+					<td>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
+								<span><?=$fs['percent_used']?>%</span>
+							</div>
+						</div>
+					</td>
+				</tr>
+<?PHP endforeach; ?>
+				</table>
 			</td>
 		</tr>
 	</tbody>
 </table>
-<script type="text/javascript">
-//<![CDATA[
-	function swapuname() {
-		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
-	}
-	<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-	function getstatus() {
-		scroll(0,0);
-		var url = "/widgets/widgets/system_information.widget.php";
-		var pars = 'getupdatestatus=yes';
-		jQuery.ajax(
-			url,
-			{
-				type: 'get',
-				data: pars,
-				complete: activitycallback
-			});
-	}
-	function activitycallback(transport) {
-		// .html() method process all script tags contained in responseText,
-		// to avoid this we set the innerHTML property
-		jQuery('#updatestatus').prop('innerHTML',transport.responseText);
-	}
-	setTimeout('getstatus()', 4000);
-	<?php endif; ?>
-//]]>
+
+<script>
+function systemStatusGetUpdateStatus() {
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/system_information.widget.php',
+		data: 'getupdatestatus=1',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			$('#widget-system_information #updatestatus').html(data);
+		}
+	});
+}
+
+events.push(function(){
+	setTimeout('systemStatusGetUpdateStatus()', 4000);
+});
 </script>

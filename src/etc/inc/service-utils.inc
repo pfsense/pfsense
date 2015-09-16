@@ -487,6 +487,18 @@ function get_service_control_links($service, $addname = false) {
 	global $g;
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
+
+	switch ($service['name']) {
+		case "openvpn":
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'] . '&amp;vpnmode=' . $service['mode'] . '&amp;id=' . $service['vpnid'] . '">';
+		break;
+		case "captiveportal":
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service=' . $service['name'] . '&amp;zone=' . $service['zone'] . '">';
+		break;
+		default:
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service=' . $service['name'] . '">';
+	}
+
 	if (get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
@@ -509,26 +521,17 @@ function get_service_control_links($service, $addname = false) {
 			default:
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' border='0' src='/themes/" . $g['theme'] . "/images/icons/icon_service_stop.gif' alt='stop' />";
 		$output .= "</a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
-		switch ($service['name']) {
-			case "openvpn":
-				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
-				break;
-			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
-				break;
-			default:
-				if ($service_enabled) {
-					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
-				}
-		}
-		if ($service_enabled) {
-			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
+
+		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
+			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
+			$output .= '<i class="icon icon-play-circle"></i></a> ';
 		}
 	}
+
 	return $output;
 }
 

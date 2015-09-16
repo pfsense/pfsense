@@ -58,550 +58,144 @@ if ($_POST['if'] && $_POST['submit']) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"), gettext("Interfaces"));
+$formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' .
+					'<input type="hidden" name="if" value="%s" />' .
+					'<input type="hidden" name="status" value="%s" />' .
+					'%s' .
+					'<input type="submit" name="submit" class="btn btn-warning btn-xs" value="%s" />' .
+					'</form>';
+
+// Display a term/definition pair
+function showDef($show, $term, $def) {
+	if($show) {
+		print('<dt>' . $term . '</dt>');
+		print('<dd>' . htmlspecialchars($def) . '</dd>');
+	}
+}
+
+// Display a term/definition pair with a button
+function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
+	global $formtemplate;
+
+	if($show) {
+		print('<dt>' . $term . '</dt>');
+		print('<dd>');
+		printf($formtemplate, $term, $ifvalue, $show, htmlspecialchars($def)	. ' ', $btnlbl);
+		print('</dd>');
+	}
+}
+
+$pgtitle = array(gettext("Status"),gettext("Interfaces"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
+		$ifdescrs = get_configured_interface_with_descr(false, true);
+
+		foreach ($ifdescrs as $ifdescr => $ifname):
+			$ifinfo = get_interface_info($ifdescr);
+			$mac_man = load_mac_manufacturer_table();
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status interfaces">
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifinfo['hwif'])?>)</h2></div>
+	<div class="panel-body">
+		<dl class="dl-horizontal">
 <?php
-	$i = 0;
-	$ifdescrs = get_configured_interface_with_descr(false, true);
-	foreach ($ifdescrs as $ifdescr => $ifname):
-		$ifinfo = get_interface_info($ifdescr);
-		// Load MAC-Manufacturer table
-		$mac_man = load_mac_manufacturer_table();
-?>
-<?php
-		if ($i):
-?>
-	<tr>
-		<td colspan="8" class="list" height="12"></td>
-	</tr>
-<?php
-		endif;
-?>
-	<tr>
-		<td colspan="2" class="listtopic">
-			<?=htmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=htmlspecialchars($ifdescr);?>, <?=htmlspecialchars($ifinfo['hwif']);?>)
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Status"); ?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['status']);?>
-		</td>
-	</tr>
-<?php
-		if ($ifinfo['dhcplink']):
-?>
-	<tr>
-		<td width="22%" class="vncellt">
-			DHCP
-		</td>
-		<td width="78%" class="listr">
-			<form name="dhcplink_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
-				<?php $action = ($ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew")); ?>
-				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
-			</form>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['dhcp6link']):
-?>
-	<tr>
-		<td width="22%" class="vncellt">
-			DHCP6
-		</td>
-		<td width="78%" class="listr">
-			<form name="dhcp6link_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcp6link']; ?>" />
-				<?=htmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
-				<?php $action = ($ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew")); ?>
-				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
-			</form>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['pppoelink']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("PPPoE"); ?></td>
-		<td width="78%" class="listr">
-			<form name="pppoelink_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['pppoelink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
-				<?php $action = ($ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
-				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
-			</form>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['pptplink']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("PPTP"); ?></td>
-		<td width="78%" class="listr">
-			<form name="pptplink_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['pptplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
-				<?php $action = ($ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
-				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
-			</form>
-		</td>
-	</tr>
-<?php 
-		endif;
-		if ($ifinfo['l2tplink']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("L2TP"); ?></td>
-		<td width="78%" class="listr">
-			<form name="l2tplink_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['l2tplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
-				<?php $action = ($ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
-				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
-			</form>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['ppplink']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("PPP"); ?></td>
-		<td width="78%" class="listr">
-			<form name="ppplink_form" action="status_interfaces.php" method="post">
-				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-				<input type="hidden" name="status" value="<?php echo $ifinfo['ppplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['ppplink']);?>
-				<?php if ($ifinfo['ppplink'] == "up"): ?>
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
-				<?php else: ?>
-					<?php if (!$ifinfo['nodevice']): ?>
-						<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Connect"); ?>" />
-					<?php endif; ?>
-				<?php endif; ?>
-			</form>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Uptime ");?><?php if ($ifinfo['ppp_uptime_accumulated']) echo "(historical)"; ?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ppp_uptime']);?> <?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_rssi']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Signal (RSSI)");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_rssi']);?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_mode']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Mode");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_mode']);?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_simstate']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell SIM State");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_simstate']);?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_service']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Service");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_service']);?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_bwupstream']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Upstream");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_bwupstream']);?> kbit/s
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_bwdownstream']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Downstream");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_bwdownstream']);?> kbit/s
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_upstream']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Current Up");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_upstream']);?> kbit/s
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['cell_downstream']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Current Down");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_downstream']);?> kbit/s
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['macaddr']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("MAC address");?></td>
-		<td width="78%" class="listr">
-			<?php
+		showDef(true, gettext("Status"), $ifinfo['status']);
+		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"));
+		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"));
+		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
+		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
+		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
+		showDefBtn($ifinfo['ppplink'], 'L2TP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"));
+		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime ") . $ifinfo['ppp_uptime_accumulated'] ? '(historical)':'', $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
+		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
+		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);
+		showDef($ifinfo['cell_simstate'], gettext("Cell SIM State"), $ifinfo['cell_simstate']);
+		showDef($ifinfo['cell_service'], gettext("Cell Service"), $ifinfo['cell_service']);
+		showDef($ifinfo['cell_bwupstream'], gettext("Cell Upstream"), $ifinfo['cell_bwupstream']);
+		showDef($ifinfo['cell_bwdownstream'], gettext("Cell Downstream"), $ifinfo['cell_bwdownstream']);
+		showDef($ifinfo['cell_upstream'], gettext("Cell Current Up"), $ifinfo['cell_upstream']);
+		showDef($ifinfo['cell_downstream'], gettext("Cell Current Down"), $ifinfo['cell_downstream']);
+
+		if ($ifinfo['macaddr']) {
 			$mac=$ifinfo['macaddr'];
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			if (isset($mac_man[$mac_hi])) {
-				print "<span>" . $mac . " - " . htmlspecialchars($mac_man[$mac_hi]); print "</span>";
-			} else {
-				print htmlspecialchars($mac);
+			showDef(isset($mac_man[$mac_hi]), gettext('MAC Address'),  ' - ' . $mac_man[$mac_hi]);
 			}
-			?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if ($ifinfo['status'] != "down"):
-?>
-<?php
-			if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"):
-				if ($ifinfo['ipaddr']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("IPv4 address");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ipaddr']);?>
-			&nbsp;
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['subnet']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv4");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['subnet']);?>
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['gateway']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Gateway IPv4");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gateway']);?>
-			<?=htmlspecialchars($ifinfo['gateway']);?>
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['linklocal']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("IPv6 Link Local");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['linklocal']);?>
-			&nbsp;
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['ipaddrv6']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("IPv6 address");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ipaddrv6']);?>
-			&nbsp;
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['subnetv6']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv6");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['subnetv6']);?>
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifinfo['gatewayv6']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Gateway IPv6");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gatewayv6']);?>
-			<?=htmlspecialchars($ifinfo['gatewayv6']);?>
-		</td>
-	</tr>
-<?php
-				endif;
-				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("ISP DNS servers");?></td>
-		<td width="78%" class="listr">
-			<?php
+
+		if ($ifinfo['status'] != "down") {
+			if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down") {
+				showDef($ifinfo['ipaddr'], gettext('IPv4 Address'), $ifinfo['ipaddr']);
+				showDef($ifinfo['subnet'], gettext('Subnet mask IPv4'), $ifinfo['subnet']);
+				showDef($ifinfo['gateway'], gettext('Gateway IPv4'), $ifinfo['gateway']);
+				showDef($ifinfo['linklocal'], gettext('IPv6 Link Local'), $ifinfo['linklocal']);
+				showDef($ifinfo['ipaddrv6'], gettext('IPv6 Address'), $ifinfo['ipaddrv6']);
+				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
+				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . $ifinfo['gatewayv6']);
+
+				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")) {
 					$dns_servers = get_dns_servers();
-					foreach ($dns_servers as $dns) {
-						echo "{$dns}<br />";
+					$dnscnt = 0;
+					foreach($dns_servers as $dns) {
+						showDef(true, $dnscnt == 0 ? gettext('ISP DNS servers'):'', $dns);
+						$dnscnt++;
 					}
-			?>
-		</td>
-	</tr>
-<?php
-				endif;
-			endif;
-			if ($ifinfo['mtu']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("MTU");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['mtu']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['media']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Media");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['media']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['laggproto']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("LAGG Protocol");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['laggproto']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if (is_array($ifinfo['laggport'])):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("LAGG Ports");?></td>
-		<td width="78%" class="listr">
-			<?php
-				foreach ($ifinfo['laggport'] as $laggport) {
-					echo htmlspecialchars($laggport);
-			?>
-			<br />
-			<?php
 				}
-			?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['channel']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Channel");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['channel']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['ssid']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("SSID");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ssid']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['bssid']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("BSSID");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['bssid']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['rate']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Rate");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['rate']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if ($ifinfo['rssi']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("RSSI");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['rssi']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("In/out packets");?></td>
-		<td width="78%" class="listr">
-		<?php
-			echo htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (");
-			echo htmlspecialchars(format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("In/out packets (pass)");?></td>
-		<td width="78%" class="listr">
-		<?php
-			echo htmlspecialchars($ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass'] . " (");
-			echo htmlspecialchars(format_bytes($ifinfo['inbytespass']) . "/" . format_bytes($ifinfo['outbytespass']) . ")");
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("In/out packets (block)");?></td>
-		<td width="78%" class="listr">
-		<?php
-			echo htmlspecialchars($ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock'] . " (");
-			echo htmlspecialchars(format_bytes($ifinfo['inbytesblock']) . "/" . format_bytes($ifinfo['outbytesblock']) . ")");
-		?>
-		</td>
-	</tr>
-<?php
-			if (isset($ifinfo['inerrs'])):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("In/out errors");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-			if (isset($ifinfo['collisions'])):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Collisions");?></td>
-		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['collisions']);?>
-		</td>
-	</tr>
-<?php
-			endif;
-		endif;
-?>
-<?php
-		if ($ifinfo['bridge']):
-?>
-	<tr>
-		<td width="22%" class="vncellt"><?php printf(gettext("Bridge (%s)"), $ifinfo['bridgeint']);?></td>
-		<td width="78%" class="listr">
-			<?=$ifinfo['bridge'];?>
-		</td>
-	</tr>
-<?php
-		endif;
-		if (file_exists("/usr/bin/vmstat")):
+			}
+
+			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
+			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
+			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);
+			showDef($ifinfo['laggport'],gettext("LAGG Ports"),$laggport);
+			showDef($ifinfo['channel'],gettext("Channel"),$ifinfo['channel']);
+			showDef($ifinfo['ssid'],gettext("SSID"),$ifinfo['ssid']);
+			showDef($ifinfo['bssid'],gettext("BSSID"),$ifinfo['bssid']);
+			showDef($ifinfo['rate'],gettext("Rate"),$ifinfo['rate']);
+			showDef($ifinfo['rssi'],gettext("RSSI"),$ifinfo['rssi']);
+			showDef(true,gettext("In/out packets"),$ifinfo['inpkts'] . '/' . $ifinfo['outpkts']);
+			showDef(true,gettext("In/out packets (pass)"),$ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass']);
+			showDef(true,gettext("In/out packets (block)"),$ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock']);
+			showDef(isset($ifinfo['inerrs']),gettext("In/out errors"),$ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);
+			showDef(isset($ifinfo['collisions']),gettext("Collisions"),$ifinfo['collisions']);
+		} // e-o-if ($ifinfo['status'] != "down")
+
+		showDef($ifinfo['bridge'], gettext('Bridge (') . $ifinfo['bridgeint'] . ')', $ifinfo['bridge']);
+
+		if(file_exists("/usr/bin/vmstat")) {
 			$real_interface = "";
 			$interrupt_total = "";
 			$interrupt_sec = "";
 			$real_interface = $ifinfo['hwif'];
 			$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
 			$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
-			if (strstr($interrupt_total, "hci")) {
+
+			if(strstr($interrupt_total, "hci")) {
 				$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
 				$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;
 			}
-			unset($interrupt_total); // XXX: FIX ME!  Need a regex and parse correct data 100% of the time.
-			if ($interrupt_total): ?>
-	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Interrupts/Second");?></td>
-		<td width="78%" class="listr">
-			<?php
-				echo $interrupt_total . " " . gettext("total");
-				echo "<br />";
-				echo $interrupt_sec . " " . gettext("rate");
-			?>
-		</td>
-	</tr>
+
+			unset($interrupt_total);
+
+			showDef($interrupt_total, gettext('Total interrupts'), $interrupt_total);
+			showDef($interrupt_total, '', $interrupt_sec . " " . $interrupt_total);
+		}
+?>
+		</dl>
+	</div>
+</div>
+
 <?php
-			endif;
-		endif;
-		$i++;
+		break;
 	endforeach;
 ?>
-</table>
 
-<br />
+<div class="alert alert-warning" role="alert">
+	<?=gettext("Using dial-on-demand will bring the connection up again if any packet ".
+	"triggers it. To substantiate this point: disconnecting manually ".
+	"will <strong>not</strong> prevent dial-on-demand from making connections ".
+	"to the outside! Don't use dial-on-demand if you want to make sure that the line ".
+	"is kept disconnected.");?>
+</div>
 
-<?php printf(gettext("Using dial-on-demand will bring the connection up again if any packet ".
-"triggers it. To substantiate this point: disconnecting manually ".
-"will %snot%s prevent dial-on-demand from making connections ".
-"to the outside! Don't use dial-on-demand if you want to make sure that the line ".
-"is kept disconnected."), '<strong>', '</strong>')?>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc"); ?>

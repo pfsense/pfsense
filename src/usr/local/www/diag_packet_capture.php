@@ -1,34 +1,61 @@
 <?php
 /*
 	diag_packet_capture.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
-	pfSense_BUILDER_BINARIES:	/bin/ps	/usr/bin/grep	/usr/sbin/tcpdump
-	pfSense_MODULE:	routing
+	pfSense_BUILDER_BINARIES:	/bin/ps /usr/bin/grep	/usr/sbin/tcpdump
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -43,9 +70,11 @@ $allowautocomplete = true;
 function fixup_host_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "and ", "and ", "or ", "not "), $value);
 }
+
 function strip_host_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "", "", "", ""), $value);
 }
+
 function get_host_boolean($value, $host) {
 	$value = str_replace(array("!", $host), array("", ""), $value);
 	$andor = "";
@@ -58,14 +87,18 @@ function get_host_boolean($value, $host) {
 			$andor = "and ";
 			break;
 	}
+
 	return $andor;
 }
+
 function has_not($value) {
 	return strpos($value, '!') !== false;
 }
+
 function fixup_not($value) {
 	return str_replace("!", "not ", $value);
 }
+
 function strip_not($value) {
 	return ltrim(trim($value), '!');
 }
@@ -98,7 +131,7 @@ $count = 100;//default number of packets to capture
 
 $fams = array('ip', 'ip6');
 $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
-		'!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp');
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp');
 
 $input_errors = array();
 
@@ -129,31 +162,37 @@ if ($_POST) {
 	if (!array_key_exists($selectedif, $interfaces)) {
 		$input_errors[] = gettext("Invalid interface.");
 	}
+
 	if ($fam !== "" && $fam !== "ip" && $fam !== "ip6") {
 		$input_errors[] = gettext("Invalid address family.");
 	}
+
 	if ($proto !== "" && !in_array(strip_not($proto), $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}
 
 	if ($host != "") {
 		$host_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $host);
+
 		if (strpos($host_string, '#') === false) {
 			$hosts = array($host);
 		} else {
 			$hosts = explode('#', $host_string);
 		}
+
 		foreach ($hosts as $h) {
 			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h))) {
 				$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $h);
 			}
 		}
 	}
+
 	if ($port != "") {
 		if (!is_port(strip_not($port))) {
 			$input_errors[] = gettext("Invalid value specified for port.");
 		}
 	}
+
 	if ($snaplen == "") {
 		$snaplen = 0;
 	} else {
@@ -161,6 +200,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Invalid value specified for packet length.");
 		}
 	}
+
 	if ($count == "") {
 		$count = 0;
 	} else {
@@ -226,260 +266,240 @@ if ($_POST) {
 	$do_tcpdump = false;
 }
 
-include("head.inc"); ?>
+$protocollist = array(
+	'' => 'Any',
+	'icmp' => 'ICMP',
+	'!icmp' => 'Exclude ICMP',
+	'icmp6' => 'ICMPv6',
+	'!icmp6' => 'Exclude ICMPv6',
+	'tcp' => 'TCP',
+	'!tcp' => 'Exclude TCP',
+	'udp' => 'UDP',
+	'!udp' => 'Exclude UDP',
+	'arp' => 'ARP',
+	'!arp' => 'Exclude ARP',
+	'carp' => 'CARP (VRRP)',
+	'!carp' => 'Exclude CARP (VRRP)',
+	'esp' => 'ESP'
+);
 
-<body link="#000000" vlink="#0000CC" alink="#0000CC">
+include("head.inc");
 
-<?php
-include("fbegin.inc");
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+require_once('classes/Form.class.php');
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag packet capture">
-	<tr><td>
-	<form action="diag_packet_capture.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="table">
-		<tr>
-			<td colspan="3" valign="top" class="listtopic"><?=gettext("Packet capture");?></td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
-			<td width="32%" class="vtable">
-				<select name="interface">
-				<?php foreach ($interfaces as $iface => $ifacename): ?>
-					<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected=\"selected\""; ?>>
-					<?php echo $ifacename;?>
-					</option>
-				<?php endforeach; ?>
-				</select>
-				<br /><?=gettext("Select the interface on which to capture traffic.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Promiscuous");?></td>
-			<td width="51%" class="vtable">
-				<input name="promiscuous" type="checkbox"<?php if ($_POST['promiscuous']) echo " checked=\"checked\""; ?> />
-				<br /><?=gettext("If checked, the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("will be performed using promiscuous mode.");?>
-				<br /><b><?=gettext("Note");?>: </b><?=gettext("Some network adapters do not support or work well in promiscuous mode.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Address Family");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<select name="fam">
-					<option value="">Any</option>
-					<option value="ip" <?php if ($fam == "ip") echo "selected=\"selected\""; ?>>IPv4 Only</option>
-					<option value="ip6" <?php if ($fam == "ip6") echo "selected=\"selected\""; ?>>IPv6 Only</option>
-				</select>
-				<br /><?=gettext("Select the type of traffic to be captured, either Any, IPv4 only or IPv6 only.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<select name="proto">
-					<option value="">Any</option>
-					<option value="icmp" <?php if ($proto == "icmp") echo "selected=\"selected\""; ?>>ICMP</option>
-					<option value="!icmp" <?php if ($proto == "!icmp") echo "selected=\"selected\""; ?>>Exclude ICMP</option>
-					<option value="icmp6" <?php if ($proto == "icmp6") echo "selected=\"selected\""; ?>>ICMPv6</option>
-					<option value="!icmp6" <?php if ($proto == "!icmp6") echo "selected=\"selected\""; ?>>Exclude ICMPv6</option>
-					<option value="tcp" <?php if ($proto == "tcp") echo "selected=\"selected\""; ?>>TCP</option>
-					<option value="!tcp" <?php if ($proto == "!tcp") echo "selected=\"selected\""; ?>>Exclude TCP</option>
-					<option value="udp" <?php if ($proto == "udp") echo "selected=\"selected\""; ?>>UDP</option>
-					<option value="!udp" <?php if ($proto == "!udp") echo "selected=\"selected\""; ?>>Exclude UDP</option>
-					<option value="arp" <?php if ($proto == "arp") echo "selected=\"selected\""; ?>>ARP</option>
-					<option value="!arp" <?php if ($proto == "!arp") echo "selected=\"selected\""; ?>>Exclude ARP</option>
-					<option value="carp" <?php if ($proto == "carp") echo "selected=\"selected\""; ?>>CARP (VRRP)</option>
-					<option value="!carp" <?php if ($proto == "!carp") echo "selected=\"selected\""; ?>>Exclude CARP (VRRP)</option>
-					<option value="esp" <?php if ($proto == "esp") echo "selected=\"selected\""; ?>>ESP</option>
-				</select>
-				<br /><?=gettext("Select the protocol to capture, or Any.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Host Address");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<input name="host" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
-				<br /><?=gettext("This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.");?>
-				<br /><?=gettext("Matching can be negated by preceding the value with \"!\". Multiple IP addresses or CIDR subnets may be specified. Comma (\",\") separated values perform a boolean \"and\". Separating with a pipe (\"|\") performs a boolean \"or\".");?>
-				<br /><?=gettext("If you leave this field blank, all packets on the specified interface will be captured.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Port");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<input name="port" class="formfld unknown" id="port" size="5" value="<?=htmlspecialchars($port);?>" />
-				<br /><?=gettext("The port can be either the source or destination port. The packet capture will look for this port in either field.");?>
-				<br /><?=gettext("Leave blank if you do not want to filter by port.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<input name="snaplen" class="formfld unknown" id="snaplen" size="5" value="<?=htmlspecialchars($snaplen);?>" />
-				<br /><?=gettext("The Packet length is the number of bytes of each packet that will be captured. Default value is 0, which will capture the entire frame regardless of its size.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Count");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<input name="count" class="formfld unknown" id="count" size="5" value="<?=htmlspecialchars($count);?>" />
-				<br /><?=gettext("This is the number of packets the packet capture will grab. Default value is 100.") . "<br />" . gettext("Enter 0 (zero) for no count limit.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Level of Detail");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<select name="detail" class="formselect" id="detail" size="1">
-					<option value="normal" <?php if ($detail == "normal") echo "selected=\"selected\""; ?>><?=gettext("Normal");?></option>
-					<option value="medium" <?php if ($detail == "medium") echo "selected=\"selected\""; ?>><?=gettext("Medium");?></option>
-					<option value="high"   <?php if ($detail == "high")   echo "selected=\"selected\""; ?>><?=gettext("High");?></option>
-					<option value="full"   <?php if ($detail == "full")   echo "selected=\"selected\""; ?>><?=gettext("Full");?></option>
-				</select>
-				<br />
-				<?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") . "<br /><b>" .
-					gettext("Note:") . "</b> " .
-					gettext("This option does not affect the level of detail when downloading the packet capture.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top" class="vncellreq"><?=gettext("Reverse DNS Lookup");?></td>
-			<td colspan="2" width="83%" class="vtable">
-				<input name="dnsquery" type="checkbox" <?php if ($_POST['dnsquery']) echo " checked=\"checked\""; ?> />
-				<br /><?=gettext("This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.");?>
-				<br /><b><?=gettext("Note");?>: </b><?=gettext("This option can cause delays for large packet captures.");?>
-			</td>
-		</tr>
-		<tr>
-			<td width="17%" valign="top">&nbsp;</td>
-			<td colspan="2" width="83%">
-<?php
+$form = new Form(false); // No button yet. We add those later depending on the required action
 
-			/* check to see if packet capture tcpdump is already running */
-			$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'")));
+$section = new Form_Section('General Logging Options');
 
-			if ($processcheck != "") {
-				$processisrunning = true;
-			} else {
-				$processisrunning = false;
-			}
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface',
+	$selectedif,
+	$interfaces
+))->setHelp('Select the interface on which to capture traffic. ');
 
-			if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
-				echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\" />&nbsp;";
-			} else {
-				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\" />&nbsp;";
-			}
-			if (file_exists($fp.$fn) and $processisrunning != true) {
-				echo "<input type=\"submit\" name=\"viewbtn\" value=\"" . gettext("View Capture") . "\" />&nbsp;";
-				echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\" />";
-				echo "<br />" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn));
-			}
-?>
-			</td>
-		</tr>
-	</table>
-	</form>
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="results">
-		<tr>
-			<td valign="top" colspan="2">
-<?php
-		echo "<font face=\"terminal\" size=\"2\">";
-		if ($processisrunning == true) {
-			echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br />");
+$section->addInput(new Form_Checkbox(
+	'promiscuous',
+	'Promiscuous',
+	'Packet capture will be performed using promiscuous mode',
+	$pconfig['promiscuous']
+))->setHelp('Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
+			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
+			'Packet capture' . '</a>');
+
+$section->addInput(new Form_Select(
+	'fam',
+	'Address Family',
+	$fam,
+	array('' => 'Any',
+		  'ip' => 'IPv4 Only',
+		  'ip6' => 'IPv6 Only'
+	)
+))->setHelp('Select the type of traffic to be captured');
+
+$section->addInput(new Form_Select(
+	'proto',
+	'Protocol',
+	$proto,
+	$protocollist
+))->setHelp('Select the protocol to capture, or "Any". ');
+
+$section->addInput(new Form_Input(
+	'host',
+	'Host Address',
+	'text',
+	$host
+))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.' . '<br />' .
+			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
+			'Separating with a pipe ("|") performs a boolean "OR".' . '<br />' .
+			'If you leave this field blank, all packets on the specified interface will be captured.');
+
+$section->addInput(new Form_Input(
+	'port',
+	'Port',
+	'text',
+	$port
+))->setHelp('The port can be either the source or destination port. The packet capture will look for this port in either field. ' .
+			'Leave blank if you do not want to filter by port.');
+
+$section->addInput(new Form_Input(
+	'snaplen',
+	'Packet Length',
+	'text',
+	$snaplen
+))->setHelp('The Packet length is the number of bytes of each packet that will be captured. Default value is 0, ' .
+			'which will capture the entire frame regardless of its size.');
+
+$section->addInput(new Form_Input(
+	'count',
+	'Count',
+	'text',
+	$count
+))->setHelp('This is the number of packets the packet capture will grab. Default value is 100.' . '<br />' .
+			'Enter 0 (zero) for no count limit.');
+
+$section->addInput(new Form_Select(
+	'detail',
+	'Level of detail',
+	$detail,
+	array('' => 'Any',
+		  'normal' => 'Normal',
+		  'medium' => 'Medium',
+		  'high' => 'High',
+		  'full' => 'Full',
+	)
+))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
+			'This option does not affect the level of detail when downloading the packet capture. ');
+
+$section->addInput(new Form_Checkbox(
+	'dnsquery',
+	'Reverse DNS Lookup',
+	null,
+	$_POST['dnsquery']
+))->setHelp('This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
+			'This option can cause delays for large packet captures.');
+
+$form->add($section);
+
+/* check to see if packet capture tcpdump is already running */
+$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'")));
+
+$processisrunning = ($processcheck != "");
+
+if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
+	$form->addGlobal(new Form_Button(
+		'startbtn',
+		'Start'
+	))->removeClass('btn-primary')->addClass('btn-success');
+}
+else {
+	$form->addGlobal(new Form_Button(
+		'stopbtn',
+		'Stop'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+}
+
+if (file_exists($fp.$fn) and $processisrunning != true) {
+	$form->addGlobal(new Form_Button(
+		'viewbtn',
+		'View Capture'
+	))->removeClass('btn-primary');
+
+	$form->addGlobal(new Form_Button(
+		'downloadbtn',
+		'Download Capture'
+	))->removeClass('btn-primary');
+
+	$section->addInput(new Form_StaticText(
+		'Last capture',
+		date("F jS, Y g:i:s a.", filemtime($fp.$fn))
+	));
+}
+
+print($form);
+
+if ($do_tcpdump) :
+	$matches = array();
+
+	if (in_array($fam, $fams))
+		$matches[] = $fam;
+
+	if (in_array($proto, $protos))
+		$matches[] = fixup_not($proto);
+
+	if ($port != "")
+		$matches[] = "port ".fixup_not($port);
+
+	if ($host != "") {
+		$hostmatch = "";
+		$hostcount = 0;
+
+		foreach ($hosts as $h) {
+			$h = fixup_host($h, $hostcount++);
+
+			if (!empty($h))
+				$hostmatch .= " " . $h;
 		}
 
-		if ($do_tcpdump) {
-			$matches = array();
+		if (!empty($hostmatch))
+			$matches[] = "({$hostmatch})";
+	}
 
-			if (in_array($fam, $fams)) {
-				$matches[] = $fam;
-			}
+	if ($count != "0" ) {
+		$searchcount = "-c " . $count;
+	} else {
+		$searchcount = "";
+	}
 
-			if (in_array($proto, $protos)) {
-				$matches[] = fixup_not($proto);
-			}
+	$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 
-			if ($port != "") {
-				$matches[] = "port ".fixup_not($port);
-			}
+	if ($action == gettext("Start")) {
+		$matchstr = implode($matches, " and ");
 
-			if ($host != "") {
-				$hostmatch = "";
-				$hostcount = 0;
-				foreach ($hosts as $h) {
-					$h = fixup_host($h, $hostcount++);
-					if (!empty($h)) {
-						$hostmatch .= " " . $h;
-					}
-				}
-				if (!empty($hostmatch)) {
-					$matches[] = "({$hostmatch})";
-				}
-			}
+		print_info_box(gettext('Packet Capture is running'), 'info');
 
-			if ($count != "0") {
-				$searchcount = "-c " . $count;
-			} else {
-				$searchcount = "";
-			}
-
-			$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
-
-			if ($action == gettext("Start")) {
-				$matchstr = implode($matches, " and ");
-				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br />");
-				$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
-				// Debug
-				//echo $cmd;
-				mwexec_bg ($cmd);
-			} else {
-				//action = stop
-				echo("<strong>" . gettext("Packet Capture stopped.") . "<br /><br />" . gettext("Packets Captured:") . "</strong><br />");
+		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
+		// Debug
+		//echo $cmd;
+		mwexec_bg ($cmd);
+	} else {
 ?>
-				<script type="text/javascript">
-				//<![CDATA[
-				window.onload=function() {
-					document.getElementById("packetsCaptured").wrap='off';
-				}
-				//]]>
-				</script>
-				<textarea id="packetsCaptured" style="width:98%" name="code" rows="15" cols="66" readonly="readonly">
-<?php
-				$detail_args = "";
-				switch ($detail) {
-					case "full":
-						$detail_args = "-vv -e";
-						break;
-					case "high":
-						$detail_args = "-vv";
-						break;
-					case "medium":
-						$detail_args = "-v";
-						break;
-					case "normal":
-					default:
-						$detail_args = "-q";
-						break;
-				}
-				system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
 
-				conf_mount_ro();
-?>
-				</textarea>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packets Captured')?></h2></div>
+	<div class="panel-body">
+
 <?php
-			}
+		$detail_args = "";
+		switch ($detail) {
+			case "full":
+				$detail_args = "-vv -e";
+				break;
+			case "high":
+				$detail_args = "-vv";
+				break;
+			case "medium":
+				$detail_args = "-v";
+				break;
+			case "normal":
+			default:
+				$detail_args = "-q";
+				break;
 		}
-?>
-				&nbsp;</font>
-			</td>
-		</tr>
-	</table>
-	</td></tr>
-</table>
 
-<?php
-include("fend.inc");
+		print('<pre>');
+		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
+		print('</pre>');
+
+		conf_mount_ro();
 ?>
-</body>
-</html>
+	</div>
+</div>
+<?php
+	}
+endif;
+
+include("foot.inc");

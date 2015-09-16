@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -46,18 +46,32 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vslb.inc");
 
+define('COLOR', true);
+define('LIGHTGREEN', '#90EE90');
+define('LIGHTCORAL', '#F08080');
+define('KHAKI',		 '#F0E68C');
+define('LIGHTGRAY',	 '#D3D3D3');
+define('WHITE',		 '#FFFFFF');
+
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 }
+
 $a_pool = &$config['load_balancer']['lbpool'];
 
 $lb_logfile = "{$g['varlog_path']}/relayd.log";
+
+$nentries = $config['syslog']['nentries'];
+
+if (!$nentries)
+	$nentries = 50;
 
 $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
+
 include("head.inc");
 
 $relay_hosts = get_lb_summary();
@@ -72,6 +86,7 @@ if ($_POST) {
 	} else {
 		/* Keep a list of servers we find in POST variables */
 		$newservers = array();
+
 		foreach ($_POST as $name => $value) {
 			/* Look through the POST vars to find the pool data */
 			if (strpos($name, '|') !== false) {
@@ -82,6 +97,7 @@ if ($_POST) {
 				$newservers[$name][] = $value;
 			}
 		}
+
 		foreach ($a_pool as & $pool) {
 			if (is_array($pool['servers']) && is_array($pool['serversdisabled'])) {
 				$oldservers = array_merge($pool['servers'], $pool['serversdisabled']);
@@ -97,135 +113,145 @@ if ($_POST) {
 				$pool['serversdisabled'] = array_diff($oldservers, $newservers[$pool['name']]);
 			}
 		}
+
 		mark_subsystem_dirty('loadbalancer');
 		write_config("Updated load balancer pools via status screen.");
 	}
 }
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="status_lb_pool.php" method="post">
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
-<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status load balancer pools">
-	<tr><td class="tabnavtbl">
-	<?php
-		/* active tabs */
-		$tab_array = array();
-		$tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
-		$tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
-		display_top_tabs($tab_array);
-	?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" id="sortabletable" summary="main area">
-				<tr>
-					<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
-					<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Servers");?></td>
-					<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
-					<td width="30%" class="listhdr"><?=gettext("Description");?></td>
-				</tr>
-<?php
-	foreach ($a_pool as & $pool):
-?>
-				<tr>
-					<td class="listlr">
-						<?=$pool['name'];?>
-					</td>
-					<td class="listr" align="center" >
-<?php
-		switch ($pool['mode']) {
-			case "loadbalance":
-				echo "Load balancing";
-				break;
-			case "failover":
-				echo "Manual failover";
-				break;
-			default:
-				echo "(default)";
-		}
-?>
-					</td>
-					<td class="listr" align="center">
-						<table border="0" cellpadding="2" cellspacing="0" summary="status">
-<?php
-		$pool_hosts = array();
-		foreach ((array) $pool['servers'] as $server) {
-			$svr['ip']['addr'] = $server;
-			$svr['ip']['state'] = $relay_hosts[$pool['name'] . ":" . $pool['port']][$server]['state'];
-			$svr['ip']['avail'] = $relay_hosts[$pool['name'] . ":" . $pool['port']][$server]['avail'];
-			$pool_hosts[]=$svr;
-		}
-		foreach ((array) $pool['serversdisabled'] as $server) {
-			$svr['ip']['addr'] = "$server";
-			$svr['ip']['state'] = 'disabled';
-			$svr['ip']['avail'] = 'disabled';
-			$pool_hosts[]=$svr;
-		}
-		asort($pool_hosts);
+if (is_subsystem_dirty('loadbalancer'))
+	print_info_box_np('The load balancer configuration has been changed You must apply the changes in order for them to take effect.');
 
-		foreach ((array) $pool_hosts as $server) {
-			if ($server['ip']['addr'] != "") {
-				switch ($server['ip']['state']) {
-					case 'up':
-						$bgcolor = "#90EE90";  // lightgreen
-						$checked = "checked=\"checked\"";
-						break;
-					case 'disabled':
-						$bgcolor = "white";
-						$checked = "";
-						break;
-					default:
-						$bgcolor = "#F08080";  // lightcoral
-						$checked = "checked=\"checked\"";
-				}
-				echo "<tr>";
-				switch ($pool['mode']) {
-					case 'loadbalance':
-						echo "<td><input type=\"checkbox\" name=\"{$pool['name']}|" . str_replace('.', '_', $server['ip']['addr']) . "\" {$checked} /></td>\n";
-						break;
-					case 'failover':
-						echo "<td><input type=\"radio\" name=\"{$pool['name']}\" value=\"{$server['ip']['addr']}\" {$checked} /></td>\n";
-						break;
-				}
-				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
-#				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']} ";
-				if ($server['ip']['avail']) {
-					echo " ({$server['ip']['avail']}) ";
-				}
-				echo "&nbsp;</td></tr>";
+/* active tabs */
+$tab_array = array();
+$tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
+$tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
+display_top_tabs($tab_array);
+
+$rowsprinted = 0;
+?>
+
+<form action="status_lb_pool.php" method="post">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title">Load Balancer Pools</h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Mode")?></th>
+						<th><?=gettext("Servers")?></th>
+						<th><?=gettext("Monitor")?></th>
+						<th><?=gettext("Description")?></th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+foreach ($a_pool as $pool):
+	$rowsprinted++;
+?>
+					<tr>
+						<td>
+							<?=$pool['name']?>
+						</td>
+						<td>
+<?php
+	switch($pool['mode']) {
+		case "loadbalance":
+			echo "Load balancing";
+			break;
+		case "failover":
+			echo "Manual failover";
+			break;
+		default:
+			echo "(default)";
+	}
+?>
+						</td>
+						<td>
+							<table> <!-- Mini-table allows manipulation of cell colors-->
+<?php
+	$pool_hosts=array();
+
+	foreach ((array) $pool['servers'] as $server) {
+		$svr['ip']['addr']=$server;
+		$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
+		$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
+		$pool_hosts[]=$svr;
+	}
+
+	foreach ((array) $pool['serversdisabled'] as $server) {
+		$svr['ip']['addr']="$server";
+		$svr['ip']['state']='disabled';
+		$svr['ip']['avail']='disabled';
+		$pool_hosts[]=$svr;
+	}
+
+	asort($pool_hosts);
+
+	foreach ((array) $pool_hosts as $server) {
+		if($server['ip']['addr']!="") {
+			switch ($server['ip']['state']) {
+				case 'up':
+					$bgcolor = LIGHTGREEN;	// lightgreen
+					$checked = "checked=\"checked\"";
+					break;
+				case 'disabled':
+					$bgcolor = WHITE;
+					$checked = "";
+					break;
+				default:
+					$bgcolor = LIGHTCORAL;	// lightcoral
+					$checked = "checked=\"checked\"";
+			}
+?>
+								<tr>
+<?php
+			switch ($pool['mode']) {
+				case 'loadbalance':
+					print("<td><input type=\"checkbox\" name=\"{$pool['name']}|" . str_replace('.', '_', $server['ip']['addr']) . "\" {$checked} /></td>\n");
+					break;
+				case 'failover':
+					print("<td><input type=\"radio\" name=\"{$pool['name']}\" value=\"{$server['ip']['addr']}\" {$checked} /></td>\n");
+					break;
+			}
+
+			print("<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;");
+
+			if($server['ip']['avail'])
+				print(" ({$server['ip']['avail']}) ");
+?>
+									</td>
+								</tr>
+<?php
 			}
 		}
 ?>
-						</table>
-					</td>
-					<td class="listr" >
-						<?php echo $pool['monitor']; ?>
-					</td>
-					<td class="listbg" >
-						<?=$pool['descr'];?>
-					</td>
-				</tr>
+							</table>
+						</td>
+						<td >
+							<?=$pool['monitor']; ?>
+						</td>
+						<td>
+							<?=htmlspecialchars($pool['descr'])?>
+						</td>
+					</tr>
 <?php
-	endforeach;
+endforeach;
 ?>
-				<tr>
-					<td colspan="5">
-						<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>" />
-						<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>" />
-					</td>
-				</tr>
+				</tbody>
 			</table>
-			</div>
-		</td>
-	</tr>
-</table>
+<?php
+if($rowsprinted > 0) {
+?>
+			<nav class="action-buttons">
+				<input name="Submit" type="submit" class="btn btn-primary" value="<?= gettext("Save"); ?>" />
+				<input name="Reset"	 type="reset"  class="btn btn-danger" value="<?= gettext("Reset"); ?>" />
+			</nav>
+<?php
+}
+?>
+		</div>
+	</div>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc");

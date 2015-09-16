@@ -2,7 +2,7 @@
 /*
 	ntp_status.widget.php
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
+X
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
@@ -89,7 +89,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_la = $gps_vars[4];
 				$gps_lo = $gps_vars[6];
-			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
+			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok  = $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
@@ -105,7 +105,7 @@ if ($_REQUEST['updateme']) {
 				$gps_sat = $gps_vars[7];
 				$gps_la = $gps_vars[3];
 				$gps_lo = $gps_vars[5];
-			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
+			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok  = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
@@ -125,9 +125,9 @@ if ($_REQUEST['updateme']) {
 	if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
 		//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
 		$gpsport = fopen("/dev/gps0", "r+");
-		while ($gpsport) {
+		while($gpsport){
 			$buffer = fgets($gpsport);
-			if (substr($buffer, 0, 6)=='$GPGSV') {
+			if(substr($buffer, 0, 6)=='$GPGSV'){
 				//echo $buffer."\n";
 				$gpgsv = explode(',',$buffer);
 				$gps_satview = $gpgsv[3];
@@ -137,94 +137,78 @@ if ($_REQUEST['updateme']) {
 	}
 ?>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
-	<tbody>
+<table class="table" id="ntp_status_widget">
+	<tr>
+		<th>Server Time</th>
+		<td id="ntpStatusClock">
+			<script>var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');</script>
+			<!-- display initial value before javascript takes over -->
+			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
+		</td>
+	</tr>
+	<tr>
+		<th>Sync Source</th>
+		<td>
+		<?php if ($ntpq_counter == 0): ?>
+			<i>No active peers available</i>
+		<?php else: ?>
+			<?php echo $syncsource; ?>
+		<?php endif; ?>
+		</td>
+	</tr>
+	<?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
 		<tr>
-			<td width="40%" class="vncellt">Sync Source</td>
-			<td width="60%" class="listr">
-			<?php if ($ntpq_counter == 0): ?>
-				No active peers available
-			<?php else: ?>
-				<?php echo $syncsource; ?>
-			<?php endif; ?>
+			<th>Clock location</th>
+			<td>
+				<a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">
+				<?php
+				echo sprintf("%.5f", $gps_lat) . " " . $gps_la . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lo; ?>
+				</a>
+				<?php if (isset($gps_alt)) {echo " (" . $gps_alt . " " . $gps_alt_unit . " alt.)";} ?>
 			</td>
 		</tr>
-		<?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
+		<?php if (isset($gps_sat) || isset($gps_satview)): ?>
 			<tr>
-				<td width="40%" class="vncellt">Clock location</td>
-				<td width="60%" class="listr">
-					<a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">
-					<?php
-					echo sprintf("%.5f", $gps_lat) . " " . $gps_la . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lo;
-					?>
-					</a>
-					<?php
-					if (isset($gps_alt)) {
-						echo " (" . $gps_alt . " " . $gps_alt_unit . " alt.)";
-					}
-					?>
+				<th>Satellites</th>
+				<td>
+				<?php
+				if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}
+				if (isset($gps_sat) && isset($gps_satview)) {echo ', ';}
+				if (isset($gps_sat)) {echo 'in use ' . $gps_sat;}
+				?>
 				</td>
 			</tr>
-			<?php if (isset($gps_sat) || isset($gps_satview)): ?>
-				<tr>
-					<td width="40%" class="vncellt">Satellites</td>
-					<td width="60%" class="listr">
-					<?php
-					if (isset($gps_satview)) {
-						echo 'in view ' . intval($gps_satview);
-					}
-					if (isset($gps_sat) && isset($gps_satview)) {
-						echo ', ';
-					}
-					if (isset($gps_sat)) {
-						echo 'in use ' . $gps_sat;
-					}
-					?>
-					</td>
-				</tr>
-			<?php endif; ?>
 		<?php endif; ?>
-	</tbody>
+	<?php endif; ?>
 </table>
+
 <?php
 	exit;
 }
-
-/*** Clock -- beginning of server-side support code
-by Andrew Shearer, http://www.shearersoftware.com/
-v2.1.2-PHP, 2003-08-07. For updates and explanations, see
-<http://www.shearersoftware.com/software/web-tools/clock/>. ***/
-
-/* Prevent this page from being cached (though some browsers still
-   cache the page anyway, which is why we use cookies). This is
-   only important if the cookie is deleted while the page is still
-   cached (and for ancient browsers that don't know about Cache-Control).
-   If that's not an issue, you may be able to get away with
-   "Cache-Control: private" instead. */
-
-/* Grab the current server time. */
-$gDate = time();
-/* Are the seconds shown by default? When changing this, also change the
-   JavaScript client code's definition of clockShowsSeconds below to match. */
-$gClockShowsSeconds = true;
-
-function getServerDateItems($inDate) {
-	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
-	// year (4-digit),month,day,hours (0-23),minutes,seconds
-	// use intval to strip leading zero from minutes and seconds
-	//   so JavaScript won't try to interpret them in octal
-	//   (use intval instead of ltrim, which translates '00' to '')
-}
-
-function clockDateString($inDate) {
-	return date('Y. F j l',$inDate);    // eg "Monday, January 1, 2002"
-}
-
-function clockTimeString($inDate, $showSeconds) {
-	return date($showSeconds ? 'G:i:s' : 'g:i',$inDate).' ';
-}
-/*** Clock -- end of server-side support code ***/
 ?>
+<script>
+function ntpWidgetUpdateFromServer(){
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/ntp_status.widget.php',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			console.log(data);
+			$('#ntp_status_widget').html(data);
+		}
+	});
+}
+
+function ntpWidgetUpdateDisplay(){
+	// Javascript handles overflowing
+	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
+
+	$('#ntpStatusClock').html(ntpServerTime.toString());
+}
 
 <script type="text/javascript">
 //<![CDATA[

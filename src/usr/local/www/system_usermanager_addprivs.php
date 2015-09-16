@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	auth
+	pfSense_MODULE: auth
 */
 
 ##|+PRIV
@@ -52,6 +52,7 @@ $pgtitle = array("System", "User manager", "Add privileges");
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
 }
+
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
 }
@@ -107,7 +108,23 @@ if ($_POST) {
 
 		exit;
 	}
+
 	conf_mount_ro();
+}
+
+function build_priv_list() {
+	global $priv_list, $a_user;
+
+	$list = array();
+
+	foreach($priv_list as $pname => $pdata) {
+		if (in_array($pname, $a_user['priv']))
+			continue;
+
+		$list[$pname] = $pdata['name'];
+	}
+
+	return($list);
 }
 
 /* if ajax is calling, give them an update message */
@@ -116,105 +133,82 @@ if (isAjax()) {
 }
 
 include("head.inc");
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+$tab_array = array();
+$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
+$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('User privileges');
+
+$section->addInput(new Form_Select(
+	'sysprivs',
+	'System',
+	null,
+	build_priv_list(),
+	true
+))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
+
+if (isset($userid)) {
+	$section->addInput(new Form_Input(
+	'userid',
+	null,
+	'hidden',
+	$userid
+	));
+}
+
+$form->add($section);
+
+print($form);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
-<script type="text/javascript">
+<div class="panel panel-body alert-info" id="pdesc">Select a privilege from the list above for a description"</div>
+
+<script>
 //<![CDATA[
+events.push(function(){
 
 <?php
 
-if (is_array($priv_list)) {
-	$id = 0;
+	// Build a list of privilege descriptions
+	if (is_array($priv_list)) {
+		$id = 0;
 
-	$jdescs = "var descs = new Array();\n";
-	foreach ($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_user['priv'])) {
-			continue;
+		$jdescs = "var descs = new Array();\n";
+		foreach ($priv_list as $pname => $pdata) {
+			if (in_array($pname, $a_user['priv'])) {
+				continue;
+			}
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
+			$jdescs .= "descs[{$id}] = '{$desc}';\n";
+			$id++;
 		}
-		$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
-		$jdescs .= "descs[{$id}] = '{$desc}';\n";
-		$id++;
+
+		echo $jdescs;
 	}
-
-	echo $jdescs;
-}
-
 ?>
+	// Set the number of options to display
+	$('.multiselect').attr("size","20");
 
-function update_description() {
-	var index = document.iform.sysprivs.selectedIndex;
-	document.getElementById("pdesc").innerHTML = descs[index];
-}
-
+	// When the 'sysprivs" selector is clicked, we display a description
+	$('.multiselect').click(function() {
+		$('#pdesc').html(descs[$(this).children('option:selected').index()]);
+	});
+});
 //]]>
 </script>
-<?php
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager add privileges">
-	<tr>
-		<td>
-		<?php
-			$tab_array = array();
-			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
-			$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
-			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
-			display_top_tabs($tab_array);
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td id="mainarea">
-			<div class="tabcont">
-				<form action="system_usermanager_addprivs.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
-							<td width="78%" class="vtable">
-								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple="multiple" size="35">
-									<?php
-										foreach ($priv_list as $pname => $pdata):
-											if (in_array($pname, $a_user['priv'])) {
-												continue;
-											}
-									?>
-									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
-									<?php endforeach; ?>
-								</select>
-								<br />
-								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
-							</td>
-						</tr>
-						<tr height="60">
-							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-							<td width="78%" valign="top" class="vtable" id="pdesc">
-								<em><?=gettext("Select a privilege from the list above for a description"); ?></em>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%">
-								<input id="submitt" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
-								<?php if (isset($userid)): ?>
-								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />
-								<?php endif; ?>
-							</td>
-						</tr>
-					</table>
-				</form>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php include("foot.inc");

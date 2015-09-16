@@ -97,7 +97,6 @@ if (isset($id) && $a_allowedips[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -156,6 +155,7 @@ if ($_POST) {
 		} else {
 			$a_allowedips[] = $ip;
 		}
+
 		allowedips_sort();
 
 		write_config();
@@ -173,10 +173,12 @@ if ($_POST) {
 					$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
 				}
 			}
+
 			$rules .= captiveportal_allowedip_configure_entry($ip);
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 			}
+
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
@@ -188,66 +190,74 @@ if ($_POST) {
 	}
 }
 
+function build_dir_list() {
+	$dirs = array(gettext("Both"),gettext("From"),gettext("To"));
+	$dirlist = array();
+
+	foreach ($dirs as $dir) {
+		$dirlist[strtolower($dir)] = $dir;
+	}
+
+	return($dirlist);
+}
+
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal allow ip edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit allowed ip rule");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>" />
-				/<select name='sn' class="formselect" id='sn'>
-				<?php for ($i = 32; $i >= 1; $i--): ?>
-					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected=\"selected\""; ?>><?=$i;?></option>
-				<?php endfor; ?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("IP address and subnet mask. Use /32 for a single IP");?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this IP address in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a download limit to be enforced on this IP address in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
-				<?php if (isset($id) && $a_allowedips[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Edit Captive Portal IP rule');
+
+$section->addInput(new Form_IpAddress(
+	'ip',
+	'IP Address',
+	$pconfig['ip']
+))->addMask(sn, $pconfig['sn'], 32);
+
+
+$section->addInput(new Form_Select(
+	'dir',
+	'Direction',
+	strtolower($pconfig['dir']),
+	build_dir_list()
+))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .
+			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this IP.');
+
+$section->addInput(new Form_Input(
+	'bw_up',
+	'Bandwidth up',
+	'text',
+	$pconfig['bw_up']
+))->setHelp('Enter an upload limit to be enforced on this address in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'bw_down',
+	'Bandwidth down',
+	'text',
+	$pconfig['bw_down']
+))->setHelp('Enter a download limit to be enforced on this address in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'zone',
+	null,
+	'hidden',
+	$cpzone
+));
+
+if (isset($id) && $a_allowedips[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

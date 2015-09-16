@@ -1919,12 +1919,12 @@ function update_output_window($text) {
 	global $pkg_interface;
 	$log = preg_replace("/\n/", "\\n", $text);
 	if ($pkg_interface != "console") {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\nthis.document.forms[0].output.value = \"" . $log . "\";";
-		echo "\nthis.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;";
-		echo "\n//]]>";
-		echo "\n</script>";
+?>
+<script>
+	document.getElementById("output").textContent="<?=htmlspecialchars($log)?>";
+	document.getElementById("output").scrollTop = document.getElementById("output").scrollHeight;
+</script>
+<?php
 	}
 	/* ensure that contents are written out */
 	ob_flush();
@@ -1938,12 +1938,9 @@ function update_status($status) {
 	if ($pkg_interface == "console") {
 		echo "\r{$status}";
 	} else {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\nthis.document.forms[0].status.value=\"" . $status . "\";";
-		echo "\n//]]>";
-		echo "\n</script>";
+		echo '<script>document.getElementById("status").innerText="'. htmlspecialchars($status).'";</script>';
 	}
+
 	/* ensure that contents are written out */
 	ob_flush();
 }
@@ -1957,11 +1954,7 @@ function update_progress_bar($percent, $first_time) {
 		$percent = 1;
 	}
 	if ($pkg_interface <> "console") {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-		echo "\n//]]>";
-		echo "\n</script>";
+		echo '<script>document.getElementById("progressbar").style.width="'. $percent.'%";</script>';
 	} else {
 		if (!($first_time)) {
 			echo "\x08\x08\x08\x08\x08";
@@ -2839,13 +2832,6 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	}
 
 	if ($check_localip) {
-		if (is_array($config['pptpd']) && !empty($config['pptpd']['localip']) && (strcasecmp($ipaddr, $config['pptpd']['localip']) == 0)) {
-			$where_entry = array();
-			$where_entry['if'] = 'pptp';
-			$where_entry['ip_or_subnet'] = $config['pptpd']['localip'];
-			$where_configured[] = $where_entry;
-		}
-
 		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
 			$where_entry = array();
 			$where_entry['if'] = 'l2tp';

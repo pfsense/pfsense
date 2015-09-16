@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnsresolver
+	pfSense_MODULE: dnsresolver
 */
 
 ##|+PRIV
@@ -43,15 +43,8 @@
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
-}
-
-if (!is_array($config['unbound']['domainoverrides'])) {
+if (!is_array($config['unbound']['domainoverrides']))
 	$config['unbound']['domainoverrides'] = array();
-}
 
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
@@ -128,56 +121,44 @@ $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Dom
 $shortcut_section = "resolver";
 include("head.inc");
 
-?>
+require_once('classes/Form.class.php');
 
-<body>
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="services_unbound_domainoverride_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="domain override">
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
-				<td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" /><br />
-					<span class="vexpl">
-						<?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)"); ?><br />
-						<?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em> <?=gettext("or"); ?> <em>mycompany.localdomain</em> <?=gettext("or"); ?> <em>1.168.192.in-addr.arpa</em>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
-				<td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" /><br />
-					<span class="vexpl">
-						<?=gettext("IP address of the authoritative DNS server for this domain"); ?><br />
-						<?=gettext("e.g."); ?> <em>192.168.100.100</em><br />
-						<?=gettext("To use a nondefault port for communication, append an '@' with the port number."); ?><br />
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br />
-					<span class="vexpl">
-						<?=gettext("You may enter a description here for your reference (not parsed).");?>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-					<input name="referer" type="hidden" value="<?=$referer;?>" />
-					<?php if (isset($id) && $a_domainOverrides[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<?php endif; ?>
-				</td>
-			</tr>
-		</table>
-	</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$form = new Form();
+
+$section = new Form_Section('Domain Override');
+
+$section->addInput(new Form_Input(
+	'domain',
+	'Domain',
+	'text',
+	$pconfig['domain']
+))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: testormycompany.localdomainor1.168.192.in-addr.arpa');
+
+$section->addInput(new Form_IpAddress(
+	'ip',
+	'IP Address',
+	$pconfig['ip']
+))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100' . '<br />' .
+			'To use a nondefault port for communication, append an \'@\' with the port number.');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+if (isset($id) && $a_domainOverrides[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+
+print $form;
+
+include("foot.inc");

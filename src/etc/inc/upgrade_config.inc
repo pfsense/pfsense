@@ -3861,4 +3861,102 @@ function upgrade_120_to_121() {
 	}
 }
 
+function upgrade_121_to_122() {
+	global $config;
+
+	// PPTP server was removed
+	if (isset($config['pptpd'])) {
+		unset($config['pptpd']);
+	}
+
+	// Cleanup firewall rules
+	if (isset($config['filter']['rule']) && is_array($config['filter']['rule'])) {
+		$rules =& $config['filter']['rule'];
+		$last_rule = count($rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($rules[$i]['interface']) && $rules[$i]['interface'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+			if (isset($rules[$i]['source']['network']) && $rules[$i]['source']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+			if (isset($rules[$i]['destination']['network']) && $rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup 1:1 NAT rules
+	if (isset($config['nat']['onetoone']) && is_array($config['nat']['onetoone'])) {
+		$onetoone =& $config['nat']['onetoone'];
+		$last_rule = count($onetoone) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($onetoone[$i]['interface']) && $onetoone[$i]['interface'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+			if (isset($onetoone[$i]['source']['network']) && $onetoone[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+			if (isset($onetoone[$i]['destination']['network']) && $onetoone[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup npt NAT rules
+	if (isset($config['nat']['npt']) && is_array($config['nat']['npt'])) {
+		$npt =& $config['nat']['npt'];
+		$last_rule = count($npt) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($npt[$i]['interface']) && $npt[$i]['interface'] == 'pptp') {
+				unset($config['nat']['npt'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup Port-forward NAT rules
+	if (isset($config['nat']['rule']) && is_array($config['nat']['rule'])) {
+		$nat_rules =& $config['nat']['rule'];
+		$last_rule = count($nat_rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($nat_rules[$i]['interface']) && $nat_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+			if (isset($nat_rules[$i]['source']['network']) && $nat_rules[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+			if (isset($nat_rules[$i]['destination']['network']) && $nat_rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup Port-forward NAT rules
+	if (isset($config['nat']['outbound']['rule']) && is_array($config['nat']['outbound']['rule'])) {
+		$out_rules =& $config['nat']['outbound']['rule'];
+		$last_rule = count($out_rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($out_rules[$i]['interface']) && $out_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['outbound']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+}
+
 ?>

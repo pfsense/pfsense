@@ -225,183 +225,79 @@ $shortcut_section = "routing";
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+if ($savemsg)
+	print_info_box($savemsg);
+if (is_subsystem_dirty('staticroutes'))
+	print_info_box_np(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+
+$tab_array = array();
+$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
+$tab_array[1] = array(gettext("Routes"), true, "system_routes.php");
+$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
+display_top_tabs($tab_array);
+
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="system_routes.php" method="post">
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /></p>
-<?php endif; ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system routes">
+<table class="table">
+<thead>
 	<tr>
-		<td>
-		<?php
-			$tab_array = array();
-			$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
-			$tab_array[1] = array(gettext("Routes"), true, "system_routes.php");
-			$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
-			display_top_tabs($tab_array);
-		?>
-		</td>
+		<th></th>
+		<th><?=gettext("Network")?></th>
+		<th><?=gettext("Gateway")?></th>
+		<th><?=gettext("Interface")?></th>
+		<th><?=gettext("Description")?></th>
+		<th></th>
 	</tr>
-	<tr>
+</thead>
+<tbody>
+<?php
+foreach ($a_routes as $i => $route):
+	if (isset($route['disabled']))
+		$icon = 'icon-ban-circle';
+	else
+		$icon = 'icon-ok-circle';
+?>
+	<tr<?=($icon != 'icon-ok-circle')? ' class="disabled"' : ''?>>
+		<td><i class="icon <?=$icon?>"></i></td>
 		<td>
-			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-					<tr id="frheader">
-						<td width="2%" class="list">&nbsp;</td>
-						<td width="2%" class="list">&nbsp;</td>
-						<td width="22%" class="listhdrr"><?=gettext("Network");?></td>
-						<td width="20%" class="listhdrr"><?=gettext("Gateway");?></td>
-						<td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
-						<td width="29%" class="listhdr"><?=gettext("Description");?></td>
-						<td width="10%" class="list">
-							<table border="0" cellspacing="0" cellpadding="1" summary="add">
-								<tr>
-									<td width="17"></td>
-									<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<?php
-					$i = 0;
-					foreach ($a_routes as $route):
-					?>
-					<tr valign="top" id="fr<?=$i;?>">
-					<?php
-						$iconfn = "pass";
-						if (isset($route['disabled'])) {
-							$textss = "<span class=\"gray\">";
-							$textse = "</span>";
-							$iconfn .= "_d";
-						} else {
-							$textss = $textse = "";
-						}
-					?>
-						<td class="listt">
-							<input type="checkbox" id="frc<?=$i;?>" name="route[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
-						</td>
-						<td class="listt" align="center">
-							<a href="?act=toggle&amp;id=<?=$i;?>">
-								<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0"
-									title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
-							</a>
-						</td>
-						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-							<?=$textss;?><?=strtolower($route['network']);?><?=$textse;?>
-						</td>
-						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-							<?=$textss;?>
-							<?php
-								echo htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway']);
-							?>
-							<?=$textse;?>
-						</td>
-						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-							<?=$textss;?>
-							<?php
-								echo convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface']) . " ";
-							?>
-							<?=$textse;?>
-						</td>
-						<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-							<?=$textss;?><?=htmlspecialchars($route['descr']);?>&nbsp;<?=$textse;?>
-						</td>
-						<td class="list nowrap" valign="middle">
-							<table border="0" cellspacing="0" cellpadding="1" summary="move">
-								<tr>
-									<td>
-										<input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>"
-											src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif"
-											title="<?=gettext("move selected routes before this route");?>"
-											type="image" style="height:17;width:17;border:0" />
-									</td>
-									<td>
-										<a href="system_routes_edit.php?id=<?=$i;?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit route");?>" alt="edit" />
-										</a>
-									</td>
-								</tr>
-								<tr>
-									<td align="center" valign="middle">
-										<a href="system_routes.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this route?");?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete route");?>" alt="delete" />
-										</a>
-									</td>
-									<td>
-										<a href="system_routes_edit.php?dup=<?=$i;?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new route based on this one");?>" width="17" height="17" border="0" alt="duplicate" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<?php
-						$i++;
-					endforeach;
-					?>
-					<tr>
-						<td class="list" colspan="6"></td>
-						<td class="list nowrap" valign="middle">
-							<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-								<tr>
-									<td>
-<?php
-									if ($i == 0):
-?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17"
-											title="<?=gettext("move selected routes to end");?>" border="0" alt="move" />
-<?php
-									else:
-?>
-										<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif"
-											style="width:17;height:17;border:0" title="<?=gettext("move selected routes to end");?>" />
-<?php
-									endif;
-?>
-									</td>
-									<td>
-										<a href="system_routes_edit.php">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"
-											title="<?=gettext("add new route");?>" alt="add" />
-										</a>
-									</td>
-								</tr>
-								<tr>
-									<td>
-<?php
-									if ($i == 0):
-?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17"
-											title="<?=gettext("delete selected routes");?>" border="0" alt="delete" />
-<?php
-									else:
-?>
-										<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
-											style="width:17;height:17" title="<?=gettext("delete selected routes");?>"
-											onclick="return confirm('<?=gettext("Do you really want to delete the selected routes?");?>')" />
-<?php
-									endif;
-?>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</div>
+			<?=strtolower($route['network'])?>
 		</td>
+		<td>
+			<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
+		</td>
+		<td>
+			<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
+		</td>
+		<td>
+			<?=htmlspecialchars($route['descr'])?>
+		</td>
+		<td>
+			<a class="btn btn-xs btn-primary" href="system_routes_edit.php?id=<?=$i?>">
+				edit
+			</a>
+
+			<a class="btn btn-xs btn-default" href="system_routes_edit.php?dup=<?=$i?>">
+				copy
+			</a>
+
+			<a class="btn btn-xs btn-danger" href="system_routes.php?act=del&amp;id=<?=$i?>">
+				delete
+			</a>
+
+			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">
+				toggle
+			</a>
+		</td>
+<? endforeach?>
 	</tr>
 </table>
-</form>
-<p><b><?=gettext("Note:");?></b>  <?=gettext("Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.");?></p>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<nav class="action-buttons">
+	<a href="system_routes_edit.php" role="button" class="btn btn-success">
+		<?=gettext("add new route")?>
+	</a>
+</nav>
+<?php
+
+include("foot.inc");

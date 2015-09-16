@@ -27,7 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	captiveportal
+	pfSense_MODULE: captiveportal
 */
 
 ##|+PRIV
@@ -52,7 +52,6 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -63,7 +62,7 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
-		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores (_).");
+		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores ( _ ).");
 	}
 
 	foreach ($a_cp as $cpkey => $cpent) {
@@ -85,40 +84,33 @@ if ($_POST) {
 		exit;
 	}
 }
+
 include("head.inc");
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="services_captiveportal_zones_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captive portal edit">
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Captive Portal Zones");?></td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Zone name"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="zone" type="text" class="formfld unknown" id="zone" size="64" />
-					<br />
-					<span class="vexpl"><?=gettext("Zone name. Can only contain letters, digits, and underscores (_)."); ?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" />
-					<br />
-					<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Continue"); ?>" />
-				</td>
-			</tr>
-		</table>
-	</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'submit',
+	'Continue'
+));
+
+$section = new Form_Section('Edit Captive Portal Zones');
+
+$section->addInput(new Form_Input(
+	'zone',
+	'Zone name'
+))->setPattern('[0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Zone description'
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$form->add($section);
+
+print($form);
+
+include("foot.inc");

@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -41,18 +41,11 @@
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_wireless.php');
-}
-
-if (!is_array($config['wireless'])) {
+if (!is_array($config['wireless']))
 	$config['wireless'] = array();
-}
-if (!is_array($config['wireless']['clone'])) {
+
+if (!is_array($config['wireless']['clone']))
 	$config['wireless']['clone'] = array();
-}
 
 $a_clones = &$config['wireless']['clone'];
 
@@ -90,7 +83,6 @@ if (isset($id) && $a_clones[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -111,6 +103,7 @@ if ($_POST) {
 				$clone['cloneif'] = $a_clones[$id]['cloneif'];
 			}
 		}
+
 		if (!$clone['cloneif']) {
 			$clone_id = 1;
 			do {
@@ -135,9 +128,10 @@ if ($_POST) {
 				}
 			}
 		}
+
 		if (!$input_errors) {
 			if (!interface_wireless_clone($clone['cloneif'], $clone)) {
-				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.  The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
+				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.	 The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
 			} else {
 				if (isset($id) && $a_clones[$id]) {
 					if ($clone['if'] != $a_clones[$id]['if']) {
@@ -160,71 +154,79 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
+function build_parent_list() {
+	global $g;
+
+	$parentlist = array();
+	$portlist = get_possible_listen_ips();
+	$count = 0;
+	foreach ($portlist as $ifn => $ifinfo) {
+		if (preg_match($g['wireless_regex'], $ifn)) {
+			$parentlist[$ifn] = htmlspecialchars($ifn . '(' . $ifinfo['mac'] . ')');
+			$count++;
+		}
+	}
+
+	if($count > 0)
+		return($parentlist);
+	else
+		return(array('0' => gettext('None available')));
+}
+
+$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="interfaces_wireless_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces wireless edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Wireless clone configuration");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
-			<td width="78%" class="vtable">
-				<select name="if" class="formselect">
-				<?php
-					foreach ($portlist as $ifn => $ifinfo) {
-						if (preg_match($g['wireless_regex'], $ifn)) {
-							echo "<option value=\"{$ifn}\"";
-							if ($ifn == $pconfig['if']) {
-								echo " selected=\"selected\"";
-							}
-							echo ">";
-							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-							echo "</option>";
-						}
-					}
-				?>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Mode");?></td>
-			<td class="vtable">
-				<select name="mode" class="formselect">
-					<option <?php if ($pconfig['mode'] == 'bss') echo "selected=\"selected\"";?> value="bss"><?=gettext("Infrastructure (BSS)");?></option>
-					<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected=\"selected\"";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)");?></option>
-					<option <?php if ($pconfig['mode'] == 'hostap') echo "selected=\"selected\"";?> value="hostap"><?=gettext("Access Point");?></option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input type="hidden" name="cloneif" value="<?=htmlspecialchars($pconfig['cloneif']); ?>" />
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_clones[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Wireless Interface');
+
+$section->addInput(new Form_Select(
+	'parent',
+	'Parent Interface',
+	$pconfig['if'],
+	build_parent_list()
+));
+
+$section->addInput(new Form_Select(
+	'mode',
+	'Mode',
+	$pconfig['mode'],
+	array(
+		'bss' => 'Infrastructure (BSS)',
+		'adhoc' => 'Ad-hoc (IBSS)',
+		'hostap' => 'Access Point'
+	)
+));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$section->addInput(new Form_Input(
+	'cloneif',
+	null,
+	'hidden',
+	$pconfig['cloneif']
+));
+
+if (isset($id) && $a_clones[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

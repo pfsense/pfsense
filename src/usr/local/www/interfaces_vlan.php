@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -86,80 +86,56 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("Interfaces"), gettext("VLAN"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include('head.inc');
 
-?>
+if ($input_errors) print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces vlan">
-	<tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), true, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), true, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+display_top_tabs($tab_array);
+
+print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
+		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
+		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
+		'%s handbook for information on supported cards.'),$g['product_name']));
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-				<tr>
-					<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("VLAN tag");?></td>
-					<td width="50%" class="listhdr"><?=gettext("Description");?></td>
-					<td width="10%" class="list"></td>
-				</tr>
+<div class="table-responsive">
+	<table class="table">
+		<tr>
+			<th><?=gettext('Interface');?></th>
+			<th><?=gettext('VLAN tag');?></th>
+			<th><?=gettext('Description');?></th>
+		</tr>
 <?php
 	$i = 0;
-	foreach ($a_vlans as $vlan):
+	foreach ($a_vlans as $vlan) {
 ?>
-				<tr ondblclick="document.location='interfaces_vlan_edit.php?id=<?=$i;?>'">
-					<td class="listlr">
-						<?=htmlspecialchars($vlan['if']);?>
-					</td>
-					<td class="listr">
-						<?=htmlspecialchars($vlan['tag']);?>
-					</td>
-					<td class="listbg">
-						<?=htmlspecialchars($vlan['descr']);?>&nbsp;
-					</td>
-					<td valign="middle" class="list nowrap"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-						&nbsp;<a href="interfaces_vlan.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this VLAN?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
-					</td>
-				</tr>
+		<tr>
+			<td><?=htmlspecialchars($vlan['if']);?></td>
+			<td><?=htmlspecialchars($vlan['tag']);?></td>
+			<td><?=htmlspecialchars($vlan['descr']);?></td>
+			<td>
+				<a class="btn btn-primary btn-xs" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
+				<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td>
+			</td>
+		</tr>
+		<?php
+			$i++;
+	}
+?>
+	</table>
+	<nav class="action-buttons">
+		<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+	</nav>
+</div>
 <?php
-		$i++;
-	endforeach;
-?>
-				<tr>
-					<td class="list" colspan="3">&nbsp;</td>
-					<td class="list"> <a href="interfaces_vlan_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-				</tr>
-				<tr>
-					<td colspan="3" class="list"><p class="vexpl">
-						<span class="red"><strong>
-							<?=gettext("Note:");?><br />
-						</strong></span>
-						<?php printf(gettext("Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?> </p>
-					</td>
-					<td class="list">&nbsp;</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

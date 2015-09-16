@@ -58,149 +58,121 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("Services"), gettext("RFC 2136 clients"));
 include("head.inc");
+
+$tab_array = array();
+$tab_array[] = array(gettext("DynDns"), false, "services_dyndns.php");
+$tab_array[] = array(gettext("RFC 2136"), true, "services_rfc2136.php");
+display_top_tabs($tab_array);
+
+if ($input_errors)
+    print_input_errors($input_errors);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="services_rfc2136.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rfc2136">
-	<tr>
-		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("DynDns"), false, "services_dyndns.php");
-	$tab_array[] = array(gettext("RFC 2136"), true, "services_rfc2136.php");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
 				<tr>
-					<td width="5%"  class="listhdrr"><?=gettext("If");?></td>
-					<td width="15%" class="listhdrr"><?=gettext("Server");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
-					<td width="25%" class="listhdrr"><?=gettext("Cached IP");?></td>
-					<td width="25%" class="listhdr"><?=gettext("Description");?></td>
-					<td width="10%" class="list"></td>
-				</tr>
+        		    <th><?=gettext("If")?></th>
+        		    <th><?=gettext("Server")?></th>
+        		    <th><?=gettext("Hostname")?></th>
+        		    <th><?=gettext("Cached IP")?></th>
+        		    <th><?=gettext("Description")?></th>
+		            <th></th>
+		        </tr>
+		    </thead>
+		    <tbody>
 <?php
-	$i = 0;
-	foreach ($a_rfc2136 as $rfc2136):
+
+
+$iflist = get_configured_interface_with_descr();
+
+$i = 0;
+foreach ($a_rfc2136 as $rfc2136):
 ?>
-				<tr ondblclick="document.location='services_rfc2136_edit.php?id=<?=$i;?>'">
-					<td class="listlr">
+		        <tr <?=(isset($rfc2136['enable']) ? '' : 'class="disabled"')?>">
+		            <td>
 <?php
-		$iflist = get_configured_interface_with_descr();
-		foreach ($iflist as $if => $ifdesc) {
-			if ($rfc2136['interface'] == $if) {
-				if (!isset($rfc2136['enable'])) {
-					echo "<span class=\"gray\">{$ifdesc}</span>";
-				} else {
-					echo "{$ifdesc}";
-				}
-				break;
-			}
-		}
+	foreach ($iflist as $if => $ifdesc) {
+	    if ($rfc2136['interface'] == $if) {
+	        print($ifdesc);
+			break;
+	    }
+	}
 ?>
-					</td>
-					<td class="listr">
+		            </td>
+		            <td>
+		                <?=htmlspecialchars($rfc2136['server'])?>
+		            </td>
+		            <td>
+		                <?=htmlspecialchars($rfc2136['host'])?>
+		            </td>
+		            <td>
 <?php
-		if (!isset($rfc2136['enable'])) {
-			echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['server']) . "</span>";
-		} else {
-			echo htmlspecialchars($rfc2136['server']);
-		}
+	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+
+	if (file_exists($filename)) {
+		print('IPv4: ');
+		if (isset($rfc2136['usepublicip']))
+			$ipaddr = dyndnsCheckIP($rfc2136['interface']);
+		else
+			$ipaddr = get_interface_ip($rfc2136['interface']);
+
+		$cached_ip_s = explode("|", file_get_contents($filename));
+		$cached_ip = $cached_ip_s[0];
+
+		if ($ipaddr != $cached_ip)
+			print('<font color="red">');
+		else
+			print('<font color="green">');
+
+		print(tmlspecialchars($cached_ip));
+		print('</font>');
+	} else {
+		print('IPv4: N/A');
+	}
+
+	print('<br />');
+
+	if (file_exists("{$filename}.ipv6")) {
+		print('IPv6: ');
+		$ipaddr = get_interface_ipv6($rfc2136['interface']);
+		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
+		$cached_ip = $cached_ip_s[0];
+
+		if ($ipaddr != $cached_ip)
+			print('<font color="red">');
+		else
+			print('<font color="green">');
+
+		print(htmlspecialchars($cached_ip));
+		print('</font>');
+	} else {
+		print('IPv6: N/A');
+	}
+
 ?>
+		            </td>
+		            <td>
+		                <?=htmlspecialchars($rfc2136['descr'])?>
+		            </td>
+		            <td>
+						<a href="services_rfc2136_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="services_rfc2136.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
 					</td>
-					<td class="listr">
+		        </tr>
 <?php
-		if (!isset($rfc2136['enable'])) {
-			echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['host']) . "</span>";
-		} else {
-			echo htmlspecialchars($rfc2136['host']);
-		}
-?>
-					</td>
-					<td class="listr">
-<?php
-		$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
-		if (file_exists($filename)) {
-			echo "IPv4: ";
-			if (isset($rfc2136['usepublicip'])) {
-				$ipaddr = dyndnsCheckIP($rfc2136['interface']);
-			} else {
-				$ipaddr = get_interface_ip($rfc2136['interface']);
-			}
-			$cached_ip_s = explode("|", file_get_contents($filename));
-			$cached_ip = $cached_ip_s[0];
-			if ($ipaddr <> $cached_ip) {
-				echo "<font color='red'>";
-			} else {
-				echo "<font color='green'>";
-			}
-			echo htmlspecialchars($cached_ip);
-			echo "</font>";
-		} else {
-			echo "IPv4: N/A";
-		}
-		echo "<br />";
-		if (file_exists("{$filename}.ipv6")) {
-			echo "IPv6: ";
-			$ipaddr = get_interface_ipv6($rfc2136['interface']);
-			$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
-			$cached_ip = $cached_ip_s[0];
-			if ($ipaddr <> $cached_ip) {
-				echo "<font color='red'>";
-			} else {
-				echo "<font color='green'>";
-			}
-			echo htmlspecialchars($cached_ip);
-			echo "</font>";
-		} else {
-			echo "IPv6: N/A";
-		}
-?>
-					</td>
-					<td class="listbg">
-<?php
-		if (!isset($rfc2136['enable'])) {
-			echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['descr']) . "</span>";
-		} else {
-			echo htmlspecialchars($rfc2136['descr']);
-		}
-?>
-					</td>
-					<td valign="middle" class="list nowrap">
-						<a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-						&nbsp;<a href="services_rfc2136.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
-					</td>
-				</tr>
-<?php
-		$i++;
-	endforeach;
-?>
-				<tr>
-					<td class="list" colspan="5">&nbsp;</td>
-					<td class="list">
-						<a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3" class="list">
-						<p class="vexpl"><span class="red"><strong><br /></strong></span></p>
-					</td>
-					<td class="list">&nbsp;</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
+    $i++;
+endforeach; ?>
+
+		    </tbody>
+        </table>
+    </div>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<nav class="action-buttons">
+	<a href="services_rfc2136_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+</nav>
+
+<?php
+include("foot.inc");

@@ -63,66 +63,52 @@ $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vou
 $shortcut_section = "captiveportal-vouchers";
 
 include("head.inc");
-?>
-<body>
-<?php include("fbegin.inc"); ?>
 
-<form action="status_captiveportal_test.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
-	<tr><td class="tabnavtbl">
-<?php
-		$tab_array = array();
-		$tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
-		$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
-		$tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
-		$tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.php?zone={$cpzone}");
-		$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
-		display_top_tabs($tab_array);
-?>
-	</td></tr>
-	<tr>
-		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="content pane">
-				<tr>
-					<td valign="top" class="vncellreq"><?=gettext("Voucher(s)"); ?></td>
-					<td class="vtable">
-						<textarea name="vouchers" cols="65" rows="3" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
-						<br />
-						<?=gettext("Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher"); ?>.
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
-						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-</form>
-<br/>
-<?php
+$tab_array = array();
+$tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+$form = new Form;
+
+$section = new Form_Section('Test Vouchers');
+
+$section->addInput(new Form_Textarea(
+	'vouchers',
+	'Vouchers',
+	$_POST['vouchers']
+))->setHelp('Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher.');
+
+$section->addInput(new Form_Input(
+	'zone',
+	null,
+	'hidden',
+	$cpzone
+));
+
+$form->add($section);
+print($form);
+
 if ($_POST) {
 	if ($_POST['vouchers']) {
 		$test_results = voucher_auth($_POST['vouchers'], 1);
-		echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\" summary=\"results\">\n";
+		$output = "";
+
 		foreach ($test_results as $result) {
 			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				echo "<tr><td bgcolor=\"#D9DEE8\"><img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" alt=\"pass\" /></td>";
-				echo "<td bgcolor=\"#D9DEE8\">$result</td></tr>";
+				$output .= '<font color="green">' . htmlspecialchars($result) . '</font>' . '<br />';
 			} else {
-				echo "<tr><td bgcolor=\"#FFD9D1\"><img src=\"/themes/{$g['theme']}/images/icons/icon_block.gif\" alt=\"block\" /></td>";
-				echo "<td bgcolor=\"#FFD9D1\">$result</td></tr>";
+				$output .= '<font color="red">' . htmlspecialchars($result) . '</font>' . '<br />';
 			}
 		}
-		echo "</table>";
+
+		print_info_box($output);
 	}
 }
 
-include("fend.inc");
-?>
-</body>
-</html>
+include("foot.inc");

@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	pkgs
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -56,108 +56,60 @@ if ($_POST) {
 		}
 		write_config();
 	}
+
+	write_config();
 }
 
 $curcfg = $config['system']['altpkgrepo'];
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Settings"));
 include("head.inc");
-?>
-<script type="text/javascript">
-//<![CDATA[
 
-function enable_altpkgrepourl(enable_over) {
-	if (document.iform.alturlenable.checked || enable_over) {
-		document.iform.pkgrepourl.disabled = 0;
-	} else {
-		document.iform.pkgrepourl.disabled = 1;
-	}
-}
+// Print package server mismatch warning. See https://redmine.pfsense.org/issues/484
+if (!verify_all_package_servers())
+	print_info_box(package_server_mismatch_message());
 
-//]]>
-</script>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc");
+// Print package server SSL warning. See https://redmine.pfsense.org/issues/484
+if (check_package_server_ssl() === false)
+	print_info_box(package_server_ssl_failure_message());
 
-	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-	if (!verify_all_package_servers()) {
-		print_info_box(package_server_mismatch_message());
-	}
+if ($savemsg)
+	print_info_box($savemsg);
 
-	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-	if (check_package_server_ssl() === false) {
-		print_info_box(package_server_ssl_failure_message());
-	}
-?>
+$version = file_get_contents("/etc/version");
+$tab_array = array();
+$tab_array[] = array(sprintf(gettext("%s packages"), $version), false, "pkg_mgr.php");
+$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
+$tab_array[] = array(gettext("Package Settings"), true, "pkg_mgr_settings.php");
+display_top_tabs($tab_array);
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+print_info_box(gettext('This page allows an alternate package repository to be configured, primarily for temporary use as a testing mechanism.' .
+					   'The contents of unofficial packages servers cannot be verified and may contain malicious files.' .
+					   'The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied.' .
+					   'A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use.'), 'default');
 
-<form action="pkg_mgr_settings.php" method="post" name="iform" id="iform">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager settings">
-	<tr>
-		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(sprintf(gettext("%s packages"), $g['product_version']), false, "pkg_mgr.php");
-	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
-	$tab_array[] = array(gettext("Package Settings"), true, "pkg_mgr_settings.php");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-						<td colspan="2" valign="top" class="vncell">
-							<?php echo gettext("This page allows an alternate package repository to be configured, primarily for temporary use as a testing mechanism."); ?>
-							<?php echo gettext("The contents of unofficial packages servers cannot be verified and may contain malicious files."); ?>
-							<?php echo gettext("The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied."); ?>
-							<br/><br/>
-							<?php echo gettext("A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use."); ?>
-							<br/><br/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("Package Repository URL");?></td>
-					</tr>
-					<tr>
-						<td valign="top" class="vncell"><?=gettext("Package Repository URL");?></td>
-						<td class="vtable">
-							<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altpkgrepourl()" <?php if (isset($curcfg['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a non-official server for packages");?> <br />
-							<table summary="alternative URL">
-								<tr>
-									<td><?=gettext("Base URL:");?></td>
-									<td>
-										<input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if ($curcfg['xmlrpcbaseurl']) echo htmlspecialchars($curcfg['xmlrpcbaseurl']); else echo $g['']; ?>" />
-									</td>
-								</tr>
-							</table>
-							<span class="vexpl">
-								<?php printf(gettext("This is where %s will check for packages when the"), $g['product_name']);?> <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
-							</span>
-						</td>
-					</tr>
-	<script type="text/javascript">
-	//<![CDATA[
-	enable_altpkgrepourl();
-	//]]>
-	</script>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Alternate package repository');
+
+$section->addInput(new Form_Checkbox(
+	'alturlenable',
+	'Enable Alternate',
+	'Use a non-official server for packages',
+	$curcfg['enable']
+))->toggles('.form-group:not(:first-child)');
+
+$section->addInput(new Form_Input(
+	'pkgrepourl',
+	'Package Repository URL',
+	'text',
+	$curcfg['xmlrpcbaseurl'] ? $curcfg['xmlrpcbaseurl'] : $g['']
+))->setHelp(sprintf("This is where %s will check for packages when the",$g['product_name']) .
+			'<a href="pkg_mgr.php">' . ' ' . 'System: Packages' . ' </a>' . 'page is viewed.');
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

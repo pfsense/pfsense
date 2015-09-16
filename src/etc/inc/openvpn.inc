@@ -1323,7 +1323,7 @@ function openvpn_get_active_clients() {
 			$client['vpnid'] = $settings['vpnid'];
 			$client['mgmt'] = "client{$client['vpnid']}";
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$client['mgmt']}.sock";
-			$client['status'] = "down";
+			$client['status']="down";
 
 			$clients[] = openvpn_get_client_status($client, $socket);
 		}

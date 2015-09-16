@@ -1,33 +1,59 @@
 <?php
 /*
 	services_dhcp_relay.php
-
-	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
-	Copyright (C) 2010 	Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  22003-2004 Justin Ellison <justin@techadvise.com>
+ *  Copyright (c)  22010 	Ermal Luçi
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
 	pfSense_MODULE:	dhcprelay
 */
@@ -40,17 +66,29 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once('classes/Form.class.php');
 
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
+
 if (empty($config['dhcrelay']['interface'])) {
 	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
 }
-$pconfig['server'] = $config['dhcrelay']['server'];
+
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 
-$iflist = get_configured_interface_with_descr();
+$iflist = array_intersect_key(
+	get_configured_interface_with_descr(),
+	array_flip(
+		array_filter(
+			array_keys(get_configured_interface_with_descr()),
+			function($if) {
+				return is_ipaddr(get_interface_ip($if));
+			}
+		)
+	)
+);
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -67,8 +105,8 @@ if (is_array($config['dhcpd'])) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
+	
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -78,21 +116,31 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+		$svrlist = '';
+		
 		if ($_POST['server']) {
-			$checksrv = explode(",", $_POST['server']);
-			foreach ($checksrv as $srv) {
-				if (!is_ipaddr($srv)) {
+			foreach($_POST['server'] as $checksrv => $srv) {
+				if (!is_ipaddr($srv[0]))
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
+					
+				if(!empty($srv[0])) { // Filter out any empties
+					if(!empty($svrlist))
+						$svrlist .= ',';
+											
+					$svrlist .= $srv[0];
 				}
 			}
 		}
 	}
 
+	// Now $svrlist is a comma separated list of servers ready to save to the config system
+	$pconfig['server'] = $svrlist;
+	
 	if (!$input_errors) {
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay']['server'] = $_POST['server'];
+		$config['dhcrelay']['server'] = $pconfig['server'];
 
 		write_config();
 
@@ -108,109 +156,74 @@ $pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");
 
-?>
+if ($dhcpd_enabled) {
+	echo '<div class="alert alert-danger">DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.</div>';
+	include("foot.inc");
+	exit;
+}
 
-<script type="text/javascript">
-//<![CDATA[
-function enable_change(enable_over) {
-	if (document.iform.enable.checked || enable_over) {
-		document.iform.server.disabled = 0;
-		document.iform.interface.disabled = 0;
-		document.iform.agentoption.disabled = 0;
-	} else {
-		document.iform.server.disabled = 1;
-		document.iform.interface.disabled = 1;
-		document.iform.agentoption.disabled = 1;
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+$form = new Form;
+
+$section = new Form_Section('DHCP Relay configuration');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable DHCP relay on interface',
+	$pconfig['enable']
+))->toggles('.form-group:not(:first-child)');
+
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface(s)',
+	$pconfig['interface'],
+	$iflist,
+	true
+))->setHelp('Interfaces without an IP address will not be shown.');
+
+$section->addInput(new Form_Checkbox(
+	'agentoption',
+	'',
+	'Append circuit ID and agent ID to requests',
+	'yes',
+	$pconfig['agentoption']
+))->setHelp(
+	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
+	[$g['product_name']]
+);
+
+//Small function to prevent duplicate code
+function createDestinationServerInputGroup($value = null)
+{
+	$group = new Form_Group('Destination server');
+
+	$group->add(new Form_IpAddress(
+		'server',
+		'Destination server',
+		$value
+	))->setWidth(4)->setHelp(
+		'This is the IP address of the server to which DHCP requests are relayed.'
+	)->setIsRepeated();
+	
+	$group->enableDuplication(null, true); // Buttons are in-line with the input
+	return $group;
+}
+
+if (!isset($pconfig['server']) || count($pconfig['server']) < 1)
+	$section->add(createDestinationServerInputGroup());
+else {
+	foreach (explode(',', $pconfig['server']) as $server) {
+			$section->add(createDestinationServerInputGroup($server));
 	}
 }
-//]]>
-</script>
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
+$form->add($section);
+print $form;
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp relay">
-	<tr>
-		<td>
-			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-<?php
-	if ($dhcpd_enabled) {
-		echo "<td>DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
-		echo "</td></tr></table></div></td></tr></table></form>";
-		include("fend.inc");
-		echo "</body></html>";
-		exit;
-	}
-?>
-
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP Relay configuration"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Enable</td>
-						<td width="78%" class="vtable">
-							<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-							<strong><?php printf(gettext("Enable DHCP relay on interface"));?></strong>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Interface(s)</td>
-						<td width="78%" class="vtable">
-							<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
-							<?php
-								foreach ($iflist as $ifent => $ifdesc) {
-									if (!is_ipaddr(get_interface_ip($ifent))) {
-										continue;
-									}
-									echo "<option value=\"{$ifent}\"";
-									if (in_array($ifent, $pconfig['interface'])) {
-										echo " selected=\"selected\"";
-									}
-									echo ">{$ifdesc}</option>\n";
-								}
-							?>
-							</select>
-							<br />Interfaces without an IP address will not be shown.
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vtable">&nbsp;</td>
-						<td width="78%" class="vtable">
-							<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
-							<?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination server");?></td>
-						<td width="78%" class="vtable">
-							<input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
-							<br />
-							<?=gettext("This is the IP address of the server to which DHCP requests are relayed. You can enter multiple server IP addresses, separated by commas.");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<script type="text/javascript">
-//<![CDATA[
-enable_change(false);
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

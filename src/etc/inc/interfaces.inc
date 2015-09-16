@@ -129,11 +129,7 @@ function interface_netgraph_needed($interface = "wan") {
 	global $config;
 
 	$found = false;
-	if (!empty($config['pptpd']) &&
-	    $config['pptpd']['mode'] == "server") {
-		$found = true;
-	}
-	if ($found == false && !empty($config['l2tp']) &&
+	if (!empty($config['l2tp']) &&
 	    $config['l2tp']['mode'] == "server") {
 		$found = true;
 	}

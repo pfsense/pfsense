@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	interfaces_assign
+	pfSense_MODULE: interfaces_assign
 */
 
 ##|+PRIV
@@ -54,6 +54,7 @@ function clone_inuse($num) {
 	global $config, $a_clones;
 
 	$iflist = get_configured_interface_list(false, true);
+
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
@@ -83,78 +84,66 @@ $pgtitle = array(gettext("Interfaces"), gettext("Wireless"));
 $shortcut_section = "wireless";
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors); ?>
+
+<?php
+$tab_array = array();
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), true, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+display_top_tabs($tab_array);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces wireless">
-	<tr><td>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+			  <th><?=gettext("Interface"); ?></th>
+			  <th><?=gettext("Mode"); ?></th>
+			  <th><?=gettext("Description"); ?></th>
+			  <th></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), true, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
-	display_top_tabs($tab_array);
+
+$i = 0;
+
+foreach ($a_clones as $clone) {
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main table">
-				<tr>
-					<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Mode");?></td>
-					<td width="50%" class="listhdr"><?=gettext("Description");?></td>
-					<td width="10%" class="list"></td>
-				</tr>
+			<tr>
+				<td>
+					<?=htmlspecialchars($clone['cloneif'])?>
+				</td>
+				<td>
+					<?= $wlan_modes[$clone['mode']]; ?>
+				</td>
+				<td>
+					<?=htmlspecialchars($clone['descr'])?>
+				</td>
+				<td>
+					<a href="interfaces_wireless_edit.php?id=<?=$i?>" class="btn btn-default btn-xs"><?=gettext("Edit")?></a>
+					<a href="interfaces_wireless.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
+				</td>
+			</tr>
 <?php
-	$i = 0;
-	foreach ($a_clones as $clone):
+	$i++;
+}
 ?>
-				<tr ondblclick="document.location='interfaces_wireless_edit.php?id=<?=$i;?>'">
-					<td class="listlr">
-						<?=htmlspecialchars($clone['cloneif']);?>
-					</td>
-					<td class="listr">
-						<?= $wlan_modes[$clone['mode']]; ?>
-					</td>
-					<td class="listbg">
-						<?=htmlspecialchars($clone['descr']);?>&nbsp;
-					</td>
-					<td valign="middle" class="list nowrap"> <a href="interfaces_wireless_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" ></a>
-						&nbsp;<a href="interfaces_wireless.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this wireless clone?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
-					</td>
-				</tr>
+		</tbody>
+	</table>
+
+	<nav class="action-buttons">
+		<a href="interfaces_wireless_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	</nav>
+</div>
 <?php
-		$i++;
-	endforeach;
-?>
-				<tr>
-					<td class="list" colspan="3">&nbsp;</td>
-					<td class="list"> <a href="interfaces_wireless_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-				</tr>
-				<tr>
-					<td colspan="3" class="list"><p class="vexpl">
-						<span class="red"><strong>
-							<?=gettext("Note");?>:<br />
-						</strong></span>
-						<?=gettext("Here you can configure clones of wireless interfaces, which can be assigned as separate independent interfaces. Only available on wireless chipsets that support this, with limitations on the number that can be created in each mode.");?></p>
-					</td>
-					<td class="list">&nbsp;</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

@@ -93,58 +93,13 @@ if (isset($a_config["refreshinterval"])) {
 }
 
 if (isset($a_config["scale_type"])) {
-        $scale_type = $a_config["scale_type"];
+		$scale_type = $a_config["scale_type"];
 } else {
-        $scale_type = "up";
+		$scale_type = "up";
 }
 
-?>
-<input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
-
-<div id="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
-<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="traffic_graphs_widget_iform" id="traffic_graphs_widget_iform">
-	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
-		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
-	<?php } ?>
-	Default AutoScale:
-		<?php
-			$scale_type_up="checked=\"checked\"";
-			$scale_type_follow="";
-			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
-				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
-				if ($selected_radio == "up") {
-					$scale_type_up = "checked=\"checked\"";
-					$scale_type_follow="";
-				} else if ($selected_radio == "follow") {
-					$scale_type_up="";
-					$scale_type_follow = "checked=\"checked\"";
-				}
-			}
-		?>
-	<input name="scale_type" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
-	Refresh Interval:
-	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
-		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
-			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected=\"selected\"";?>><?= $i ?></option>
-		<?php } ?>
-	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
-	<input id="traffic_graphs_widget_submit" name="traffic_graphs_widget_submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
-</form>
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-	d = document;
-	selectIntLink = "traffic_graphs-configure";
-	textlink = d.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
-</script>
-
-<?php
 $graphcounter = 0;
-foreach ($ifdescrs as $ifname => $ifdescr) {
+foreach ($ifdescrs as $ifname => $ifdescr):
 	$ifinfo = get_interface_info($ifname);
 	if ($shown[$ifname]) {
 		$mingraphbutton = "inline";
@@ -158,36 +113,49 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 		$graphdisplay = "none";
 		$interfacevalue = "hide";
 	}
-	if ($ifinfo['status'] != "down") { ?>
-		<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
-			<div id="<?=$ifname;?>topic" class="widgetsubheader">
-				<div style="float:left;width:49%">
-					<span onclick="location.href='/status_graph.php?if=<?=$ifname;?>'" style="cursor:pointer">Current <?=$ifdescr;?> Traffic</span>
-				</div>
-				<div align="right" style="float:right;width:49%">
-					<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?= $ifname ?>", true);'
-						style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>
-					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", "<?= rawurlencode($ifdescr); ?>", "<?= $refreshinterval ?>", true);'
-						style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>
-				</div>
-				<div style="clear:both;"></div>
-			</div>
-			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-<?php
-		// If the graph is already enabled by the config then put the object inside the div now.
-		// Otherwise the graph object is inserted by trafficshowDiv JS when the user opens it.
-		if ($graphdisplay == "inline") {
+	if ($ifinfo['status'] != "down"):
 ?>
-				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=$graphcounter * 2;?>" height="100%" width="100%">
-					<param name="id" value="graph" />
-					<param name="type" value="image/svg+xml" />
-					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
-				</object>
-<?php
-		}
-?>
-			</div>
+	<div style="display:<?=$graphdisplay?>">
+		<object data="graph.php?ifnum=<?=$ifname?>&amp;ifname=<?=rawurlencode($ifdescr)?>&amp;timeint=<?=$refreshinterval?>&amp;initdelay=<?=$graphcounter * 2?>">
+			<param name="id" value="graph" />
+			<param name="type" value="image/svg+xml" />
+			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+		</object>
+	</div>
+<?php endif; ?>
+<?php endforeach; ?>
+
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div class="panel-footer collapse">
+
+<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" class="form-horizontal">
+	<?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
+		<input type="hidden" name="shown[<?= $ifname?>]" value="<?= $shown[$ifname] ? "show" : "hide"?>" />
+	<?php endforeach; ?>
+	<div class="form-group">
+		<label for="scale_type_up" class="col-sm-3 control-label">Default Autoscale</label>
+		<div class="col-sm-6 checkbox">
+			<label>
+				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked="checked"')?> />
+				up
+			</label>
+			<label>
+				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked="checked"' : '')?> />
+				follow
+			</label>
 		</div>
-	<?php }
-}
-?>
+	</div>
+
+	<div class="form-group">
+		<label for="refreshinterval" class="col-sm-3 control-label">Refresh Interval</label>
+		<div class="col-sm-6">
+			<input type="number" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-default">Save</button>
+		</div>
+	</div>
+</form>

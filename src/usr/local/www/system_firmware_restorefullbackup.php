@@ -34,7 +34,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/etc/rc.restore_full_backup
-	pfSense_MODULE:	backup
+	pfSense_MODULE: backup
 */
 
 ##|+PRIV
@@ -43,6 +43,9 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Restore Full Backup' page.
 ##|*MATCH=system_firmware_restorefullbackup.php
 ##|-PRIV
+
+// Don't really restore or reboot while testing. Should be 'false' for production of course
+define(DEBUG, false);
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '0');
@@ -61,144 +64,153 @@ if ($_GET['backupnow']) {
 	mwexec_bg("/etc/rc.create_full_backup");
 }
 
-if ($_GET['downloadbackup']) {
-	$filename = basename($_GET['downloadbackup']);
-	$path = "/root/{$filename}";
-	if (file_exists($path)) {
-		session_write_close();
-		ob_end_clean();
-		session_cache_limiter('public');
-		//$fd = fopen("/root/{$filename}", "rb");
-		$filesize = filesize("/root/{$filename}");
-		header("Cache-Control: ");
-		header("Pragma: ");
-		header("Content-Type: application/octet-stream");
-		header("Content-Length: " .(string)(filesize($path)));
-		header('Content-Disposition: attachment; filename="'.$filename.'"');
-		header("Content-Transfer-Encoding: binary\n");
-		if ($file = fopen("/root/{$filename}", 'rb')) {
-			while ((!feof($file)) && (connection_status() == 0)) {
-				print(fread($file, 1024*8));
-				flush();
+if($_POST['downloadbackup']) {
+	$filename = basename($_POST['downloadbackup']);
+	
+	if(DEBUG)
+		print_info_box('DEBUG: Simulating download of ' . htmlspecialchars($filename));
+	else {
+		$path = "/root/{$filename}";
+		if(file_exists($path)) {
+			session_write_close();
+			ob_end_clean();
+			session_cache_limiter('public');
+			//$fd = fopen("/root/{$filename}", "rb");
+			$filesize = filesize("/root/{$filename}");
+			header("Cache-Control: ");
+			header("Pragma: ");
+			header("Content-Type: application/octet-stream");
+			header("Content-Length: " .(string)(filesize($path)) );
+			header('Content-Disposition: attachment; filename="'.$filename.'"');
+			header("Content-Transfer-Encoding: binary\n");
+			if($file = fopen("/root/{$filename}", 'rb')){
+				while( (!feof($file)) && (connection_status()==0) ){
+					print(fread($file, 1024*8));
+					flush();
+				}
+				fclose($file);
 			}
-			fclose($file);
+
+			exit;
 		}
-
-		exit;
 	}
 }
-
-if ($_GET['deletefile']) {
-	$filename = basename($_GET['deletefile']);
-	if (file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
-		unlink("/root/" . $filename);
-		$savemsg = htmlspecialchars($filename) . " " . gettext("has been deleted.");
-	} else {
-		$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been deleted (invalid backup file or file does not exist).");
+else if ($_POST['deletefile']) {
+	$filename = basename($_POST['deletefile']);
+	if(DEBUG)
+		print_info_box('DEBUG: Simulating deletion of ' . htmlspecialchars($filename));
+	else {
+		if(file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
+			unlink("/root/" . $filename);
+			$savemsg = htmlspecialchars($filename) . " " . gettext("has been deleted.");
+		} else {
+			$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been deleted (invalid backup file or file does not exist).");
+		}
 	}
 }
-
-if ($_POST['restorefile']) {
+else if ($_POST['restorefile']) {
 	$filename = basename($_POST['restorefile']);
-	if (file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
-		mwexec_bg("/etc/rc.restore_full_backup /root/" . escapeshellcmd($filename));
-		$savemsg = gettext("The firewall is currently restoring") . " " . htmlspecialchars($filename);
-	} else {
-		$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been restored (invalid backup file or file does not exist).");
+	if(DEBUG)
+	   print_info_box('DEBUG: Restoration of ' . $filename . ' simulated');
+	else {
+		if(file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
+			mwexec_bg("/etc/rc.restore_full_backup /root/" . escapeshellcmd($filename));
+			$savemsg = gettext("The firewall is currently restoring") . " " . htmlspecialchars($filename);
+		} else {
+			$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been restored (invalid backup file or file does not exist).");
+		}
 	}
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Restore full backup"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('restore')): ?>
-<p>
+if ($savemsg)
+	print_info_box($savemsg);
+
+if (is_subsystem_dirty('restore')) {
+ ?>
 	<form action="reboot.php" method="post">
 		<input name="Submit" type="hidden" value="Yes" />
-		<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
+<?php	print_info_box(gettext("The firewall configuration has been changed. The firewall is now rebooting.")) ?>
 	</form>
-</p>
-<?php endif; ?>
+<?php
+}
+?>
+
+<?php
+$tab_array = array();
+$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+if($g['hidedownloadbackup'] == false)
+	$tab_array[] = array(gettext("Restore Full Backup"), true, "system_firmware_restorefullbackup.php");
+
+display_top_tabs($tab_array);
+?>
+
 <form action="system_firmware_restorefullbackup.php" method="post">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="restore full backup">
-	<tr>
-		<td>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Available backup files')?></h2></div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-hover table-striped table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("File to restore")?></th>
+							<th><?=gettext("Date")	?></th>
+							<th><?=gettext("Size")	?></th>
+							<th><?=gettext("Action")?></th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-	$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
-	$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-	if ($g['hidedownloadbackup'] == false) {
-		$tab_array[] = array(gettext("Restore Full Backup"), true, "system_firmware_restorefullbackup.php");
-	}
-	display_top_tabs($tab_array);
+					$home = getcwd();
+					chdir("/root");
+					$available_restore_files = glob("pfSense-full-backup-*");
+					$counter = 0;
+					foreach($available_restore_files as $arf) {
+						$counter++;
+						$size = exec("gzip -l /root/$arf | grep -v compressed | awk '{ print $2 }'");
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td colspan="1" class="listtopic"><?=gettext("Filename"); ?></td>
-					<td colspan="1" class="listtopic"><?=gettext("Date"); ?></td>
-					<td colspan="1" class="listtopic"><?=gettext("Size"); ?></td>
-					<td colspan="1" class="listtopic"></td>
-				</tr>
+						<tr>
+							<td>
+								<input type="radio" class="radio-inline" name="restorefile" value="<?=$arf?>" /> <?=$arf?>
+							</td>
+							<td>
+								<?=date ("F d Y H:i:s", filemtime($arf))?>
+							</td>
+							<td>
+								<?=format_bytes($size)?>
+							</td>
+							<td>
+								<button class="btn btn-xs btn-danger" type="submit" name="deletefile" value="<?=$arf?>" title="Delete backup file">Delete</button>
+								<button class="btn btn-xs btn-default" type="submit" name="downloadbackup" value="<?=$arf?>" title="Download backup file">Download</button>
+							</td>
+						</tr>
 <?php
-				chdir("/root");
-				$available_restore_files = glob("pfSense-full-backup-*");
-				$counter = 0;
-				foreach ($available_restore_files as $arf) {
-					$counter++;
-					$size = exec("gzip -l /root/$arf | grep -v compressed | awk '{ print $2 }'");
-					echo "<tr>";
-					echo "<td class='listlr' width='50%' colspan='1'>";
-					echo "<input type='radio' name='restorefile' value='$arf' /> $arf";
-					echo "</td>";
-					echo "<td class='listr' width='30%' colspan='1'>";
-					echo date ("F d Y H:i:s", filemtime($arf));
-					echo "</td>";
-					echo "<td class='listr' width='40%' colspan='1'>";
-					echo format_bytes($size);
-					echo "</td>";
-					echo "<td class='listr nowrap' width='20%' colspan='1'>";
-					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
-					echo gettext("Delete");
-					echo "</a> | ";
-					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
-					echo gettext("Download");
-					echo "</a>";
-					echo "</td>";
-					echo "</tr>";
-				}
-				if ($counter == 0) {
-					echo "<tr>";
-					echo "<td class='listlr' width='100%' colspan='4' align='center'>";
-					echo gettext("Could not locate any previous backups.");
-					echo "</td>";
-					echo "</tr>";
-				}
+					} // e-o-foreach backup file
+
+					chdir($home);  // Je me souvien
 ?>
-				<tr>
-					<td width="78%" colspan="3">
-						&nbsp;<br />
-						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" checked="checked" /> <?=gettext("do not restore config.xml."); ?>
-						<br />
-						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>" />
-					</td>
-				</tr>
-			</table>
+					</tbody>
+				</table>
 			</div>
-		</td>
-	</tr>
-</table>
+		</div>
+	</div>
+<?php
+	if($counter == 0)
+		print_info_box(gettext("Could not locate any previous backups."));
+	else {
+?>
+		<p><input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" checked="checked"/> <?=gettext(" When checked, DO NOT restore the config.xml file."); ?></p>
+		<p><button name="Restore" type="submit" class="btn btn-danger" id="restore" value="<?=gettext("Restore")?>"><?=gettext("Restore")?></button></p>
+<?php
+	}
+?>
 </form>
 
 <script type="text/javascript">
@@ -208,13 +220,10 @@ decrypt_change();
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
 <?php
 
 if (is_subsystem_dirty('restore')) {
 	system_reboot();
 }
 
-?>
+include("foot.inc");?>

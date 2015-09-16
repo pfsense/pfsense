@@ -1,0 +1,56 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
+	echo "===> ERROR: base tarball not found!"
+	exit 1
+fi
+
+echo "===> Removing schg flag from base files"
+
+# Cleanup schg flags
+chflags -R noschg \
+	/bin \
+	/sbin \
+	/usr/bin \
+	/usr/sbin \
+	/libexec \
+	/lib \
+	/usr/lib >/dev/null 2>&1
+
+echo "===> Extracting new base tarball"
+
+# Install new base files
+tar -C / -xJPUf /usr/local/share/%%PRODUCT_NAME%%/base.txz
+
+echo "===> Removing static obsoleted files"
+
+# Set IFS to \n to deal with filenames containing spaces
+oIFS=${IFS}
+IFS="
+"
+
+PLATFORM=$(cat /etc/platform)
+
+# Process obsolete files
+if [ "${PLATFORM}" != "nanobsd" -a -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
+	for f in $(cat /etc/%%PRODUCT_NAME%%.obsoletedfiles); do
+		if [ -n "${f}" -a -d "${f}" ]; then
+			chflags -R noschg "${f}"
+			rm -rf "${f}"
+		elif [ -n "${f}" -a -f "${f}" ]; then
+			chflags noschg "${f}"
+			rm -f "${f}"
+		elif [ -n "${f}" -a -L "${f}" ]; then
+			rm -f "${f}"
+		fi
+	done
+fi
+
+# Restore IFS
+IFS=${oIFS}
+
+exit 0

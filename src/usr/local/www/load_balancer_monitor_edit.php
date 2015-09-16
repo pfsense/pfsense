@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -42,11 +42,7 @@
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_monitor.php');
-}
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_monitor.php');
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
@@ -218,173 +214,170 @@ $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => get
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
+
 <script type="text/javascript">
 //<![CDATA[
-function updateType(t) {
-	switch (t) {
-<?php
-	/* OK, so this is sick using php to generate javascript, but it needed to be done */
-	foreach ($types as $key => $val) {
-		echo "		case \"{$key}\": {\n";
-		$t = $types;
-		foreach ($t as $k => $v) {
-			if ($k != $key) {
-				echo "			jQuery('#{$k}').hide();\n";
+events.push(function(){
+
+	// Hides all elements of the specified class. This will usually be a section
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
+	// Hide all sections except 't'
+	function updateType(t){
+		switch(t) {
+	<?php
+		/* OK, so this is sick using php to generate javascript, but it needed to be done */
+		foreach ($types as $key => $val) {
+			echo "		case \"{$key}\": {\n";
+			$t = $types;
+			foreach ($t as $k => $v) {
+				if ($k != $key) {
+					echo "			hideClass('{$k}', true);\n";
+				}
 			}
+			echo "		}\n";
 		}
-		echo "		}\n";
+	?>
+		}
+
+		hideClass(t, false);
 	}
-?>
-	}
-	jQuery('#' + t).show();
-}
+
+
+	// On click . .
+	$('#type').on('change', function() {
+		updateType($('#type').val());
+	});
+
+	// On page load
+	updateType($('#type').val());
+});
+
 //]]>
 </script>
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<form action="load_balancer_monitor_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="monitor entry">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Monitor entry"); ?></td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if (isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?> size="16" maxlength="16" />
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if (isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?> size="64" />
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<select id="type" name="type">
-<?
-					foreach ($types as $key => $val) {
-						if (isset($pconfig['type']) && $pconfig['type'] == $key) {
-							$selected = " selected=\"selected\"";
-						} else {
-							$selected = "";
-						}
-						echo "<option value=\"{$key}\" onclick=\"updateType('{$key}');\"{$selected}>{$val}</option>\n";
-					}
-?>
-				</select>
-			</td>
-		</tr>
-		<tr align="left" id="icmp"<?= $pconfig['type'] == "icmp" ? "" : " style=\"display:none;\""?>>
-			<td></td>
-		</tr>
-		<tr align="left" id="tcp"<?= $pconfig['type'] == "tcp" ? "" : " style=\"display:none;\""?>>
-			<td></td>
-		</tr>
-		<tr align="left" id="http"<?= $pconfig['type'] == "http" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("HTTP"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="http">
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Path"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="http_options_path" type="text" <?if (isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) . "\"";?> size="64" />
-						</td>
-					</tr>
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Host"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="http_options_host" type="text" <?if (isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
-						</td>
-					</tr>
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
-						<td class="vtable" colspan="2">
-							<?= print_rfc2616_select("http_options_code", $pconfig['options']['code']); ?>
-						</td>
-					</tr>
-<!-- BILLM: XXX not supported digest checking just yet
-					<tr align="left">
-						<td width="22%" valign="top" class="vncell">MD5 Page Digest</td>
-						<td width="78%" class="vtable" colspan="2">
-							<input name="digest" type="text" <?if (isset($pconfig['digest'])) echo "value=\"" . htmlspecialchars($pconfig['digest']) . "\"";?>size="32"><br /><b>TODO: add fetch functionality here</b>
-						</td>
-					</tr>
--->
-				</table>
-			</td>
-		</tr>
-		<tr align="left" id="https"<?= $pconfig['type'] == "https" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("HTTPS"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="https">
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Path"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="https_options_path" type="text" <?if (isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) ."\"";?> size="64" />
-						</td>
-					</tr>
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Host"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="https_options_host" type="text" <?if (isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
-						</td>
-					</tr>
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
-						<td class="vtable" colspan="2">
-							<?= print_rfc2616_select("https_options_code", $pconfig['options']['code']); ?>
-						</td>
-					</tr>
-<!-- BILLM: XXX not supported digest checking just yet
+require_once('classes/Form.class.php');
 
-					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">MD5 Page Digest</td>
-						<td width="78%" class="vtable" colspan="2">
-							<input name="digest" type="text" <?if (isset($pconfig['digest'])) echo "value=\"" . htmlspecialchars($pconfig['digest']) . "\"";?>size="32"><br /><b>TODO: add fetch functionality here</b>
-						</td>
-					</tr>
--->
-				</table>
-			</td>
-		</tr>
-		<tr align="left" id="send"<?= $pconfig['type'] == "send" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Send/Expect"); ?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="send expect">
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Send string"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="send_options_send" type="text" <?if (isset($pconfig['options']['send'])) echo "value=\"" . htmlspecialchars($pconfig['options']['send']) . "\"";?> size="64" />
-						</td>
-					</tr>
-					<tr align="left">
-						<td valign="top" align="right" class="vtable"><?=gettext("Expect string"); ?></td>
-						<td class="vtable" colspan="2">
-							<input name="send_options_expect" type="text" <?if (isset($pconfig['options']['expect'])) echo "value=\"" . htmlspecialchars($pconfig['options']['expect']) . "\"";?> size="64" />
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_monitor[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<br />
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
+
+$section = new Form_Section('Edit Load Balancer - Monitor entry');
+
+$section->addInput(new Form_Input(
+	'name',
+	'Name',
+	'text',
+	$pconfig['name']
+));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+));
+
+$section->addInput(new Form_Select(
+	'type',
+	'Type',
+	$pconfig['type'],
+	$types
+));
+
+$form->add($section);
+
+$section = new Form_Section('HTTP Options');
+$section->addClass('http');
+
+$section->addInput(new Form_Input(
+	'http_options_path',
+	'Path',
+	'text',
+	$pconfig['options']['path']
+));
+
+$section->addInput(new Form_Input(
+	'http_options_host',
+	'Host',
+	'text',
+	$pconfig['options']['host']
+))->setHelp('Hostname for Host: header if needed.');
+
+$section->addInput(new Form_Select(
+	'http_options_code',
+	'HTTP Code',
+	$pconfig['options']['code'],
+	$rfc2616
+));
+
+$form->add($section);
+
+$section = new Form_Section('HTTPS Options');
+$section->addClass('https');
+
+$section->addInput(new Form_Input(
+	'https_options_path',
+	'Path',
+	'text',
+	$pconfig['options']['path']
+));
+
+$section->addInput(new Form_Input(
+	'https_options_host',
+	'Host',
+	'text',
+	$pconfig['options']['host']
+))->setHelp('Hostname for Host: header if needed.');
+
+$section->addInput(new Form_Select(
+	'https_options_code',
+	'HTTPS Code',
+	$pconfig['options']['code'],
+	$rfc2616
+));
+
+$form->add($section);
+
+$section = new Form_Section('Send/Expect Options');
+$section->addClass('send');
+
+$section->addInput(new Form_Input(
+	'send_options_send',
+	'Send',
+	'text',
+	$pconfig['options']['send']
+));
+
+$section->addInput(new Form_Input(
+	'send_options_expect',
+	'Expect',
+	'text',
+	$pconfig['options']['expect']
+));
+
+if (isset($id) && $a_monitor[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+
+print($form);
+
+include("foot.inc");

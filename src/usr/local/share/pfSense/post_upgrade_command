@@ -8,11 +8,6 @@ if [ "${PFSENSETYPE}" = "pfSense" -o "${PFSENSETYPE}" = "nanobsd" ]; then
 	touch /conf/needs_package_sync
 fi
 
-# Detect interactive logins and display the shell
-detect_command='[ -n "$SSH_TTY" -o "$TERM" = "cons25" ] && exec /etc/rc.initial'
-echo "${detect_command}" > ${CVS_CO_DIR}/root/.shrc
-echo "${detect_command}" >> ${CVS_CO_DIR}/root/.profile
-
 if [ "${PFSENSETYPE}" = "nanobsd" ]; then
 	ROOT=/tmp/${1}/
 else
@@ -25,9 +20,6 @@ if [ -x ${ROOT}usr/local/share/pfSense/post_upgrade_command.php ]; then
 	echo "Running ${ROOT}usr/local/share/pfSense/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
 	${ROOT}usr/local/share/pfSense/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
 fi
-
-# Remove any previous MD5 sum files
-rm -f /root/*.md5 >/dev/null 2>&1
 
 # Fixup permissions on installed files
 if [ -f ${ROOT}usr/local/share/pfSense/base.mtree ]; then

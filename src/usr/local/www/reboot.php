@@ -37,36 +37,47 @@
 ##|*MATCH=reboot.php*
 ##|-PRIV
 
+// Set DEBUG to true to prevent the system_reboot() function from being called
+define("DEBUG", false);
+
 require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if ($_POST['Submit'] == " " . gettext("No") . " ") {
-	header("Location: index.php");
-	exit;
-}
-
-$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($_POST['Submit'] == " " . gettext("Yes") . " "): ?>
-<meta http-equiv=\"refresh\" content=\"70;url=/\">
-<?php	print_info_box(gettext("The system is rebooting now. This may take one minute.")); ?>
-<pre>
-<?php	system_reboot(); ?>
-</pre>
-<?php else: ?>
-<form action="reboot.php" method="post">
-	<p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
-	<p>
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> " />
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> " />
-	</p>
-</form>
-<?php endif; ?>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+	<meta http-equiv="refresh" content="70;url=/">
+	<div class="alert alert-success" role="alert">
+		<?=gettext("The system is rebooting now. This may take one minute or so.")?>
+	</div>
+<?php
+
+	if(DEBUG)
+	   print("Not actually rebooting (DEBUG is set true)");
+	else
+		system_reboot();
+
+} else {
+
+
+?>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">Are you sure you want to reboot the system?</h2></div>
+	<div class="panel-body">Click "Yes" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)<br /><br />
+		<form action="reboot.php" method="post">
+			<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Yes">
+			<a href="/" class="btn btn-default">No</a>
+		</form>
+	</div>
+</div>
+
+<?php
+
+}
+
+include("foot.inc");

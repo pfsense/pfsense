@@ -33,7 +33,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/usr/bin/nohup	/bin/cat	/sbin/sha256
-	pfSense_MODULE:	firmware
+	pfSense_MODULE: firmware
 */
 
 ##|+PRIV
@@ -64,85 +64,31 @@ $closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
+$tab_array = array();
+$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+if($g['hidedownloadbackup'] == false)
+	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+
+display_top_tabs($tab_array);
 ?>
 
-<meta http-equiv="Content-Type" content="text/html; charset=<?=system_get_language_codeset();?>" />
-<link href="gui.css" rel="stylesheet" type="text/css" />
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<div id="statusheading" name="statusheading" class="panel panel-default">
+   <div	 class="panel-heading" id="status" name="status"><?=gettext("Beginning firmware upgrade")?></div>
+   <div id='output' name='output' class="panel-body"></div>
+</div>
 
-<?php include("fbegin.inc"); ?>
 
-<form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware auto-check">
-	<tr>
-		<td>
-		<?php
-			$tab_array = array();
-			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
-			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-			if ($g['hidedownloadbackup'] == false) {
-				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-			}
-			display_top_tabs($tab_array);
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="outer">
-				<tr>
-					<td class="tabcont">
-						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="inner">
-							<tr>
-								<td align="center">
-									<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
-										<tr>
-											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5">	</td>
-											<td>
-												<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
-													<tr>
-														<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-															<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
-														</td>
-													</tr>
-												</table>
-											</td>
-											<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5"></td>
-										</tr>
-									</table>
-									<br />
-									<script type="text/javascript">
-									//<![CDATA[
-									window.onload=function() {
-										document.getElementById("status").wrap='hard';
-										document.getElementById("output").wrap='hard';
-									}
-									//]]>
-									</script>
-									<!-- status box -->
-									<textarea cols="90" rows="1" name="status" id="status"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
-									<br />
-									<!-- command output box -->
-									<textarea cols="90" rows="25" name="output" id="output"></textarea>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-</form>
-
-<?php include("fend.inc"); ?>
+<?php
+include("foot.inc"); ?>
 
 <?php
 
-update_status(gettext("Downloading current version information") . "...");
+panel_heading_text(gettext("Downloading current version information") . "...");
+panel_heading_class('info');
+
 $nanosize = "";
 if ($g['platform'] == "nanobsd") {
 	if (!isset($g['enableserial_force'])) {
@@ -159,32 +105,39 @@ download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 if (!$latest_version) {
 	update_output_window(gettext("Unable to check for updates."));
-	require("fend.inc");
+	require("foot.inc");
 	exit;
 } else {
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
 	$latest_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
-	if (!$latest_version) {
+	if(!$latest_version) {
+		panel_heading_class('danger');
+		panel_heading_text(gettext('Version check'));
 		update_output_window(gettext("Unable to check for updates."));
-		require("fend.inc");
+		require("foot.inc");
 		exit;
 	} else {
-		if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $latest_version) == -1) {
-			update_status(gettext("Downloading updates") . "...");
+		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
+			panel_heading_text(gettext("Downloading updates") . '...');
+			panel_heading_class('info');
+
 			conf_mount_rw();
 			if ($g['platform'] == "nanobsd") {
 				$update_filename = "latest{$nanosize}.img.gz";
 			} else {
 				$update_filename = "latest.tgz";
 			}
+
 			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");
 			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
 		} else {
+			panel_heading_class('success');
+			panel_heading_text(gettext('Version check complete'));
 			update_output_window(gettext("You are on the latest version."));
-			require("fend.inc");
+			require("foot.inc");
 			exit;
 		}
 	}
@@ -225,37 +178,40 @@ if ($sigchk == 1) {
 }
 
 if ($exitstatus) {
-	update_status($sig_warning);
+	panel_heading_text($sig_warning);
+	panel_heading_class('danger');
+
 	update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
-	require("fend.inc");
+	require("foot.inc");
 	exit;
 } else if ($sigchk == 2) {
-	update_status("Upgrade in progress...");
+	panel_heading_text(gettext('Upgrade in progress...'));
+	panel_heading_class('info');
+
 	update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
 }
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
-	update_status(gettext("The image file is corrupt."));
+	panel_heading_text(gettext("The image file is corrupt."));
+	panel_heading_class('danger');
+
 	update_output_window(gettext("Update cannot continue"));
 	if (file_exists("{$g['upload_path']}/latest.tgz")) {
 		conf_mount_rw();
 		unlink("{$g['upload_path']}/latest.tgz");
 		conf_mount_ro();
 	}
-	require("fend.inc");
+	require("foot.inc");
 	exit;
 }
 
-if ($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
-	update_status(gettext("Downloading complete but sha256 does not match."));
+if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
+	panel_heading_text(gettext("Downloading complete but sha256 does not match."));
+	panel_heading_class('danger');
+
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
-	echo "\n<script type=\"text/javascript\">";
-	echo "\n//<![CDATA[";
-	echo "\ndocument.progressbar.style.visibility='hidden';";
-	echo "\n//]]>";
-	echo "\n</script>";
 	mwexec_bg($external_upgrade_helper_text);
 }
 
@@ -272,7 +228,7 @@ function read_body_firmware($ch, $string) {
 	$a = $file_size;
 	$b = $downloaded;
 	$c = $downloadProgress;
-	$text  = "  " . gettext("Auto Update Download Status") . "\\n";
+	$text  = "	" . gettext("Auto Update Download Status") . "\\n";
 	$text .= "----------------------------------------------------\\n";
 	$text .= "  " . gettext("Current Version") . " : {$g['product_version']}\\n";
 	$text .= "  " . gettext("Latest Version") . "  : {$latest_version}\\n";
@@ -290,7 +246,28 @@ function read_body_firmware($ch, $string) {
 	return $length;
 }
 
+// Update the text in the panel-heading
+function panel_heading_text($text) {
+?>
+	<script>
+	events.push(function(){
+		$('#status').html('<?=$text?>');
+	});
+	</script>
+<?php
+}
+
+// Update the class of the message panel so that it's color changes
+// Use danger, success, info, warning, default etc
+function panel_heading_class($newclass = 'default') {
+?>
+	<script>
+	events.push(function(){
+		$('#statusheading').removeClass().addClass('panel panel-' + '<?=$newclass?>');
+	});
+	</script>
+<?php
+}
+
 ?>
 
-</body>
-</html>

@@ -1,18 +1,59 @@
 <?php
 /*
 	diag_smart.php
-	Part of pfSense
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved
-
-	Some modifications:
-	Copyright (C) 2010 - Jim Pingle
-
-	Copyright (C) 2006, Eric Friesen
-	All rights reserved
-
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2010 - Jim Pingle
+ *	Copyright (c) 2006, Eric Friesen
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 require("guiconfig.inc");
 
@@ -27,56 +68,17 @@ $valid_log_types = array("error", "selftest");
 
 $closehead = false;
 include("head.inc");
-?>
-
-<style type="text/css">
-/*<![CDATA[*/
-
-input {
-	font-family: courier new, courier;
-	font-weight: normal;
-	font-size: 9pt;
-}
-
-pre {
-	border: 2px solid #435370;
-	background: #F0F0F0;
-	padding: 1em;
-	font-family: courier new, courier;
-	white-space: pre;
-	line-height: 10pt;
-	font-size: 10pt;
-}
-
-.label {
-	font-family: tahoma, verdana, arial, helvetica;
-	font-size: 11px;
-	font-weight: bold;
-}
-
-.button {
-	font-family: tahoma, verdana, arial, helvetica;
-	font-weight: bold;
-	font-size: 11px;
-}
-
-/*]]>*/
-</style>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php
-include("fbegin.inc");
 
 // Highlights the words "PASSED", "FAILED", and "WARNING".
-function add_colors($string) {
+function add_colors($string)
+{
 	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
-	$replacements[0] = '<b><font color="#00ff00">' . gettext("PASSED") . '</font></b>';
-	$replacements[1] = '<b><font color="#ff0000">' . gettext("FAILED") . '</font></b>';
-	$replacements[2] = '<font color="#ff0000">' . gettext("Warning") . '</font>';
+	$replacements[0] = '<b><font color="#00ff00">' . gettext("PASSED") .  '</font></b>';
+	$replacements[1] = '<b><font color="#ff0000">' . gettext("FAILED") .  '</font></b>';
+	$replacements[2] = '<font color="#ff0000">'	   . gettext("Warning") . '</font>';
 	ksort($patterns);
 	ksort($replacements);
 	return preg_replace($patterns, $replacements, $string);
@@ -103,10 +105,19 @@ function smartmonctl($action) {
 // If they "get" a page but don't pass all arguments, smartctl will throw an error
 $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $targetdev = basename($_POST['device']);
+
 if (!file_exists('/dev/' . $targetdev)) {
 	echo "Device does not exist, bailing.";
 	return;
 }
+
+require_once('classes/Form.class.php');
+
+$tab_array = array();
+$tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
+$tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
+display_top_tabs($tab_array);
+
 switch ($action) {
 	// Testing devices
 	case 'test':
@@ -116,14 +127,26 @@ switch ($action) {
 			echo "Invalid test type, bailing.";
 			return;
 		}
+
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
-		echo '<pre>' . $output . '
+?>
+		<div class="panel  panel-default">
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test results')?></h2></div>
+			<div class="panel-body">
+				<pre><?=$output?></pre>
+			</div>
+		</div>
+
 		<form action="diag_smart.php" method="post" name="abort">
-		<input type="hidden" name="device" value="' . $targetdev . '" />
-		<input type="hidden" name="action" value="abort" />
-		<input type="submit" name="submit" value="' . gettext("Abort") . '" />
+			<input type="hidden" name="device" value="<?=$targetdev?>" />
+			<input type="hidden" name="action" value="abort" />
+			<nav class="action-buttons">
+				<input type="submit" name="submit"	class="btn btn-danger" value="<?=gettext("Abort")?>" />
+				<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+			</nav>
 		</form>
-		</pre>';
+
+<?php
 		break;
 	}
 
@@ -131,12 +154,25 @@ switch ($action) {
 	case 'info':
 	{
 		$type = $_POST['type'];
+
 		if (!in_array($type, $valid_info_types)) {
-			echo "Invalid info type, bailing.";
+			print_info_box(gettext("Invalid info type, bailing."), 'danger');
 			return;
 		}
+
 		$output = add_colors(shell_exec($smartctl . " -" . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
-		echo "<pre>$output</pre>";
+?>
+		<div class="panel  panel-default">
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Information')?></h2></div>
+			<div class="panel-body">
+				<pre><?=$output?></pre>
+			</div>
+		</div>
+
+		<nav class="action-buttons">
+			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+		</nav>
+<?php
 		break;
 	}
 
@@ -145,11 +181,23 @@ switch ($action) {
 	{
 		$type = $_POST['type'];
 		if (!in_array($type, $valid_log_types)) {
-			echo "Invalid log type, bailing.";
+			print_info_box(gettext("Invalid log type, bailing."), 'danger');
 			return;
 		}
+
 		$output = add_colors(shell_exec($smartctl . " -l " . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
-		echo "<pre>$output</pre>";
+?>
+		<div class="panel  panel-default">
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Logs')?></h2></div>
+			<div class="panel-body">
+				<pre><?=$output?></pre>
+			</div>
+		</div>
+
+		<nav class="action-buttons">
+			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+		</nav>
+<?php
 		break;
 	}
 
@@ -157,297 +205,297 @@ switch ($action) {
 	case 'abort':
 	{
 		$output = shell_exec($smartctl . " -X /dev/" . escapeshellarg($targetdev));
-		echo "<pre>$output</pre>";
+?>
+		<div class="panel  panel-default">
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Abort')?></h2></div>
+			<div class="panel-body">
+				<pre><?=$output?></pre>
+			</div>
+		</div>
+<?php
 		break;
 	}
 
 	// Config changes, users email in xml config and write changes to smartd.conf
 	case 'config':
 	{
-		if (isset($_POST['submit'])) {
-			// DOES NOT WORK YET...
-			if ($_POST['testemail']) {
+		if (isset($_POST['test'])) {
+
 // FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
-				$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
-				smartmonctl("stop");
-				smartmonctl("start");
-			} else {
-				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
-				write_config();
+			$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
+			smartmonctl("stop");
+			smartmonctl("start");
+			$style = 'warning';
+		}
+		else if (isset($_POST['save']))
+		{
+			$config['system']['smartmonemail'] = $_POST['smartmonemail'];
+			write_config();
 
-				// Don't know what all this means, but it adds the config changed header when config is saved
-				$retval = 0;
-				config_lock();
-				if (stristr($retval, "error") <> true) {
-					$savemsg = get_std_save_message($retval);
-				} else {
-					$savemsg = $retval;
+			// Don't know what all this means, but it adds the config changed header when config is saved
+			$retval = 0;
+			config_lock();
+			if (stristr($retval, "error") != true) {
+				$savemsg = get_std_save_message($retval);
+				$style = 'success';
 				}
-				config_unlock();
-
-				if ($_POST['email']) {
-					// Write the changes to the smartd.conf file
-					update_email($_POST['smartmonemail']);
-				}
-
-				// Send sig HUP to smartd, rereads the config file
-				shell_exec("/usr/bin/killall -HUP smartd");
+			else {
+				$savemsg = $retval;
+				$style='danger';
 			}
+
+			config_unlock();
+
+			// Write the changes to the smartd.conf file
+			update_email($_POST['smartmonemail']);
+
+			// Send sig HUP to smartd, rereads the config file
+			shell_exec("/usr/bin/killall -HUP smartd");
 		}
-		// Was the config changed? if so , print the message
-		if ($savemsg) {
-			print_info_box($savemsg);
-		}
-		// Get users email from the xml file
-		$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
 
-		?>
-		<!-- Print the tabs across the top -->
-		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabs">
-			<tr>
-				<td>
-					<?php
-					$tab_array = array();
-					$tab_array[0] = array(gettext("Information/Tests"), false, $_SERVER['PHP_SELF'] . "?action=default");
-					$tab_array[1] = array(gettext("Config"), true, $_SERVER['PHP_SELF'] . "?action=config");
-					display_top_tabs($tab_array);
-					?>
-				</td>
-			</tr>
-		</table>
-<!-- user email address -->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="e-mail">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Config"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Email Address"); ?></td>
-					<td width="78%" class="vtable">
-						<input type="text" name="smartmonemail" value="<?=htmlspecialchars($pconfig['smartmonemail'])?>"/>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="config" />
-						<input type="hidden" name="email" value="true" />
-						<input type="submit" name="submit" value="<?=gettext("Save"); ?>" class="formbtn" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
+	// Was the config changed? if so, print the message
+	if ($savemsg)
+		print_info_box($savemsg, $style);
 
-<!-- test email -->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="test e-mail">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Test email"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<?php printf(gettext("Send test email to %s"), $config['system']['smartmonemail']); ?>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="config" />
-						<input type="hidden" name="testemail" value="true" />
-						<input type="submit" name="submit" value="<?=gettext("Send"); ?>" class="formbtn" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
+	// Get users email from the xml file
+	$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
 
-		<?php
-		break;
+	$form = new Form();
+
+	$section = new Form_Section('Configuration');
+
+	$section->addInput(new Form_Input(
+		'smartmonemail',
+		'Email Address',
+		'text',
+		$pconfig['smartmonemail']
+	 ));
+
+	$form->add($section);
+
+	if (!empty($pconfig['smartmonemail'])) {
+		$form->addGlobal(new Form_Button(
+			'test',
+			'Send test email'
+		))->removeClass('btn-primary')->addClass('btn-default');
+	}
+
+	print($form);
+
+	break;
 	}
 
 	// Default page, prints the forms to view info, test, etc...
-	default:
-	{
+	default: {
+// Information	
 		$devs = get_smart_drive_list();
-		?>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="default page">
-			<tr>
-				<td>
-					<?php
-					$tab_array = array();
-					$tab_array[0] = array(gettext("Information/Tests"), true, $_SERVER['PHP_SELF']);
-					//$tab_array[1] = array("Config", false, $_SERVER['PHP_SELF'] . "?action=config");
-					display_top_tabs($tab_array);
-					?>
-				</td>
-			</tr>
-		</table>
-<!--INFO-->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="info">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="info">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Info"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Info type"); ?></td>
-					<td width="78%" class="vtable">
-						<input type="radio" name="type" value="i" /><?=gettext("Info"); ?><br />
-						<input type="radio" name="type" value="H" checked="checked" /><?=gettext("Health"); ?><br />
-						<input type="radio" name="type" value="c" /><?=gettext("SMART Capabilities"); ?><br />
-						<input type="radio" name="type" value="A" /><?=gettext("Attributes"); ?><br />
-						<input type="radio" name="type" value="a" /><?=gettext("All"); ?><br />
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
-					<td width="78%" class="vtable">
-						<select name="device">
-						<?php
-						foreach ($devs as $dev) {
-							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
-						}
-						?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="info" />
-						<input type="submit" name="submit" value="<?=gettext("View"); ?>" class="formbtn" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
-<!--TESTS-->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="tests">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tests">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Perform Self-tests"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Test type"); ?></td>
-					<td width="78%" class="vtable">
-						<input type="radio" name="testType" value="offline" /><?=gettext("Offline"); ?><br />
-						<input type="radio" name="testType" value="short" checked="checked" /><?=gettext("Short"); ?><br />
-						<input type="radio" name="testType" value="long" /><?=gettext("Long"); ?><br />
-						<input type="radio" name="testType" value="conveyance" /><?=gettext("Conveyance (ATA Disks Only)"); ?><br />
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
-					<td width="78%" class="vtable">
-						<select name="device">
-						<?php
-						foreach ($devs as $dev) {
-							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
-						}
-						?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="test" />
-						<input type="submit" name="submit" value="<?=gettext("Test"); ?>" class="formbtn" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
-<!--LOGS-->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="logs">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="logs">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("View Logs"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Log type"); ?></td>
-					<td width="78%" class="vtable">
-						<input type="radio" name="type" value="error" checked="checked" /><?=gettext("Error"); ?><br />
-						<input type="radio" name="type" value="selftest" /><?=gettext("Self-test"); ?><br />
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
-					<td width="78%" class="vtable">
-						<select name="device">
-						<?php
-						foreach ($devs as $dev) {
-							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
-						}
-						?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="logs" />
-						<input type="submit" name="submit" value="<?=gettext("View"); ?>" class="formbtn" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
-<!--ABORT-->
-		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="abort">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="abort">
-			<tbody>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Abort tests"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
-					<td width="78%" class="vtable">
-						<select name="device">
-						<?php
-						foreach ($devs as $dev) {
-							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
-						}
-						?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input type="hidden" name="action" value="abort" />
-						<input type="submit" name="submit" value="<?=gettext("Abort"); ?>" class="formbtn" onclick="return confirm('<?=gettext("Do you really want to abort the test?"); ?>')" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		</form>
 
-		<?php
+		$form = new Form(new Form_Button(
+			'submit',
+			'View'
+		));
+
+		$section = new Form_Section('Information');
+
+		$section->addInput(new Form_Input(
+			'action',
+			null,
+			'hidden',
+			'info'
+		));
+
+		$group = new Form_Group('Info type');
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'Info',
+			false,
+			'i'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'Health',
+			true,
+			'H'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'SMART Capabilities',
+			false,
+			'c'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'Attributes',
+			false,
+			'A'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'All',
+			false,
+			'a'
+		))->displayAsRadio();
+
+		$section->add($group);
+
+		$section->addInput(new Form_Select(
+			'device',
+			'Device: /dev/',
+			false,
+			array_combine($devs, $devs)
+		));
+
+		$form->add($section);
+		print($form);
+
+// Tests
+		$form = new Form(new Form_Button(
+			'submit',
+			'Test'
+		));
+
+		$section = new Form_Section('Perform self-tests');
+
+		$section->addInput(new Form_Input(
+			'action',
+			null,
+			'hidden',
+			'test'
+		));
+
+		$group = new Form_Group('Test type');
+
+		$group->add(new Form_Checkbox(
+			'testType',
+			null,
+			'Offline',
+			false,
+			'offline'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'testType',
+			null,
+			'Short',
+			true,
+			'short'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'testType',
+			null,
+			'Long',
+			false,
+			'long'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'testType',
+			null,
+			'Conveyance',
+			false,
+			'conveyance'
+		))->displayAsRadio();
+
+		$group->setHelp('Select "Conveyance" for ATA disks only');
+		$section->add($group);
+
+		$section->addInput(new Form_Select(
+			'device',
+			'Device: /dev/',
+			false,
+			array_combine($devs, $devs)
+		));
+
+		$form->add($section);
+		print($form);
+
+// Logs
+		$form = new Form(new Form_Button(
+			'submit',
+			'View'
+		));
+
+		$section = new Form_Section('View logs');
+
+		$section->addInput(new Form_Input(
+			'action',
+			null,
+			'hidden',
+			'logs'
+		));
+
+		$group = new Form_Group('Log type');
+
+		$group->add(new Form_Checkbox(
+			'type',
+			null,
+			'Error',
+			true,
+			'error'
+		))->displayAsRadio();
+
+		$group->add(new Form_Checkbox(
+			'test',
+			null,
+			'Self-test',
+			false,
+			'selftest'
+		))->displayAsRadio();
+
+		$section->add($group);
+
+		$section->addInput(new Form_Select(
+			'device',
+			'Device: /dev/',
+			false,
+			array_combine($devs, $devs)
+		));
+
+		$form->add($section);
+		print($form);
+
+// Abort
+		$btnabort = new Form_Button(
+			'submit',
+			'Abort'
+		);
+
+		$btnabort->removeClass('btn-primary')->addClass('btn-danger');
+
+		$form = new Form($btnabort);
+
+		$section = new Form_Section('Abort');
+
+		$section->addInput(new Form_Input(
+			'action',
+			null,
+			'hidden',
+			'abort'
+		));
+
+		$section->addInput(new Form_Select(
+			'device',
+			'Device: /dev/',
+			false,
+			array_combine($devs, $devs)
+		));
+
+		$form->add($section);
+		print($form);
+
 		break;
 	}
 }
 
-// print back button on pages
-if (isset($_POST['submit']) && $_POST['submit'] != "Save") {
-?>
-	<input type="button" class="formbtn" value="<?=gettext("Back");?>" onclick="window.location.href='<?=$_SERVER['PHP_SELF'];?>'" />
-<?php
-}
-?>
-<br />
-<?php
-if ($ulmsg) {
-	echo "<p><strong>" . $ulmsg . "</strong></p>\n";
-}
-?>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

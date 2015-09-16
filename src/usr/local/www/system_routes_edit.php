@@ -1,36 +1,61 @@
 <?php
 /*
 	system_routes_edit.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	part of pfSense
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2010 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -45,11 +70,7 @@ require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
-}
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
 if (!is_array($config['staticroutes']['route'])) {
 	$config['staticroutes']['route'] = array();
@@ -180,16 +201,16 @@ if ($_POST) {
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $if) {
 			if (is_ipaddrv4($_POST['network']) &&
-			    isset($if['ipaddr']) && isset($if['subnet']) &&
-			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
-			    ($_POST['network_subnet'] == $if['subnet']) &&
-			    (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
+				isset($if['ipaddr']) && isset($if['subnet']) &&
+				is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
+				($_POST['network_subnet'] == $if['subnet']) &&
+				(gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
 					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			} else if (is_ipaddrv6($_POST['network']) &&
-			    isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
-			    is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
-			    ($_POST['network_subnet'] == $if['subnetv6']) &&
-			    (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
+				isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
+				is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
+				($_POST['network_subnet'] == $if['subnetv6']) &&
+				(gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
 					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			}
 		}
@@ -238,208 +259,73 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Static Routes"), gettext("Edit route"));
 $shortcut_section = "routing";
 include("head.inc");
-?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
-<?php include("fbegin.inc");?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="system_routes_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system routes edit">
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit route entry"); ?></td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>" />
-					/
-					<select name="network_subnet" class="formselect ipv4v6" id="network_subnet">
-					<?php for ($i = 128; $i >= 1; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected=\"selected\""; ?>>
-							<?=$i;?>
-						</option>
-					<?php endfor; ?>
-					</select>
-					<br /><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
-				<td width="78%" class="vtable">
-					<select name="gateway" id="gateway" class="formselect">
-					<?php
-						foreach ($a_gateways as $gateway) {
-							echo "<option value='{$gateway['name']}' ";
-							if ($gateway['name'] == $pconfig['gateway']) {
-								echo "selected=\"selected\"";
-							}
-							echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
-						}
-					?>
-					</select> <br />
-					<div id='addgwbox'>
-						<?=gettext("Choose which gateway this route applies to or"); ?> <a onclick="show_add_gateway();" href="#"><?=gettext("add a new one.");?></a>
-					</div>
-					<div id='notebox'>
-					</div>
-					<div style="display:none" id="status">
-					</div>
-					<div style="display:none" id="addgateway">
-						<table border="1" style="background:#990000; border-style: none none none none; width:225px;" summary="add gateway">
-							<tr>
-								<td>
-									<table bgcolor="#990000" cellpadding="1" cellspacing="1" summary="add">
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td colspan="2" align="center"><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td width="45%" align="right"><font color="white"><?=gettext("Default gateway:"); ?></font></td><td><input type="checkbox" id="defaultgw" name="defaultgw" /></td>
-										</tr>
-										<tr>
-											<td width="45%" align="right"><font color="white"><?=gettext("Interface:"); ?></font></td>
-											<td>
-												<select name="addinterfacegw" id="addinterfacegw">
-												<?php $gwifs = get_configured_interface_with_descr();
-													foreach ($gwifs as $fif => $dif) {
-														echo "<option value=\"{$fif}\">{$dif}</option>\n";
-													}
-												?>
-												</select>
-											</td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></font></td><td><input id="name" name="name" value="GW" /></td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Gateway IP:"); ?></font></td><td><input id="gatewayip" name="gatewayip" /></td>
-										</tr>
-										<tr>
-											<td align="right"><font color="white"><?=gettext("Description:"); ?></font></td><td><input id="gatewaydescr" name="gatewaydescr" /></td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-										<tr>
-											<td colspan="2" align="center">
-												<div id='savebuttondiv'>
-													<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
-													<input id="gwsave" type="button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave();' />
-													<input id="gwcancel" type="button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway();' />
-												</div>
-											</td>
-										</tr>
-										<tr><td>&nbsp;</td></tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
-				<td width="78%" class="vtable">
-					<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
-					<strong><?=gettext("Disable this static route");?></strong><br />
-					<span class="vexpl"><?=gettext("Set this option to disable this static route without removing it from the list.");?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-					<?php if (isset($id) && $a_routes[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<?php endif; ?>
-					<input name="referer" type="hidden" value="<?=$referer;?>" />
-				</td>
-			</tr>
-		</table>
-	</form>
-<script type="text/javascript">
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+$form = new Form;
+
+if (isset($id) && $a_routes[$id]) {
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$section = new Form_Section('Edit route entry');
+
+$section->addInput(new Form_IpAddress(
+	'network',
+	'Destination network',
+	$pconfig['network']
+))->addMask('network_subnet', $pconfig['network_subnet'])->setPattern('[a-zA-Z0-9_]+')->setHelp('Destination network for this static route');
+
+$allGateways = array_combine(
+	array_map(function($g){ return $g['name']; }, $a_gateways),
+	array_map(function($g){ return $g['name'] .' - '. $g['gateway']; }, $a_gateways)
+);
+$section->addInput(new Form_Select(
+	'gateway',
+	'Gateway',
+	$pconfig['gateway'],
+	$allGateways
+))->setHelp('Choose which gateway this route applies to or <a href="'.
+	'/system_gateways_edit.php">add a new one first</a>');
+
+$section->addInput(new Form_Checkbox(
+	'disabled',
+	'Disabled',
+	'Disable this static route',
+	$pconfig['disabled']
+))->setHelp('Set this option to disable this static route without removing it from '.
+	'the list.');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	htmlspecialchars($pconfig['descr'])
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$form->add($section);
+
+print $form;
+
+?>
+<script>
 //<![CDATA[
-	var gatewayip;
-	var name;
-	function show_add_gateway() {
-		document.getElementById("addgateway").style.display = '';
-		document.getElementById("addgwbox").style.display = 'none';
-		document.getElementById("gateway").style.display = 'none';
-		document.getElementById("save").style.display = 'none';
-		document.getElementById("cancel").style.display = 'none';
-		document.getElementById("gwsave").style.display = '';
-		document.getElementById("gwcancel").style.display = '';
-		jQuery('#notebox').html("");
-	}
-	function hide_add_gateway() {
-		document.getElementById("addgateway").style.display = 'none';
-		document.getElementById("addgwbox").style.display = '';
-		document.getElementById("gateway").style.display = '';
-		document.getElementById("save").style.display = '';
-		document.getElementById("cancel").style.display = '';
-		document.getElementById("gwsave").style.display = '';
-		document.getElementById("gwcancel").style.display = '';
-	}
-	function hide_add_gatewaysave() {
-		document.getElementById("addgateway").style.display = 'none';
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> One moment please...');
-		var iface = jQuery('#addinterfacegw').val();
-		name = jQuery('#name').val();
-		var descr = jQuery('#gatewaydescr').val();
-		gatewayip = jQuery('#gatewayip').val();
-		addrtype = jQuery('#addrtype').val();
-		var defaultgw = '';
-		if (jQuery('#defaultgw').checked) {
-			defaultgw = 'yes';
-		}
-		var url = "system_gateways_edit.php";
-		var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
-		jQuery.ajax(
-			url,
-		{
-			type: 'post',
-				data: pars,
-				error: report_failure,
-				complete: save_callback
-		});
-	}
-	function addOption(selectbox, text, value) {
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.append(optn);
-		selectbox.prop('selectedIndex', selectbox.children('option').length-1);
-		jQuery('#notebox').html("<p><strong><?=gettext("NOTE:");?><\/strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_blank' href='system_gateways.php'>", "<\/a>");?> <\/strong><\/p>");
-	}
-	function report_failure() {
-		alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");
-		hide_add_gateway();
-	}
-	function save_callback(transport) {
-		var response = transport.responseText;
-		if (response) {
-			document.getElementById("addgateway").style.display = 'none';
-			hide_add_gateway();
-			jQuery('#status').html('');
-			addOption(jQuery('#gateway'), name, name);
-		} else {
-			report_failure();
-		}
-	}
+events.push(function(){
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
-	var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
+
+	$('#network').autocomplete({
+		source: addressarray
+	});
+});
 //]]>
 </script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php
+include("foot.inc");

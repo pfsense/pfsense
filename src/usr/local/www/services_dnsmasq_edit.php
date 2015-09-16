@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnsforwarder
+	pfSense_MODULE: dnsforwarder
 */
 
 ##|+PRIV
@@ -56,15 +56,8 @@ function hosts_sort() {
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dnsmasq.php');
-}
-
-if (!is_array($config['dnsmasq']['hosts'])) {
+if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
-}
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 
@@ -84,7 +77,6 @@ if (isset($id) && $a_hosts[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -149,6 +141,7 @@ if ($_POST) {
 				}
 			}
 		}
+
 		if (($alias['domain'] && !is_domain($alias['domain']))) {
 			$input_errors[] = gettext("A valid domain must be specified in alias list.");
 		}
@@ -193,153 +186,131 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DNS forwarder"), gettext("Edit host"));
+// Delete a row in the options table
+if($_GET['act'] == "delopt") {
+	$idx = $_GET['id'];
+
+	if($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
+	   unset($pconfig['aliases']['item'][$idx]);
+	}
+}
+
+// Add an option row
+if($_GET['act'] == "addopt") {
+    if(!is_array($pconfig['aliases']['item']))
+        $pconfig['aliases']['item'] = array();
+        
+	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
+}
+
+$pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit host"));
 $shortcut_section = "forwarder";
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+require_once('classes/Form.class.php');
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+$form = new Form();
 
-<script type="text/javascript">
-//<![CDATA[
-	rowname[0] = "aliashost";
-	rowtype[0] = "textbox";
-	rowsize[0] = "20";
-	rowname[1] = "aliasdomain";
-	rowtype[1] = "textbox";
-	rowsize[1] = "20";
-	rowname[2] = "aliasdescription";
-	rowtype[2] = "textbox";
-	rowsize[2] = "20";
-//]]>
-</script>
+$section = new Form_Section('Domain override options');
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dns edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit DNS Forwarder entry");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
-			<td width="78%" class="vtable">
-				<input name="host" type="text" class="formfld unknown" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" />
-				<br /> 
-				<span class="vexpl">
-					<?=gettext("Name of the host, without domain part"); ?><br />
-					<?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
-			<td width="78%" class="vtable">
-				<input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("Domain of the host"); ?><br />
-					<?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
-			<td width="78%" class="vtable">
-				<input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("IP address of the host"); ?><br />
-					<?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("You may enter a description here for your reference (not parsed).");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
-			<td width="78%" class="vtable">
-				<table id="maintable" summary="aliases">
-					<tbody>
-					<tr>
-						<td colspan="4">
-							<div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">
-								<?=gettext("Enter additional names for this host."); ?>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td><div id="onecolumn"><?=gettext("Host");?></div></td>
-						<td><div id="twocolumn"><?=gettext("Domain");?></div></td>
-						<td><div id="threecolumn"><?=gettext("Description");?></div></td>
-					</tr>
-<?php
+$section->addInput(new Form_Input(
+	'host',
+	'Host',
+	'text',
+	$pconfig['host']
+))->setHelp('Name of the host, without the domain part' . '<br />' .
+			'e.g.: "myhost"');
+
+$section->addInput(new Form_Input(
+	'domain',
+	'Domain',
+	'text',
+	$pconfig['domain']
+))->setHelp('Domain of the host' . '<br />' .
+			'e.g.: "example.com"');
+
+$section->addInput(new Form_IpAddress(
+	'ip',
+	'IP Address',
+	$pconfig['ip']
+))->setHelp('IP address of the host' . '<br />' .
+			'e.g.: 192.168.100.100 or fd00:abcd::1');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+if (isset($id) && $a_hosts[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$pconfig['id']
+	));
+}
+
+$form->add($section);
+
+$section = new Form_Section('Additional names for this host');
+
+if( $pconfig['aliases']['item']) {
 	$counter = 0;
-	if ($pconfig['aliases']['item']):
-		foreach ($pconfig['aliases']['item'] as $item):
-			$host = $item['host'];
-			$domain = $item['domain'];
-			$description = $item['description'];
-?>
-					<tr>
-						<td>
-							<input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($host);?>" />
-						</td>
-						<td>
-							<input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($domain);?>" />
-						</td>
-						<td>
-							<input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($description);?>" />
-						</td>
-						<td>
-							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-						</td>
-					</tr>
-<?php
-			$counter++;
-		endforeach;
-	endif;
-?>
-					</tbody>
-				</table>
-				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
-					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
-				</a>
-				<script type="text/javascript">
-				//<![CDATA[
-					field_counter_js = 3;
-					rows = 1;
-					totalrows = <?php echo $counter; ?>;
-					loaded = <?php echo $counter; ?>;
-				//]]>
-				</script>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_hosts[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+	$last = count($pconfig['aliases']['item']) - 1;
+
+	foreach($pconfig['aliases']['item'] as $item) {
+		$group = new Form_Group(null);
+
+		$group->add(new Form_Input(
+			'aliashost' . $counter,
+			null,
+			'text',
+			$item['host']
+		))->setHelp($counter == $last ? 'Host name':null);
+
+		$group->add(new Form_Input(
+			'aliasdomain' . $counter,
+			null,
+			'text',
+			$item['domain']
+		))->setHelp($counter == $last ? 'Value':null);
+
+		$group->add(new Form_Input(
+			'aliasdescription' . $counter,
+			null,
+			'text',
+			$item['description']
+		))->setHelp($counter == $last ? 'Description':null);
+
+		$btn = new Form_Button(
+			'btn' . $counter,
+			'Delete',
+			'services_dnsmasq_edit.php?act=delopt' . '&id=' . $counter
+		);
+
+		$btn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+		$group->add($btn);
+		$section->add($group);
+		$counter++;
+	}
+}
+
+$btnaddopt = new Form_Button(
+	'btnaddopt',
+	'Add Option',
+	'services_dnsmasq_edit.php?act=addopt'
+);
+
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+
+$section->addInput($btnaddopt);
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

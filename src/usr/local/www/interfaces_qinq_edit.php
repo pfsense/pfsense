@@ -76,16 +76,11 @@ if (isset($id) && $a_qinqs[$id]) {
 	$pconfig['tag'] = $a_qinqs[$id]['tag'];
 	$pconfig['members'] = $a_qinqs[$id]['members'];
 	$pconfig['descr'] = html_entity_decode($a_qinqs[$id]['descr']);
-/*
-	$pconfig['autoassign'] = isset($a_qinqs[$id]['autoassign']);
-	$pconfig['autoenable'] = isset($a_qinqs[$id]['autoenable']);
-*/
 	$pconfig['autogroup'] = isset($a_qinqs[$id]['autogroup']);
 	$pconfig['autoadjustmtu'] = isset($a_qinqs[$id]['autoadjustmtu']);
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -116,49 +111,34 @@ if ($_POST) {
 	$qinqentry = array();
 	$qinqentry['if'] = $_POST['if'];
 	$qinqentry['tag'] = $_POST['tag'];
-/*
-	if ($_POST['autoassign'] == "yes") { {
-		$qinqentry['autoassign'] = true;
-	}
-	if ($_POST['autoenable'] == "yes") {
-		$qinqentry['autoenable'] = true;
-	}
-	if ($_POST['autoadjust'] == "yes") {
-		$qinqentry['autoadjustmtu'] = true;
-	}
-*/
+
 	if ($_POST['autogroup'] == "yes") {
 		$qinqentry['autogroup'] = true;
 	}
 
 	$members = "";
 	$isfirst = 0;
-	/* item is a normal qinqentry type */
-	for ($x = 0; $x < 9999; $x++) {
-		if ($_POST["members{$x}"] <> "") {
-			$member = explode("-", $_POST["members{$x}"]);
-			if (count($member) > 1) {
-				if (preg_match("/([^0-9])+/", $member[0], $match) ||
-				    preg_match("/([^0-9])+/", $member[1], $match)) {
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
-				}
 
-				for ($i = $member[0]; $i <= $member[1]; $i++) {
-					if ($isfirst > 0) {
-						$members .= " ";
-					}
-					$members .= $i;
-					$isfirst++;
-				}
-			} else {
-				if (preg_match("/([^0-9])+/", $_POST["members{$x}"], $match)) {
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
-				}
+	// Read the POSTed member array into a space separated list translating any ranges
+	// into their included values
+	foreach ($_POST['members'] as $memb) {
+		// Might be a range
+		$member = explode("-", $memb);
 
-				if ($isfirst > 0) {
-					$members .= " ";
-				}
-				$members .= $_POST["members{$x}"];
+		if (count($member) > 1) {
+			if (preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match))
+				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+
+			for ($i = $member[0]; $i <= $member[1]; $i++) {
+				$members .= ($isfirst == 0 ? '':' ') . $i;
+				$isfirst++;
+			}
+		}
+		else { // Just a single number
+			if (preg_match("/([^0-9])+/", $memb, $match))
+				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+			else {
+				$members .= ($isfirst == 0 ? '':' ') . $memb;
 				$isfirst++;
 			}
 		}
@@ -235,210 +215,106 @@ if ($_POST) {
 	}
 }
 
+function build_parent_list() {
+	global $portlist;
+
+	$list = array();
+
+	foreach ($portlist as $ifn => $ifinfo) {
+		if (is_jumbo_capable($ifn))
+			$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+	}
+
+	return($list);
+}
+
 include("head.inc");
 
-?>
+if ($input_errors) 
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+require_once('classes/Form.class.php');
 
-<script type="text/javascript">
-//<![CDATA[
-// Global Variables
-var rowname = new Array(9999);
-var rowtype = new Array(9999);
-var newrow  = new Array(9999);
-var rowsize = new Array(9999);
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
 
-for (i = 0; i < 9999; i++) {
-	rowname[i] = 'members';
-	rowtype[i] = 'select';
-	newrow[i] = '';
-	rowsize[i] = '30';
+$section = new Form_Section('Interface QinQ Edit');
+
+$section->addInput(new Form_Select(
+	'if',
+	'Parent interface',
+	$pconfig['if'],
+	build_parent_list()
+))->setHelp('Only QinQ capable interfaces will be shown.');
+
+$section->addInput(new Form_Input(
+	'tag',
+	'First level tag',
+	'number',
+	$pconfig['tag'],
+	['max' => '4094', 'min' => '1']
+))->setHelp('This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.');
+
+$section->addInput(new Form_Checkbox(
+	'autogroup',
+	'Option(s)',
+	'Adds interface to QinQ interface groups',
+	$pconfig['autogroup']
+))->setHelp('Allows rules to be written more easily');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$section->addInput(new Form_StaticText(
+	'Member(s)',
+	'You can specify ranges in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
+	'Click "Duplicate" as many times as needed to add new inputs'
+));
+
+if (isset($id) && $a_qinqs[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
 }
 
-var field_counter_js = 0;
-var loaded = 0;
-var is_streaming_progress_bar = 0;
-var temp_streaming_text = "";
+$counter = 0;
+$members = $pconfig['members'];
 
-var addRowTo = (function() {
-	return (function (tableId) {
-		var d, tbody, tr, td, bgc, i, ii, j;
-		d = document;
-		tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
-		tr = d.createElement("tr");
-		for (i = 0; i < field_counter_js; i++) {
-			td = d.createElement("td");
-			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input size='" + rowsize[i] + "' class='formfld unknown' name='" + rowname[i] + totalrows + "' /> ";
-			tr.appendChild(td);
-		}
-		td = d.createElement("td");
-		td.rowSpan = "1";
+// List each of the member tags from the space-separated list
+if ($members != "")
+	$item = explode(" ", $members);
+else
+	$item = array('');
 
-		td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /><\/a>';
-		tr.appendChild(td);
-		tbody.appendChild(tr);
-		totalrows++;
-	});
-})();
+foreach($item as $ww) {
+	$member = $item[$counter];
 
-function removeRow(el) {
-	var cel;
-	while (el && el.nodeName.toLowerCase() != "tr") {
-		el = el.parentNode;
-	}
+	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
 
-	if (el && el.parentNode) {
-		cel = el.getElementsByTagName("td").item(0);
-		el.parentNode.removeChild(el);
-	}
+	$group->add(new Form_Input(
+		'members',
+		null,
+		'text',
+		$ww
+	))->setWidth(6); // Width must be <= 8 to make room for the duplication buttons
+
+$counter++;
+
+$group->enableDuplication(null, true); // Buttons are in-line with the input
+$section->add($group);
 }
 
-	rowname[0] = <?=gettext("members");?>;
-	rowtype[0] = "textbox";
-	rowsize[0] = "30";
+$form->add($section);
 
-	rowname[2] = <?=gettext("detail");?>;
-	rowtype[2] = "textbox";
-	rowsize[2] = "50";
-//]]>
-</script>
-<input type='hidden' name='members_type' value='textbox' class="formfld unknown" />
+print($form);
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<div id="inputerrors"></div>
-
-<form action="interfaces_qinq_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces qinq edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface QinQ Edit");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
-			<td width="78%" class="vtable">
-				<select name="if" id="if" class="formselect">
-				<?php
-					foreach ($portlist as $ifn => $ifinfo) {
-						if (is_jumbo_capable($ifn)) {
-							echo "<option value=\"{$ifn}\"";
-							if ($ifn == $pconfig['if']) {
-								echo " selected=\"selected\"";
-							}
-							echo ">";
-							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-							echo "</option>";
-						}
-					}
-				?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Only QinQ capable interfaces will be shown.");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("First level tag");?></td>
-			<td width="78%" class="vtable">
-				<input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=htmlspecialchars($pconfig['tag']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Options");?></td>
-			<td width="78%" class="vtable">
-<?php /* ?>
-				<br />
-				<input type="checkbox" value="yes" name="autoassign" id="autoassign" <?php if ($pconfig['autoassign']) echo "checked=\"checked\""; ?> />
-				<span class="vexpl"> Auto assign interface so it can be configured with ip etc...</span>
-				<br />
-				<input type="checkbox" value="yes" name="autoenable" id="autoenable" <?php if ($pconfig['autoenable']) echo "checked=\"checked\""; ?> />
-				<span class="vexpl"> Auto enable interface so it can be used on filter rules.</span>
-				<br />
-				<input type="checkbox" value="yes" name="autoadjustmtu" id="autoadjustmtu" <?php if ($pconfig['autoadjustmtu']) echo "checked=\"checked\""; ?> />
-				<span class="vexpl"> Allows to keep clients mtu unchanged(1500). <br />NOTE: if you are using jumbo frames this option is not needed and may produce incorrect results!</span>
-<?php */ ?>
-				<br />
-				<input name="autogroup" type="checkbox" value="yes" id="autogroup" <?php if ($pconfig['autogroup']) echo "checked=\"checked\""; ?> />
-				<span class="vexpl"><?=gettext("Adds interface to QinQ interface groups so you can write filter rules easily.");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl">
-					<?=gettext("You may enter a description here for your reference (not parsed).");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
-			<td width="78%" class="vtable">
-				<span class="vexpl">
-					<?=gettext("You can specify ranges in the input below. The format is pretty simple i.e 9-100 or 10.20...");?>
-				</span>
-				<br />
-				<table id="maintable" summary="main table">
-				<tbody>
-					<tr>
-						<td><div id="onecolumn"><?=gettext("Tag");?></div></td>
-					</tr>
-
-<?php
-	$counter = 0;
-	$members = $pconfig['members'];
-	if ($members <> "") {
-		$item = explode(" ", $members);
-		foreach ($item as $ww) {
-			$member = $item[$counter];
-?>
-					<tr>
-						<td class="vtable">
-							<input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo htmlspecialchars($member);?>" />
-						</td>
-						<td>
-							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>
-						</td>
-					</tr>
-<?php
-			$counter++;
-
-		} // end foreach
-	} // end if
-?>
-				</tbody>
-				</table>
-				<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
-				<?php if (isset($id) && $a_qinqs[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-
-<script type="text/javascript">
-//<![CDATA[
-	field_counter_js = 1;
-	rows = 1;
-	totalrows = <?php echo $counter; ?>;
-	loaded = <?php echo $counter; ?>;
-//]]>
-</script>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

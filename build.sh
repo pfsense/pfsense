@@ -65,14 +65,15 @@ usage() {
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
+	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
 	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
 	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports - Update poudriere ports tree"
-	echo "		--update-pkg-repo - Rebuild necessary ports on poudriere and update pkg repo"
-	echo "		--do-not-upload|-U - Do not send updated pkg repo to PKG_RSYNC_HOSTNAME"
+	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
+	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -85,6 +86,8 @@ unset _USE_OLD_DATESTRING
 unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
+unset SNAPSHOTS
+unset ARCH_LIST
 BUILDACTION="images"
 
 # Maybe use options for nocleans etc?
@@ -130,6 +133,10 @@ while test "$1" != ""; do
 			fi
 			export INSTALL_EXTRA_KERNELS="${1}"
 			;;
+		--snapshots)
+			export SNAPSHOTS=1
+			IMAGETYPE="all"
+			;;
 		--build-kernel)
 			BUILDACTION="buildkernel"
 			shift
@@ -163,17 +170,15 @@ while test "$1" != ""; do
 			;;
 		--update-poudriere-jails)
 			BUILDACTION="update_poudriere_jails"
+			;;
+		-a)
 			shift
-			unset ARCH_LIST
-			if [ "${1}" = "-a" ]; then
-				shift
-				if [ $# -eq 0 ]; then
-					echo "-a needs extra parameter."
-					echo
-					usage
-				fi
-				export ARCH_LIST="${1}"
+			if [ $# -eq 0 ]; then
+				echo "-a needs extra parameter."
+				echo
+				usage
 			fi
+			export ARCH_LIST="${1}"
 			;;
 		--update-poudriere-ports)
 			BUILDACTION="update_poudriere_ports"
@@ -181,7 +186,7 @@ while test "$1" != ""; do
 		--update-pkg-repo)
 			BUILDACTION="update_pkg_repo"
 			;;
-		--do-not-upload|-U)
+		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
 		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
@@ -192,6 +197,11 @@ while test "$1" != ""; do
 			shift
 			[ -n "${1}" ] \
 				&& var_to_print="${1}"
+			;;
+		--snapshot-update-status)
+			shift
+			snapshot_status_message="${1}"
+			BUILDACTION="snapshot_status_message"
 			;;
 		*)
 			usage
@@ -208,6 +218,13 @@ done
 # Print var required with -V and exit
 if [ -n "${var_to_print}"  ]; then
 	eval "echo \$${var_to_print}"
+	exit 0
+fi
+
+# Update snapshot status and exit
+if [ "${BUILDACTION}" = "snapshot_status_message" ]; then
+	export SNAPSHOTS=1
+	snapshots_update_status "${snapshot_status_message}"
 	exit 0
 fi
 
@@ -232,7 +249,7 @@ case $BUILDACTION in
 	printflags)
 		print_flags
 	;;
-	images)
+	images|snapshots)
 		# It will be handled below
 	;;
 	updatesources)
@@ -269,6 +286,28 @@ if [ "${BUILDACTION}" != "images" ]; then
 	exit 0
 fi
 
+if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+	_required=" \
+		RSYNCIP \
+		RSYNCUSER \
+		RSYNCPATH \
+		RSYNCLOGS \
+		PKG_RSYNC_HOSTNAME \
+		PKG_RSYNC_USERNAME \
+		PKG_RSYNC_SSH_PORT \
+		PKG_RSYNC_DESTDIR \
+		PKG_REPO_SERVER \
+		PKG_REPO_CONF_BRANCH"
+
+	for _var in ${_required}; do
+		eval "_value=\${$_var}"
+		if [ -z "${_value}" ]; then
+			echo ">>> ERROR: ${_var} is not defined"
+			exit 1
+		fi
+	done
+fi
+
 if [ $# -gt 1 ]; then
 	echo "ERROR: Too many arguments given."
 	echo
@@ -290,6 +329,17 @@ else
 fi
 
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
+
+if [ -n "${SNAPSHOTS}" ]; then
+	snapshots_rotate_logfile
+
+	snapshots_update_status ">>> Starting snapshot build operations"
+
+	if pkg update -r ${PRODUCT_NAME} >/dev/null 2>&1; then
+		snapshots_update_status ">>> Updating builder packages... "
+		pkg upgrade -r ${PRODUCT_NAME} -y -q >/dev/null 2>&1
+	fi
+fi
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
@@ -361,8 +411,25 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	fi
 done
 
-echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
+core_pkg_create_repo
+
+if [ -n "${SNAPSHOTS}" ]; then
+	snapshots_update_status ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+else
+	echo ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+fi
 wait
+
+if [ -n "${SNAPSHOTS}" ]; then
+	snapshots_copy_to_staging_iso_updates
+	snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+	# SCP files to snapshot web hosting area
+	if [ -z "${DO_NOT_UPLOAD}" ]; then
+		snapshots_scp_files
+	fi
+	# Alert the world that we have some snapshots ready.
+	snapshots_update_status ">>> Builder run is complete."
+fi
 
 echo ">>> ${IMAGES_FINAL_DIR} now contains:"
 ls -lah ${IMAGES_FINAL_DIR}

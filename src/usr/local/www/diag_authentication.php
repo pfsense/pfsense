@@ -1,35 +1,61 @@
 <?php
 /*
 	diag_authentication.php
-	part of the pfSense project	(https://www.pfsense.org)
-	Copyright (C) 2010 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2010 Ermal Luçi
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
-	pfSense_MODULE:	auth
+	pfSense_MODULE: auth
 */
 
 ##|+PRIV
@@ -52,19 +78,21 @@ if ($_POST) {
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
 	}
 
-	if (empty($_POST['username']) || empty($_POST['passwordfld'])) {
+	if (empty($_POST['username']) || empty($_POST['password'])) {
 		$input_errors[] = gettext("A username and password must be specified.");
 	}
 
 	if (!$input_errors) {
 		$attributes = array();
-		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg, $attributes)) {
+		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg, $attributes)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
-			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
-			foreach ($groups as $group) {
-				$savemsg .= "{$group} ";
-			}
+			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br />";
+			$savemsg .= "<ul>";
+			foreach ($groups as $group)
+				$savemsg .= "<li>" . "{$group} " . "</li>";
+			$savemsg .= "</ul>";
+
 		} else {
 			$input_errors[] = gettext("Authentication failed.");
 		}
@@ -75,64 +103,46 @@ $shortcut_section = "authentication";
 include("head.inc");
 
 ?>
+<?php
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+if ($savemsg)
+	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
 
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors);?>
-<?php if ($savemsg) print_info_box($savemsg);?>
+require_once('classes/Form.class.php');
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag authentication">
-	<tr>
-		<td class="tabnavtbl"></td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<form id="iform" name="iform" action="diag_authentication.php" method="post">
-				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="test">
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
-						<td width="78%" class="vtable">
-							<select name="authmode" id="authmode" class="formselect" >
-							<?php
-								$auth_servers = auth_get_authserver_list();
-								foreach ($auth_servers as $auth_server):
-									$selected = "";
-									if ($auth_server['name'] == $pconfig['authmode']) {
-										$selected = "selected=\"selected\"";
-									}
-							?>
-							<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-							<?php endforeach; ?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
-						<td width="78%" class="vtable">
-							<input class="formfld unknown" size="20" id="username" name="username" value="<?=htmlspecialchars($pconfig['username']);?>" />
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
-						<td width="78%" class="vtable">
-							<input class="formfld pwd" type="password" size="20" id="passwordfld" name="passwordfld" value="<?=htmlspecialchars($pconfig['passwordfld']);?>" />
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Test");?>" />
-						</td>
-					</tr>
-				</table>
-			</form>
-			</div>
-		</td>
-	</tr>
-</table>
+$form = new Form('Test');
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$section = new Form_Section('Authentication Test');
+
+foreach (auth_get_authserver_list() as $auth_server)
+	$serverlist[$auth_server['name']] = $auth_server['name'];
+
+$section->addInput(new Form_Select(
+	'authmode',
+	'Authentication Server',
+	$pconfig['authmode'],
+	$serverlist
+))->setHelp('Select the authentication server to test against');
+
+$section->addInput(new Form_Input(
+	'username',
+	'Username',
+	'text',
+	$pconfig['username'],
+	['placeholder' => 'Username']
+));
+
+$section->addInput(new Form_Input(
+	'password',
+	'Password',
+	'password',
+	$pconfig['password'],
+	['placeholder' => 'Password']
+));
+
+$form->add($section);
+print $form;
+
+include("foot.inc");

@@ -2,40 +2,62 @@
 /* $Id$ */
 /*
 	services_router_advertisements.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -52,8 +74,8 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-/*  Fix failover DHCP problem
- *  http://article.gmane.org/gmane.comp.security.firewalls.pfsense.support/18749
+/*	Fix failover DHCP problem
+ *	http://article.gmane.org/gmane.comp.security.firewalls.pfsense.support/18749
  */
 ini_set("memory_limit", "64M");
 
@@ -73,7 +95,7 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") . ".</b></p>" .
+	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses") . ".</b></p>" .
 		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 }
 
@@ -84,7 +106,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
 		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 			continue;
 		}
 		$if = $ifent;
@@ -121,10 +143,11 @@ $priority_modes = array("low" => "Low",
 	"high" => "High");
 $carplist = get_configured_carp_interface_list();
 
-$subnets_help = gettext("Subnets are specified in CIDR format.  " .
-	"Select the CIDR mask that pertains to each entry.  " .
+$subnets_help = '<span class="help-block">' . gettext("Subnets are specified in CIDR format.  " .
+	"Select the CIDR mask that pertains to each entry.	" .
 	"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
-	"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.");
+	"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned." .
+	'</span>');
 
 if ($_POST) {
 	unset($input_errors);
@@ -210,271 +233,354 @@ $pgtitle = array(gettext("Services"), gettext("Router advertisements"));
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+/* active tabs */
+$tab_array = array();
+$tabscounter = 0;
+$i = 0;
+foreach ($iflist as $ifent => $ifname) {
+	$oc = $config['interfaces'][$ifent];
+	// We need at least one interface configured with a NON-LOCAL IPv6 static address. fd80:8dba:82e1::/64 fits the bill
+	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+		(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		continue;
+	}
+
+	if ($ifent == $if) {
+		$active = true;
+	} else {
+		$active = false;
+	}
+
+	$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
+	$tabscounter++;
+}
+
+if ($tabscounter == 0) {
+	include("foot.inc");
+	exit;
+}
+
+display_top_tabs($tab_array);
+
+$tab_array = array();
+$tab_array[] = array(gettext("DHCPv6 Server"),		 false, "services_dhcpv6.php?if={$if}");
+$tab_array[] = array(gettext("Router Advertisements"), true,  "services_router_advertisements.php?if={$if}");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
+
+$section = new Form_Section('Advertisements');
+
+$section->addInput(new Form_Select(
+	'ramode',
+	'Router mode',
+	$pconfig['ramode'],
+	$advertise_modes
+))->setHelp('Select the Operating Mode for the Router Advertisement (RA) Daemon. Use:' . '<br />' .
+			'&nbsp;<strong>Router Only</strong> to only advertise this router' . '<br />' .
+			'&nbsp;<strong>Unmanaged</strong> for Router Advertising with Stateless Autoconfig' . '<br />' .
+			'&nbsp;<strong>Managed</strong> for assignment through a DHCPv6 Server' . '<br />' .
+			'&nbsp;<strong>Assisted</strong> for DHCPv6 Server assignment combined with Stateless Autoconfig.' .
+			'It is not required to activate this DHCPv6 server when set to "Managed", this can be another host on the network');
+
+$section->addInput(new Form_Select(
+	'rapriority',
+	'Router priority',
+	$pconfig['rapriority'],
+	$priority_modes
+))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');
+
+$carplistif = array();
+if (count($carplist) > 0) {
+	foreach ($carplist as $ifname => $vip) {
+		if ((preg_match("/^{$if}_/", $ifname)) && (is_ipaddrv6($vip))) {
+			$carplistif[$ifname] = $vip;
+		}
+	}
+}
+
+if (count($carplistif) > 0) {
+	$list = array();
+
+	foreach ($carplistif as $ifname => $vip) {
+		$list['interface'] = strtoupper($if);
+		$list[$ifname] = $ifname . ' - ' . $vip;
+	}
+
+	$section->addInput(new Form_Select(
+		'rainterface',
+		'RA Interface',
+		$pconfig['rainterface'],
+		$list
+	))->setHelp('Select the Interface for the Router Advertisement (RA) Daemon.');
+}
+
+$section->addInput(new Form_StaticText(
+	'RA Subnets',
+	$subnets_help
+));
+
+
+if(empty($pconfig['subnets']))
+	$pconfig['subnets'] = array('0' => '/128');
+
+$counter = 0;
+$numrows = count($pconfig['subnets']) - 1;
+
+foreach ($pconfig['subnets'] as $subnet) {
+	$address_name = "subnet_address" . $counter;
+	$bits_name = "subnet_bits" . $counter;
+	list($address, $subnet) = explode("/", $subnet);
+
+	$group = new Form_Group($counter == 0 ? 'Subnets':'');
+
+	$group->add(new Form_IpAddress(
+		$address_name,
+		null,
+		$address
+	))->addMask($bits_name, $subnet);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+
+	$group->addClass('repeatable');
+
+	$section->add($group);
+
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add'
+))->removeClass('btn-primary')->addClass('btn-success');
+
+$form->add($section);
+
+$section = new Form_Section('DNS Configuration');
+
+for($idx=1; $idx=<4; $idx++) {
+	$section->addInput(new Form_IpAddress(
+		'radns' . $idx,
+		'Server ' . $idx,
+		$pconfig['radns' . $idx]
+	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+}
+
+$section->addInput(new Form_Input(
+	'radomainsearchlist',
+	'Domain search list',
+	'text',
+	$pconfig['radomainsearchlist']
+))->setHelp('The RA server can optionally provide a domain search list. Use the semicolon character as separator ');
+
+$section->addInput(new Form_Checkbox(
+	'rasamednsasdhcp6',
+	'Settings',
+	'Use same settings as DHCPv6 server',
+	$pconfig['rasamednsasdhcp6']
+));
+
+$section->addInput(new Form_Input(
+	'if',
+	null,
+	'hidden',
+	$if
+));
+
+
+$form->add($section);
+print($form);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1">
-</script>
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
-<script type="text/javascript">
+<script>
 //<![CDATA[
-	rowname[0] = "subnet_address";
-	rowtype[0] = "textbox";
-	rowsize[0] = "30";
-	rowname[1] = "subnet_bits";
-	rowtype[1] = "select";
-	rowsize[1] = "1";
-	function add_alias_control() {
-		var name = "subnet_address" + (totalrows - 1);
-		obj = document.getElementById(name);
-		obj.setAttribute('class', 'formfldalias');
-		obj.setAttribute('autocomplete', 'off');
-		objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
-	}
-//]]>
-</script>
+events.push(function(){
 
-<form action="services_router_advertisements.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="router advert">
-	<tr>
-		<td>
-<?php
-	/* active tabs */
-	$tab_array = array();
-	$tabscounter = 0;
-	$i = 0;
-	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
-			continue;
-		}
-		if ($ifent == $if) {
-			$active = true;
-		} else {
-			$active = false;
-		}
-		$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
-		$tabscounter++;
+	function setMasks() {
+		// Find all ipaddress masks and make dynamic based on address family of input
+		$('span.pfIpMask + select').each(function (idx, select){
+			var input = $(select).prevAll('input[type=text]');
+
+			input.on('change', function(e){
+				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+				if (!isV6)
+					max = 32;
+
+				if (input.val() == "")
+					return;
+
+				while (select.options.length > max)
+					select.remove(0);
+
+				if (select.options.length < max)
+				{
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+				}
+			});
+
+			// Fire immediately
+			input.change();
+		});
 	}
-	if ($tabscounter == 0) {
-		echo "</td></tr></table></form>";
-		include("fend.inc");
-		echo "</body>";
-		echo "</html>";
-		exit;
-	}
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabnavtbl">
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("DHCPv6 Server"),         false, "services_dhcpv6.php?if={$if}");
-	$tab_array[] = array(gettext("Router Advertisements"), true,  "services_router_advertisements.php?if={$if}");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td width="22%" valign="top" class="vncellreq"><?=gettext("Router Advertisements");?></td>
-					<td width="78%" class="vtable">
-						<select name="ramode" id="ramode">
-							<?php foreach ($advertise_modes as $name => $value) { ?>
-							<option value="<?=$name ?>" <?php if ($pconfig['ramode'] == $name) echo "selected=\"selected\""; ?> > <?=$value ?></option>
-							<?php } ?>
-						</select>
-						<br />
-						<strong><?php printf(gettext("Select the Operating Mode for the Router Advertisement (RA) Daemon."))?></strong>
-						<?php printf(gettext("Use \"Router Only\" to only advertise this router, \"Unmanaged\" for Router Advertising with Stateless Autoconfig, \"Managed\" for assignment through (a) DHCPv6 Server, \"Assisted\" for DHCPv6 Server assignment combined with Stateless Autoconfig"));?>
-						<?php printf(gettext("It is not required to activate this DHCPv6 server when set to \"Managed\", this can be another host on the network")); ?>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Router Priority");?></td>
-					<td width="78%" class="vtable">
-						<select name="rapriority" id="rapriority">
-							<?php foreach ($priority_modes as $name => $value) { ?>
-							<option value="<?=$name ?>" <?php if ($pconfig['rapriority'] == $name) echo "selected=\"selected\""; ?> > <?=$value ?></option>
-							<?php } ?>
-						</select>
-						<br />
-						<strong><?php printf(gettext("Select the Priority for the Router Advertisement (RA) Daemon."))?></strong>
-					</td>
-				</tr>
-<?php
-	$carplistif = array();
-	if (count($carplist) > 0) {
-		foreach ($carplist as $ifname => $vip) {
-			if ((preg_match("/^{$if}_/", $ifname)) && (is_ipaddrv6($vip))) {
-				$carplistif[$ifname] = $vip;
+
+	// Complicated function to move all help text associated with this input id to the same id
+	// on the row above. That way if you delete the last row, you don't lose the help
+	function moveHelpText(id) {
+		$('#' + id).parent('div').parent('div').find('input').each(function() {	 // For each <span></span>
+			var fromId = this.id;
+			var toId = decrStringInt(fromId);
+			var helpSpan;
+
+			if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
+
+				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+				if($(helpSpan).hasClass('help-block')) {
+					if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
+						$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
+					else
+						$('#' + decrStringInt(fromId)).after(helpSpan);
+				}
 			}
-		}
+		});
 	}
-	if (count($carplistif) > 0) {
-?>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("RA Interface");?></td>
-					<td width="78%" class="vtable">
-						<select name="rainterface" id="rainterface">
-							<?php foreach ($carplistif as $ifname => $vip) { ?>
-							<option value="interface" <?php if ($pconfig['rainterface'] == "interface") echo "selected=\"selected\""; ?> > <?=strtoupper($if); ?></option>
-							<option value="<?=$ifname ?>" <?php if ($pconfig['rainterface'] == $ifname) echo "selected=\"selected\""; ?> > <?="$ifname - $vip"; ?></option>
-							<?php } ?>
-						</select>
-						<br />
-						<strong><?php printf(gettext("Select the Interface for the Router Advertisement (RA) Daemon."))?></strong>
-					</td>
-				</tr>
-<?php
+
+	// Increment the number at the end of the string
+	function bumpStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
+
+	  return newStr || str;
 	}
-?>
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("RA Subnet(s)");?></td>
-					<td width="78%" class="vtable">
-						<div><?= htmlentities($subnets_help) ?></div>
-						<table id="maintable" summary="subnets">
-							<tbody>
-<?php
-	$counter = 0;
-	foreach ($pconfig['subnets'] as $subnet) {
-		$address_name = "subnet_address" . $counter;
-		$bits_name = "subnet_bits" . $counter;
-		list($address, $subnet) = explode("/", $subnet);
-?>
-							<tr>
-								<td>
-									<input autocomplete="off" name="<?= $address_name ?>" type="text" class="formfldalias" id="<?= $address_name ?>" size="30" value="<?= htmlentities($address) ?>" />
-								</td>
-								<td>
-									<select name="<?= $bits_name ?>" class="formselect" id="<?= $bits_name ?>">
-										<option value="">
-										<?php for ($i = 128; $i >= 0; $i -= 1) { ?>
-										<option value="<?= $i ?>" <?= ("$subnet" === "$i") ? "selected='selected'" : "" ?>><?= $i ?></option>
-										<?php } ?>
-									</select>
-								</td>
-								<td>
-									<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-								</td>
-							</tr>
-<?php
-		$counter += 1;
+
+	// Decrement the number at the end of the string
+	function decrStringInt( str )	{
+	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+
+	  if( data )
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
+
+	  return newStr || str;
 	}
-?>
-							<tr style="display:none">
-								<td></td>
-							</tr>
-							</tbody>
-						</table>
-						<script type="text/javascript">
-						//<![CDATA[
-							field_counter_js = 2;
-							totalrows = <?= $counter ?>;
-						//]]>
-						</script>
-						<div id="addrowbutton">
-							<a onclick="javascript:addRowTo('maintable'); add_alias_control(); return false;" href="#"><!--
-							--><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></a>
-						</div>
-					</td>
-				</tr>
 
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
+	// Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
+	// gaps, but I do :)
+	function renumber() {
+		var idx = 0;
 
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">DNS</td>
-				</tr>
+		$('.repeatable').each(function() {
 
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
-					<td width="78%" class="vtable">
-						<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>" /><br />
-						<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>" /><br />
-						<input name="radns3" type="text" class="formfld unknown" id="radns3" size="28" value="<?=htmlspecialchars($pconfig['radns3']);?>" /><br />
-						<input name="radns4" type="text" class="formfld unknown" id="radns4" size="28" value="<?=htmlspecialchars($pconfig['radns4']);?>" /><br />
-						<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.");?>
-					</td>
-				</tr>
+			$(this).find('input').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
 
-				<tr>
-					<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
-					<td width="78%" class="vtable">
-						<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>" /><br />
-						<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as separator");?>
-					</td>
-				</tr>
+			$(this).find('select').each(function() {
+				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+			});
 
-				<tr>
-					<td width="22%" valign="top" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<input id="rasamednsasdhcp6" name="rasamednsasdhcp6" type="checkbox" value="yes" <?php if ($pconfig['rasamednsasdhcp6']) { echo "checked='checked'"; } ?> />
-						<strong><?= gettext("Use same settings as DHCPv6 server"); ?></strong>
-					</td>
-				</tr>
+			$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
 
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input name="if" type="hidden" value="<?=$if;?>" />
-						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
+			idx++;
+		});
+	}
 
-<script type="text/javascript">
-//<![CDATA[
-	jQuery(function ($) {
-		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");
-		var $triggered_checkboxes = $("#radns1, #radns2, #radns3, #radns4, #radomainsearchlist");
-		if ($rasamednsasdhcp6.length !== 1) { return; }
-		var onchange = function () {
-			var checked = $rasamednsasdhcp6.is(":checked");
-			if (checked) {
-				$triggered_checkboxes.each(function () { this.disabled = true; });
-			} else {
-				$triggered_checkboxes.each(function () { this.disabled = false; });
+	function delete_row(row) {
+		$('#' + row).parent('div').parent('div').remove();
+		renumber();
+	}
+
+	function add_row() {
+		// Find the lst repeatable group
+		var lastRepeatableGroup = $('.repeatable:last');
+
+		// Clone it
+		var newGroup = lastRepeatableGroup.clone(true);
+
+		// Increment the suffix number for each input elemnt in the new group
+		$(newGroup).find('input').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			if(!$(this).is('[id^=delete]'))
+				$(this).val('');
+		});
+
+		// Do the same for selectors
+		$(newGroup).find('select').each(function() {
+			$(this).prop("id", bumpStringInt(this.id));
+			$(this).prop("name", bumpStringInt(this.name));
+			// If this selector lists mask bits, we need it to be reset to all 128 options
+			// and no items selected, so that automatic v4/v6 selection still works
+			if($(this).is('[id^=address_subnet]')) {
+				$(this).empty();
+				for(idx=128; idx>0; idx--) {
+					$(this).append($('<option>', {
+						value: idx,
+						text: idx
+					}));
+				}
 			}
-		};
-		$rasamednsasdhcp6.bind("change", onchange);
-		onchange();
+		});
+
+		// And for "for" tags
+		$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+		$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+
+		// Insert the updated/cloned row
+		$(lastRepeatableGroup).after(newGroup);
+
+		// Delete any help text from the group we have cloned
+		$(lastRepeatableGroup).find('.help-block').each(function() {
+			$(this).remove();
+		});
+
+		setMasks();
+	}
+
+	// These are action buttons, not submit buttons
+	$('[id^=addrow]').prop('type','button');
+	$('[id^=delete]').prop('type','button');
+
+	// on click . .
+	$('[id^=addrow]').click(function() {
+		add_row();
 	});
 
-	var addressarray = <?= json_encode(get_alias_list("host", "network", "openvpn", "urltable")); ?>;
-	var objAlias = [];
-	function createAutoSuggest () {
-		<?php for ($i = 0; $i < $counter; $i += 1) { ?>
-			objAlias.push(new AutoSuggestControl(document.getElementById('subnet_address<?= $i ?>'), new StateSuggestions(addressarray)));
-		<?php } ?>
-		new AutoSuggestControl(document.getElementById('radns1'), new StateSuggestions(addressarray));
-		new AutoSuggestControl(document.getElementById('radns2'), new StateSuggestions(addressarray));
-		new AutoSuggestControl(document.getElementById('radns3'), new StateSuggestions(addressarray));
-		new AutoSuggestControl(document.getElementById('radns4'), new StateSuggestions(addressarray));
-	}
-	setTimeout(createAutoSuggest, 500);
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			moveHelpText(event.target.id);
+			delete_row(event.target.id);
+		}
+		else
+			alert('<?php echo gettext("You may not delete the last one!")?>');
+	});
+
+	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+
+	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
+		source: addressarray
+	});
+
+});
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc");

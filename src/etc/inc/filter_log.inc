@@ -406,7 +406,7 @@ function find_action_image($action) {
 function handle_ajax($nentries, $tail = 50) {
 	global $config;
 	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile, $filterent;
+		global $filter_logfile,$filterent;
 		if ($_GET['lastsawtime']) {
 			$lastsawtime = $_GET['lastsawtime'];
 		}
@@ -429,8 +429,8 @@ function handle_ajax($nentries, $tail = 50) {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">{$img}</a>";
-				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
+				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">" . gettext("Block") . " </a>";
+				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
 		echo $new_rules;

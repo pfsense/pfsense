@@ -2,35 +2,62 @@
 /* $Id$ */
 /*
 	firewall_shaper_wizards.php
-	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2008 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2008 Ermal Luçi
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE:	shaper
+	pfSense_MODULE: shaper
 */
 
 ##|+PRIV
@@ -46,7 +73,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if ($_GET['reset'] <> "") {
+if ($_GET['reset'] != "") {
 	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }
@@ -82,65 +109,43 @@ $wizards = array(
 
 $closehead = false;
 include("head.inc");
-?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+$tab_array = array();
+$tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
+$tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+$tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+$tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
+display_top_tabs($tab_array);
 
-<form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper wizard">
-	<tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
-	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
-	display_top_tabs($tab_array);
+if (is_subsystem_dirty('shaper'))
+	print_info_box_np(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-					<tr>
-						<td class="listhdrr" width="25%" align="center" ><?=gettext("Wizard function");?></td>
-						<td class="listhdrr" width="75%" align="center"><?=gettext("Wizard Link");?></td>
-					</tr>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Traffic Shaper Wizards')?></h2></div>
+	<div class="panel-body">
+		<dl	 class="dl-horizontal responsive">
 <?php
-				foreach ($wizards as $key => $wizard):
+foreach ($wizards as $key => $wizard):
 ?>
-					<tr class="tabcont">
-						<td class="listlr" style="background-color: #e0e0e0" width="25%" align="center">
+			<dt>
+				<?=$key?>
+			</dt>
+			<dd>
+				<?='<a href="wizard.php?xml=' . $wizard . '">' . $wizard . '</a>'?>
+			</dd>
 <?php
-							echo $key;
+endforeach;
 ?>
-						</td>
-						<td class="listr" style="background-color: #e0e0e0" width="75%" align="center">
+		</dl>
+	</div>
+</div>
 <?php
-							echo "<a href=\"wizard.php?xml=" . $wizard ."\" >" .$wizard . "</a>";
-?>
-						</td>
-					</tr>
-<?php
-				endforeach;
-?>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");

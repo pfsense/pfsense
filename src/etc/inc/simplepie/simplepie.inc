@@ -4010,16 +4010,16 @@ class SimplePie_Item
 					$temp = explode(':', $this->sanitize($duration_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT));
 					if (sizeof($temp) > 0)
 					{
-						(int) $seconds = array_pop($temp);
+						$seconds = (int)array_pop($temp);
 					}
 					if (sizeof($temp) > 0)
 					{
-						(int) $minutes = array_pop($temp);
+						$minutes = (int)array_pop($temp);
 						$seconds += $minutes * 60;
 					}
 					if (sizeof($temp) > 0)
 					{
-						(int) $hours = array_pop($temp);
+						$hours = (int)array_pop($temp);
 						$seconds += $hours * 3600;
 					}
 					unset($temp);
@@ -9132,8 +9132,6 @@ class SimplePie_Misc
 				return 'Adobe-Symbol-Encoding';
 
 			case 'ami1251':
-			case 'ami1251':
-			case 'amiga1251':
 			case 'amiga1251':
 				return 'Amiga-1251';
 
@@ -9227,7 +9225,6 @@ class SimplePie_Misc
 
 			case 'csiso646danish':
 			case 'dk':
-			case 'ds2089':
 			case 'ds2089':
 			case 'iso646dk':
 				return 'DS_2089';
@@ -9725,7 +9722,6 @@ class SimplePie_Misc
 				return 'IBM1026';
 
 			case 'ibm1047':
-			case 'ibm1047':
 				return 'IBM1047';
 
 			case 'csiso143iecp271':
@@ -9890,7 +9886,6 @@ class SimplePie_Misc
 			case 'latin8':
 				return 'ISO-8859-14';
 
-			case 'iso885915':
 			case 'iso885915':
 			case 'latin9':
 				return 'ISO-8859-15';
@@ -10438,9 +10433,6 @@ class SimplePie_Misc
 			case 'latin5':
 			case 'windows1254':
 				return 'Windows-1254';
-
-			case 'windows1254':
-				return 'windows-1254';
 
 			case 'windows1255':
 				return 'windows-1255';
@@ -11151,7 +11143,6 @@ class SimplePie_Decode_HTML_Entities
 		{
 			case "\x09":
 			case "\x0A":
-			case "\x0B":
 			case "\x0B":
 			case "\x0C":
 			case "\x20":

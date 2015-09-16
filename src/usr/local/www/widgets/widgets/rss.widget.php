@@ -85,72 +85,7 @@ if ($config['widgets']['rssfeed']) {
 }
 
 ?>
-
-<input type="hidden" id="rss-config" name="rss-config" value="" />
-
-<div id="rss-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/rss.widget.php" method="post" name="rss_widget_iform">
-		<textarea name="rssfeed" class="formfld unknown textarea_widget" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
-		<br />
-		<table summary="rss widget">
-			<tr>
-				<td align="right">
-					Display number of items:
-				</td>
-				<td>
-					<select name='rssmaxitems' id='rssmaxitems'>
-						<option value='<?= $max_items ?>'><?= $max_items ?></option>
-						<?php
-							for ($x=100; $x<5100; $x=$x+100) {
-								echo "<option value='{$x}'>{$x}</option>\n";
-							}
-						?>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td align="right">
-					Widget height:
-				</td>
-				<td>
-					<select name='rsswidgetheight' id='rsswidgetheight'>
-						<option value='<?= $rsswidgetheight ?>'><?= $rsswidgetheight ?>px</option>
-						<?php
-							for ($x=100; $x<5100; $x=$x+100) {
-								echo "<option value='{$x}'>{$x}px</option>\n";
-							}
-						?>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td align="right">
-					Show how many characters from story:
-				</td>
-				<td>
-					<select name='rsswidgettextlength' id='rsswidgettextlength'>
-						<option value='<?= $rsswidgettextlength ?>'><?= $rsswidgettextlength ?></option>
-						<?php
-							for ($x=10; $x<5100; $x=$x+10) {
-								echo "<option value='{$x}'>{$x}</option>\n";
-							}
-						?>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					&nbsp;
-				</td>
-				<td>
-					<input id="rss_widget_submit" name="rss_widget_submit" type="submit" class="formbtn" value="Save" />
-				</td>
-			</tr>
-		</table>
-	</form>
-</div>
-
-<div id="rss-widgets" style="padding: 5px; height: <?=$rsswidgetheight?>px; overflow:scroll;">
+<div class="list-group" style="height: <?=$rsswidgetheight?>px; overflow:scroll;">
 <?php
 	if (!is_dir("/tmp/simplepie")) {
 		mkdir("/tmp/simplepie");
@@ -160,9 +95,8 @@ if ($config['widgets']['rssfeed']) {
 	exec("chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
 	function textLimit($string, $length, $replacer = '...') {
-		if (strlen($string) > $length) {
+		if(strlen($string) > $length)
 			return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
-		}
 		return $string;
 	}
 	$feed = new SimplePie();
@@ -171,28 +105,63 @@ if ($config['widgets']['rssfeed']) {
 	$feed->init();
 	$feed->handle_content_type();
 	$counter = 1;
-	foreach ($feed->get_items() as $item) {
+	foreach($feed->get_items(0, $max_items) as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
-		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
 		$content = $item->get_content();
 		$content = strip_tags($content);
-		echo textLimit($content, $rsswidgettextlength) . "<br />";
-		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br />";
-		$counter++;
-		if ($counter > $max_items) {
-			break;
-		}
-		echo "<hr/>";
+?>
+	<a href="<?=$item->get_permalink()?>" target="_blank" class="list-group-item">
+		<h4 class="list-group-item-heading">
+			<img src="<?=$feed->get_favicon()?>" title="Source: <?=$feed->get_title()?>" width="16" height="16" />
+			<?=$item->get_title()?>
+		</h4>
+		<p class="list-group-item-text">
+			<?=textLimit($content, $rsswidgettextlength)?>
+			<br />
+		</p>
+	</a>
+<?php
 	}
 ?>
+
 </div>
 
-<!-- needed to display the widget settings menu -->
-<script type="text/javascript">
-//<![CDATA[
-	selectIntLink = "rss-configure";
-	textlink = document.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
-</script>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div class="panel-footer collapse">
+
+<form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
+	<div class="form-group">
+		<label for="rssfeed" class="col-sm-3 control-label">Feeds</label>
+		<div class="col-sm-6">
+			<textarea name="rssfeed" class="form-control"><?=$textarea_txt;?></textarea>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="rssmaxitems" class="col-sm-3 control-label"># Stories</label>
+		<div class="col-sm-6">
+			<input type="number" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="rsswidgetheight" class="col-sm-3 control-label">Widget height</label>
+		<div class="col-sm-6">
+			<input type="number" name="rsswidgetheight" value="<?=$rsswidgetheight?>" min="100" max="2500" step="100" class="form-control" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="rsswidgettextlength" class="col-sm-3 control-label">Content limit</label>
+		<div class="col-sm-6">
+			<input type="number" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="100" class="form-control" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-default">Save</button>
+		</div>
+	</div>
+</form>

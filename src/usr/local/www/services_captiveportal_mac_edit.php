@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	captiveportal
+	pfSense_MODULE: captiveportal
 */
 
 ##|+PRIV
@@ -98,7 +98,6 @@ if (isset($id) && $a_passthrumacs[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -183,88 +182,106 @@ if ($_POST) {
 		exit;
 	}
 }
+
+// Get the MAC address
+$ip = $_SERVER['REMOTE_ADDR'];
+$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
+$mymac = str_replace("\n","",$mymac);
+
 include("head.inc");
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Edit MAC address rules');
+
+$section->addInput(new Form_Select(
+	'action',
+	'Action',
+	strtolower($pconfig['action']),
+	array('pass' => 'Pass', 'block' => 'Block')
+))->setHelp('Choose what to do with packets coming from this MAC address.');
+
+$macaddress = new Form_Input(
+	'mac',
+	'MAC Address',
+	'text',
+	$pconfig['mac'],
+	['placeholder' => 'xx:xx:xx:xx:xx:xx']
+);
+
+$btnmymac = new Form_Button(
+	'btnmymac',
+	'Copy My MAC'
+	);
+
+$btnmymac->removeClass('btn-primary')->addClass('btn-success btn-sm');
+
+$group = new Form_Group('MAC controls');
+$group->add($macaddress);
+$group->add($btnmymac);
+$group->setHelp('MAC address (6 hex octets separated by colons)');
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'bw_up',
+	'Bandwidth up',
+	'text',
+	$pconfig['bw_up']
+))->setHelp('Enter an upload limit to be enforced on this MAC in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'bw_down',
+	'Bandwidth down',
+	'text',
+	$pconfig['bw_down']
+))->setHelp('Enter a download limit to be enforced on this MAC in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'zone',
+	null,
+	'hidden',
+	$cpzone
+));
+
+if (isset($id) && $a_passthrumacs[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+if (isset($pconfig['username']) && $pconfig['username']) {
+	$section->addInput(new Form_Input(
+		'username',
+		null,
+		'hidden',
+		$pconfig['username']
+	));
+}
+
+$form->add($section);
+print($form);
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal mac edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit MAC address rules");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="action" class="formselect">
-<?php
-					$actions = explode(" ", "Pass Block");
-					foreach ($actions as $action):
-?>
-						<option value="<?=strtolower($action);?>"<?php if (strtolower($action) == strtolower($pconfig['action'])) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($action);?>
-						</option>
-<?php
-					endforeach;
-?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Choose what to do with packets coming from this MAC address"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>" />
-<?php
-				$ip = getenv('REMOTE_ADDR');
-				$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
-				$mac = str_replace("\n", "", $mac);
-?>
-				<a onclick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
-				<br />
-				<span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this MAC address in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a download limit to be enforced on this MAC address in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
-				<?php if (isset($id) && $a_passthrumacs[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-				<?php if (isset($pconfig['username']) && $pconfig['username']): ?>
-					<input name="username" type="hidden" value="<?=htmlspecialchars($pconfig['username']);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	// Make the ‘Copy My MAC’ button a plain button, not a submit button
+	$("#btnmymac").prop('type','button');
+
+	// On click, copy the hidden 'mymac' text to the 'mac' input
+	$("#btnmymac").click(function() {
+		$('#mac').val('<?=$mymac?>');
+	});
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

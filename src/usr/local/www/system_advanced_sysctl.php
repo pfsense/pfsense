@@ -2,38 +2,61 @@
 /* $Id$ */
 /*
 	system_advanced_sysctl.php
-	part of pfSense
-	Copyright (C) 2005-2007 Scott Ullrich
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -44,12 +67,6 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
-}
 
 if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();
@@ -84,7 +101,6 @@ if ($act == "edit") {
 		$pconfig['descr'] = $tunables[$id]['descr'];
 	}
 }
-
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
@@ -103,7 +119,6 @@ if ($act == "del") {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -120,7 +135,8 @@ if ($_POST) {
 		clear_subsystem_dirty('sysctl');
 	}
 
-	if ($_POST['Submit'] == gettext("Save")) {
+	if ($_POST['save'] == gettext("Save")) {
+
 		$tunableent = array();
 
 		$tunableent['tunable'] = $_POST['tunable'];
@@ -134,9 +150,7 @@ if ($_POST) {
 		}
 
 		mark_subsystem_dirty('sysctl');
-
 		write_config();
-
 		pfSenseHeader("system_advanced_sysctl.php");
 		exit;
 	}
@@ -145,161 +159,106 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced: System Tunables"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
+	
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-	<form action="system_advanced_sysctl.php" method="post">
-		<?php
-			if ($input_errors) {
-				print_input_errors($input_errors);
-			}
-			if ($savemsg) {
-				print_info_box($savemsg);
-			}
-			if (is_subsystem_dirty('sysctl') && ($act != "edit")) {
-				print_info_box_np(gettext("The firewall tunables have changed.  You must apply the configuration to take affect."));
-			}
-		?>
-	</form>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced tunables">
-		<tr>
-			<td>
+if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
+	print_info_box_np(gettext("The firewall tunables have changed. You must apply the configuration for them to take affect."));
+
+$tab_array = array();
+$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
+$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+$tab_array[] = array(gettext("System Tunables"), true, "system_advanced_sysctl.php");
+$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+display_top_tabs($tab_array);
+
+if ($act != "edit" ): ?>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title"><?=gettext('System Tunables'); ?></h2>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<table class="table table-responsive table-hover table-condensed">
+				<caption><strong><?=gettext('NOTE: '); ?></strong><?=gettext('The options on this page are intended for use by advanced users only.'); ?></caption>
+				<thead>
+					<tr>
+						<th class="col-sm-3"><?=gettext("Tunable Name"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th class="col-sm-1"><?=gettext("Value"); ?></th>
+						<th><a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit"><?=gettext('New'); ?></a></th>
+					</tr>
+				</thead>
+				<?php foreach ($tunables as $i => $tunable):
+					if (!isset($tunable['modified']))
+						$i = $tunable['tunable']; ?>
+				<tr>
+					<td><?=$tunable['tunable']; ?></td>
+					<td><?=$tunable['descr']; ?></td>
+					<td><?=$tunable['value']; ?>
+					<?php if($tunable['value'] == "default")
+						echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; ?>
+					</td>
+					<td>
+					<a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"><?=gettext('Edit'); ?></a>
+						<?php if (isset($tunable['modified'])): ?>
+						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"><?=gettext('Delete/Reset'); ?></a>
+						<?php endif; ?>
+					</td>
+				</tr>
 				<?php
-					$tab_array = array();
-					$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
-					$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
-					$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
-					$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
-					$tab_array[] = array(gettext("System Tunables"), true, "system_advanced_sysctl.php");
-					$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
-					display_top_tabs($tab_array);
+					endforeach;
+					unset($tunables);
 				?>
-			</td>
-		</tr>
-		<?php if ($act != "edit"): ?>
-		<tr>
-			<td id="mainarea">
-				<div class="tabcont">
-					<span class="vexpl">
-						<span class="red">
-							<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
-						</span>
-						<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-						<br />
-					</span>
-					<br />
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<tr>
-							<td width="20%" class="listhdrr"><?=gettext("Tunable Name"); ?></td>
-							<td width="60%" class="listhdrr"><?=gettext("Description"); ?></td>
-							<td width="20%" class="listhdrr"><?=gettext("Value"); ?></td>
-						</tr>
-						<?php foreach ($tunables as $i => $tunable):
+			</table>
+		</div>
+	</div>
+</div>
 
-								if (!isset($tunable['modified'])) {
-									$i = urlencode($tunable['tunable']);
-								}
-						?>
-						<tr>
-							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo htmlspecialchars($tunable['tunable']); ?>
-							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo htmlspecialchars($tunable['descr']); ?>
-							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
-								<?php echo htmlspecialchars($tunable['value']); ?>
-								<?php
-									if ($tunable['value'] == "default") {
-										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
-									}
-								?>
-							</td>
-							<td class="list nowrap">
-								<table border="0" cellspacing="0" cellpadding="1" summary="edit delete">
-									<tr>
-										<td valign="middle">
-											<a href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>">
-												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
-											</a>
-										</td>
-							<?php if (isset($tunable['modified'])): ?>
-										<td valign="middle">
-											<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?"); ?>')">
-												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
-											</a>
-										</td>
-							<?php endif; ?>
-									</tr>
-								</table>
-							</td>
-						</tr>
-						<?php endforeach; unset($tunables); ?>
-						<tr>
-							<td class="list" colspan="3">
-							</td>
-							<td class="list">
-								<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-									<tr>
-										<td valign="middle">
-											<a href="system_advanced_sysctl.php?act=edit">
-												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-											</a>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-		<?php else: ?>
-		<tr>
-			<td>
-				<div id="mainarea">
-					<form action="system_advanced_sysctl.php" method="post" name="iform" id="iform">
-						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="edit system tunable">
-							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit system tunable"); ?></td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunable"); ?></td>
-								<td width="78%" class="vtable">
-									<input size="65" name="tunable" value="<?php echo htmlspecialchars($pconfig['tunable']); ?>" />
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
-								<td width="78%" class="vtable">
-									<textarea rows="7" cols="50" name="descr"><?php echo htmlspecialchars($pconfig['descr']); ?></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Value"); ?></td>
-								<td width="78%" class="vtable">
-									<input size="65" name="value" value="<?php echo htmlspecialchars($pconfig['value']); ?>" />
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%">
-									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-									<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-									<input name="referer" type="hidden" value="<?=$referer;?>" />
-									<?php if (isset($id) && $a_tunable[$id]): ?>
-									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-									<?php endif; ?>
-								</td>
-							</tr>
-						</table>
-					</form>
-				</div>
-			</td>
-		</tr>
-		<?php endif; ?>
-	</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php else:
+	require_once('classes/Form.class.php');
+	$form = new Form;
+	$section = new Form_Section('Edit Tunable');
+
+	$section->addInput(new Form_Input(
+		'tunable',
+		'Tunable',
+		'text',
+		$pconfig['tunable']
+	))->setWidth(4);
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'Description',
+		'text',
+		$pconfig['descr']
+	))->setWidth(4);
+
+	$section->addInput(new Form_Input(
+		'value',
+		'Value',
+		'text',
+		$pconfig['value']
+	))->setWidth(4);
+
+	if (isset($id) && $a_tunable[$id]) {
+		$form->addGlobal(new Form_Input(
+			'id',
+			'id',
+			'hidden',
+			$id
+		));
+	}
+
+	$form->add($section);
+
+	print $form;
+
+endif;
+
+include("fend.inc");

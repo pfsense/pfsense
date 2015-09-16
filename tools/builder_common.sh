@@ -55,10 +55,25 @@ lc() {
 }
 
 git_last_commit() {
-	CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
-	CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
+	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+	export CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
 	echo ">>> Last known commit $CURRENT_AUTHOR - $CURRENT_COMMIT"
 	echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
+}
+
+# Create core pkg repository
+core_pkg_create_repo() {
+	if [ ! -d "${CORE_PKG_PATH}/All" ]; then
+		return
+	fi
+
+	echo -n ">>> Creating core packages repository... "
+	if pkg repo -q "${CORE_PKG_PATH}"; then
+		echo "Done!"
+	else
+		echo "Failed!"
+		print_error_pfS
+	fi
 }
 
 # Create core pkg (base, kernel)
@@ -117,8 +132,8 @@ core_pkg_create() {
 		rm -f ${_plist}.tmp ${plist}.exclude
 	fi
 
-	mkdir -p ${CORE_PKG_PATH}
-	if ! pkg create -o ${CORE_PKG_PATH} -p ${_plist} -r ${_root} -m ${_metadir}; then
+	mkdir -p ${CORE_PKG_PATH}/All
+	if ! pkg create -o ${CORE_PKG_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
 		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
 		print_error_pfS
 	fi
@@ -140,8 +155,10 @@ print_error_pfS() {
 		echo "Log saved on ${LOGFILE}" && \
 		tail -n20 ${LOGFILE} >&2
 	echo
-	echo "Press enter to continue."
-	read ans
+	if [ -z "${NOT_INTERACTIVE}" ]; then
+		echo "Press enter to continue."
+		read ans
+	fi
 	kill $$
 	exit 1
 }
@@ -159,7 +176,7 @@ prestage_on_ram_setup() {
 	else
 		echo "######################################################################################"
 		echo
-		echo ">>> Builder has more than 1.4GiB RAM enabling memory disks"
+		echo ">>> Builder has more than 2GiB RAM enabling memory disks"
 		echo ">>> WARNING: Remember to remove these memory disks by running $0 --disable-memorydisks"
 		echo
 		echo "######################################################################################"
@@ -245,7 +262,7 @@ build_all_kernels() {
 			print_error_pfS
 		fi
 
-		if [ -n "${NO_BUILDKERNEL:-}" -a -f "${CORE_PKG_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
+		if [ -n "${NO_BUILDKERNEL:-}" -a -f "${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
@@ -292,10 +309,10 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
-		cp ${CORE_PKG_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
+		cp ${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
-				_EXTRA_KERNEL_PATH=${CORE_PKG_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
+				_EXTRA_KERNEL_PATH=${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
 				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
 					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
 					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
@@ -361,6 +378,18 @@ create_Full_update_tarball() {
 	rm ${FINAL_CHROOT_DIR}/boot/loader.conf 2>/dev/null
 	rm ${FINAL_CHROOT_DIR}/boot/loader.conf.local 2>/dev/null
 
+	# Old systems will run (pre|post)_upgrade_command from /tmp
+	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command ]; then
+		cp -p \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command \
+			${FINAL_CHROOT_DIR}/tmp
+	fi
+	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command ]; then
+		cp -p \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command \
+			${FINAL_CHROOT_DIR}/tmp
+	fi
+
 	echo ">>> Creating ${UPDATES_TARBALL_FILENAME} ..." | tee -a ${LOGFILE}
 	tar --exclude=./dev -czPf ${UPDATES_TARBALL_FILENAME} -C ${FINAL_CHROOT_DIR} .
 }
@@ -380,9 +409,9 @@ print_flags() {
 	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
-	printf "                 OVADISKSIZE: %s\n" $OVADISKSIZE
-	printf "         OVA_FIRST_PART_SIZE: %s\n" $OVA_FIRST_PART_SIZE
-	printf "          OVA_SWAP_PART_SIZE: %s\n" $OVA_SWAP_PART_SIZE
+	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
+	printf "   OVA_FIRST_PART_SIZE_IN_GB: %s\n" $OVA_FIRST_PART_SIZE_IN_GB
+	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -549,8 +578,8 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-${DATESTRING}.img"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade-${DATESTRING}.img"
+		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}${TIMESTAMP_SUFFIX}.img"
+		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade${TIMESTAMP_SUFFIX}.img"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -794,14 +823,15 @@ create_ova_image() {
 
 	# Fill fstab
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/label/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
-	echo "/dev/label/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 
 	# Create / partition
+	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
-		-s ${OVA_FIRST_PART_SIZE} \
+		-s ${OVA_FIRST_PART_SIZE_IN_GB}g \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
 
@@ -809,42 +839,65 @@ create_ova_image() {
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
+		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating vmdk / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
-	# Create vmdk file
+	# Create raw disk
+	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
 	mkimg \
 		-s gpt \
-		-f vmdk \
+		-f raw \
 		-b /boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
-		-o ${OVA_TMP}/${OVFVMDK} 2>&1 >> ${LOGFILE}
+		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFRAW} ]; then
 		if [ -f ${OVA_TMP}/${OVFUFS} ]; then
 			rm -f ${OVA_TMP}/${OVFUFS}
 		fi
-		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
-			rm -f ${OVA_TMP}/${OVFVMDK}
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
 		fi
-		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	echo "Done!" | tee -a ${LOGFILE}
 
 	# We don't need it anymore
 	rm -f ${OVA_TMP}/${OVFUFS} >/dev/null 2>&1
 
+	# Convert raw to vmdk
+	echo -n ">>> Creating vmdk disk... " | tee -a ${LOGFILE}
+	vmdktool -z9 -v ${OVA_TMP}/${OVFVMDK} ${OVA_TMP}/${OVFRAW}
+
+	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFVMDK} ]; then
+		if [ -f ${OVA_TMP}/${OVFRAW} ]; then
+			rm -f ${OVA_TMP}/${OVFRAW}
+		fi
+		if [ -f ${OVA_TMP}/${OVFVMDK} ]; then
+			rm -f ${OVA_TMP}/${OVFVMDK}
+		fi
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating vmdk image. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	echo "Done!" | tee -a ${LOGFILE}
+
+	rm -f ${OVA_TMP}/i${OVFRAW}
+
 	ova_setup_ovf_template
 
-	# We repack the file with a more universal xml file that
-	# works in both virtual box and esx server
+	echo -n ">>> Writing final ova image... " | tee -a ${LOGFILE}
+	# Create OVA file for vmware
 	gtar -C ${OVA_TMP} -cpf ${OVAPATH} ${PRODUCT_NAME}.ovf ${OVFVMDK}
+	echo "Done!" | tee -a ${LOGFILE}
 	rm -f ${OVA_TMP}/${OVFVMDK} >/dev/null 2>&1
-
-	gzip -qf ${OVAPATH} &
 
 	echo ">>> OVA created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -861,31 +914,28 @@ ova_setup_ovf_template() {
 	#  78   FreeBSD 64-Bit
 	if [ "${TARGET}" = "amd64" ]; then
 		local _os_id="78"
-		local _os_type="FreeBSD 64-Bit"
+		local _os_type="freebsd64Guest"
+		local _os_descr="FreeBSD 64-Bit"
 	elif [ "${TARGET}" = "i386" ]; then
 		local _os_id="42"
-		local _os_type="FreeBSD"
+		local _os_type="freebsdGuest"
+		local _os_descr="FreeBSD"
 	else
 		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
 		print_error_pfS
 	fi
 
-	local POPULATEDSIZE=$(du -d0 -m $FINAL_CHROOT_DIR | cut -f1)
-	local POPULATEDSIZEBYTES=$((${POPULATEDSIZE}*1024^2))
-	local REFERENCESSIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
-
-	echo ">>> Setting REFERENCESSIZE to ${REFERENCESSIZE}..." | tee -a ${LOGFILE}
-	echo ">>> Setting POPULATEDSIZEBYTES to ${POPULATEDSIZEBYTES}..." | tee -a ${LOGFILE}
-	echo ">>> Setting DISKSECTIONALLOCATIONUNITS to ${OVA_DISKSECTIONALLOCATIONUNITS}..." | tee -a ${LOGFILE}
-	echo ">>> Setting DISKSECTIONCAPACITY to ${OVADISKSIZE}..." | tee -a ${LOGFILE}
+	local POPULATED_SIZE=$(du -d0 -k $FINAL_CHROOT_DIR | cut -f1)
+	local POPULATED_SIZE_IN_BYTES=$((${POPULATED_SIZE}*1024))
+	local VMDK_FILE_SIZE=$(stat -f "%z" ${OVA_TMP}/${OVFVMDK})
 
 	sed \
-		-e "s,%%REFERENCESSIZE%%,${REFERENCESSIZE},g" \
-		-e "s,%%DISKSECTIONALLOCATIONUNITS%%,${OVA_DISKSECTIONALLOCATIONUNITS},g" \
-		-e "s,%%DISKSECTIONCAPACITY%%,${OVADISKSIZE},g" \
-		-e "s,%%DISKSECTIONPOPULATEDSIZE%%,${POPULATEDSIZEBYTES},g" \
+		-e "s,%%VMDK_FILE_SIZE%%,${VMDK_FILE_SIZE},g" \
+		-e "s,%%VMDK_DISK_CAPACITY_IN_GB%%,${VMDK_DISK_CAPACITY_IN_GB},g" \
+		-e "s,%%POPULATED_SIZE_IN_BYTES%%,${POPULATED_SIZE_IN_BYTES},g" \
 		-e "s,%%OS_ID%%,${_os_id},g" \
 		-e "s,%%OS_TYPE%%,${_os_type},g" \
+		-e "s,%%OS_DESCR%%,${_os_descr},g" \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
@@ -929,6 +979,7 @@ clean_builder() {
 
 	echo -n ">>> Cleaning previously built images..."
 	rm -rf $IMAGES_FINAL_DIR/*
+	rm -rf $STAGINGAREA/*
 	echo "Done!"
 
 	if [ -z "${NO_CLEAN_FREEBSD_SRC}" ]; then
@@ -1016,6 +1067,14 @@ clone_to_staging_area() {
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
+
+	# Change default interface names to match vmware driver
+	sed -i '' -e 's,em0,vmx0,' -e 's,em1,vmx1,' ${DEFAULTCONF}
+	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore default values to be used by serial package
+	sed -i '' -e 's,vmx0,em0,' -e 's,vmx1,em1,' ${DEFAULTCONF}
+
 	# Activate serial console in config.xml
 	# If it was there before, clear the setting to be sure we don't add it twice.
 	sed -i "" -e "/		<enableserial\/>/d" ${DEFAULTCONF}
@@ -1070,13 +1129,15 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
+		cp ${CORE_PKG_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
 	if [ "${1}" = "nanobsd" -o \
 	     "${1}" = "memstickserial" -o \
 	     "${1}" = "memstickadi" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
+	elif [ "${1}" = "ova" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
 	fi
@@ -1423,12 +1484,12 @@ pkg_chroot_add() {
 		print_error_pfS
 	fi
 
-	if [ ! -f ${CORE_PKG_PATH}/${_pkg} ]; then
+	if [ ! -f ${CORE_PKG_PATH}/All/${_pkg} ]; then
 		echo ">>> ERROR: Package ${_pkg} not found"
 		print_error_pfS
 	fi
 
-	cp ${CORE_PKG_PATH}/${_pkg} ${_target}
+	cp ${CORE_PKG_PATH}/All/${_pkg} ${_target}
 	pkg_chroot ${_target} add /${_pkg}
 	rm -f ${_target}/${_pkg}
 }
@@ -1542,6 +1603,32 @@ finish() {
 	echo ">>> Operation $0 has ended at $(date)"
 }
 
+pkg_repo_rsync() {
+	local _repo_path="${1}"
+
+	if [ -n "${DO_NOT_UPLOAD}" -o -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
+		return
+	fi
+
+	if [ -z "${LOGFILE}" ]; then
+		local _logfile="/dev/null"
+	else
+		local _logfile="${LOGFILE}"
+	fi
+
+	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
+	if script -aq ${_logfile} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+		--timeout=60 --delete-delay ${_repo_path} \
+		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+	then
+		echo "Done!" | tee -a ${_logfile}
+	else
+		echo "Failed!" | tee -a ${_logfile}
+		echo ">>> ERROR: An error occurred sending repo to remote hostname"
+		print_error_pfS
+	fi
+}
+
 poudriere_create_patch() {
 	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${GIT_REPO_BRANCH_OR_TAG}.patch"
 
@@ -1586,6 +1673,24 @@ poudriere_possible_archs() {
 				_archs="${_archs} arm.armv6"
 			fi
 		fi
+	fi
+
+	if [ -n "${ARCH_LIST}" ]; then
+		local _found=0
+		for _desired_arch in ${ARCH_LIST}; do
+			_found=0
+			for _possible_arch in ${_archs}; do
+				if [ "${_desired_arch}" = "${_possible_arch}" ]; then
+					_found=1
+					break
+				fi
+			done
+			if [ ${_found} -eq 0 ]; then
+				echo ">>> ERROR: Impossible to build for arch: ${_desired_arch}"
+				print_error_pfS
+			fi
+		done
+		_archs="${ARCH_LIST}"
 	fi
 
 	echo ${_archs}
@@ -1751,20 +1856,6 @@ poudriere_update_jails() {
 
 	local native_xtools=""
 	for jail_arch in ${_archs}; do
-		local _run=0
-		if [ -n "${ARCH_LIST}" ]; then
-			for _arch in ${ARCH_LIST}; do
-				if [ "${jail_arch##*.}" = "${_arch}" ]; then
-					_run=1
-				fi
-			done
-		else
-			_run=1
-		fi
-
-		[ ${_run} -eq 0 ] \
-			&& continue
-
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
 		if ! poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
@@ -1849,19 +1940,178 @@ poudriere_bulk() {
 		fi
 
 		# ./ is intentional, it's a rsync trick to make it chdir to directory before send it
-		REPO_PATH="/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
-		if [ -z "${DO_NOT_UPLOAD}" -a -d "${REPO_PATH}" ]; then
-			echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${LOGFILE}
-			if script -aq ${LOGFILE} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
-				--timeout=60 --delete-delay ${REPO_PATH} \
-				${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
-			then
-				echo "Done!" | tee -a ${LOGFILE}
-			else
-				echo "Failed!" | tee -a ${LOGFILE}
-				echo ">>> ERROR: An error occurred sending repo to remote hostname"
-				print_error_pfS
-			fi
-		fi
+		pkg_repo_rsync "/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
+}
+
+# This routine is called to write out to stdout
+# a string. The string is appended to $SNAPSHOTSLOGFILE
+# and we scp the log file to the builder host if
+# needed for the real time logging functions.
+snapshots_update_status() {
+	if [ -z "${SNAPSHOTS}" -o -z "$1" ]; then
+		return
+	fi
+	echo $1
+	echo "`date` -|- $1" >> $SNAPSHOTSLOGFILE
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
+		LU=`cat $SNAPSHOTSLASTUPDATE`
+		CT=`date "+%H%M%S"`
+		# Only update every minute
+		if [ "$LU" != "$CT" ]; then
+			ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCLOGS}"
+			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log
+			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
+		fi
+	fi
+}
+
+# Copy the current log file to $filename.old on
+# the snapshot www server (real time logs)
+snapshots_rotate_logfile() {
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
+		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log.old
+	fi
+
+	# Cleanup log file
+	rm -f $SNAPSHOTSLOGFILE;    touch $SNAPSHOTSLOGFILE
+	rm -f $SNAPSHOTSLASTUPDATE; touch $SNAPSHOTSLASTUPDATE
+
+}
+
+snapshots_copy_to_staging_nanobsd() {
+	for NANOTYPE in nanobsd nanobsd-vga; do
+		for FILESIZE in ${1}; do
+			FILENAMEFULL="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}${TIMESTAMP_SUFFIX}.img.gz"
+			FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+			mkdir -p $STAGINGAREA/nanobsd
+			mkdir -p $STAGINGAREA/nanobsdupdates
+
+			cp $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
+			cp $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
+
+			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
+				md5 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.md5 2>/dev/null
+				sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.sha256 2>/dev/null
+			fi
+			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
+				md5 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.md5 2>/dev/null
+				sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.sha256 2>/dev/null
+			fi
+
+			# Copy NanoBSD auto update:
+			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
+				cp $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
+				sha256 $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz > $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz.sha256 2>/dev/null
+				# NOTE: Updates need a file with output similar to date output
+				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
+				cp $BUILTDATESTRINGFILE $STAGINGAREA/version-${NANOTYPE}-$FILESIZE
+			fi
+		done
+	done
+}
+
+snapshots_copy_to_staging_iso_updates() {
+	# Copy ISOs
+	md5 ${ISOPATH}.gz > ${ISOPATH}.md5
+	sha256 ${ISOPATH}.gz > ${ISOPATH}.sha256
+	cp ${ISOPATH}* $STAGINGAREA/ 2>/dev/null
+
+	# Copy memstick items
+	md5 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.md5
+	sha256 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.sha256
+	cp ${MEMSTICKPATH}* $STAGINGAREA/ 2>/dev/null
+
+	md5 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.md5
+	sha256 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.sha256
+	cp ${MEMSTICKSERIALPATH}* $STAGINGAREA/ 2>/dev/null
+
+	if [ "${TARGET}" = "amd64" ]; then
+		md5 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.md5
+		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
+		cp ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
+	fi
+
+	md5 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.md5
+	sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
+	cp ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
+	# NOTE: Updates need a file with output similar to date output
+	# Use the file generated at start of snapshots_dobuilds() to be consistent on times
+	if [ -z "${_IS_RELEASE}" ]; then
+		cp $BUILTDATESTRINGFILE $STAGINGAREA/version 2>/dev/null
+	fi
+}
+
+snapshots_scp_files() {
+	if [ -z "${RSYNC_COPY_ARGUMENTS:-}" ]; then
+		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60 --bwlimit=${RSYNCKBYTELIMIT}" #--bwlimit=50
+	fi
+
+	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
+	# Add ./ before last directory, it's rsync trick to make it chdir to parent directory before send
+	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	snapshots_update_status ">>> Finished copying core pkg repo"
+
+	snapshots_update_status ">>> Copying files to ${RSYNCIP}"
+
+	# Ensure directory(s) are available
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/livecd_installer"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
+	if [ -d $STAGINGAREA/virtualization ]; then
+		ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/virtualization"
+	fi
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/.updaters"
+	# ensure permissions are correct for r+w
+	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/."
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*iso* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-memstick* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*Update* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/nanobsd/
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
+	if [ -d $STAGINGAREA/virtualization ]; then
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
+			${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/virtualization/
+	fi
+
+	# Rather than copy these twice, use ln to link to the latest one.
+
+	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
+	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
+
+	LATESTFILENAME="`ls $UPDATESDIR/*.tgz | grep Full | grep -v md5 | grep -v sha256 | tail -n1`"
+	LATESTFILENAME=`basename ${LATESTFILENAME}`
+	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
+		${RSYNCPATH}/.updaters/latest.tgz"
+	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
+		${RSYNCPATH}/.updaters/latest.tgz.sha256"
+
+	for i in ${FLASH_SIZE}
+	do
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+
+		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+
+		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-vga-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+	done
+
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/.updaters
+	snapshots_update_status ">>> Finished copying files."
 }

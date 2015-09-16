@@ -1,36 +1,63 @@
 <?php
 /* $Id$ */
 /*
-	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
-	Created by technologEase (http://www.technologEase.com).
-
-	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	exec.php
 */
+/* ====================================================================
+ *	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Created by technologEase (http://www.technologEase.com)
+ *	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)\
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	shell
+	pfSense_MODULE: shell
 */
 
 ##|+PRIV
@@ -87,38 +114,33 @@ function puts($arg) {
 
 // "Constants".
 
-$Version    = '';
+$Version = '';
 $ScriptName = $REQUEST['SCRIPT_NAME'];
 
 // Get year.
 
-$arrDT   = localtime();
+$arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
-
-<script type="text/javascript">
-//<![CDATA[
-
+<script>
 	// Create recall buffer array (of encoded strings).
-
 <?php
 
 if (isBlank($_POST['txtRecallBuffer'])) {
-	puts("   var arrRecallBuffer = new Array;");
+	puts("	 var arrRecallBuffer = new Array;");
 } else {
-	puts("   var arrRecallBuffer = new Array(");
+	puts("	 var arrRecallBuffer = new Array(");
 	$arrBuffer = explode("&", $_POST['txtRecallBuffer']);
 	for ($i = 0; $i < (count($arrBuffer) - 1); $i++) {
-		puts("      '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "',");
+		puts("		'" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "',");
 	}
-	puts("      '" . htmlspecialchars($arrBuffer[count($arrBuffer) - 1], ENT_QUOTES | ENT_HTML401) . "'");
-	puts("   );");
+	puts("		'" . htmlspecialchars($arrBuffer[count($arrBuffer) - 1], ENT_QUOTES | ENT_HTML401) . "'");
+	puts("	 );");
 }
-
 ?>
 
 	// Set pointer to end of recall buffer.
@@ -193,163 +215,89 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 	}
 //]]>
 </script>
-<style type="text/css">
-/*<![CDATA[*/
-
-input {
-	font-family: courier new, courier;
-	font-weight: normal;
-	font-size: 9pt;
-}
-
-pre {
-	border: 2px solid #435370;
-	background: #F0F0F0;
-	padding: 1em;
-	font-family: courier new, courier;
-	white-space: pre;
-	line-height: 10pt;
-	font-size: 10pt;
-}
-
-.label {
-	font-family: tahoma, verdana, arial, helvetica;
-	font-size: 11px;
-	font-weight: bold;
-}
-
-.button {
-	font-family: tahoma, verdana, arial, helvetica;
-	font-weight: bold;
-	font-size: 11px;
-}
-
-/*]]>*/
-</style>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if (isBlank($_POST['txtCommand'])): ?>
-<p class="red"><strong><?=gettext("Note: this function is unsupported. Use it " .
-"on your own risk"); ?>!</strong></p>
-<?php endif; ?>
-<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <?php
 
-if (!isBlank($_POST['txtCommand'])) {
-	puts("<pre>");
-	puts("\$ " . htmlspecialchars($_POST['txtCommand']));
+if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg))
+	print('<div class="alert alert-warning" role="alert">'.gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!").'</div>');
+
+if (!isBlank($_POST['txtCommand'])):?>
+	<div class="panel panel-success responsive">
+		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
+		<div class="panel-body">
+			<pre>
+<?php
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
-	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));	/* PHP scripts */
-	$ph = popen($_POST['txtCommand'] . ' 2>&1', "r");
-	while ($line = fgets($ph)) {
-		echo htmlspecialchars($line);
-	}
-	pclose($ph);
-	puts("&nbsp;</pre>");
-}
+	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
+	$output = array();
+	exec($_POST['txtCommand'] . ' 2>&1', $output);
+	foreach($output as $line)
+		print(htmlspecialchars($line) . "\r\n");
+?></pre>
 
+		</div>
+	</div>
+<? endif ?>
 
-if (!isBlank($_POST['txtPHPCommand'])) {
-	puts("<pre>");
-	require_once("config.inc");
-	require_once("functions.inc");
-	echo eval($_POST['txtPHPCommand']);
-	puts("&nbsp;</pre>");
-}
+<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
+		<div class="panel-body">
+			<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
+			<br /><br />
+			<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
+			<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
+			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute"); ?>" />
+			<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
+			<input type="button"  class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+		</div>
+	</div>
 
-?>
-<div id="niftyOutter">
-<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit(this);">
-	<table summary="exec">
-		<tr>
-		<td colspan="2" valign="top" class="vnsepcell"><?=gettext("Execute Shell command"); ?></td>
-		</tr>
-		<tr>
-			<td class="label" align="right"><?=gettext("Command"); ?>:</td>
-			<td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>" /></td>
-		</tr>
-		<tr>
-			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
-			<td valign="top" class="label">
-				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
-				<input type="button" class="button" name="btnRecallPrev" value="<" onclick="btnRecall_onClick(this.form, -1);" />
-				<input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
-				<input type="button" class="button" name="btnRecallNext" value=">" onclick="btnRecall_onClick(this.form, 1);" />
-				<input type="button" class="button" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick(this.form);" />
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" height="16"></td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="vnsepcell"><?=gettext("Download"); ?></td>
-		</tr>
-		<tr>
-			<td align="right"><?=gettext("File to download"); ?>:</td>
-			<td>
-				<input name="dlPath" type="text" class="formfld file" id="dlPath" size="50" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>" />
-			</td>
-		</tr>
-		<tr>
-			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
-			<td valign="top" class="label">
-				<input name="submit" type="submit" class="button" id="download" value="<?=gettext("Download"); ?>" />
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" height="16"></td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="vnsepcell"><?=gettext("Upload"); ?></td>
-		</tr>
-		<tr>
-			<td align="right"><?=gettext("File to upload"); ?>:</td>
-			<td valign="top" class="label">
-				<input name="ulfile" type="file" class="formfld file" id="ulfile" />
-			</td>
-		</tr>
-		<tr>
-			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
-			<td valign="top" class="label">
-				<input name="submit" type="submit" class="button" id="upload" value="<?=gettext("Upload"); ?>" /></td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" height="16"></td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="vnsepcell"><?=gettext("PHP Execute"); ?></td>
-		</tr>
-		<tr>
-			<td align="right"><?=gettext("Command"); ?>:</td>
-			<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
-		</tr>
-		<tr>
-			<td valign="top">&nbsp;&nbsp;&nbsp;</td>
-			<td valign="top" class="label">
-				<input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
-				<p>
-					<strong><?=gettext("Example"); ?>:</strong>   interfaces_sync_setup();
-				</p>
-			</td>
-		</tr>
-
-	</table>
-</form>
-</div>
-<?php include("fend.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
-document.forms[0].txtCommand.focus();
-//]]>
-</script>
-</body>
-</html>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
+		<div class="panel-body">
+			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
+			<br /><br />
+			<input name="submit" type="submit"	class="btn btn-default btn-sm" id="download" value="<?=gettext("Download"); ?>" />
+		</div>
+	</div>
 
 <?php
-
-if ($_POST) {
-	conf_mount_ro();
-}
-
+	if ($ulmsg)
+		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
 ?>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload a file')?></h2></div>
+		<div class="panel-body">
+			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
+			<br />
+			<input name="submit" type="submit" class="btn btn-default btn-sm pull-left" id="upload" value="<?=gettext("Upload"); ?>" />
+
+		</div>
+	</div>
+<?php
+	if (!isBlank($_POST['txtPHPCommand'])) {
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
+		puts("<pre>");
+		require_once("config.inc");
+		require_once("functions.inc");
+		echo eval($_POST['txtPHPCommand']);
+		puts("&nbsp;</pre>");
+		puts("</div>");
+}
+?>
+	<div class="panel panel-default responsive">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute PHP Commands')?></h2></div>
+		<div class="panel-body">
+			<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
+			<br />
+			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
+			<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
+		</div>
+	</div>
+</form>
+
+<?php
+include("foot.inc");
+
+if($_POST)
+	conf_mount_ro();

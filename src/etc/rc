@@ -166,10 +166,6 @@ elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
-	# Ensure that PBI packages can be persistent across reboots
-	/bin/mkdir -p /root/var/db/pbi
-	/bin/rm -rf /var/db/pbi
-	/bin/ln -s /root/var/db/pbi/ /var/db/pbi
 else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
@@ -179,17 +175,7 @@ else
 		# User must have just disabled RAM disks, move these back into place.
 		/bin/mkdir -p /var/db/pkg
 		/bin/mv /root/var/db/pkg /var/db/pkg
-		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pbi /var/db/pbi
 	fi
-fi
-
-# Copy PBI keys
-if ls /usr/local/share/pbi-keys/*.ssl >/dev/null 2>&1; then
-	if [ ! -d "/var/db/pbi/keys" ]; then
-		mkdir -p /var/db/pbi/keys
-	fi
-	cp -f /usr/local/share/pbi-keys/*.ssl /var/db/pbi/keys
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -280,10 +266,6 @@ if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
 
-if [ ! -d /cf/conf/backup/ ]; then
-	/bin/mkdir -p /cf/conf/backup/
-fi
-
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
@@ -349,6 +331,12 @@ echo "done."
 
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
+
+# Finish update
+if [ -f /cf/conf/upgrade_in_progress ]; then
+	echo "Running second stage of upgrade process..."
+	/usr/local/sbin/pfsense-upgrade.sh -y
+fi
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini

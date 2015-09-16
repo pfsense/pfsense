@@ -48,7 +48,7 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-if ($_REQUEST['getdyndnsstatus']) {
+if($_REQUEST['getdyndnsstatus']) {
 	$first_entry = true;
 	foreach ($a_dyndns as $dyndns) {
 		if ($first_entry) {
@@ -79,7 +79,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table>
 	<tr>
 		<td width="5%"  class="listhdrr"><?=gettext("Int.");?></td>
 		<td width="15%" class="listhdrr"><?=gettext("Service");?></td>
@@ -139,10 +139,10 @@ if ($_REQUEST['getdyndnsstatus']) {
 		?>
 		</td>
 		<td class="listr">
-		<div id='dyndnsstatus<?php echo $i; ?>'><?php echo gettext("Checking ..."); ?></div>
+		<div id='dyndnsstatus<?= $i;?>'><?= gettext("Checking ...");?></div>
 		</td>
 	</tr>
-	<?php $i++; endforeach; ?>
+	<?php $i++; endforeach;?>
 </table>
 <script type="text/javascript">
 //<![CDATA[

@@ -51,7 +51,7 @@ $friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
 $vips = link_interface_to_vips($friendly, '', $vhid);
 $carp_iface = "{$friendly}_vip{$vhid}";
 foreach ($vips as $vip) {
-	$notificationmsg = sprintf('Carp cluster member "{$friendly_descr)(%2$s): {$vip['subnet']} (%1$s)" has resumed the state "MASTER" for vhid %s', $argument, $vip['descr'], $vhid);
+	$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "MASTER" for vhid %3$s', $argument, $friendly_descr, $vhid);
 
 	notify_via_smtp($notificationmsg);
 	notify_via_growl($notificationmsg);

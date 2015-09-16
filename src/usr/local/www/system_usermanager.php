@@ -354,7 +354,10 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
+		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
+		local_user_set_groups($userent,$_POST['groups']);
 		local_user_set($userent);
+		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
 		local_user_set_groups($userent, $_POST['groups']);
 		write_config();
 

@@ -109,9 +109,9 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_POST['act'] == "deluser") {
+if ($_GET['act'] == "deluser") {
 
-	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
+	if (!isset($_GET['username']) || !isset($a_user[$id]) || ($_GET['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -503,7 +503,7 @@ foreach($a_user as $i => $userent):
 				<td>
 					<a href="?act=edit&amp;userid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
 <?php if($userent['scope'] != "system"): ?>
-					<a href="?act=del&amp;userid=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
+					<a href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" class="btn btn-xs btn-danger">delete</a>
 <?php endif; ?>
 				</td>
 			</tr>

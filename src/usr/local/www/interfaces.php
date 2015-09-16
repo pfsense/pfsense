@@ -3674,6 +3674,37 @@ events.push(function(){
 		show_dhcp6adv();
 	});
 
+	// DHCP preset actions
+	// Set presets from value of radio buttons
+	function setPresets(val) {
+		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
+		if (val == "DHCP")		setPresetsnow("60", "300", "0", "10", "120", "10");
+		if (val == "pfSense")	setPresetsnow("60", "15", "0", "", "", "1");
+		if (val == "SavedCfg")	setPresetsnow("<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
+		if (val == "Clear")		setPresetsnow("", "", "", "", "", "");
+	}
+
+	function setPresetsnow(timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
+		$('#adv_dhcp_pt_timeout').val(timeout);
+		$('#adv_dhcp_pt_retry').val(retry);
+		$('#adv_dhcp_pt_select_timeout').val(selecttimeout);
+		$('#adv_dhcp_pt_reboot').val(reboot);
+		$('#adv_dhcp_pt_backoff_cutoff').val(backoffcutoff);
+		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
+	}
+
+	// Set preset buttons on page load
+	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
+	if(sv == "")
+		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
+
+	// Set preset from value
+	setPresets(sv);
+
+	// On click . .
+	$('[id=adv_dhcp_pt_values]').click(function () {
+	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
+	});
 });
 //]]>
 </script>

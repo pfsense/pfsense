@@ -2663,16 +2663,12 @@ function filter_generate_user_rule($rule) {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
-			} else {
-				log_error(sprintf(gettext("Could not find IPv6 gateway for interface (%s)."), $rule['interface']));
 			}
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else {
-				log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
-			}
+			} 
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */

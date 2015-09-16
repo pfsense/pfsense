@@ -2754,13 +2754,13 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'pptp_local',
 	'Local IP address',
-	$pconfig['pptp_local']
+	$pconfig['pptp_local'][0]
 ))->addMask('pptp_subnet', $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote',
 	'Remote IP address',
-	$pconfig['pptp_remote']
+	$pconfig['pptp_remote'][0]
 ));
 
 $section->addInput(new Form_Checkbox(

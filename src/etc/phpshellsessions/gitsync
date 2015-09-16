@@ -410,7 +410,7 @@ function isUrl($url = "") {
 	if ($url) {
 		if (strstr($url, "rcs.pfsense.org") or
 			strstr($url, "mainline") or
-			strstr($url, ".git") or 
+			strstr($url, ".git") or
 			strstr($url, "git://")) {
 			return true;
 		}

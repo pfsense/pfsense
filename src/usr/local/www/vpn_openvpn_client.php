@@ -274,14 +274,14 @@ if ($_POST) {
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
+			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
+			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 		}
 	}
@@ -420,7 +420,7 @@ function build_if_list() {
 function build_cert_list() {
 	global $a_cert;
 
-	$list = array();
+	$list = array('' => 'None (Username and/or Password required)');
 
 	foreach ($a_cert as $cert) {
 		$caname = "";
@@ -449,7 +449,7 @@ function build_cert_list() {
 if (!$savemsg)
 	$savemsg = "";
 
-if ($input_errors) 
+if ($input_errors)
 	print_input_errors($input_errors);
 
 if ($savemsg)
@@ -614,11 +614,11 @@ if($act=="new" || $act=="edit") :
 	))->setHelp('Paste your shared key here');
 
 	if (count($a_ca)) {
-		
+
 		$list = array();
 		foreach ($a_ca as $ca)
 			$list[$ca['refid']] = $ca['descr'];
-			
+
 		$section->addInput(new Form_Select(
 			'caref',
 			'Peer Certificate Authority',
@@ -631,8 +631,8 @@ if($act=="new" || $act=="edit") :
 			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
 		));
 	}
-			 
-	if (count($a_crl)) {			
+
+	if (count($a_crl)) {
 		$section->addInput(new Form_Select(
 			'crlref',
 			'Peer Certificate Revocation list',
@@ -645,7 +645,7 @@ if($act=="new" || $act=="edit") :
 			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
 		));
 	}
-	
+
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_checkbox(
 			'autokey_enable',
@@ -660,6 +660,13 @@ if($act=="new" || $act=="edit") :
 		'Shared Key',
 		$pconfig['shared_key']
 	))->setHelp('Paste your shared key here');
+
+	$section->addInput(new Form_Select(
+		'certref',
+		'Client Certificate',
+		$pconfig['certref'],
+		build_cert_list()
+		));
 
 	$section->addInput(new Form_Select(
 		'crypto',
@@ -878,20 +885,22 @@ events.push(function(){
 				hideCheckbox('tlsauth_enable', false);
 				hideCheckbox('autotls_enable', false);
 				hideInput('caref', false);
-				hideInput('certreft', false);
+				hideInput('certref', false);
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
+				hideLabel('Peer Certificate Revocation list', true);
 				break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
 				hideCheckbox('tlsauth_enable', true);
 				hideCheckbox('autotls_enable', true);
 				hideInput('caref', true);
-				hideInput('certreft', true);
+				hideInput('certref', true);
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
 				hideInput('shared_key', false);
+				hideLabel('Peer Certificate Revocation list', false);
 				break;
 		}
 	}
@@ -914,12 +923,15 @@ events.push(function(){
 
 	<?php if (!$pconfig['tls']): ?>
 		hideCheckbox('autotls_enable', hide);
+		hideInput('tls', hide);
 	<?php endif; ?>
 
 		autotls_change();
 	}
 
 	function autotls_change() {
+
+	hideInput('tls', false);
 
 	<?php if (!$pconfig['tls']): ?>
 		autocheck = $('#autotls_enable').prop('checked');
@@ -934,6 +946,17 @@ events.push(function(){
 	}
 
 	// ---------- Library of show/hide functions ----------------------------------------------------------------------
+
+	// Hides div whose label contains the specified text. (Good for StaticText)
+	function hideLabel(text, hide) {
+
+		var element = $('label:contains(' + text + ')');
+
+		if(hide)
+			element.parent('div').addClass('hidden');
+		else
+			element.parent('div').removeClass('hidden');
+	}
 
 	// Hides the <div> in which the specified input element lives so that the input,
 	// its label and help text are hidden
@@ -993,12 +1016,15 @@ events.push(function(){
 		dev_mode_change();
 	});
 
+	 // Auto TLS
+	$('#autotls_enable').click(function () {
+		autotls_change();
+	});
 	// ---------- Set initial page display state ----------------------------------------------------------------------
 	mode_change();
 	autokey_change();
 	tlsauth_change();
 	useproxy_changed();
-	dev_mode_change();
 });
 //]]>
 </script>

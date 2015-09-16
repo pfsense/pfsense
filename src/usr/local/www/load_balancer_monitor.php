@@ -41,6 +41,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("filter.inc");
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();

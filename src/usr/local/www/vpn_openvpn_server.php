@@ -950,7 +950,7 @@ if($act=="new" || $act=="edit") :
 		$pconfig['serverbridge_dhcp_end']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'gwredir',
 		'Redirect Gateway',
 		'Force all client generated traffic through the tunnel.',
@@ -1314,15 +1314,17 @@ events.push(function(){
 	function mode_change() {
 		value = $('#mode').val();
 
+		hideCheckbox('autotls_enable', false);
+		hideCheckbox('tlsauth_enable', false);
+		hideInput('caref', false);
+		hideInput('crlref', false);
+		hideLabel('Peer Certificate Revocation list', false);
+
 		switch(value) {
 			case "p2p_tls":
 			case "server_tls":
 			case "server_user":
-				hideCheckbox('tlsauth_enable', false);
-				hideCheckbox('auto_tls_enable', false);
 				hideInput('tls', false);
-				hideInput('ca_ref', false);
-				hideInput('crl_ref', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
@@ -1331,11 +1333,7 @@ events.push(function(){
 				hideInput('shared_key', false);
 				break;
 			case "server_tls_user":
-				hideCheckbox('tlsauth_enable', false);
-				hideCheckbox('auto_tls_enable', false);
 				hideInput('tls', false);
-				hideInput('ca_ref', false);
-				hideInput('crl_ref', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
@@ -1344,12 +1342,13 @@ events.push(function(){
 				hideInput('shared_key', true);
 				break;
 			case "p2p_shared_key":
-				hideCheckbox('tlsauth_enable', true);
-				hideCheckbox('auto_tls_enable', true);
 				hideInput('tls', true);
-				hideInput('ca_ref', true);
-				hideInput('crl_ref', true);
+				hideInput('caref', true);
+				hideInput('crlref', true);
+				hideLabel('Peer Certificate Revocation list', true);
 				hideInput('certref', true);
+				hideCheckbox('autotls_enable', true);
+				hideCheckbox('tlsauth_enable', true);
 				hideInput('dh_length', true);
 				hideInput('cert_depth', true);
 				hideInput('strictusercn', true);
@@ -1363,7 +1362,7 @@ events.push(function(){
 				hideClass('advanced', true);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
-				hideInput('gwredir', true);
+				hideCheckbox('gwredir', true);
 				hideInput('local_network', true);
 				hideInput('local_networkv6', true);
 				hideInput('authmode', true);
@@ -1373,7 +1372,7 @@ events.push(function(){
 				hideClass('advanced', true);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
-				hideInput('gwredir', false);
+				hideCheckbox('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideInput('authmode', true);
@@ -1384,7 +1383,7 @@ events.push(function(){
 				hideClass('advanced', false);
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
-				hideInput('gwredir', false);
+				hideCheckbox('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideInput('authmode', false);
@@ -1397,20 +1396,18 @@ events.push(function(){
 				hideInput('verbosity_level', false);
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
-				hideInput('gwredir', false);
+				hideCheckbox('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
 				break;
 		}
 
-		tuntap_change();
 		gwredir_change();
 	}
 
 	function autokey_change() {
-		var hide  = ! $('#autokey_enable').prop('checked')
-
+		var hide  = $('#autokey_enable').prop('checked')
 		hideInput('shared_key', hide);
 	}
 
@@ -1425,17 +1422,16 @@ events.push(function(){
 	}
 
 	function autotls_change() {
+		<?php if (!$pconfig['tls']): ?>
+			autocheck = $('#autotls_enable').prop('checked');
+		<?php else: ?>
+			autocheck = false;
+		<?php endif; ?>
 
-	<?php if (!$pconfig['tls']): ?>
-		autocheck = $('#autotls_enable').prop('checked');
-	<?php else: ?>
-		autocheck = false;
-	<?php endif; ?>
-
-	if ($('#tlsauth_enable').prop('checked')  && !autocheck)
-	   hideInput('tls', false);
-	else
-	   hideInput('tls', true);
+		if ($('#tlsauth_enable').prop('checked')  && !autocheck)
+		   hideInput('tls', false);
+		else
+		   hideInput('tls', true);
 	}
 
 	function gwredir_change() {
@@ -1555,6 +1551,17 @@ events.push(function(){
 
 	// ---------- Library of show/hide functions ----------------------------------------------------------------------
 
+	// Hides div whose label contains the specified text. (Good for StaticText)
+	function hideLabel(text, hide) {
+
+		var element = $('label:contains(' + text + ')');
+
+		if(hide)
+			element.parent('div').addClass('hidden');
+		else
+			element.parent('div').removeClass('hidden');
+	}
+
 	// Hides the <div> in which the specified input element lives so that the input,
 	// its label and help text are hidden
 	function hideInput(id, hide) {
@@ -1641,6 +1648,7 @@ events.push(function(){
 	 // Mode
 	$('#mode').click(function () {
 		mode_change();
+		tuntap_change();
 	});
 
 	 // Tun/tap mode

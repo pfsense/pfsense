@@ -73,7 +73,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 		$flent = parse_filter_line($logent);
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
-			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) ||
+			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
 			    (($flent != "") && (is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
 				$counter++;
 				$filterlog[] = $flent;
@@ -86,7 +86,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 function escape_filter_regex($filtertext) {
 	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
-	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".  */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".    */
 	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
 }
 
@@ -413,9 +413,9 @@ function handle_ajax($nentries, $tail = 50) {
 		if ($_POST['lastsawtime']) {
 			$lastsawtime = $_POST['lastsawtime'];
 		}
-		/*  compare lastsawrule's time stamp to filter logs.
-		 *  afterwards return the newer records so that client
-		 *  can update AJAX interface screen.
+		/* compare lastsawrule's time stamp to filter logs.
+		 * afterwards return the newer records so that client
+		 * can update AJAX interface screen.
 		 */
 		$new_rules = "";
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);

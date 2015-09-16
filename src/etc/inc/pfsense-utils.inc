@@ -1071,7 +1071,7 @@ function setup_serial_port($when = "save", $path = "") {
 				}
 			}
 			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-			
+
 			$specplatform = system_identify_specific_platform();
 			if ($specplatform['name'] == 'RCC-VE' ||
 			    $specplatform['name'] == 'RCC-DFF') {

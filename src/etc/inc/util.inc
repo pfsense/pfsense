@@ -835,7 +835,7 @@ function is_hostname($hostname, $allow_wildcard=false) {
 		return false;
 	}
 
-	if (is_domain($hostname, $allow_wildcard=false)) {
+	if (is_domain($hostname, $allow_wildcard)) {
 		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
 			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
 			return false;
@@ -852,7 +852,6 @@ function is_domain($domain, $allow_wildcard=false) {
 	if (!is_string($domain)) {
 		return false;
 	}
-
 	if ($allow_wildcard) {
 		$domain_regex = '/^(?:(?:[a-z_0-9\*]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i';
 	} else {

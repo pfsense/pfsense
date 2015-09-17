@@ -230,6 +230,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 	<option value="">IP Address</option>
 	<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
+	<option value="descr"<?php if ($curhostipformat == "descr") echo " selected=\"selected\"";?>>Description</option>
 	<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected=\"selected\"";?>>FQDN</option>
 </select>
 </form>

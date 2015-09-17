@@ -234,13 +234,13 @@ if ($act == "csr") {
 }
 
 if ($_POST) {
-	
+
 	// This is just the blank altername name that is added for display purposes. We don't want to validate/save it
 	if($_POST['altname_value0']  == "") {
 		unset($_POST['altname_type0']);
 		unset($_POST['altname_value0']);
 	}
-	
+
 	if ($_POST['save'] == gettext("Save")) {
 		$input_errors = array();
 		$pconfig = $_POST;
@@ -323,8 +323,8 @@ if ($_POST) {
 			foreach ($altnames as $idx => $altname) {
 				switch ($altname['type']) {
 					case "DNS":
-						if (!is_hostname($altname['value'])) {
-							array_push($input_errors, "DNS subjectAltName values must be valid hostnames or FQDNs");
+						if (!is_hostname($altname['value'], true)) {
+							array_push($input_errors, "DNS subjectAltName values must be valid hostnames, FQDNs or wildcard domains.");
 						}
 						break;
 					case "IP":
@@ -551,7 +551,7 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 

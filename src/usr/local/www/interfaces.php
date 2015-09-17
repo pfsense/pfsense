@@ -1997,6 +1997,24 @@ $form->add($modal);
 $section = new Form_Section('DHCP client configuration');
 $section->addClass('dhcp');
 
+$group = new Form_Group('Options');
+
+$group->add(new Form_Checkbox(
+	'dhcpadv',
+	null,
+	'Show DHCP advanced options',
+	false
+));
+
+$group->add(new Form_Checkbox(
+	'dhcpovr',
+	null,
+	'Config file override',
+	false
+));
+
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'dhcphostname',
 	'Hostname',
@@ -2019,6 +2037,7 @@ $section->addInput(new Form_Input(
 			'This is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync.');
 
 $group = new Form_Group('Protocol timing');
+$group->addClass('dhcpadvanced');
 
 $group->add(new Form_Input(
 	'adv_dhcp_pt_timeout',
@@ -2065,6 +2084,7 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $group = new Form_Group('Presets');
+$group->addClass('dhcpadvanced');
 
 $group->add(new Form_Checkbox(
 	'adv_dhcp_pt_values',
@@ -2103,10 +2123,20 @@ $group->setHelp('The values in these fields are DHCP protocol timings used when 
 
 $section->add($group);
 
+$section->addInput(new Form_Input(
+	'adv_dhcp_config_file_override_path',
+	'Option modifiers',
+	'text',
+	$pconfig['adv_dhcp_config_file_override_path']
+))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
+			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
+			'Some ISPs may require certain options be or not be sent.');
+
 $form->add($section);
 
 $section = new Form_Section('Lease Requirements and Requests');
-$section->addClass('dhcp dhcpadvanced');
+$section->addClass('dhcpadvanced');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_send_options',
@@ -2140,16 +2170,6 @@ $section->addInput(new Form_Input(
 	$pconfig['adv_dhcp_option_modifiers']
 ))->sethelp('The values in this field are DHCP option modifiers applied to obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
 			'modifiers: (default, supersede, prepend, append)');
-
-$section->addInput(new Form_Input(
-	'adv_dhcp_config_file_override_path',
-	'Option modifiers',
-	'text',
-	$pconfig['adv_dhcp_config_file_override_path']
-))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
 
 $form->add($section);
 
@@ -3272,29 +3292,29 @@ events.push(function(){
 	function updateType(t) {
 		switch (t) {
 			case "none": {
-				$('.staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				$('.none, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				$('.none, .staticv4, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none, .staticv4, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "ppp": {
-				$('.none, .staticv4, .dhcp, .pptp, .pppoe').hide();
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .pppoe').hide();
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				$('.none, .staticv4, .dhcp, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				$('.none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp').hide();
 				$('.pptp').show();
 				break;
 			}
@@ -3591,6 +3611,14 @@ events.push(function(){
 			$('#' + id).parent().parent('div').removeClass('hidden');
 	}
 
+	// Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
+	function hideIpAddress(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent().parent('div').removeClass('hidden');
+	}
+
 	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 	function hideCheckbox(id, hide) {
 		if(hide)
@@ -3612,6 +3640,25 @@ events.push(function(){
 		hideClass('dhcp6advanced', !adv || ovr);
 	}
 
+	function setDHCPoptions() {
+		var adv = $('#dhcpadv').prop('checked');
+		var ovr = $('#dhcpovr').prop('checked');
+
+		if(ovr) {
+			hideInput('dhcphostname', true);
+			hideIpAddress('alias-address', true);
+			hideInput('dhcprejectfrom', true);
+			hideInput('adv_dhcp_config_file_override_path', false);
+			hideClass('dhcpadvanced', true);
+		} else {
+			hideInput('dhcphostname', false);
+			hideIpAddress('alias-address', false);
+			hideInput('dhcprejectfrom', false);
+			hideInput('adv_dhcp_config_file_override_path', true);
+			hideClass('dhcpadvanced', !adv);
+		}
+	}
+
 	// On page load . .
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
@@ -3623,18 +3670,20 @@ events.push(function(){
 	$("#cnx6").prop('type' ,'button');
 	$("#addgw6").prop('type' ,'button');
 	hideClass('dhcp6advanced', true);
+	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
+	setDHCPoptions()
 
 	// On click . .
    $('#type').on('change', function() {
 		updateType( this.value );
 	});
 
-   $('#type6').on('change', function() {
+	$('#type6').on('change', function() {
 		updateTypeSix( this.value );
 	});
 
-   $('#pppoe-reset-type').on('change', function() {
+	$('#pppoe-reset-type').on('change', function() {
 		show_reset_settings( this.value );
 	});
 
@@ -3664,6 +3713,10 @@ events.push(function(){
 
 	$('#providerplan').on('change', function() {
 		prefill_provider();
+	});
+
+	$('#dhcpadv, #dhcpovr').click(function () {
+		setDHCPoptions();
 	});
 
 	$('#dhcp6adv').click(function () {

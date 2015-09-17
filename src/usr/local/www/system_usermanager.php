@@ -109,9 +109,9 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_POST['act'] == "deluser") {
+if ($_GET['act'] == "deluser") {
 
-	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
+	if (!isset($_GET['username']) || !isset($a_user[$id]) || ($_GET['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -354,7 +354,10 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
+		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
+		local_user_set_groups($userent,$_POST['groups']);
 		local_user_set($userent);
+		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
 		local_user_set_groups($userent, $_POST['groups']);
 		write_config();
 
@@ -503,7 +506,7 @@ foreach($a_user as $i => $userent):
 				<td>
 					<a href="?act=edit&amp;userid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
 <?php if($userent['scope'] != "system"): ?>
-					<a href="?act=del&amp;userid=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
+					<a href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" class="btn btn-xs btn-danger">delete</a>
 <?php endif; ?>
 				</td>
 			</tr>

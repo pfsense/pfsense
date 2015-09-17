@@ -4,55 +4,55 @@
 	firewall_nat_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
  *	part of m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
   *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  ====================================================================
+ *	====================================================================
  *
  */
 /*
@@ -149,8 +149,8 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
 }
 
-/*  run through $_POST items encoding HTML entities so that the user
- *  cannot think he is slick and perform a XSS attack on the unwilling
+/*	run through $_POST items encoding HTML entities so that the user
+ *	cannot think he is slick and perform a XSS attack on the unwilling
  */
 unset($input_errors);
 
@@ -309,7 +309,7 @@ if ($_POST) {
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
-	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
+		($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
 
@@ -372,7 +372,7 @@ if ($_POST) {
 		}
 
 		if (!((($_POST['dstbeginport'] < $begp) && ($_POST['dstendport'] < $begp)) ||
-		     (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
+			 (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
@@ -444,8 +444,8 @@ if ($_POST) {
 		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
 		else if (isset($_POST['filter-rule-association']) &&
-		    ($_POST['filter-rule-association'] == 'add-associated' ||
-		     $_POST['filter-rule-association'] == 'add-unassociated')) {
+			($_POST['filter-rule-association'] == 'add-associated' ||
+			 $_POST['filter-rule-association'] == 'add-unassociated')) {
 			$need_filter_rule = true;
 		}
 
@@ -875,11 +875,13 @@ $section->addInput(new Form_Select(
 ));
 
 if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
+
 	$hlpstr = '';
 	$rulelist = array('' => 'None', 'pass' => 'Pass');
 
 	if (is_array($config['filter']['rule'])) {
 		filter_rules_sort();
+
 		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
 				$rulelist[$filter_rule['associated-rule-id']] = 'Rule ' . $filter_rule['descr'];
@@ -897,7 +899,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 	$section->addInput(new Form_Select(
 		'associated-rule-id',
 		'Filter rule association',
-		'add-associated',
+		$pconfig['associated-rule-id'],
 		$rulelist
 	))->setHelp($hlpstr);
 } else {
@@ -1217,7 +1219,7 @@ events.push(function(){
 		nordr_change();
 	});
 
-	$('#interface').click(function () {		
+	$('#interface').click(function () {
 		dst_change($('#interface').val(), iface_old, $('#dsttype').val());
 		iface_old = $('#interface').val();
 		typesel_change();
@@ -1239,15 +1241,15 @@ events.push(function(){
 	typesel_change();
 	proto_change();
 	nordr_change();
-	
+
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
-	
+
 	$('#localip, #ser, #dst').autocomplete({
 		source: addressarray
 	});
-	
+
 	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, localbeginport_cust').autocomplete({
 		source: customarray
 	});

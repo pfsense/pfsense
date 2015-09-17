@@ -54,7 +54,7 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		FSCK_ACTION_NEEDED=1
 		;;
 	*)
-		echo "Stopping boot is recommended due to  filesystem manual action needed, nevertheless it will be tried to repair the filesystem."
+		echo "Stopping boot is recommended because filesystem manual action is needed, nevertheless automated repair of the filesystem will be attempted."
 		FSCK_ACTION_NEEDED=1
 		;;
 	esac
@@ -129,7 +129,7 @@ if [ -f /etc/rc.disable_hdd_apm ]; then
 	/etc/rc.disable_hdd_apm
 fi
 
-#Eject CD devices on 3G modems
+# Eject CD devices on 3G modems
 MANUFACTURER="huawei|zte"
 CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
 if [ "$CDDEVICE" != "" ]; then

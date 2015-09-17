@@ -110,7 +110,7 @@ $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveporta
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
-
+                              
 ?>
 <div class="table-responsive">
 	<table class="table table-hover table-striped table-condensed">

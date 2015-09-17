@@ -31,7 +31,7 @@ $action = $args[0];
 // dhcpd, openvpn, etc.
 $svc_name = $args[1];
 
-// Handle servive-specific options.
+// Handle service-specific options.
 switch ($svc_name) {
 	case "openvpn":
 		if (in_array($args[2], array("server", "client"))) {

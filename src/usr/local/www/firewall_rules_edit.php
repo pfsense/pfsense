@@ -1097,7 +1097,7 @@ if ($edit_disabled)
 		'the interface, protocol, source, or destination of associated filter '.
 		'rules.'. $extra);
 
-	$section->addGlobal(new Form_Input(
+	$section->addInput(new Form_Input(
 		'associated-rule-id',
 		'Associated Rule ID',
 		'hidden',

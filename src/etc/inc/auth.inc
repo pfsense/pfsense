@@ -1252,10 +1252,10 @@ function ldap_backed($username, $passwd, $authcfg) {
 	$usercount = 0;
 
 	/*****************************************************************/
-	/*  We First find the user based on username and filter          */
-	/*  Then, once we find the first occurrence of that person       */
-	/*  We set session variables to point to the OU and DN of the    */
-	/*  Person.  To later be used by ldap_get_groups.                */
+	/*  We first find the user based on username and filter          */
+	/*  then, once we find the first occurrence of that person       */
+	/*  we set session variables to point to the OU and DN of the    */
+	/*  person.  To later be used by ldap_get_groups.                */
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
 	if ($debug) {
@@ -1277,9 +1277,9 @@ function ldap_backed($username, $passwd, $authcfg) {
 		}
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
-			$search = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
+			$search = @$ldapfunc($ldap, $ldac_split, $ldapfilter);
 		} else {
-			$search = @$ldapfunc($ldap,$ldapsearchbasedn,$ldapfilter);
+			$search = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapfilter);
 		}
 		if (!$search) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));

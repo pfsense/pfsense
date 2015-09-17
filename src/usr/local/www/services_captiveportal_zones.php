@@ -71,84 +71,66 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="services_captiveportal_zones.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('captiveportal')): ?><p>
-<?php print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
-<?php endif; ?>
+<html>
+	<body>
+		<form action="services_captiveportal_zones.php" method="post">
+			<?php if ($savemsg) print_info_box($savemsg); ?>
+			<?php if (is_subsystem_dirty('captiveportal')): ?><p>
+			<?php print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
+			<?php endif; ?>
 
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="captive portal">
-	<tr>
-		<td width="15%" class="listhdrr"><?=gettext("Zone");?></td>
-		<td width="30%" class="listhdrr"><?=gettext("Interfaces");?></td>
-		<td width="10%" class="listhdrr"><?=gettext("Number of users");?></td>
-		<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
-		<td width="5%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-				<tr>
-					<td valign="middle" width="17">&nbsp;</td>
-					<td valign="middle">
-						<a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>" alt="add" /></a>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
+		<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive portal Zones')?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th><?=gettext('Zone')?></th>
+						<th><?=gettext('Interfaces')?></th>
+						<th><?=gettext('Number of users'); ?></th>
+						<th><?=gettext('Description'); ?></th>
+						<th><!-- Action buttons --></th>
+					</tr>
+				</thead>
+				<tbody>
+			
 <?php
 	foreach ($a_cp as $cpzone => $cpitem):
 		if (!is_array($cpitem)) {
 			continue;
 		}
 ?>
-	<tr>
-		<td class="listlr" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
-			<?=htmlspecialchars($cpitem['zone']);?>
-		</td>
-		<td class="listlr" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
+					<tr>
+						<td><?=htmlspecialchars($cpitem['zone']);?></td>
+						<td>
 <?php
 		$cpifaces = explode(",", $cpitem['interface']);
 		foreach ($cpifaces as $cpiface) {
 			echo convert_friendly_interface_to_friendly_descr($cpiface) . " ";
 		}
 ?>
-		</td>
-		<td class="listr" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
-			<?=count(captiveportal_read_db());?>
-		</td>
-		<td class="listbg" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
-			<?=htmlspecialchars($cpitem['descr']);?>&nbsp;
-		</td>
-		<td valign="middle" class="list nowrap">
-			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-				<tr>
-					<td valign="middle"><a href="services_captiveportal.php?zone=<?=$cpzone?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit captiveportal instance"); ?>" alt="edit" /></a></td>
-					<td>
-						<a href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete captiveportal instance");?>" alt="delete" /></a>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
+						</td>
+						<td><?=count(captiveportal_read_db());?></td>
+						<td><?=htmlspecialchars($cpitem['descr']);?>&nbsp;</td>
+						<td>
+							<a type="button" class="btn btn-info btn-xs" href="services_captiveportal.php?zone=<?=$cpzone?>"><?=gettext('Edit')?></a>
+							<a type="button" class="btn btn-danger btn-xs" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>"><?=gettext('Del')?></a>
+						</td>
+					</tr>
 <?php
 	endforeach;
 ?>
-	<tr>
-		<td class="list" colspan="4"></td>
-		<td class="list">
-			<table border="0" cellspacing="0" cellpadding="1" summary="add">
-				<tr>
-					<td valign="middle" width="17">&nbsp;</td>
-					<td valign="middle">
-						<a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>" alt="add" /></a>
-					</td>
-				</tr>
+				</tbody>
 			</table>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
+		</div>
+
+		<nav class="action-buttons">
+			<a href="services_captiveportal_zones_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
+		</nav>
+
+		</div>
+		</form>
+	</body>
 </html>
+
+<?php include("foot.inc"); ?>

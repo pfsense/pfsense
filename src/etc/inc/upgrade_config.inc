@@ -3800,7 +3800,7 @@ function upgrade_117_to_118() {
 	$a_phase1 =& $config['ipsec']['phase1'];
 
 	foreach ($a_phase1 as &$ph1_entry) {
-		// update asn1dn strings from racoon's format to strongswan's 
+		// update asn1dn strings from racoon's format to strongswan's
 		if (isset($ph1_entry['myid_type']) && $ph1_entry['myid_type'] == 'asn1dn') {
 			$ph1_entry['myid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['myid_data']);
@@ -3828,7 +3828,7 @@ function upgrade_118_to_119() {
 
 	foreach ($a_phase1 as &$ph1_entry) {
 		if (strstr($ph1_entry['authentication_method'], 'eap')) {
-			$ph1_entry['peerid_type'] = "any";	
+			$ph1_entry['peerid_type'] = "any";
 		}
 	}
 }

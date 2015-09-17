@@ -130,8 +130,8 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 				}
 			} else {
 				if (!isset($parsed_response['config_version']) ||
-					($parsed_response['config_version'] < $config['version']) ||
-					($parsed_response['config_version'] > $config['version'])) {
+				    ($parsed_response['config_version'] < $config['version']) ||
+				    ($parsed_response['config_version'] > $config['version'])) {
 					update_filter_reload_status("The other member is on a different configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
 					log_error("The other member is on a different configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
 					return false;

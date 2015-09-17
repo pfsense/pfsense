@@ -601,10 +601,10 @@ class altq_root_queue {
 	/*
 	 * First it spits:
 	 * altq on $interface ..............
-	 *		then it goes like
-	 *		foreach ($queues as $qkey => $queue) {
-	 *				this->queues[$qkey]->build_rule();
-	 *		}
+	 *	then it goes like
+	 *	foreach ($queues as $qkey => $queue) {
+	 *		this->queues[$qkey]->build_rule();
+	 *	}
 	 */
 	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {

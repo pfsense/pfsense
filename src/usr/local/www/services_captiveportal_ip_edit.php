@@ -138,12 +138,16 @@ if ($_POST) {
 		$ip['ip'] = $_POST['ip'];
 		$ip['sn'] = $_POST['sn'];
 		$ip['descr'] = $_POST['descr'];
+		$ip['dir'] = $_POST['dir'];
+
 		if ($_POST['bw_up']) {
 			$ip['bw_up'] = $_POST['bw_up'];
 		}
+
 		if ($_POST['bw_down']) {
 			$ip['bw_down'] = $_POST['bw_down'];
 		}
+
 		if (isset($id) && $a_allowedips[$id]) {
 			$oldip = $a_allowedips[$id]['ip'];
 			if (!empty($a_allowedips[$id]['sn'])) {
@@ -151,6 +155,7 @@ if ($_POST) {
 			} else {
 				$oldmask = 32;
 			}
+
 			$a_allowedips[$id] = $ip;
 		} else {
 			$a_allowedips[] = $ip;

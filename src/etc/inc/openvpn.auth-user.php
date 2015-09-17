@@ -191,7 +191,7 @@ if (isset($attributes['framed_ip'])) {
 		$content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
 	} else {
 		$content .= "topology net30\n";
-		$content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) + 1));
+		$content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) - 1));
 	}
 }
 

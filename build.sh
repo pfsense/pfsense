@@ -385,13 +385,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	staginareas_clean_each_run
 
 	if [ "${_IMGTOBUILD}" = "iso" ]; then
-		(create_iso_image)
+		create_iso_image
 	elif [ "${_IMGTOBUILD}" = "memstick" ]; then
-		(create_memstick_image)
+		create_memstick_image
 	elif [ "${_IMGTOBUILD}" = "memstickserial" ]; then
-		(create_memstick_serial_image)
+		create_memstick_serial_image
 	elif [ "${_IMGTOBUILD}" = "memstickadi" ]; then
-		(create_memstick_adi_image)
+		create_memstick_adi_image
 	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
 		create_Full_update_tarball
 	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
@@ -406,7 +406,7 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 	elif [ "${_IMGTOBUILD}" = "ova" ]; then
 		install_pkg_install_ports ${PRODUCT_NAME}-vmware
-		(create_ova_image)
+		create_ova_image
 		install_pkg_install_ports
 	fi
 done

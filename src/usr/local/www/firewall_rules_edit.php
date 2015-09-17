@@ -1708,6 +1708,7 @@ events.push(function(){
 	var portsenabled = 1;
 	var editenabled = 1;
 	var optionsvisible = 0;
+	var srcportsvisible = 0;
 
 	function ext_change() {
 		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
@@ -1762,10 +1763,7 @@ events.push(function(){
 	}
 
 	function show_source_port_range() {
-		if (portsenabled) {
-			hideInput('btnsrcadv', true);
-			hideClass('srcprtr', false);
-		}
+		hideClass('srcprtr', !srcportsvisible);
 	}
 
 	function typesel_change() {
@@ -1850,11 +1848,14 @@ events.push(function(){
 		}
 
 		if ($('#proto').find(":selected").index() <= 2) {
-			hideClass('dstprtr', false);
-			hideClass('srcprtr', false);
+			hideClass('dstprtr', !srcportsvisible);
+			hideClass('srcprtr', !srcportsvisible);
+			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 		} else {
 			hideClass('srcprtr', true);
 			hideClass('dstprtr', true);
+			srcportsvisible = 0;
+			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 		}
 	}
 
@@ -1891,8 +1892,9 @@ events.push(function(){
 	});
 
 	$('#btnsrcadv').click(function() {
-		hideClass('srcportrange', false);
-		hideInput('btnsrcadv', true);
+		srcportsvisible = !srcportsvisible;
+		show_source_port_range();
+		$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 	});
 
 	$('#srcendport').on('change', function() {

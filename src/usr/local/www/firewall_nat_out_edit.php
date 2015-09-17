@@ -213,7 +213,7 @@ if ($_POST) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat'])) {
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !(is_portoralias($_POST['natport']) || is_portrange($_POST['natport'])) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
 	}
 

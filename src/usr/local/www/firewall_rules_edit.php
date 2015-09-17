@@ -1848,7 +1848,7 @@ events.push(function(){
 		}
 
 		if ($('#proto').find(":selected").index() <= 2) {
-			hideClass('dstprtr', !srcportsvisible);
+			hideClass('dstprtr', false);
 			hideClass('srcprtr', !srcportsvisible);
 			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 		} else {

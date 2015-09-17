@@ -209,7 +209,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
     } else if ($a_ppps[$pppid]['type'] == "pptp" || $a_ppps[$pppid]['type'] == "l2tp") {
         $pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
         $pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
-		$pconfig['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
+        $pconfig['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
         $pconfig['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
         $pconfig['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
         $pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
@@ -1011,11 +1011,11 @@ if ($_POST['apply']) {
         }
     }
     if (!$input_errors) {
-		// These 3 fields can be a list of multiple data items when used for MLPPP.
-		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
-		$poriginal['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
-		$poriginal['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
-		$poriginal['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
+        // These 3 fields can be a list of multiple data items when used for MLPPP.
+        // The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
+        $poriginal['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
+        $poriginal['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
+        $poriginal['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
 
         if ($wancfg['ipaddr'] != $_POST['type']) {
             if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
@@ -1242,13 +1242,13 @@ if ($_POST['apply']) {
                 }
                 $a_ppps[$pppid]['username'] = $_POST['pptp_username'];
                 $a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
-				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
-				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
-				$a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);
-				$poriginal['pptp_subnet'][0] = $_POST['pptp_subnet0'];
-				$a_ppps[$pppid]['subnet'] = implode(',', $poriginal['pptp_subnet']);
-				$poriginal['pptp_remote'][0] = $_POST['pptp_remote0'];
-				$a_ppps[$pppid]['gateway'] = implode(',', $poriginal['pptp_remote']);
+                // Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
+                $poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
+                $a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);
+                $poriginal['pptp_subnet'][0] = $_POST['pptp_subnet0'];
+                $a_ppps[$pppid]['subnet'] = implode(',', $poriginal['pptp_subnet']);
+                $poriginal['pptp_remote'][0] = $_POST['pptp_remote0'];
+                $a_ppps[$pppid]['gateway'] = implode(',', $poriginal['pptp_remote']);
                 $a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
                 if (!empty($_POST['pptp_idletimeout'])) {
                     $a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
@@ -2812,11 +2812,11 @@ $section->addInput(new Form_Input(
             'An idle timeout of zero disables this feature.');
 
 if (isset($pconfig['pppid'])) {
-	if (isset($pconfig['pptp_localip'][1]) || isset($pconfig['pptp_subnet'][1]) || isset($pconfig['pptp_remote'][1])) {
-		$mlppp_text = gettext("There are additional Local and Remote IP addresses defined for MLPPP.") . "<br />";
-	} else {
-		$mlppp_text = "";
-	}
+    if (isset($pconfig['pptp_localip'][1]) || isset($pconfig['pptp_subnet'][1]) || isset($pconfig['pptp_remote'][1])) {
+        $mlppp_text = gettext("There are additional Local and Remote IP addresses defined for MLPPP.") . "<br />";
+    } else {
+        $mlppp_text = "";
+    }
 
     $section->addInput(new Form_StaticText(
         'Advanced and MLPPP',

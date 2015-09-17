@@ -77,21 +77,21 @@ $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 //Get rule Hit count
-function get_rule_ht($tracker,$sum_ht=array()){
+function get_rule_ht($tracker,$sum_ht=array()) {
 	global $g,$rules_count_array;
-	//check if there is previous values
-	$packets=(isset($sum_ht['packets']) ? $sum_ht['packets'] : 0);
-	$states=(isset($sum_ht['bytes']) ? $sum_ht['bytes'] : 0);
-	$rules_title=(isset($sum_ht['title']) ? $sum_ht['title'] : "");
-	$rules_id=array();
-	if (preg_match("/\s+/",$tracker)){
-		$rules_title.="$tracker\n";
+	//check if there are previous values
+	$packets = (isset($sum_ht['packets']) ? $sum_ht['packets'] : 0);
+	$states = (isset($sum_ht['bytes']) ? $sum_ht['bytes'] : 0);
+	$rules_title = (isset($sum_ht['title']) ? $sum_ht['title'] : "");
+	$rules_id = array();
+	if (preg_match("/\s+/",$tracker)) {
+		$rules_title .= "$tracker\n";
 	}
-	if (is_array($rules_count_array) && array_key_exists($tracker,$rules_count_array)) {
-		$packets +=$rules_count_array[$tracker]['Packets'];
-		$states +=$rules_count_array[$tracker]['States'];
+	if (is_array($rules_count_array) && array_key_exists($tracker, $rules_count_array)) {
+		$packets += $rules_count_array[$tracker]['Packets'];
+		$states += $rules_count_array[$tracker]['States'];
 		foreach ($rules_count_array[$tracker] as $rck => $rcv) {
-			switch($rck){
+			switch ($rck) {
 				case "Label":
 					$label=$rcv;
 					break;
@@ -99,46 +99,47 @@ function get_rule_ht($tracker,$sum_ht=array()){
 					$ruleid=$rcv;
 					break;
 				default:
-					$rules_title.= "$rck: ".bd_nice_number($rcv)."\n";
+					$rules_title .= "$rck: " . bd_nice_number($rcv) . "\n";
 			}
 		}
 	}
-	$hitcount=bd_nice_number($packets)."/".bd_nice_number($states);
-	if ($states > 0){
+	$hitcount = bd_nice_number($packets) . "/" . bd_nice_number($states);
+	if ($states > 0) {
 		//icon_log.gif
 		///themes/pfsense_ng/images/icons/icon_log_d.gif
-		$html="<span id=\"{$label}\" class=\"{$label}\" title=\"Click to load rule details\" style=\"cursor:pointer;\" onclick=\"showState('{$ruleid}','{$hitcount}','{$label}');\">{$hitcount}</span><br>";
-		$html.="<span title=\"Click to kill current rule active connections\" style=\"cursor:pointer;\" onclick=\"removeState('{$label}','".bd_nice_number($packets)."');\"><img src=\"./themes/{$g['theme']}/images/icons/icon_block.gif\" align= \"Right\" width=\"8\" height=\"8\"  border=\"0\" /></span>";
-		//$resp_info="<span class=\'{$rulelabel}\' style=\'cursor:pointer;\' onclick=\'removeState(6789789,0);\'>Kill Rule States {$rulelabel}</span>" . $resp;
+		$html = "<span id=\"{$label}\" class=\"{$label}\" title=\"Click to load rule details\" style=\"cursor:pointer;\" onclick=\"showState('{$ruleid}','{$hitcount}','{$label}');\">{$hitcount}</span><br>";
+		$html .= "<span title=\"Click to kill current rule active connections\" style=\"cursor:pointer;\" onclick=\"removeState('{$label}','" . bd_nice_number($packets) . "');\"><img src=\"./themes/{$g['theme']}/images/icons/icon_block.gif\" align= \"Right\" width=\"8\" height=\"8\"  border=\"0\" /></span>";
+		//$resp_info = "<span class=\'{$rulelabel}\' style=\'cursor:pointer;\' onclick=\'removeState(6789789,0);\'>Kill Rule States {$rulelabel}</span>" . $resp;
 	} else {
-		$html="<span id=\"{$label}\" class=\"{$label}\">{$hitcount}</span>";
+		$html = "<span id=\"{$label}\" class=\"{$label}\">{$hitcount}</span>";
 	}
-	return (array(	'title'=> $rules_title,
-					'packets' =>$packets,
-					'states' =>$states,
-					'html' =>$html,
-					'id' => $label
+	return (array(
+		'title' => $rules_title,
+		'packets' => $packets,
+		'states' => $states,
+		'html' => $html,
+		'id' => $label
 	));
 }
 
 function bd_nice_number($n) {
 	// first strip any formatting;
-	$n = (0+str_replace(",","",$n));
+	$n = (0 + str_replace(",", "", $n));
 
 	// is this a number?
-	if(!is_numeric($n)) return false;
+	if (!is_numeric($n)) return false;
 
 	// now filter it;
-	if ( $n>1000000000000 ) {
-		return round(($n/1000000000000),1).'t';
-	} else if ( $n>1000000000 ) {
-		return round(($n/1000000000),1).'g';
-	} else if ( $n>1000000 ) {
-		return round(($n/1000000),1).'m';
-	} else if( $n>1000 ) {
-		return round(($n/1000),1).'k';
+	if ($n > 1000000000000) {
+		return round(($n/1000000000000), 1) . 't';
+	} else if ($n > 1000000000) {
+		return round(($n/1000000000), 1) . 'g';
+	} else if ($n > 1000000) {
+		return round(($n/1000000), 1) . 'm';
+	} else if ($n > 1000) {
+		return round(($n/1000), 1) . 'k';
 	}
-	
+
 	return number_format($n);
 }
 
@@ -240,13 +241,13 @@ if ($_POST) {
 	/* handle AJAX operations */
 	if ($_POST['action'] == "KillRuleStates") {
 		if (isset($_POST['label'])) {
-			$rulelabel=html_entity_decode($_POST['label']);
-			$cnt_pfctlk=array();
-			exec("/sbin/pfctl -k label -k \"{$rulelabel}\" 2>&1",$cnt_pfctlk);
+			$rulelabel = html_entity_decode($_POST['label']);
+			$cnt_pfctlk = array();
+			exec("/sbin/pfctl -k label -k \"{$rulelabel}\" 2>&1", $cnt_pfctlk);
 		} else {
 			echo gettext("invalid input");
 		}
-		
+
 		if (!empty($cnt_pfctlk)) {
 			foreach ($cnt_pfctlk as $line) {
 				print "$line\n";
@@ -255,10 +256,10 @@ if ($_POST) {
 		return;
 	}
 
-	if($_POST['action'] == "ShowRuleStates") {
-		$th1="<th>";
-		$th2="<th>"; 
-		//$td2="<td class=\'vncell\' style=\'background: #FFFFFF;color: #000000;\'>";
+	if ($_POST['action'] == "ShowRuleStates") {
+		$th1 = "<th>";
+		$th2 = "<th>"; 
+		//$td2 = "<td class=\'vncell\' style=\'background: #FFFFFF;color: #000000;\'>";
 		$resp  = "<table class='table table-striped table-hover table-condensed'>";
 		$resp .= "<thead>";
 		$resp .= "<tr>";
@@ -270,45 +271,43 @@ if ($_POST) {
 		$resp .= "</tr>";
 		$resp .= "</thead>";
 		$resp .= "<tbody>";
-		$state_count=0;
-		
-		if (isset($_POST['hitcount'])){
-			$hitcount=html_entity_decode($_POST['hitcount']);
+		$state_count = 0;
+
+		if (isset($_POST['hitcount'])) {
+			$hitcount = html_entity_decode($_POST['hitcount']);
 		}
-		
-		if (isset($_POST['ruleid'])){
-			$ruleid=html_entity_decode($_POST['ruleid']);
-			$cnt_pfctls=array();
-			exec("/sbin/pfctl -vvss | /usr/bin/grep -EB2 \"rule ({$ruleid})\"",$cnt_pfctls);
+
+		if (isset($_POST['ruleid'])) {
+			$ruleid = html_entity_decode($_POST['ruleid']);
+			$cnt_pfctls = array();
+			exec("/sbin/pfctl -vvss | /usr/bin/grep -EB2 \"rule ({$ruleid})\"", $cnt_pfctls);
 		} else {
 			echo gettext("invalid input");
 		}
-		
-		if (isset($_POST['title'])){
-			$hittitle=html_entity_decode($_POST['title']);
+
+		if (isset($_POST['title'])) {
+			$hittitle = html_entity_decode($_POST['title']);
 		}
-		
+
 		if (!empty($cnt_pfctls)) {
-			foreach($cnt_pfctls as $line) {
+			foreach ($cnt_pfctls as $line) {
 				if (preg_match("/^\w+\s+(\w+)\s+(.*)(.-.)(.*)\s+(\w+:\w+)/",$line,$mcon)) {
 					$state_count++;
 					$resp .= "<tr>{$th2}{$mcon[1]}</th>{$th2}{$mcon[2]}{$mcon[3]}{$mcon[4]}</th>{$th2}{$mcon[5]}</th>";
-				} else if (preg_match("/age.*, (\S+) pkts, (\S+) bytes, rule (\d+)/",$line,$mrule)) {
-					list($pkt1,$pkt2)=split(":",$mrule[1],2);
-					list($bt1,$bt2)=split(":",$mrule[2],2);
-					$resp .= "{$th2}".bd_nice_number($pkt1)." / ".bd_nice_number($pkt2)."</th>{$th2}".bd_nice_number($bt1)." / ".bd_nice_number($bt2)."</th></tr>";
+				} else if (preg_match("/age.*, (\S+) pkts, (\S+) bytes, rule (\d+)/", $line, $mrule)) {
+					list($pkt1, $pkt2) = split(":", $mrule[1], 2);
+					list($bt1, $bt2) = split(":", $mrule[2], 2);
+					$resp .= "{$th2}" . bd_nice_number($pkt1) . " / " . bd_nice_number($pkt2) . "</th>{$th2}" . bd_nice_number($bt1) . " / " . bd_nice_number($bt2) . "</th></tr>";
 				}
 			}
 		}
 		$resp .= "</tbody>";
 		$resp .= "</table>";
-		//$html.="<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$rulelabel}','content','{$resp}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',800);\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>{$hitcount}</u></span>";
-		$html.="<a data-toggle=\"popover\" data-trigger=\"hover focus\" data-content=\"{$resp}\" data-html=\"true\">{$hitcount}</a>";
-		print ($html);
+		//$html .= "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$rulelabel}','content','{$resp}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',800);\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>{$hitcount}</u></span>";
+		$html .= "<a data-toggle=\"popover\" data-trigger=\"hover focus\" data-content=\"{$resp}\" data-html=\"true\">{$hitcount}</a>";
+		print($html);
 		return;
 	}
-
-	
 }
 
 
@@ -412,7 +411,7 @@ display_top_tabs($tab_array);
 			jQuery(icon).bind("onclick","");
 			jQuery(icon).css("cursor","wait");
 		}
- 
+
 		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>",
 			{
@@ -456,10 +455,10 @@ display_top_tabs($tab_array);
 		return;
 	}
 	function ShowComplete(req) {
-			jQuery('span[id="'+ mylabel + '"]').each(
-					function(index,row) { jQuery(row).html(req.responseText); }
-					);
-	return;
+		jQuery('span[id="'+ mylabel + '"]').each(
+			function(index,row) { jQuery(row).html(req.responseText); }
+			);
+		return;
 	}
 //]]>
 </script>
@@ -491,7 +490,7 @@ display_top_tabs($tab_array);
 		(((count($config['interfaces']) > 1) && ($if == 'lan')) ||
 		 ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
-		$rule_hit_count=get_rule_ht("anti-lockout rule");
+		$rule_hit_count = get_rule_ht("anti-lockout rule");
 ?>
 					<tr id="antilockout">
 						<td></td>
@@ -512,10 +511,10 @@ display_top_tabs($tab_array);
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockpriv'])):
-		$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 192.168/16");
-		$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 127/8",$rule_hit_count);
-		$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 172.16/12",$rule_hit_count);
-		$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 10/8",$rule_hit_count);
+		$rule_hit_count = get_rule_ht("Block private networks from " . strtoupper($if) . " block 192.168/16");
+		$rule_hit_count = get_rule_ht("Block private networks from " . strtoupper($if) . " block 127/8", $rule_hit_count);
+		$rule_hit_count = get_rule_ht("Block private networks from " . strtoupper($if) . " block 172.16/12", $rule_hit_count);
+		$rule_hit_count = get_rule_ht("Block private networks from " . strtoupper($if) . " block 10/8", $rule_hit_count);
 ?>
 					<tr id="frrfc1918">
 						<td></td>
@@ -536,8 +535,8 @@ display_top_tabs($tab_array);
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])):
-		$rule_hit_count=get_rule_ht("block bogon IPv4 networks from ".strtoupper($if));
-		$rule_hit_count=get_rule_ht("block bogon IPv6 networks from ".strtoupper($if),$rule_hit_count);
+		$rule_hit_count = get_rule_ht("block bogon IPv4 networks from " . strtoupper($if));
+		$rule_hit_count = get_rule_ht("block bogon IPv6 networks from " . strtoupper($if), $rule_hit_count);
 ?>
 					<tr id="frrfc1918">
 					<td></td>
@@ -739,7 +738,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				$printicon = true;
 			}
 		}
-		$rule_hit_count=get_rule_ht($filterent['tracker']);
+		$rule_hit_count = get_rule_ht($filterent['tracker']);
 	?>
 				<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'] ?>"><?=$rule_hit_count['html']; ?></td>
 				<td>

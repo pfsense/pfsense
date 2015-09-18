@@ -116,13 +116,22 @@ $helpurl .= "{$g['help_base_url']}?page={$pagename}";
 
 function return_ext_menu($section) {
 	global $config;
+
 	$htmltext = "";
 	$extarray = array();
-	if ($config['installedpackages']['menu'] != "") {
-		foreach ($config['installedpackages']['menu'] as $menuitem) {
-			if ($menuitem['section'] != $section) {
+
+	if (!empty($config['installedpackages']['package'])) {
+		foreach ($config['installedpackages']['package'] as $package) {
+
+			if ($package['category'] != $section) {
 				continue;
 			}
+
+			// A package has been found that matches the specified category. We need to read it's config file
+			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+
+			$menuitem = $pkg_config['menu'][0];
+
 			if ($menuitem['url'] != "") {
 				$test_url=$menuitem['url'];
 				$addresswithport = getenv("HTTP_HOST");
@@ -138,9 +147,11 @@ function return_ext_menu($section) {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 				$test_url=$description;
 			}
+
 			if (isAllowedPage($test_url)) {
-				$extarray[] = array($menuitem['name'], $description);
+				$extarray[] = array($pkg_config['name'], $description);
 			}
+
 		}
 	}
 	return $extarray;
@@ -184,6 +195,7 @@ if (!isAllowedPage("system_usermanager.php*")) {
 } else {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
+
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces

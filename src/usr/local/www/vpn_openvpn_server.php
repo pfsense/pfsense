@@ -743,6 +743,13 @@ if($act=="new" || $act=="edit") :
 		));
 
 	$section->addInput(new Form_Select(
+		'protocol',
+		'Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
+
+	$section->addInput(new Form_Select(
 		'dev_mode',
 		'Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],

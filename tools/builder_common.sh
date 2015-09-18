@@ -1093,8 +1093,6 @@ clone_to_staging_area() {
 	# Make sure pkg is present
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
-	pkg_chroot_add ${STAGE_CHROOT_DIR} base
-
 	echo "Done!"
 }
 
@@ -1124,6 +1122,8 @@ create_final_staging_area() {
 customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
+
+	pkg_chroot_add ${FINAL_CHROOT_DIR} base
 
 	if [ "${1}" = "iso" -o \
 	     "${1}" = "memstick" -o \

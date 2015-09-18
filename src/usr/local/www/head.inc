@@ -149,7 +149,7 @@ function return_ext_menu($section) {
 			}
 
 			if (isAllowedPage($test_url)) {
-				$extarray[] = array($pkg_config['name'], $description);
+				$extarray[] = array($menuitem['name'], $description);
 			}
 
 		}

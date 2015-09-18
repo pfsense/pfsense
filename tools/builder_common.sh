@@ -1066,6 +1066,7 @@ clone_to_staging_area() {
 		.
 
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
@@ -1123,7 +1124,12 @@ customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
 
-	pkg_chroot_add ${FINAL_CHROOT_DIR} base
+	if [ "${1}" = "nanobsd" -o \
+	     "${1}" = "nanobsd-vga" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} base-nanobsd
+	else
+		pkg_chroot_add ${FINAL_CHROOT_DIR} base
+	fi
 
 	if [ "${1}" = "iso" -o \
 	     "${1}" = "memstick" -o \

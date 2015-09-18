@@ -3013,7 +3013,7 @@ if (isset($wancfg['wireless'])) {
 		$section->addInput(new Form_Checkbox(
 			'puremode',
 			'802.11g only',
-			'Preserve common wireless configuration through interface deletions and reassignments.',
+			null,
 			$pconfig['puremode'],
 			'11g'
 		))->setHelp('When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)');

@@ -782,8 +782,10 @@ awk '
 		# Wrap up the show, Johnny
 		echo ">>> NanoBSD Image completed for size: $_NANO_MEDIASIZE." | tee -a ${LOGFILE}
 
-		gzip -f $IMG &
-		gzip -f $IMGUPDATE &
+		gzip -qf $IMG &
+		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+		gzip -qf $IMGUPDATE &
+		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 	done
 
 	unset IMG
@@ -1184,6 +1186,7 @@ create_iso_image() {
 		print_error_pfS
 	fi
 	gzip -qf $ISOPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> ISO created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1226,6 +1229,7 @@ create_memstick_image() {
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
 	gzip -qf $MEMSTICKPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1287,6 +1291,7 @@ create_memstick_serial_image() {
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
 	gzip -qf $MEMSTICKSERIALPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKSERIAL created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1350,6 +1355,7 @@ create_memstick_adi_image() {
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
 	gzip -qf $MEMSTICKADIPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }

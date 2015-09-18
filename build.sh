@@ -380,6 +380,10 @@ fi
 
 export DEFAULT_KERNEL=${DEFAULT_KERNEL_ISO:-"${PRODUCT_NAME}"}
 
+# XXX: Figure out why wait is failing and proper fix
+# Global variable to keep track of process running in bg
+export _bg_pids=""
+
 for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	# Clean up items that should be cleaned each run
 	staginareas_clean_each_run
@@ -413,12 +417,29 @@ done
 
 core_pkg_create_repo
 
-if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_update_status ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
-else
-	echo ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+if [ -n "${_bg_pids}" ]; then
+	if [ -n "${SNAPSHOTS}" ]; then
+		snapshots_update_status ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	else
+		echo ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	fi
+	wait
+
+	# XXX: For some reason wait is failing, workaround it tracking all PIDs
+	while [ -n "${_bg_pids}" ]; do
+		_tmp_pids="${_bg_pids}"
+		unset _bg_pids
+		for p in ${_tmp_pids}; do
+			[ -z "${p}" ] \
+				&& continue
+
+			kill -0 ${p} >/dev/null 2>&1 \
+				&& _bg_pids="${_bg_pids}${_bg_pids:+ }${p}"
+		done
+		[ -n "${_bg_pids}" ] \
+			&& sleep 1
+	done
 fi
-wait
 
 if [ -n "${SNAPSHOTS}" ]; then
 	snapshots_copy_to_staging_iso_updates

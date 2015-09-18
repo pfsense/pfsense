@@ -513,10 +513,10 @@ if($act=="new" || $act=="edit") :
 	))->setHelp('Set this option if you would like to bind to a specific port. Leave this blank or enter 0 for a random dynamic port.');
 
 	$section->addInput(new Form_Input(
-		'sever_addr',
+		'server_addr',
 		'Server host or address',
 		'text',
-		$pconfig['sever_addr']
+		$pconfig['server_addr']
 	));
 
 	$section->addInput(new Form_Input(

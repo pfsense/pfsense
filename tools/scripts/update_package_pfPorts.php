@@ -386,6 +386,9 @@ function create_port($pkg) {
 			$makefile[] = $port_use;
 		}
 	}
+	if (isset($pkg['noembedded'])) {
+		$pkg['conflicts'] = $product_name . '-base-nanobsd-[0-9]*' . (isset($pkg['conflicts']) ? ' ' . $pkg['conflicts'] : '');
+	}
 	if (isset($pkg['conflicts']) && !empty($pkg['conflicts'])) {
 		$makefile[] = "";
 		$makefile[] = "CONFLICTS=\t" . $port_name_prefix . $pkg['conflicts'] . '-[0-9]*';

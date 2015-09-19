@@ -57,9 +57,92 @@ tr.disabled th {
 	margin-bottom: 0px;
 }
 
+.navbar {
+	margin-bottom: 10px;
+}
+
+.page-header {
+	padding-bottom: 4px;
+	margin-bottom: 10px;
+}
+
+.breadcrumb {
+	margin-bottom: 10px;
+}
+
+.panel-heading {
+	padding: 5px 15px;
+}
+
+#login .panel-heading {
+	padding: 10px 15px
+}
+
 .form-horizontal {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	overflow: hidden;
+}
+
+.form-horizontal .checkbox {
+	padding: 3px 16px;
+}
+
+.form-group:nth-child(odd) {
+	background-color: #fafafa;
+	border-bottom: 1px solid #eee;
+	border-top: 1px solid #eee;
+}
+
+.form-group:last-child {
+	border-bottom: none;
+}
+
+.form-group:first-child {
+	border-top: none;
+}
+
+.form-control {
+    height: 24px;
+    padding: 0 12px;
+    margin-bottom: 5px;
+}
+
+#login .form-control {
+	height: 34px;
+}
+
+#login .form-group {
+	border: none;
+	background-color: none;
+}
+
+.form-horizontal .form-group {
+    margin: 0;
+    padding: 7px 5px 5px 5px;
+}
+
+.input-group-addon {
+	padding: 0 12px;
+}
+
+.panel {
+	margin-bottom: 10px;
+}
+
+.panel-body {
+	padding: 0px;
+}
+
+.table {
+	margin-bottom: 0;
+}
+
+.table>tbody>tr>td {
+	padding: 4px;
+}
+
+.help-block {
+	margin-bottom: 0;
 }
 
 .action-buttons {
@@ -132,7 +215,7 @@ form .btn + .btn {
 	width: 100%;
 	height: 60px;
 	background-color: #f5f5f5;
-	padding-top: 21px;
+	padding-top: 10px;
 	text-align: center;
 }
 

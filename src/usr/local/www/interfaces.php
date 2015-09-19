@@ -655,6 +655,9 @@ if ($_POST['apply']) {
 					}
 				}
 			}
+			if (!is_ipaddrv4($wancfg['gateway-6rd'])) {
+				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
+			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
 			}

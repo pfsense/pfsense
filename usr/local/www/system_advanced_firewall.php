@@ -72,6 +72,8 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
+$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout']; 
 $pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout']; 
 $pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout']; 
@@ -112,6 +114,14 @@ if ($_POST) {
 	}
 	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
 		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
+	}
+	if ($_POST['maxmss']) {
+		if (!is_numericint($_POST['maxmss'])) {
+			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
+		}
+		if ($_POST['maxmss'] < 576 || $_POST['maxmss'] > 65535) {
+			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
+		}
 	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
@@ -176,6 +186,19 @@ if ($_POST) {
 			$config['system']['disablevpnrules'] = true;
 		else
 			unset($config['system']['disablevpnrules']);
+
+		if($_POST['maxmss_enable'] == "yes") {
+			$config['system']['maxmss_enable'] = true;
+			$config['system']['maxmss'] = $_POST['maxmss'];
+		} else {
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
+		}
+
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
 		else
@@ -387,6 +410,19 @@ function update_description(itemnum) {
 //]]>
 </script>
 
+<script type="text/javascript">
+//<![CDATA[
+
+function maxmss_checked(obj) {
+	if (obj.checked)
+		jQuery('#maxmss').attr('disabled',false);
+	else
+		jQuery('#maxmss').attr('disabled','true');
+}
+
+//]]>
+</script>
+
 <?php
 	if ($input_errors)
 		print_input_errors($input_errors);
@@ -558,6 +594,18 @@ function update_description(itemnum) {
 									<br />
 									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?>
 									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
+									<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
+									<br />
+									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo htmlspecialchars($pconfig['maxmss']); else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
+									<br />
+									<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
+									"This helps overcome problems with PMTUD on VPN links. If left blank, the default value is 1400 bytes. "); ?>
 								</td>
 							</tr>
 							<tr>

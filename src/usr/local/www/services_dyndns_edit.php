@@ -117,10 +117,12 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		/* Allow @. and *. in hostname */
-		/* NameCheap - Bug #3568; No-Ip - #3900 etc. */
+		/* Allow @, @. and *. in hostname */
+		/* NameCheap - Bug #3568; No-Ip - Bug #3900, etc. */
 		if ((substr($_POST['host'], 0, 2) == '@.') || (substr($_POST['host'], 0, 2) == '*.')) {
 			$host_to_check = substr($_POST['host'], 2);
+		} elseif (substr($_POST['host'], 0, 1) == '@') {
+			$host_to_check = substr($_POST['host'], 1);
 		} else {
 			$host_to_check = $_POST['host'];
 		}

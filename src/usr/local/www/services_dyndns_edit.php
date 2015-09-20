@@ -117,8 +117,9 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		/* Namecheap can have a @. in hostname */
-		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
+		/* Allow @. and *. in hostname */
+		/* NameCheap - Bug #3568; No-Ip - #3900 etc. */
+		if ((substr($_POST['host'], 0, 2) == '@.') || (substr($_POST['host'], 0, 2) == '*.')) {
 			$host_to_check = substr($_POST['host'], 2);
 		} else {
 			$host_to_check = $_POST['host'];

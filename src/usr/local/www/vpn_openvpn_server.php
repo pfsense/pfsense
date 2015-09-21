@@ -1442,7 +1442,7 @@ events.push(function(){
 	}
 
 	function gwredir_change() {
-		var hide  = ! $('#gwredir').prop('checked')
+		var hide  = $('#gwredir').prop('checked')
 
 		hideInput('local_network', hide);
 		hideInput('local_networkv6', hide);

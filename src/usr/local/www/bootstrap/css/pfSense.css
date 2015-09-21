@@ -87,20 +87,6 @@ tr.disabled th {
 	padding: 3px 16px;
 }
 
-.form-group:nth-child(odd) {
-	background-color: #fafafa;
-	border-bottom: 1px solid #eee;
-	border-top: 1px solid #eee;
-}
-
-.form-group:last-child {
-	border-bottom: none;
-}
-
-.form-group:first-child {
-	border-top: none;
-}
-
 .form-control {
     height: 24px;
     padding: 0 12px;
@@ -113,12 +99,16 @@ tr.disabled th {
 
 #login .form-group {
 	border: none;
-	background-color: none;
 }
 
-.form-horizontal .form-group {
+.form-group {
     margin: 0;
     padding: 7px 5px 5px 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-group:last-child {
+	border-bottom: none;
 }
 
 .input-group-addon {

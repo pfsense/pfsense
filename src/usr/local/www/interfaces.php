@@ -79,6 +79,7 @@ require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
 define("ALLOWWEP", false);
+define("ANTENNAS", false);
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
@@ -2897,7 +2898,7 @@ if (isset($wancfg['wireless'])) {
 	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
 				'Not all channels may be supported by your card.  Auto may override the wireless standard selected above.');
 
-	if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
+	if (ANTENNAS && isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
 		$group = new Form_Group('Antenna Settings');
 
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])) {

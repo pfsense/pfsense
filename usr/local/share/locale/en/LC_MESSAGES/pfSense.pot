@@ -259,7 +259,7 @@ msgid "VLAN interfaces:"
 msgstr ""
 
 #: etc/inc/config.console.inc:203
-msgid "Enter the WAN interface name or 'a' for auto-detection:"
+msgid "Enter the WAN interface name or 'a' for auto-detection"
 msgstr ""
 
 #: etc/inc/config.console.inc:204

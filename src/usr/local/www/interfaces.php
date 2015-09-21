@@ -656,7 +656,7 @@ if ($_POST['apply']) {
 					}
 				}
 			}
-			if (!is_ipaddrv4($wancfg['gateway-6rd'])) {
+			if (!is_ipaddrv4($_POST['gateway-6rd'])) {
 				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {

@@ -1603,14 +1603,14 @@ $group->add(new Form_Select(
 	'ackqueue',
 	'Ackqueue',
 	($qselected) ? $pconfig['ackqueue']:'',
-	['' => 'None'] + $qlist
+	['""' => 'None'] + $qlist
 ));
 
 $group->add(new Form_Select(
 	'defaultqueue',
 	'Default Queue',
 	($qselected) ? $pconfig['defaultqueue']:'',
-	['' => 'None'] + $qlist
+	['""' => 'None'] + $qlist
 ));
 
 $section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.

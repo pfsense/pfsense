@@ -114,7 +114,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php if (empty($ifinfo['ipaddr'])): ?>
 				n/a
 			<?php else: ?>
-				<?=$ifinfo['ipaddr']?><br />
+				<?=htmlspecialchars($ifinfo['ipaddr'])?><br />
+				<?=htmlspecialchars($ifinfo['ipaddrv6'])?>
 			<?php endif; ?>
 		</td>
 	</tr>

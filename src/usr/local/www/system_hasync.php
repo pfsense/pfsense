@@ -131,8 +131,8 @@ $section->addInput(new Form_Select(
 	$pconfig['pfsyncinterface'],
 	$iflist
 ))->setHelp('If Synchronize States is enabled this interface will be used for communication.<br />' .
-			'We recommend setting this to an interface other than LAN!	A dedicated interface works the best.<br />' .
-			'You must define a IP on each machine participating in this failover group.<br />' .
+			'We recommend setting this to an interface other than LAN! A dedicated interface works the best.<br />' .
+			'You must define an IP on each machine participating in this failover group.<br />' .
 			'You must have an IP assigned to the interface on any participating sync nodes.');
 
 $section->addInput(new Form_Input(
@@ -141,7 +141,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['pfsyncpeerip'],
 	['placeholder' => 'IP Address']
-))->setHelp('Setting this option will force pfsync to synchronize its state table to this IP address.  The default is directed multicast.');
+))->setHelp('Setting this option will force pfsync to synchronize its state table to this IP address. The default is directed multicast.');
 
 $form->add($section);
 

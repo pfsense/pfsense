@@ -379,6 +379,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+
 		$natent = array();
 
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
@@ -453,6 +454,7 @@ if ($_POST) {
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
+
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
 				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
@@ -904,7 +906,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 	))->setHelp($hlpstr);
 } else {
 	$section->addInput(new Form_Select(
-		'associated-rule-id',
+		'filter-rule-association',
 		'Filter rule association',
 		'add-associated',
 		array(

@@ -258,8 +258,12 @@ msgstr ""
 msgid "VLAN interfaces:"
 msgstr ""
 
-#: etc/inc/config.console.inc:201
-msgid "Enter the WAN interface name or 'a' for auto-detection:"
+#: etc/inc/config.console.inc:203
+msgid "Enter the WAN interface name or 'a' for auto-detection"
+msgstr ""
+
+#: etc/inc/config.console.inc:204
+msgid "%s(%s or a): "
 msgstr ""
 
 #: etc/inc/config.console.inc:209 etc/inc/config.console.inc:234
@@ -268,11 +272,11 @@ msgstr ""
 msgid "%sInvalid interface name '%s'%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:216
+#: etc/inc/config.console.inc:220
 #, php-format
 msgid ""
 "%sEnter the LAN interface name or 'a' for auto-detection %sNOTE: this "
-"enables full Firewalling/NAT mode.%s(or nothing if finished):%s"
+"enables full Firewalling/NAT mode.%s(%s a or nothing if finished):%s"
 msgstr ""
 
 #: etc/inc/config.console.inc:251
@@ -280,10 +284,10 @@ msgstr ""
 msgid "%sOptional interface %s description found: %s"
 msgstr ""
 
-#: etc/inc/config.console.inc:253
+#: etc/inc/config.console.inc:258
 #, php-format
 msgid ""
-"%sEnter the Optional %s interface name or 'a' for auto-detection%s(or "
+"%sEnter the Optional %s interface name or 'a' for auto-detection%s(%s a or "
 "nothing if finished):%s"
 msgstr ""
 

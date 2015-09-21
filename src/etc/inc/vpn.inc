@@ -1654,6 +1654,12 @@ function vpn_l2tp_configure() {
 	switch ($l2tpcfg['mode']) {
 
 		case 'server':
+			$l2tp_listen="";
+			$ipaddr = get_interface_ip(get_failover_interface($l2tpcfg['interface']));
+			if (is_ipaddrv4($ipaddr)) {
+				$l2tp_listen="set l2tp self $ipaddr";
+			}
+
 			if ($l2tpcfg['paporchap'] == "chap") {
 				$paporchap = "set link enable chap";
 			} else {
@@ -1712,6 +1718,7 @@ l2tp_standard:
 	set link yes acfcomp protocomp
 	set link no pap chap
 	{$paporchap}
+	{$l2tp_listen}
 	set link keep-alive 10 180
 
 EOD;

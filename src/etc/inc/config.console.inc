@@ -86,8 +86,9 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
+			$ifsmallist = trim($ifsmallist . " " . $iface);
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "  (up)" : "(down)", $ifa['dmesg']);
+				$ifa['up'] ? "  (up)" : "(down)", substr($ifa['dmesg'], 0, 48));
 		}
 	}
 
@@ -190,6 +191,7 @@ EOD;
 					"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
 				$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
+				$ifsmallist = trim($ifsmallist . " " . $vlan['if'] . '_vlan' . $vlan['tag']);
 			}
 		}
 
@@ -202,7 +204,8 @@ hitting 'a' to initiate auto detection.
 EOD;
 
 		do {
-			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection:") . " ";
+			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
+			printf(gettext("%s(%s or a): "), "\n", $ifsmallist);
 			$wanif = chop(fgets($fp));
 			if ($wanif === "") {
 				return;
@@ -214,12 +217,13 @@ EOD;
 				unset($wanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($wanif, "", $ifsmallist)));
 		} while (!$wanif);
 
 		do {
 			printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
 				"NOTE: this enables full Firewalling/NAT mode.%s" .
-				"(or nothing if finished):%s"), "\n", "\n", "\n", " ");
+				"(%s a or nothing if finished):%s"), "\n", "\n", "\n", $ifsmallist, " ");
 
 			$lanif = chop(fgets($fp));
 
@@ -239,6 +243,7 @@ EOD;
 				unset($lanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($lanif, "", $ifsmallist)));
 		} while (!$lanif);
 
 		/* optional interfaces */
@@ -257,7 +262,7 @@ EOD;
 				}
 
 				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-					"(or nothing if finished):%s"), "\n", $io, "\n", " ");
+					"(%s a or nothing if finished):%s"), "\n", $io, "\n", $ifsmallist, " ");
 
 				$optif[$i] = chop(fgets($fp));
 
@@ -274,6 +279,7 @@ EOD;
 						unset($optif[$i]);
 						continue;
 					}
+					$ifsmallist = trim(str_replace("  ", " ", str_replace($optif[$i], "", $ifsmallist)));
 				} else {
 					unset($optif[$i]);
 					break;

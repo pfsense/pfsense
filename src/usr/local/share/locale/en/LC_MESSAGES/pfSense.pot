@@ -250,97 +250,101 @@ msgstr ""
 msgid "Press ENTER to continue."
 msgstr ""
 
-#: etc/inc/config.console.inc:84 etc/inc/config.console.inc:484
+#: etc/inc/config.console.inc:85 etc/inc/config.console.inc:523
 msgid "No interfaces found!"
 msgstr ""
 
-#: etc/inc/config.console.inc:182
+#: etc/inc/config.console.inc:187
 msgid "VLAN interfaces:"
 msgstr ""
 
-#: etc/inc/config.console.inc:201
-msgid "Enter the WAN interface name or 'a' for auto-detection:"
+#: etc/inc/config.console.inc:207
+msgid "Enter the WAN interface name or 'a' for auto-detection"
 msgstr ""
 
-#: etc/inc/config.console.inc:209 etc/inc/config.console.inc:234
-#: etc/inc/config.console.inc:266 etc/inc/config.console.inc:507
+#: etc/inc/config.console.inc:208
+msgid "%s(%s or a): "
+msgstr ""
+
+#: etc/inc/config.console.inc:216 etc/inc/config.console.inc:242
+#: etc/inc/config.console.inc:278 etc/inc/config.console.inc:546
 #, php-format
 msgid "%sInvalid interface name '%s'%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:216
+#: etc/inc/config.console.inc:224
 #, php-format
 msgid ""
 "%sEnter the LAN interface name or 'a' for auto-detection %sNOTE: this "
-"enables full Firewalling/NAT mode.%s(or nothing if finished):%s"
+"enables full Firewalling/NAT mode.%s(%s a or nothing if finished):%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:251
+#: etc/inc/config.console.inc:261
 #, php-format
 msgid "%sOptional interface %s description found: %s"
 msgstr ""
 
-#: etc/inc/config.console.inc:253
+#: etc/inc/config.console.inc:264
 #, php-format
 msgid ""
-"%sEnter the Optional %s interface name or 'a' for auto-detection%s(or "
+"%sEnter the Optional %s interface name or 'a' for auto-detection%s(%s a or "
 "nothing if finished):%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:260
+#: etc/inc/config.console.inc:271
 msgid "Optional"
 msgstr ""
 
-#: etc/inc/config.console.inc:294
+#: etc/inc/config.console.inc:307
 msgid "The interfaces will be assigned as follows:"
 msgstr ""
 
-#: etc/inc/config.console.inc:408
+#: etc/inc/config.console.inc:447
 #, php-format
 msgid "%sWriting configuration..."
 msgstr ""
 
-#: etc/inc/config.console.inc:410
+#: etc/inc/config.console.inc:449
 #, php-format
 msgid "done.%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:417
+#: etc/inc/config.console.inc:457
 msgid "One moment while we reload the settings..."
 msgstr ""
 
-#: etc/inc/config.console.inc:418
+#: etc/inc/config.console.inc:458
 msgid " done!"
 msgstr ""
 
-#: etc/inc/config.console.inc:438
+#: etc/inc/config.console.inc:478
 #, php-format
 msgid "Detected link-up on interface %s.%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:443
+#: etc/inc/config.console.inc:483
 #, php-format
 msgid "No link-up detected.%s"
 msgstr ""
 
-#: etc/inc/config.console.inc:482
+#: etc/inc/config.console.inc:521
 msgid "VLAN Capable interfaces:"
 msgstr ""
 
-#: etc/inc/config.console.inc:497
+#: etc/inc/config.console.inc:536
 msgid "No VLAN capable interfaces detected."
 msgstr ""
 
-#: etc/inc/config.console.inc:501
+#: etc/inc/config.console.inc:540
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
 
-#: etc/inc/config.console.inc:514
+#: etc/inc/config.console.inc:553
 msgid "Enter the VLAN tag (1-4094):"
 msgstr ""
 
-#: etc/inc/config.console.inc:518
+#: etc/inc/config.console.inc:557
 #, php-format
 msgid "%sInvalid VLAN tag '%s'%s"
 msgstr ""

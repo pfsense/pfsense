@@ -1180,7 +1180,7 @@ function delete_package_xml($pkg) {
 		update_output_window($static_output);
 	}
 	/* syslog */
-	if(is_array($pkg_info['logging']) && $pkg_info['logging']['logfile_name'] <> "") {
+	if(is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
 		$static_output .= "Syslog entries... ";
 		update_output_window($static_output);
 		remove_text_from_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);

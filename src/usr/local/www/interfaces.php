@@ -2465,10 +2465,10 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'prefix-6rd-v4plen',
-	'DHCPv6 Prefix Delegation size',
+	'6RD IPv4 Prefix length',
 	$pconfig['prefix-6rd-v4plen'],
 	array_combine(range(0, 32), range(0, 32))
-))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix..');
+))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix.');
 
 $form->add($section);
 

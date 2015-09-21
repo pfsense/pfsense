@@ -1457,8 +1457,8 @@ events.push(function(){
 
 		hideInput('local_network', hide);
 		hideInput('local_networkv6', hide);
-		hideInput('remote_network', hide);
-		hideInput('remote_networkv6', hide);
+//		hideInput('remote_network', hide);
+//		hideInput('remote_networkv6', hide);
 	}
 
 	function dns_domain_change() {

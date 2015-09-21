@@ -742,6 +742,27 @@ if($act=="new" || $act=="edit") :
 		build_mode_list()
 		));
 
+	$options = array();
+	$authmodes = array();
+
+	$authmodes = explode(",", $pconfig['authmode']);
+	$auth_servers = auth_get_authserver_list();
+	// If no authmodes set then default to selecting the first entry in auth_servers
+	if (empty($authmodes[0]) && !empty(key($auth_servers))) {
+		$authmodes[0] = key($auth_servers);
+	}
+
+	foreach ($auth_servers as $auth_server_key => $auth_server)
+		$options[$auth_server_key] = $auth_server['name'];
+
+	$section->addInput(new Form_Select(
+		'authmode',
+		'Backend for authentication',
+		$authmodes,
+		$options,
+		true
+		))->addClass('authmode');
+
 	$section->addInput(new Form_Select(
 		'protocol',
 		'Protocol',
@@ -1372,7 +1393,7 @@ events.push(function(){
 				hideCheckbox('gwredir', true);
 				hideInput('local_network', true);
 				hideInput('local_networkv6', true);
-				hideInput('authmode', true);
+				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
 				break;
 			case "p2p_tls":
@@ -1382,7 +1403,7 @@ events.push(function(){
 				hideCheckbox('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
-				hideInput('authmode', true);
+				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
 				break;
 			case "server_user":
@@ -1393,11 +1414,11 @@ events.push(function(){
 				hideCheckbox('gwredir', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
-				hideInput('authmode', false);
+				hideMultiClass('authmode', false);
 				hideCheckbox('client2client', false);
 				break;
 			case "server_tls":
-				hideInput('authmode', true);
+				hideMultiClass('authmode', true);
 			default:
 				hideInput('custom_options', false);
 				hideInput('verbosity_level', false);
@@ -1411,6 +1432,19 @@ events.push(function(){
 		}
 
 		gwredir_change();
+		tlsauth_change();
+		autokey_change();
+	}
+
+	// Process "Enable authentication of TLS packets" checkbox
+	function tlsauth_change() {
+		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  && ($('#mode').val() != 'p2p_shared_key'));
+		autotls_change();
+	}
+
+	// Process "Automatically generate a shared TLS authentication key" checkbox
+	function autotls_change() {
+		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}
 
 	function autokey_change() {
@@ -1418,31 +1452,8 @@ events.push(function(){
 		hideInput('shared_key', hide);
 	}
 
-	function tlsauth_change() {
-		var hide  = ! $('#tlsauth_enable').prop('checked')
-
-	<?php if (!$pconfig['tls']): ?>
-		hideCheckbox('autotls_enable', hide);
-	<?php endif; ?>
-
-		autotls_change();
-	}
-
-	function autotls_change() {
-		<?php if (!$pconfig['tls']): ?>
-			autocheck = $('#autotls_enable').prop('checked');
-		<?php else: ?>
-			autocheck = false;
-		<?php endif; ?>
-
-		if ($('#tlsauth_enable').prop('checked')  && !autocheck)
-		   hideInput('tls', false);
-		else
-		   hideInput('tls', true);
-	}
-
 	function gwredir_change() {
-		var hide  = $('#gwredir').prop('checked')
+		var hide = $('#gwredir').prop('checked')
 
 		hideInput('local_network', hide);
 		hideInput('local_networkv6', hide);
@@ -1557,6 +1568,14 @@ events.push(function(){
 	}
 
 	// ---------- Library of show/hide functions ----------------------------------------------------------------------
+
+	// Hides all elements of the specified class belonging to a multiselect.
+	function hideMultiClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).parent().parent().hide();
+		else
+			$('.' + s_class).parent().parent().show();
+	}
 
 	// Hides div whose label contains the specified text. (Good for StaticText)
 	function hideLabel(text, hide) {

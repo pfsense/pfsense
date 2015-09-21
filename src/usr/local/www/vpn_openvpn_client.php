@@ -921,7 +921,7 @@ events.push(function(){
 		autotls_change();
 	}
 
-	// Procedd "Automatically generate a shared TLS authentication key" checkbox
+	// Process "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
 		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}

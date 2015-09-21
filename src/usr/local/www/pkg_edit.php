@@ -995,7 +995,7 @@ if ($pkg['tabs'] <> "") {
 
 				<!-- <br /><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
 				<br /><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
-				<br /><?php if ($pkga['description'] != "") echo $pkga['description']; ?>
+				<br /><?php if ($pkga['rowhelper']['description'] != "") echo $pkga['rowhelper']['description']; ?>
 				<script type="text/javascript">
 				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
@@ -1124,31 +1124,78 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "</select>\n";
 			break;
 		case "interfaces_selection":
-			$size = ($size ? "size=\"{$size}\"" : '');
+			$ips = array();
+			$interface_regex = (isset($rowhelper['hideinterfaceregex']) ? $rowhelper['hideinterfaceregex'] : "nointerfacestohide");
+			if (is_array($config['interfaces'])) {
+				foreach ($config['interfaces'] as $iface_key => $iface_value) {
+					if ((isset($iface_value['enable'])) && (!preg_match("/$interface_regex/", $iface_key))) {
+						$iface_description = ($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
+						if (isset($rowhelper['showips'])) {
+							$iface_description .= " address";
+						}
+						$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
+					}
+				}
+			}
+			if (is_array($config['virtualip']) && isset($rowhelper['showvirtualips'])) {
+				foreach ($config['virtualip']['vip'] as $vip) {
+					if (!preg_match("/$interface_regex/", $vip['interface'])) {
+						$vip_description = ($vip['descr'] != "" ? " ({$vip['descr']}) " : " ");
+						switch ($vip['mode']) {
+							case "ipalias":
+							case "carp":
+								$ips[] = array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
+								break;
+							case "proxyarp":
+								if ($vip['type'] == "network") {
+									$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
+									$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
+									$len = $end - $start;
+									for ($i = 0; $i <= $len; $i++) {
+										$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i) . " from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
+									}
+								} else {
+									$ips[]= array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
+								}
+								break;
+						}
+					}
+				}
+			}
+			sort($ips);
+			if (isset($rowhelper['showlistenall'])) {
+				array_unshift($ips, array('ip' => 'All', 'description' => 'Listen on All interfaces/ip addresses '));
+			}
+			if (!preg_match("/$interface_regex/","loopback")) {
+				$iface_description = (isset($rowhelper['showips']) ? "127.0.0.1 (loopback)" : "loopback");
+				array_push($ips,array('ip' => 'lo0', 'description' => $iface_description));
+			}
+
+			#show interfaces array on gui
+			$size = ($rowhelper['size'] ? "size=\"{$rowhelper['size']}\"" : '');
 			$multiple = '';
+			$fieldname = $rowhelper['fieldname'];
 			if (isset($rowhelper['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = "multiple=\"multiple\"";
+				$multiple = 'multiple="multiple"';
 			}
-			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
-			$ifaces = get_configured_interface_with_descr();
-			$additional_ifaces = $rowhelper['add_to_interfaces_selection'];
-			if (!empty($additional_ifaces)) {
-				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
-			}
+			$input = "<select style='height:22px;' id='{$rowhelper['fieldname']}{$trc}' name=\"{$fieldname}{$trc}\" {$size} {$multiple}>\n";
 			if (is_array($value)) {
 				$values = $value;
 			} else {
 				$values = explode(',', $value);
 			}
-			$ifaces["lo0"] = "loopback";
-			echo "<option><name></name><value></value></option>/n";
-			foreach ($ifaces as $ifname => $iface) {
-				$text .="<option value=\"{$ifname}\">$iface</option>";
-				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected="selected"' : '').">{$iface}</option>\n";
+			foreach ($ips as $iface) {
+				$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
+				$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
 			}
-			echo "</select>\n";
-			break;
+			$input .= "</select>\n<br />\n";
+			if (isset($rowhelper['advancedfield']) && isset($adv_filed_count)) {
+				$advanced .= $input;
+			} else {
+				echo $input;
+				break;
+			}
 		case "select_source":
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
 			if (isset($rowhelper['show_disable_value'])) {

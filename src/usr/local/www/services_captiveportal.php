@@ -705,10 +705,10 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'auth_method',
 	null,
-	'Local/Vouchers',
+	'Local User Manager / Vouchers',
 	$pconfig['auth_method'] == 'local',
 	'local'
-))->displayasRadio()->setHelp('<a href="system_usermanager.php">User Manager</a>');
+))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'auth_method',
@@ -1204,6 +1204,8 @@ events.push(function(){
 		hideClass('Radius', hide);
 
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
+		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
+		hideCheckbox('radius_protocol', !($('input[name="auth_method"]:checked').val() == 'radius'));
 	}
 
 	function hideHTTPS() {

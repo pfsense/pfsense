@@ -146,12 +146,10 @@ if ($_POST) {
 			$input_errors[] = gettext("The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters") . " a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
-	if (empty($a_aliases[$id])) {
-		foreach ($a_aliases as $alias) {
-			if ($alias['name'] == $_POST['name']) {
-				$input_errors[] = gettext("An alias with this name already exists.");
-				break;
-			}
+	foreach ($a_aliases as $key => $alias) {
+		if (($alias['name'] == $_POST['name']) && (empty($a_aliases[$id]) || ($key != $id))) {
+			$input_errors[] = gettext("An alias with this name already exists.");
+			break;
 		}
 	}
 

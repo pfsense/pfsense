@@ -2447,7 +2447,7 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('6RD Configuration');
-$section->addClass('6rd');
+$section->addClass('_6rd');
 
 $section->addInput(new Form_Input(
 	'prefix-6rd',
@@ -3335,31 +3335,31 @@ events.push(function(){
 
 		switch (t) {
 			case "none": {
-				$('.dhcp6advanced, .staticv6, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .staticv6, .dhcp6, ._6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "staticv6": {
-				$('.dhcp6advanced, .none, .dhcp6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, ._6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "slaac": {
-				$('.dhcp6advanced, .none, .staticv6, .6rd, ._6to4, .track6, .dhcp6').hide();
+				$('.dhcp6advanced, .none, .staticv6, ._6rd, ._6to4, .track6, .dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				$('.dhcp6advanced, .none, .staticv6, .6rd, ._6to4, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .staticv6, ._6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
-			case "_6rd": {
-				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6to4, .track6, .slaac').hide();
+			case "6rd_": {
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, ._6to4, .track6, .slaac').hide();
 				break;
 			}
 			case "_6to4": {
-				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6rd, .track6, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, ._6rd, .track6, .slaac').hide();
 				break;
 			}
 			case "track6": {
-				$('.dhcp6advanced, .none, .dhcp6, .staticv6, .6rd, .6to4, .slaac').hide();
+				$('.dhcp6advanced, .none, .dhcp6, .staticv6, ._6rd, ._6to4, .slaac').hide();
 				update_track6_prefix();
 				break;
 			}

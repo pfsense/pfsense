@@ -728,8 +728,15 @@
 						log_error("GratisDNS.dk ({$this->_dnsHost}): DNS update() starting.");
 					}
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
-					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $domain . '&i=' . $this->_dnsIP);
+					$host = trim($this->_dnsHost);
+					$hostnames = explode(".", $host);
+					$hostnames_count = count($hostnames);
+					if ($hostnames_count > 2) {
+						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
+					} else {
+						$domain = $host;
+					}
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $host . '&d=' . $domain . '&i=' . $this->_dnsIP);
 					break;
 				case 'ovh-dynhost':
 					$needsIP = FALSE;

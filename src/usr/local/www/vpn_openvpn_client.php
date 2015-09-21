@@ -614,7 +614,6 @@ if($act=="new" || $act=="edit") :
 	))->setHelp('Paste your shared key here');
 
 	if (count($a_ca)) {
-
 		$list = array();
 		foreach ($a_ca as $ca)
 			$list[$ca['refid']] = $ca['descr'];
@@ -653,13 +652,13 @@ if($act=="new" || $act=="edit") :
 			'Automatically generate a shared key',
 			$pconfig['autokey_enable']
 		));
-	}
 
-	$section->addInput(new Form_TextArea(
-		'shared_key',
-		'Shared Key',
-		$pconfig['shared_key']
-	))->setHelp('Paste your shared key here');
+		$section->addInput(new Form_TextArea(
+			'shared_key',
+			'Shared Key',
+			$pconfig['shared_key']
+		))->setHelp('Paste your shared key here');
+	}
 
 	$section->addInput(new Form_Select(
 		'certref',
@@ -877,13 +876,9 @@ endif;
 events.push(function(){
 
 	function mode_change() {
-		value = $('#mode').val();
-
-		switch(value) {
+		switch($('#mode').val()) {
 			case "p2p_tls":
-				hideInput('tls', false);
 				hideCheckbox('tlsauth_enable', false);
-				hideCheckbox('autotls_enable', false);
 				hideInput('caref', false);
 				hideInput('certref', false);
 				hideClass('authentication', false);
@@ -892,9 +887,7 @@ events.push(function(){
 				hideLabel('Peer Certificate Revocation list', true);
 				break;
 			case "p2p_shared_key":
-				hideInput('tls', true);
 				hideCheckbox('tlsauth_enable', true);
-				hideCheckbox('autotls_enable', true);
 				hideInput('caref', true);
 				hideInput('certref', true);
 				hideClass('authentication', true);
@@ -903,12 +896,16 @@ events.push(function(){
 				hideLabel('Peer Certificate Revocation list', false);
 				break;
 		}
+
+		tlsauth_change();
+		autokey_change();
 	}
 
 	function dev_mode_change() {
 		hideCheckbox('no_tun_ipv6', ($('#dev_mode').val() == 'tap'));
 	}
 
+	// Process "Automatically generate a shared key" checkbox
 	function autokey_change() {
 		hideInput('shared_key', $('#autokey_enable').prop('checked'));
 	}
@@ -918,38 +915,21 @@ events.push(function(){
 		hideInput('proxy_passwd', ($('#proxy_authtype').val() == 'none'));
 	}
 
+	// Process "Enable authentication of TLS packets" checkbox
 	function tlsauth_change() {
-		var hide  = ! $('#tlsauth_enable').prop('checked')
-
-	<?php if (!$pconfig['tls']): ?>
-		hideCheckbox('autotls_enable', hide);
-		hideInput('tls', hide);
-	<?php endif; ?>
-
+		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  && ($('#mode').val() != 'p2p_shared_key'));
 		autotls_change();
 	}
 
+	// Procedd "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
-
-	hideInput('tls', false);
-
-	<?php if (!$pconfig['tls']): ?>
-		autocheck = $('#autotls_enable').prop('checked');
-	<?php else: ?>
-		autocheck = false;
-	<?php endif; ?>
-
-	if ($('#tlsauth_enable').prop('checked')  && !autocheck)
-	   hideInput('tls', false);
-	else
-	   hideInput('tls', true);
+		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}
 
 	// ---------- Library of show/hide functions ----------------------------------------------------------------------
 
 	// Hides div whose label contains the specified text. (Good for StaticText)
 	function hideLabel(text, hide) {
-
 		var element = $('label:contains(' + text + ')');
 
 		if(hide)
@@ -1020,6 +1000,7 @@ events.push(function(){
 	$('#autotls_enable').click(function () {
 		autotls_change();
 	});
+
 	// ---------- Set initial page display state ----------------------------------------------------------------------
 	mode_change();
 	autokey_change();

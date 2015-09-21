@@ -517,25 +517,25 @@ display_top_tabs($tab_array);
 <?php
 							if ($j == 0):
 ?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected phase2 entries to end")?>" border="0" alt="move" />
+										<i class="icon icon-arrow-down" title="<?=gettext("move selected phase2 entries to end")?>" alt="move"></i>
 <?php
 							else:
 ?>
-										<input onmouseover="fr_insline(<?=$j?>, true, '<?=$fr_prefix?>')" onmouseout="fr_insline(<?=$j?>, false, '<?=$fr_prefix?>')" name="movep2_<?=$j?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected phase2 entries to end")?>" />
+										<i class="icon icon-arrow-down" name="movep2_<?=$j?>" onmouseover="fr_insline(<?=$j?>, true, '<?=$fr_prefix?>')" onmouseout="fr_insline(<?=$j?>, false, '<?=$fr_prefix?>')" title="<?=gettext("move selected phase2 entries to end")?>" alt="move"></i>
 <?php
 							endif;
 ?>
 										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase2 entry"); ?>" alt="add" />
+											<i class="icon icon-plus-sign" title="<?=gettext("add phase2 entry"); ?>" alt="add"></i>
 										</a>
 <?php
 							if ($j == 0):
 ?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected phase2 entries")?>" border="0" alt="delete" />
+										<i class="icon icon-remove-sign" title="<?=gettext("delete selected phase2 entries")?>" alt="delete"></i>
 <?php
 							else:
 ?>
-										<input name="delp2" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected phase2 entries")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase2 entries?")?>')" />
+										<i name="delp2" class="icon icon-remove-sign" title="<?=gettext("delete selected phase2 entries")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase2 entries?")?>')"></i>
 <?php
 							endif;
 ?>

@@ -746,7 +746,7 @@ if($act=="new" || $act=="edit") :
 		'protocol',
 		'Protocol',
 		$pconfig['protocol'],
-		$openvpn_prots
+		array_combine($openvpn_prots, $openvpn_prots)
 		));
 
 	$section->addInput(new Form_Select(

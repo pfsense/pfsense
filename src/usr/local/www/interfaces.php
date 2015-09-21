@@ -2898,39 +2898,41 @@ if (isset($wancfg['wireless'])) {
 	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
 				'Not all channels may be supported by your card.  Auto may override the wireless standard selected above.');
 
-	if (ANTENNAS && isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
-		$group = new Form_Group('Antenna Settings');
+	if (ANTENNAS) {
+		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
+			$group = new Form_Group('Antenna Settings');
 
-		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])) {
-			$group->add(new Form_Select(
-				'diversity',
-				null,
-				(isset($pconfig['diversity'])) ? $pconfig['diversity']:'',
-				['' => 'Default', '0' => 'Off', '1' => 'On']
-			))->setHelp('Diversity');
+			if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])) {
+				$group->add(new Form_Select(
+					'diversity',
+					null,
+					(isset($pconfig['diversity'])) ? $pconfig['diversity']:'',
+					['' => 'Default', '0' => 'Off', '1' => 'On']
+				))->setHelp('Diversity');
+			}
+
+			if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])) {
+				$group->add(new Form_Select(
+					'txantenna',
+					null,
+					(isset($pconfig['txantenna'])) ? $pconfig['txantenna']:'',
+					['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
+				))->setHelp('Transmit antenna');
+			}
+
+			if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
+				$group->add(new Form_Select(
+					'rxantenna',
+					null,
+					(isset($pconfig['rxantenna'])) ? $pconfig['rxantenna']:'',
+					['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
+				))->setHelp('Receive antenna');
+			}
+
+			$group->setHelp('Note: The antenna numbers do not always match up with the labels on the card.');
+
+			$section->add($group);
 		}
-
-		if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])) {
-			$group->add(new Form_Select(
-				'txantenna',
-				null,
-				(isset($pconfig['txantenna'])) ? $pconfig['txantenna']:'',
-				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
-			))->setHelp('Transmit antenna');
-		}
-
-		if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
-			$group->add(new Form_Select(
-				'rxantenna',
-				null,
-				(isset($pconfig['rxantenna'])) ? $pconfig['rxantenna']:'',
-				['' => 'Default', '0' => 'Auto', '1' => '#1', '2' => '#2']
-			))->setHelp('Receive antenna');
-		}
-
-		$group->setHelp('Note: The antenna numbers do not always match up with the labels on the card.');
-
-		$section->add($group);
 	}
 
 	if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])) {

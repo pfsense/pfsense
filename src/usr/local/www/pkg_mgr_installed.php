@@ -114,6 +114,8 @@ if(!is_array($config['installedpackages']['package'])):?>
 		if(!$pkg['name'])
 			continue;
 
+		$full_name = $g['pkg_prefix'] . get_package_internal_name($pkg);
+
 		// get history/changelog git dir
 		$commit_dir=explode("/",$pkg['config_file']);
 		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
@@ -164,9 +166,9 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<?=$pkgdescr?>
 		</td>
 		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="btn btn-danger">remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="btn btn-info">reinstall</a>
-			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$pkg['name']?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
+			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-danger">remove</a>
+			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info">reinstall</a>
+			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
 <?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
 			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-default">info</a>
 <?php endif;?>

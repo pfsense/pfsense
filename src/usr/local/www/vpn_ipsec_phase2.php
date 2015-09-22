@@ -978,7 +978,10 @@ events.push(function(){
 		change_mode();
 	});
 
-    // ---------- Iniatial page load ----------------------------------------------------------------------------------    
+    // ---------- Iniatial page load ----------------------------------------------------------------------------------
+    hideInput('ikeid', true);
+    hideInput('uniqid', true);
+
 	change_mode();
 	change_protocol();
 	typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);

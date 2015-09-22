@@ -77,8 +77,12 @@ export COUNTER=0
 # Global variable used to control SIGINFO action
 export _sleeping=0
 
+snapshot_update_statu() {
+	${BUILDER_ROOT}/build.sh --snapshot-update-status "${1}"
+}
+
 git_last_commit() {
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Updating ${PRODUCT_NAME} repository."
+	snapshot_update_status ">>> Updating ${PRODUCT_NAME} repository."
 	[ -z "${NO_RESET}" ] \
 		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
 	git -C "${BUILDER_ROOT}" pull -q
@@ -88,7 +92,7 @@ git_last_commit() {
 
 restart_build() {
 	if [ ${_sleeping} -ne 0 ]; then
-		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> SIGNINFO received, restarting build"
+		snapshot_update_status ">>> SIGNINFO received, restarting build"
 		COUNTER=$((maxsleepvalue + 60))
 	fi
 }
@@ -104,9 +108,9 @@ snapshots_sleep_between_runs() {
 	[ -z "${LAST_COMMIT}" ] \
 		&& export LAST_COMMIT=${CURRENT_COMMIT}
 
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)"
+	snapshot_update_status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
+	snapshot_update_status ">>> Last known commit: ${LAST_COMMIT}"
+	snapshot_update_status ">>> Freezing build process at $(date)"
 	echo ">>> Press ctrl+T to start a new build"
 	COUNTER=0
 	_sleeping=1
@@ -116,7 +120,7 @@ snapshots_sleep_between_runs() {
 	done
 
 	if [ ${COUNTER} -lt ${maxsleepvalue} ]; then
-		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."
+		snapshot_update_status ">>> Thawing build process and resuming checks for pending commits at $(date)."
 		echo ">>> Press ctrl+T to start a new build"
 	fi
 
@@ -126,7 +130,7 @@ snapshots_sleep_between_runs() {
 		if [ "$((${COUNTER} % 60))" = "0" ]; then
 			git_last_commit
 			if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
-				${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
+				snapshot_update_status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
 				COUNTER=$(($maxsleepvalue + 60))
 				export LAST_COMMIT="${CURRENT_COMMIT}"
 			fi
@@ -136,7 +140,7 @@ snapshots_sleep_between_runs() {
 	_sleeping=0
 
 	if [ $COUNTER -ge $maxsleepvalue ]; then
-		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleep timer expired. Restarting build."
+		snapshot_update_status ">>> Sleep timer expired. Restarting build."
 		COUNTER=0
 	fi
 
@@ -150,11 +154,11 @@ while [ /bin/true ]; do
 	git_last_commit
 
 	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read -r LINE; do
-		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
+		snapshot_update_status "${LINE}"
 	done
 
 	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots 2>&1) | while read -r LINE; do
-		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
+		snapshot_update_status "${LINE}"
 	done
 
 	if [ -z "${LOOPED_SNAPSHOTS}" ]; then

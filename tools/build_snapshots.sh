@@ -30,6 +30,13 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+usage() {
+	echo "Usage: $(basename $0) [-l] [-r] [-u]"
+	echo "	-l: Build looped operations"
+	echo "	-r: Do not reset local changes"
+	echo "	-u: Do not upload snapshots"
+}
+
 # Use an env var to let build.sh know we are running build_snapshots.sh
 # This will avoid build.sh to run in interactive mode and wait a key
 # to be pressed when something goes wrong
@@ -38,21 +45,29 @@ export NOT_INTERACTIVE=1
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
+NO_RESET=""
 NO_UPLOAD=""
 LOOPED_SNAPSHOTS=""
 export minsleepvalue=${minsleepvalue:-"28800"}
 export maxsleepvalue=${maxsleepvalue:-"86400"}
 
 # Handle command line arguments
-while test "$1" != "" ; do
-	case $1 in
-	--noupload|-u)
-		NO_UPLOAD="-u"
-		;;
-	--looped|-l)
-		LOOPED_SNAPSHOTS="true"
+while getopts lur opt; do
+	case ${opt} in
+		l)
+			LOOPED_SNAPSHOTS=1
+			;;
+		r)
+			NO_RESET=1
+			;;
+		u)
+			NO_UPLOAD="-u"
+			;;
+		*)
+			usage
+			exit 1
+			;;
 	esac
-	shift
 done
 
 # Keeps track of how many time builder has looped
@@ -63,6 +78,10 @@ export COUNTER=0
 export _sleeping=0
 
 git_last_commit() {
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Updating ${PRODUCT_NAME} repository."
+	[ -z "${NO_RESET}" ] \
+		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
+	git -C "${BUILDER_ROOT}" pull -q
 	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
 	export CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
 }
@@ -105,8 +124,6 @@ snapshots_sleep_between_runs() {
 		sleep 1
 		# Update this repo each 60 seconds
 		if [ "$((${COUNTER} % 60))" = "0" ]; then
-			git -C "${BUILDER_ROOT}" reset --hard
-			git -C "${BUILDER_ROOT}" pull -q
 			git_last_commit
 			if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
 				${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
@@ -126,15 +143,11 @@ snapshots_sleep_between_runs() {
 	trap "-" SIGINFO
 }
 
-git_last_commit
-
 # Main builder loop
 while [ /bin/true ]; do
 	BUILDCOUNTER=$((${BUILDCOUNTER}+1))
 
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Updating ${PRODUCT_NAME} repository."
-	git -C "${BUILDER_ROOT}" reset --hard
-	git -C "${BUILDER_ROOT}" pull -q
+	git_last_commit
 
 	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"

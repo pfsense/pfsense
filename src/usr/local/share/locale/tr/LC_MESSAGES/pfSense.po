@@ -22202,7 +22202,7 @@ msgid "Warning: "
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:349
-msgid "these options will create persistant daily log files in /var/log/ntp."
+msgid "these options will create persistent daily log files in /var/log/ntp."
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:352

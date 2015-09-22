@@ -378,7 +378,7 @@ $btnadvstats->removeClass('btn-primary')->addClass('btn-default btn-sm');
 $section->addInput(new Form_StaticText(
 	'Statistics logging',
 	$btnadvstats
-))->setHelp('Warning: These options will create persistant daily log files in /var/log/ntp.');
+))->setHelp('Warning: These options will create persistent daily log files in /var/log/ntp.');
 
 $section->addInput(new Form_Checkbox(
 	'clockstats',

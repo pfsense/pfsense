@@ -77,7 +77,7 @@ export COUNTER=0
 # Global variable used to control SIGINFO action
 export _sleeping=0
 
-snapshot_update_statu() {
+snapshot_update_status() {
 	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshot-update-status "${1}"
 }
 

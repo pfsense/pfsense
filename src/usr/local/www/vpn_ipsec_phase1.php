@@ -1103,6 +1103,10 @@ events.push(function(){
 	methodsel_change();
 	ealgosel_change(<?=$keyset?>);
 	dpdchkbox_change();
+
+	// ---------- Iniatial page load ----------------------------------------------------------------------------------  
+	
+	hideInput('ikeid', true);
 });
 //]]>
 </script>

@@ -155,6 +155,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php
 
 	foreach($pkg_info as $index):
+
 		if(get_package_id($index['name']) >= 0 ) {
 			continue;
 		}
@@ -175,14 +176,19 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 				</a>
 			</td>
 
-<?php if (!$g['disablepackagehistory']):?>
+<?php
+/*	// We no longer have a package revision history URL
+	 if (!$g['disablepackagehistory']):?>
 			<td>
 				<!-- XXX: $changeloglink is undefined -->
 				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
 					<?=htmlspecialchars($index['version'])?>
 				</a>
 			</td>
-<?php endif;?>
+<?php 
+endif;
+*/
+?>
 			<td>
 				<?=$index['desc']?>
 			</td>

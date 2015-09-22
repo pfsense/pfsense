@@ -534,10 +534,6 @@ function install_package($package_name) {
 function install_package_xml($package_name) {
 	global $g, $config, $static_output, $pkg_interface;
 
-	if ($pkg_interface == "console") {
-		echo "\n";
-	}
-
 	if (($pkg_info = read_package_config($package_name)) == false) {
 		return false;
 	}

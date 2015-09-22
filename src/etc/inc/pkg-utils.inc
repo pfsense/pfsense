@@ -280,7 +280,8 @@ function get_package_id($package_name) {
 	}
 
 	foreach ($config['installedpackages']['package'] as $idx => $pkg) {
-		if ($pkg['name'] == $package_name) {
+		if ($pkg['name'] == $package_name ||
+		    get_package_internal_name($pkg) == $package_name) {
 			return $idx;
 		}
 	}

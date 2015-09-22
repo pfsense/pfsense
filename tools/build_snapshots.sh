@@ -78,7 +78,29 @@ restart_build() {
 # will sleep for a bit and check for new commits
 # in between sleeping for short durations.
 snapshots_sleep_between_runs() {
+	# Handle SIGINFO (ctrl+T) and restart build
+	trap restart_build SIGINFO
+
+	# Initialize variables that keep track of last commit
+	[ -z "${LAST_COMMIT}" ] \
+		&& export LAST_COMMIT=${CURRENT_COMMIT}
+
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)"
+	echo ">>> Press ctrl+T to start a new build"
+	COUNTER=0
 	_sleeping=1
+	while [ ${COUNTER} -lt ${minsleepvalue} ]; do
+		sleep 1
+		COUNTER=$((COUNTER + 1))
+	done
+
+	if [ ${COUNTER} -lt ${maxsleepvalue} ]; then
+		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."
+		echo ">>> Press ctrl+T to start a new build"
+	fi
+
 	while [ $COUNTER -lt $maxsleepvalue ]; do
 		sleep 1
 		# Update this repo each 60 seconds
@@ -95,16 +117,16 @@ snapshots_sleep_between_runs() {
 		COUNTER=$(($COUNTER + 1))
 	done
 	_sleeping=0
+
 	if [ $COUNTER -ge $maxsleepvalue ]; then
 		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleep timer expired. Restarting build."
 		COUNTER=0
 	fi
+
+	trap "-" SIGINFO
 }
 
 git_last_commit
-
-# Handle SIGINFO (ctrl+T) and restart build
-trap restart_build SIGINFO
 
 # Main builder loop
 while [ /bin/true ]; do
@@ -123,29 +145,8 @@ while [ /bin/true ]; do
 		exit
 	fi
 
-	# Initialize variables that keep track of last commit
-	[ -z "${LAST_COMMIT}" ] \
-		&& export LAST_COMMIT=${CURRENT_COMMIT}
-
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)"
-	echo ">>> Press ctrl+T to start a new build"
-	COUNTER=0
-	_sleeping=1
-	while [ ${COUNTER} -lt ${minsleepvalue} ]; do
-		sleep 1
-		COUNTER=$((COUNTER + 1))
-	done
-	_sleeping=0
-
-	if [ ${COUNTER} -lt ${maxsleepvalue} ]; then
-		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."
-		echo ">>> Press ctrl+T to start a new build"
-
-		# Count some sheep or wait until a new commit turns up
-		# for one days time.  We will wake up if a new commit
-		# is detected during sleepy time.
-		snapshots_sleep_between_runs
-	fi
+	# Count some sheep or wait until a new commit turns up
+	# for one days time.  We will wake up if a new commit
+	# is detected during sleepy time.
+	snapshots_sleep_between_runs
 done

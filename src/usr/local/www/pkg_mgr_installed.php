@@ -77,10 +77,9 @@ if (!verify_all_package_servers())
 if (check_package_server_ssl() === false)
 	print_info_box(package_server_ssl_failure_message());
 
-$version = file_get_contents("/etc/version");
 $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+//	$tab_array[] = array("{$g['product_version']} " . gettext("packages"), false, "pkg_mgr.php");
 //	$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //	$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");

@@ -141,7 +141,7 @@ if ($needs_system_upgrade == false) {
 <?php
 
 $txt  = gettext("A new version is now available") . "<br />";
-$txt .= gettext("Current version") .": ". $current_installed_version . "<br />";
+$txt .= gettext("Current version") .": ". $g['product_version'] . "<br />";
 if ($g['platform'] == "nanobsd") {
 	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "<br />";
 }

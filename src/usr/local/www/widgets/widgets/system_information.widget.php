@@ -66,7 +66,6 @@ if ($_REQUEST['getupdatestatus']) {
 		echo "<i>Unable to check for updates</i>";
 	else {
 		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-		$current_installed_version = trim(file_get_contents("/etc/version"));
 
 		if(!$remote_version) {
 			echo "<i>Unable to check for updates</i>";
@@ -104,7 +103,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
-				<strong><?php readfile("/etc/version"); ?></strong>
+				<strong><?=$g['product_version']?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>

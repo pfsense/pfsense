@@ -118,7 +118,7 @@ if (!$latest_version) {
 		require("foot.inc");
 		exit;
 	} else {
-		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
+		if (pfs_version_compare($current_installed_buildtime, $g['product_version'], $latest_version) == -1) {
 			panel_heading_text(gettext("Downloading updates") . '...');
 			panel_heading_class('info');
 

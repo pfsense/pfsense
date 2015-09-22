@@ -83,7 +83,29 @@ if ($_POST) {
 	    (!is_ipaddr($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
+	
+	if (!is_numericint($_POST['tunnel-remote-net'])) {
+		$input_errors[] = gettext("The GRE tunnel subnet must be an integer.");
+	}
+	
+	if (is_ipaddrv4($_POST['tunnel-local-addr'])) {
+		if (!is_ipaddrv4($_POST['tunnel-remote-addr'])) {
+			$input_errors[] = gettext("The GRE Tunnel remote address must be IPv4 where tunnel local address is IPv4.");
+		}
+		if ($_POST['tunnel-remote-net'] > 32 || $_POST['tunnel-remote-net'] < 1) {
+			$input_errors[] = gettext("The GRE tunnel subnet must be an integer between 1 and 32.");
+		}
+	}
 
+	if (is_ipaddrv6($_POST['tunnel-local-addr'])) {
+		if (!is_ipaddrv6($_POST['tunnel-remote-addr'])) {
+			$input_errors[] = gettext("The GRE Tunnel remote address must be IPv6 where tunnel local address is IPv6.");
+		}
+		if ($_POST['tunnel-remote-net'] > 128 || $_POST['tunnel-remote-net'] < 1) {
+			$input_errors[] = gettext("The GRE tunnel subnet must be an integer between 1 and 128.");
+		}
+	}
+	
 	foreach ($a_gres as $gre) {
 		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre)) {
 			continue;
@@ -143,6 +165,10 @@ function build_parent_list() {
 $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
 require_once('classes/Form.class.php');
 
 $form = new Form();
@@ -176,7 +202,7 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Select(
 	'tunnel-remote-net',
-	'GRE tunnel remote subnet',
+	'GRE tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
 ))->setHelp('The subnet is used for determining the network that is tunnelled');

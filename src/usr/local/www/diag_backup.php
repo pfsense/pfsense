@@ -663,7 +663,7 @@ $section->addInput(new Form_Checkbox(
 	'Encryption',
 	'Encrypt this configuration file.',
 	false
-))->toggles('.toggle-passwords');;
+));
 
 $section->addInput(new Form_Input(
 	'encrypt_password',
@@ -671,7 +671,7 @@ $section->addInput(new Form_Input(
 	'password',
 	null,
 	['placeholder' => 'Password']
-))->addClass('toggle-passwords');
+));
 
 $section->addInput(new Form_Input(
 	'encrypt_passconf',
@@ -679,7 +679,7 @@ $section->addInput(new Form_Input(
 	'password',
 	null,
 	['placeholder' => 'Confirm password']
-))->addClass('toggle-passwords');
+));
 
 $group = new Form_Group('');
 $group->add(new Form_Button(
@@ -712,11 +712,11 @@ $section->addInput(new Form_Input(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'encrypt',
+	'decrypt',
 	'Encryption',
-	'Encrypt this configuration file.',
+	'Configuration file is encrypted.',
 	false
-))->toggles('.toggle-dpasswords');;
+));
 
 $section->addInput(new Form_Input(
 	'decrypt_password',
@@ -724,7 +724,7 @@ $section->addInput(new Form_Input(
 	'password',
 	null,
 	['placeholder' => 'Password']
-))->addClass('toggle-dpasswords');
+));
 
 $section->addInput(new Form_Input(
 	'decrypt_passconf',
@@ -732,7 +732,7 @@ $section->addInput(new Form_Input(
 	'password',
 	null,
 	['placeholder' => 'Confirm password']
-))->addClass('toggle-dpasswords');
+));
 
 $group = new Form_Group('');
 $group->add(new Form_Button(
@@ -771,7 +771,82 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 }
 
 print($form);
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function(){
+	//---------- "Standard" show/hide functions ---------------------------------------------------
 
+	// Hides all elements of the specified class. This will usually be a section or group
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
+	// Hides all elements of the specified class belonging to a multiselect.
+	function hideMultiClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).parent().parent().hide();
+		else
+			$('.' + s_class).parent().parent().show();
+	}
+
+	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
+	function hideInput(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent('div').removeClass('hidden');
+	}
+
+	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
+	function hideCheckbox(id, hide) {
+		if(hide)
+			$('#' + id).parent().parent().parent('div').addClass('hidden');
+		else
+			$('#' + id).parent().parent().parent('div').removeClass('hidden');
+	}
+
+	// Disables the specified input element
+	function disableInput(id, disable) {
+		$('#' + id).prop("disabled", disable);
+	}
+
+	// ------- Show/hide sections based on checkbox settings --------------------------------------
+	function hideSections(hide) {
+		hidePasswords();
+	}
+
+	function hidePasswords() {
+		
+		encryptHide = !($('input[name="encrypt"]').is(':checked'));
+		decryptHide = !($('input[name="decrypt"]').is(':checked'));
+
+		hideInput('encrypt_password', encryptHide);
+		hideInput('encrypt_passconf', encryptHide);
+		hideInput('decrypt_password', decryptHide);
+		hideInput('decrypt_passconf', decryptHide);
+	}
+
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	$('input[name="encrypt"]').on('change', function() {
+		hidePasswords();
+	});
+
+	$('input[name="decrypt"]').on('change', function() {
+		hidePasswords();
+	});	
+
+	// ---------- On itial page load --------------------------------------------------------------
+	hideSections();
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");
 
 if (is_subsystem_dirty('restore')) {

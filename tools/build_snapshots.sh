@@ -78,7 +78,7 @@ export COUNTER=0
 export _sleeping=0
 
 snapshot_update_statu() {
-	${BUILDER_ROOT}/build.sh --snapshot-update-status "${1}"
+	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshot-update-status "${1}"
 }
 
 git_last_commit() {

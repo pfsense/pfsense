@@ -132,6 +132,10 @@ git_last_commit
 while [ /bin/true ]; do
 	BUILDCOUNTER=$((${BUILDCOUNTER}+1))
 
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Updating ${PRODUCT_NAME} repository."
+	git -C "${BUILDER_ROOT}" reset --hard
+	git -C "${BUILDER_ROOT}" pull -q
+
 	(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) | while read -r LINE; do
 		${BUILDER_ROOT}/build.sh --snapshot-update-status "${LINE}"
 	done

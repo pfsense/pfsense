@@ -135,29 +135,29 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['maxage'] && !is_numeric($_POST['maxage'])) {
+	if ($_POST['maxage'] && !is_numericint($_POST['maxage'])) {
 		$input_errors[] = gettext("Maxage needs to be an integer between 6 and 40.");
 	}
-	if ($_POST['maxaddr'] && !is_numeric($_POST['maxaddr'])) {
+	if ($_POST['maxaddr'] && !is_numericint($_POST['maxaddr'])) {
 		$input_errors[] = gettext("Maxaddr needs to be an integer.");
 	}
-	if ($_POST['timeout'] && !is_numeric($_POST['timeout'])) {
+	if ($_POST['timeout'] && !is_numericint($_POST['timeout'])) {
 		$input_errors[] = gettext("Timeout needs to be an integer.");
 	}
-	if ($_POST['fwdelay'] && !is_numeric($_POST['fwdelay'])) {
+	if ($_POST['fwdelay'] && !is_numericint($_POST['fwdelay'])) {
 		$input_errors[] = gettext("Forward Delay needs to be an integer between 4 and 30.");
 	}
-	if ($_POST['hellotime'] && !is_numeric($_POST['hellotime'])) {
+	if ($_POST['hellotime'] && !is_numericint($_POST['hellotime'])) {
 		$input_errors[] = gettext("Hello time for STP needs to be an integer between 1 and 2.");
 	}
-	if ($_POST['priority'] && !is_numeric($_POST['priority'])) {
+	if ($_POST['priority'] && !is_numericint($_POST['priority'])) {
 		$input_errors[] = gettext("Priority for STP needs to be an integer between 0 and 61440.");
 	}
-	if ($_POST['holdcnt'] && !is_numeric($_POST['holdcnt'])) {
+	if ($_POST['holdcnt'] && !is_numericint($_POST['holdcnt'])) {
 		$input_errors[] = gettext("Transmit Hold Count for STP needs to be an integer between 1 and 10.");
 	}
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		if ($_POST[$ifn] <> "" && !is_numeric($_POST[$ifn])) {
+		if ($_POST[$ifn] <> "" && !is_numericint($_POST[$ifn])) {
 			$input_errors[] = "{$ifdescr} " . gettext("interface priority for STP needs to be an integer between 0 and 240.");
 		}
 	}
@@ -299,8 +299,9 @@ function build_member_list() {
 	foreach ($ifacelist as $ifn => $ifinfo) {
 		$memberlist['list'][$ifn] = $ifinfo;
 
-		if (in_array($ifn, $members_array))
-		   array_push($memberlist['selected'], $ifn);
+		if (in_array($ifn, $members_array)) {
+			array_push($memberlist['selected'], $ifn);
+		}
 	}
 	unset($members_array);
 	return($memberlist);
@@ -309,14 +310,14 @@ function build_member_list() {
 function build_port_list($selecton) {
 	global $pconfig, $ifacelist;
 
-	$portlist = array('list' => array(),
-						'selected' => array());
+	$portlist = array('list' => array(), 'selected' => array());
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		$portlist['list'][$ifn] = $ifdescr;
 
-		if (stristr($selecton, $ifn))
-		   array_push($portlist['selected'], $ifn);
+		if (stristr($selecton, $ifn)) {
+			array_push($portlist['selected'], $ifn);
+		}
 	}
 
 	return($portlist);

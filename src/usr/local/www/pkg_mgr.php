@@ -88,11 +88,14 @@ if(is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
+include("head.inc");
+
 //get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
 $pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
 $xmlrpc_base_url = get_active_xml_rpc_base_url();
 if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
+	unset($input_errors);
 	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 	//create cache file after get_pkg_info
 	if($pkg_info) {
@@ -118,18 +121,20 @@ if (! empty($_GET))
 		$requested_version = htmlspecialchars($_GET['ver']);
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
-include("head.inc");
 
 /* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
 if (!verify_all_package_servers())
-	print_info_box(package_server_mismatch_message());
+	print_info_box(package_server_mismatch_message(), 'danger');
 
 /* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
 if (check_package_server_ssl() === false)
 	print_info_box(package_server_ssl_failure_message());
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 
 $version = rtrim(file_get_contents("/etc/version"));
 
@@ -138,7 +143,6 @@ $tab_array[] = array(gettext("Available Packages"), $requested_version <> "" ? f
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-$version = rtrim(file_get_contents("/etc/version"));
 if($pkg_info) {
 	$pkg_keys = array_keys($pkg_info);
 	natcasesort($pkg_keys);
@@ -150,6 +154,7 @@ if($pkg_info) {
 				$categories[$pkg_info[$key]['category']]++;
 			}
 		}
+
 	ksort($categories);
 	$cm_count=0;
 	$tab_array = array();
@@ -176,6 +181,7 @@ if($pkg_info) {
 			$cm_count++;
 		}
 	}
+
 	$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
 	if (count($categories) > 1)
 		display_top_tabs($tab_array);
@@ -200,12 +206,12 @@ if(!$pkg_info || !is_array($pkg_keys)):?>
 	</thead>
 	<tbody>
 <?php
+
 	foreach($pkg_keys as $key):
 		$index = &$pkg_info[$key];
 
 		if(get_pkg_id($index['name']) >= 0 )
 			continue;
-		continue;
 
 		/* get history/changelog git dir */
 		$commit_dir=explode("/",$index['config_file']);

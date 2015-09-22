@@ -57,15 +57,17 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
+include("head.inc");
+
 if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
+
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
 }
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Manager"));
-include("head.inc");
 
 /* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
 if (!verify_all_package_servers())

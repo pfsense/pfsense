@@ -130,6 +130,8 @@ display_top_tabs($tab_array);
 		<div class="panel-footer">
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
 		</div>
 	</div>
 <?php endif;?>
@@ -137,7 +139,7 @@ display_top_tabs($tab_array);
 <?php if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 id="status"><?=gettext("Beginning package installation.")?></h2>
+			<h4 id="status"><?=gettext("Beginning package installation.")?></h4>
 		</div>
 
 		<div class="panel-body">
@@ -242,7 +244,7 @@ if ($_GET) {
 		default:
 			$status = install_package($pkgid);
 			if ($status != 0) {
-				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
+				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED! "));
 				$static_output .= "\n" . gettext("Installation halted.");
 				update_output_window($static_output);
 			} else {

@@ -232,7 +232,7 @@ function is_pkg_installed($pkg_name) {
 
 	pkg_remove_prefix($pkg_name);
 
-	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name, true);
+	return pkg_call("info " . $g['pkg_prefix'] . $pkg_name, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */
@@ -305,7 +305,7 @@ function get_package_internal_name($package_data) {
 
 /* Get information about packages */
 function get_pkg_info($pkgs = 'all', $info = 'all') {
-	global $g, $static_output;
+	global $g, $static_output, $input_errors;
 
 	$out = '';
 	$err = '';
@@ -318,6 +318,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
 	update_status($static_output);
 	if (!pkg_call("update")) {
+		$input_errors[] = gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		$static_output .= "\n" . gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		update_status($static_output);
 		return array();
@@ -328,6 +329,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	if ($rc != 0) {
 		$static_output .= "\n" . gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
 		$static_output .= $err;
+		$input_errors[] =  gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
+		$input_errors[] =  $err;
 		update_status($static_output);
 		return array();
 	}

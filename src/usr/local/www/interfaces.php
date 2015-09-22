@@ -3193,6 +3193,10 @@ if (isset($wancfg['wireless'])) {
 		'yes'
 	));
 
+	$form->add($section);
+
+	$section = new Form_Section('802.1x RADIUS options');
+
 	$section->addInput(new Form_Checkbox(
 		'ieee8021x',
 		'IEEE802.1X',

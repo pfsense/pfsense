@@ -252,7 +252,7 @@ function build_interface_list() {
 			continue;
 		}
 
-		$iflist['options']['$iface'] = $ifacename;
+		$iflist['options'][$iface] = $ifacename;
 
 		if (in_array($iface, $pconfig['interface'])) {
 			array_push($iflist['selected'], $iface);

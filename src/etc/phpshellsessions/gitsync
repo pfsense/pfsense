@@ -312,22 +312,22 @@ exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name CVS -exec rm -rf
 exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
 
 // Remove files that we do not want to overwrite the system with
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/group 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/conf*");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.shrc");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.tcshrc");
-exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/platform 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
+exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 

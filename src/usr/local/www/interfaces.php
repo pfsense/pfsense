@@ -742,6 +742,9 @@ if ($_POST['apply']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} else {
+			if (ip_in_subnet($_POST['ipaddrv6'], "fe80::/10")) {
+				$input_errors[] = gettext("IPv6 link local addresses cannot be configured as an interface IP.");
+			}
 			$where_ipaddr_configured = where_is_ipaddr_configured($_POST['ipaddrv6'], $if, true, true, $_POST['subnetv6']);
 			if (count($where_ipaddr_configured)) {
 				$subnet_conflict_text = sprintf(gettext("IPv6 address %s is being used by or overlaps with:"), $_POST['ipaddrv6'] . "/" . $_POST['subnetv6']);

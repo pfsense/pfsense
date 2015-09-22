@@ -1357,7 +1357,7 @@ events.push(function(){
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
 				hideInput('strictusercn', true);
-				hideInput('autokey_enable', false);
+				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				break;
 			case "server_tls_user":
@@ -1366,7 +1366,7 @@ events.push(function(){
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
 				hideInput('strictusercn', false);
-				hideInput('autokey_enable', true);
+				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				break;
 			case "p2p_shared_key":
@@ -1380,7 +1380,7 @@ events.push(function(){
 				hideInput('dh_length', true);
 				hideInput('cert_depth', true);
 				hideInput('strictusercn', true);
-				hideInput('autokey_enable', false);
+				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				break;
 		}
@@ -1395,6 +1395,7 @@ events.push(function(){
 				hideInput('local_networkv6', true);
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
+				hideCheckbox('autokey_enable', false);
 				break;
 			case "p2p_tls":
 				hideClass('advanced', true);
@@ -1416,9 +1417,11 @@ events.push(function(){
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', false);
 				hideCheckbox('client2client', false);
+				hideCheckbox('autokey_enable', true);
 				break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
+				hideCheckbox('autokey_enable', true);
 			default:
 				hideInput('custom_options', false);
 				hideInput('verbosity_level', false);
@@ -1438,7 +1441,7 @@ events.push(function(){
 
 	// Process "Enable authentication of TLS packets" checkbox
 	function tlsauth_change() {
-		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  && ($('#mode').val() != 'p2p_shared_key'));
+		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  || ($('#mode').val() == 'p2p_shared_key'));
 		autotls_change();
 	}
 

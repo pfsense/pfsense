@@ -449,7 +449,7 @@ foreach ($interfaces as $iface => $ifacename): ?>
 
 		<div class="panel-body">
 			<div class="form-group">
-				<label for="radiusenable" class="col-sm-2 control-label"><?=gettext('Enable')?></label>
+				<label for="radiusenable" class="col-sm-2 control-label"><?=gettext('RADIUS Authentication')?></label>
 				<div class="col-sm-10 checkbox">
 					<label>
 						<input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked=\"checked\""?> />
@@ -461,7 +461,7 @@ foreach ($interfaces as $iface => $ifacename): ?>
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="radacct_enable" class="col-sm-2 control-label"><?=gettext('Enable accounting')?></label>
+				<label for="radacct_enable" class="col-sm-2 control-label"><?=gettext('RADIUS Accounting')?></label>
 				<div class="col-sm-10 checkbox">
 					<label>
 						<input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked=\"checked\""?> />
@@ -493,7 +493,7 @@ foreach ($interfaces as $iface => $ifacename): ?>
 			</div>
 
 			<div class="form-group">
-				<label for="radiusissueips" class="col-sm-2 control-label"><?=gettext("RADIUS Issued IP's")?></label>
+				<label for="radiusissueips" class="col-sm-2 control-label"><?=gettext("RADIUS Issued IPs")?></label>
 				<div class="col-sm-10 checkbox">
 					<label>
 						<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""?> />

@@ -82,7 +82,6 @@ snapshots_sleep_between_runs() {
 	done
 	if [ $COUNTER -ge $maxsleepvalue ]; then
 		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleep timer expired. Restarting build."
-		maxsleepvalue=0
 		COUNTER=0
 	fi
 }

@@ -85,6 +85,7 @@ snapshots_sleep_between_runs() {
 		wait ${_sleep_pid}
 		_sleep_pid=0
 		# Update this repo
+		git -C "${BUILDER_ROOT}" reset --hard
 		git -C "${BUILDER_ROOT}" pull -q
 		git_last_commit
 		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then

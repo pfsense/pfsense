@@ -634,6 +634,7 @@ display_top_tabs($tab_array);
 require_once('classes/Form.class.php');
 
 $form = new Form(false);
+$form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('Backup configuration');
 
@@ -820,7 +821,7 @@ events.push(function(){
 	}
 
 	function hidePasswords() {
-		
+
 		encryptHide = !($('input[name="encrypt"]').is(':checked'));
 		decryptHide = !($('input[name="decrypt"]').is(':checked'));
 
@@ -838,7 +839,7 @@ events.push(function(){
 
 	$('input[name="decrypt"]').on('change', function() {
 		hidePasswords();
-	});	
+	});
 
 	// ---------- On itial page load --------------------------------------------------------------
 	hideSections();

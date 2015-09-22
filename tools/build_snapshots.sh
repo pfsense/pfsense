@@ -57,19 +57,33 @@ done
 
 # Keeps track of how many time builder has looped
 BUILDCOUNTER=0
+export COUNTER=0
+
+# Global variable to keep sleep pid
+export _sleep_pid=0
 
 git_last_commit() {
 	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
 	export CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
 }
 
+restart_build() {
+	if [ "${_sleep_pid}" != "0" ]; then
+		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> SIGNINFO received, restarting build"
+		COUNTER=$((maxsleepvalue + 60))
+		kill ${_sleep_pid}
+	fi
+}
+
 # This routine is called in between runs. We
 # will sleep for a bit and check for new commits
 # in between sleeping for short durations.
 snapshots_sleep_between_runs() {
-	COUNTER=0
 	while [ $COUNTER -lt $maxsleepvalue ]; do
-		sleep 60
+		sleep 60 &
+		_sleep_pid=$!
+		wait ${_sleep_pid}
+		_sleep_pid=0
 		# Update this repo
 		git -C "${BUILDER_ROOT}" pull -q
 		git_last_commit
@@ -87,6 +101,9 @@ snapshots_sleep_between_runs() {
 }
 
 git_last_commit
+
+# Handle SIGINFO (ctrl+T) and restart build
+trap restart_build SIGINFO
 
 # Main builder loop
 while [ /bin/true ]; do
@@ -111,12 +128,22 @@ while [ /bin/true ]; do
 
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
 	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Last known commit: ${LAST_COMMIT}"
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)."
-	sleep $minsleepvalue
-	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."
+	${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Freezing build process at $(date)"
+	echo ">>> Press ctrl+T to start a new build"
+	COUNTER=0
+	sleep $minsleepvalue &
+	_sleep_pid=$!
+	wait ${_sleep_pid}
+	_sleep_pid=0
 
-	# Count some sheep or wait until a new commit turns up
-	# for one days time.  We will wake up if a new commit
-	# is detected during sleepy time.
-	snapshots_sleep_between_runs $maxsleepvalue
+	# If COUNTER > 0, ctrl+T was pressed, then skip this block
+	if [ ${COUNTER} -eq 0 ]; then
+		${BUILDER_ROOT}/build.sh --snapshot-update-status ">>> Thawing build process and resuming checks for pending commits at $(date)."
+		echo ">>> Press ctrl+T to start a new build"
+
+		# Count some sheep or wait until a new commit turns up
+		# for one days time.  We will wake up if a new commit
+		# is detected during sleepy time.
+		snapshots_sleep_between_runs $maxsleepvalue
+	fi
 done

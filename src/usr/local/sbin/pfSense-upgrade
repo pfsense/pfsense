@@ -47,6 +47,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 pid_file="/var/run/$(basename $0).pid"
+logfile=/cf/conf/upgrade_log.txt
 
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
@@ -250,8 +251,6 @@ fi
 echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
-
-logfile=/cf/conf/upgrade_log.txt
 
 unset need_reboot
 if [ ! -f "${upgrade_in_progress}" ]; then

@@ -46,22 +46,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
+pid_file="/var/run/$(basename $0).pid"
+
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
 # Disable automatic update
 export REPO_AUTOUPDATE=false
 
-# Firmware lock subsystem
-firmwarelock=/var/run/firmwarelock.dirty
-
 # File used to detect second call, after kernel update and reboot
 upgrade_in_progress="/cf/conf/upgrade_in_progress"
-
-if [ -f "${firmwarelock}" ]; then
-	_echo "ERROR: Another upgrade is running... aborting."
-	exit 0
-fi
 
 stdout='/dev/null'
 unset yes
@@ -137,8 +131,8 @@ _exit() {
 	if [ -n "${kernel_pkg}" ]; then
 		_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
 	fi
-	if [ -f "${firmwarelock}" ]; then
-		rm -f ${firmwarelock}
+	if [ -f "${pid_file}" ]; then
+		rm -f ${pid_file}
 	fi
 }
 
@@ -242,6 +236,13 @@ second_step() {
 	rm -f ${upgrade_in_progress}
 	rm -f ${firmwarelock}
 }
+
+if pgrep -qF ${pid_file} >/dev/null 2>&1; then
+	echo "Another instance is already running... Aborting!"
+	exit 1
+fi
+
+echo $$ > ${pid_file}
 
 logfile=/cf/conf/upgrade_log.txt
 

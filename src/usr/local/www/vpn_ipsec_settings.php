@@ -202,7 +202,9 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		if ($_POST['noshuntlaninterfaces'] == "yes") {
+		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with 
+		// noshuntlaninterfaces which is the reverse true/false logic setting - #4655
+		if ($_POST['autoexcludelanaddress'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
 				unset($config['ipsec']['noshuntlaninterfaces']);
 			}
@@ -255,9 +257,11 @@ if ($_POST) {
 		return;
 	}
 
-	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// The logic value sent by $POST for autoexcludelanaddress is opposite to
+	// the way it is stored in the config as noshuntlaninterfaces.
 	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
-	if ($_POST['noshuntlaninterfaces'] == "yes") {
+	// This helps a redrawn UI page after Save to correctly display the most recently entered setting.
+	if ($_POST['autoexcludelanaddress'] == "yes") {
 		$pconfig['noshuntlaninterfaces'] = false;
 	} else {
 		$pconfig['noshuntlaninterfaces'] = true;
@@ -411,7 +415,7 @@ $section->addInput(new Form_Checkbox(
 			'during reauthentication, but requires support for overlapping SAs by the peer');
 
 $section->addInput(new Form_Checkbox(
-	'noshuntlaninterfaces',
+	'autoexcludelanaddress',
 	'Auto-exclude LAN address',
 	'Enable bypass for LAN interface IP',
 	!$pconfig['noshuntlaninterfaces']

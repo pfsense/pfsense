@@ -60,10 +60,14 @@ upgrade_in_progress="/cf/conf/upgrade_in_progress"
 
 stdout='/dev/null'
 unset yes
-while getopts dys opt; do
+action="run_upgrade"
+while getopts duy opt; do
 	case ${opt} in
 		d)
 			stdout=''
+			;;
+		u)
+			action="run_update"
 			;;
 		y)
 			yes=1
@@ -76,8 +80,9 @@ while getopts dys opt; do
 done
 
 usage() {
-	_echo "Usage: $(basename ${0}) [-d] [-y]"
+	_echo "Usage: $(basename ${0}) [-duy]"
 	_echo "	-d - Turn on debug"
+	_echo "	-u - Update repository information"
 	_echo "	-y - Consider yes as the answer for any possible interaction"
 }
 
@@ -149,9 +154,7 @@ _exit() {
 	exit 0
 }
 
-first_step() {
-	_exec "pkg update" "Updating repositories" mute
-
+upgrade_first_step() {
 	# figure out which kernel variant is running
 	kernel_pkg=$(pkg query %n $(pkg info pfSense-kernel-\*))
 
@@ -233,7 +236,7 @@ first_step() {
 	fi
 }
 
-second_step() {
+upgrade_second_step() {
 	_echo "Upgrading necessary packages..."
 	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: An error occurred when upgrade was running..."
@@ -249,6 +252,25 @@ second_step() {
 	rm -f ${firmwarelock}
 }
 
+upgrade() {
+	unset need_reboot
+	if [ ! -f "${upgrade_in_progress}" ]; then
+		if [ -f "${logfile}" ]; then
+			rm -f ${logfile}
+		fi
+
+		upgrade_first_step
+		need_reboot=1
+	fi
+
+	upgrade_second_step
+
+	if [ -n "${need_reboot}" ]; then
+		_echo "Rebooting..."
+		/etc/rc.reboot
+	fi
+}
+
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
 	exit 1
@@ -258,21 +280,16 @@ echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
 
-unset need_reboot
-if [ ! -f "${upgrade_in_progress}" ]; then
-	if [ -f "${logfile}" ]; then
-		rm -f ${logfile}
-	fi
-
-	first_step
-	need_reboot=1
-fi
-
-second_step
-
-if [ -n "${need_reboot}" ]; then
-	_echo "Rebooting..."
-	/etc/rc.reboot
-fi
+case "${action}" in
+	run_upgrade)
+		upgrade
+		;;
+	run_update)
+		_exec "pkg update" "Updating repositories" mute
+		;;
+	*)
+		_echo "ERROR: Invalid action!"
+		_exit 1
+esac
 
 _exit 0

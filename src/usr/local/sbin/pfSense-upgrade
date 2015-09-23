@@ -134,7 +134,9 @@ _exit() {
 	trap "-" 1 2 15 EXIT
 
 	if [ -n "${kernel_pkg}" ]; then
-		_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
+		if [ "$(pkg query %k ${kernel_pkg})" = "0" ]; then
+			_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
+		fi
 	fi
 	if [ -f "${pid_file}" ]; then
 		rm -f ${pid_file}
@@ -176,7 +178,9 @@ first_step() {
 
 	if [ "${kernel_version_compare}" = "<" ]; then
 		kernel_update=1
-		_exec "pkg unlock ${kernel_pkg}" "Unlocking kernel package" mute ignore_result
+		if [ "$(pkg query %k ${kernel_pkg})" = "1" ]; then
+			_exec "pkg unlock ${kernel_pkg}" "Unlocking kernel package" mute ignore_result
+		fi
 	elif [ "${kernel_version_compare}" = "=" ]; then
 		kernel_update=0
 	elif [ "${kernel_version_compare}" = ">" ]; then

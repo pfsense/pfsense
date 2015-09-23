@@ -131,6 +131,8 @@ _exec() {
 }
 
 _exit() {
+	trap "-" 1 2 15 EXIT
+
 	if [ -n "${kernel_pkg}" ]; then
 		_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
 	fi

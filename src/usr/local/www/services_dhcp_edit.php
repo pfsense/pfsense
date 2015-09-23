@@ -429,7 +429,7 @@ $section->addInput(new Form_IpAddress(
 			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
 
 $section->addInput(new Form_Input(
-	'hostnme',
+	'hostname',
 	'Hostname',
 	'text',
 	$pconfig['hostname']
@@ -455,7 +455,7 @@ $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
-	$pconfig['hostname']
+	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 $section->addInput(new Form_Checkbox(
@@ -562,7 +562,7 @@ $btndyndns = new Form_Button(
 	'Advanced'
 );
 
-$btndyndns->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btndyndns->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
@@ -608,7 +608,7 @@ $btnntp = new Form_Button(
 	'Advanced'
 );
 
-$btnntp->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btnntp->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
@@ -642,7 +642,7 @@ $btntftp = new Form_Button(
 	'Advanced'
 );
 
-$btntftp->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btntftp->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP servers',

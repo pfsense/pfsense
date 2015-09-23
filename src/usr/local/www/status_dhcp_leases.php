@@ -358,6 +358,7 @@ if (count($pools) > 0) {
 		</thead>
 		<tbody>
 <?php
+$dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 foreach ($leases as $data):
 	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
 		continue;
@@ -371,13 +372,18 @@ foreach ($leases as $data):
 
 	$lip = ip2ulong($data['ip']);
 	if ($data['act'] != "static") {
+		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if (!is_array($dhcpifconf['range']))
 				continue;
 			if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 				$data['if'] = $dhcpif;
+				$dhcp_leases_subnet_counter[$dlsc][0] = $dhcpifconf['range']['from'];
+				$dhcp_leases_subnet_counter[$dlsc][1] = $dhcpifconf['range']['to'];
+				$dhcp_leases_subnet_counter[$dlsc][2] = $dhcp_leases_subnet_counter[$dlsc][2]+1;
 				break;
 			}
+			$dlsc++;
 		}
 	}
 
@@ -437,7 +443,29 @@ foreach ($leases as $data):
 		</table>
 	</div>
 </div>
-
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases in use')?></h2></div>
+	<div class="panel-body">
+		<table class="table">
+		<thead>
+			<tr>
+				<th><?=gettext("Pool Start")?></th>
+				<th><?=gettext("Pool End")?></th>
+				<th><?=gettext("# of leases in use")?></th>
+			</tr>
+		</thead>
+		<tbody>
+<? foreach ($dhcp_leases_subnet_counter as $listcounters):?>						
+			<tr>
+				<td><?=$listcounters[0]?></td>
+				<td><?=$listcounters[1]?></td>
+				<td><?=$listcounters[2]?></td>
+			</tr>
+<? endforeach; ?>
+		</tbody>
+		</table>
+	</div>
+</div>
 <?php if ($_GET['all']): ?>
 	<a class="btn btn-default" href="status_dhcp_leases.php?all=0"><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>

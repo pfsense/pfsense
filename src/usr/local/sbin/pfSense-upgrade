@@ -75,7 +75,9 @@ while getopts dys opt; do
 done
 
 usage() {
-	_echo "Usage: $(basename ${0}) [-d] [-y] [-c]"
+	_echo "Usage: $(basename ${0}) [-d] [-y]"
+	_echo "	-d - Turn on debug"
+	_echo "	-y - Consider yes as the answer for any possible interaction"
 }
 
 _echo() {

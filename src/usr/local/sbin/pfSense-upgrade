@@ -134,6 +134,12 @@ _exit() {
 	if [ -f "${pid_file}" ]; then
 		rm -f ${pid_file}
 	fi
+
+	if [ -n "${1}" ]; then
+		exit ${1}
+	fi
+
+	exit 0
 }
 
 first_step() {
@@ -144,45 +150,43 @@ first_step() {
 
 	if [ -z "${kernel_pkg}" ]; then
 		_echo "ERROR: It was not possible to identify which pfSense kernel is installed"
-		exit 1
+		_exit 1
 	fi
 
 	kernel_local=$(pkg query %v ${kernel_pkg})
 
 	if [ -z "${kernel_local}" ]; then
 		_echo "ERROR: It was not possible to determine pfSense kernel local version"
-		exit 1
+		_exit 1
 	fi
 
 	kernel_remote=$(pkg rquery %v ${kernel_pkg})
 
 	if [ -z "${kernel_remote}" ]; then
 		_echo "ERROR: It was not possible to determine pfSense kernel remote version"
-		exit 1
+		_exit 1
 	fi
 
 	kernel_version_compare=$(pkg version -t ${kernel_local} ${kernel_remote})
 
 	if [ "${kernel_version_compare}" = "<" ]; then
 		kernel_update=1
-		# Make sure we lock kernel package again
-		trap _exit 1 2 15 EXIT
 		_exec "pkg unlock ${kernel_pkg}" "Unlocking kernel package" mute ignore_result
 	elif [ "${kernel_version_compare}" = "=" ]; then
 		kernel_update=0
 	elif [ "${kernel_version_compare}" = ">" ]; then
 		_echo "ERROR: You are using a newer kernel version than remote repository"
-		exit 1
+		_exit 1
 	else
 		_echo "ERROR: Error comparing pfSense kernel local and remote versions"
-		exit 1
+		_exit 1
 	fi
 
 	# XXX find a samrter way to do it
 	l=$(pkg upgrade -nq | wc -l)
 	if [ ${l} -eq 1 ]; then
 		_echo "Your packages are up to date"
-		exit 0
+		_exit 0
 	fi
 
 	if [ -z "${yes}" ]; then
@@ -198,18 +202,17 @@ first_step() {
 		read answer
 		if [ "${answer}" != "y" ]; then
 			_echo "Aborting..."
-			exit 0
+			_exit 0
 		fi
 	fi
 
 	_echo ">>> Downloading packages..."
 	if ! pkg upgrade -F 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: It was not possible to download packages"
-		exit 1
+		_exit 1
 	fi
 
 	# Mark firmware subsystem dirty
-	trap _exit 1 2 15 EXIT
 	touch ${firmwarelock}
 
 	# First upgrade kernel and reboot
@@ -225,7 +228,7 @@ second_step() {
 	_echo "Upgrading necessary packages..."
 	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: An error occurred when upgrade was running..."
-		exit 1
+		_exit 1
 	fi
 
 	_exec "pkg autoremove" "Removing unnecessary packages" mute ignore_result
@@ -243,6 +246,8 @@ if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 fi
 
 echo $$ > ${pid_file}
+
+trap _exit 1 2 15 EXIT
 
 logfile=/cf/conf/upgrade_log.txt
 
@@ -263,4 +268,4 @@ if [ -n "${need_reboot}" ]; then
 	/etc/rc.reboot
 fi
 
-exit 0
+_exit 0

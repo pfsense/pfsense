@@ -274,6 +274,10 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	update_pkg_repo)
+		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
+			echo "ERROR: rsync is not installed, aborting..."
+			exit 1
+		fi
 		poudriere_bulk
 	;;
 	*)
@@ -306,6 +310,11 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 			exit 1
 		fi
 	done
+
+	if [ ! -f /usr/local/bin/rsync ]; then
+		echo "ERROR: rsync is not installed, aborting..."
+		exit 1
+	fi
 fi
 
 if [ $# -gt 1 ]; then

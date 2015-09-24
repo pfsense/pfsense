@@ -476,10 +476,10 @@ $group->add(new Form_Input(
 ));
 
 $group->add(new Form_Input(
-	'win2',
+	'wins2',
 	null,
 	'text',
-	$pconfig['win2'],
+	$pconfig['wins2'],
 	['placeholder' => 'WINS 2']
 ));
 
@@ -518,7 +518,7 @@ $group->add(new Form_Input(
 	['placeholder' => 'DNS 4']
 ));
 
-$group->setHelp('NOTE: leave blank to use the system default DNS servers - this interface\'s IP if DNS forwarder is enabled, otherwise the servers configured on the General page.');
+$group->setHelp('Note: leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.');
 
 $section->add($group);
 
@@ -627,7 +627,7 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Input(
 	'ntp2',
-	'NTP Server 1',
+	'NTP Server 2',
 	'text',
 	$pconfig['ntp2'],
 	['placeholder' => 'NTP 2']

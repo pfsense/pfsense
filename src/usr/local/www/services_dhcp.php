@@ -645,10 +645,7 @@ if ($act == "del") {
 	}
 }
 
-// DEBUG
-$a_pools = array(array('range' => array('from' => '192.168.70.70', 'to' => '192.168.70.99'), 'descr' => 'My first pool'),
-				 array('range' => array('from' => '192.168.80.70', 'to' => '192.168.80.99'), 'descr' => 'My second pool'));
-
+// Build an HTML table that can be inseted into a Form_StaticText element
 function build_pooltable() {
 	global $a_pools;
 
@@ -703,7 +700,6 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -720,6 +716,7 @@ if (is_subsystem_dirty('staticmaps'))
 $tab_array = array();
 $tabscounter = 0;
 $i = 0;
+
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 	if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
@@ -747,6 +744,7 @@ display_top_tabs($tab_array);
 
 require_once('classes/Form.class.php');
 
+// THis form uses a non-standard submit button name
 $form = new Form(new Form_Button(
 	'submit',
 	gettext("Save")
@@ -764,7 +762,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 } else {
 	$section->addInput(new Form_StaticText(
 		null,
-		'<div class="alert alert-warning"> Editing Pool-Specific Options. To return to the Interface, click its tab above. </div>'
+		'<div class="alert alert-info"> Editing Pool-Specific Options. To return to the Interface, click its tab above. </div>'
 	));
 }
 
@@ -794,6 +792,7 @@ $section->addInput(new Form_StaticText(
 	gen_subnet_mask($ifcfgsn)
 ));
 
+// Compose a string to display the required address ranges
 $range_from = ip2long(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 $range_from++;
 
@@ -884,7 +883,6 @@ $section->addInput(new Form_IpAddress(
 	null,
 	$pconfig['wins2']
 ))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 2');
-
 
 for($idx=1; $idx<=4; $idx++) {
 	$section->addInput(new Form_IpAddress(
@@ -1122,7 +1120,7 @@ $section->addInput(new Form_IpAddress(
 	'nextserver',
 	'Next Server',
 	$pconfig['nextserver']
-))->setHelp('Enter the IP address of hte next server');
+))->setHelp('Enter the IP address of the next server');
 
 $section->addInput(new Form_Input(
 	'filename',
@@ -1213,7 +1211,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 		null,
 		$itemtype,
 		$customitemtypes
-	))->setHelp($numrows == $counter ? 'Type':null);
+	))->setWidth(3)->setHelp($numrows == $counter ? 'Type':null);
 
 	$group->add(new Form_Input(
 		'value' . $counter,
@@ -1232,12 +1230,10 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 	$counter++;
 }
 
-
 $section->addInput(new Form_Button(
 	'addrow',
 	'Add'
 ))->removeClass('btn-primary')->addClass('btn-success');
-
 
 $form->add($section);
 
@@ -1267,18 +1263,6 @@ $form->addGlobal(new Form_Input(
 ));
 
 print($form);
-
-print_info_box(sprintf(gettext('The DNS servers entered in ') . '%s' . gettext("System: General setup") . '%s' .
-					   gettext(' (or the ') . '%s' . gettext(' DNS forwarder ') . '%s' . gettext('if enabled) ') .
-					   gettext('will be assigned to clients by the DHCP server.') . '<br />' . gettext('The DHCP lease table can be viewed on the ') . '%s' . gettext('Status: DHCP leases') .
-					   '%s' . gettext(' page'),
-					   '<a href="system.php">',
-					   '</a>',
-					   '<a href="services_dnsmasq.php">',
-					   '</a>',
-					   '<a href="status_dhcp_leases.php">',
-					   '</a>')
-					   );
 
 // DHCP Static Mappings table
 
@@ -1400,6 +1384,8 @@ events.push(function(){
 		else
 			$('.' + s_class).parent().parent().parent().show();
 	}
+
+	// Row add/delete function for class="repeatable" =================================================================
 
 	function setMasks() {
 		// Find all ipaddress masks and make dynamic based on address family of input
@@ -1546,13 +1532,31 @@ events.push(function(){
 
 	}
 
+	// These are action buttons, not submit buttons
+	$('[id^=addrow]').prop('type','button');
+	$('[id^=delete]').prop('type','button');
+
+	// on click . .
+	$('[id^=addrow]').click(function() {
+		add_row();
+	});
+
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			moveHelpText(event.target.id);
+			delete_row(event.target.id);
+		}
+		else
+			alert('<?php echo gettext("You may not delete the last one!")?>');
+	});
+
 	// Show advanced DNS options ======================================================================================
 	var showadvdns = false;
 
 	function show_advdns() {
 <?php
 		if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-			empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey']))
+		    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey']))
 			$hide = false;
 		else
 			$hide = true;
@@ -1564,6 +1568,7 @@ events.push(function(){
 		hideInput('ddnsdomainprimary', !showadvdns && !hide);
 		hideInput('ddnsdomainkeyname', !showadvdns && !hide);
 		hideInput('ddnsdomainkey', !showadvdns && !hide);
+		hideInput('btnadvdns', hide);
 		showadvdns = !showadvdns;
 	}
 
@@ -1587,6 +1592,7 @@ events.push(function(){
 
 		hideInput('mac_allow', !showadvmac && !hide);
 		hideInput('mac_deny', !showadvmac && !hide);
+		hideInput('btnadvmac', hide);
 
 		showadvmac = !showadvmac;
 	}
@@ -1611,6 +1617,7 @@ events.push(function(){
 
 		hideInput('ntp1', !showadvntp && !hide);
 		hideInput('ntp2', !showadvntp && !hide);
+		hideInput('btnadvntp', hide);
 
 		showadvntp = !showadvntp;
 	}
@@ -1634,6 +1641,7 @@ events.push(function(){
 		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('tftp', !showadvtftp && !hide);
+		hideInput('btnadvtftp', hide);
 
 		showadvtftp = !showadvtftp;
 	}
@@ -1657,6 +1665,7 @@ events.push(function(){
 		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('ldap', !showadvldap && !hide);
+		hideInput('btnadvldap', hide);
 
 		showadvldap = !showadvldap;
 	}
@@ -1673,7 +1682,7 @@ events.push(function(){
 	function show_advboot() {
 <?php
 		if (!$pconfig['netboot'] && empty($pconfig['nextserver']) && empty($pconfig['filename']) && empty($pconfig['filename32']) &&
-			empty($pconfig['filename64']) && empty($pconfig['rootpath']))
+		    empty($pconfig['filename64']) && empty($pconfig['rootpath']))
 			$hide = false;
 		else
 			$hide = true;
@@ -1686,6 +1695,7 @@ events.push(function(){
 		hideInput('filename32', !showadvboot && !hide);
 		hideInput('filename64', !showadvboot && !hide);
 		hideInput('rootpath', !showadvboot && !hide);
+		hideInput('btnadvboot', hide);
 
 		showadvboot = !showadvboot;
 	}
@@ -1702,7 +1712,7 @@ events.push(function(){
 	function show_advopts() {
 <?php
 		if ( empty($pconfig['numberoptions']) ||
-			(empty($pconfig['numberoptions']['item']['number']) && (empty($pconfig['numberoptions']['item']['value']))))
+		    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value']))))
 			$hide = false;
 		else
 			$hide = true;
@@ -1710,6 +1720,7 @@ events.push(function(){
 		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideClass('adnlopts', !showadvopts && !hide);
+		hideInput('btnadvopts', hide);
 
 		showadvopts = !showadvopts;
 	}
@@ -1718,24 +1729,6 @@ events.push(function(){
 
 	$('#btnadvopts').click(function(event) {
 		show_advopts();
-	});
-
-	// These are action buttons, not submit buttons
-	$('[id^=addrow]').prop('type','button');
-	$('[id^=delete]').prop('type','button');
-
-	// on click . .
-	$('[id^=addrow]').click(function() {
-		add_row();
-	});
-
-	$('[id^=delete]').click(function(event) {
-		if($('.repeatable').length > 1) {
-			moveHelpText(event.target.id);
-			delete_row(event.target.id);
-		}
-		else
-			alert('<?php echo gettext("You may not delete the last one!")?>');
 	});
 
 	// On page load . .

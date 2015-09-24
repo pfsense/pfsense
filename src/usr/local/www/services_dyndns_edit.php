@@ -460,7 +460,8 @@ events.push(function(){
 		setVisible( this.value );
 	});
 
-	// On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+	
 	setVisible($('#type').val());
 
 });

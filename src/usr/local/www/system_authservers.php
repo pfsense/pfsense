@@ -823,7 +823,7 @@ events.push(function(){
 		}
 	}
 
-	// On page load . .
+	// ---------- On initial page load ------------------------------------------------------------
 	
 <?php if ($act != 'edit') : ?>
 	ldap_tmplchange();
@@ -851,7 +851,8 @@ events.push(function(){
 		}
 	}
 ?>
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+	
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();
 	});

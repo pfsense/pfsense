@@ -540,6 +540,8 @@ events.push(function(){
 		}
 	}
 
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	// When radio buttons are clicked . .
 	$('input:radio[name=mode]').click(function() {
 		check_mode();
@@ -551,7 +553,8 @@ events.push(function(){
 		hideCheckbox('noexpand', (this.value == 'single'));
 	});
 
-	// On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+	
 	check_mode();
 });
 //]]>

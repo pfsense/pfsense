@@ -816,6 +816,7 @@ events.push(function(){
 	}
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
+	
 	function hideSections(hide) {
 		hidePasswords();
 	}
@@ -841,7 +842,8 @@ events.push(function(){
 		hidePasswords();
 	});
 
-	// ---------- On itial page load --------------------------------------------------------------
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hideSections();
 });
 //]]>

@@ -567,6 +567,8 @@ if($act=="new" || $act=="edit"):
 events.push(function(){
 	var visible = false;
 
+	//---------- "Standard" show/hide functions ---------------------------------------------------	
+
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
 		if(hide)
@@ -610,6 +612,8 @@ events.push(function(){
 		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
 	}
 
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	// On clicking the netbios_enable checkbox
 	$('#netbios_enable').click(function () {
 		setNetbios();
@@ -620,7 +624,8 @@ events.push(function(){
 		setWins();
 	});
 
-	// On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	setNetbios();
 });
 //]]>

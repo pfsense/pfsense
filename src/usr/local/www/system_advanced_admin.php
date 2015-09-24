@@ -527,6 +527,8 @@ print $form;
 //<![CDATA[
 events.push(function(){
 
+	//---------- "Standard" show/hide functions ---------------------------------------------------
+
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
 		if(hide)
@@ -535,10 +537,12 @@ events.push(function(){
 			$('#' + id).parent().parent('div').removeClass('hidden');
 	}
 
-	// On page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	 $('[id=webguiproto]').click(function () {
 		hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
 	});

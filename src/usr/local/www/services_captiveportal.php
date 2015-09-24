@@ -1250,7 +1250,7 @@ events.push(function(){
 		hideHTTPS(!this.checked);
 	});
 
-	// ---------- On itial page load --------------------------------------------------------------
+	// ---------- On initial page load ------------------------------------------------------------
 	hideSections(!$('#enable').prop('checked'));
 	disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 });

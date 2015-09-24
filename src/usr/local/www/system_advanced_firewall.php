@@ -767,12 +767,14 @@ events.push(function(){
 		setHelpText('optimization', htext);
 	}
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	$('#optimization').on('change', function() {
 		setOptText(this.value);
 	});
 
-	// At page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+	
 	setOptText($('#optimization').val())
 });
 //]]>

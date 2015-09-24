@@ -490,7 +490,8 @@ events.push(function(){
 			$('#' + id).parent('div').parent('div').removeClass('hidden');
 	}
 
-	// Hides all elements of the specified class. This will usually be a section
+	//---------- "Standard" show/hide functions ---------------------------------------------------
+	
 	function hideClass(s_class, hide) {
 		if(hide)
 			$('.' + s_class).hide();
@@ -524,7 +525,8 @@ events.push(function(){
 		disableInput('hostapd', hide);
 	}
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	$('#logall').click(function () {
 		disableEverything();
 	});
@@ -535,9 +537,8 @@ events.push(function(){
 		hideSelect('ipproto', !this.checked);
 	});
 
+	// ---------- On initial page load ------------------------------------------------------------
 
-
-	// On page load . .
 	disableEverything();
 	hideClass('remotelogging', !$('#enable').prop('checked'));
 	hideSelect('sourceip', !$('#enable').prop('checked'));

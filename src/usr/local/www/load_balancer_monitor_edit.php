@@ -249,13 +249,14 @@ events.push(function(){
 		hideClass(t, false);
 	}
 
+	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-	// On click . .
 	$('#type').on('change', function() {
 		updateType($('#type').val());
 	});
 
-	// On page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	updateType($('#type').val());
 });
 

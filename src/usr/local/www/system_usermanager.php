@@ -834,6 +834,8 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
+	//---------- "Standard" show/hide functions ---------------------------------------------------
+	
 	// Hides all elements of the specified class.
 	function hideClass(s_class, hide) {
 		if(hide)
@@ -912,9 +914,10 @@ events.push(function(){
 		}
 	});
 
-	// On page load . .
-   hideClass('cert-options', true);
-//   hideInput('authorizedkeys', true);
+	// ---------- On initial page load ------------------------------------------------------------
+
+	hideClass('cert-options', true);
+	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
 
 	// On submit mark all the user's groups as "selected"

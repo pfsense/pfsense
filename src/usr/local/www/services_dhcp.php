@@ -1706,7 +1706,7 @@ events.push(function(){
 		show_advboot();
 	});
 
-   // Show advanced additional opts options ===========================================================================
+	// Show advanced additional opts options ===========================================================================
 	var showadvopts = false;
 
 	function show_advopts() {
@@ -1731,7 +1731,8 @@ events.push(function(){
 		show_advopts();
 	});
 
-	// On page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+
 	show_advdns();
 	show_advmac();
 	show_advntp();

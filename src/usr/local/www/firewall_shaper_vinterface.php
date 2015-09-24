@@ -473,10 +473,12 @@ events.push(function(){
 		disableInput('maskbitsv6', ($('#scheduler').val() == 'none'));
 	}
 	
-	// On page load . . 
+	// ---------- On initial page load ------------------------------------------------------------
+	
 	change_masks();
 	
-	// On click . . 
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
     $('#scheduler').on('change', function() {
         change_masks();
     });	

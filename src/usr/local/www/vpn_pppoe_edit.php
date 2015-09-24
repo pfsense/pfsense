@@ -763,14 +763,16 @@ events.push(function(){
 		hide_radius2(!$('#radiussecenable').prop('checked'));
 	});
 
-	//On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hide_radius2(!$('#radiussecenable').prop('checked'));
 	hide_radius(!$('#radiusenable').prop('checked'));
 	// These are action buttons, not submit buttons
 	$('[id^=addrow]').prop('type','button');
 	$('[id^=delete]').prop('type','button');
 
-	// on click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+	
 	$('[id^=addrow]').click(function() {
 		add_row();
 	});

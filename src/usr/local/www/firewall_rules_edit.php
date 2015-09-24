@@ -1661,6 +1661,7 @@ echo $form;
 <script>
 //<![CDATA[
 events.push(function(){
+	//---------- "Standard" show/hide functions ---------------------------------------------------
 
 	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 	function hideInput(id, hide) {
@@ -1965,15 +1966,18 @@ events.push(function(){
 		setHelpText(target, dispstr);
 	}
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
 	$('#statetype').on('change', function() {
 		setOptText('statetype', this.value);
 	});
 
-	// At page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+
 	setOptText('statetype', $('#statetype').val())
 
-	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	// ---------- Autocomplete --------------------------------------------------------------------
+
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 

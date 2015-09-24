@@ -552,7 +552,7 @@ events.push(function(){
 		}
 	}
 
-	// On-click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#srctype').click(function () {
 		typesel_change();
@@ -562,10 +562,12 @@ events.push(function(){
 		typesel_change();
 	});
 
-	// Initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	typesel_change();
 
-	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	// ---------- Autocomplete --------------------------------------------------------------------
+
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 
 	$('#dst').autocomplete({

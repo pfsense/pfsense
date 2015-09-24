@@ -3688,7 +3688,8 @@ events.push(function(){
 		}
 	}
 
-	// On page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
 	show_reset_settings($('#pppoe-reset-type').val());
@@ -3703,7 +3704,8 @@ events.push(function(){
 	show_dhcp6adv();
 	setDHCPoptions()
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+	
    $('#type').on('change', function() {
 		updateType( this.value );
 	});

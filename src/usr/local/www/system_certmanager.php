@@ -1248,12 +1248,14 @@ events.push(function(){
 		}
 	}
 
-	// On click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+	
 	$('#caref').on('change', function() {
 		internalca_change();
 	});
 
-	// On page load . .
+	// ---------- On initial page load ------------------------------------------------------------
+
 	internalca_change();
 
 <?php endif; ?>

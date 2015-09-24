@@ -909,7 +909,7 @@ events.push(function(){
 			hideClass('encalg', ($('#proto').val() != 'esp'));
 	}
 
-	// ---------- Library of show/hide functions ----------------------------------------------------------------------
+	// ---------- Library of show/hide functions --------------------------------------------------
 
 	// Hides the <div> in which the specified input element lives so that the input,
 	// its label and help text are hidden
@@ -951,7 +951,7 @@ events.push(function(){
 			$('.' + s_class).show();
 	}
 
-	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
+	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Protocol
 	$('#proto').click(function () {
@@ -978,7 +978,7 @@ events.push(function(){
 		change_mode();
 	});
 
-    // ---------- Iniatial page load ----------------------------------------------------------------------------------
+	// ---------- On initial page load ------------------------------------------------------------
     hideInput('ikeid', true);
     hideInput('uniqid', true);
 

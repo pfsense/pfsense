@@ -1022,7 +1022,7 @@ events.push(function(){
 			$('#dpd_maxfail').val('5')
 	}
 
-	// ---------- Library of show/hide functions ----------------------------------------------------------------------
+	// ---------- Library of show/hide functions --------------------------------------------------
 
 	// Hides the <div> in which the specified input element lives so that the input,
 	// its label and help text are hidden
@@ -1064,7 +1064,7 @@ events.push(function(){
 			$('.' + s_class).show();
 	}
 
-	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
+	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
@@ -1104,7 +1104,7 @@ events.push(function(){
 	ealgosel_change(<?=$keyset?>);
 	dpdchkbox_change();
 
-	// ---------- Iniatial page load ----------------------------------------------------------------------------------  
+	// ---------- On initial page load ------------------------------------------------------------ 
 	
 	hideInput('ikeid', true);
 });

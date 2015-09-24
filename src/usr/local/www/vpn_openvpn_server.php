@@ -859,7 +859,7 @@ if($act=="new" || $act=="edit") :
 
 	$section->addInput(new Form_Select(
 		'certref',
-		'Peer Certificate Authority',
+		'Server certificate',
 		$pconfig['certref'],
 		build_cert_list()
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
@@ -874,7 +874,7 @@ if($act=="new" || $act=="edit") :
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_checkbox(
 			'autokey_enable',
-			'Auto generate',
+			'Shared key',
 			'Automatically generate a shared key',
 			$pconfig['autokey_enable']
 		));
@@ -1374,8 +1374,8 @@ events.push(function(){
 				hideInput('caref', true);
 				hideInput('crlref', true);
 				hideLabel('Peer Certificate Revocation list', true);
+				hideLabel('Peer Certificate Authority', true);
 				hideInput('certref', true);
-				hideCheckbox('autotls_enable', true);
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('dh_length', true);
 				hideInput('cert_depth', true);
@@ -1441,18 +1441,34 @@ events.push(function(){
 
 	// Process "Enable authentication of TLS packets" checkbox
 	function tlsauth_change() {
-		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  || ($('#mode').val() == 'p2p_shared_key'));
 		autotls_change();
 	}
 
 	// Process "Automatically generate a shared TLS authentication key" checkbox
+	// Hide 'autotls_enable' AND 'tls' if mode == p2p_shared_key
+	// Otherwise hide 'tls' based on state of 'autotls_enable'
 	function autotls_change() {
-		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		if(($('#mode').val() == 'p2p_shared_key') || (!$('#tlsauth_enable').prop('checked'))){
+			hideInput('tls', true);
+			hideInput('autotls_enable', true);
+		} else {
+			hideInput('autotls_enable', false);
+			hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		}
 	}
 
 	function autokey_change() {
 		var hide  = $('#autokey_enable').prop('checked')
-		hideInput('shared_key', hide);
+
+		if($('#mode').val() != 'p2p_shared_key') {
+			hideCheckbox('autokey_enable', true);
+			hideInput('shared_key', true);
+		} else {
+			hideInput('shared_key', hide);
+			hideCheckbox('autokey_enable', false);
+		}
+
+
 	}
 
 	function gwredir_change() {

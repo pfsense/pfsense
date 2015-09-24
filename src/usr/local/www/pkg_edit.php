@@ -568,6 +568,7 @@ if ($pkg['tabs'] <> "") {
 
 		// if user is editing a record, load in the data.
 		$fieldname = $pkga['fieldname'];
+		unset($value);
 		if ($get_from_post) {
 			$value = $_POST[$fieldname];
 			if (is_array($value)) {

@@ -1898,6 +1898,10 @@ poudriere_update_ports() {
 	if ! poudriere ports -l | grep -q -E "^${POUDRIERE_PORTS_NAME}[[:blank:]]"; then
 		poudriere_create_ports_tree
 	else
+		echo -n ">>> Reseting local changes on ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
+		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" reset --hard >/dev/null 2>&1
+		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" clean -fxd >/dev/null 2>&1
+		echo "Done!" | tee -a ${LOGFILE}
 		echo -n ">>> Updating ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
 		script -aq ${LOGFILE} poudriere ports -u -p "${POUDRIERE_PORTS_NAME}" >/dev/null 2>&1
 		echo "Done!" | tee -a ${LOGFILE}
@@ -1921,6 +1925,15 @@ poudriere_bulk() {
 
 	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
 		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+	fi
+
+	# Change version of pfSense meta ports for snapshots
+	if [ -z "${_IS_RELEASE}" ]; then
+		for meta_pkg in ${PRODUCT_NAME} ${PRODUCT_NAME}-vmware; do
+			local _meta_pkg_version="$(echo "${PRODUCT_VERSION}" | sed 's,DEVELOPMENT,ALPHA,')-${DATESTRING}"
+			sed -i '' -e "/^DISTVERSION/ s,^.*,DISTVERSION=	${_meta_pkg_version}," \
+				/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/security/${meta_pkg}/Makefile
+		done
 	fi
 
 	for jail_arch in ${_archs}; do

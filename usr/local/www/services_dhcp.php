@@ -889,7 +889,7 @@ include("head.inc");
 				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>" /><br />
 				<input name="dns3" type="text" class="formfld unknown" id="dns3" size="20" value="<?=htmlspecialchars($pconfig['dns3']);?>" /><br />
 				<input name="dns4" type="text" class="formfld unknown" id="dns4" size="20" value="<?=htmlspecialchars($pconfig['dns4']);?>" /><br />
-				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.");?>
+				<?=gettext("Note: leave blank to use the system default DNS servers - this interface's IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
 			<tr>
@@ -1202,15 +1202,19 @@ include("head.inc");
 			</tr>
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
-				</strong></span><?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: " .
-				"General setup"); ?></a> <?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS " .
-				"forwarder"); ?></a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
-				"be assigned to clients by the DHCP server."); ?><br />
-				<br />
-				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcp_leases.php"><?=gettext("Status: " .
-				"DHCP leases"); ?></a> <?=gettext("page."); ?><br />
-				</span></p>
+			<td width="78%">
+				<p>
+					<span class="vexpl">
+						<span class="red">
+							<strong>
+								<?=gettext("Note:");?>
+							</strong>
+						</span>
+						<br />
+						<?=gettext("The DHCP lease table can be viewed on the"); ?>
+						<a href="status_dhcp_leases.php"><?=gettext("Status: DHCP leases"); ?></a> <?=gettext("page."); ?><br />
+					</span>
+				</p>
 			</td>
 			</tr>
 		</table>

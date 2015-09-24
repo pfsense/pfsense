@@ -122,18 +122,19 @@ if(!is_array($config['installedpackages']['package'])):?>
 		#check package version
 		$latest_package = $currentvers[$pkg['name']]['version'];
 		if ($latest_package) {
+			$pkg_compare_result = compare_pkg_versions($pkg['version'], $latest_package);
 			// we're running a newer version of the package
-			if(strcmp($pkg['version'], $latest_package) > 0) {
+			if ($pkg_compare_result > 0) {
 				$status = 'Newer then available ('. $latest_package .')';
 				$statusicon = 'exclamation';
 			}
 			// we're running an older version of the package
-			if(strcmp($pkg['version'], $latest_package) < 0) {
+			if ($pkg_compare_result < 0) {
 				$status = 'Upgrade available to '.$latest_package;
 				$statusicon = 'plus';
 			}
 			// we're running the current version
-			if(!strcmp($pkg['version'], $latest_package)) {
+			if ($pkg_compare_result == 0) {
 				$status = 'Up-to-date';
 				$statusicon = 'ok';
 			}

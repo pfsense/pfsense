@@ -118,11 +118,12 @@ _exit() {
 		rm -f ${pid_file}
 	fi
 
-	if [ -n "${1}" ]; then
-		exit ${1}
-	fi
+	local _rc=${1:-"0"}
 
-	exit 0
+	[ -n "${_GUI_CALL}" ] \
+		&& _echo "__RC=${_rc}"
+
+	exit ${_rc}
 }
 
 pkg_upgrade_first_step() {

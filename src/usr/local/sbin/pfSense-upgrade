@@ -269,17 +269,16 @@ upgrade() {
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile=/cf/conf/upgrade_log.txt
+stdout='/dev/null'
+
+# File used to detect second call, after kernel update and reboot
+upgrade_in_progress="/cf/conf/upgrade_in_progress"
 
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
 # Disable automatic update
 export REPO_AUTOUPDATE=false
-
-# File used to detect second call, after kernel update and reboot
-upgrade_in_progress="/cf/conf/upgrade_in_progress"
-
-stdout='/dev/null'
 
 unset yes
 action="run_upgrade"

@@ -134,21 +134,7 @@ upgrade_first_step() {
 		_exit 1
 	fi
 
-	kernel_local=$(pkg query %v ${kernel_pkg})
-
-	if [ -z "${kernel_local}" ]; then
-		_echo "ERROR: It was not possible to determine pfSense kernel local version"
-		_exit 1
-	fi
-
-	kernel_remote=$(pkg rquery %v ${kernel_pkg})
-
-	if [ -z "${kernel_remote}" ]; then
-		_echo "ERROR: It was not possible to determine pfSense kernel remote version"
-		_exit 1
-	fi
-
-	kernel_version_compare=$(pkg version -t ${kernel_local} ${kernel_remote})
+	kernel_version_compare=$(compare_version ${kernel_pkg})
 
 	if [ "${kernel_version_compare}" = "<" ]; then
 		kernel_update=1

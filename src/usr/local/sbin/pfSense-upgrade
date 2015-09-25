@@ -49,6 +49,7 @@
 usage() {
 	echo "Usage: $(basename ${0}) [-dy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
 	echo "	-d          - Turn on debug" >&2
+	echo "	-p FIFO     - Write pkg progress to FIFO"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
 	echo "Following parameters are mutually exclusive:" >&2
@@ -120,7 +121,8 @@ _exit() {
 
 	local _rc=${1:-"0"}
 
-	[ -n "${_GUI_CALL}" ] \
+	# If EVENT_PIPE is defined, GUI is calling
+	[ -n "${EVENT_PIPE}" ] \
 		&& _echo "__RC=${_rc}"
 
 	exit ${_rc}
@@ -357,13 +359,11 @@ export ASSUME_ALWAYS_YES=true
 # Disable automatic update
 export REPO_AUTOUPDATE=false
 
-# pkg write progress in EVENT_PIPE
-export EVENT_PIPE="/tmp/pkg-progress.fifo"
-
 unset yes
+unset progress_fifo
 unset action
 unset action_pkg
-while getopts di:r:uy opt; do
+while getopts di:p:r:uy opt; do
 	case ${opt} in
 		d)
 			stdout=''
@@ -375,6 +375,9 @@ while getopts di:r:uy opt; do
 			fi
 			action="install"
 			action_pkg="${OPTARG}"
+			;;
+		p)
+			progress_fifo="${OPTARG}"
 			;;
 		r)
 			if [ -n "${action}" ]; then
@@ -413,11 +416,13 @@ echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
 
-if [ ! -p "${EVENT_PIPE}" ]; then
+if [ -n "${progress_fifo}" -a ! -p "${progress_fifo}" ]; then
 	if [ -e "${EVENT_PIPE}" ]; then
-		rm -rf ${EVENT_PIPE}
+		_echo "ERROR: ${progress_fifo} is not a FIFO"
+		_exit 1
 	fi
-	mkfifo ${EVENT_PIPE}
+	mkfifo ${progress_fifo}
+	export EVENT_PIPE="${progress_fifo}"
 fi
 
 case "${action}" in

@@ -46,40 +46,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-pid_file="/var/run/$(basename $0).pid"
-last_update_file="/var/run/$(basename $0)-last-update"
-logfile=/cf/conf/upgrade_log.txt
-
-# pkg should not ask for confirmations
-export ASSUME_ALWAYS_YES=true
-
-# Disable automatic update
-export REPO_AUTOUPDATE=false
-
-# File used to detect second call, after kernel update and reboot
-upgrade_in_progress="/cf/conf/upgrade_in_progress"
-
-stdout='/dev/null'
-unset yes
-action="run_upgrade"
-while getopts duy opt; do
-	case ${opt} in
-		d)
-			stdout=''
-			;;
-		u)
-			action="run_update"
-			;;
-		y)
-			yes=1
-			;;
-		*)
-			usage
-			exit 1
-			;;
-	esac
-done
-
 usage() {
 	_echo "Usage: $(basename ${0}) [-duy]"
 	_echo "	-d - Turn on debug"
@@ -299,6 +265,41 @@ upgrade() {
 		/etc/rc.reboot
 	fi
 }
+
+pid_file="/var/run/$(basename $0).pid"
+last_update_file="/var/run/$(basename $0)-last-update"
+logfile=/cf/conf/upgrade_log.txt
+
+# pkg should not ask for confirmations
+export ASSUME_ALWAYS_YES=true
+
+# Disable automatic update
+export REPO_AUTOUPDATE=false
+
+# File used to detect second call, after kernel update and reboot
+upgrade_in_progress="/cf/conf/upgrade_in_progress"
+
+stdout='/dev/null'
+
+unset yes
+action="run_upgrade"
+while getopts duy opt; do
+	case ${opt} in
+		d)
+			stdout=''
+			;;
+		u)
+			action="run_update"
+			;;
+		y)
+			yes=1
+			;;
+		*)
+			usage
+			exit 1
+			;;
+	esac
+done
 
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"

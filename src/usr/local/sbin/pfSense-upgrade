@@ -420,12 +420,14 @@ echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
 
-if [ -n "${progress_fifo}" -a ! -p "${progress_fifo}" ]; then
-	if [ -e "${EVENT_PIPE}" ]; then
+if [ -n "${progress_fifo}" ]; then
+	if [ ! -e "${progress_fifo}" ]; then
+		mkfifo ${progress_fifo}
+	fi
+	if [ ! -p "${progress_fifo}" ]; then
 		_echo "ERROR: ${progress_fifo} is not a FIFO"
 		_exit 1
 	fi
-	mkfifo ${progress_fifo}
 	export EVENT_PIPE="${progress_fifo}"
 fi
 

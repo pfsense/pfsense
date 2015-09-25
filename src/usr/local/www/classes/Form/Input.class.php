@@ -165,6 +165,23 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
+	// These methods required by pkg_edit and the wizards that map xml element definitions to Form elements
+	public function setOnclick($text)
+	{
+		if($text)
+			$this->_attributes['onclick'] = $text;
+
+		return $this;
+	}
+
+	public function setOnchange($text)
+	{
+		if($text)
+			$this->_attributes['onchange'] = $text;
+
+		return $this;
+	}
+
 	protected function _getInput()
 	{
 		return parent::__toString();

@@ -370,7 +370,7 @@ while getopts di:r:uy opt; do
 		i)
 			if [ -n "${action}" ]; then
 				usage
-				exit 1
+				_exit 1
 			fi
 			action="install"
 			action_pkg="${OPTARG}"
@@ -378,7 +378,7 @@ while getopts di:r:uy opt; do
 		r)
 			if [ -n "${action}" ]; then
 				usage
-				exit 1
+				_exit 1
 			fi
 			action="delete"
 			action_pkg="${OPTARG}"
@@ -386,7 +386,7 @@ while getopts di:r:uy opt; do
 		u)
 			if [ -n "${action}" ]; then
 				usage
-				exit 1
+				_exit 1
 			fi
 			action="update"
 			;;
@@ -395,7 +395,7 @@ while getopts di:r:uy opt; do
 			;;
 		*)
 			usage
-			exit 1
+			_exit 1
 			;;
 	esac
 done
@@ -405,7 +405,7 @@ done
 
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
-	exit 1
+	_exit 1
 fi
 
 echo $$ > ${pid_file}

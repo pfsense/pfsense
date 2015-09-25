@@ -254,14 +254,16 @@ upgrade_second_step() {
 }
 
 update() {
-	_exec "pkg update" "Updating repositories" mute
-	date +%s > ${last_update_file}
-}
-
-upgrade() {
 	local _run_update=1
-	if [ -f ${last_update_file} ]; then
+
+	unset _force
+	if [ "${1}" = "force" ]; then
+		local _force=1
+	fi
+
+	if [ -z "${_force}" -a -f ${last_update_file} ]; then
 		local _last_update=$(head -n 1 ${last_update_file})
+		# Verify if content contain only numbers
 		if echo "${_last_update}" | grep -E -q '^[0-9]+$'; then
 			local _now=$(date +%s)
 			# Only run update hourly, and if last update is in the future
@@ -270,8 +272,15 @@ upgrade() {
 		fi
 	fi
 
-	[ -n "${_run_update}" ] \
-		&& update
+	[ -z "${_run_update}" ] \
+		&& return 0
+
+	_exec "pkg update" "Updating repositories" mute
+	date +%s > ${last_update_file}
+}
+
+upgrade() {
+	update
 
 	unset need_reboot
 	if [ ! -f "${upgrade_in_progress}" ]; then
@@ -305,7 +314,7 @@ case "${action}" in
 		upgrade
 		;;
 	run_update)
-		update
+		update force
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

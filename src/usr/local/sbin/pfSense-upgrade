@@ -356,6 +356,9 @@ export ASSUME_ALWAYS_YES=true
 # Disable automatic update
 export REPO_AUTOUPDATE=false
 
+# pkg write progress in EVENT_PIPE
+export EVENT_PIPE="/tmp/pkg-progress.fifo"
+
 unset yes
 unset action
 unset action_pkg
@@ -408,6 +411,13 @@ fi
 echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
+
+if [ ! -p "${EVENT_PIPE}" ]; then
+	if [ -e "${EVENT_PIPE}" ]; then
+		rm -rf ${EVENT_PIPE}
+	fi
+	mkfifo ${EVENT_PIPE}
+fi
 
 case "${action}" in
 	upgrade)

@@ -49,6 +49,7 @@
 usage() {
 	echo "Usage: $(basename ${0}) [-dy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
 	echo "	-d          - Turn on debug" >&2
+	echo "	-h          - Show this usage help" >&2
 	echo "	-p FIFO     - Write pkg progress to FIFO"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
@@ -363,7 +364,7 @@ unset yes
 unset progress_fifo
 unset action
 unset action_pkg
-while getopts di:p:r:uy opt; do
+while getopts di:hp:r:uy opt; do
 	case ${opt} in
 		d)
 			stdout=''
@@ -376,6 +377,9 @@ while getopts di:p:r:uy opt; do
 			action="install"
 			action_pkg="${OPTARG}"
 			;;
+		h)
+			usage
+			_exit 0
 		p)
 			progress_fifo="${OPTARG}"
 			;;

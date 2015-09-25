@@ -125,7 +125,7 @@ _exit() {
 	exit 0
 }
 
-upgrade_first_step() {
+pkg_upgrade_first_step() {
 	# figure out which kernel variant is running
 	kernel_pkg=$(pkg query %n $(pkg info pfSense-kernel-\*))
 
@@ -134,7 +134,7 @@ upgrade_first_step() {
 		_exit 1
 	fi
 
-	kernel_version_compare=$(compare_version ${kernel_pkg})
+	kernel_version_compare=$(compare_pkg_version ${kernel_pkg})
 
 	if [ "${kernel_version_compare}" = "<" ]; then
 		kernel_update=1
@@ -193,7 +193,7 @@ upgrade_first_step() {
 	fi
 }
 
-upgrade_second_step() {
+pkg_upgrade_second_step() {
 	_echo "Upgrading necessary packages..."
 	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: An error occurred when upgrade was running..."
@@ -209,7 +209,7 @@ upgrade_second_step() {
 	rm -f ${firmwarelock}
 }
 
-update() {
+pkg_update() {
 	local _run_update=1
 
 	unset _force
@@ -235,8 +235,8 @@ update() {
 	date +%s > ${last_update_file}
 }
 
-upgrade() {
-	update
+pkg_upgrade() {
+	pkg_update
 
 	unset need_reboot
 	if [ ! -f "${upgrade_in_progress}" ]; then
@@ -244,11 +244,11 @@ upgrade() {
 			rm -f ${logfile}
 		fi
 
-		upgrade_first_step
+		pkg_upgrade_first_step
 		need_reboot=1
 	fi
 
-	upgrade_second_step
+	pkg_upgrade_second_step
 
 	if [ -n "${need_reboot}" ]; then
 		_echo "Rebooting..."
@@ -256,17 +256,17 @@ upgrade() {
 	fi
 }
 
-is_installed() {
+is_pkg_installed() {
 	local _pkg_name="${1}"
 
 	pkg info -e ${_pkg_name}
 	return $?
 }
 
-compare_version() {
+compare_pkg_version() {
 	local _pkg_name="${1}"
 
-	if ! is_installed ${_pkg_name}; then
+	if ! is_pkg_installed ${_pkg_name}; then
 		echo '!'
 		return -1
 	fi
@@ -296,7 +296,7 @@ compare_version() {
 	return 0
 }
 
-install() {
+pkg_install() {
 	local _pkg_name="${1}"
 
 	if [ -z "${_pkg_name}" ]; then
@@ -304,10 +304,10 @@ install() {
 		_exit 1
 	fi
 
-	update
+	pkg_update
 
-	if is_installed ${_pkg_name}; then
-		local _cversion=$(compare_version ${_pkg_name})
+	if is_pkg_installed ${_pkg_name}; then
+		local _cversion=$(compare_pkg_version ${_pkg_name})
 
 		if [ "${_cversion}" = "=" ]; then
 			_echo "Package ${_pkg_name} is up to date"
@@ -326,7 +326,7 @@ install() {
 	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
 }
 
-delete() {
+pkg_delete() {
 	local _pkg_name="${1}"
 
 	if [ -z "${_pkg_name}" ]; then
@@ -334,7 +334,7 @@ delete() {
 		_exit 1
 	fi
 
-	if ! is_installed ${_pkg_name}; then
+	if ! is_pkg_installed ${_pkg_name}; then
 		_echo "ERROR: Package ${_pkg_name} is not installed"
 		_exit 1
 	fi
@@ -369,7 +369,7 @@ while getopts di:r:uy opt; do
 				usage
 				exit 1
 			fi
-			action="run_install"
+			action="install"
 			action_pkg="${OPTARG}"
 			;;
 		r)
@@ -377,7 +377,7 @@ while getopts di:r:uy opt; do
 				usage
 				exit 1
 			fi
-			action="run_delete"
+			action="delete"
 			action_pkg="${OPTARG}"
 			;;
 		u)
@@ -385,7 +385,7 @@ while getopts di:r:uy opt; do
 				usage
 				exit 1
 			fi
-			action="run_update"
+			action="update"
 			;;
 		y)
 			yes=1
@@ -398,7 +398,7 @@ while getopts di:r:uy opt; do
 done
 
 # Set default action when no parameter is set
-: ${action:="run_upgrade"}
+: ${action:="upgrade"}
 
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
@@ -410,17 +410,17 @@ echo $$ > ${pid_file}
 trap _exit 1 2 15 EXIT
 
 case "${action}" in
-	run_upgrade)
-		upgrade
+	upgrade)
+		pkg_upgrade
 		;;
-	run_update)
-		update force
+	update)
+		pkg_update force
 		;;
-	run_install)
-		install ${action_pkg}
+	install)
+		pkg_install ${action_pkg}
 		;;
-	run_delete)
-		delete ${action_pkg}
+	delete)
+		pkg_delete ${action_pkg}
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

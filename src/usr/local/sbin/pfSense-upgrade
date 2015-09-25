@@ -47,6 +47,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 pid_file="/var/run/$(basename $0).pid"
+last_update_file="/var/run/$(basename $0)-last-update"
 logfile=/cf/conf/upgrade_log.txt
 
 # pkg should not ask for confirmations
@@ -252,7 +253,26 @@ upgrade_second_step() {
 	rm -f ${firmwarelock}
 }
 
+update() {
+	_exec "pkg update" "Updating repositories" mute
+	date +%s > ${last_update_file}
+}
+
 upgrade() {
+	local _run_update=1
+	if [ -f ${last_update_file} ]; then
+		local _last_update=$(head -n 1 ${last_update_file})
+		if echo "${_last_update}" | grep -E -q '^[0-9]+$'; then
+			local _now=$(date +%s)
+			# Only run update hourly, and if last update is in the future
+			[ ${_now} -gt ${_last_update} -a $((${_now} - ${_last_update})) -le $((60 * 60)) ] \
+				&& unset _run_update
+		fi
+	fi
+
+	[ -n "${_run_update}" ] \
+		&& update
+
 	unset need_reboot
 	if [ ! -f "${upgrade_in_progress}" ]; then
 		if [ -f "${logfile}" ]; then
@@ -285,7 +305,7 @@ case "${action}" in
 		upgrade
 		;;
 	run_update)
-		_exec "pkg update" "Updating repositories" mute
+		update
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

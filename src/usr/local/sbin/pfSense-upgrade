@@ -328,6 +328,7 @@ pkg_install() {
 	fi
 
 	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg clean" "Cleaning up cache" mute ignore_result
 }
 
 pkg_delete() {
@@ -344,6 +345,7 @@ pkg_delete() {
 	fi
 
 	_exec "pkg delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
 pid_file="/var/run/$(basename $0).pid"

@@ -380,6 +380,7 @@ while getopts di:hp:r:uy opt; do
 		h)
 			usage
 			_exit 0
+			;;
 		p)
 			progress_fifo="${OPTARG}"
 			;;

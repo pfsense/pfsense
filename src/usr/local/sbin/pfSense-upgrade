@@ -48,9 +48,13 @@
 
 usage() {
 	echo "Usage: $(basename ${0}) [-dy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
-	echo "	-d - Turn on debug" >&2
-	echo "	-u - Update repository information" >&2
-	echo "	-y - Consider yes as the answer for any possible interaction" >&2
+	echo "	-d          - Turn on debug" >&2
+	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
+	echo "" >&2
+	echo "Following parameters are mutually exclusive:" >&2
+	echo "	-i PKG_NAME - Install package PKG_NAME" >&2
+	echo "	-r PKG_NAME - Remove package PKG_NAME" >&2
+	echo "	-u          - Update repository information" >&2
 }
 
 _echo() {
@@ -266,6 +270,92 @@ upgrade() {
 	fi
 }
 
+is_installed() {
+	local _pkg_name="${1}"
+
+	pkg info -e ${_pkg_name}
+	return $?
+}
+
+compare_version() {
+	local _pkg_name="${1}"
+
+	if ! is_installed ${_pkg_name}; then
+		echo '!'
+		return -1
+	fi
+
+	local _lver=$(pkg query %v ${_pkg_name})
+
+	if [ -z "${_lver}" ]; then
+		_echo "ERROR: It was not possible to determine ${_pkg_name} local version"
+		_exit 1
+	fi
+
+	local _rver=$(pkg rquery %v ${_pkg_name})
+
+	if [ -z "${_rver}" ]; then
+		_echo "ERROR: It was not possible to determine ${_pkg_name} remote version"
+		_exit 1
+	fi
+
+	local _version=$(pkg version -t ${_lver} ${_rver})
+
+	if [ $? -ne 0 ]; then
+		_echo "ERROR: Error comparing ${_pkg_name} local and remote versions"
+		_exit 1
+	fi
+
+	echo ${_version}
+	return 0
+}
+
+install() {
+	local _pkg_name="${1}"
+
+	if [ -z "${_pkg_name}" ]; then
+		_echo "ERROR: Blank package name"
+		_exit 1
+	fi
+
+	update
+
+	if is_installed ${_pkg_name}; then
+		local _cversion=$(compare_version ${_pkg_name})
+
+		if [ "${_cversion}" = "=" ]; then
+			_echo "Package ${_pkg_name} is up to date"
+			_exit 0
+		elif [ "${_cversion}" = ">" ]; then
+			_echo "Installed ${_pkg_name} version is newer than remote"
+			_exit 0
+		fi
+		local _cmd="upgrade"
+		local _msg="Upgrading"
+	else
+		local _cmd="install"
+		local _msg="Installing"
+	fi
+
+	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+}
+
+delete() {
+	local _pkg_name="${1}"
+
+	if [ -z "${_pkg_name}" ]; then
+		_echo "ERROR: Blank package name"
+		_exit 1
+	fi
+
+	if ! is_installed ${_pkg_name}; then
+		_echo "ERROR: Package ${_pkg_name} is not installed"
+		_exit 1
+	fi
+
+	_exec "pkg delete ${_pkg_name}" "Removing ${_pkg_name}"
+}
+
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile=/cf/conf/upgrade_log.txt
@@ -281,13 +371,34 @@ export ASSUME_ALWAYS_YES=true
 export REPO_AUTOUPDATE=false
 
 unset yes
-action="run_upgrade"
-while getopts duy opt; do
+unset action
+unset action_pkg
+while getopts di:r:uy opt; do
 	case ${opt} in
 		d)
 			stdout=''
 			;;
+		i)
+			if [ -n "${action}" ]; then
+				usage
+				exit 1
+			fi
+			action="run_install"
+			action_pkg="${OPTARG}"
+			;;
+		r)
+			if [ -n "${action}" ]; then
+				usage
+				exit 1
+			fi
+			action="run_delete"
+			action_pkg="${OPTARG}"
+			;;
 		u)
+			if [ -n "${action}" ]; then
+				usage
+				exit 1
+			fi
 			action="run_update"
 			;;
 		y)
@@ -299,6 +410,9 @@ while getopts duy opt; do
 			;;
 	esac
 done
+
+# Set default action when no parameter is set
+: ${action:="run_upgrade"}
 
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
@@ -315,6 +429,12 @@ case "${action}" in
 		;;
 	run_update)
 		update force
+		;;
+	run_install)
+		install ${action_pkg}
+		;;
+	run_delete)
+		delete ${action_pkg}
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

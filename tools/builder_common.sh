@@ -151,7 +151,7 @@ print_error_pfS() {
 	if [ "$1" != "" ]; then
 		echo $1
 	fi
-	[ -n "${LOGFILE:-}" -a -f "${LOGFILE}" ] && \
+	[ -n "${LOGFILE}" -a -f "${LOGFILE}" ] && \
 		echo "Log saved on ${LOGFILE}" && \
 		tail -n20 ${LOGFILE} >&2
 	echo
@@ -258,7 +258,7 @@ build_all_kernels() {
 			print_error_pfS
 		fi
 
-		if [ -n "${NO_BUILDKERNEL:-}" -a -f "${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
+		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
@@ -427,26 +427,26 @@ fi
 make_world() {
 
 	LOGFILE=${BUILDER_LOGS}/buildworld.${TARGET}
-	if [ -n "${NO_BUILDWORLD:-}" ]; then
+	if [ -n "${NO_BUILDWORLD}" ]; then
 		echo ">>> NO_BUILDWORLD set, skipping build" | tee -a ${LOGFILE}
 		return
 	fi
 
 	# Set SRC_CONF variable if it's not already set.
-	if [ -z "${SRC_CONF:-}" ]; then
+	if [ -z "${SRC_CONF}" ]; then
 		echo ">>> SRC_CONF is unset make sure this is what you want!" | tee -a ${LOGFILE}
 	else
 		echo ">>> Setting SRC_CONF to $SRC_CONF" | tee -a ${LOGFILE}
 	fi
 
 	# Set default parameters
-	export MAKE_ARGS="${MAKEJ_WORLD:-} __MAKE_CONF=${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
+	export MAKE_ARGS="${MAKEJ_WORLD} __MAKE_CONF=${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
 
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	makeargs="${MAKE_ARGS}"
 	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs:-} buildworld" | tee -a ${LOGFILE}
-	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs:-} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld" | tee -a ${LOGFILE}
+	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
@@ -454,28 +454,28 @@ make_world() {
 	# Create if cleaned up
 	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} installworld" | tee -a ${LOGFILE}
-	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
+	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} distribution " | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Distribution world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
 	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs:-} clean all install " | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs:-} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} clean" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} clean || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} all" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} all || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} install" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs:-} install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install " | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} all" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} all || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} install" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	unset makeargs
@@ -1417,7 +1417,7 @@ update_freebsd_sources() {
 		mkdir -p ${FREEBSD_SRC_DIR}
 	fi
 
-	if [ -n "${NO_BUILDWORLD:-}" -a -n "${NO_BUILDKERNEL:-}" ]; then
+	if [ -n "${NO_BUILDWORLD}" -a -n "${NO_BUILDKERNEL}" ]; then
 		echo ">>> NO_BUILDWORLD and NO_BUILDKERNEL set, skipping update of freebsd sources" | tee -a ${LOGFILE}
 		return
 	fi
@@ -1553,17 +1553,17 @@ staginareas_clean_each_run() {
 
 # Imported from FreeSBIE
 buildkernel() {
-	if [ -n "${NO_BUILDKERNEL:-}" ]; then
+	if [ -n "${NO_BUILDKERNEL}" ]; then
 		echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 		return
 	fi
 
-	if [ -z "${KERNCONF:-}" ]; then
+	if [ -z "${KERNCONF}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 
-	if [ -n "${KERNELCONF:-}" ]; then
+	if [ -n "${KERNELCONF}" ]; then
 		export KERNCONFDIR=$(dirname ${KERNELCONF})
 		export KERNCONF=$(basename ${KERNELCONF})
 	fi
@@ -1573,27 +1573,27 @@ buildkernel() {
 	echo ">>> ARCH:        ${TARGET}"
 	echo ">>> SRC_CONF:    ${SRCCONFBASENAME}"
 
-	makeargs="${MAKEJ_KERNEL:-} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
+	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
 	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 }
 
 # Imported from FreeSBIE
 installkernel() {
-	if [ -z "${KERNCONF:-}" ]; then
+	if [ -z "${KERNCONF}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 
-	if [ -n "${KERNELCONF:-}" ]; then
+	if [ -n "${KERNELCONF}" ]; then
 		export KERNCONFDIR=$(dirname ${KERNELCONF})
 		export KERNCONF=$(basename ${KERNELCONF})
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ_KERNEL:-} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs:-} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs:-} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
+	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
+	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 	gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel
 }
 
@@ -2064,7 +2064,7 @@ snapshots_copy_to_staging_iso_updates() {
 }
 
 snapshots_scp_files() {
-	if [ -z "${RSYNC_COPY_ARGUMENTS:-}" ]; then
+	if [ -z "${RSYNC_COPY_ARGUMENTS}" ]; then
 		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60 --bwlimit=${RSYNCKBYTELIMIT}" #--bwlimit=50
 	fi
 

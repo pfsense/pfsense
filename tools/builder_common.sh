@@ -1430,7 +1430,7 @@ update_freebsd_sources() {
 		CUR_BRANCH=$(cd ${FREEBSD_SRC_DIR} && git branch | grep '^\*' | cut -d' ' -f2)
 		if [ ${_full} -eq 0 -a "${CUR_BRANCH}" = "${_FREEBSD_BRANCH}" ]; then
 			_CLONE=0
-			( cd ${FREEBSD_SRC_DIR} && git clean -fxd; git fetch origin; git reset --hard origin/${_FREEBSD_BRANCH} ) 2>&1 | grep -C3 -i -E 'error|fatal'
+			( cd ${FREEBSD_SRC_DIR} && git clean -fd; git fetch origin; git reset --hard origin/${_FREEBSD_BRANCH} ) 2>&1 | grep -C3 -i -E 'error|fatal'
 		else
 			rm -rf ${FREEBSD_SRC_DIR}
 		fi
@@ -1896,7 +1896,7 @@ poudriere_update_ports() {
 	else
 		echo -n ">>> Reseting local changes on ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
 		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" reset --hard >/dev/null 2>&1
-		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" clean -fxd >/dev/null 2>&1
+		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" clean -fd >/dev/null 2>&1
 		echo "Done!" | tee -a ${LOGFILE}
 		echo -n ">>> Updating ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
 		script -aq ${LOGFILE} poudriere ports -u -p "${POUDRIERE_PORTS_NAME}" >/dev/null 2>&1

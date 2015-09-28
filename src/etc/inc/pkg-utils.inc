@@ -882,7 +882,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	write_config("Removed {$package_name} package.\n");
 
 	/* remove package entry from /etc/syslog.conf if needed */
-	/* this must to be done after removing the entries from config.xml */
+	/* this must be done after removing the entries from config.xml */
 	if ($need_syslog_restart) {
 		system_syslogd_start();
 	}

@@ -863,14 +863,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		}
 	}
 	/* syslog */
+	$need_syslog_restart = false;
 	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
 		$static_output .= "Syslog entries... ";
 		update_output_window($static_output);
-		remove_text_from_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);
-		system_syslogd_start();
 		@unlink("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		$static_output .= "done.\n";
 		update_output_window($static_output);
+		$need_syslog_restart = true;
 	}
 
 	/* remove config.xml entries */
@@ -880,6 +880,13 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);
 	write_config("Removed {$package_name} package.\n");
+
+	/* remove package entry from /etc/syslog.conf if needed */
+	/* this must be done after removing the entries from config.xml */
+	if ($need_syslog_restart) {
+		system_syslogd_start();
+	}
+
 	conf_mount_ro();
 }
 

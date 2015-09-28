@@ -133,12 +133,10 @@ else
 	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
 fi
 
+GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed 's,/[^/]*,,')
+
 # This is used for using svn for retrieving src
-if git -C ${BUILDER_ROOT} remote -v | grep -q git.pfmechanics.com; then
-	export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
-else
-	export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"https://github.com/pfsense/freebsd-src.git"}
-fi
+export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
@@ -268,11 +266,7 @@ export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
 export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
-if git -C ${BUILDER_ROOT} remote -v | grep -q git.pfmechanics.com; then
-	export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"git@git.pfmechanics.com:pfsense/freebsd-ports.git"}
-else
-	export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"https://github.com/pfsense/freebsd-ports.git"}
-fi
+export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 
 # Host to rsync pkg repos from poudriere

@@ -75,6 +75,7 @@ if (isset($_POST['backupcount'])) {
 }
 
 if ($_GET['getcfg'] != "") {
+	$_GET['getcfg'] = basename($_GET['getcfg']);
 	$file = $g['conf_path'] . '/backup/config-' . $_GET['getcfg'] . '.xml';
 
 	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");

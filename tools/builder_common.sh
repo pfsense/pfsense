@@ -1396,6 +1396,8 @@ builder_setup() {
 		[ -d /usr/local/etc/pkg/repos ] \
 			|| mkdir -p /usr/local/etc/pkg/repos
 
+		update_freebsd_sources
+
 		local _arch=$(uname -m)
 		setup_pkg_repo /usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ${_arch} ${_arch} ${PKG_REPO_CONF_BRANCH}
 	fi

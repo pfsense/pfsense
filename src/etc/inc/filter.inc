@@ -4039,30 +4039,30 @@ function filter_generate_ipsec_rules($log = array()) {
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
 			$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
+pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if ($ph1ent['nat_traversal'] != "off") {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
+pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 			}
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
+pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if ($prot_used_ah) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
+pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;
 			}

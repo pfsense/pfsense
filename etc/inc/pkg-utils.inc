@@ -1206,7 +1206,7 @@ function delete_package_xml($pkg) {
 	write_config("Removed {$pkg} package.\n");
 	
 	/* remove package entry from /etc/syslog.conf if needed */
-	/* this must to be done after removing the entries from config.xml */
+	/* this must be done after removing the entries from config.xml */
 	if ($need_syslog_restart) {
 		system_syslogd_start();
 	}

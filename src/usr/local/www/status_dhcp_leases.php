@@ -381,6 +381,7 @@ if (count($pools) > 0) {
 			<tbody>
 <?php
 $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
+$iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
 
 foreach ($leases as $data):
 	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
@@ -402,6 +403,7 @@ foreach ($leases as $data):
 				continue;
 			if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 				$data['if'] = $dhcpif;
+				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];
 				$dhcp_leases_subnet_counter[$dlsc]['to'] = $dhcpifconf['range']['to'];
 				$dhcp_leases_subnet_counter[$dlsc]['count'] = $dhcp_leases_subnet_counter[$dlsc][2]+1;
@@ -473,6 +475,7 @@ foreach ($leases as $data):
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Pool Start")?></th>
 					<th><?=gettext("Pool End")?></th>
 					<th><?=gettext("# of leases in use")?></th>
@@ -481,6 +484,7 @@ foreach ($leases as $data):
 			<tbody>
 <? foreach ($dhcp_leases_subnet_counter as $listcounters):?>
 				<tr>
+					<td><?=$iflist[$listcounters['dhcpif']]?></td>
 					<td><?=$listcounters['from']?></td>
 					<td><?=$listcounters['to']?></td>
 					<td><?=$listcounters['count']?></td>

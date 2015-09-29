@@ -411,7 +411,6 @@ if (!$g['disablehelpmenu']) {
 					</li>
 <?php
 				endif;
-
 ?>
 			</ul>
 		</div>
@@ -420,9 +419,20 @@ if (!$g['disablehelpmenu']) {
 
 <div class="container">
 	<header class="header">
-		<?=genhtmltitle($pgtitle)?>
+
+<?php
+	// If you set $notitle = true BEFORE including head.inc, the page title will be supressed
+	if(isset($notitle)) {
+		print('<br />');
+		unset($notitle);
+	} else {
+
+	print(genhtmltitle($pgtitle));
+	}
+?>
 		<ul class="context-links">
 <?php
+
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {

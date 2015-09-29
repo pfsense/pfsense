@@ -2,33 +2,60 @@
 /* $Id$ */
 /*
 	pkg.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
 /*
-	pfSense_MODULE:	pkgs
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
+/*
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -46,25 +73,25 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-function domTT_title($title_msg) {
-	print "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '".gettext($title_msg)."', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
-}
-
 $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
-	print_info_box_np(gettext("ERROR: No package defined."));
+	include("head.inc");
+	print_info_box_np(gettext("ERROR: No valid package defined."));
+	include("foot.inc");
 	exit;
 } else {
 	if (file_exists("/usr/local/pkg/" . $xml)) {
 		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 	} else {
-		echo "File not found " . htmlspecialchars($xml);
+		include("head.inc");
+		print_info_box_np(gettext("File not found ") . htmlspecialchars($xml));
+		include("foot.inc");
 		exit;
 	}
 }
 
-if ($pkg['donotsave'] <> "") {
+if ($pkg['donotsave'] != "") {
 	header("Location: pkg_edit.php?xml=" . $xml);
 	exit;
 }
@@ -110,7 +137,7 @@ if ($_GET['act'] == "update") {
 }
 if ($_GET['act'] == "del") {
 	// loop through our fieldnames and automatically setup the fieldnames
-	// in the environment.  ie: a fieldname of username with a value of
+	// in the environment.	ie: a fieldname of username with a value of
 	// testuser would automatically eval $username = "testuser";
 	foreach ($evaledvar as $ip) {
 		if ($pkg['adddeleteeditpagefields']['columnitem']) {
@@ -125,8 +152,8 @@ if ($_GET['act'] == "del") {
 	if ($a_pkg[$_GET['id']]) {
 		unset($a_pkg[$_GET['id']]);
 		write_config();
-		if ($pkg['custom_delete_php_command'] <> "") {
-			if ($pkg['custom_php_command_before_form'] <> "") {
+		if ($pkg['custom_delete_php_command'] != "") {
+			if ($pkg['custom_php_command_before_form'] != "") {
 				eval($pkg['custom_php_command_before_form']);
 			}
 			eval($pkg['custom_delete_php_command']);
@@ -141,11 +168,11 @@ ob_start();
 $iflist = get_configured_interface_with_descr(false, true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($pkg['custom_php_global_functions'] <> "") {
+if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);
 }
 
-if ($pkg['custom_php_command_before_form'] <> "") {
+if ($pkg['custom_php_command_before_form'] != "") {
 	eval($pkg['custom_php_command_before_form']);
 }
 
@@ -154,14 +181,9 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<script type="text/javascript" src="javascript/domTT/domLib.js"></script>
-<script type="text/javascript" src="javascript/domTT/domTT.js"></script>
-<script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
-<script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
 <script type="text/javascript">
 //<![CDATA[
+events.push(function(){
 	function setFilter(filtertext) {
 		jQuery('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
@@ -186,12 +208,12 @@ include("head.inc");
 			});
 			function save_changes_to_xml(xml) {
 				var ids=jQuery('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
-				var strloading="<img src='/themes/<?= $g['theme']; ?>/images/misc/loader.gif' alt='loader' /> " + "<?=gettext('Saving changes...');?>";
-				if (confirm("<?=gettext("Do you really want to save changes?");?>")) {
+				var strloading="<img src='/themes/<?= $g['theme']; ?>/images/misc/loader.gif' alt='loader' /> " + "<?=gettext('Saving changes...')?>";
+				if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
 					jQuery.ajax({
 						type: 'get',
 						cache: false,
-						url: "<?=$_SERVER['SCRIPT_NAME'];?>",
+						url: "<?=$_SERVER['SCRIPT_NAME']?>",
 						data: {xml:'<?=$xml?>', act:'update', ids: ids},
 						beforeSend: function() {
 							jQuery('#savemsg').empty().html(strloading);
@@ -208,16 +230,22 @@ include("head.inc");
 	<?php
 		}
 	?>
+});
 //]]>
 </script>
-<form action="pkg.php" name="pkgform" method="get">
-<input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>' />
-<?php if ($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
-<div id="savemsg"></div>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package settings">
+
 <?php
-	if ($pkg['tabs'] <> "") {
+if ($_GET['savemsg'] != "")
+	$savemsg = htmlspecialchars($_GET['savemsg']);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+?>
+
+<form action="pkg.php" name="pkgform" method="get">
+	<input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>' />
+<?php
+	if ($pkg['tabs'] != "") {
 		$tab_array = array();
 		foreach ($pkg['tabs']['tab'] as $tab) {
 			if ($tab['tab_level']) {
@@ -234,10 +262,10 @@ include("head.inc");
 				$no_drop_down = true;
 			}
 			$urltmp = "";
-			if ($tab['url'] <> "") {
+			if ($tab['url'] != "") {
 				$urltmp = $tab['url'];
 			}
-			if ($tab['xml'] <> "") {
+			if ($tab['xml'] != "") {
 				$urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 			}
 
@@ -261,21 +289,17 @@ include("head.inc");
 
 		ksort($tab_array);
 		foreach ($tab_array as $tab) {
-			echo '<tr><td>';
 			display_top_tabs($tab, $no_drop_down);
-			echo '</td></tr>';
 		}
 	}
 ?>
-<tr><td><div id="mainarea"><table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-	<tr>
-		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabs">
+
+			<table class="table table-striped table-hover table-condensed">
 <?php
 	/* Handle filtering bar A-Z */
 	$include_filtering_inputbox = false;
 	$colspan = 0;
-	if ($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+	if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 		foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 			$colspan++;
 		}
@@ -292,7 +316,7 @@ include("head.inc");
 						$display_maximum_rows = $field['display_maximum_rows'];
 					}
 				}
-				echo "<tr><td class='listhdrr' colspan='$colspan' align='center'>";
+				echo "<tr><td colspan='$colspan' align='center'>";
 				echo "Filter by: ";
 				$isfirst = true;
 				for ($char = 65; $char < 91; $char++) {
@@ -303,7 +327,7 @@ include("head.inc");
 					$isfirst = false;
 				}
 				echo "</td></tr>";
-				echo "<tr><td class='listhdrr' colspan='$colspan' align='center'>";
+				echo "<tr><td colspan='$colspan' align='center'>";
 				if ($field['sortablefields']) {
 					echo "Filter field: <select name='pkg_filter_type'>";
 					foreach ($field['sortablefields']['item'] as $si) {
@@ -317,7 +341,7 @@ include("head.inc");
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo "&nbsp;&nbsp;Filter text: <input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /> <input type='submit' value='Filter' />";
+					echo "&nbsp;&nbsp;Filter text: <input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /><input type='submit' value='Filter' />";
 				}
 				echo "</td></tr><tr><td><font size='-3'>&nbsp;</font></td></tr>";
 			}
@@ -363,7 +387,7 @@ include("head.inc");
 		echo "</td></tr>";
 	}
 	$cols = 0;
-	if ($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+	if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 		foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 			echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
 			$cols++;
@@ -406,7 +430,7 @@ include("head.inc");
 				}
 				// Do we have something to filter on?
 				unset($filter_matches);
-				if ($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+				if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 					foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 						$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 						if ($column['fieldname'] == $filter_fieldname) {
@@ -428,7 +452,7 @@ include("head.inc");
 			} else {
 				echo "<tr valign=\"top\">\n";
 			}
-			if ($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+			if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 					if ($column['fieldname'] == "description") {
 						$class = "listbg";
@@ -436,7 +460,7 @@ include("head.inc");
 						$class = "listlr";
 					}
 ?>
-					<td class="<?=$class;?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i;?>';">
+					<td class="<?=$class?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>';">
 <?php
 					$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 					#Check if columnitem has a type field declared
@@ -475,21 +499,21 @@ include("head.inc");
 			#Show custom description to edit button if defined
 			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:"Edit this item");
 ?>
-								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" <?=domTT_title($edit_msg)?> alt="edit" /></a></td>
+								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" <?=domTT_title($edit_msg)?> alt="edit" /></a></td>
 <?php
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:"Delete this item");
 ?>
-								<td valign="middle"><a href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" <?=domTT_title($delete_msg)?> alt="delete" /></a></td>
+								<td valign="middle"><a href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?")?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" <?=domTT_title($delete_msg)?> alt="delete" /></a></td>
 							</tr>
 						</table>
 					</td>
 <?php
-			echo "</tr>\n"; // Pairs with an echo tr some way above 
+			echo "</tr>\n"; // Pairs with an echo tr some way above
 			// Handle pagination and display_maximum_rows
 			if ($display_maximum_rows) {
 				if ($pagination_counter == ($display_maximum_rows-1) or
-				    $i == (count($evaledvar)-1)) {
+					$i == (count($evaledvar)-1)) {
 					$colcount = count($pkg['adddeleteeditpagefields']['columnitem']);
 					$final_footer = "";
 					$final_footer .= "<tr><td colspan='$colcount'>";
@@ -534,12 +558,12 @@ include("head.inc");
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:"Add a new item");
 ?>
-								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" <?=domTT_title($add_msg)?> alt="add" /></a></td>
+								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {
 ?>
-								<td valign="middle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" width="17" height="17" border="0" <?=domTT_title($pkg['adddeleteeditpagefields']['description'])?> alt="info" /></td>
+								<td valign="middle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" <?=domTT_title($pkg['adddeleteeditpagefields']['description'])?> alt="info" /></td>
 <?php
 	}
 ?>
@@ -553,24 +577,16 @@ include("head.inc");
 	if ($pkg['adddeleteeditpagefields']['movable']) {
 ?>
 				<tr>
-					<td><input class="formbtn" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" /></td>
+					<td><input class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" /></td>
 				</tr>
 <?php
 	}
 ?>
 			</table>
-		</td>
-	</tr>
-</table></div></td></tr>
-</table>
 
 </form>
-<?php include("fend.inc"); ?>
-
 <?php
-	echo "<!-- filter_fieldname: {$filter_fieldname} -->";
-	echo "<!-- filter_regex: {$filter_regex} -->";
-?>
+echo "<!-- filter_fieldname: {$filter_fieldname} -->";
+echo "<!-- filter_regex: {$filter_regex} -->";
 
-</body>
-</html>
+include("foot.inc"); ?>

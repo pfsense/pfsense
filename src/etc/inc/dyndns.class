@@ -5,7 +5,6 @@
 	 * +====================================================+
 	 *  Services Supported:
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
-	 *    - DHSDns (dhs.org)
 	 *    - No-IP (no-ip.com)
 	 *    - EasyDNS (easydns.com)
 	 *    - DHS (www.dhs.org)
@@ -328,6 +327,7 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'dhs':
+					// DHS is disabled in the GUI because the following doesn't work.
 					$needsIP = TRUE;
 					$post_data['hostscmd'] = 'edit';
 					$post_data['hostscmdstage'] = '2';
@@ -351,7 +351,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, '{$server}{$port}');
+					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;

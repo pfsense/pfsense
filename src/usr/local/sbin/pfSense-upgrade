@@ -241,10 +241,10 @@ pkg_update() {
 }
 
 pkg_upgrade() {
-	pkg_update
-
 	unset need_reboot
 	if [ ! -f "${upgrade_in_progress}" ]; then
+		pkg_update
+
 		if [ -f "${logfile}" ]; then
 			rm -f ${logfile}
 		fi

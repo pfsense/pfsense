@@ -335,7 +335,7 @@ echo "done."
 # Finish update
 if [ -f /cf/conf/upgrade_in_progress ]; then
 	echo "Running second stage of upgrade process..."
-	/usr/local/sbin/pfsense-upgrade.sh -y
+	/usr/local/sbin/pfSense-upgrade -y
 fi
 
 # Run the php.ini setup file and populate

@@ -421,7 +421,7 @@ done
 
 if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
-	_exit 1
+	exit 1
 fi
 
 echo $$ > ${pid_file}

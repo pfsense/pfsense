@@ -249,15 +249,14 @@ foreach($a_gateways as $gwname => $gateway) {
 	}
 
 	$interface = $gateway['friendlyiface'];
-	$selected = array();
 
 	foreach((array)$pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		if($itemsplit[0] == $gwname) {
-			$selected[$itemsplit[1]] = "selected=\"selected\"";
+			$selected = $itemsplit[1];
 			break;
 		} else {
-			$selected[0] = "selected=\"selected\"";
+			$selected = '0';
 		}
 	}
 
@@ -275,7 +274,7 @@ foreach($a_gateways as $gwname => $gateway) {
 	$group->add(new Form_Select(
 		$gwname,
 		'Tier',
-		isset($pconfig['filterdescriptions']) ? $pconfig['filterdescriptions']:'0',
+		$selected,
 		array(
 			'0' => 'Never',
 			'1' => 'Tier 1',
@@ -285,6 +284,16 @@ foreach($a_gateways as $gwname => $gateway) {
 			'5' => 'Tier 5'
 		)
 	))->setHelp($row == $numrows ? 'Tier':null)->addClass('row')->addClass($gateway['ipprotocol']);
+
+	foreach ((array)$pconfig['item'] as $item) {
+		$itemsplit = explode("|", $item);
+		if ($itemsplit[0] == $gwname) {
+			$selected = $itemsplit[2];
+			break;
+		} else {
+			$selected = "0";
+		}
+	}
 
 	$group->add(new Form_Select(
 		$gwname . '_vip',
@@ -304,7 +313,7 @@ foreach($a_gateways as $gwname => $gateway) {
 	$section->add($group);
 
 	$row++;
-} // e-o-forwach
+} // e-o-foreach
 
 $section->addInput(new Form_StaticText(
 	'Link Priority',

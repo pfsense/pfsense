@@ -190,9 +190,6 @@ pkg_upgrade_first_step() {
 		_exit 1
 	fi
 
-	# Mark firmware subsystem dirty
-	touch ${firmwarelock}
-
 	# First upgrade kernel and reboot
 	if [ ${kernel_update} -eq 1 ]; then
 		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense kernel"
@@ -215,7 +212,6 @@ pkg_upgrade_second_step() {
 	# cleanup caches
 
 	rm -f ${upgrade_in_progress}
-	rm -f ${firmwarelock}
 }
 
 pkg_update() {

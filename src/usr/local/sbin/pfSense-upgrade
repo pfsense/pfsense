@@ -138,6 +138,11 @@ pkg_upgrade_first_step() {
 		_exit 1
 	fi
 
+	if [ "$(compare_pkg_version pkg)" = "<" ]; then
+		_exec "pkg upgrade pkg" "Upgrading pkg" mute
+		pkg_update force
+	fi
+
 	kernel_version_compare=$(compare_pkg_version ${kernel_pkg})
 
 	if [ "${kernel_version_compare}" = "<" ]; then

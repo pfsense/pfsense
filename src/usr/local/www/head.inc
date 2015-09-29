@@ -111,9 +111,11 @@ if (($pagename == "pkg.php") || ($pagename == "pkg_edit.php") || ($pagename == "
 	}
 }
 
-/* Build the full help URL. */
+// Build the full help URL.
 $helpurl .= "{$g['help_base_url']}?page={$pagename}";
 
+// Create a menu entry of any installed packages in the specified category
+// (Now reads the menu information from $config['installedpackages']['menu'] only)
 function return_ext_menu($section) {
 	global $config;
 
@@ -121,39 +123,35 @@ function return_ext_menu($section) {
 	$extarray = array();
 
 	if (!empty($config['installedpackages']['package'])) {
-		foreach ($config['installedpackages']['package'] as $package) {
-
-			if ($package['category'] != $section) {
+		foreach ($config['installedpackages']['menu'] as $menu) {
+//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
+			if ($menu['section'] != $section) {
 				continue;
 			}
 
-			// A package has been found that matches the specified category. We need to read it's config file
-			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-
-			$menuitem = $pkg_config['menu'][0];
-
-			if ($menuitem['url'] != "") {
-				$test_url=$menuitem['url'];
+			if ($menu['url'] != "") {
+				$test_url = $menu['url'];
 				$addresswithport = getenv("HTTP_HOST");
 				$colonpos = strpos($addresswithport, ":");
-				if ($colonpos !== False) {
+
+				if ($colonpos !== false) {
 					//my url is actually just the IP address of the pfsense box
 					$myurl = substr($addresswithport, 0, $colonpos);
 				} else {
 					$myurl = $addresswithport;
 				}
-				$description = str_replace('$myurl', $myurl, $menuitem['url']);
+				$description = str_replace('$myurl', $myurl, $menu['url']);
 			} else {
-				$description = '/pkg.php?xml=' . $menuitem['configfile'];
+				$description = '/pkg.php?xml=' . $menu['configfile'];
 				$test_url=$description;
 			}
 
 			if (isAllowedPage($test_url)) {
-				$extarray[] = array($menuitem['name'], $description);
+				$extarray[] = array($menu['name'], $description);
 			}
-
 		}
 	}
+
 	return $extarray;
 }
 
@@ -233,6 +231,7 @@ if ($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
 	$services_menu[] = array(gettext("DHCPv6 Server/RA"), "/services_dhcpv6.php");
 }
+
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
 $services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");

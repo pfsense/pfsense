@@ -96,6 +96,8 @@ if ($_POST) {
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
 		setup_gateways_monitor();
+		/* Dynamic DNS on gw groups may have changed */
+		send_event("service reload dyndnsall");
 
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {

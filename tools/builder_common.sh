@@ -1538,7 +1538,7 @@ install_pkg_install_ports() {
 
 install_bsdinstaller() {
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
-	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller ${MAIN_PKG} ${custom_package_list}
+	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
 }
 

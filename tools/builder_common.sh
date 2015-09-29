@@ -1539,6 +1539,11 @@ install_pkg_install_ports() {
 install_bsdinstaller() {
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
 	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller
+	sed -i '' -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME}," \
+		  -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION}," \
+		  -e "s,%%ARCH%%,${TARGET}," \
+		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense.lua \
+		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense_rescue.lua
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
 }
 

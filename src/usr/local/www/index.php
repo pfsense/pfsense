@@ -175,7 +175,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <html lang="en">
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
-	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
+	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
 	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 </head>
 <body id="loading-wizard" class="no-menu">

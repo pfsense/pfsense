@@ -44,8 +44,17 @@ fi
 
 /etc/rc.banner
 
-product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
-hidebanner=`grep hidebanner /etc/inc/globals.inc | cut -d'"' -f4`
+globals_inc="/etc/inc/globals.inc"
+if [ -f /etc/inc/globals_override.inc ]; then
+	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
+fi
+product=$(cat ${globals_inc} | \
+	grep product_name | \
+	head -n 1 | \
+	sed 's/^.*=>* *//; s/["\;,]*//g')
+
+# product cannot be blank
+product=${product:-"pfSense"}
 
 # Check to see if SSH is running.
 if pgrep -q -a -F /var/run/sshd.pid sshd >/dev/null 2>&1; then
@@ -128,7 +137,7 @@ case ${opmode} in
 	/usr/local/sbin/pfSsh.php
 	;;
 13)
-	/bin/sh /usr/local/sbin/pfSense-upgrade
+	/bin/sh /usr/local/sbin/${product}-upgrade
 	;;
 14)
 	php -f /etc/rc.initial.toggle_sshd

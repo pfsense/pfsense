@@ -25,9 +25,21 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+globals_inc="/etc/inc/globals.inc"
+if [ -f /etc/inc/globals_override.inc ]; then
+	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
+fi
+product=$(cat ${globals_inc} | \
+	grep product_name | \
+	head -n 1 | \
+	sed 's/^.*=>* *//; s/["\;,]*//g')
+
+# product cannot be blank
+product=${product:-"pfSense"}
+
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/etc/rc.dumpon
 fi
 
@@ -106,7 +118,7 @@ if [ "${PLATFORM}" = "nanobsd" ]; then
 	if [ $? -eq 0 ]; then
 		/sbin/kldunload zfs
 	fi
-elif [ "$PLATFORM" = "pfSense" ]; then
+elif [ "$PLATFORM" = "${product}" ]; then
 	# Handle ZFS read-only case
 	/sbin/kldstat -qm zfs
 	if [ $? -eq 0 ]; then
@@ -136,14 +148,16 @@ if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
 
-product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
-hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
-varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
+varrunpath=$(cat ${globals_inc} | \
+	grep varrun_path | \
+	head -n 1 | \
+	sed 's/^.*=>* *//; s/["\;,]*//g')
 
-if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
+if [ "$PLATFORM" = "${product}" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
+hideplatform=$(egrep -c 'hideplatform.*=>* *true' ${globals_inc} 2>/dev/null)
 if [ "$hideplatform" -gt "0" ]; then
 	platformbanner="" # hide the platform
 else
@@ -159,7 +173,7 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	# If use MFS var is disabled, move files back to place
 	if [ ${USE_MFS_TMPVAR} -eq 0 -a -d /root/var/db/pkg ]; then
 		rm -rf /var/db/pkg 2>/dev/null
@@ -205,7 +219,7 @@ fi
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
-if [ "$PLATFORM" != "pfSense" ]; then
+if [ "$PLATFORM" != "${product}" ]; then
 	/bin/rm /var/log/* 2>/dev/null
 fi
 
@@ -355,7 +369,7 @@ if [ "$PLATFORM" = "nanobsd" ]; then
 fi
 
 # Launch external configuration loader for supported platforms
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 

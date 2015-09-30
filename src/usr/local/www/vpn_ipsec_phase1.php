@@ -934,6 +934,7 @@ events.push(function(){
 
 		switch ($('#authentication_method').val()) {
 			case 'eap-mschapv2':
+			case 'eap-radius':
 			case 'eap-tls':
 			case 'hybrid_rsa_server':
 			case 'xauth_rsa_server':

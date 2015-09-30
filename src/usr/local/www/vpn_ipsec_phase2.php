@@ -233,13 +233,13 @@ if ($_POST) {
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$entered = array();
 				$entered['type'] = $pconfig['localid_type'];
-				
-				if (isset($pconfig['localid_address'])) 
-				    $entered['address'] = $pconfig['localid_address'];
-				    
-				if (isset($pconfig['localid_netbits'])) 
-				    $entered['netbits'] = $pconfig['localid_netbits'];
-				    
+
+				if (isset($pconfig['localid_address']))
+					$entered['address'] = $pconfig['localid_address'];
+
+				if (isset($pconfig['localid_netbits']))
+					$entered['netbits'] = $pconfig['localid_netbits'];
+
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data) {
 					/* adding new p2 entry */
@@ -556,29 +556,31 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'natlocalid_address',
 	null,
-	$pconfig['localid_address']
+	$pconfig['natlocalid_address']
 ))->setHelp('Address')->addMask(natlocalid_netbits, $pconfig['natlocalid_netbits'], 128, 0);
 
 $group->setHelp('If NAT/BINAT is required on this network specify the address to be translated');
 $section->add($group);
 
-$group = new Form_Group('Remote Network');
-$group->addClass('opt_remoteid');
+if (!isset($pconfig['mobile'])) {
+	$group = new Form_Group('Remote Network');
+	$group->addClass('opt_remoteid');
 
-$group->add(new Form_Select(
-	'remoteid_type',
-	null,
-	$pconfig['remoteid_type'],
-	array('address' => 'Address', 'network' => 'Network')
-))->setHelp('Type');
+	$group->add(new Form_Select(
+		'remoteid_type',
+		null,
+		$pconfig['remoteid_type'],
+		array('address' => 'Address', 'network' => 'Network')
+	))->setHelp('Type');
 
-$group->add(new Form_IpAddress(
-	'remoteid_address',
-	null,
-	$pconfig['remoteid_address']
-))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits'], 128, 0);
+	$group->add(new Form_IpAddress(
+		'remoteid_address',
+		null,
+		$pconfig['remoteid_address']
+	))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits'], 128, 0);
 
-$section->add($group);
+	$section->add($group);
+}
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -613,8 +615,6 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$algo
 	))->addClass('multi');
 
-
-
 	if(is_array($algodata['keysel'])) {
 		$list = array();
 		$key_hi = $algodata['keysel']['hi'];
@@ -628,7 +628,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 			'keylen_' . $algo,
 			null,
 			$keylen == $pconfig["keylen_".$algo],
-			array_merge(array('auto' => 'Auto'), $list)
+			['auto' => 'Auto'] + $list
 		));
 	}
 
@@ -723,7 +723,7 @@ print($form);
 //<![CDATA[
 events.push(function(){
 
-    // ---------- On changing "Mode" ----------------------------------------------------------------------------------
+	// ---------- On changing "Mode" ----------------------------------------------------------------------------------
 	function change_mode() {
 
 		value = $('#mode').val();
@@ -745,7 +745,7 @@ events.push(function(){
 		}
 	}
 
-    // ---------- On changing "NAT/BINAT" -----------------------------------------------------------------------------
+	// ---------- On changing "NAT/BINAT" -----------------------------------------------------------------------------
 	function typesel_change_natlocal(bits) {
 		var value = $('#mode').val();
 
@@ -772,11 +772,11 @@ events.push(function(){
 				break;
 			case 1: /* network */
 				disableInput('natlocalid_address', false);
-				
+
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(bits);
 				}
-				
+
 				disableInput('natlocalid_netbits', false);
 				break;
 			case 3: /* none */
@@ -786,17 +786,17 @@ events.push(function(){
 			default:
 				$('#natlocalid_address').val("");
 				disableInput('natlocalid_address', true);
-				
+
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(0);
 				}
-				
+
 				disableInput('natlocalid_netbits', true);
 				break;
 		}
 	}
 
-    // ---------- On changing "Local Network" -------------------------------------------------------------------------
+	// ---------- On changing "Local Network" -------------------------------------------------------------------------
 	function typesel_change_local(bits) {
 		var value = $('#mode').val();
 
@@ -823,11 +823,11 @@ events.push(function(){
 				break;
 			case 1: /* network */
 				disableInput('localid_address', false);
-				
+
 				if (address_is_blank) {
 					$('#localid_netbits').val(bits);
 				}
-				
+
 				disableInput('localid_netbits', false);
 				break;
 			case 3: /* none */
@@ -837,11 +837,11 @@ events.push(function(){
 			default:
 				$('#localid_address').val("");
 				disableInput('localid_address', true);
-				
+
 				if (address_is_blank) {
 					$('#localid_netbits').val(0);
 				}
-				
+
 				disableInput('localid_netbits', true);
 				break;
 		}
@@ -849,7 +849,7 @@ events.push(function(){
 
 <?php
 
-    // ---------- On changing "Remote Network" ------------------------------------------------------------------------
+	// ---------- On changing "Remote Network" ------------------------------------------------------------------------
 	if (!isset($pconfig['mobile'])): ?>
 
 		function typesel_change_remote(bits) {
@@ -879,11 +879,11 @@ events.push(function(){
 					break;
 				case 1: /* network */
 					disableInput('remoteid_address', false);
-					
+
 					if (address_is_blank) {
 						$('#remoteid_netbits').val(bits);
 					}
-					
+
 					disableInput('remoteid_netbits', false);
 					break;
 				case 3: /* none */
@@ -893,11 +893,11 @@ events.push(function(){
 				default:
 					$('#remoteid_address').val("");
 					disableInput('remoteid_address', true);
-					
+
 					if (address_is_blank) {
 						$('#remoteid_netbits').val(0);
 					}
-					
+
 					disableInput('remoteid_netbits', true);
 					break;
 			}
@@ -979,8 +979,8 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-    hideInput('ikeid', true);
-    hideInput('uniqid', true);
+	hideInput('ikeid', true);
+	hideInput('uniqid', true);
 
 	change_mode();
 	change_protocol();

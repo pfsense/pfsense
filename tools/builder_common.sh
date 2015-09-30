@@ -324,35 +324,6 @@ install_default_kernel() {
 	unset KERNEL_NAME
 }
 
-# Items that need to be fixed up that are
-# specific to nanobsd builds
-cust_fixup_nanobsd() {
-	local _NANO_WITH_VGA="${1}"
-
-	echo ">>> Fixing up NanoBSD Specific items..." | tee -a ${LOGFILE}
-
-	echo "nanobsd" > $FINAL_CHROOT_DIR/etc/platform
-
-	local BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
-	local LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
-
-	if [ "${_NANO_WITH_VGA}" = "nanobsd" ]; then
-		# Tell loader to use serial console early.
-		echo "-S115200 -h" >> ${BOOTCONF}
-	fi
-
-	# Remove old console options if present.
-	[ -f "${LOADERCONF}" ] \
-		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial|hint.uart)/d" ${LOADERCONF}
-	# Activate serial console+video console in loader.conf
-	echo 'autoboot_delay="5"' >> ${LOADERCONF}
-	echo 'loader_color="NO"' >> ${LOADERCONF}
-	echo 'beastie_disable="YES"' >> ${LOADERCONF}
-	echo 'boot_serial="YES"' >> ${LOADERCONF}
-	echo 'console="comconsole"' >> ${LOADERCONF}
-	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
-}
-
 # Creates a full update file
 create_Full_update_tarball() {
 	mkdir -p $UPDATESDIR
@@ -563,8 +534,28 @@ create_nanobsd_diskimage () {
 	customize_stagearea_for_image "${1}"
 	install_default_kernel ${DEFAULT_KERNEL} "no"
 
-	# Must be run after customize_stagearea_for_image
-	cust_fixup_nanobsd ${1}
+	echo ">>> Fixing up NanoBSD Specific items..." | tee -a ${LOGFILE}
+
+	echo "nanobsd" > $FINAL_CHROOT_DIR/etc/platform
+
+	local BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
+	local LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
+
+	if [ "${1}" = "nanobsd" ]; then
+		# Tell loader to use serial console early.
+		echo "-S115200 -h" >> ${BOOTCONF}
+	fi
+
+	# Remove old console options if present.
+	[ -f "${LOADERCONF}" ] \
+		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial|hint.uart)/d" ${LOADERCONF}
+	# Activate serial console+video console in loader.conf
+	echo 'autoboot_delay="5"' >> ${LOADERCONF}
+	echo 'loader_color="NO"' >> ${LOADERCONF}
+	echo 'beastie_disable="YES"' >> ${LOADERCONF}
+	echo 'boot_serial="YES"' >> ${LOADERCONF}
+	echo 'console="comconsole"' >> ${LOADERCONF}
+	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 
 	for _NANO_MEDIASIZE in ${2}; do
 		if [ -z "${_NANO_MEDIASIZE}" ]; then

@@ -303,10 +303,13 @@ include("head.inc");
 						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
 <?php
-							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 								echo "V1";
-							else
+							} elseif ($ph1ent['iketype'] == "auto") {
+								echo "Auto";
+							} else {
 								echo "V2";
+							}
 ?>
 							<?=$spane;?>
 						</td>

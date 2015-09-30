@@ -957,6 +957,7 @@
 /usr/share/nls/POSIX/ee.cat
 /usr/share/nls/en_US.US-ASCII/ee.cat
 /usr/share/syscons
+/usr/share/zoneinfo/GMT
 /usr/share/zoneinfo.tgz
 /var/db/dhclient.leases.sis1
 /var/db/rrd/71

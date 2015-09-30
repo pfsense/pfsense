@@ -1113,6 +1113,16 @@ customize_stagearea_for_image() {
 
 	if [ "${1}" = "nanobsd" -o \
 	     "${1}" = "nanobsd-vga" ]; then
+
+		mkdir -p ${FINAL_CHROOT_DIR}/root/var/db \
+			 ${FINAL_CHROOT_DIR}/root/var/cache \
+			 ${FINAL_CHROOT_DIR}/var/db/pkg \
+			 ${FINAL_CHROOT_DIR}/var/cache/pkg
+		mv -f ${FINAL_CHROOT_DIR}/var/db/pkg ${FINAL_CHROOT_DIR}/root/var/db
+		mv -f ${FINAL_CHROOT_DIR}/var/cache/pkg ${FINAL_CHROOT_DIR}/root/var/cache
+		ln -sf ../../root/var/db/pkg ${FINAL_CHROOT_DIR}/var/db/pkg
+		ln -sf ../../root/var/cache/pkg ${FINAL_CHROOT_DIR}/var/cache/pkg
+
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base-nanobsd
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base

@@ -282,13 +282,20 @@
 			if ($this->_dnsVerboseLog) {
 				log_error("DynDNS ({$this->_dnsHost}): DynDns _update() starting.");
 			}
+			
+			if (strstr($this->_dnsRequestIf, "_vip")) {
+				$parentif = link_carp_interface_to_parent($this->_dnsRequestIf);
+				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
+			} else {
+				$realparentif = $this->_dnsRequestIf;
+			}
 
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_HEADER, 0);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $this->_dnsRequestIf);
+				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 

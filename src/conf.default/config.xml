@@ -35,7 +35,6 @@
 		</user>
 		<nextuid>2000</nextuid>
 		<nextgid>2000</nextgid>
-		<timezone>Etc/UTC</timezone>
 		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>

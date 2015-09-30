@@ -535,7 +535,7 @@ function build_interface_list() {
 }
 
 function build_auth_method_list() {
-	global $p1_authentication_methods;
+	global $p1_authentication_methods, $pconfig;
 
 	$list = array();
 

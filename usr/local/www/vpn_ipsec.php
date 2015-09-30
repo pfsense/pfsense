@@ -350,7 +350,7 @@ include("head.inc");
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
 							<?php
-							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1" || $ph1ent['iketype'] == "auto")
 								echo "{$ph1ent['mode']}";
 							?>
 							<?=$spane;?>

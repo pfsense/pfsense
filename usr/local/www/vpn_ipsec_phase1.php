@@ -333,7 +333,7 @@ if ($_POST) {
 	}
 
 	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
-		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
+		$input_errors[] = gettext("IKE type must be v1, v2 or auto");
                 
         if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
             if ($config['system']['crypto_hardware'] == "glxsb") {
@@ -351,7 +351,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
-		if ($pconfig['iketype'] != 'ikev1')
+		if ($pconfig['iketype'] != 'ikev1' && $pconfig['iketype'] != "auto")
 			unset($ph1ent['mode']);
 		else
 			$ph1ent['mode'] = $pconfig['mode'];

@@ -162,7 +162,7 @@ pkg_upgrade_first_step() {
 
 	# XXX find a samrter way to do it
 	l=$(pkg upgrade -nq | wc -l)
-	if [ ${l} -eq 1 ]; then
+	if [ ${l} -le 1 ]; then
 		_echo "Your packages are up to date"
 		_exit 0
 	fi

@@ -218,7 +218,7 @@ if (!$args[0] && !$upgrading) {
 	} while (!empty($merge_repo));
 }
 
-if ($branch == "RESTORE" && $g['platform'] == "pfSense") {
+if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
 	if (!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
 		conf_mount_ro();
@@ -331,7 +331,7 @@ exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf 2>/dev/nu
 
 echo "===> Installing new files...\n";
 
-if ($g['platform'] == "pfSense") {
+if ($g['platform'] == $g['product_name']) {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
 } else {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";

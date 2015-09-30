@@ -474,7 +474,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 
-if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom"))
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom"))
 {
 	$form->add($section);
 	$section = new Form_Section('Serial Communications');

@@ -326,7 +326,7 @@ function conf_mount_rw() {
 	global $g, $config;
 
 	/* do not mount on cdrom platform */
-	if ($g['platform'] == "cdrom" or $g['platform'] == "pfSense") {
+	if ($g['platform'] == "cdrom" or $g['platform'] == $g['product_name']) {
 		return;
 	}
 
@@ -342,7 +342,7 @@ function conf_mount_rw() {
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
-	/*    if the platform is soekris or wrap or pfSense, lets mount the
+	/*    if the platform is soekris or wrap or $product, lets mount the
 	 *    compact flash cards root.
 	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
@@ -367,7 +367,7 @@ function conf_mount_ro() {
 	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
 	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if ($platform == "cdrom" or $platform == "pfSense") {
+	if ($platform == "cdrom" or $platform == $g['product_name']) {
 		return;
 	}
 

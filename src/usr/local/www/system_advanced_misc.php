@@ -536,7 +536,7 @@ $section->addInput(new Form_Checkbox(
 	'use_mfs_tmpvar',
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
-	($pconfig['use_mfs_tmpvar'] || $g['platform'] != "pfSense")
+	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
 ))->setHelp('Set this if you wish to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
 	'cause the data in /tmp and /var to be lost at reboot, including log data. RRD '.

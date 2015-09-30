@@ -1122,7 +1122,7 @@ function is_serial_enabled() {
 
 	if (!isset($g['enableserial_force']) &&
 	    !isset($config['system']['enableserial']) &&
-	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom")) {
+	    ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 		return false;
 	}
 

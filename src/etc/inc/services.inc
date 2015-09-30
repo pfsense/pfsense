@@ -471,7 +471,7 @@ function services_dhcpdv4_configure() {
 			}
 		}
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
 		}
 	}
@@ -1185,7 +1185,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	if (platform_booting()) {
-		if ($g['platform'] != "pfSense") {
+		if ($g['platform'] != $g['product_name']) {
 			/* restore the leases, if we have them */
 			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
 				$dhcprestore = "";

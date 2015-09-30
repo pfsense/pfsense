@@ -183,7 +183,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense") {
+if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 	$section = new Form_Section('GitSync');
 
 	$section->addInput(new Form_Checkbox(

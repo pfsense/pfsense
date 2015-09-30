@@ -331,7 +331,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'disablelocallogging',
 	'Local Logging',
-	$g['platform'] == 'pfSense' ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
+	$g['platform'] == $g['product_name'] ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
 	$pconfig['disablelocallogging']
 ));
 

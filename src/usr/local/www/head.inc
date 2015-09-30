@@ -182,7 +182,7 @@ $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Firmware"), "/system_firmware.php");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
-if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
+if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
 	$system_menu[] = array(gettext("Packages"), "/pkg_mgr_installed.php");
 }
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
@@ -275,7 +275,7 @@ $status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
 $status_menu[] = array(gettext("NTP"), "/status_ntpd.php");
 $status_menu[] = array(gettext("OpenVPN"), "/status_openvpn.php");
 
-if ($g['platform'] == "pfSense") {
+if ($g['platform'] == $g['product_name']) {
 	$status_menu[] = array(gettext("Package Logs"), "/diag_pkglogs.php");
 }
 

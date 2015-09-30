@@ -284,7 +284,7 @@ $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
 	$sourceip,
-	array_merge(array('' => 'Any'), get_possible_traffic_source_addresses(true))
+	['' => 'Any'] + get_possible_traffic_source_addresses(true)
 ))->setHelp('Select source address for the trace');
 
 $section->addInput(new Form_Select(

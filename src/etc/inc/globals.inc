@@ -88,7 +88,8 @@ $g = array(
 	"services_dhcp_server_enable" => true,
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
 	"help_base_url" => "/help.php",
-	"pkg_prefix" => "pfSense-pkg-"
+	"pkg_prefix" => "pfSense-pkg-",
+	"default_timezone" => "Etc/UTC"
 );
 
 /* IP TOS flags */

@@ -72,6 +72,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("system.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
@@ -114,9 +115,7 @@ if ($pconfig['timezone'] <> $_POST['timezone']) {
 	filter_pflog_start(true);
 }
 
-exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
-$timezonelist = array_filter($timezonelist, 'is_timezone');
-sort($timezonelist);
+$timezonelist = system_get_timezone_list();
 
 $multiwan = false;
 $interfaces = get_configured_interface_list();

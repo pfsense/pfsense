@@ -68,6 +68,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
+require_once("system.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -822,9 +823,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				break;
 			case "timezone_select":
-				exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
-				$timezonelist = array_filter($timezonelist, 'is_timezone');
-				sort($timezonelist);
+				$timezonelist = system_get_timezone_list();
 
 				/* kill carriage returns */
 				for ($x = 0; $x < count($timezonelist); $x++) {

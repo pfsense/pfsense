@@ -441,7 +441,7 @@ $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
 
 <!-- Present the pfSense logo -->
-<div style="text-align:center"><p><a href="$ip"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
+<div style="text-align:center"><p><a href="<?=$ip?>"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">

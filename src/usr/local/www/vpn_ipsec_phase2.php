@@ -525,7 +525,7 @@ $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	array_merge(array('address' => 'Address', 'network' => 'Network'), $subnetarray)
+	['address' => 'Address', 'network' => 'Network'] + $subnetarray
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(

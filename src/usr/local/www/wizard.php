@@ -2,32 +2,58 @@
 /* $Id$ */
 /*
 	wizard.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2010 Ermal Luçi
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
@@ -35,7 +61,6 @@
 ##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
 ##|*MATCH=wizard.php*
 ##|-PRIV
-
 
 require("globals.inc");
 require("guiconfig.inc");
@@ -55,6 +80,7 @@ $stepid = htmlspecialchars($_GET['stepid']);
 if (isset($_POST['stepid'])) {
 	$stepid = htmlspecialchars($_POST['stepid']);
 }
+
 if (!$stepid) {
 	$stepid = "0";
 }
@@ -110,6 +136,7 @@ if ($_POST && !$input_errors) {
 			} else {
 				$unset_fields = "";
 			}
+
 			if ($field['arraynum'] != "") {
 				$arraynum = $field['arraynum'];
 			} else {
@@ -127,6 +154,7 @@ if ($_POST && !$input_errors) {
 	if (!$input_errors) {
 		write_config();
 	}
+
 	$stepid++;
 	if ($stepid > $totalsteps) {
 		$stepid = $totalsteps;
@@ -193,10 +221,8 @@ if (file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) {
 } else {
 	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 }
-?>
 
-
-<?php if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
+if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
@@ -318,122 +344,172 @@ events.push(function(){
 </script>
 <?php }
 
-/*
-?>
+function fixup_string($string) {
+	global $config, $g, $myurl, $title;
+	$newstring = $string;
+	// fixup #1: $myurl -> http[s]://ip_address:port/
+	switch ($config['system']['webgui']['protocol']) {
+		case "http":
+			$proto = "http";
+			break;
+		case "https":
+			$proto = "https";
+			break;
+		default:
+			$proto = "http";
+			break;
+	}
+	$port = $config['system']['webgui']['port'];
+	if ($port != "") {
+		if (($port == "443" and $proto != "https") or ($port == "80" and $proto != "http")) {
+			$urlport = ":" . $port;
+		} elseif ($port != "80" and $port != "443") {
+			$urlport = ":" . $port;
+		} else {
+			$urlport = "";
+		}
+	}
 
-<form action="wizard.php" method="post" name="iform" id="iform">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
-<input type="hidden" name="stepid" value="<?= htmlspecialchars($stepid) ?>" />
-
-<center>
-
-&nbsp;<br />
-
-<?php
-*/
-
-	require('classes/Form.class.php');
-
+	$http_host = $_SERVER['SERVER_NAME'];
+	$urlhost = $http_host;
+	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if ($title == "Reload in progress") {
-		$ip = fixup_string("\$myurl");
-	} else {
-		$ip = "/";
-	}
-/*
-	echo "<a href='$ip'>";
-?>
-<img border="0" src="logo-black.png" alt="logo-black" /></a>
-<p>&nbsp;</p>
-<div style="width:800px;background-color:#ffffff" id="roundme">
-<?php
-*/
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-	if ($_GET['message'] != "") {
-		print_info_box(htmlspecialchars($_GET['message']));
-	}
-	if ($_POST['message'] != "") {
-		print_info_box(htmlspecialchars($_POST['message']));
+		if (is_ipaddr($urlhost)) {
+			$host_if = find_ip_interface($urlhost);
+			if ($host_if) {
+				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
+				if ($host_if && is_ipaddr($config['interfaces'][$host_if]['ipaddr'])) {
+					$urlhost = $config['interfaces'][$host_if]['ipaddr'];
+				}
+			}
+		} else if ($urlhost == $config['system']['hostname']) {
+			$urlhost = $config['wizardtemp']['system']['hostname'];
+		} else if ($urlhost == $config['system']['hostname'] . '.' . $config['system']['domain']) {
+			$urlhost = $config['wizardtemp']['system']['hostname'] . '.' . $config['wizardtemp']['system']['domain'];
+		}
 	}
 
-	?> <div style="text-align:center"><p><a href="$ip"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/> <?php
-/*
-?>
-<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2" summary="wizard">
-	<!-- wizard goes here -->
-	<tr><td>&nbsp;</td></tr>
-	<tr>
-		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td colspan="2" align="center"><font size="2"><b><?= fixup_string($description) ?></b></font></td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-				</tr>
-<?php
-	if (!$pkg['step'][$stepid]['disableheader']) {
-		echo "<tr><td colspan=\"2\" class=\"listtopic\">" . fixup_string($title) . "</td></tr>";
+	if ($urlhost != $http_host) {
+		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $http_host . $urlport . $_SERVER['REQUEST_URI']);
 	}
+
+	$myurl = $proto . "://" . $urlhost . $urlport . "/";
+
+	if (strstr($newstring, "\$myurl")) {
+		$newstring = str_replace("\$myurl", $myurl, $newstring);
+	}
+	// fixup #2: $wanip
+	if (strstr($newstring, "\$wanip")) {
+		$curwanip = get_interface_ip();
+		$newstring = str_replace("\$wanip", $curwanip, $newstring);
+	}
+	// fixup #3: $lanip
+	if (strstr($newstring, "\$lanip")) {
+		$lanip = get_interface_ip("lan");
+		$newstring = str_replace("\$lanip", $lanip, $newstring);
+	}
+	// fixup #4: fix'r'up here.
+	return $newstring;
+}
+
+function is_timezone($elt) {
+	return !preg_match("/\/$/", $elt);
+}
+
+require('classes/Form.class.php');
+
+if ($title == "Reload in progress") {
+	$ip = fixup_string("\$myurl");
+} else {
+	$ip = "/";
+}
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
+if ($_GET['message'] != "") {
+	print_info_box(htmlspecialchars($_GET['message']));
+}
+if ($_POST['message'] != "") {
+	print_info_box(htmlspecialchars($_POST['message']));
+}
+
+$completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
-*/
-	$form = new Form(false);
-	$form->addGlobal(new Form_Input(
-		'stepid',
+
+<!-- Present the pfSense logo -->
+<div style="text-align:center"><p><a href="$ip"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
+
+<!-- Draw a progress bar to show step progress -->
+<div class="progress">
+	<div class="progress-bar" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%">
+	</div>
+</div>
+
+<?php
+
+$form = new Form(false);
+
+$form->addGlobal(new Form_Input(
+	'stepid',
+	null,
+	'hidden',
+	$stepid
+));
+
+$form->addGlobal(new Form_Input(
+	'xml',
+	null,
+	'hidden',
+	$xml
+));
+
+$section = new Form_Section(fixup_string($title));
+
+if($description) {
+	$section->addInput(new Form_StaticText(
 		null,
-		'hidden',
-		$stepid
+		fixup_string($description)
 	));
+}
 
-	$section = new Form_Section(fixup_string($title));
+$inputaliases = array();
+if ($pkg['step'][$stepid]['fields']['field'] != "") {
+	foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 
-	if($description) {
-		$section->addInput(new Form_StaticText(
-			null,
-			$description
-		));
-	}
+		$value = $field['value'];
+		$name  = $field['name'];
 
-	$inputaliases = array();
-	if ($pkg['step'][$stepid]['fields']['field'] != "") {
-		foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
+		$name = preg_replace("/\s+/", "", $name);
+		$name = strtolower($name);
 
-			$value = $field['value'];
-			$name  = $field['name'];
-
-			$name = preg_replace("/\s+/", "", $name);
-			$name = strtolower($name);
-
-			if ($field['bindstofield'] != "") {
-				$arraynum = "";
-				$field_conv = "";
-				$field_split = explode("->", $field['bindstofield']);
-				// arraynum is used in cases where there is an array of the same field
-				// name such as dnsserver (2 of them)
-				if ($field['arraynum'] != "") {
-					$arraynum = "[" . $field['arraynum'] . "]";
-				}
-				foreach ($field_split as $f) {
-					$field_conv .= "['" . $f . "']";
-				}
-				if ($field['type'] == "checkbox") {
-					$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
-				} else {
-					$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
-				}
-
-				eval($toeval);
+		if ($field['bindstofield'] != "") {
+			$arraynum = "";
+			$field_conv = "";
+			$field_split = explode("->", $field['bindstofield']);
+			// arraynum is used in cases where there is an array of the same field
+			// name such as dnsserver (2 of them)
+			if ($field['arraynum'] != "") {
+				$arraynum = "[" . $field['arraynum'] . "]";
 			}
-/*
-			if (!$field['combinefieldsend']) {
-				echo "<tr>";
+
+			foreach ($field_split as $f) {
+				$field_conv .= "['" . $f . "']";
 			}
-*/
-			switch ($field['type']) {
+
+			if ($field['type'] == "checkbox") {
+				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
+			} else {
+				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
+			}
+
+			eval($toeval);
+		}
+
+		switch ($field['type']) {
 			case "input":
 				if ($field['displayname']) {
 					$etitle = $field['displayname'];
@@ -442,31 +518,13 @@ events.push(function(){
 					$etitle =  fixup_string($field['name']);
 				}
 
-				if (!$field['dontcombinecells']) {
-//					echo "<td class=\"vtable\">\n";
-				}
-
-/*
-				echo "<input class='formfld unknown' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
-				if ($field['size']) {
-					echo " size='" . $field['size'] . "' ";
-				}
-				if ($field['validate']) {
-					echo " onchange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
-				}
-				echo " />\n";
-
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				$section->addInput(new Form_Input(
 					$name,
 					$etitle,
 					'text',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'onchange=\'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
 
 				break;
 			case "text":
@@ -474,70 +532,60 @@ events.push(function(){
 					null,
 					$field['description']
 				));
-/*
-				echo "<td colspan=\"2\" align=\"center\" class=\"vncell\">\n";
-				if ($field['description'] != "") {
-					echo "<center><br /> " . $field['description'] . "</center>";
-				}
-*/
+
 				break;
 			case "inputalias":
 				if ($field['displayname']) {
-					echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-					echo $field['displayname'];
-					echo ":</td>\n";
+					$etitle = $field['displayname'];
+
 				} else if (!$field['dontdisplayname']) {
-					echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-					echo fixup_string($field['name']);
-					echo ":</td>\n";
-				}
-				if (!$field['dontcombinecells']) {
-					echo "<td class=\"vtable\">\n";
+					$etitle =  fixup_string($field['name']);
 				}
 
-				$inputaliases[] = $name;
-				echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
-				if ($field['size']) {
-					echo " size='" . $field['size'] . "' ";
-				}
+				$onchange = "";
+
 				if ($field['validate']) {
-					echo " onchange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+					$onchange="FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
 				}
-				echo " />\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
+				$section->addInput(new Form_Input(
+					$name,
+					$etitle,
+					'text',
+					$value
+				))->setAttribute('autocomplete', 'off')
+				  ->setOnchange($onchange)
+				  ->setHelp($field['description']);
+
 				break;
 			case "interfaces_selection":
 			case "interface_select":
-				$size = "";
-				$multiple = "";
+
 				$name = strtolower($name);
-				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo fixup_string($field['displayname'] ? $field['displayname'] : $field['name']) . ":\n";
-				echo "</td>";
-				echo "<td class=\"vtable\">\n";
-				if ($field['size'] != "") {
-					$size = "size=\"{$field['size']}\"";
-				}
-				if ($field['multiple'] != "" and $field['multiple'] != "0") {
-					$multiple = "multiple=\"multiple\"";
-					$name .= "[]";
-				}
-				echo "<select class='formselect' id='{$name}' name='{$name}' {$size} {$multiple}>\n";
+				$options = array();
+				$selected = array();
+
+				$etitle = (fixup_string($field['displayname'])) ? $field['displayname'] : $field['name'];
+
+				if (($field['multiple'] != "") && ($field['multiple'] != "0"))
+					$multiple = true;
+				else
+					$multiple = false;
+
 				if ($field['add_to_interfaces_selection'] != "") {
-					$SELECTED = "";
 					if ($field['add_to_interfaces_selection'] == $value) {
-						$SELECTED = " selected=\"selected\"";
+						array_push($selected, $value);
 					}
-					echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
+
+					$options[$field['add_to_interfaces_selection']] = $field['add_to_interfaces_selection'];
 				}
+
 				if ($field['type'] == "interface_select") {
 					$interfaces = get_interface_list();
 				} else {
 					$interfaces = get_configured_interface_with_descr();
 				}
+
 				foreach ($interfaces as $ifname => $iface) {
 					if ($field['type'] == "interface_select") {
 						$iface = $ifname;
@@ -545,10 +593,10 @@ events.push(function(){
 							$iface .= " ({$iface['mac']})";
 						}
 					}
-					$SELECTED = "";
-					if ($value == $ifname) $SELECTED = " selected=\"selected\"";
-					$to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";
-					$to_echo .= "<!-- {$value} -->";
+
+					if ($value == $ifname)
+						array_push($selected, $value);
+
 					$canecho = 0;
 					if ($field['interface_filter'] != "") {
 						if (stristr($ifname, $field['interface_filter']) == true) {
@@ -557,15 +605,19 @@ events.push(function(){
 					} else {
 						$canecho = 1;
 					}
+
 					if ($canecho == 1) {
-						echo $to_echo;
+						$options[$ifname] = $iface;
 					}
 				}
-				echo "</select>\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
+				$section->addInput(new Form_Select(
+					$name,
+					$etitle,
+					($multiple) ? $selected:$selected[0],
+					$options,
+					$multiple
+				))->setHelp($field['description']);
 
 				break;
 			case "password":
@@ -575,54 +627,37 @@ events.push(function(){
 					$etitle =  fixup_string($field['name']);
 				}
 
-				if (!$field['dontcombinecells']) {
-					//echo "<td class=\"vtable\">";
-				}
-
 				$section->addInput(new Form_Input(
 					$name,
 					$etitle,
 					'password',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'onchange=\'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
-/*
-				echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\" type='password' ";
-				if ($field['size']) {
-					echo " size='" . $field['size'] . "' ";
-				}
-				echo " />\n";
+				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				break;
 			case "certca_selection":
-				$size = "";
-				$multiple = "";
+				$options = array();
+				$selected = "";
+
 				$name = strtolower($name);
-				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo fixup_string($field['displayname'] ? $field['displayname'] : $field['name']) . ":\n";
-				echo "</td>";
-				echo "<td class=\"vtable\">\n";
-				if ($field['size'] != "") {
-					$size = "size=\"{$field['size']}\"";
-				}
-				echo "<select id='{$name}' name='{$name}' {$size}>\n";
+
+				$etitle = (fixup_string($field['displayname']) ? $field['displayname'] : $field['name']);
+
 				if ($field['add_to_certca_selection'] != "") {
-					$SELECTED = "";
 					if ($field['add_to_certca_selection'] == $value) {
-						$SELECTED = " selected=\"selected\"";
+						$selected = $value;
 					}
-					echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
+
+					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
+
 				foreach ($config['ca'] as $ca) {
 					$name = htmlspecialchars($ca['descr']);
-					$SELECTED = "";
-					if ($value == $name) $SELECTED = " selected=\"selected\"";
-					$to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
-					$to_echo .= "<!-- {$value} -->";
+
+					if ($value == $name)
+						$selected = $value;
+
 					$canecho = 0;
 					if ($field['certca_filter'] != "") {
 						if (stristr($name, $field['certca_filter']) == true) {
@@ -632,46 +667,49 @@ events.push(function(){
 						$canecho = 1;
 					}
 					if ($canecho == 1) {
-						echo $to_echo;
+						$options[$ca['refid']] = $name;
 					}
 				}
-				echo "</select>\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
+				$section->addInput(new Form_Select(
+					$name,
+					$etitle,
+					$selected,
+					$options
+				))->setHelp($field['description']);
 
 				break;
 			case "cert_selection":
-				$size = "";
-				$multiple = "";
+				$options = array();
+				$selected = array();
+
+				$multiple = false;
 				$name = strtolower($name);
-				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo fixup_string($field['displayname'] ? $field['displayname'] : $field['name']) . ":\n";
-				echo "</td>";
-				echo "<td class=\"vtable\">\n";
-				if ($field['size'] != "") {
-					$size = "size=\"{$field['size']}\"";
-				}
+
+				$etitle = (fixup_string($field['displayname']) ? $field['displayname'] : $field['name']);
+
 				echo "<select id='{$name}' name='{$name}' {$size}>\n";
+
 				if ($field['add_to_cert_selection'] != "") {
-					$SELECTED = "";
 					if ($field['add_to_cert_selection'] == $value) {
-						$SELECTED = " selected=\"selected\"";
+						array_push($selected, $value);
 					}
-					echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
+
+					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
 				}
+
 				foreach ($config['cert'] as $ca) {
 					if (stristr($ca['descr'], "webconf")) {
 						continue;
 					}
+
 					$name = htmlspecialchars($ca['descr']);
-					$SELECTED = "";
+
 					if ($value == $name) {
-						$SELECTED = " selected=\"selected\"";
+						array_push($selected, $value);
 					}
-					$to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
-					$to_echo .= "<!-- {$value} -->";
+
+
 					$canecho = 0;
 					if ($field['cert_filter'] != "") {
 						if (stristr($name, $field['cert_filter']) == true) {
@@ -680,15 +718,19 @@ events.push(function(){
 					} else {
 						$canecho = 1;
 					}
+
 					if ($canecho == 1) {
-						echo $to_echo;
+						$options[$ca['refid']] = $name;
 					}
 				}
-				echo "</select>\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
+				$section->addInput(new Form_Select(
+					$name,
+					$etitle,
+					($multiple) ? $selected:$selected[0],
+					$options,
+					$multiple
+				))->setHelp($field['description']);
 
 				break;
 			case "select":
@@ -704,18 +746,12 @@ events.push(function(){
 
 				$multiple = ($field['multiple'] == "yes");
 
-				if (!$field['dontcombinecells']) {
-//					echo "<td class=\"vtable\">\n";
-				}
-
 				$onchange = "";
 				foreach ($field['options']['option'] as $opt) {
 					if ($opt['enablefields'] != "") {
 						$onchange = "Javascript:enableitems(this.selectedIndex);";
 					}
 				}
-
-//				echo "<select class='formselect' " . $onchange . $multiple . $size . "id='" . $name . "' name='" . $name . "'>\n";
 
 				$options = array();
 				$selected = array();
@@ -724,7 +760,6 @@ events.push(function(){
 					if ($value == $opt['value']) {
 						array_push($selected, $value);
 					}
-//					echo "\t<option value='" . $opt['value'] . "'" . $selected . ">";
 
 					if ($opt['displayname']) {
 						$options[$opt['value']] = $opt['displayname'];
@@ -732,11 +767,7 @@ events.push(function(){
 						$options[$opt['value']] = $opt['name'];
 					}
 
-//					echo "</option>\n";
 				}
-
-//				echo "</select>\n";
-//				echo "<!-- {$value} -->\n";
 
 				$section->addInput(new Form_Select(
 					$name,
@@ -746,10 +777,6 @@ events.push(function(){
 					$multiple
 				))->setHelp($field['description'])->setOnchange($onchange);
 
-//				if ($field['description'] != "") {
-//					echo $field['description'];
-//				}
-
 				break;
 			case "textarea":
 				if ($field['displayname']) {
@@ -758,54 +785,25 @@ events.push(function(){
 					$etitle =  fixup_string($field['name']);
 				}
 
-				if (!$field['dontcombinecells']) {
-					//echo "<td class=\"vtable\">";
-				}
-
 				$section->addInput(new Form_TextArea(
 					$name,
 					$etitle,
 					$value
 				))->setHelp($field['description'])
 				  ->setAttribute('rows', $field['rows'])
-				  ->setOnchange(($field['validate']) ? 'onchange=\'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
-/*
-				echo "<textarea class='formpre' id='" . $name . "' name='" . $name . "'";
-				if ($field['rows']) {
-					echo " rows='" . $field['rows'] . "' ";
-				}
-				if ($field['cols']) {
-					echo " cols='" . $field['cols'] . "' ";
-				}
-				echo ">" . $value . "</textarea>\n";
+				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
 
-
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				break;
 			case "submit":
 				$form->addGlobal(new Form_Button(
 					$name,
 					$field['name']
 				));
-/*
-				echo "<td>&nbsp;<br /></td></tr>";
-				echo "<tr><td colspan=\"2\" align=\"center\">";
-				echo "<input type='submit' class='btn btn-primary' name='" . $name . "' value=\"" . htmlspecialchars($field['name']) . "\" />\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				break;
 			case "listtopic":
 				$form->add($section);
 				$section = new Form_Section($field['name']);
-
-//				echo "<td>&nbsp;</td></tr>";
-//				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br />\n";
 
 				break;
 			case "subnet_select":
@@ -815,10 +813,6 @@ events.push(function(){
 					$etitle =  fixup_string($field['name']);
 				}
 
-				if (!$field['dontcombinecells']) {
-//					echo "<td class=\"vtable\">";
-				}
-
 				$section->addInput(new Form_Select(
 					$name,
 					$etitle,
@@ -826,22 +820,6 @@ events.push(function(){
 					array_combine(range(32, 1, -1), range(32, 1, -1))
 				))->setHelp($field['description']);
 
-/*				echo "<select class='formselect' name='{$name}'>\n";
-				for ($x=1; $x<33; $x++) {
-					$CHECKED = "";
-					if ($value == $x) {
-						$CHECKED = " selected=\"selected\"";
-					}
-					if ($x != 31) {
-						echo "<option value='{$x}' {$CHECKED}>{$x}</option>\n";
-					}
-				}
-				echo "</select>\n";
-
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				break;
 			case "timezone_select":
 				exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
@@ -863,37 +841,13 @@ events.push(function(){
 					//echo "<td class=\"vtable\">";
 				}
 
-				if (!$field['dontcombinecells']) {
-//					echo "<td class=\"vtable\">";
-				}
-
-
 				$section->addInput(new Form_Select(
 					$name,
 					$etitle,
 					$value,
 					array_combine($timezonelist, $timezonelist)
 				))->setHelp($field['description']);
-/*
-				echo "<select class='formselect' name='{$name}'>\n";
-				foreach ($timezonelist as $tz) {
-					if (strstr($tz, "GMT")) {
-						continue;
-					}
-					$SELECTED = "";
-					if ($value == $tz) {
-						$SELECTED = " selected=\"selected\"";
-					}
-					echo "<option value=\"" . htmlspecialchars($tz) . "\" {$SELECTED}>";
-					echo htmlspecialchars($tz);
-					echo "</option>\n";
-				}
-				echo "</select>\n";
 
-				if ($field['description'] != "") {
-					echo "<br /> " . $field['description'];
-				}
-*/
 				break;
 			case "checkbox":
 				if ($field['displayname']) {
@@ -918,40 +872,13 @@ events.push(function(){
 				))->setHelp($field['description'])
 				  ->setOnclick($onclick);
 
-/*
-				echo "<td class=\"vtable\"><input value=\"on\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
-
-
-				echo " />\n";
-
-				if ($field['description'] != "") {
-					echo $field['description'];
-				}
-*/
 				break;
-			}
+		} // e-o-switch
+	} // e-o-foreach(package)
+} // e-o- if(we have fields)
 
-/*
-			if ($field['typehint'] != "") {
-				echo $field['typehint'];
-			}
-
-			if ($field['warning'] != "") {
-				echo "<br /><b><font color=\"red\">" . $field['warning'] . "</font></b>";
-			}
-
-			if (!$field['combinefieldsbegin']) {
-				if (!$field['dontcombinecells']) {
-					echo "</td>";
-				}
-
-				echo "</tr>\n";
-			}
-*/
-		}
-	$form->add($section);
-	print($form);
-	}
+$form->add($section);
+print($form);
 ?>
 
 <script type="text/javascript">
@@ -987,14 +914,16 @@ events.push(function(){
 
 		window.onload = function () {
 
-	<?php
+<?php
 		$counter = 0;
 		foreach ($inputaliases as $alias) {
-			echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(customarray));\n";
-			$counter++;
+?>
+			$('#' + '<?php echo $alias; ?>').autocomplete({
+				source: customarray
+			});
+<?php
 		}
-	?>
-
+?>
 	}
 });
 //]]>
@@ -1055,12 +984,9 @@ if ($pkg['step'][$stepid]['disableallfieldsbydefault'] != "") {
 
 <script type="text/javascript">
 //<![CDATA[
-NiftyCheck();
-var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
-Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
-enablechange();
-disablechange();
-showchange();
+	enablechange();
+	disablechange();
+	showchange();
 //]]>
 </script>
 
@@ -1079,79 +1005,4 @@ if ($pkg['step'][$stepid]['javascriptafterformdisplay'] != "") {
 	echo "</script>\n\n";
 }
 
-/*
- *	HELPER FUNCTIONS
- */
-
-function fixup_string($string) {
-	global $config, $g, $myurl, $title;
-	$newstring = $string;
-	// fixup #1: $myurl -> http[s]://ip_address:port/
-	switch ($config['system']['webgui']['protocol']) {
-		case "http":
-			$proto = "http";
-			break;
-		case "https":
-			$proto = "https";
-			break;
-		default:
-			$proto = "http";
-			break;
-	}
-	$port = $config['system']['webgui']['port'];
-	if ($port != "") {
-		if (($port == "443" and $proto != "https") or ($port == "80" and $proto != "http")) {
-			$urlport = ":" . $port;
-		} elseif ($port != "80" and $port != "443") {
-			$urlport = ":" . $port;
-		} else {
-			$urlport = "";
-		}
-	}
-	$http_host = $_SERVER['SERVER_NAME'];
-	$urlhost = $http_host;
-	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
-	if ($title == "Reload in progress") {
-		if (is_ipaddr($urlhost)) {
-			$host_if = find_ip_interface($urlhost);
-			if ($host_if) {
-				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
-				if ($host_if && is_ipaddr($config['interfaces'][$host_if]['ipaddr'])) {
-					$urlhost = $config['interfaces'][$host_if]['ipaddr'];
-				}
-			}
-		} else if ($urlhost == $config['system']['hostname']) {
-			$urlhost = $config['wizardtemp']['system']['hostname'];
-		} else if ($urlhost == $config['system']['hostname'] . '.' . $config['system']['domain']) {
-			$urlhost = $config['wizardtemp']['system']['hostname'] . '.' . $config['wizardtemp']['system']['domain'];
-		}
-	}
-	if ($urlhost != $http_host) {
-		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $http_host . $urlport . $_SERVER['REQUEST_URI']);
-	}
-	$myurl = $proto . "://" . $urlhost . $urlport . "/";
-
-	if (strstr($newstring, "\$myurl")) {
-		$newstring = str_replace("\$myurl", $myurl, $newstring);
-	}
-	// fixup #2: $wanip
-	if (strstr($newstring, "\$wanip")) {
-		$curwanip = get_interface_ip();
-		$newstring = str_replace("\$wanip", $curwanip, $newstring);
-	}
-	// fixup #3: $lanip
-	if (strstr($newstring, "\$lanip")) {
-		$lanip = get_interface_ip("lan");
-		$newstring = str_replace("\$lanip", $lanip, $newstring);
-	}
-	// fixup #4: fix'r'up here.
-	return $newstring;
-}
-
-function is_timezone($elt) {
-	return !preg_match("/\/$/", $elt);
-}
-
 include("foot.inc");
-
-

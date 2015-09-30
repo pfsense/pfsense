@@ -178,6 +178,10 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
+elif [ "${PLATFORM}" = "nanobsd" ]; then
+	/bin/mkdir -p /var/db /var/cache
+	ln -sf ../../root/var/db/pkg /var/db/pkg
+	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

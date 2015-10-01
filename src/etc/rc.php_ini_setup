@@ -165,8 +165,25 @@ if [ -f /usr/local/lib/php.ini ]; then
 fi
 LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\["`
 
-# Fetch the timezone from the XML and set it here. We set it later too in the running scripts
-TIMEZONE=`cat /conf/config.xml | egrep -E '<timezone>(.*?)</timezone>' | awk -F'>' '{print $2}'|awk -F'<' '{print $1}'`
+# Fetch the timezone from /var/db/zoneinfo if present
+if [ -f /var/db/zoneinfo ]; then
+	TIMEZONE=$(cat /var/db/zoneinfo)
+# Second option is from config.xml
+elif grep -q '<timezone>' /cf/conf/config.xml; then
+	TIMEZONE=$(/usr/bin/sed -E \
+		'/<timezone>/!d; s,^.*<timezone>,,; s,<.*,,' \
+		/cf/conf/config.xml)
+# Last option, use default value
+else
+	globals_inc="/etc/inc/globals.inc"
+	if [ -f /etc/inc/globals_override.inc ]; then
+		globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
+	fi
+	TIMEZONE=$(cat ${globals_inc} | \
+		grep default_timezone | \
+		head -n 1 | \
+		sed 's/^.*=>* *//; s/["\;,]*//g')
+fi
 
 # Get a loaded module list in the stock php
 # Populate a dummy php.ini to avoid

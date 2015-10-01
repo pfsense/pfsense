@@ -692,6 +692,9 @@ EOD;
 			if ($key['ident'] == "allusers") {
 				$key['ident'] = '%any';
 			}
+			if ($key['ident'] == "any") {
+				$key['ident'] = '%any';
+			}
 			if (empty($key['type'])) {
 				$key['type'] = 'PSK';
 			}

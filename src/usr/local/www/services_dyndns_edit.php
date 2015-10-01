@@ -393,23 +393,6 @@ print($form);
 <script>
 //<![CDATA[
 events.push(function(){
-	var visible = false;
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
 
 	function setVisible(service) {
 		switch(service) {

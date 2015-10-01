@@ -3624,38 +3624,6 @@ events.push(function(){
 		});
 	}
 
-	// Hides all elements of the specified class. This will usually be a section
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
-	function hideIpAddress(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
 	function show_dhcp6adv() {
 		var ovr = $('#adv_dhcp6_config_file_override').prop('checked');
 		var adv = $('#dhcp6adv').prop('checked');

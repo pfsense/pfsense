@@ -1146,44 +1146,6 @@ print_info_box(gettext('Warning:' . '<br />' . 'Don\'t forget to enable the DHCP
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
-	//---------- "Standard" show/hide functions ---------------------------------------------------
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	// Hides all elements of the specified class belonging to a multiselect.
-	function hideMultiClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).parent().parent().hide();
-		else
-			$('.' + s_class).parent().parent().show();
-	}
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
 	function hideSections(hide) {

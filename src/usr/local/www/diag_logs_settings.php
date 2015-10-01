@@ -189,9 +189,9 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-		    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
+			($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+			($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+			($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 			$retval |= filter_configure();
 		}
 
@@ -462,7 +462,7 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['hostapd']
 ));
 
-// Ugly hack to prevent the "Toggle all" button from being automatically
+// Ugly hack to prevent the "Toggle all" button from being automatically created
 $group->add(new Form_MultiCheckbox(
 	'notoggleall',
 	null,
@@ -477,40 +477,27 @@ $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote 
 $section->add($group);
 
 $form->add($section);
+
 print $form;
 ?>
 <script>
 //<![CDATA[
 events.push(function(){
 
-	function hideSelect(id, hide) {
-		if(hide)
-			$('#' + id).parent('div').parent('div').addClass('hidden');
-		else
-			$('#' + id).parent('div').parent('div').removeClass('hidden');
-	}
+	hideMultiCheckbox('notoggleall', true);
 
-	//---------- "Standard" show/hide functions ---------------------------------------------------
-	
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
+	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().addClass('hidden');
-		else
-			$('#' + id).parent().removeClass('hidden');
-	}
+	$('#logall').click(function () {
+		disableEverything();
+	});
 
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	hideInput('notoggleall', true);
+	 $('#enable').click(function () {
+		hideClass('remotelogging', !this.checked);
+		hideSelect('sourceip', !this.checked);
+		hideSelect('ipproto', !this.checked);
+		hideMultiCheckbox('notoggleall', true);
+	});
 
 	function disableEverything() {
 		var hide = $('#logall').prop('checked');
@@ -525,21 +512,8 @@ events.push(function(){
 		disableInput('hostapd', hide);
 	}
 
-	// ---------- Click checkbox handlers ---------------------------------------------------------
-
-	$('#logall').click(function () {
-		disableEverything();
-	});
-
-	 $('#enable').click(function () {
-		hideClass('remotelogging', !this.checked);
-		hideSelect('sourceip', !this.checked);
-		hideSelect('ipproto', !this.checked);
-	});
-
 	// ---------- On initial page load ------------------------------------------------------------
 
-	disableEverything();
 	hideClass('remotelogging', !$('#enable').prop('checked'));
 	hideSelect('sourceip', !$('#enable').prop('checked'));
 	hideSelect('ipproto', !$('#enable').prop('checked'));
@@ -548,4 +522,5 @@ events.push(function(){
 </script>
 
 <?php
+
 include("foot.inc");

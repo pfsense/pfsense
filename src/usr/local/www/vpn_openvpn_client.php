@@ -926,49 +926,6 @@ events.push(function(){
 		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}
 
-	// ---------- Library of show/hide functions ----------------------------------------------------------------------
-
-	// Hides div whose label contains the specified text. (Good for StaticText)
-	function hideLabel(text, hide) {
-		var element = $('label:contains(' + text + ')');
-
-		if(hide)
-			element.parent('div').addClass('hidden');
-		else
-			element.parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified input element lives so that the input,
-	// its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox,
-	// its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	 // TLS Authorization

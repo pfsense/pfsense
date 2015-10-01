@@ -663,33 +663,9 @@ print($form);
 <script>
 //<![CDATA[
 events.push(function(){
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified icheckbox lives so that the input, its label and help text are hidden
-	// Checkboxes live inside <label></label> tags so we need another parent level
-	function hideCheckBox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
 
 	function hideDDNS(hide) {
-		hideCheckBox('ddnsupdate', hide);
+		hideCheckbox('ddnsupdate', hide);
 		hideInput('ddnsdomain', hide);
 		hideInput('ddnsdomainprimary', hide);
 		hideInput('ddnsdomainkeyname', hide);

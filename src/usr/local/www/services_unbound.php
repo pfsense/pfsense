@@ -353,20 +353,8 @@ print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
 <script>
 //<![CDATA[
 events.push(function(){
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
 
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	// If hte enable checkbox is not checked, disable the next three checkboxes
+	// If the enable checkbox is not checked, disable the next three checkboxes
 	function disableDHCP() {
 		var hide = ! $('#enable').prop('checked');
 

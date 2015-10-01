@@ -565,33 +565,6 @@ if($act=="new" || $act=="edit"):
 <script>
 //<![CDATA[
 events.push(function(){
-	var visible = false;
-
-	//---------- "Standard" show/hide functions ---------------------------------------------------	
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
 
 	// Hide/show that section, but have to also respect the wins_server_enable checkbox
 	function setNetbios() {

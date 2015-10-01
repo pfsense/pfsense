@@ -559,9 +559,9 @@ function gentitle($title) {
 
 function genhtmltitle($title) {
 	if (!is_array($title))
-		return '<h1 class="page-header">' . $title . '</h1>';
+		return '<h1 class="page-header"><a href="#">' . $title . '</a></h1>';
 
-	$heading = '<h1 class="page-header">' . end($title) . '</h1>';
+	$heading = '<h1 class="page-header"><a href="#">' . end($title) . '</a></h1>';
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else

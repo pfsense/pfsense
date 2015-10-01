@@ -23,5 +23,6 @@
 	<script src="/jquery/jquery-ui-1.11.2.min.js"></script>
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>
+	<script src="/jquery/pfSenseHelpers.js"></script>
 </body>
 </html>

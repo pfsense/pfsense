@@ -720,9 +720,9 @@ while ($counter < count($addresses)) {
 	$counter++;
 }
 
-$section->addInput(new Form_Button(
+$form->addGlobal(new Form_Button(
 	'addrow',
-	'Add'
+	'Add host'
 ))->removeClass('btn-primary')->addClass('btn-success');
 
 $form->add($section);

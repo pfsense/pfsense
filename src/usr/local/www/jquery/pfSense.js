@@ -126,7 +126,7 @@ $(function() {
 		var msg = $.trim(this.textContent);
 		
 		if(!msg)
-			var msg = $.trim(this.value);
+			var msg = $.trim(this.value).toLowerCase();
 			
 		var q = 'Are you sure you wish to '+ msg +'?';
 

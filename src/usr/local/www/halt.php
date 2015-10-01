@@ -101,13 +101,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		<h2 class="panel-title">Are you sure you want to halt the system?</h2>
 	</div>
 	<div class="panel-body">
-		<p>Click "Halt" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)</p>
-		<form action="halt.php" method="post">
-			<input type="submit" class="btn btn-danger pull-center" name="save" value="Halt">
-			<a href="/" class="btn btn-default">No</a>
-		</form>
+		<div class="content">
+			<p>Click "Halt" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)</p>
+			<form action="halt.php" method="post">
+				<input type="submit" class="btn btn-danger pull-center" name="save" value="Halt">
+				<a href="/" class="btn btn-default">No</a>
+			</form>
+		</div>
 	</div>
 </div>
+
+
 
 <?php
 }

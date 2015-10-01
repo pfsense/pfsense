@@ -86,6 +86,10 @@ tr.disabled th {
 	padding: 10px 15px
 }
 
+.content {
+	padding: 10px;
+}
+
 .form-horizontal {
 	margin-bottom: 10px;
 	overflow: hidden;

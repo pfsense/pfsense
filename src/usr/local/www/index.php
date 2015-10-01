@@ -286,11 +286,15 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Available Widgets"); ?></h2></div>
 	<div class="panel-body">
+		<div class="content">
+			<div class="row">
 <?php foreach ($widgets as $widgetname => $widgetconfig): ?>
 	<?php if ($widgetconfig['display'] == 'none'): ?>
 		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
+			</div>
+		</div>
 	</div>
 </div>
 

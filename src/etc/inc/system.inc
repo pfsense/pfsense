@@ -1526,7 +1526,7 @@ function system_timezone_configure() {
 	/* extract appropriate timezone file */
 	$timezone = (isset($syscfg['timezone']) ? $syscfg['timezone'] : $g['default_timezone']);
 	conf_mount_rw();
-	/* DO NOT remove \n otherwise tzseup will fail */
+	/* DO NOT remove \n otherwise tzsetup will fail */
 	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
 	mwexec("/usr/sbin/tzsetup -r");
 	conf_mount_ro();

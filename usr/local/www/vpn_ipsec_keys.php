@@ -196,7 +196,7 @@ if (is_subsystem_dirty('ipsec'))
 			<span class="red">
 				<strong><?=gettext("Note"); ?>:<br /></strong>
 			</span>
-			<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
+			<?=gettext("PSK for any user can be set by using an identifier of any");?>
 			</span>
 			</p>
 		</td>

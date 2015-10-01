@@ -280,8 +280,8 @@ if ($_POST) {
 			unset($config['system']['use_mfs_tmpvar']);
 		}
 
-		$config['system']['use_mfs_tmp_size'] = $_POST['-tmp-ram-disk-size'];
-		$config['system']['use_mfs_var_size'] = $_POST['-var-ram-disk-size'];
+		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
+		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
 
 		if (isset($_POST['rrdbackup'])) {
 			$config['system']['rrdbackup'] = $_POST['rrdbackup'];

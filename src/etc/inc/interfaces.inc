@@ -4540,6 +4540,20 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 	}
 
 	if (empty($parents)) {
+		// Handle _vlans not assigned to an interface
+		if (strpos($realif, '_vlan') !== FALSE) {
+			if (is_array($config['vlans']['vlan'])) {
+				foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
+					if ($realif == $vlan['vlanif']) {
+						$parents[0] = $vlan['if'];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (empty($parents)) {
 		$parents[0] = $realif;
 	}
 

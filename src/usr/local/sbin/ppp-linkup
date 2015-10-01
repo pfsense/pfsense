@@ -2,6 +2,8 @@
 
 export PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
 
+DNSALLOWOVERRIDE=$(/usr/local/sbin/read_xml_tag.sh boolean system/dnsallowoverride)
+
 if [ "${2}" == "inet" ]; then
 
 	OLD_ROUTER=`cat /tmp/${1}_router`
@@ -16,7 +18,7 @@ if [ "${2}" == "inet" ]; then
 	echo ${3} > /tmp/${1}_ip
 	touch /tmp/${1}up
 
-	if grep -q dnsallowoverride /conf/config.xml; then
+	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file
 		echo -n "" > /var/etc/nameserver_${1}
 		if echo "${6}" | grep -q dns1; then
@@ -40,7 +42,7 @@ elif [ "${2}" == "inet6" ]; then
 	echo ${3} |cut -d% -f1 > /tmp/${1}_ipv6
 	touch /tmp/${1}upv6
 
-	if grep -q dnsallowoverride /conf/config.xml; then
+	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file
 		echo -n "" > /var/etc/nameserver_v6${1}
 		if echo "${6}" | grep -q dns1; then

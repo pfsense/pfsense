@@ -165,16 +165,19 @@ if [ -f /usr/local/lib/php.ini ]; then
 fi
 LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\["`
 
+unset TIMEZONE
 # Fetch the timezone from /var/db/zoneinfo if present
 if [ -f /var/db/zoneinfo ]; then
 	TIMEZONE=$(cat /var/db/zoneinfo)
-# Second option is from config.xml
-elif grep -q '<timezone>' /cf/conf/config.xml; then
-	TIMEZONE=$(/usr/bin/sed -E \
-		'/<timezone>/!d; s,^.*<timezone>,,; s,<.*,,' \
-		/cf/conf/config.xml)
-# Last option, use default value
-else
+fi
+
+if [ -z "${TIMEZONE}" ]; then
+	# Second option is from config.xml
+	TIMEZONE=$(/usr/local/sbin/read_xml_tag.sh string system/timezone)
+fi
+
+if [ -z "${TIMEZONE}" ]; then
+	# Last option, use default value
 	globals_inc="/etc/inc/globals.inc"
 	if [ -f /etc/inc/globals_override.inc ]; then
 		globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
@@ -183,6 +186,11 @@ else
 		grep default_timezone | \
 		head -n 1 | \
 		sed 's/^.*=>* *//; s/["\;,]*//g')
+fi
+
+if [ -z "${TIMEZONE}" ]; then
+	# It it's still blank, lets avoid PHP errors
+	TIMEZONE="Etc/UTC"
 fi
 
 # Get a loaded module list in the stock php

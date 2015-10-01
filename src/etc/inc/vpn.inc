@@ -923,8 +923,12 @@ EOD;
 			}
 
 			$rightsourceip = NULL;
-			if (isset($ph1ent['mobile']) && !empty($a_client['pool_address'])) {
-				$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+			if (isset($ph1ent['mobile'])) {
+				if (!empty($a_client['pool_address'])) {
+					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+				} elseif ($ph1ent['authentication_method'] == "eap-radius") {
+					$rightsourceip = "\trightsourceip = %radius\n";
+				}
 			}
 
 			$authentication = "";

@@ -143,7 +143,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		if ($ifinfo['macaddr']) {
 			$mac=$ifinfo['macaddr'];
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			showDef(isset($mac_man[$mac_hi]), gettext('MAC Address'),  ' - ' . $mac_man[$mac_hi]);
+			showDef(isset($mac_man[$mac_hi]), gettext('MAC Address'), $mac . ' - ' . $mac_man[$mac_hi]);
 			}
 
 		if ($ifinfo['status'] != "down") {

@@ -76,16 +76,7 @@ fi
 
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
-	globals_inc="/etc/inc/globals.inc"
-	if [ -f /etc/inc/globals_override.inc ]; then
-		globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-	fi
-	UPLOADTMPDIR=$(cat ${globals_inc} | \
-		grep upload_path | \
-		head -n 1 | \
-		sed 's/^.*=>* *//; s/["\;,]*//g')
-
-	UPLOADTMPDIR=${UPLOADTMPDIR:-"/root"}
+	UPLOADTMPDIR=$(/usr/local/sbin/read_global_var upload_path "/root")
 else
 	UPLOADTMPDIR="/tmp"
 fi
@@ -177,20 +168,8 @@ if [ -z "${TIMEZONE}" ]; then
 fi
 
 if [ -z "${TIMEZONE}" ]; then
-	# Last option, use default value
-	globals_inc="/etc/inc/globals.inc"
-	if [ -f /etc/inc/globals_override.inc ]; then
-		globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-	fi
-	TIMEZONE=$(cat ${globals_inc} | \
-		grep default_timezone | \
-		head -n 1 | \
-		sed 's/^.*=>* *//; s/["\;,]*//g')
-fi
-
-if [ -z "${TIMEZONE}" ]; then
-	# It it's still blank, lets avoid PHP errors
-	TIMEZONE="Etc/UTC"
+	# Last option, use default value from $g or Etc/UTC
+	TIMEZONE=$(/usr/local/sbin/read_global_var default_timezone "Etc/UTC")
 fi
 
 # Get a loaded module list in the stock php

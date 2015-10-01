@@ -25,17 +25,9 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
-globals_inc="/etc/inc/globals.inc"
-if [ -f /etc/inc/globals_override.inc ]; then
-	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-fi
-product=$(cat ${globals_inc} | \
-	grep product_name | \
-	head -n 1 | \
-	sed 's/^.*=>* *//; s/["\;,]*//g')
-
-# product cannot be blank
-product=${product:-"pfSense"}
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
@@ -148,17 +140,16 @@ if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
 
-varrunpath=$(cat ${globals_inc} | \
-	grep varrun_path | \
-	head -n 1 | \
-	sed 's/^.*=>* *//; s/["\;,]*//g')
+# Use php -n here because we are not ready to load extensions yet
+varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
 if [ "$PLATFORM" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
-hideplatform=$(egrep -c 'hideplatform.*=>* *true' ${globals_inc} 2>/dev/null)
-if [ "$hideplatform" -gt "0" ]; then
+# Use php -n here because we are not ready to load extensions yet
+hideplatform=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var hideplatform)
+if [ "$hideplatform" = "true" ]; then
 	platformbanner="" # hide the platform
 else
 	platformbanner=" on the '${PLATFORM}' platform"

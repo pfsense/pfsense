@@ -1,0 +1,31 @@
+#!/usr/local/bin/php -f
+<?php
+
+if (empty(ini_get("date.timezone"))) {
+	ini_set("date.timezone", "Etc/UTC");
+}
+
+require_once("/etc/inc/globals.inc");
+
+global $g;
+
+if (!isset($argv[1]) || empty($argv[1])) {
+	exit;
+}
+
+if (isset($g[$argv[1]])) {
+	if (is_bool($g[$argv[1]])) {
+		if ($g[$argv[1]] == true) {
+			echo "true\n";
+		} else {
+			echo "false\n";
+		}
+	} else {
+		echo $g[$argv[1]] . "\n";
+	}
+} else if (isset($argv[2]) && !empty($argv[2])) {
+	// Print default value
+	echo "$argv[2]\n";
+}
+
+?>

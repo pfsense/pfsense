@@ -9,17 +9,8 @@ fi
 
 sleep 1
 
-globals_inc="/etc/inc/globals.inc"
-if [ -f /etc/inc/globals_override.inc ]; then
-	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-fi
-product=$(cat ${globals_inc} | \
-	grep product_name | \
-	head -n 1 | \
-	sed 's/^.*=>* *//; s/["\;,]*//g')
-
-# product cannot be blank
-product=${product:-"pfSense"}
+# Read product_name from $g, defaults to pfSense
+product=$(/usr/local/sbin/read_global_var product_name pfSense)
 
 # If PLATFORM is $product then remove
 # temporary files on shutdown from /tmp/

@@ -15,18 +15,9 @@ if [ ! -f "$config" ]; then
 	exit 1
 fi
 
-# Get xml_rootobj
-globals_inc="/etc/inc/globals.inc"
-if [ -f /etc/inc/globals_override.inc ]; then
-	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-fi
-xml_rootobj=$(cat ${globals_inc} | \
-	grep xml_rootobj | \
-	head -n 1 | \
-	sed 's/^.*=>* *//; s/["\;,]*//g')
+# Get xml_rootobj, if not defined defaults to pfsense
+# Use php -n here because we are not ready to load extensions yet
+xml_rootobj=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var xml_rootobj pfsense 2>/dev/null)
 
-# defaults to pfsense
-xml_rootobj=${product:-"pfsense"}
-
-/usr/local/bin/xmllint --xpath "${type}(//${xml_rootobj}/${path})" ${config}
+/usr/local/bin/xmllint --xpath "${type}(//${xml_rootobj}/${path})" ${config} 2>/dev/null
 exit $?

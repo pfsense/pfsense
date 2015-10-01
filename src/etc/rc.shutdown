@@ -5,17 +5,8 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	exit -1
 fi
 
-globals_inc="/etc/inc/globals.inc"
-if [ -f /etc/inc/globals_override.inc ]; then
-	globals_inc="/etc/inc/globals_override.inc ${globals_inc}"
-fi
-product=$(cat ${globals_inc} | \
-	grep product_name | \
-	head -n 1 | \
-	sed 's/^.*=>* *//; s/["\;,]*//g')
-
-# product cannot be blank
-product=${product:-"pfSense"}
+# Read product_name from $g, defaults to pfSense
+product=$(/usr/local/sbin/read_global_var product_name pfSense)
 
 echo
 echo "${product} is now shutting down ..."

@@ -131,10 +131,10 @@ _exit() {
 
 pkg_upgrade_first_step() {
 	# figure out which kernel variant is running
-	kernel_pkg=$(pkg query %n $(pkg info pfSense-kernel-\*))
+	kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
 
 	if [ -z "${kernel_pkg}" ]; then
-		_echo "ERROR: It was not possible to identify which pfSense kernel is installed"
+		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"
 		_exit 1
 	fi
 
@@ -156,7 +156,7 @@ pkg_upgrade_first_step() {
 		_echo "ERROR: You are using a newer kernel version than remote repository"
 		_exit 1
 	else
-		_echo "ERROR: Error comparing pfSense kernel local and remote versions"
+		_echo "ERROR: Error comparing ${product} kernel local and remote versions"
 		_exit 1
 	fi
 
@@ -192,7 +192,7 @@ pkg_upgrade_first_step() {
 
 	# First upgrade kernel and reboot
 	if [ ${kernel_update} -eq 1 ]; then
-		_exec "pkg upgrade ${kernel_pkg}" "Upgrading pfSense kernel"
+		_exec "pkg upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
 		touch ${upgrade_in_progress}
 		_echo "Rebooting..."
 		/etc/rc.reboot
@@ -362,6 +362,8 @@ export ASSUME_ALWAYS_YES=true
 
 # Disable automatic update
 export REPO_AUTOUPDATE=false
+
+export product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 
 unset yes
 unset progress_fifo

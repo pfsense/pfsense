@@ -145,6 +145,11 @@ pkg_upgrade_first_step() {
 		pkg_update force
 	fi
 
+	if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
+		_echo "Your packages are up to date"
+		_exit 0
+	fi
+
 	kernel_version_compare=$(compare_pkg_version ${kernel_pkg})
 
 	if [ "${kernel_version_compare}" = "<" ]; then
@@ -160,11 +165,6 @@ pkg_upgrade_first_step() {
 	else
 		_echo "ERROR: Error comparing ${product} kernel local and remote versions"
 		_exit 1
-	fi
-
-	if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
-		_echo "Your packages are up to date"
-		_exit 0
 	fi
 
 	if [ -z "${yes}" ]; then

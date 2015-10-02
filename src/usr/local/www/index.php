@@ -308,7 +308,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			<div class="modal-body">
 				<p>
 					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-					<?=gettext("To get started click the");?> FIXME <?=gettext("icon to add widgets.");?><br />
+					<?=gettext("To get started click the ");?> <i class="icon icon-plus"> <?=gettext(" icon to add widgets.");?><br />
 					<br />
 					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 				</p>

@@ -248,7 +248,10 @@ pkg_upgrade() {
 		fi
 
 		pkg_upgrade_first_step
-		need_reboot=1
+
+		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
+			need_reboot=1
+		fi
 	fi
 
 	pkg_upgrade_second_step

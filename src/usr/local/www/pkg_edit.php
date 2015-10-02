@@ -682,6 +682,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		}
 	}
 
+	// If we get here but have no $section, the package config file probably had no listtopic field
+	// We can create a section with a generic name to fix that
+	if(!$section)
+		$section = new Form_Section(gettext('General options'));
+
 	switch ($pkga['type']) {
 		// Creat an input element. The format is slightly different depending on whether we are composing a group,
 		// section, or advanced section. This is true for every element type

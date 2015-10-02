@@ -41,6 +41,18 @@ require_once("functions.inc");
 
 require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
+function getServerDateItems($inDate) {
+	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
+	// year (4-digit),month,day,hours (0-23),minutes,seconds
+	// use intval to strip leading zero from minutes and seconds
+	//   so JavaScript won't try to interpret them in octal
+	//   (use intval instead of ltrim, which translates '00' to '')
+}
+
+function clockTimeString($inDate, $showSeconds) {
+	return date($showSeconds ? 'G:i:s' : 'g:i',$inDate).' ';
+}
+
 if ($_REQUEST['updateme']) {
 //this block displays only on ajax refresh
 	if (isset($config['system']['ipv6allow'])) {

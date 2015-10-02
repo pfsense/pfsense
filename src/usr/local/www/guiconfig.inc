@@ -397,7 +397,6 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 	</table>
 	<script type="text/javascript">
 	//<![CDATA[
-		NiftyCheck();
 		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
 	//]]>
@@ -888,7 +887,6 @@ function display_widget_tabs(& $tab_array) {
 
 	echo "<script type=\"text/javascript\">";
 	echo "\n//<![CDATA[\n";
-	echo "NiftyCheck();\n";
 	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
 	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
 	echo "//]]>\n";

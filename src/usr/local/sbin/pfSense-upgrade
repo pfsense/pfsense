@@ -120,6 +120,8 @@ _exit() {
 		rm -f ${pid_file}
 	fi
 
+	/etc/rc.conf_mount_ro
+
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
@@ -422,6 +424,8 @@ if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	echo "Another instance is already running... Aborting!"
 	exit 1
 fi
+
+/etc/rc.conf_mount_rw
 
 echo $$ > ${pid_file}
 

@@ -134,7 +134,7 @@ if (count($a_cp) >	1) {
 
 	$section->addInput(new Form_Select(
 		'zone',
-		'Where to show rule descriptions',
+		'Display Zone',
 		$cpzone,
 		$zonelist
 	));

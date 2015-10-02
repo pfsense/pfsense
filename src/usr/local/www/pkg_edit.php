@@ -688,7 +688,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		$section = new Form_Section(gettext('General options'));
 
 	switch ($pkga['type']) {
-		// Creat an input element. The format is slightly different depending on whether we are composing a group,
+		// Create an input element. The format is slightly different depending on whether we are composing a group,
 		// section, or advanced section. This is true for every element type
 		case "input":
 			if($grouping) {

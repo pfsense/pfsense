@@ -970,7 +970,7 @@
 							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Invalid Password.";
 							break;
 						case 5:
-							$status = "phpDynDNS ({$this->_dnsHost}): (Error) To many updates sent.";
+							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Too many updates sent.";
 							break;
 						case 6:
 							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Account disabled due to violation of No-IP terms of service.";

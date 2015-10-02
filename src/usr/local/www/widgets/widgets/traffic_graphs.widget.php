@@ -163,7 +163,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 <?php endif; ?>
 <?php endforeach; ?>
 
-<!-- close the body we're wrapped in and add a configuraton-panel -->
+<!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div class="panel-footer collapse">
 
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" class="form-horizontal">

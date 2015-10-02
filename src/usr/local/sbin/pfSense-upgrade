@@ -172,7 +172,7 @@ pkg_upgrade_first_step() {
 		pkg upgrade -nq 2>&1 | tee -a ${logfile}
 
 		_echo ""
-		if [ ${kernel_update} -eq 1 ]; then
+		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
 			_echo "**** WARNING ****"
 			_echo "Reboot will be required!!"
 		fi

@@ -93,14 +93,17 @@ if ($g['disablecrashreporter'] != true) {
 			$x++;
 		}
 	}
+
 	$crash = glob("/var/crash/*");
 	$skip_files = array(".", "..", "minfree", "");
+
 	if (is_array($crash)) {
 		foreach ($crash as $c) {
 			if (!in_array(basename($c), $skip_files)) {
 				$x++;
 			}
 		}
+
 		if ($x > 0) {
 			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
 		}
@@ -124,6 +127,7 @@ if (!is_array($config['widgets'])) {
 }
 
 if ($_POST && $_POST['sequence']) {
+
 	$config['widgets']['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
@@ -254,9 +258,11 @@ $phpincludefiles = array();
 $directory = "/usr/local/www/widgets/include/";
 $dirhandle = opendir($directory);
 $filename = "";
+
 while (false !== ($filename = readdir($dirhandle))) {
 	$phpincludefiles[] = $filename;
 }
+
 foreach ($phpincludefiles as $includename) {
 	if (!stristr($includename, ".inc")) {
 		continue;
@@ -288,9 +294,11 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div class="panel-body">
 		<div class="content">
 			<div class="row">
-<?php foreach ($widgets as $widgetname => $widgetconfig): ?>
-	<?php if ($widgetconfig['display'] == 'none'): ?>
-		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+<?php
+foreach ($widgets as $widgetname => $widgetconfig):
+	if ($widgetconfig['display'] == 'none'):
+?>
+		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
 			</div>
@@ -308,7 +316,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			<div class="modal-body">
 				<p>
 					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-					<?=gettext("To get started click the ");?> <i class="icon icon-plus"> <?=gettext(" icon to add widgets.");?><br />
+					<?=gettext("To get started click the ");?> FIXME <?=gettext(" icon to add widgets.");?><br />
 					<br />
 					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 				</p>
@@ -321,10 +329,10 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 </div>
 
 <div class="hidden" id="widgetSequence">
-	<form action="/" method="post" id="widgetSequence">
+	<form action="/" method="post" id="widgetSequence" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
 
-		<button type="submit" class="btn btn-primary">Store widget configuration</button>
+		<button type="submit" id="btnstore" class="btn btn-primary">Store widget configuration</button>
 	</form>
 </div>
 
@@ -376,7 +384,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 </div>
 
 <script>
-function updateWidgets()
+function updateWidgets(newWidget)
 {
 	var sequence = '';
 
@@ -387,6 +395,9 @@ function updateWidgets()
 			sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +',';
 		});
 	});
+
+	if (typeof newWidget !== 'undefined')
+		sequence += newWidget + ':' + 'col2:close';
 
 	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
@@ -436,6 +447,25 @@ events.push(function() {
 		connectWith: '.container .col-md-6',
 		update: updateWidgets
 	});
+
+	// On clicking a widget to install . .
+	$('[name^=btnadd-]').click(function(event) {
+		// Extract hte widget name from the button name that got us here
+		var widgetToAdd = this.name.replace('btnadd-', '');
+
+		// Set its display type to 'close'
+		<?php $widgets[widgetToAdd]['display'] = 'close'; ?>
+
+		// Add it to the list of displayed widgets
+		updateWidgets(widgetToAdd);
+
+		// We don't want to see hte "Store" button because we are doing that automatically
+		$('#btnstore').hide();
+
+		// Submit the form save/display all selected widgets
+		$('[name=widgetForm]').submit();
+	});
+
 });
 </script>
 <?php

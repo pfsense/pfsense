@@ -195,7 +195,8 @@ pkg_upgrade_first_step() {
 		_exec "pkg upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
 		touch ${upgrade_in_progress}
 		_echo "Rebooting..."
-		/etc/rc.reboot
+		/etc/rc.reboot &
+		_exit 0
 	fi
 }
 
@@ -260,7 +261,8 @@ pkg_upgrade() {
 
 	if [ -n "${need_reboot}" ]; then
 		_echo "Rebooting..."
-		/etc/rc.reboot
+		/etc/rc.reboot &
+		_exit 0
 	fi
 }
 

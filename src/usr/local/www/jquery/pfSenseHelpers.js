@@ -1,6 +1,5 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -139,9 +138,12 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
-// The followinf functions are used by form froups assigned a class of "repeatable" and provide the ability
-// to add/delete new rows of sequentially numbered elements, their labels and their help text
+// The following functions are used by Form_Groups assigned a class of "repeatable" and provide the ability
+// to add/delete rows of sequentially numbered elements, their labels and their help text
 // See firewall_aliases_edit.php for an example
+
+// NOTE: retainhelp is a global var that defined prevents any help text from being deleted as lines are inserted.
+// IOW it causes every row to have help text, not just the last row
 
 function setMasks() {
 	// Find all ipaddress masks and make dynamic based on address family of input
@@ -241,13 +243,13 @@ function delete_row(row) {
 }
 
 function add_row() {
-	// Find the lst repeatable group
+	// Find the last repeatable group
 	var lastRepeatableGroup = $('.repeatable:last');
 
 	// Clone it
 	var newGroup = lastRepeatableGroup.clone(true);
 
-	// Increment the suffix number for each input elemnt in the new group
+	// Increment the suffix number for each input element in the new group
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));

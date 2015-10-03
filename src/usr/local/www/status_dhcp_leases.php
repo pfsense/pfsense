@@ -406,7 +406,7 @@ foreach ($leases as $data):
 				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];
 				$dhcp_leases_subnet_counter[$dlsc]['to'] = $dhcpifconf['range']['to'];
-				$dhcp_leases_subnet_counter[$dlsc]['count'] = $dhcp_leases_subnet_counter[$dlsc][2]+1;
+				$dhcp_leases_subnet_counter[$dlsc]['count'] = $dhcp_leases_subnet_counter[$dlsc]['count']+1;
 				break;
 			}
 

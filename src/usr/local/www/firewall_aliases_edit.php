@@ -566,13 +566,13 @@ $section_str = array(
 	);
 	
 $btn_str = array(
-	'network' => gettext("Network"),
-	'host'	=> gettext("Host"),
-	'port' => gettext("Port"),
-	'url' => gettext("URL"),
-	'url_ports' => gettext("URL"),
-	'urltable' => gettext("URL Table)"),
-	'urltable_ports' => gettext("URL Table")
+	'network' => gettext("Add Network"),
+	'host'	=> gettext("Add Host"),
+	'port' => gettext("Add Port"),
+	'url' => gettext("Add URL"),
+	'url_ports' => gettext("Add URL"),
+	'urltable' => gettext("Add URL Table"),
+	'urltable_ports' => gettext("Add URL Table")
 	);
 
 $label_str = array(

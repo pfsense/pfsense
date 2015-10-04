@@ -143,9 +143,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<table class="table">
 		<thead>
 		<tr>
-			<th>Active Tunnels</td>
-			<th>Inactive Tunnels</td>
-			<th>Mobile Users</td>
+			<th>Active Tunnels</th>
+			<th>Inactive Tunnels</th>
+			<th>Mobile Users</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -192,8 +192,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<tbody>
 
 		<?php foreach ($mobile['pool'] as $pool):
-			if (!is_array($pool['lease']))
+			if (!is_array($pool['lease'])) {
 				continue;
+			}
 
 			foreach ($pool['lease'] as $muser) : ?>
 				<tr>

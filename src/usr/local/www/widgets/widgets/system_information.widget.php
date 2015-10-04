@@ -62,15 +62,14 @@ if ($_REQUEST['getupdatestatus']) {
 		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	}
 
-	if(empty($remote_version))
+	if (empty($remote_version)) {
 		echo "<i>Unable to check for updates</i>";
-	else {
+	} else {
 		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
 
-		if(!$remote_version) {
+		if (!$remote_version) {
 			echo "<i>Unable to check for updates</i>";
-		}
-		else {
+		} else {
 			$needs_system_upgrade = false;
 			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
 			if ($version_compare == -1) {
@@ -97,7 +96,7 @@ $filesystems = get_mounted_filesystems();
 <table class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<th><?=gettext("Name");?></td>
+			<th><?=gettext("Name");?></th>
 			<td><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
 		</tr>
 		<tr>
@@ -107,19 +106,19 @@ $filesystems = get_mounted_filesystems();
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
-			<?php if(!$g['hideuname']): ?>
+			<?php if (!$g['hideuname']): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
 			<br/><br/>
-			<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
+			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 				<div id='updatestatus'><?php echo gettext("Obtaining update status"); ?> ...</div>
 			<?php endif; ?>
 			</td>
 		</tr>
 		<?php if (!$g['hideplatform']): ?>
 		<tr>
-			<th><?=gettext("Platform");?></td>
+			<th><?=gettext("Platform");?></th>
 			<td>
 				<?=htmlspecialchars($g['platform']);?>
 				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
@@ -137,7 +136,7 @@ $filesystems = get_mounted_filesystems();
 			$rw = is_writable("/") ? "(rw)" : "(ro)";
 			?>
 		<tr>
-			<th><?=gettext("NanoBSD Boot Slice");?></td>
+			<th><?=gettext("NanoBSD Boot Slice");?></th>
 			<td>
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
@@ -148,7 +147,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("CPU Type");?></td>
+			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
@@ -161,7 +160,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($hwcrypto): ?>
 		<tr>
-			<th><?=gettext("Hardware crypto");?></td>
+			<th><?=gettext("Hardware crypto");?></th>
 			<td><?=htmlspecialchars($hwcrypto);?></td>
 		</tr>
 		<?php endif; ?>
@@ -174,7 +173,7 @@ $filesystems = get_mounted_filesystems();
 			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
 		</tr>
 		<tr>
-			<th><?=gettext("DNS server(s)");?></td>
+			<th><?=gettext("DNS server(s)");?></th>
 			<td>
 				<ul>
 				<?php
@@ -188,14 +187,15 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($config['revision']): ?>
 		<tr>
-			<th><?=gettext("Last config change");?></td>
+			<th><?=gettext("Last config change");?></th>
 			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("State table size");?></td>
+			<th><?=gettext("State table size");?></th>
 			<td>
-				<?php	$pfstatetext = get_pfstate();
+				<?php
+					$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
 				<div class="progress">
@@ -207,7 +207,7 @@ $filesystems = get_mounted_filesystems();
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("MBUF Usage");?></td>
+			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
 					$mbufstext = get_mbuf();
@@ -222,7 +222,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if (get_temp() != ""): ?>
 		<tr>
-			<th><?=gettext("Temperature");?></td>
+			<th><?=gettext("Temperature");?></th>
 			<td>
 				<?php $TempMeter = $temp = get_temp(); ?>
 				<div id="tempPB"></div>
@@ -231,20 +231,20 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("Load average");?></td>
+			<th><?=gettext("Load average");?></th>
 			<td>
 			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("CPU usage");?></td>
+			<th><?=gettext("CPU usage");?></th>
 			<td>
 				<div id="cpuPB"></div>
 				<span id="cpumeter">(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("Memory usage");?></td>
+			<th><?=gettext("Memory usage");?></th>
 			<td>
 				<?php $memUsage = mem_usage(); ?>
 				<div class="progress">
@@ -256,7 +256,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($showswap == true): ?>
 		<tr>
-			<th><?=gettext("SWAP usage");?></td>
+			<th><?=gettext("SWAP usage");?></th>
 			<td>
 				<?php $swapusage = swap_usage(); ?>
 				<div class="progress">
@@ -268,10 +268,10 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("Disk usage");?></td>
+			<th><?=gettext("Disk usage");?></th>
 			<td>
 				<table class="table">
-<?PHP foreach ($filesystems as $fs): ?>
+<?php foreach ($filesystems as $fs): ?>
 				<tr>
 					<th><?=$fs['mountpoint']?></th>
 					<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
@@ -284,14 +284,15 @@ $filesystems = get_mounted_filesystems();
 						</div>
 					</td>
 				</tr>
-<?PHP endforeach; ?>
+<?php endforeach; ?>
 				</table>
 			</td>
 		</tr>
 	</tbody>
 </table>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function systemStatusGetUpdateStatus() {
 	$.ajax({
 		type: 'get',
@@ -311,4 +312,5 @@ function systemStatusGetUpdateStatus() {
 events.push(function(){
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
+//]]>
 </script>

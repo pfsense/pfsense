@@ -41,10 +41,11 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if(is_array($config['installedpackages']['package'])) {
+if (is_array($config['installedpackages']['package'])) {
 	$instpkgs = array();
-	foreach ($config['installedpackages']['package'] as $instpkg)
+	foreach ($config['installedpackages']['package'] as $instpkg) {
 		$instpkgs[ $instpkg['name'] ] = $instpkg;
+	}
 	ksort($instpkgs);
 	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
 }
@@ -67,13 +68,14 @@ if(is_array($config['installedpackages']['package'])) {
 	<tbody>
 <?php
 foreach ($instpkgs as $pkgname => $pkg):
-	if (empty($pkgname))
+	if (empty($pkgname)) {
 		continue;
+	}
 
 	$latest_package = $currentvers[$pkg['name']]['version'];
 	if ($latest_package) {
 		// we're running a newer version of the package
-		if(strcmp($pkg['version'], $latest_package) > 0) {
+		if (strcmp($pkg['version'], $latest_package) > 0) {
 			$status = 'Newer then available ('. $latest_package .')';
 			$statusicon = 'exclamation';
 		}

@@ -63,10 +63,10 @@ $gateways_status = return_gateways_status(true);
 <table class="table table-striped table-hover">
 <thead>
 <tr>
-	<th>Name</td>
-	<th>RTT</td>
-	<th>Loss</td>
-	<th>Status</td>
+	<th>Name</th>
+	<th>RTT</th>
+	<th>Loss</th>
+	<th>Status</th>
 </tr>
 </thead>
 <tbody>
@@ -75,13 +75,15 @@ $gateways_status = return_gateways_status(true);
 		<td>
 <?php
 	$if_gw = '';
-	if (is_ipaddr($gateway['gateway']))
+	if (is_ipaddr($gateway['gateway'])) {
 		$if_gw = $gateway['gateway'];
-	else {
-		if($gateway['ipprotocol'] == "inet")
+	} else {
+		if ($gateway['ipprotocol'] == "inet") {
 			$if_gw = get_interface_gateway($gateway['friendlyiface']);
-		if($gateway['ipprotocol'] == "inet6")
+		}
+		if ($gateway['ipprotocol'] == "inet6") {
 			$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
+		}
 	}
 ?>
 			<?=htmlspecialchars($gateway['name'])?><br />

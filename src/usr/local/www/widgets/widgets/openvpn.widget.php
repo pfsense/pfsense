@@ -135,29 +135,29 @@ $clients = openvpn_get_active_clients();
 		<td>
 			<table>
 			<tr>
-				<th>Name/Time</td>
-				<th>Real/Virtual IP</td>
+				<th>Name/Time</th>
+				<th>Real/Virtual IP</th>
 			</tr>
 			<?php $rowIndex = 0;
 			foreach ($server['conns'] as $conn):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;
 			?>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+			<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 				<td class="listMRlr">
 					<?=$conn['common_name'];?>
 				</td>
 				<td class="listMRr">
 					<?=$conn['remote_host'];?>
 				</td>
-				<td class='listMR' rowspan="2">
-					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-						onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
-						name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
-						title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
+				<td class="listMR" rowspan="2">
+					<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
+						onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
+						name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
+						title="Kill client connection from <?php echo $conn['remote_host']; ?>" alt="" />
 				</td>
 			</tr>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+			<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 				<td class="listMRlr">
 					<?=$conn['connect_time'];?>
 				</td>
@@ -188,12 +188,12 @@ $clients = openvpn_get_active_clients();
 	<tr>
 		<table>
 		<tr>
-			<th>Name/Time</td>
-			<th>Remote/Virtual IP</td>
+			<th>Name/Time</th>
+			<th>Remote/Virtual IP</th>
 		</tr>
 
 <?php foreach ($sk_servers as $sk_server): ?>
-		<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+		<tr name="<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>">
 			<td class="listlr">
 				<?=$sk_server['name'];?>
 			</td>
@@ -209,11 +209,11 @@ $clients = openvpn_get_active_clients();
 				/* tunnel is down */
 				$iconfn = "interface_down";
 			}
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif\" alt=\"\" />";
 			?>
 			</td>
 		</tr>
-		<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+		<tr name="<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>">
 			<td class="listlr">
 				<?=$sk_server['connect_time'];?>
 			</td>
@@ -238,12 +238,12 @@ $clients = openvpn_get_active_clients();
 	<tr>
 		<table>
 		<tr>
-			<th>Name/Time</td>
-			<th>Remote/Virtual IP</td>
+			<th>Name/Time</th>
+			<th>Remote/Virtual IP</th>
 		</tr>
 
 	<?php foreach ($clients as $client): ?>
-			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+			<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 				<td class="listlr">
 					<?=$client['name'];?>
 				</td>
@@ -259,11 +259,11 @@ $clients = openvpn_get_active_clients();
 					/* tunnel is down */
 					$iconfn = "interface_down";
 				}
-				echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
+				echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif\" alt=\"\" />";
 				?>
 				</td>
 			</tr>
-			<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+			<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 				<td class="listlr">
 					<?=$client['connect_time'];?>
 				</td>

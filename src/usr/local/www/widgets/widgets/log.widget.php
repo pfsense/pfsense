@@ -92,15 +92,18 @@ if (isset($_POST['lastsawtime'])) {
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
 
 	foreach ($filterlog as $idx => $row) {
-		if (strtotime($log_row['time']) <= $_POST['lastsawtime'])
+		if (strtotime($log_row['time']) <= $_POST['lastsawtime']) {
 			unset($filterlog[$idx]);
+		}
 	}
 }
 else
 	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	var logWidgetLastRefresh = <?=time()?>;
+//]]>
 </script>
 
 <table class="table table-striped table-hover">
@@ -124,14 +127,15 @@ else
 			$dstIP = htmlspecialchars($filterent['dstip']);
 		}
 
-		if ($filterent['act'] == "block")
+		if ($filterent['act'] == "block") {
 			$iconfn = "remove";
-		else if ($filterent['act'] == "reject")
+		} else if ($filterent['act'] == "reject") {
 			$iconfn = "fire";
-		else if ($filterent['act'] == "match")
+		} else if ($filterent['act'] == "match") {
 			$iconfn = "filter";
-		else
+		} else {
 			$iconfn = "ok";
+		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 ?>
@@ -163,7 +167,8 @@ if (isset($_GET['lastsawtime']))
 	exit;
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function logWidgetUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -183,6 +188,7 @@ function logWidgetUpdateFromServer(){
 events.push(function(){
 	setInterval('logWidgetUpdateFromServer()', 60*1000);
 });
+//]]>
 </script>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -220,7 +226,7 @@ events.push(function(){
 				<select name="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
-						<?=($nentriesinterfaces==$iface?'selected="selected"':'')?>><?=htmlspecialchars($ifacename)?></option>
+						<?=($nentriesinterfaces==$iface ? 'selected="selected"' : '')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>
 			</select>
 			</div>

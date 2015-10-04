@@ -64,9 +64,9 @@ if($_REQUEST['getdyndnsstatus']) {
 			$cached_ip_s = explode(':', file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
 			if ($ipaddr <> $cached_ip) {
-				echo "<font color='red'>";
+				echo "<font color=\"red\">";
 			} else {
-				echo "<font color='green'>";
+				echo "<font color=\"green\">";
 			}
 			echo htmlspecialchars($cached_ip);
 			echo "</font>";
@@ -139,7 +139,7 @@ if($_REQUEST['getdyndnsstatus']) {
 		?>
 		</td>
 		<td class="listr">
-		<div id='dyndnsstatus<?= $i;?>'><?= gettext("Checking ...");?></div>
+		<div id="dyndnsstatus<?= $i;?>"><?= gettext("Checking ...");?></div>
 		</td>
 	</tr>
 	<?php $i++; endforeach;?>

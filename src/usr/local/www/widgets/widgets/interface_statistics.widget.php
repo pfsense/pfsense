@@ -68,8 +68,9 @@ $ifdescrs = get_configured_interface_with_descr();
 <?php foreach ($ifdescrs as $ifdescr => $ifname):
 		$ifinfo = get_interface_info($ifdescr);
 
-		if ($ifinfo['status'] == "down")
+		if ($ifinfo['status'] == "down") {
 			continue;
+		}
 
 		$ifinfo['inbytes'] = format_bytes($ifinfo['inbytes']);
 		$ifinfo['outbytes'] = format_bytes($ifinfo['outbytes']);

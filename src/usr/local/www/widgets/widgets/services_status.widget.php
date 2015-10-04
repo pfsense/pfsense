@@ -44,8 +44,9 @@ $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
 	$validNames = array();
-	foreach ($services as $service)
+	foreach ($services as $service) {
 		array_push($validNames, $service['name']);
+	}
 
 	$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
 	write_config("Saved Service Status Filter via Dashboard");
@@ -56,9 +57,9 @@ if(isset($_POST['servicestatusfilter'])) {
 <thead>
 	<tr>
 		<th></th>
-		<th>Service</td>
-		<th>Description</td>
-		<th>Action</td>
+		<th>Service</th>
+		<th>Description</th>
+		<th>Action</th>
 	</tr>
 </thead>
 <tbody>
@@ -74,10 +75,10 @@ if (count($services) > 0) {
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
 		}
-		$service_desc = explode(".",$service['description']);
+		$service_desc = explode(".", $service['description']);
 ?>
 		<tr>
-			<td><i class="icon icon-<?=get_service_status($service)? 'ok' : 'remove'?>-sign"></i></td>
+			<td><i class="icon icon-<?=get_service_status($service) ? 'ok' : 'remove'?>-sign"></i></td>
 			<td><?=$service['name']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_links($service)?></td>
@@ -85,7 +86,7 @@ if (count($services) > 0) {
 <?php
 	}
 } else {
-	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . " . </td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . ".</td></tr>\n";
 }
 ?>
 </tbody>
@@ -100,7 +101,7 @@ if (count($services) > 0) {
 		<div class="col-sm-6">
 			<select multiple="multiple" name="servicestatusfilter" class="form-control" height="5">
 			<?php foreach ($services as $service): ?>
-				<option <?=(in_array($service['name'], $skipservices)?'selected="selected"':'')?>><?=$service['name']?></option>
+				<option <?=(in_array($service['name'], $skipservices) ? 'selected="selected"' : '')?>><?=$service['name']?></option>
 			<?php endforeach; ?>
 			</select>
 		</div>

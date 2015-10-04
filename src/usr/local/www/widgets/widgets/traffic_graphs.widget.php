@@ -101,7 +101,7 @@ if ($_POST) {
 	$a_config["shown"]["item"] = array();
 
 	foreach ($ifdescrs as $ifname => $ifdescr) {
-		if(in_array($ifname, $_POST["shown"])) {
+		if (in_array($ifname, $_POST["shown"])) {
 			$a_config["shown"]["item"][] = $ifname;
 		}
 	}
@@ -172,7 +172,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<div class="col-sm-6 checkbox">
 <?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
 			<label>
-				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
+				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked=\"checked\"" : ""?> />
 				<?=$ifname?>
 			</label>
 <?php endforeach; ?>

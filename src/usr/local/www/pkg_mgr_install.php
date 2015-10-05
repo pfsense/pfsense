@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE:	pkgs
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -57,6 +57,11 @@ $sendto = "output";
 
 if ($_POST) {
 	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
+
+	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
@@ -255,7 +260,7 @@ if ($_GET) {
 				if ($status) {
 					$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
 				} else {
-					$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
+					$static_output .= "\n" . gettext("Installation completed. Please check to make sure that the package is configured from the respective menu then start the package.");
 				}
 
 				@file_put_contents("/tmp/{$pkgid}.info", $static_output);

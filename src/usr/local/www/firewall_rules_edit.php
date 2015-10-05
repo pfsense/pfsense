@@ -1242,12 +1242,15 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	))->setWidth(2);
 
 	$ruleType = $pconfig[$type];
-	if (is_specialnet($pconfig[$type]))
+	if ($pconfig[$type] == 'any') {
+		$ruleType = 'any';
+	} elseif (is_specialnet($pconfig[$type])) {
 		$ruleType = 'network';
-	elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
+	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
 			(is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
-			(is_alias($pconfig[$type])))
+			(is_alias($pconfig[$type]))) {
 		$ruleType = 'single';
+	}
 
 	$ruleValues = array(
 		'any' => 'any',
@@ -1273,7 +1276,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_Select(
 		$type . 'type',
 		$name .' Type',
-		$type == 'src' ? $pconfig['src']:$pconfig['dst'],
+		$ruleType,
 		$ruleValues
 	));
 

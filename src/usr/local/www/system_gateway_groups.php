@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -91,6 +91,7 @@ if ($_GET['act'] == "del") {
 				unset($config['filter']['rule'][$idx]['gateway']);
 			}
 		}
+
 		unset($a_gateway_groups[$_GET['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
@@ -104,132 +105,79 @@ $shortcut_section = "gateway-groups";
 
 include("head.inc");
 
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('staticroutes'))
+	print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));
+
+$tab_array = array();
+$tab_array[] = array(gettext("Gateways"), false, "system_gateways.php");
+$tab_array[] = array(gettext("Routes"), false, "system_routes.php");
+$tab_array[] = array(gettext("Groups"), true, "system_gateway_groups.php");
+display_top_tabs($tab_array);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="system_gateway_groups.php" method="post">
-<input type="hidden" name="y1" value="1" />
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('staticroutes')): ?><br/>
-<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system groups">
-	<tr>
-		<td>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext("Group Name")?></th>
+				<th><?=gettext("Gateways")?></th>
+				<th><?=gettext("Priority")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><!-- Action Buttons --></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
-			$tab_array = array();
-			$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
-			$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
-			$tab_array[2] = array(gettext("Groups"), true, "system_gateway_groups.php");
-			display_top_tabs($tab_array);
+$i = 0;
+foreach ($a_gateway_groups as $gateway_group):
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-				<thead>
-				<tr>
-					<td width="15%" class="listhdrr"><?=gettext("Group Name");?></td>
-					<td width="15%" class="listhdrr"><?=gettext("Gateways");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Priority");?></td>
-					<td width="30%" class="listhdr"><?=gettext("Description");?></td>
-					<td width="10%" class="list">
-						<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-							<tr>
-								<td width="17"></td>
-								<td>
-									<a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				</thead>
-				<tfoot>
-				<tr>
-					<td class="list" colspan="4"></td>
-					<td class="list">
-						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-							<tr>
-								<td width="17"></td>
-								<td>
-									<a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				</tfoot>
-				<tbody>
+			<tr>
+				<td>
+				   <?=$gateway_group['name']?>
+				</td>
+				<td>
 <?php
-	$i = 0;
-	foreach ($a_gateway_groups as $gateway_group):
+	foreach($gateway_group['item'] as $item) {
+		$itemsplit = explode("|", $item);
+		print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
+	}
 ?>
-				<tr>
-					<td class="listlr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?php
-							echo $gateway_group['name'];
-						?>
-					</td>
-					<td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?php
-							foreach ($gateway_group['item'] as $item) {
-								$itemsplit = explode("|", $item);
-								echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n";
-							}
-						?>
-					</td>
-					<td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?php
-							foreach ($gateway_group['item'] as $item) {
-								$itemsplit = explode("|", $item);
-								echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n";
-							}
-						?>
-					</td>
-					<td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
-					</td>
-					<td valign="middle" class="list nowrap">
-						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-							<tr>
-								<td>
-									<a href="system_gateway_groups_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-								</td>
-								<td>
-									<a href="system_gateway_groups.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway group?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
-								</td>
-							</tr>
-							<tr>
-								<td width="17"></td>
-								<td>
-									<a href="system_gateway_groups_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="duplicate" /></a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
+				</td>
+				<td>
 <?php
-		$i++;
-	endforeach;
+	foreach($gateway_group['item'] as $item) {
+		$itemsplit = explode("|", $item);
+		print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
+	}
 ?>
-				<tr style="display:none;">
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<p>
-	<b><?=gettext("Note:");?></b>
-	<?=gettext("Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, or policy-based routing. Without rules directing traffic into the Gateway Groups, they will not be used.");?>
-</p>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+				</td>
+				<td>
+					<?=htmlspecialchars($gateway_group['descr'])?>
+				</td>
+				<td>
+					<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Edit')?></a>
+					<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Duplicate')?></a>
+					<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger" ><?=gettext('Delete')?></a>
+				</td>
+			</tr>
+<?php
+	$i++;
+endforeach;
+?>
+		</tbody>
+	</table>
+</div>
+
+<nav class="action-buttons">
+	<a href="system_gateway_groups_edit.php" class="btn btn-default"><?=gettext('Add')?></a>
+</nav>
+
+<?php
+	print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
+						   'or policy-based routing.' . '<br />' .
+						   'Without rules directing traffic into the Gateway Groups, they will not be used.'));
+
+include("foot.inc");

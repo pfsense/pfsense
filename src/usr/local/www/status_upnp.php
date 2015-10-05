@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	upnp
+	pfSense_MODULE: upnp
 */
 
 ##|+PRIV
@@ -44,7 +44,7 @@
 require("guiconfig.inc");
 
 if ($_POST) {
-	if ($_POST['clear'] == "Clear") {
+	if ($_POST['clear']) {
 		upnp_action('restart');
 		$savemsg = gettext("Rules have been cleared and the daemon restarted");
 	}
@@ -53,78 +53,80 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$now = time();
-$year = date("Y");
-
-$pgtitle = array(gettext("Status"), gettext("UPnP &amp; NAT-PMP Status"));
+$pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP Status"));
 $shortcut_section = "upnp";
+
 include("head.inc");
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php
-if (!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
-    !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-	echo gettext("UPnP is currently disabled.");
-	include("fend.inc");
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+   !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+
+	print_info_box('UPnP is currently disabled.', 'danger');
+	include("foot.inc");
 	exit;
 }
+
 ?>
-<div id="mainlevel">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td class="tabcont" >
-			<form action="status_upnp.php" method="post">
-				<input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /> <?=gettext("all currently connected sessions");?>.
-			</form>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabcont" >
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+
+<div class="panel-body panel-default">
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
 				<tr>
-					<td width="10%" class="listhdrr"><?=gettext("Port");?></td>
-					<td width="10%" class="listhdrr"><?=gettext("Protocol");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Internal IP");?></td>
-					<td width="10%" class="listhdrr"><?=gettext("Int. Port");?></td>
-					<td width="50%" class="listhdr"><?=gettext("Description");?></td>
-					</tr>
+					<th><?=gettext("Port")?></th>
+					<th><?=gettext("Protocol")?></th>
+					<th><?=gettext("Internal IP")?></th>
+					<th><?=gettext("Int. Port")?></th>
+					<th><?=gettext("Description")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
-	foreach ($rdr_entries as $rdr_entry) {
-		if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) keep state label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches)) {
-			$rdr_proto = $matches[2];
-			$rdr_port = $matches[3];
-			$rdr_label =$matches[4];
-			$rdr_ip = $matches[5];
-			$rdr_iport = $matches[6];
+$i = 0;
+
+foreach ($rdr_entries as $rdr_entry) {
+	if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) keep state label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches)) {
+	$rdr_proto = $matches[2];
+	$rdr_port = $matches[3];
+	$rdr_label =$matches[4];
+	$rdr_ip = $matches[5];
+	$rdr_iport = $matches[6];
+
 ?>
 				<tr>
-					<td class="listlr">
-						<?php print $rdr_port;?>
+					<td>
+						<?=$rdr_port?>
 					</td>
-					<td class="listr">
-						<?php print $rdr_proto;?>
+					<td>
+						<?=$rdr_proto?>
 					</td>
-					<td class="listr">
-						<?php print $rdr_ip;?>
+					<td>
+						<?=$rdr_ip?>
 					</td>
-					<td class="listr">
-						<?php print $rdr_iport;?>
+					<td>
+						<?=$rdr_iport?>
 					</td>
-					<td class="listr">
-						<?php print $rdr_label;?>
+					<td>
+						<?=$rdr_label?>
 					</td>
 				</tr>
 <?php
-		}
 	}
+	$i++;
+}
 ?>
-			</table>
-		</td>
-	</tr>
-</table>
+			</tbody>
+		</table>
+	</div>
+	<form action="status_upnp.php" method="post">
+		<nav class="action-buttons">
+			<input class="btn btn-danger" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>" />
+		</nav>
+	</form>
 </div>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+include("foot.inc");

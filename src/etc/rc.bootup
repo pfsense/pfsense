@@ -149,6 +149,9 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
+/* run any early shell commands specified in config.xml */
+system_do_shell_commands(1);
+
 /*
  *	Determine if we need to throw a interface exception
  *	and ask the user to reassign interfaces.  This will
@@ -193,9 +196,6 @@ load_crypto();
 
 /* enable optional thermal sensor modules */
 load_thermal_hardware();
-
-/* run any early shell commands specified in config.xml */
-system_do_shell_commands(1);
 
 /* set up our timezone */
 system_timezone_configure();
@@ -396,7 +396,7 @@ if (file_exists("/sbin/shutdown.old")) {
 if (file_exists('/conf/needs_package_sync')) {
 	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
 		require_once("pkg-utils.inc");
-		if ($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+		if ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd") {
 			mark_subsystem_dirty('packagelock');
 			pkg_reinstall_all();
 			clear_subsystem_dirty('packagelock');

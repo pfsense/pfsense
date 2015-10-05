@@ -33,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	snmp
+	pfSense_MODULE: snmp
 */
 
 ##|+PRIV
@@ -62,6 +62,7 @@ if (!is_array($config['snmpd']['modules'])) {
 	$config['snmpd']['modules']['ucd'] = true;
 	$config['snmpd']['modules']['regex'] = true;
 }
+
 $pconfig['enable'] = isset($config['snmpd']['enable']);
 $pconfig['pollport'] = $config['snmpd']['pollport'];
 $pconfig['syslocation'] = $config['snmpd']['syslocation'];
@@ -131,7 +132,6 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 
-
 /* disabled until some docs show up on what this does.
 	if ($_POST['rwenable']) {
 		$reqdfields = explode(" ", "rwcommunity");
@@ -174,270 +174,193 @@ if ($_POST) {
 	}
 }
 
+function build_iplist() {
+	$listenips = get_possible_listen_ips();
+	$iplist = array();
+	$iplist[''] = 'All';
+
+	foreach ($listenips as $lip => $ldescr) {
+		$iplist[$lip] = $ldescr;
+	}
+	unset($listenips);
+
+	return($iplist);
+}
+
 $closehead = false;
 $pgtitle = array(gettext("Services"), gettext("SNMP"));
 $shortcut_section = "snmp";
+
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('SNMP Daemon');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable the SNMP Daemon and its controls',
+	$pconfig['enable']
+));
+
+$form->add($section);
+
+$section = new Form_Section('SNMP Daemon settings');
+
+$section->addInput(new Form_Input(
+	'pollport',
+	'Polling Port',
+	'text',
+	($pconfig['pollport'] ? $pconfig['pollport']:'161')
+))->setHelp('Enter the port to accept polling events on (default 161)');
+
+$section->addInput(new Form_Input(
+	'syslocation',
+	'System Location',
+	'text',
+	$pconfig['syslocation']
+));
+
+$section->addInput(new Form_Input(
+	'syscontact',
+	'System Contact',
+	'text',
+	$pconfig['syscontact']
+));
+
+$section->addInput(new Form_Input(
+	'rocommunity',
+	'Read Community String',
+	'text',
+	$pconfig['rocommunity']
+))->setHelp('The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.');
+
+$form->add($section);
+
+$section = new Form_Section('SNMP Traps Enable');
+
+$section->addInput(new Form_Checkbox(
+	'trapenable',
+	'Enable',
+	'Enable the SNMP Trap and its controls',
+	$pconfig['trapenable']
+))->toggles('.toggle-traps');
+
+$form->add($section);
+
+$section = new Form_Section('SNMP Trap settings');
+
+if($pconfig['trapenable'])
+	$section->addClass('toggle-traps', 'in');
+else
+	$section->addClass('toggle-traps', 'collapse');
+
+$section->addInput(new Form_Input(
+	'trapserver',
+	'Trap server',
+	'text',
+	$pconfig['trapserver']
+))->setHelp('Enter the trap server name');
+
+$section->addInput(new Form_Input(
+	'trapserverport',
+	'Trap Server Port',
+	'text',
+	($pconfig['trapserverport'] ? $pconfig['trapserverport']:'162')
+))->setHelp('Enter the port to send the traps to (default 162)');
+
+$section->addInput(new Form_Input(
+	'trapstring',
+	'SNMP Trap String',
+	'text',
+	$pconfig['trapstring']
+));
+
+$form->add($section);
+
+$section = new Form_Section('SNMP Modules');
+
+$group = new Form_MultiCheckboxGroup('SNMP modules');
+
+$group->add(new Form_MultiCheckbox(
+	'mibii',
+	null,
+	'MibII',
+	$pconfig['mibii']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'netgraph',
+	null,
+	'Netgraph',
+	$pconfig['netgraph']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'pf',
+	null,
+	'PF',
+	$pconfig['pf']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'hostres',
+	null,
+	'Host Resources',
+	$pconfig['hostres']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'ucd',
+	null,
+	'UCD',
+	$pconfig['ucd']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'regex',
+	null,
+	'Regex',
+	$pconfig['regex']
+));
+
+$section->add($group);
+$form->add($section);
+
+$section = new Form_Section('Interface Binding');
+
+$section->addInput(new Form_Select(
+	'bindip',
+	'Bind Interface',
+	$pconfig['bindip'],
+	build_iplist()
+));
+
+$form->add($section);
+
+print($form);
 ?>
+
 <script type="text/javascript">
 //<![CDATA[
-function check_deps() {
-	if (jQuery('#hostres').prop('checked') == true) {
-		jQuery('#mibii').prop('checked', true);
-	}
-}
 
-function enable_change(whichone) {
-
-	if (whichone.name == "trapenable") {
-		if (whichone.checked == true) {
-			document.iform.trapserver.disabled = false;
-			document.iform.trapserverport.disabled = false;
-			document.iform.trapstring.disabled = false;
-		} else {
-			document.iform.trapserver.disabled = true;
-			document.iform.trapserverport.disabled = true;
-			document.iform.trapstring.disabled = true;
-		}
-	}
-
-	/* disabled until some docs show up on what this does.
-	if (whichone.name == "rwenable") {
-		if (whichone.checked == true) {
-			document.iform.rwcommunity.disabled = false;
-		} else {
-			document.iform.rwcommunity.disabled = true;
-		}
-	}
-	*/
-
-	if (document.iform.enable.checked == true) {
-		document.iform.pollport.disabled = false;
-		document.iform.syslocation.disabled = false;
-		document.iform.syscontact.disabled = false;
-		document.iform.rocommunity.disabled = false;
-		document.iform.trapenable.disabled = false;
-		/* disabled until some docs show up on what this does.
-		document.iform.rwenable.disabled = false;
-		if (document.iform.rwenable.checked == true) {
-			document.iform.rwcommunity.disabled = false;
-		} else {
-			document.iform.rwcommunity.disabled = true;
-		}
-		*/
-		if (document.iform.trapenable.checked == true) {
-			document.iform.trapserver.disabled = false;
-			document.iform.trapserverport.disabled = false;
-			document.iform.trapstring.disabled = false;
-		} else {
-			document.iform.trapserver.disabled = true;
-			document.iform.trapserverport.disabled = true;
-			document.iform.trapstring.disabled = true;
-		}
-		document.iform.mibii.disabled = false;
-		document.iform.netgraph.disabled = false;
-		document.iform.pf.disabled = false;
-		document.iform.hostres.disabled = false;
-		document.iform.ucd.disabled = false;
-		document.iform.regex.disabled = false;
-		//document.iform.bridge.disabled = false;
-	} else {
-		document.iform.pollport.disabled = true;
-		document.iform.syslocation.disabled = true;
-		document.iform.syscontact.disabled = true;
-		document.iform.rocommunity.disabled = true;
-		/*
-		document.iform.rwenable.disabled = true;
-		document.iform.rwcommunity.disabled = true;
-		*/
-		document.iform.trapenable.disabled = true;
-		document.iform.trapserver.disabled = true;
-		document.iform.trapserverport.disabled = true;
-		document.iform.trapstring.disabled = true;
-
-		document.iform.mibii.disabled = true;
-		document.iform.netgraph.disabled = true;
-		document.iform.pf.disabled = true;
-		document.iform.hostres.disabled = true;
-		document.iform.ucd.disabled = true;
-		document.iform.regex.disabled = true;
-		//document.iform.bridge.disabled = true;
-	}
-}
+// hostres requires mibii so we force that here
+events.push(function(){
+	$('#hostres').change(function(){
+		if($('#hostres').is(':checked'))
+			$('#mibii').attr('checked', 'checked');
+	});
+});
 //]]>
 </script>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<form action="services_snmp.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="snmp">
-		<tr>
-			<td colspan="2" valign="top" class="optsect_t">
-				<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
-					<tr>
-						<td class="optsect_s"><strong><?=gettext("SNMP Daemon");?></strong></td>
-						<td align="right" class="optsect_s">
-							<input name="enable" id="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" /> <strong><?=gettext("Enable");?></strong>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
 
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Polling Port ");?></td>
-			<td width="78%" class="vtable">
-				<input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=htmlspecialchars($pconfig['pollport']) ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>" />
-				<br /><?=gettext("Enter the port to accept polling events on (default 161)");?><br />
-			</td>
-		</tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("System location");?></td>
-			<td width="78%" class="vtable">
-				<input name="syslocation" type="text" class="formfld unknown" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>" />
-			</td>
-		</tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("System contact");?></td>
-			<td width="78%" class="vtable">
-				<input name="syscontact" type="text" class="formfld unknown" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>" />
-			</td>
-		</tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Read Community String");?></td>
-			<td width="78%" class="vtable">
-				<input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>" />
-				<br /><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?><br />
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		<tr>
-			<td colspan="2" valign="top" class="optsect_t">
-				<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
-					<tr>
-						<td class="optsect_s"><strong><?=gettext("SNMP Traps");?></strong></td>
-						<td align="right" class="optsect_s">
-							<input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" /> <strong><?=gettext("Enable");?></strong>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server");?></td>
-			<td width="78%" class="vtable">
-				<input name="trapserver" type="text" class="formfld unknown" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>" />
-				<br /><?=gettext("Enter trap server name");?><br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server port ");?></td>
-			<td width="78%" class="vtable">
-				<input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=htmlspecialchars($pconfig['trapserverport']) ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>" />
-				<br /><?=gettext("Enter the port to send the traps to (default 162)");?><br />
-			</td>
-		</tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Enter the SNMP trap string");?></td>
-			<td width="78%" class="vtable">
-				<input name="trapstring" type="text" class="formfld unknown" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>" />
-				<br /><?=gettext("Trap string");?><br />
-			</td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		<tr>
-			<td colspan="2" valign="top" class="optsect_t">
-				<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="modules">
-					<tr>
-						<td class="optsect_s"><strong><?=gettext("Modules");?></strong></td>
-						<td align="right" class="optsect_s">&nbsp;</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("SNMP Modules");?></td>
-			<td width="78%" class="vtable">
-				<input name="mibii" type="checkbox" id="mibii" value="yes" onclick="check_deps()" <?php if ($pconfig['mibii']) echo "checked=\"checked\""; ?> /><?=gettext("MibII"); ?>
-				<br />
-				<input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked=\"checked\""; ?> /><?=gettext("Netgraph"); ?>
-				<br />
-				<input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked=\"checked\""; ?> /><?=gettext("PF"); ?>
-				<br />
-				<input name="hostres" type="checkbox" id="hostres" value="yes" onclick="check_deps()" <?php if ($pconfig['hostres']) echo "checked=\"checked\""; ?> /><?=gettext("Host Resources (Requires MibII)");?>
-				<br />
-				<input name="ucd" type="checkbox" id="ucd" value="yes" <?php if ($pconfig['ucd']) echo "checked=\"checked\""; ?> /><?=gettext("UCD"); ?>
-				<br />
-				<input name="regex" type="checkbox" id="regex" value="yes" <?php if ($pconfig['regex']) echo "checked=\"checked\""; ?> /><?=gettext("Regex"); ?>
-				<br />
-			</td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		<tr>
-			<td colspan="2" valign="top" class="optsect_t">
-				<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="interface">
-					<tr>
-						<td class="optsect_s"><strong><?=gettext("Interface Binding");?></strong></td>
-						<td align="right" class="optsect_s">&nbsp;</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Bind Interface"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="bindip" class="formselect">
-					<option value="">All</option>
-				<?php
-					$listenips = get_possible_listen_ips();
-					foreach ($listenips as $lip => $ldescr):
-						$selected = "";
-						if ($lip == $pconfig['bindip']) {
-							$selected = "selected=\"selected\"";
-						}
-				?>
-					<option value="<?=$lip;?>" <?=$selected;?>>
-						<?=htmlspecialchars($ldescr);?>
-					</option>
-				<?php
-					endforeach;
-					unset($listenips);
-				?>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
-			</td>
-		</tr>
-	</table>
-</form>
-<script type="text/javascript">
-//<![CDATA[
-enable_change(this);
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc");

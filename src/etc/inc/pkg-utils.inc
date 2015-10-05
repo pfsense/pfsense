@@ -280,7 +280,8 @@ function get_package_id($package_name) {
 	}
 
 	foreach ($config['installedpackages']['package'] as $idx => $pkg) {
-		if ($pkg['name'] == $package_name) {
+		if ($pkg['name'] == $package_name ||
+		    get_package_internal_name($pkg) == $package_name) {
 			return $idx;
 		}
 	}
@@ -305,7 +306,7 @@ function get_package_internal_name($package_data) {
 
 /* Get information about packages */
 function get_pkg_info($pkgs = 'all', $info = 'all') {
-	global $g, $static_output;
+	global $g, $static_output, $input_errors;
 
 	$out = '';
 	$err = '';
@@ -318,6 +319,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
 	update_status($static_output);
 	if (!pkg_call("update")) {
+		$input_errors[] = gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		$static_output .= "\n" . gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		update_status($static_output);
 		return array();
@@ -328,6 +330,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	if ($rc != 0) {
 		$static_output .= "\n" . gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
 		$static_output .= $err;
+		$input_errors[] =  gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
+		$input_errors[] =  $err;
 		update_status($static_output);
 		return array();
 	}
@@ -530,10 +534,6 @@ function install_package($package_name) {
 function install_package_xml($package_name) {
 	global $g, $config, $static_output, $pkg_interface;
 
-	if ($pkg_interface == "console") {
-		echo "\n";
-	}
-
 	if (($pkg_info = read_package_config($package_name)) == false) {
 		return false;
 	}
@@ -560,8 +560,8 @@ function install_package_xml($package_name) {
 		$to_output = gettext("overwrite!") . "\n";
 	}
 	unlink_if_exists('/conf/needs_package_sync');
-	conf_mount_ro();
 	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
+	conf_mount_ro();
 	$static_output .= $to_output;
 	update_output_window($static_output);
 
@@ -569,8 +569,8 @@ function install_package_xml($package_name) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 
 		uninstall_package($package_name);
@@ -691,8 +691,8 @@ function install_package_xml($package_name) {
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 
 		uninstall_package($package_name);
@@ -748,8 +748,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $package_name, "\n\n");
 		update_output_window($static_output);
 		if ($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		ob_flush();
 		sleep(1);
@@ -863,17 +863,16 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		}
 	}
 	/* syslog */
-	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfile_name'] <> "") {
+	$need_syslog_restart = false;
+	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
 		$static_output .= "Syslog entries... ";
 		update_output_window($static_output);
-		remove_text_from_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);
-		system_syslogd_start();
 		@unlink("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		$static_output .= "done.\n";
 		update_output_window($static_output);
+		$need_syslog_restart = true;
 	}
 
-	conf_mount_ro();
 	/* remove config.xml entries */
 	$static_output .= gettext("Configuration... ");
 	update_output_window($static_output);
@@ -881,6 +880,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);
 	write_config("Removed {$package_name} package.\n");
+
+	/* remove package entry from /etc/syslog.conf if needed */
+	/* this must be done after removing the entries from config.xml */
+	if ($need_syslog_restart) {
+		system_syslogd_start();
+	}
+
+	conf_mount_ro();
 }
 
 function pkg_reinstall_all() {

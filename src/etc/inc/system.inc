@@ -1317,6 +1317,7 @@ mimetype.assign             = (
   ".jpg"          =>      "image/jpeg",
   ".jpeg"         =>      "image/jpeg",
   ".png"          =>      "image/png",
+  ".svg"          =>      "image/svg+xml",
   ".xbm"          =>      "image/x-xbitmap",
   ".xpm"          =>      "image/x-xpixmap",
   ".xwd"          =>      "image/x-xwindowdump",
@@ -1497,6 +1498,18 @@ EOD;
 
 }
 
+function system_get_timezone_list() {
+	global $g;
+
+	$file_list = glob("/usr/share/zoneinfo/*/*");
+
+	if (empty($file_list)) {
+		$file_list[] = $g['default_timezone'];
+	}
+
+	return str_replace('/usr/share/zoneinfo/', '', $file_list);
+}
+
 function system_timezone_configure() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -1511,28 +1524,11 @@ function system_timezone_configure() {
 	}
 
 	/* extract appropriate timezone file */
-	$timezone = $syscfg['timezone'];
-	if ($timezone) {
-		exec('/usr/bin/tar -tvzf /usr/share/zoneinfo.tgz', $tzs);
-		foreach ($tzs as $tz) {
-			if (preg_match(",{$timezone}$,", $tz)) {
-				break;
-			}
-			if (preg_match(",{$timezone} link to *(.*)$,", $tz, $matches)) {
-				$timezone = $matches[1];
-				break;
-			}
-		}
-	} else {
-		$timezone = "Etc/UTC";
-	}
-
+	$timezone = (isset($syscfg['timezone']) ? $syscfg['timezone'] : $g['default_timezone']);
 	conf_mount_rw();
-
-	exec("LANG=C /usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
-		escapeshellarg($timezone) . " > /etc/localtime");
-
-	mwexec("sync");
+	/* DO NOT remove \n otherwise tzsetup will fail */
+	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
+	mwexec("/usr/sbin/tzsetup -r");
 	conf_mount_ro();
 
 	if (platform_booting()) {

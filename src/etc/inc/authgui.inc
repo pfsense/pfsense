@@ -110,50 +110,24 @@ function display_error_form($http_code, $desc) {
 	}
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-	<head>
-		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
-		<title><?=$http_code?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
-		<script type="text/javascript">
-		//<![CDATA[
-			function page_load() {}
-			function clearError() {
-				if ($('#inputerrors')) {
-					$('#inputerrors').html('');
-				}
-			}
-			<?php
-				require("headjs.php");
-				echo getHeadJS();
-			?>
-		//]]>
-		</script>
-		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
-	</head>
-	<body onload="page_load();">
-		<div id="errordesc">
-			<h1>&nbsp</h1>
-			<a href="/index.php?logout">
-			<p id="errortext" style="vertical-align: middle; text-align: center;">
-				<span style="color: #000000; font-weight: bold;">
-					<?=$desc;?>
-				</span>
-			</p>
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Error: not allowed"); ?></title>
+</head>
+<body id="error" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+				<!-- FIXME: We really need to POST the logout action -->
+				<div class="alert alert-danger" role="alert"><a href="index.php?logout"><?=$desc;?></a></div>
+			</div>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
-
 <?php
 
 } // end function
@@ -233,103 +207,79 @@ if ($local_ip == false) {
 }
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-	<head>
-		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
-		<script type="text/javascript">
-		//<![CDATA[
-		$(document).ready(function() { jQuery('#usernamefld').focus(); });
-		//]]>
-		</script>
-
-		<title><?=gettext("Login"); ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
-		<script type="text/javascript">
-		//<![CDATA[
-			function page_load() {}
-			function clearError() {
-				if ($('#inputerrors')) {
-					$('#inputerrors').html('');
-				}
-			}
-			<?php
-				require("headjs.php");
-				echo getHeadJS();
-			?>
-		//]]>
-		</script>
-		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
-	</head>
-	<body onload="page_load()">
-		<div id="login">
-			<?php
-				if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-					$nifty_background = "#999";
-					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
-				}
-				$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
-			?>
-			<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
-				<h1>&nbsp;</h1>
-				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
-				<p>
-					<span style="text-align:left">
-						<?=gettext("Username:"); ?><br />
-						<input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
-					</span>
-				</p>
-				<p>
-					<br />
-					<span style="text-align:left">
-						<?=gettext("Password:"); ?> <br />
-						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
-					</span>
-				</p>
-				<p>
-					<br />
-					<span style="text-align:center; font-weight: normal ; font-style: italic">
-						<?=gettext("Enter username and password to login."); ?>
-					</span>
-
-					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000; display:none" id="no_cookies">
-						<br /><br />
-						<?= gettext("Your browser must support cookies to login."); ?>
-					</span>
-				</p>
-				<p>
-					<span style="text-align:center">
-						<input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
-					</span>
-				</p>
-			</form>
-		</div>
-		<script type="text/javascript">
-		//<![CDATA[
-		document.cookie=
-			"cookie_test=1" +
-			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
-
-		if (document.cookie.indexOf("cookie_test") == -1) {
-			document.getElementById("no_cookies").style.display="";
-		}
-
-		// Delete it
-		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-		//]]>
-		</script>
-	</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Login"); ?></title>
+	<script>var events = events || [];</script>
+</head>
+<body id="login" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 <?php
-} // end function
+	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+		$nifty_background = "#999";
+		print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
+	}
 
+	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 ?>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2 class="panel-title">Login to pfSense</h2>
+					</div>
+
+					<div class="panel-body">
+<?php if (!empty($_SESSION['Login_Error'])): ?>
+						<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
+<?php endif ?>
+						<div class="alert alert-warning" class="hidden" id="no_cookies"><?= gettext("Your browser must support cookies to login."); ?></div>
+
+						<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
+							<div class="form-group">
+								<label for="usernamefld" class="col-sm-3 control-label">Username</label>
+								<div class="col-sm-9 col-md-7">
+									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="Enter your username">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="passwordfld" class="col-sm-3 control-label">Password</label>
+								<div class="col-sm-9 col-md-7">
+									<input type="password" class="form-control" name="passwordfld" id="passwordfld" placeholder="Enter your password">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9 col-md-7">
+									<button type="submit" class="btn btn-primary" name="login">Login</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+		events.push(function() {
+			document.cookie=
+				"cookie_test=1" +
+				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+
+			if (document.cookie.indexOf("cookie_test") == -1)
+				document.getElementById("no_cookies").style.display="";
+			else
+				document.getElementById("no_cookies").style.display="none";
+
+			// Delete it
+			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		});
+		</script>
+<?php
+require('foot.inc');
+
+} // end function

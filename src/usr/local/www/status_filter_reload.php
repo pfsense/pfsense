@@ -67,28 +67,35 @@ if ($_POST['syncfilter']) {
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
-<br />
-<form action="status_filter_reload.php" method="post" name="filter">
-	<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
-<?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-	&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter" />
-<?php endif; ?>
-</form>
-<br /><br /><br />
-<div id="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
-	<?php echo $status; ?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">Filter Reload</h2></div>
+	<div class="panel-body">
+		<form action="status_filter_reload.php" method="post" name="filter">
+			<input type="submit" class="btn btn-success" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
+<?php
+if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
+		<input type="submit" class="btn btn-default" value="Force Config Sync" name="syncfilter" id="syncfilter" />
+<?php
+endif;
+?>
+		</form>
+
+		<br />
+
+		<div id="status" class="panel panel-default">
+			<?=$status; ?>
+		</div>
+
+		<div id="doneurl">
+		</div>
+
+		<br/>
+
+		<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
+
+	</div>
 </div>
-
-<div id="doneurl">
-</div>
-
-<br/>
-
-<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -96,6 +103,7 @@ include("head.inc");
 function update_status_thread() {
 	getURL('status_filter_reload.php?getstatus=true', update_data);
 }
+
 function update_data(obj) {
 	var result_text = obj.content;
 	var result_text_split = result_text.split("|");
@@ -103,9 +111,9 @@ function update_data(obj) {
 	result_text = result_text.replace("\n", "");
 	result_text = result_text.replace("\r", "");
 	if (result_text) {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> ' + result_text + '...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> ' + result_text + '...');
 	} else {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> Obtaining filter status...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Obtaining filter status...');
 	}
 	if (result_text == "Initializing") {
 		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> Initializing...');
@@ -169,11 +177,9 @@ if (typeof getURL == 'undefined') {
 		http_request.send(null);
 	}
 }
+
 window.setTimeout('update_status_thread()', 2500);
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
-
-</body>
-</html>
+<?php include("foot.inc");

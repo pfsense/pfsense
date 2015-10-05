@@ -1,0 +1,465 @@
+#!/bin/sh
+
+# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+#
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgment:
+#    "This product includes software developed by the pfSense Project
+#    for use in the pfSense® software distribution. (http://www.pfsense.org/).
+#
+# 4. The names "pfSense" and "pfSense Project" must not be used to
+#    endorse or promote products derived from this software without
+#    prior written permission. For written permission, please contact
+#    coreteam@pfsense.org.
+#
+# 5. Products derived from this software may not be called "pfSense"
+#    nor may "pfSense" appear in their names without prior written
+#    permission of the Electric Sheep Fencing, LLC.
+#
+# 6. Redistributions of any form whatsoever must retain the following
+#    acknowledgment:
+#
+# "This product includes software developed by the pfSense Project
+# for use in the pfSense software distribution (http://www.pfsense.org/).
+#
+# THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+# EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+# ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+# OF THE POSSIBILITY OF SUCH DAMAGE.
+
+usage() {
+	echo "Usage: $(basename ${0}) [-dy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "	-d          - Turn on debug" >&2
+	echo "	-h          - Show this usage help" >&2
+	echo "	-p FIFO     - Write pkg progress to FIFO"
+	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
+	echo "" >&2
+	echo "Following parameters are mutually exclusive:" >&2
+	echo "	-i PKG_NAME - Install package PKG_NAME" >&2
+	echo "	-r PKG_NAME - Remove package PKG_NAME" >&2
+	echo "	-u          - Update repository information" >&2
+}
+
+_echo() {
+	local _n=""
+	if [ "${1}" = "-n" ]; then
+		shift
+		_n="-n"
+	fi
+
+	if [ -z "${logfile}" ]; then
+		logfile=/dev/null
+	fi
+
+	echo ${_n} "${1}" | tee -a ${logfile}
+}
+
+_exec() {
+	local _cmd="${1}"
+	local _msg="${2}"
+	local _mute="${3}"
+	local _ignore_result="${4}"
+	local _stdout="${stdout}"
+
+	if [ -z "${_cmd}" -o -z "${_msg}" ]; then
+		return 1
+	fi
+
+	if [ "${_mute}" != "mute" ]; then
+		_stdout=''
+	fi
+
+	_echo -n ">>> ${_msg}... "
+	if [ -z "${_stdout}" ]; then
+		_echo ""
+		${_cmd} 2>&1 | tee -a ${logfile}
+	else
+		${_cmd} >${_stdout} 2>&1 | tee -a ${logfile}
+	fi
+	local _result=$?
+
+	if [ ${_result} -eq 0 -o -n "${_ignore_result}" ]; then
+		[ -n "${_stdout}" ] \
+			&& _echo "done."
+		return 0
+	else
+		[ -n "${_stdout}" ] \
+			&& _echo "failed."
+		return 1
+	fi
+}
+
+_exit() {
+	trap "-" 1 2 15 EXIT
+
+	if [ -n "${kernel_pkg}" ]; then
+		if [ "$(pkg query %k ${kernel_pkg})" = "0" ]; then
+			_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
+		fi
+	fi
+	if [ -f "${pid_file}" ]; then
+		rm -f ${pid_file}
+	fi
+
+	/etc/rc.conf_mount_ro
+
+	local _rc=${1:-"0"}
+
+	# If EVENT_PIPE is defined, GUI is calling
+	[ -n "${EVENT_PIPE}" ] \
+		&& _echo "__RC=${_rc}"
+
+	exit ${_rc}
+}
+
+pkg_upgrade_first_step() {
+	# figure out which kernel variant is running
+	kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
+
+	if [ -z "${kernel_pkg}" ]; then
+		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"
+		_exit 1
+	fi
+
+	if [ "$(compare_pkg_version pkg)" = "<" ]; then
+		_exec "pkg upgrade pkg" "Upgrading pkg" mute
+		pkg_update force
+	fi
+
+	if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
+		_echo "Your packages are up to date"
+		_exit 0
+	fi
+
+	kernel_version_compare=$(compare_pkg_version ${kernel_pkg})
+
+	if [ "${kernel_version_compare}" = "<" ]; then
+		kernel_update=1
+		if [ "$(pkg query %k ${kernel_pkg})" = "1" ]; then
+			_exec "pkg unlock ${kernel_pkg}" "Unlocking kernel package" mute ignore_result
+		fi
+	elif [ "${kernel_version_compare}" = "=" ]; then
+		kernel_update=0
+	elif [ "${kernel_version_compare}" = ">" ]; then
+		_echo "ERROR: You are using a newer kernel version than remote repository"
+		_exit 1
+	else
+		_echo "ERROR: Error comparing ${product} kernel local and remote versions"
+		_exit 1
+	fi
+
+	if [ -z "${yes}" ]; then
+		# Show user which packages are going to be upgraded
+		pkg upgrade -nq 2>&1 | tee -a ${logfile}
+
+		_echo ""
+		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
+			_echo "**** WARNING ****"
+			_echo "Reboot will be required!!"
+		fi
+		_echo -n "Proceed with upgrade? (y/N) "
+		read answer
+		if [ "${answer}" != "y" ]; then
+			_echo "Aborting..."
+			_exit 0
+		fi
+	fi
+
+	_echo ">>> Downloading packages..."
+	if ! pkg upgrade -F 2>&1 | tee -a ${logfile}; then
+		_echo "ERROR: It was not possible to download packages"
+		_exit 1
+	fi
+
+	# First upgrade kernel and reboot
+	if [ ${kernel_update} -eq 1 ]; then
+		_exec "pkg upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
+		touch ${upgrade_in_progress}
+		_echo "Rebooting..."
+		/etc/rc.reboot &
+		_exit 0
+	fi
+}
+
+pkg_upgrade_second_step() {
+	_echo "Upgrading necessary packages..."
+	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
+		_echo "ERROR: An error occurred when upgrade was running..."
+		_exit 1
+	fi
+
+	_exec "pkg autoremove" "Removing unnecessary packages" mute ignore_result
+	_exec "pkg clean" "Cleanup pkg cache" mute ignore_result
+
+	# cleanup caches
+
+	rm -f ${upgrade_in_progress}
+}
+
+pkg_update() {
+	local _run_update=1
+
+	unset _force
+	if [ "${1}" = "force" ]; then
+		local _force=1
+	fi
+
+	if [ -z "${_force}" -a -f ${last_update_file} ]; then
+		local _last_update=$(head -n 1 ${last_update_file})
+		# Verify if content contain only numbers
+		if echo "${_last_update}" | grep -E -q '^[0-9]+$'; then
+			local _now=$(date +%s)
+			# Only run update hourly, and if last update is in the future
+			[ ${_now} -gt ${_last_update} -a $((${_now} - ${_last_update})) -le $((60 * 60)) ] \
+				&& unset _run_update
+		fi
+	fi
+
+	[ -z "${_run_update}" ] \
+		&& return 0
+
+	_exec "pkg update" "Updating repositories" mute
+	date +%s > ${last_update_file}
+}
+
+pkg_upgrade() {
+	unset need_reboot
+	if [ ! -f "${upgrade_in_progress}" ]; then
+		pkg_update
+
+		if [ -f "${logfile}" ]; then
+			rm -f ${logfile}
+		fi
+
+		pkg_upgrade_first_step
+
+		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
+			need_reboot=1
+		fi
+	fi
+
+	pkg_upgrade_second_step
+
+	if [ -n "${need_reboot}" ]; then
+		_echo "Rebooting..."
+		/etc/rc.reboot &
+		_exit 0
+	fi
+}
+
+is_pkg_installed() {
+	local _pkg_name="${1}"
+
+	pkg info -e ${_pkg_name}
+	return $?
+}
+
+compare_pkg_version() {
+	local _pkg_name="${1}"
+
+	if ! is_pkg_installed ${_pkg_name}; then
+		echo '!'
+		return -1
+	fi
+
+	local _lver=$(pkg query %v ${_pkg_name})
+
+	if [ -z "${_lver}" ]; then
+		_echo "ERROR: It was not possible to determine ${_pkg_name} local version"
+		_exit 1
+	fi
+
+	local _rver=$(pkg rquery %v ${_pkg_name})
+
+	if [ -z "${_rver}" ]; then
+		_echo "ERROR: It was not possible to determine ${_pkg_name} remote version"
+		_exit 1
+	fi
+
+	local _version=$(pkg version -t ${_lver} ${_rver})
+
+	if [ $? -ne 0 ]; then
+		_echo "ERROR: Error comparing ${_pkg_name} local and remote versions"
+		_exit 1
+	fi
+
+	echo ${_version}
+	return 0
+}
+
+pkg_install() {
+	local _pkg_name="${1}"
+
+	if [ -z "${_pkg_name}" ]; then
+		_echo "ERROR: Blank package name"
+		_exit 1
+	fi
+
+	pkg_update
+
+	if is_pkg_installed ${_pkg_name}; then
+		local _cversion=$(compare_pkg_version ${_pkg_name})
+
+		if [ "${_cversion}" = "=" ]; then
+			_echo "Package ${_pkg_name} is up to date"
+			_exit 0
+		elif [ "${_cversion}" = ">" ]; then
+			_echo "Installed ${_pkg_name} version is newer than remote"
+			_exit 0
+		fi
+		local _cmd="upgrade"
+		local _msg="Upgrading"
+	else
+		local _cmd="install"
+		local _msg="Installing"
+	fi
+
+	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg clean" "Cleaning up cache" mute ignore_result
+}
+
+pkg_delete() {
+	local _pkg_name="${1}"
+
+	if [ -z "${_pkg_name}" ]; then
+		_echo "ERROR: Blank package name"
+		_exit 1
+	fi
+
+	if ! is_pkg_installed ${_pkg_name}; then
+		_echo "ERROR: Package ${_pkg_name} is not installed"
+		_exit 1
+	fi
+
+	_exec "pkg delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
+}
+
+pid_file="/var/run/$(basename $0).pid"
+last_update_file="/var/run/$(basename $0)-last-update"
+logfile=/cf/conf/upgrade_log.txt
+stdout='/dev/null'
+
+# File used to detect second call, after kernel update and reboot
+upgrade_in_progress="/cf/conf/upgrade_in_progress"
+
+# pkg should not ask for confirmations
+export ASSUME_ALWAYS_YES=true
+
+# Disable automatic update
+export REPO_AUTOUPDATE=false
+
+export product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
+unset yes
+unset progress_fifo
+unset action
+unset action_pkg
+while getopts di:hp:r:uy opt; do
+	case ${opt} in
+		d)
+			stdout=''
+			;;
+		i)
+			if [ -n "${action}" ]; then
+				usage
+				_exit 1
+			fi
+			action="install"
+			action_pkg="${OPTARG}"
+			;;
+		h)
+			usage
+			_exit 0
+			;;
+		p)
+			progress_fifo="${OPTARG}"
+			;;
+		r)
+			if [ -n "${action}" ]; then
+				usage
+				_exit 1
+			fi
+			action="delete"
+			action_pkg="${OPTARG}"
+			;;
+		u)
+			if [ -n "${action}" ]; then
+				usage
+				_exit 1
+			fi
+			action="update"
+			;;
+		y)
+			yes=1
+			;;
+		*)
+			usage
+			_exit 1
+			;;
+	esac
+done
+
+# Set default action when no parameter is set
+: ${action:="upgrade"}
+
+if pgrep -qF ${pid_file} >/dev/null 2>&1; then
+	echo "Another instance is already running... Aborting!"
+	exit 1
+fi
+
+/etc/rc.conf_mount_rw
+
+echo $$ > ${pid_file}
+
+trap _exit 1 2 15 EXIT
+
+if [ -n "${progress_fifo}" ]; then
+	if [ ! -e "${progress_fifo}" ]; then
+		mkfifo ${progress_fifo}
+	fi
+	if [ ! -p "${progress_fifo}" ]; then
+		_echo "ERROR: ${progress_fifo} is not a FIFO"
+		_exit 1
+	fi
+	export EVENT_PIPE="${progress_fifo}"
+fi
+
+case "${action}" in
+	upgrade)
+		pkg_upgrade
+		;;
+	update)
+		pkg_update force
+		;;
+	install)
+		pkg_install ${action_pkg}
+		;;
+	delete)
+		pkg_delete ${action_pkg}
+		;;
+	*)
+		_echo "ERROR: Invalid action!"
+		_exit 1
+esac
+
+_exit 0

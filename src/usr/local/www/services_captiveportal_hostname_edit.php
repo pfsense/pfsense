@@ -32,7 +32,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ipfw
-	pfSense_MODULE:	captiveportal
+	pfSense_MODULE: captiveportal
 */
 
 ##|+PRIV
@@ -101,7 +101,6 @@ if (isset($id) && $a_allowedhostnames[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -165,80 +164,84 @@ if ($_POST) {
 	}
 }
 
+function build_dir_list() {
+	$dirs = array(gettext("Both"),gettext("From"),gettext("To"));
+	$dirlist = array();
+
+	foreach ($dirs as $dir) {
+		$dirlist[strtolower($dir)] = $dir;
+	}
+
+	return($dirlist);
+}
+
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="services_captiveportal_hostname_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal hostname edit">
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="dir" class="formfld">
-				<?php
-					$dirs = array(gettext("Both"), gettext("From"), gettext("To")) ;
-					foreach ($dirs as $dir):
-				?>
-						<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected=\"selected\"";?> >
-						<?=htmlspecialchars($dir);?>
-						</option>
-				<?php
-					endforeach;
-				?>
-				</select>
-				<br />
-				<span class="vexpl">
-					<?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an Hostname through the captive portal (without authentication)"); ?>.
-					<?=gettext("Use"); ?> <em><?=gettext("To"); ?></em> <?=gettext("to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname"); ?>.
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Hostname");?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this Hostname in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a download limit to be enforced on this Hostname in Kbit/s"); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
-				<?php if (isset($id) && $a_allowedhostnames[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'Submit',
+	gettext("Save")
+));
+
+$section = new Form_Section('Captive Portal Hostname settings');
+
+$section->addInput(new Form_Select(
+	'dir',
+	'Direction',
+	strtolower($pconfig['dir']),
+	build_dir_list()
+))->setHelp('Use "From" to always allow an Hostname through the captive portal (without authentication). ' .
+			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname.');
+
+$section->addInput(new Form_Input(
+	'hostname',
+	'Hostname',
+	'text',
+	$pconfig['hostname']
+));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$section->addInput(new Form_Input(
+	'bw_up',
+	'Bandwidth up',
+	'text',
+	$pconfig['bw_up']
+))->setHelp('Enter a upload limit to be enforced on this Hostname in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'bw_down',
+	'Bandwidth down',
+	'text',
+	$pconfig['bw_down']
+))->setHelp('Enter a download limit to be enforced on this Hostname in Kbit/s');
+
+$section->addInput(new Form_Input(
+	'zone',
+	null,
+	'hidden',
+	$cpzone
+));
+
+if (isset($id) && $a_allowedhostnames[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

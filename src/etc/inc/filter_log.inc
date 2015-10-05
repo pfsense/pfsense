@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/bin/tail	/usr/local/sbin/clog
-	pfSense_MODULE:	filter
+	pfSense_MODULE: filter
 */
 
 require 'config.inc';
@@ -73,7 +73,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 		$flent = parse_filter_line($logent);
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
-			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) ||
+			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
 			    (($flent != "") && (is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
 				$counter++;
 				$filterlog[] = $flent;
@@ -86,7 +86,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 function escape_filter_regex($filtertext) {
 	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
-	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".  */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".    */
 	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
 }
 
@@ -261,7 +261,7 @@ function parse_filter_line($line) {
 		}
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule number: %s.   Please report to mailing list or forum."), $flent['rulenum']));
+			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
 		}
 		return "";
 	}
@@ -271,7 +271,7 @@ function parse_filter_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s.   Please report to mailing list or forum."), $errline));
+			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $errline));
 		}
 		return "";
 	}
@@ -379,7 +379,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$lookup_key = $trackernum;
 	}
 
-	if ($type == "rdr")	{
+	if ($type == "rdr") {
 		$ruleString = $buffer_rules_rdr[$lookup_key];
 		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
 		$rulename = substr($ruleString, 0, 30);
@@ -406,16 +406,16 @@ function find_action_image($action) {
 function handle_ajax($nentries, $tail = 50) {
 	global $config;
 	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile, $filterent;
+		global $filter_logfile,$filterent;
 		if ($_GET['lastsawtime']) {
 			$lastsawtime = $_GET['lastsawtime'];
 		}
 		if ($_POST['lastsawtime']) {
 			$lastsawtime = $_POST['lastsawtime'];
 		}
-		/*  compare lastsawrule's time stamp to filter logs.
-		 *  afterwards return the newer records so that client
-		 *  can update AJAX interface screen.
+		/* compare lastsawrule's time stamp to filter logs.
+		 * afterwards return the newer records so that client
+		 * can update AJAX interface screen.
 		 */
 		$new_rules = "";
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
@@ -429,8 +429,8 @@ function handle_ajax($nentries, $tail = 50) {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">{$img}</a>";
-				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
+				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">" . gettext("Block") . " </a>";
+				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
 		echo $new_rules;

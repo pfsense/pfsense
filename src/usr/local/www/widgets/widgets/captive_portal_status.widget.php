@@ -105,42 +105,36 @@ if ($_GET['order']) {
 	usort($cpdb_all, "clientcmp");
 }
 ?>
-<table class="sortable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="captive portal status">
+<table class="table">
+	<thead>
 	<tr>
-		<td class="listhdrr"><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></td>
-		<td class="listhdrr"><a href="?order=mac&amp;showact=<?=$showact;?>">MAC address</a></td>
-		<td class="listhdrr"><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></td>
-<?php
-	if ($showact == 1):
-?>
-		<td class="listhdrr"><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></td>
-		<td class="listhdrr"><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></td>
-<?php
-	endif;
-?>
+		<th><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></td>
+		<th><a href="?order=mac&amp;showact=<?=$showact;?>">MAC address</a></td>
+		<th><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></td>
+<?php if ($showact == 1): ?>
+		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></td>
+		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></td>
+<?php endif; ?>
 	</tr>
-<?php
-foreach ($cpdb_all as $cpent):
-?>
+	</thead>
+	<tbody>
+<?php foreach ($cpdb_all as $cpent): ?>
 	<tr>
-		<td class="listlr"><?=$cpent[2];?></td>
-		<td class="listr"><?=$cpent[3];?>&nbsp;</td>
-		<td class="listr"><?=$cpent[4];?>&nbsp;</td>
-<?php
-	if ($showact == 1):
-?>
-		<td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-		<td class="listr"><?php if ($cpent[11] && ($cpent[11] > 0)) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[11]));?></td>
-<?php
-	endif;
-?>
-		<td valign="middle" class="list nowrap">
-			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" onclick="return confirm('Do you really want to disconnect this client?')">
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="x" />
+		<td><?=$cpent[2];?></td>
+		<td><?=$cpent[3];?></td>
+		<td><?=$cpent[4];?></td>
+<?php if ($showact == 1): ?>
+		<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
+		<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
+<?php endif; ?>
+		<td>
+			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" class="btn btn-xs btn-danger">
+				delete
 			</a>
 		</td>
 	</tr>
 <?php
 endforeach;
 ?>
+	</tbody>
 </table>

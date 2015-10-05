@@ -77,8 +77,7 @@ if (is_numeric($_POST['filterlogentries'])) {
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
 
 //set variables for log
-
-$nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
+$nentriesacts		= isset($config['widgets']['filterlogentriesacts'])		? $config['widgets']['filterlogentriesacts']		: 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
 $filterfieldsarray = array(
@@ -87,143 +86,36 @@ $filterfieldsarray = array(
 );
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get log entries
 
 /* AJAX related routines */
-handle_ajax($nentries, $nentries + 20);
+if (isset($_POST['lastsawtime'])) {
+	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
 
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-lastsawtime = '<?php echo time(); ?>';
-var lines = Array();
-var timer;
-var updateDelay = 30000;
-var isBusy = false;
-var isPaused = false;
-var nentries = <?php echo $nentries; ?>;
-
-<?php
-if (isset($config['syslog']['reverse'])) {
-	echo "var isReverse = true;\n";
-} else {
-	echo "var isReverse = false;\n";
+	foreach ($filterlog as $idx => $row) {
+		if (strtotime($log_row['time']) <= $_POST['lastsawtime'])
+			unset($filterlog[$idx]);
+	}
 }
+else
+	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
 ?>
-
-/* Called by the AJAX updater */
-function format_log_line(row) {
-	var rrText = "<?php echo gettext("Reverse Resolve with DNS"); ?>";
-
-	if (row[8] == '6') {
-		srcIP = '[' + row[3] + ']';
-		dstIP = '[' + row[5] + ']';
-	} else {
-		srcIP = row[3];
-		dstIP = row[5];
-	}
-
-	if (row[4] == '') {
-		srcPort = '';
-	} else {
-		srcPort = ':' + row[4];
-	}
-	if (row[6] == '') {
-		dstPort = '';
-	} else {
-		dstPort = ':' + row[6];
-	}
-
-	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
-		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '</td>' +
-		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
-		'<td class="listMRr ellipsis" title="' + srcIP + srcPort + '"><a href="diag_dns.php?host=' + row[3] + '" title="' + rrText + '">' + srcIP + '</a></td>' +
-		'<td class="listMRr ellipsis" title="' + dstIP + dstPort + '"><a href="diag_dns.php?host=' + row[5] + '" title="' + rrText + '">' + dstIP + '</a>' + dstPort + '</td>';
-
-	var nentriesacts = "<?php echo $nentriesacts; ?>";
-	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
-
-	var Action = row[0].match(/alt=.*?(pass|block|reject)/i).join("").match(/pass|block|reject/i).join("");
-	var Interface = row[2];
-
-	if (!(in_arrayi(Action,	nentriesacts.replace      (/\s+/g, ',').split(','))) && (nentriesacts != 'All')) {
-		return false;
-	}
-	if (!(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(','))) && (nentriesinterfaces != 'All')) {
-		return false;
-	}
-
-	return line;
-}
-//]]>
+<script>
+	var logWidgetLastRefresh = <?=time()?>;
 </script>
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
-<input type="hidden" id="log-config" name="log-config" value="" />
 
-<div id="log-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/log.widget.php" method="post" name="log_widget_iform">
-		Number of lines to display:
-		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-		<?php for ($i = 1; $i <= 20; $i++) { ?>
-			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
-		<?php } ?>
-		</select>
-
-<?php
-		$Include_Act = explode(" ", $nentriesacts);
-		if ($nentriesinterfaces == "All") {
-			$nentriesinterfaces = "";
-		}
-?>
-		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass
-		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
-		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
-		<br />
-		Interfaces:
-		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
-			<option value="All">ALL</option>
-<?php
-		$interfaces = get_configured_interface_with_descr();
-		foreach ($interfaces as $iface => $ifacename):
-?>
-			<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-				<?=htmlspecialchars($ifacename);?>
-			</option>
-<?php
-		endforeach;
-		unset($interfaces);
-		unset($Include_Act);
-?>
-		</select>
-
-		<input id="log_widget_submit" name="log_widget_submit" type="submit" class="formbtn" value="Save" />
-	</form>
-</div>
-
-<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout: fixed;" summary="logs">
-	<colgroup>
-		<col style='width:  7%;' />
-		<col style='width: 23%;' />
-		<col style='width: 11%;' />
-		<col style='width: 28%;' />
-		<col style='width: 31%;' />
-	</colgroup>
+<table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<td class="listhdrr"><?=gettext("Act");?></td>
-			<td class="listhdrr"><?=gettext("Time");?></td>
-			<td class="listhdrr"><?=gettext("IF");?></td>
-			<td class="listhdrr"><?=gettext("Source");?></td>
-			<td class="listhdrr"><?=gettext("Destination");?></td>
+			<th><?=gettext("Act");?></th>
+			<th><?=gettext("Time");?></th>
+			<th><?=gettext("IF");?></th>
+			<th><?=gettext("Source");?></th>
+			<th><?=gettext("Destination");?></th>
 		</tr>
 	</thead>
-	<tbody id='filter-log-entries'>
-	<?php
-	$rowIndex = 0;
+	<tbody>
+<?php
 	foreach ($filterlog as $filterent):
-		$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-		$rowIndex++;
 		if ($filterent['version'] == '6') {
 			$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
 			$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
@@ -232,38 +124,31 @@ function format_log_line(row) {
 			$dstIP = htmlspecialchars($filterent['dstip']);
 		}
 
-		if ($filterent['srcport']) {
-			$srcPort = ":" . htmlspecialchars($filterent['srcport']);
-		} else {
-			$srcPort = "";
-		}
+		if ($filterent['act'] == "block")
+			$iconfn = "remove";
+		else if ($filterent['act'] == "reject")
+			$iconfn = "fire";
+		else if ($filterent['act'] == "match")
+			$iconfn = "filter";
+		else
+			$iconfn = "ok";
 
-		if ($filterent['dstport']) {
-			$dstPort = ":" . htmlspecialchars($filterent['dstport']);
-		} else {
-			$dstPort = "";
-		}
-
-	?>
-		<tr class="<?=$evenRowClass?>">
-			<td class="listMRlr nowrap" align="center">
-			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
-			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
-			</a>
+		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
+?>
+		<tr>
+			<td><a role="button" data-toggle="popover" data-trigger="hover"
+				data-title="Rule that triggered this action"
+				data-content="<?=htmlspecialchars($rule)?>"> <i
+					class="icon icon-<?=$iconfn?>"></i>
+			</a></td>
+			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
+			<td><?=htmlspecialchars($filterent['interface']);?></td>
+			<td><a href="diag_dns.php?host=<?=$filterent['srcip']?>"
+				title="<?=gettext("Reverse Resolve with DNS")?>"><?=$srcIP?></a>:<?=htmlspecialchars($filterent['srcport'])?>
 			</td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo $srcIP . $srcPort;?>">
-				<a href="diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo $srcIP;?></a></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo $dstIP . $dstPort;?>">
-				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo $dstIP;?></a><?php echo $dstPort;?></td>
-			<?php
-				if ($filterent['proto'] == "TCP") {
-					$filterent['proto'] .= ":{$filterent['tcpflags']}";
-				}
-			?>
+			<td><a href="diag_dns.php?host=<?=$filterent['dstip']?>"
+				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>
+			</td>
 		</tr>
 	<?php
 	endforeach;
@@ -271,11 +156,79 @@ function format_log_line(row) {
 	</tbody>
 </table>
 
-<!-- needed to display the widget settings menu -->
-<script type="text/javascript">
-//<![CDATA[
-	selectIntLink = "log-configure";
-	textlink = document.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
+<?php
+
+/* for AJAX response, we only need the panel-body */
+if (isset($_GET['lastsawtime']))
+	exit;
+?>
+
+<script>
+function logWidgetUpdateFromServer(){
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/log.widget.php',
+		data: 'lastsawtime='+logWidgetLastRefresh,
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			$('#widget-log .panel-body').html(data);
+		}
+	});
+}
+
+events.push(function(){
+	setInterval('logWidgetUpdateFromServer()', 60*1000);
+});
 </script>
+
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div>
+<div class="panel-footer collapse">
+
+	<form action="/widgets/widgets/log.widget.php" method="post"
+		class="form-horizontal">
+		<div class="form-group">
+			<label for="filterlogentries" class="col-sm-4 control-label">Number
+				of entries</label>
+			<div class="col-sm-6">
+				<input type="number" name="filterlogentries" value="<?=$nentries?>"
+					min="1" max="20" class="form-control" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-4 control-label">Filter actions</label>
+			<div class="col-sm-6 checkbox">
+			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
+			<label><input name="actpass" type="checkbox" value="Pass"
+					<?=(in_array('pass', $include_acts) ? 'checked="checked"':'')?> />Pass</label>
+				<label><input name="actblock" type="checkbox" value="Block"
+					<?=(in_array('block', $include_acts) ? 'checked="checked"':'')?> />Block</label>
+				<label><input name="actreject" type="checkbox" value="Reject"
+					<?=(in_array('reject', $include_acts) ? 'checked="checked"':'')?> />Reject</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="filterlogentriesinterfaces"
+				class="col-sm-4 control-label">Filter interface</label>
+			<div class="col-sm-6 checkbox">
+				<select name="filterlogentriesinterfaces" class="form-control">
+			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
+				<option value="<?=$iface?>"
+						<?=($nentriesinterfaces==$iface?'selected="selected"':'')?>><?=htmlspecialchars($ifacename)?></option>
+			<?php endforeach;?>
+			</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-6">
+				<button type="submit" class="btn btn-default">Save</button>
+			</div>
+		</div>
+	</form>

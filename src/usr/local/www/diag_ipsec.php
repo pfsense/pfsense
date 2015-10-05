@@ -2,38 +2,61 @@
 /* $Id$ */
 /*
 	diag_ipsec.php
-	Copyright (C) 2004-2009 Scott Ullrich
-	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Parts of this code was originally based on vpn_ipsec_sad.php
-	Copyright (C) 2003-2004 Manuel Kasper
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
-	pfSense_MODULE:	ipsec
+	pfSense_MODULE: ipsec
 */
 
 ##|+PRIV
@@ -51,7 +74,7 @@ $shortcut_section = "ipsec";
 
 require("guiconfig.inc");
 include("head.inc");
-require("ipsec.inc");
+require_once("ipsec.inc");
 
 if ($_GET['act'] == 'connect') {
 	if (ctype_digit($_GET['ikeid'])) {
@@ -94,54 +117,71 @@ $a_phase1 = &$config['ipsec']['phase1'];
 
 $status = ipsec_smp_dump_status();
 
+$tab_array = array();
+$tab_array[] = array(gettext("Overview"), true, "diag_ipsec.php");
+$tab_array[] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
+$tab_array[] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
+$tab_array[] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+$tab_array[] = array(gettext("Logs"), false, "diag_logs.php?logfile=ipsec");
+display_top_tabs($tab_array);
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?php echo $jsevents["body"]["onload"]; ?>">
-<?php include("fbegin.inc"); ?>
-<div id="inputerrors"></div>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec">
-	<tr>
-		<td>
+<div class="panel panel-default">
+	<div class="panel-heading">IPSec status</div>
+	<div class="panel-body table responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Local ID")?></th>
+					<th><?=gettext("Local IP")?></th>
+					<th><?=gettext("Remote ID")?></th>
+					<th><?=gettext("Remote IP")?></th>
+					<th><?=gettext("Role")?></th>
+					<th><?=gettext("Reauth")?></th>
+					<th><?=gettext("Algo")?></th>
+					<th><?=gettext("Status")?></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
-			$tab_array = array();
-			$tab_array[0] = array(gettext("Overview"), true, "diag_ipsec.php");
-			$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-			$tab_array[2] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-			$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-			$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
-			display_top_tabs($tab_array);
+$ipsecconnected = array();
+
+if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])):
+	foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa):
+		$con_id = substr($ikesa['peerconfig'], 3);
+		
+		if ($ikesa['version'] == 1) {
+			$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+			$ipsecconnected[$ph1idx] = $ph1idx;
+		} else {
+			$ipsecconnected[$con_id] = $ph1idx = $con_id;
+		}
+
+		if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id']))
+			$icon = "pass";
+		elseif (!isset($config['ipsec']['enable']))
+			$icon = "block";
+		else
+			$icon = "reject";
 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-		<div id="mainarea">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable" summary="status">
-		<thead>
-			<tr>
-				<th class="listhdrr nowrap"><?php echo gettext("Description");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Local ID");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Local IP");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Remote ID");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Remote IP");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Role");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Reauth");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Algo");?></th>
-				<th class="listhdrr nowrap"><?php echo gettext("Status");?></th>
-				<th class="list nowrap"></th>
-			</tr>
-		</thead>
-		<tbody>
+				<tr>
+					<td>
+						<?=htmlspecialchars(ipsec_get_descr($ph1idx))?>
+					</td>
+					<td>
 <?php
-	$ipsecconnected = array();
-	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])):
-		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa):
-			$con_id = substr($ikesa['peerconfig'], 3);
-			if ($ikesa['version'] == 1) {
-				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
-				$ipsecconnected[$ph1idx] = $ph1idx;
-			} else {
-				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+			if (!is_array($ikesa['local']))
+				echo gettext("Unknown");
+			else {
+				if (!empty($ikesa['local']['identification'])) {
+					if ($ikesa['local']['identification'] == '%any')
+						print(gettext('Any identifier'));
+					else
+						print(htmlspecialchars($ikesa['local']['identification']));
+				} else
+					print(gettext("Unknown"));
 			}
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
@@ -152,396 +192,317 @@ $status = ipsec_smp_dump_status();
 				$icon = "reject";
 			}
 ?>
-			<tr>
-				<td class="listlr">
+					</td>
+					<td>
 <?php
-					echo htmlspecialchars(ipsec_get_descr($ph1idx));
+			if (!is_array($ikesa['local']))
+				print(gettext("Unknown"));
+			else {
+				if (!empty($ikesa['local']['address']))
+					print(htmlspecialchars($ikesa['local']['address']) . '<br/>' .	gettext('Port: ') . htmlspecialchars($ikesa['local']['port']));
+				else
+					print(gettext("Unknown"));
+				if ($ikesa['local']['port'] == '4500')
+					print(" NAT-T");
+			}
 ?>
-				</td>
-				<td class="listr">
+					</td>	
+					<td>
 <?php
-				if (!is_array($ikesa['local'])) {
-					echo gettext("Unknown");
-				} else {
-					if (!empty($ikesa['local']['identification'])) {
-						if ($ikesa['local']['identification'] == '%any') {
-							echo gettext('Any identifier');
-						} else {
-							echo htmlspecialchars($ikesa['local']['identification']);
-						}
-					} else {
-						echo gettext("Unknown");
-					}
+			if (!is_array($ikesa['remote']))
+				print(gettext("Unknown"));
+			else {
+				$identity = "";
+				if (!empty($ikesa['remote']['identification'])) {
+					if ($ikesa['remote']['identification'] == '%any')
+						$identity = 'Any identifier';
+					else
+						$identity = htmlspecialchars($ikesa['remote']['identification']);
 				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				if (!is_array($ikesa['local'])) {
-					echo gettext("Unknown");
-				} else {
-					if (!empty($ikesa['local']['address'])) {
-						echo htmlspecialchars($ikesa['local']['address']) . '<br/>' .
-							gettext('Port: ') . htmlspecialchars($ikesa['local']['port']);
-					} else {
-						echo gettext("Unknown");
-					}
-					if ($ikesa['local']['port'] == '4500') {
-						echo " NAT-T";
-					}
-				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				if (!is_array($ikesa['remote'])) {
-					echo gettext("Unknown");
-				} else {
-					$identity = "";
-					if (!empty($ikesa['remote']['identification'])) {
-						if ($ikesa['remote']['identification'] == '%any') {
-							$identity = 'Any identifier';
-						} else {
-							$identity = htmlspecialchars($ikesa['remote']['identification']);
-						}
-					}
 
-					if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth'][0]['identity'])) {
-						echo htmlspecialchars($ikesa['remote']['auth'][0]['identity']);
-						echo "<br/>{$identity}";
-					} else {
-						if (empty($identity)) {
-							echo gettext("Unknown");
-						} else {
-							echo $identity;
-						}
-					}
-				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				if (!is_array($ikesa['remote'])) {
-					echo gettext("Unknown");
+				if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth'][0]['identity'])) {
+					print(htmlspecialchars($ikesa['remote']['auth'][0]['identity']));
+					print('<br/>' . $identity);
 				} else {
-					if (!empty($ikesa['remote']['address'])) {
-						echo htmlspecialchars($ikesa['remote']['address']) . '<br/>' .
-							gettext('Port: ') . htmlspecialchars($ikesa['remote']['port']);
-					} else {
-						echo gettext("Unknown");
-					}
-					if ($ikesa['remote']['port'] == '4500') {
-						echo " NAT-T";
-					}
+					if (empty($identity))
+						print(gettext("Unknown"));
+					else
+						print($identity);
 				}
+			}
 ?>
-				</td>
-				<td class="listr">
-					IKEv<?php echo htmlspecialchars($ikesa['version']);?>
-					<br/>
+					</td>
+					<td>
 <?php
-					echo htmlspecialchars($ikesa['role']);
+			if (!is_array($ikesa['remote']))
+				print(gettext("Unknown"));
+			else {
+				if (!empty($ikesa['remote']['address']))
+					print(htmlspecialchars($ikesa['remote']['address']) . '<br/>' . gettext('Port: ') . htmlspecialchars($ikesa['remote']['port']));
+				else
+					print(gettext("Unknown"));
+				if ($ikesa['remote']['port'] == '4500')
+					print(" NAT-T");
+			}
 ?>
-				</td>
-				<td class="listr">
+					</td>
+					<td>
+						IKEv<?=htmlspecialchars($ikesa['version'])?>
+						<br/>
+						<?=htmlspecialchars($ikesa['role'])?>
+					</td>
+					<td>
+						<?=htmlspecialchars($ikesa['reauth']);?>
+					</td>
+					<td>
+						<?=htmlspecialchars($ikesa['encalg'])?>
+						<br/>
+						<?=htmlspecialchars($ikesa['intalg'])?>
+						<br/>
+						<?=htmlspecialchars($ikesa['prfalg'])?>
+						<br/>
+						<?=htmlspecialchars($ikesa['dhgroup'])?>
+					</td>
+					<td>
 <?php
-					echo htmlspecialchars($ikesa['reauth']);
+			if ($ikesa['status'] == 'established')
+				print('<span style="color:green">');
+			else
+				print('<span>');
 ?>
-				</td>
-				<td class="listr">
-<?php
-					echo htmlspecialchars($ikesa['encalg']);
-					echo "<br/>";
-					echo htmlspecialchars($ikesa['intalg']);
-					echo "<br/>";
-					echo htmlspecialchars($ikesa['prfalg']);
-					echo "<br/>";
-					echo htmlspecialchars($ikesa['dhgroup']);
-?>
-				</td>
-				<td class="listr">
-					<center>
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $ikesa['status']; ?>" alt=""/>
-						<br/><?php echo htmlspecialchars($ikesa['status']);?>
-						<br/><?php echo htmlspecialchars($ikesa['established']);?>
-					</center>
-				</td>
-				<td >
+						<?=ucfirst(htmlspecialchars($ikesa['status']))?>
+						<br/><?=htmlspecialchars($ikesa['established'])?>
+						</span>
+					</td>
+					<td >
 <?php
 				if ($icon != "pass"):
 ?>
-					<center>
-						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $con_id; ?>">
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt=<?php echo gettext("Connect VPN");?> title=<?php echo gettext("Connect VPN");?> border="0"/>
+					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
+							<?=gettext("Connect VPN")?>
 						</a>
-					</center>
 <?php
 				else:
 ?>
-					<center>
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>">
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_stop.gif" alt=<?php echo gettext("Disconnect VPN");?> title=<?php echo gettext("Disconnect VPN");?> border="0"/>
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Disconnect VPN">
+							<?=gettext("Disconnect")?>
+						</a><br />
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$ikesa['id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Disconnect VPN connection">
+							<?=gettext("Disconnect")?>
 						</a>
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $ikesa['id']; ?>">
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt=<?php echo gettext("Disconnect VPN Connection");?> title=<?php echo gettext("Disconnect VPN Connection");?> border="0"/>
-						</a>
-					</center>
 <?php
 				endif;
 ?>
-				</td>
-				<td valign="middle" class="list nowrap">
-					<table border="0" cellspacing="0" cellpadding="1" summary="">
-					</table>
-				</td>
-			</tr>
+					</td>
+				</tr>
+				<tr>
+					<td colspan = 10>
 <?php
-			if (is_array($ikesa['childsalist'])):
+		    if (is_array($ikesa['childsalist'])):
 ?>
-			<tr>
-				<td class="listrborder" colspan="9">
-				<div id="btnchildsa-<?=$ikeid;?>">
-					<input type="button" onclick="show_childsa('childsa-<?=$ikeid;?>', 'btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
-				</div>
-				<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="childsa-<?=$ikeid;?>" style="display:none" summary="">
-					<thead>
-						<tr>
-							<th class="listhdrr nowrap"><?php echo gettext("Local subnets");?></th>
-							<th class="listhdrr nowrap"><?php echo gettext("Local SPI(s)");?></th>
-							<th class="listhdrr nowrap"><?php echo gettext("Remote subnets");?></th>
-							<th class="listhdrr nowrap"><?php echo gettext("Times");?></th>
-							<th class="listhdrr nowrap"><?php echo gettext("Algo");?></th>
-							<th class="listhdrr nowrap"><?php echo gettext("Stats");?></th>
-						</tr>
-					</thead>
-					<tbody>
+						<div id="btnchildsa-<?=$ikeid?>">
+							<a type="button" onclick="show_childsa('childsa-<?=$ikeid?>','btnchildsa-<?=$ikeid?>');" class="btn btn-sm btn-default" />
+								<?=gettext('Show child SA entries')?>
+							</a>
+						</div>
+
+						<table class="table table-hover table-condensed" id="childsa-<?=$ikeid?>" style="display:none">
+							<thead>
+								<tr class="info">
+									<th><?=gettext("Local subnets")?></th>
+									<th><?=gettext("Local SPI(s)")?></th>
+									<th><?=gettext("Remote subnets")?></th>
+									<th><?=gettext("Times")?></th>
+									<th><?=gettext("Algo")?></th>
+									<th><?=gettext("Stats")?></th>
+									<th><!-- Buttons --></th>
+								</tr>
+							</thead>
+							<tbody>
 <?php
-				if (is_array($ikesa['childsalist']['childsa'])):
-					foreach ($ikesa['childsalist']['childsa'] as $childsa):
+			if (is_array($ikesa['childsalist']['childsa'])):
+				foreach ($ikesa['childsalist']['childsa'] as $childsa):
 ?>
-						<tr valign="top">
-							<td class="listlr nowrap">
+								<tr>
+									<td>
 <?php
-							if (is_array($childsa['local']) &&
-							    is_array($childsa['local']['networks']) &&
-							    is_array($childsa['local']['networks']['network'])) {
-								foreach ($childsa['local']['networks']['network'] as $lnets) {
-									echo htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
-								}
-							} else {
-								echo gettext("Unknown");
-							}
+				if (is_array($childsa['local']) &&
+				    is_array($childsa['local']['networks']) &&
+				    is_array($childsa['local']['networks']['network']))
+					foreach ($childsa['local']['networks']['network'] as $lnets)
+						print(htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />");
+				else
+					print(gettext("Unknown"));
 ?>
-							</td>
-							<td class="listr nowrap">
+									</td>
+									<td>
 <?php
-							if (is_array($childsa['local'])) {
-								echo gettext("Local: ") . htmlspecialchars($childsa['local']['spi']);
-							}
-							if (is_array($childsa['remote'])) {
-								echo "<br/>" . gettext("Remote: ") . htmlspecialchars($childsa['remote']['spi']);
-							}
+				if (is_array($childsa['local']))
+					print(gettext("Local: ") . htmlspecialchars($childsa['local']['spi']));
+					
+				if (is_array($childsa['remote']))
+					print('<br/>' . gettext('Remote: ') . htmlspecialchars($childsa['remote']['spi']));
 ?>
-							</td>
-							<td class="listr nowrap">
+									</td>
+									<td>
 <?php
-							if (is_array($childsa['remote']) &&
-							    is_array($childsa['remote']['networks']) &&
-							    is_array($childsa['remote']['networks']['network'])) {
-								foreach ($childsa['remote']['networks']['network'] as $rnets) {
-									echo htmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
-								}
-							} else {
-								echo gettext("Unknown");
-							}
+				if (is_array($childsa['remote']) &&
+				    is_array($childsa['remote']['networks']) &&
+				    is_array($childsa['remote']['networks']['network']))
+					foreach ($childsa['remote']['networks']['network'] as $rnets)
+						print(htmlspecialchars(ipsec_fixup_network($rnets)) . '<br />');
+				else
+					print(gettext("Unknown"));
 ?>
-							</td>
-							<td class="listr nowrap">
+									</td>
+									<td>
 <?php
-								echo gettext("Rekey: ") . htmlspecialchars($childsa['rekey']);
-								echo "<br/>" . gettext("Life: ") . htmlspecialchars($childsa['lifetime']);
-								echo "<br/>" . gettext("Install: ") .htmlspecialchars($childsa['installtime']);
+				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey']));
+				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['lifetime']));
+				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['installtime']));
 
 ?>
-							</td>
-							<td class="listr nowrap">
+									</td>
+									<td>
 <?php
-								echo htmlspecialchars($childsa['encalg']);
-								echo "<br/>";
-								echo htmlspecialchars($childsa['intalg']);
-								echo "<br/>";
-								if (!empty($childsa['prfalg'])) {
-									echo htmlspecialchars($childsa['prfalg']);
-									echo "<br/>";
-								}
-								if (!empty($childsa['dhgroup'])) {
-									echo htmlspecialchars($childsa['dhgroup']);
-									echo "<br/>";
-								}
-								if (!empty($childsa['esn'])) {
-									echo htmlspecialchars($childsa['esn']);
-									echo "<br/>";
-								}
-								echo gettext("IPComp: ") . htmlspecialchars($childsa['ipcomp']);
+				print(htmlspecialchars($childsa['encalg']) . '<br/>');
+				print(htmlspecialchars($childsa['intalg']) . '<br/>');
+				
+				if (!empty($childsa['prfalg']))
+					print(htmlspecialchars($childsa['prfalg']) . '<br/>');
+				
+				if (!empty($childsa['dhgroup']))
+					print(htmlspecialchars($childsa['dhgroup']) . '<br/>');
+				
+				if (!empty($childsa['esn']))
+					print(htmlspecialchars($childsa['esn']) . '<br/>');
+				
+				print(gettext("IPComp: ") . htmlspecialchars($childsa['ipcomp']));
 ?>
-							</td>
-							<td class="listr nowrap">
+									</td>
+									<td>
 <?php
-								echo gettext("Bytes-In: ") . htmlspecialchars($childsa['bytesin']);
-								echo "<br/>";
-								echo gettext("Packets-In: ") . htmlspecialchars($childsa['packetsin']);
-								echo "<br/>";
-								echo gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytesout']);
-								echo "<br/>";
-								echo gettext("Packets-Out: ") . htmlspecialchars($childsa['packetsout']);
+				print(gettext("Bytes-In: ") . htmlspecialchars($childsa['bytesin']) . '<br/>');
+				print(gettext("Packets-In: ") . htmlspecialchars($childsa['packetsin']) . '<br/>');
+				print(gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytesout']) . '<br/>');
+				print(gettext("Packets-Out: ") . htmlspecialchars($childsa['packetsout']) . '<br/>');
 ?>
-							</td>
-							<td>
-								<center>
-									<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['reqid']; ?>">
-									<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt=<?php echo gettext("Disconnect Child SA");?> title=<?php echo gettext("Disconnect Child SA");?> border="0"/>
-									</a>
-								</center>
-							</td>
-							<td class="list nowrap">
-								&nbsp;
-							</td>
-						</tr>
+									</td>
+									<td>
+										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['reqid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
+											<?=gettext("Disconnect")?>
+										</a>
+									</td>
+								</tr>
 <?php
-					endforeach;
-				endif;
-?>
-						<tr style="display:none;"><td></td></tr>
-					</tbody>
-				</table>
-				</td>
-			</tr>
-<?php
-			endif;
-
-			unset($con_id);
-		endforeach;
-	endif;
-
-	$rgmap = array();
-	foreach ($a_phase1 as $ph1ent):
-		if (isset($ph1ent['disabled'])) {
-			continue;
-		}
-		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
-		if ($ipsecconnected[$ph1ent['ikeid']]) {
-			continue;
-		}
-?>
-			<tr>
-				<td class="listlr">
-<?php
-					echo htmlspecialchars($ph1ent['descr']);
-?>
-				</td>
-				<td class="listr">
-<?php
-				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
-				if (empty($myid_data)) {
-					echo gettext("Unknown");
-				} else {
-					echo htmlspecialchars($myid_data);
-				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				$ph1src = ipsec_get_phase1_src($ph1ent);
-				if (empty($ph1src)) {
-					echo gettext("Unknown");
-				} else {
-					echo htmlspecialchars($ph1src);
-				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
-				if (empty($peerid_data)) {
-					echo gettext("Unknown");
-				} else {
-					echo htmlspecialchars($peerid_data);
-				}
-?>
-				</td>
-				<td class="listr">
-<?php
-				$ph1src = ipsec_get_phase1_dst($ph1ent);
-				if (empty($ph1src)) {
-					echo gettext("Unknown");
-				} else {
-					echo htmlspecialchars($ph1src);
-				}
-?>
-				</td>
-				<td class="listr" >
-				</td>
-				<td class="listr" >
-				</td>
-				<td class="listr" >
-				</td>
-<?php
-			if (isset($ph1ent['mobile'])):
-?>
-				<td class="listr">
-					<center>
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_pass.gif" title=<?php echo gettext("Awaiting connections");?> alt=""/>
-						<br/><?php echo gettext("Awaiting connections");?>
-					</center>
-				</td>
-				<td valign="middle" class="list nowrap">
-					<table border="0" cellspacing="0" cellpadding="1" summary="">
-					</table>
-				</td>
-<?php
-			else:
-?>
-				<td class="listr">
-					<center>
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title=<?php echo gettext("Disconnected");?> alt=""/>
-						<br/><?php echo gettext("Disconnected");?>
-					</center>
-				</td>
-				<td >
-					<center>
-						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $ph1ent['ikeid']; ?>">
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt=<?php echo gettext("Connect VPN");?> title=<?php echo gettext("Connect VPN");?> border="0"/>
-						</a>
-					</center>
-				</td>
-<?php
+				endforeach;
 			endif;
 ?>
-				<td valign="middle" class="list nowrap">
-					<table border="0" cellspacing="0" cellpadding="1" summary="">
-					</table>
-				</td>
-			</tr>
+
+							</tbody>
+						</table>
+					</td>
+				</tr>
 <?php
+		endif;
+
+		unset($con_id);
 	endforeach;
-	unset($ipsecconnected, $phase1, $rgmap);
-?>
-			<tr style="display:none;"><td></td></tr>
-		</tbody>
-		</table>
-		</div>
-		</td>
-	</tr>
-</table>
+endif;
 
-<p class="vexpl">
-	<span class="red">
-		<strong><?php echo gettext("Note:");?><br /></strong>
-	</span>
-	<?php echo gettext("You can configure IPsec");?>
-	<a href="vpn_ipsec.php">here</a>.
-</p>
-<?php unset($status); include("fend.inc"); ?>
+$rgmap = array();
+foreach ($a_phase1 as $ph1ent):
+	if (isset($ph1ent['disabled']))
+		continue;
+		
+	$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
+	
+	if ($ipsecconnected[$ph1ent['ikeid']])
+		continue;
+?>
+				<tr>
+					<td>
+<?php
+	print(htmlspecialchars($ph1ent['descr']));
+?>
+					</td>
+					<td>
+<?php
+	list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+	if (empty($myid_data))
+		print(gettext("Unknown"));
+	else
+		print(htmlspecialchars($myid_data));
+?>
+					</td>
+					<td>
+<?php
+	$ph1src = ipsec_get_phase1_src($ph1ent);
+	
+	if (empty($ph1src))
+		print(gettext("Unknown"));
+	else
+		print(htmlspecialchars($ph1src));
+?>
+					</td>
+					<td>
+<?php
+	list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
+	if (empty($peerid_data))
+		print(gettext("Unknown"));
+	else
+		print(htmlspecialchars($peerid_data));
+?>
+					</td>
+					<td>
+<?php
+	$ph1src = ipsec_get_phase1_dst($ph1ent);
+	if (empty($ph1src))
+		print(gettext("Unknown"));
+	else
+		print(htmlspecialchars($ph1src));
+?>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+<?php
+	if (isset($ph1ent['mobile'])):
+?>
+					<td>
+						<?=gettext("Awaiting connections")?>
+					</td>
+					<td>
+					</td>
+<?php
+	else:
+?>
+					<td>
+						<?=gettext("Disconnected")?>
+					</td>
+					<td >
+						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$ph1ent['ikeid']; ?>" class="btn btn-xs btn-success">
+							<?=gettext("Connect VPN")?>
+						</a>
+					</td>
+<?php
+	endif;
+?>
+					<td>>
+					</td>
+				</tr>
+<?php
+endforeach;
+unset($ipsecconnected, $phase1, $rgmap);
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
 function show_childsa(id, buttonid) {
@@ -551,5 +512,8 @@ function show_childsa(id, buttonid) {
 }
 //]]>
 </script>
-</body>
-</html>
+
+<?php
+unset($status);
+print_info_box(gettext("You can configure IPsec ") . '<a href="vpn_ipsec.php">Here</a>');
+include("foot.inc"); ?>

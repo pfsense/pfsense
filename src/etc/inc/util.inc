@@ -830,12 +830,12 @@ function is_unqualified_hostname($hostname) {
 }
 
 /* returns true if $hostname is a valid hostname, with or without being a fully-qualified domain name. */
-function is_hostname($hostname) {
+function is_hostname($hostname, $allow_wildcard=false) {
 	if (!is_string($hostname)) {
 		return false;
 	}
 
-	if (is_domain($hostname)) {
+	if (is_domain($hostname, $allow_wildcard)) {
 		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
 			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
 			return false;
@@ -848,12 +848,17 @@ function is_hostname($hostname) {
 }
 
 /* returns true if $domain is a valid domain name */
-function is_domain($domain) {
+function is_domain($domain, $allow_wildcard=false) {
 	if (!is_string($domain)) {
 		return false;
 	}
+	if ($allow_wildcard) {
+		$domain_regex = '/^(?:(?:[a-z_0-9\*]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i';
+	} else {
+		$domain_regex = '/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i';
+	}
 
-	if (preg_match('/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i', $domain)) {
+	if (preg_match($domain_regex, $domain)) {
 		return true;
 	} else {
 		return false;

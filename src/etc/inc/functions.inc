@@ -102,7 +102,7 @@ if (!function_exists("get_menu_messages")) {
 				foreach ($notices as $key => $value) {
 					$date = date("m-d-y H:i:s", $key);
 					$noticemsg = ($value['notice'] != "" ? $value['notice'] : $value['id']);
-					$noticemsg = preg_replace("/(\"|\'|\n|<.?\w+>)/i", "", $noticemsg);
+					$noticemsg = strip_tags(preg_replace("/(\"|\'|\n|<.?\w+>)/i", "", $noticemsg));
 					if ((strlen($noticemsg)* 8) > $domtt_width) {
 						$domtt_width=(strlen($noticemsg) *8);
 					}

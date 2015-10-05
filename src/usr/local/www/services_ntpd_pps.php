@@ -49,7 +49,6 @@ if (!is_array($config['ntpd']['pps'])) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 
 	if (!$input_errors) {
@@ -109,143 +108,102 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 }
+
 $pconfig = &$config['ntpd']['pps'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP PPS"));
 $shortcut_section = "ntp";
 include("head.inc");
-?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="services_ntpd_pps.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
+if ($input_errors)
+    print_input_errors($input_errors);
+    
+if ($savemsg)
+    print_info_box($savemsg, 'success');
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ntpd pps">
-	<tr>
-		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
-	$tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
-	$tab_array[] = array(gettext("PPS"), true, "services_ntpd_pps.php");
-	display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("NTP PPS Configuration"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">
-					</td>
-					<td width="78%" class="vtable"><?php echo gettext("Devices with a Pulse Per Second output such as radios that receive a time signal from DCF77 (DE), JJY (JP), MSF (GB) or WWVB (US) may be used as a PPS reference for NTP.");?>
-						<?php echo gettext("A serial GPS may also be used, but the serial GPS driver would usually be the better option.");?>
-						<?php echo gettext("A PPS signal only provides a reference to the change of a second, so at least one other source to number the seconds is required.");?>
-						<br />
-						<br /><strong><?php echo gettext("Note");?>:</strong> <?php echo gettext("At least 3 additional time sources should be configured under"); ?> <a href="services_ntpd.php"><?php echo gettext("Services > NTP"); ?></a> <?php echo gettext("to reliably supply the time of each PPS pulse."); ?>
-					</td>
-				</tr>
-<?php
-	$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-	if (!empty($serialports)):
-?>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Serial port</td>
-					<td width="78%" class="vtable">
-						<select name="ppsport" class="formselect">
-							<option value="">none</option>
-							<?php
-								foreach ($serialports as $port):
-									$shortport = substr($port, 5);
-									$selected = ($shortport == $pconfig['port']) ? " selected=\"selected\"" : "";?>
-							<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
-							<?php
-								endforeach;
-							?>
-						</select>&nbsp;
-						<?php echo gettext("All serial ports are listed, be sure to pick the port with the PPS source attached."); ?>
-					</td>
-				</tr>
-<?php
-	endif;
-?>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Fudge time</td>
-					<td width="78%" class="vtable">
-						<input name="ppsfudge1" type="text" class="formfld unknown" id="ppsfudge1" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge1']);?>" />(<?php echo gettext("seconds");?>)<br />
-						<?php echo gettext("Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver.");?> (<?php echo gettext("default");?>: 0.0).
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Stratum</td>
-					<td width="78%" class="vtable">
-						<input name="ppsstratum" type="text" class="formfld unknown" id="ppsstratum" max="16" size="20" value="<?=htmlspecialchars($pconfig['stratum']);?>" /><?php echo gettext("(0-16)");?><br />
-						<?php echo gettext("This may be used to change the PPS Clock stratum");?> (<?php echo gettext("default");?>: 0). <?php echo gettext("This may be useful if, for some reason, you want ntpd to prefer a different clock and just monitor this source."); ?>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Flags</td>
-					<td width="78%" class="vtable">
-						<table summary="flags">
-							<tr>
-								<td>
-									<?php echo gettext("Normally there should be no need to change these options from the defaults."); ?><br />
-								</td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>
-									<input name="ppsflag2" type="checkbox" class="formcheckbox" id="ppsflag2"<?php if ($pconfig['flag2']) echo " checked=\"checked\""; ?> />
-								</td>
-								<td>
-									<span class="vexpl"><?php echo gettext("Enable falling edge PPS signal processing (default: rising edge)."); ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="ppsflag3" type="checkbox" class="formcheckbox" id="ppsflag3"<?php if ($pconfig['flag3']) echo " checked=\"checked\""; ?> />
-								</td>
-								<td>
-									<span class="vexpl"><?php echo gettext("Enable kernel PPS clock discipline (default: disabled)."); ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="ppsflag4" type="checkbox" class="formcheckbox" id="ppsflag4"<?php if ($pconfig['flag4']) echo " checked=\"checked\""; ?> />
-								</td>
-								<td>
-									<span class="vexpl"><?php echo gettext("Record a timestamp once for each second, useful for constructing Allan deviation plots (default: disabled)."); ?></span>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Clock ID</td>
-					<td width="78%" class="vtable">
-						<input name="ppsrefid" type="text" class="formfld unknown" id="ppsrefid" maxlength= "4" size="20" value="<?php htmlspecialchars($pconfig['refid']);?>" /><?php echo gettext("(1 to 4 charactors)");?><br />
-						<?php echo gettext("This may be used to change the PPS Clock ID");?> (<?php echo gettext("default");?>: PPS).
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$tab_array = array();
+$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
+$tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
+$tab_array[] = array(gettext("PPS"), true, "services_ntpd_pps.php");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+$form = new Form; 
+
+$section = new Form_Section('NTP Serial PPS Configuration');
+
+$section->addInput(new Form_StaticText(
+	'Notes',
+	'Devices with a Pulse Per Second output such as radios that receive a time signal from DCF77 (DE), JJY (JP), MSF (GB) or WWVB (US) may be used as a PPS reference for NTP.' .
+	'A serial GPS may also be used, but the serial GPS driver would usually be the better option. ' . 
+	'A PPS signal only provides a reference to the change of a second, so at least one other source to number the seconds is required.' . '<br /><br />' .
+	'At least 3 additional time sources should be configured under ' . 
+	'<a href="services_ntpd.php">' . 'Services > NTP' . '</a>' . ' to reliably supply the time of each PPS pulse.'
+));
+
+$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+
+if (!empty($serialports)) {
+    $splist = array();
+    
+    foreach ($serialports as $port) {
+    	$shortport = substr($port,5);
+    	$splist[$shortport] = $shortport;
+    }
+    
+    $section->addInput(new Form_Select(
+    	'ppsport',
+    	'Serial port',
+    	$pconfig['port'],
+    		$splist
+    ))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
+}
+
+$section->addInput(new Form_Input(
+	'ppsfudge1',
+	'Fudge time',
+	'text',
+	$pconfig['fudge1']
+))->setHelp('Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver. (default: 0.0).');
+
+$section->addInput(new Form_Input(
+	'ppsstratum',
+	'Stratum',
+	'text',
+	$pconfig['stratum']
+))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful if, for some reason, you want ntpd to prefer a different clock and just monitor this source.');
+
+$section->addInput(new Form_Checkbox(
+	'ppsflag2',
+	'Flags',
+	'Enable falling edge PPS signal processing (default: rising edge).',
+	$pconfig['flag2']
+));
+
+$section->addInput(new Form_Checkbox(
+	'ppsflag3',
+	null,
+	'Enable kernel PPS clock discipline (default: disabled).',
+	$pconfig['flag3']
+));
+
+$section->addInput(new Form_Checkbox(
+	'ppsflag4',
+	null,
+	'Record a timestamp once for each second, useful for constructing Allan deviation plots (default: disabled).',
+	$pconfig['flag4']
+));
+
+$section->addInput(new Form_Input(
+	'ppsrefid',
+	'Clock ID',
+	'text',
+	$pconfig['refid'],
+	['placeholder' => '1 to 4 characters']
+))->setHelp('This may be used to change the PPS Clock ID (default: PPS).');
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

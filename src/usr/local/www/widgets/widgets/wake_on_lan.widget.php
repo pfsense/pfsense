@@ -9,11 +9,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -39,7 +39,7 @@ if (is_array($config['wol']['wolentry'])) {
 }
 
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="wol status">
+<table>
 	<tr>
 		<?php
 		echo '<td class="widgetsubheader" align="center">' . gettext("Computer / Device") . '</td>';
@@ -51,12 +51,12 @@ if (is_array($config['wol']['wolentry'])) {
 <?php
 
 if (count($wolcomputers) > 0) {
-	foreach ($wolcomputers as $wolent) {
+	foreach($wolcomputers as $wolent) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-		if ($is_active == 1) {
+		if($is_active == 1) {
 			echo '<td class="listr" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\" alt=\"pass\" /> " . gettext("Online") . "</td>\n";
 		} else {
@@ -64,7 +64,7 @@ if (count($wolcomputers) > 0) {
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\" alt=\"block\" />&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";
 		}
 		echo '<td valign="middle" class="list nowrap">';
-		/*if ($is_active) { */
+		/*if($is_active) { */
 			/* Will always show wake-up button even if pfsense thinks it is awake */
 		/* } else { */
 			echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";

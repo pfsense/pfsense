@@ -5,7 +5,6 @@
 	 * +====================================================+
 	 *  Services Supported:
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
-	 *    - DHSDns (dhs.org)
 	 *    - No-IP (no-ip.com)
 	 *    - EasyDNS (easydns.com)
 	 *    - DHS (www.dhs.org)
@@ -283,13 +282,24 @@
 			if ($this->_dnsVerboseLog) {
 				log_error("DynDNS ({$this->_dnsHost}): DynDns _update() starting.");
 			}
+			
+			if (strstr($this->_dnsRequestIf, "_vip")) {
+				$parentif = link_carp_interface_to_parent($this->_dnsRequestIf);
+				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
+			} else {
+				$realparentif = $this->_dnsRequestIf;
+			}
+
+			if ($this->_useIPv6 == false) {
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+			}
 
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_HEADER, 0);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $this->_dnsRequestIf);
+				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 
@@ -328,6 +338,7 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'dhs':
+					// DHS is disabled in the GUI because the following doesn't work.
 					$needsIP = TRUE;
 					$post_data['hostscmd'] = 'edit';
 					$post_data['hostscmdstage'] = '2';
@@ -351,7 +362,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, '{$server}{$port}');
+					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
@@ -671,10 +682,43 @@
 					break;
 				case 'cloudflare':
 					$needsIP = TRUE;
-					$dnsServer ='www.cloudflare.com';
-					$dnsHost = str_replace(' ', '', $this->_dnsHost);
-					$URL = "https://{$dnsServer}/api.html?a=DIUP&email={$this->_dnsUser}&tkn={$this->_dnsPass}&ip={$this->_dnsIP}&hosts={$dnsHost}";
-					curl_setopt($ch, CURLOPT_URL, $URL);
+					$dnsServer ='api.cloudflare.com';
+					$dnsHost = str_replace(' ','', $this->_dnsHost);
+					$host_names = explode(".", $dnsHost);
+					$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
+
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'X-Auth-Email: '.$this->_dnsUser.'',
+						'X-Auth-Key: '.$this->_dnsPass.'',
+						'Content-Type: application/json'
+					));
+
+					// Get zone ID
+					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$bottom_host_name}";
+					curl_setopt($ch, CURLOPT_URL, $getZoneId); 	
+					$output = json_decode(curl_exec($ch));
+					$zone = $output->result[0]->id;
+					if ($zone){ // If zone ID was found get host ID
+						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_dnsHost}";
+						curl_setopt($ch, CURLOPT_URL, $getHostId); 
+						$output = json_decode(curl_exec($ch));
+						$host = $output->result[0]->id;
+						if ($host){ // If host ID was found update host
+							$hostData = array(
+								"content" => "{$this->_dnsIP}",
+								"type" => "A",
+								"name" => "{$this->_dnsHost}",
+								"proxiable" => false,
+								"proxied" => false
+							);
+							$data_json = json_encode($hostData);
+							$updateHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records/{$host}";
+							curl_setopt($ch, CURLOPT_URL, $updateHostId); 
+							curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+							curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
+						}
+					}
 					break;
 				case 'eurodns':
 					$needsIP = TRUE;
@@ -695,8 +739,15 @@
 						log_error("GratisDNS.dk ({$this->_dnsHost}): DNS update() starting.");
 					}
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
-					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $domain . '&i=' . $this->_dnsIP);
+					$host = trim($this->_dnsHost);
+					$hostnames = explode(".", $host);
+					$hostnames_count = count($hostnames);
+					if ($hostnames_count > 2) {
+						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
+					} else {
+						$domain = $host;
+					}
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $host . '&d=' . $domain . '&i=' . $this->_dnsIP);
 					break;
 				case 'ovh-dynhost':
 					$needsIP = FALSE;
@@ -923,7 +974,7 @@
 							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Invalid Password.";
 							break;
 						case 5:
-							$status = "phpDynDNS ({$this->_dnsHost}): (Error) To many updates sent.";
+							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Too many updates sent.";
 							break;
 						case 6:
 							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Account disabled due to violation of No-IP terms of service.";
@@ -1226,35 +1277,20 @@
 					}
 					break;
 				case 'cloudflare':
-					// receive multiple results
-					$data = explode("\n", $data);
-					$lines = count($data)-1;
-
-					// loop over the lines
-					for ($pos = 0; ($successful_update || $pos == 0) && $pos < $lines; $pos++) {
-						$resp = $data[$pos];
-						if (preg_match('/UAUTH/i', $resp)) {
-							$status = "DynDNS: The username specified is not authorized to update this hostname and domain.";
-						} else if (preg_match('/NOHOST/i', $resp)) {
-							$status = "DynDNS: No valid FQDN (fully qualified domain name) was specified";
-						} else if (preg_match('/INVLDHST/i', $resp)) {
-							$status = "DynDNS: An invalid hostname was specified. This may be due to the fact the hostname has not been created in the system. Creating new host names via clients is not supported.";
-						} else if (preg_match('/INVLDIP/i', $resp)) {
-							$status = "DynDNS: The IP address given is not valid.";
-						} else if (preg_match('/DUPHST/i', $resp)) {
-							$status = "DynDNS: Duplicate values exist for a record. Only single values for records are supported currently.";
-						} else if (preg_match('/NOUPDATE/i', $resp)) {
-							$status = "DynDNS: No changes made to the hostname (" . strtok($resp, ' ') . "). Continual updates with no changes lead to blocked clients.";
-							$successful_update = true; //success if it is the same so that it saves
-						} else if (preg_match('/OK/i', $resp)) {
-							$status = "DynDNS: (Success) (" . strtok($resp, ' ') . ") IP Address for Changed Successfully!";
-							$successful_update = true;
-						} else {
-							$status = "DynDNS: (Unknown Response)";
-							log_error("DynDNS: PAYLOAD: {$resp}");
-							$this->_debug($resp);
-						}
-						log_error($status);
+					$output = json_decode($data);
+					if ($output->result->content === $this->_dnsIP){
+						$status = "DynDNS: (Success) {$this->_dnsHost} updated to {$this->_dnsIP}";
+						$successful_update = true;
+					}
+					elseif ($output->errors[0]->code === 9103){
+						$status = "DynDNS ({$this->_dnsHost}): ERROR - Invalid Credentials! Don't forget to use API Key for password field with CloudFlare.";
+					}
+					elseif (($output->success) && (!$output->result[0]->id)) {
+						$status = "DynDNS ({$this->_dnsHost}): ERROR - Zone or Host ID was not found, check your hostname.";
+					}
+					else {
+						$status = "DynDNS ({$this->_dnsHost}): UNKNOWN ERROR - {$output->errors[0]->message}";
+						log_error("DynDNS ({$this->_dnsHost}): PAYLOAD: {$data}");
 					}
 					break;
 				case 'eurodns':

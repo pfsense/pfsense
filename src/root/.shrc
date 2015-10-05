@@ -1,6 +1,6 @@
-HTTP_PROXY=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyurl)' /conf/config.xml`
+HTTP_PROXY=`/usr/local/sbin/read_xml_tag.sh string system/proxyurl`
 if [ "${HTTP_PROXY}" != "" ]; then
-	HTTP_PROXY_PORT=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyport)' /conf/config.xml`
+	HTTP_PROXY_PORT=`/usr/local/sbin/read_xml_tag.sh string system/proxyport`
 	if [ "${HTTP_PROXY_PORT}" != "" ]; then
 		HTTP_PROXY="${HTTP_PROXY}:${HTTP_PROXY_PORT}"
 	fi

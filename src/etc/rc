@@ -25,9 +25,13 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/etc/rc.dumpon
 fi
 
@@ -54,7 +58,7 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		FSCK_ACTION_NEEDED=1
 		;;
 	*)
-		echo "Stopping boot is recommended due to  filesystem manual action needed, nevertheless it will be tried to repair the filesystem."
+		echo "Stopping boot is recommended because filesystem manual action is needed, nevertheless automated repair of the filesystem will be attempted."
 		FSCK_ACTION_NEEDED=1
 		;;
 	esac
@@ -91,8 +95,8 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		fi
 	fi
 
-	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
 		/etc/rc.embedded
 	fi
 fi
@@ -106,7 +110,7 @@ if [ "${PLATFORM}" = "nanobsd" ]; then
 	if [ $? -eq 0 ]; then
 		/sbin/kldunload zfs
 	fi
-elif [ "$PLATFORM" = "pfSense" ]; then
+elif [ "$PLATFORM" = "${product}" ]; then
 	# Handle ZFS read-only case
 	/sbin/kldstat -qm zfs
 	if [ $? -eq 0 ]; then
@@ -129,22 +133,23 @@ if [ -f /etc/rc.disable_hdd_apm ]; then
 	/etc/rc.disable_hdd_apm
 fi
 
-#Eject CD devices on 3G modems
+# Eject CD devices on 3G modems
 MANUFACTURER="huawei|zte"
 CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
 if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
 
-product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
-hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
-varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
+# Use php -n here because we are not ready to load extensions yet
+varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
-if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
+if [ "$PLATFORM" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
-if [ "$hideplatform" -gt "0" ]; then
+# Use php -n here because we are not ready to load extensions yet
+hideplatform=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var hideplatform)
+if [ "$hideplatform" = "true" ]; then
 	platformbanner="" # hide the platform
 else
 	platformbanner=" on the '${PLATFORM}' platform"
@@ -159,37 +164,29 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-if [ "$PLATFORM" = "cdrom" ] ; then
-	# do nothing for cdrom platform
-elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
-	# Ensure that old-style PKG packages can be persistent across reboots
-	/bin/mkdir -p /root/var/db/pkg
-	/bin/rm -rf /var/db/pkg
-	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
-	# Ensure that PBI packages can be persistent across reboots
-	/bin/mkdir -p /root/var/db/pbi
-	/bin/rm -rf /var/db/pbi
-	/bin/ln -s /root/var/db/pbi/ /var/db/pbi
-else
+if [ "$PLATFORM" = "${product}" ]; then
+	# If use MFS var is disabled, move files back to place
+	if [ "${USE_MFS_TMPVAR}" != "true" -a -d /root/var/db/pkg ]; then
+		rm -rf /var/db/pkg 2>/dev/null
+		rm -rf /var/cache/pkg 2>/dev/null
+		mv /root/var/db/pkg /var/db
+		mv /root/var/cache/pkg /var/cache
+	# If use MFS var is enabled, move files to a safe place
+	elif [ "${USE_MFS_TMPVAR}" = "true" -a ! -d /root/var/db/pkg ]; then
+		/bin/mkdir -p /root/var/db /root/var/cache
+		mv /var/db/pkg /root/var/db
+		mv /var/cache/pkg /root/var/cache
+		ln -sf ../../root/var/db/pkg /var/db/pkg
+		ln -sf ../../root/var/cache/pkg /var/cache/pkg
+	fi
+
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
-
-	if [ -d /root/var/db/pkg ]; then
-		# User must have just disabled RAM disks, move these back into place.
-		/bin/mkdir -p /var/db/pkg
-		/bin/mv /root/var/db/pkg /var/db/pkg
-		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pbi /var/db/pbi
-	fi
-fi
-
-# Copy PBI keys
-if ls /usr/local/share/pbi-keys/*.ssl >/dev/null 2>&1; then
-	if [ ! -d "/var/db/pbi/keys" ]; then
-		mkdir -p /var/db/pbi/keys
-	fi
-	cp -f /usr/local/share/pbi-keys/*.ssl /var/db/pbi/keys
+elif [ "${PLATFORM}" = "nanobsd" ]; then
+	/bin/mkdir -p /var/db /var/cache
+	ln -sf ../../root/var/db/pkg /var/db/pkg
+	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -213,7 +210,7 @@ fi
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
-if [ "$PLATFORM" != "pfSense" ]; then
+if [ "$PLATFORM" != "${product}" ]; then
 	/bin/rm /var/log/* 2>/dev/null
 fi
 
@@ -280,10 +277,6 @@ if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
 
-if [ ! -d /cf/conf/backup/ ]; then
-	/bin/mkdir -p /cf/conf/backup/
-fi
-
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
@@ -291,21 +284,19 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 /bin/rm -f /var/etc/nameserver*
 
 echo -n "."
-DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
-ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
+DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
+ENABLEFIFOLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/usefifolog)
 LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
 
-DEFAULT_LOG_FILE_SIZE=`/usr/local/bin/xmllint --xpath 'string(//pfsense/syslog/logfilesize)' /conf/config.xml`
-if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
-	DEFAULT_LOG_FILE_SIZE=511488
-fi
+DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
+DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}
 
 for logfile in $LOG_FILES; do
-	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
+	if [ "$DISABLESYSLOGCLOG" = "true" ]; then
 		/usr/bin/touch /var/log/$logfile.log
 	else
 		if [ ! -f /var/log/$logfile.log ]; then
-			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
+			if [ "$ENABLEFIFOLOG" = "true" ]; then
 				# generate fifolog files
 				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			else
@@ -350,6 +341,12 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
+# Finish update
+if [ -f /cf/conf/upgrade_in_progress ]; then
+	echo "Running second stage of upgrade process..."
+	/usr/local/sbin/${product}-upgrade -y
+fi
+
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
@@ -361,7 +358,7 @@ if [ "$PLATFORM" = "nanobsd" ]; then
 fi
 
 # Launch external configuration loader for supported platforms
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 

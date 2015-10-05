@@ -2,7 +2,7 @@
 /*
 	installed_packages.widget.php
 
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,86 +41,67 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if (is_array($config['installedpackages']['package'])) {
-	foreach ($config['installedpackages']['package'] as $instpkg) {
-		$tocheck[] = $instpkg['name'];
-	}
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
+if(is_array($config['installedpackages']['package'])) {
+	$instpkgs = array();
+	foreach ($config['installedpackages']['package'] as $instpkg)
+		$instpkgs[ $instpkg['name'] ] = $instpkg;
+	ksort($instpkgs);
+	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
 }
-
-$updateavailable = false;
 ?>
 
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="installed packages">
-	<tr>
-		<td width="15%" class="listhdrr">Package Name</td>
-		<td width="15%" class="listhdrr">Category</td>
-		<td width="30%" class="listhdrr">Package Version</td>
-	</tr>
-	<?php
-	if ($config['installedpackages']['package'] != "") {
-		$instpkgs = array();
-		foreach ($config['installedpackages']['package'] as $instpkg) {
-			$instpkgs[] = $instpkg['name'];
-		}
-		natcasesort($instpkgs);
-		$y=1;
-		foreach ($instpkgs as $index => $pkgname){
+<?php if (empty($config['installedpackages']['package'])): ?>
+	<div class="alert alert-warning" role="alert">
+		<strong>No packages installed.</strong>
+		You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
+	</div>
+<?php else: ?>
+	<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Package Name</th>
+			<th>Category</th>
+			<th>Package Version</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php
+foreach ($instpkgs as $pkgname => $pkg):
+	if (empty($pkgname))
+		continue;
 
-			$pkg = $config['installedpackages']['package'][$index];
-			if ($pkg['name'] <> "") { ?>
-				<tr valign="top">
-				<td class="listlr">
-					<?= $pkg['name'] ?>
-				</td>
-				<td class="listr">
-					<?= $pkg['category'] ?>
-				</td>
-				<td class="listr">
-				<?php
-				$latest_package = $currentvers[$pkg['name']]['version'];
-				if ($latest_package == false) {
-					// We can't determine this package's version status.
-					echo "Current: Unknown.<br />Installed: " . $pkg['version'];
-				} elseif (strcmp($pkg['version'], $latest_package) > 0) {
-					/* we're running a newer version of the package */
-					echo "Current: {$latest_package}";
-					echo "<br />Installed: {$pkg['version']}";
-				} elseif (strcmp($pkg['version'], $latest_package) < 0) {
-					/* our package is out of date */
-					$updateavailable = true;
-					?>
-					<div id="updatediv-<?php echo $y; ?>" style="color:red">
-						<b>Update Available!</b></div><div style="float:left">
-						Current: <?php echo $latest_package; ?><br />
-						Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
-					<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" /></a>
-					</div>
-					<?php
-					$y++;
-				} else {
-					echo $pkg['version'];
-				} ?>
-				</td>
-				</tr>
-		<?php	}
+	$latest_package = $currentvers[$pkg['name']]['version'];
+	if ($latest_package) {
+		// we're running a newer version of the package
+		if(strcmp($pkg['version'], $latest_package) > 0) {
+			$status = 'Newer then available ('. $latest_package .')';
+			$statusicon = 'exclamation';
+		}
+		// we're running an older version of the package
+		if(strcmp($pkg['version'], $latest_package) < 0) {
+			$status = 'Upgrade available to '.$latest_package;
+			$statusicon = 'plus';
+		}
+		// we're running the current version
+		if(!strcmp($pkg['version'], $latest_package)) {
+			$status = 'Up-to-date';
+			$statusicon = 'ok';
 		}
 	} else {
-		echo "<tr><td colspan=\"5\" align=\"center\">There are no packages currently installed.</td></tr>";
+		// unknown available package version
+		$status = 'Unknown';
+		$statusicon = 'question';
 	}
-	?>
-</table>
-
-<?php if ($updateavailable): ?>
-<script type="text/javascript">
-//<![CDATA[
-	window.onload = function(in_event)
-	{
-		for (y=1; y<=<?php echo $y;?>; y++) {
-			textID = "#updatediv-" + y;
-			jQuery(textID).effect('pulsate');
-		}
-	}
-//]]>
-</script>
+?>
+		<tr>
+			<td><?=$pkg['name']?></td>
+			<td><?=$pkg['category']?></td>
+			<td>
+				<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
+				<?=$pkg['version']?>
+			</td>
+		</tr>
+<?php endforeach; ?>
+	</tbody>
+	</table>
 <?php endif; ?>

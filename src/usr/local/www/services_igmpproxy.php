@@ -54,7 +54,6 @@ if (!is_array($config['igmpproxy']['igmpentry'])) {
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
 if ($_POST) {
-
 	$pconfig = $_POST;
 
 	$retval = 0;
@@ -83,107 +82,75 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"), gettext("IGMP Proxy"));
 include("head.inc");
 
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('igmpproxy'))
+	print_info_box_np(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="services_igmpproxy.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('igmpproxy')): ?><br/>
-<?php print_info_box_np(gettext("The IGMP entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
-<?php endif; ?>
-
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="igmp proxy">
-	<tr>
-		<td width="15%" class="listhdrr"><?=gettext("Name");?></td>
-		<td width="10%" class="listhdrr"><?=gettext("Type");?></td>
-		<td width="25%" class="listhdrr"><?=gettext("Values");?></td>
-		<td width="25%" class="listhdr"><?=gettext("Description");?></td>
-		<td width="5%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1" summary="add">
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
 				<tr>
-					<td valign="middle" width="17">&nbsp;</td>
-					<td valign="middle">
-						<a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new igmpentry");?>" alt="add" /></a>
-					</td>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Type")?></th>
+					<th><?=gettext("Values")?></th>
+					<th><?=gettext("Description")?></th>
+					<th</th>
 				</tr>
-			</table>
-		</td>
-	</tr>
+			</thead>
+			<tbody>
 <?php
-	$i = 0;
-	foreach ($a_igmpproxy as $igmpentry):
+$i = 0;
+foreach ($a_igmpproxy as $igmpentry):
 ?>
-	<tr>
-		<td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']));?>
-		</td>
-		<td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($igmpentry['type']);?>
-		</td>
-		<td class="listr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-<?php
-		$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
-		echo $addresses;
-		if (count($addresses) < 10) {
-			echo " ";
-		} else {
-			echo "...";
-		}
-?>
-		</td>
-		<td class="listbg" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($igmpentry['descr']);?>&nbsp;
-		</td>
-		<td valign="middle" class="list nowrap">
-			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
-					<td valign="middle"><a href="services_igmpproxy_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit igmpentry"); ?>" alt="edit" /></a></td>
 					<td>
-						<a href="services_igmpproxy.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this igmp entry? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete igmpentry");?>" alt="delete" /></a>
+						<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']))?>
+					</td>
+					<td>
+						<?=htmlspecialchars($igmpentry['type'])?>
+					</td>
+					<td>
+<?php
+	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
+	print($addresses);
+
+	if(count($addresses) < 10) {
+		print(' ');
+	} else {
+		print('...');
+	}
+?>
+					</td>
+					<td>
+						<?=htmlspecialchars($igmpentry['descr'])?>&nbsp;
+					</td>
+					<td>
+						<a href="services_igmpproxy_edit.php?id=<?=$i?>" class="btn btn-info btn-xs"><?=gettext('Edit')?></a>
+						<a href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext('Delete')?></a>
 					</td>
 				</tr>
-			</table>
-		</td>
-	</tr>
 <?php
-		$i++;
-	endforeach;
+	$i++;
+endforeach;
 ?>
-	<tr>
-		<td class="list" colspan="4"></td>
-		<td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
-				<tr>
-					<td valign="middle" width="17">&nbsp;</td>
-					<td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new igmpentry");?>" alt="add" /></a></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2" width="78%">
-			<br />
-			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-			<br />
-		</td>
-	</tr>
-	<tr>
-		<td class="tabcont" colspan="4">
-			<p>
-				<span class="vexpl">
-					<span class="red">
-						<strong>
-							<?=gettext("Note:");?><br />
-						</strong>
-					</span>
-					<?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?>
-				</span>
-			</p>
-		</td>
-	</tr>
-</table>
+			</tbody>
+		</table>
+	</div>
+
+	<nav class="action-buttons">
+		<input id="submit" name="submit" type="submit" class="btn btn-primary" value="<?=gettext("Save")?>" />
+		<a href="services_igmpproxy_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
+	</nav>
+
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+
+print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
+					   'Only one "upstream" interface can be configured.'));
+
+include("foot.inc");

@@ -2,32 +2,58 @@
 /* $Id$ */
 /*
 	crash_reporter.php
-	part of pfSense
-	Copyright (C) 2011 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
 	pfSense_MODULE:	header
 */
@@ -60,20 +86,9 @@ function upload_crash_report($files) {
 	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
 	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 	$response = curl_exec($ch);
 	return $response;
-}
-
-function output_crash_reporter_html($crash_reports) {
-	echo "<p><strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
-	echo "<p>" . gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
-	echo "<p><i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i></p>";
-	echo "<p>" . gettext("Contents of crash reports") . ":<br />";
-	echo "<textarea readonly=\"readonly\" rows=\"40\" cols=\"65\" name=\"crashreports\">{$crash_reports}</textarea></p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") . "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
-	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") . "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
-	echo "</form>";
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
@@ -86,15 +101,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
-
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-
-	<form action="crash_reporter.php" method="post">
-
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
@@ -146,11 +153,26 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		} else {
 			echo "Could not locate any crash data.";
 		}
-		output_crash_reporter_html($crash_reports);
+?>
+	<div class="jumbotron">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3><?=gettext("Unfortunately we have detected a programming bug.")?></h3></div>
+		<div class="panel-body">
+		<p>
+			<?=gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?")?>
+			<i><?=gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.")?></i>
+		</p>
+		<textarea readonly="readonly" style="width: 100%; height: 350px;">
+			<?=$crash_reports?>
+		</textarea>
+		<form action="crash_reporter.php" method="post">
+			<button class="btn btn-primary" name="Submit" type="submit" value="Yes"><?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?></button>
+			<button class="btn btn-default" name="Submit" type="submit" value="No"><?=gettext("No")?> - <?=gettext("Just delete the crash report and take me back to the Dashboard")?></button>
+		</form>
+	</div>
+	</div>
+<?php
 	}
 ?>
 
-<?php include("fend.inc"); ?>
-
-</body>
-</html>
+<?php include("foot.inc")?>

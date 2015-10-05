@@ -386,9 +386,16 @@ function create_port($pkg) {
 			$makefile[] = $port_use;
 		}
 	}
+	$conflicts = '';
+	if (isset($pkg['noembedded'])) {
+		$conflicts = $product_name . '-base-nanobsd-[0-9]*';
+	}
 	if (isset($pkg['conflicts']) && !empty($pkg['conflicts'])) {
+		$conflicts = trim($conflicts . ' ' . $port_name_prefix . $pkg['conflicts'] . '-[0-9]*');
+	}
+	if (!empty($conflicts)) {
 		$makefile[] = "";
-		$makefile[] = "CONFLICTS=\t" . $port_name_prefix . $pkg['conflicts'] . '-[0-9]*';
+		$makefile[] = "CONFLICTS=\t" . $conflicts;
 	}
 	$makefile[] = "";
 	$makefile[] = "NO_BUILD=\tyes";

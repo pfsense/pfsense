@@ -464,20 +464,20 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
-		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
-		$output .= "\" alt=\"status\" />&nbsp;";
+		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
+		$output .= ($smallicon) ? "icon icon-play" : "icon icon-large icon-play";
+		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
 		}
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
-		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
-		$output .= "\" alt=\"status\" />&nbsp;";
+		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
+		$output .= ($smallicon) ? "icon icon-remove" : "icon icon-large icon-remove";
+		$output .= "\" ></i></a>";
 		if ($withtext) {
-			$output .= "&nbsp;<font color=\"white\">{$statustext}</font>";
+			$output .= "&nbsp;" . $statustext;
 		}
 	}
 	return $output;
@@ -487,48 +487,54 @@ function get_service_control_links($service, $addname = false) {
 	global $g;
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
+
+	switch ($service['name']) {
+		case "openvpn":
+			$link = '<a title="%s" href="#" id="openvpn-%s-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+		break;
+		case "captiveportal":
+			$link = '<a title="%s" href="#" id="captiveportal-%s-' . $service['zone'] . '">';
+		break;
+		default:
+			$link = '<a title="%s" href="#" value="" id="%s-' . $service['name'] . '">';
+	}
+
 	if (get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= '<a href="#" id="openvpn-restartservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= '<a href="#" value="" id=captiveportal-restartservice-' . $service['zone'] . '">';
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
+				$output .= '<a href="#" id="restartservice-' . $service['name'] . '" >';
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
+
+		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= '<a href="#" id="openvpn-stopservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= '<a href="#" value="" id=captiveportal-stopservice-' . $service['zone'] . '">';
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
+				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
-		$output .= "</a>";
+
+		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
-		switch ($service['name']) {
-			case "openvpn":
-				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
-				break;
-			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
-				break;
-			default:
-				if ($service_enabled) {
-					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
-				}
-		}
-		if ($service_enabled) {
-			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
+
+		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
+			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
+			$output .= '<i class="icon icon-play-circle"></i></a> ';
 		}
 	}
+
 	return $output;
 }
 

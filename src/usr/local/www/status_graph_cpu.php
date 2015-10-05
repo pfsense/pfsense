@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	system
+	pfSense_MODULE: system
 */
 
 ##|+PRIV
@@ -42,14 +42,21 @@
 $pgtitle = array(gettext("Status"), gettext("CPU load"));
 require("guiconfig.inc");
 include("head.inc");
-include("fbegin.inc");
 
 $pgtitle = gettext("Status: CPU Graph");
 
 ?>
-<div align="center">
-	<embed src="graph_cpu.php" type="image/svg+xml"
-		width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">CPU Load graph</h2></div>
+	<div class="panel-body" align="center">
+		<embed src="graph_cpu.php" type="image/svg+xml"
+			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+	</div>
+
+	<p align="center"><strong><?=gettext("Note"); ?>:</strong><?=gettext("if you can't see the graph, you may have to install the")?>
+		<a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>
+	</p>
 </div>
-<br /><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("if you can't see the graph, you may have to install the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>.
-<?php include("fend.inc"); ?>
+
+<?php
+include("foot.inc");

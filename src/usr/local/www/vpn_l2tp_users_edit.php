@@ -56,12 +56,6 @@ function l2tp_users_sort() {
 require("guiconfig.inc");
 require_once("vpn.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/vpn_l2tp_users.php');
-}
-
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
@@ -159,54 +153,57 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php 
+if ($input_errors)
+	print_input_errors($input_errors);
+?>
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<div id="inputerrors"></div>
-<form action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn l2tp users edit">
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
-				<td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
-				<td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="passwordfld" type="password" class="formfld pwd" id="passwordfld" size="20" />
-					<br /><?=$mandfldhtml;?><input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
-					&nbsp;(<?=gettext("confirmation");?>)
-					<?php if (isset($id) && $a_secret[$id]): ?>
-					<br />
-					<span class="vexpl"><?=gettext("If you want to change the users password, enter it here twice.");?></span>
-					<?php endif; ?>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
-				<td width="78%" class="vtable">
-					<input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>" />
-					<br /><span class="vexpl"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.");?></span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext('Save');?>" />
-					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-					<input name="referer" type="hidden" value="<?=$referer;?>" />
-					<?php if (isset($id) && $a_secret[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<?php endif; ?>
-				</td>
-			</tr>
-		</table>
+<form class="form-horizontal" action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title"><?=gettext('User'); ?></h2>
+		</div>
+
+		<div class="panel-body">
+			<div class="form-group">
+				<label for="usernamefld" class="col-sm-2 control-label"><?=gettext("Username")?></label>
+				<div class="col-sm-10">
+					<?=$mandfldhtml?><input name="usernamefld" type="text" class="formfld user form-control" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld'])?>" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="passwordfld" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<?=$mandfldhtml?><input name="passwordfld" type="password" class="formfld pwd form-control" id="passwordfld" size="20" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="passwordfld2" class="col-sm-2 control-label"><?=gettext('Confirm')?></label>
+				<div class="col-sm-10">
+					<?=$mandfldhtml?><input name="passwordfld2" type="password" class="formfld pwd form-control" id="passwordfld2" size="20" />
+<?php if (isset($id) && $a_secret[$id]):?>
+					<span class="help-block"><?=gettext("If you want to change the users password, enter it here twice.")?></span>
+<?php endif?>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="ip" class="col-sm-2 control-label"><?=gettext("IP address")?></label>
+				<div class="col-sm-10">
+					<input name="ip" type="text" class="formfld unknown form-control" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip'])?>" />
+					<span class="help-block"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.")?></span>
+				</div>
+			</div>
+		</div>
 	</div>
+
+	<div class="col-sm-10 col-sm-offset-2">
+		<input id="submit" name="Submit" type="submit" class="formbtn btn btn-primary" value="<?=gettext('Save')?>" />
+	</div>
+
+<?php if (isset($id) && $a_secret[$id]):?>
+	<input name="id" type="hidden" value="<?=htmlspecialchars($id)?>" />
+<?php endif?>
 </form>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php
+include("foot.inc");

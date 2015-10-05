@@ -2082,7 +2082,7 @@ function upgrade_054_to_055() {
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if ($g['platform'] != "pfSense") {
+	if ($g['platform'] != $g['product_name']) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -2811,7 +2811,7 @@ function upgrade_080_to_081() {
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
-	if ($g['platform'] != "pfSense") {
+	if ($g['platform'] != $g['product_name']) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -3283,7 +3283,7 @@ function upgrade_095_to_096() {
 	$rrddbpath = "/var/db/rrd";
 	$rrdtool = "/usr/local/bin/rrdtool";
 
-	if ($g['platform'] != "pfSense") {
+	if ($g['platform'] != $g['product_name']) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -3635,7 +3635,6 @@ function upgrade_110_to_111() {
 		"active_interface" => "network_interface",
 		"query_interface" => "outgoing_interface",
 		"unbound_verbosity" => "log_verbosity",
-		"unbound_verbosity" => "log_verbosity",
 		"msg_cache_size" => "msgcachesize",
 		"outgoing_num_tcp" => "outgoing_num_tcp",
 		"incoming_num_tcp" => "incoming_num_tcp",
@@ -3801,7 +3800,7 @@ function upgrade_117_to_118() {
 	$a_phase1 =& $config['ipsec']['phase1'];
 
 	foreach ($a_phase1 as &$ph1_entry) {
-		// update asn1dn strings from racoon's format to strongswan's 
+		// update asn1dn strings from racoon's format to strongswan's
 		if (isset($ph1_entry['myid_type']) && $ph1_entry['myid_type'] == 'asn1dn') {
 			$ph1_entry['myid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['myid_data']);
@@ -3829,7 +3828,7 @@ function upgrade_118_to_119() {
 
 	foreach ($a_phase1 as &$ph1_entry) {
 		if (strstr($ph1_entry['authentication_method'], 'eap')) {
-			$ph1_entry['peerid_type'] = "any";	
+			$ph1_entry['peerid_type'] = "any";
 		}
 	}
 }
@@ -3858,6 +3857,104 @@ function upgrade_120_to_121() {
 	foreach ($config['system']['user'] as &$user) {
 		if (isset($user['nt-hash'])) {
 			unset($user['nt-hash']);
+		}
+	}
+}
+
+function upgrade_121_to_122() {
+	global $config;
+
+	// PPTP server was removed
+	if (isset($config['pptpd'])) {
+		unset($config['pptpd']);
+	}
+
+	// Cleanup firewall rules
+	if (isset($config['filter']['rule']) && is_array($config['filter']['rule'])) {
+		$rules =& $config['filter']['rule'];
+		$last_rule = count($rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($rules[$i]['interface']) && $rules[$i]['interface'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+			if (isset($rules[$i]['source']['network']) && $rules[$i]['source']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+			if (isset($rules[$i]['destination']['network']) && $rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup 1:1 NAT rules
+	if (isset($config['nat']['onetoone']) && is_array($config['nat']['onetoone'])) {
+		$onetoone =& $config['nat']['onetoone'];
+		$last_rule = count($onetoone) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($onetoone[$i]['interface']) && $onetoone[$i]['interface'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+			if (isset($onetoone[$i]['source']['network']) && $onetoone[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+			if (isset($onetoone[$i]['destination']['network']) && $onetoone[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['onetoone'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup npt NAT rules
+	if (isset($config['nat']['npt']) && is_array($config['nat']['npt'])) {
+		$npt =& $config['nat']['npt'];
+		$last_rule = count($npt) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($npt[$i]['interface']) && $npt[$i]['interface'] == 'pptp') {
+				unset($config['nat']['npt'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup Port-forward NAT rules
+	if (isset($config['nat']['rule']) && is_array($config['nat']['rule'])) {
+		$nat_rules =& $config['nat']['rule'];
+		$last_rule = count($nat_rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($nat_rules[$i]['interface']) && $nat_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+			if (isset($nat_rules[$i]['source']['network']) && $nat_rules[$i]['source']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+			if (isset($nat_rules[$i]['destination']['network']) && $nat_rules[$i]['destination']['network'] == 'pptp') {
+				unset($config['nat']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+
+	// Cleanup Port-forward NAT rules
+	if (isset($config['nat']['outbound']['rule']) && is_array($config['nat']['outbound']['rule'])) {
+		$out_rules =& $config['nat']['outbound']['rule'];
+		$last_rule = count($out_rules) - 1;
+		// Process in reverse order to be able to unset items
+		for ($i = $last_rule; $i >= 0; $i--) {
+			if (isset($out_rules[$i]['interface']) && $out_rules[$i]['interface'] == 'pptp') {
+				unset($config['nat']['outbound']['rule'][$i]);
+				continue;
+			}
 		}
 	}
 }

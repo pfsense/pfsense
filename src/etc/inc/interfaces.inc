@@ -129,11 +129,7 @@ function interface_netgraph_needed($interface = "wan") {
 	global $config;
 
 	$found = false;
-	if (!empty($config['pptpd']) &&
-	    $config['pptpd']['mode'] == "server") {
-		$found = true;
-	}
-	if ($found == false && !empty($config['l2tp']) &&
+	if (!empty($config['l2tp']) &&
 	    $config['l2tp']['mode'] == "server") {
 		$found = true;
 	}
@@ -1315,7 +1311,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			if (does_interface_exist("$realif")) {
 				/* destroy stf interface if tunnel is being disabled or tunnel type is being changed */
 				if (($ifcfg['ipaddrv6'] == '6rd' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6rd')) ||
-					($ifcfg['ipaddrv6'] == '6to4' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6to4'))) {
+				    ($ifcfg['ipaddrv6'] == '6to4' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6to4'))) {
 					$destroy = true;
 				} else {
 					/* get_interface_ipv6() returns empty value if interface is being disabled */
@@ -3988,7 +3984,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 			$id_assoc_statement_prefix .= "\t\tsla-id {$wancfg['adv_dhcp6_prefix_interface_statement_sla_id']};\n";
 			if (($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] >= 0) &&
 			    ($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] <= 128)) {
-				 $id_assoc_statement_prefix .= "\t\tsla-len {$wancfg['adv_dhcp6_prefix_interface_statement_sla_len']};\n";
+				$id_assoc_statement_prefix .= "\t\tsla-len {$wancfg['adv_dhcp6_prefix_interface_statement_sla_len']};\n";
 			}
 			$id_assoc_statement_prefix .= "\t};";
 		}
@@ -5295,7 +5291,7 @@ function get_interface_ip($interface = "wan") {
 	if (substr($realif, 0, 4) == '_vip') {
 		return get_configured_carp_interface_list($realif, 'inet', 'ip');
 	}
-	
+
 	if (strstr($realif, "_vip")) {
 		return get_configured_carp_interface_list($realif);
 	}
@@ -5329,7 +5325,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 			case 'pptp':
 			case 'ppp':
 				if ($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') {
-					$realif = get_real_interface($interface, 'inet6', true);
+					$realif = get_real_interface($interface, 'inet6', false);
 				}
 				break;
 		}

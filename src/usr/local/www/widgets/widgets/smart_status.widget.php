@@ -34,13 +34,16 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="smart status">
-	<tr>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Drive") ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("Ident") ?></b></td>
-		<td class="widgetsubheader" align="center"><b><?php echo gettext("SMART Status") ?></b></td>
-	</tr>
-
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th></th>
+			<th><?=gettext("Drive")?></th>
+			<th><?=gettext("Ident")?></th>
+			<th><?=gettext("SMART Status")?></th>
+		</tr>
+	</thead>
+	<tbody>
 <?php
 $devs = array();
 ## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
@@ -66,11 +69,14 @@ if (count($devs) > 0)  {
 		}
 ?>
 		<tr>
-			<td class="listlr"><?php echo $dev; ?></td>
-			<td class="listr" align="center"><?php echo $dev_ident; ?></td>
-			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>">&nbsp;<?php echo $dev_state; ?>&nbsp;</span></td>
+			<td><i class="icon icon-<?=$icon?>-sign"></i></td>
+			<td><?=$dev?></td>
+			<td><?=$dev_ident?></td>
+			<td><?=ucfirst($dev_state)?></td>
 		</tr>
-<?php	}
+<?php
+	} 
 }
 ?>
+	</tbody>
 </table>

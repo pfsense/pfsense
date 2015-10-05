@@ -75,8 +75,8 @@ foreach (array('server', 'client') as $mode) {
 	}
 }
 
-if ($_GET['if']) {
-	$curif = $_GET['if'];
+if ($_POST['if']) {
+	$curif = $_POST['if'];
 	$found = false;
 	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
@@ -97,106 +97,131 @@ if ($_GET['if']) {
 		$curif = "wan";
 	}
 }
-if ($_GET['sort']) {
-	$cursort = $_GET['sort'];
+if ($_POST['sort']) {
+	$cursort = $_POST['sort'];
 } else {
 	$cursort = "";
 }
-if ($_GET['filter']) {
-	$curfilter = $_GET['filter'];
+if ($_POST['filter']) {
+	$curfilter = $_POST['filter'];
 } else {
 	$curfilter = "";
 }
-if ($_GET['hostipformat']) {
-	$curhostipformat = $_GET['hostipformat'];
+if ($_POST['hostipformat']) {
+	$curhostipformat = $_POST['hostipformat'];
 } else {
 	$curhostipformat = "";
 }
 
-$pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
+function iflist() {
+	global $ifdescrs;
+
+	$iflist = array();
+
+	foreach ($ifdescrs as $ifn => $ifd) {
+		$iflist[$ifn] = $ifd;
+	}
+
+	return($iflist);
+}
+
+$pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
 include("head.inc");
 
+require_once('classes/Form.class.php');
+
+$form = new Form(false);
+$form->addClass('auto-submit');
+
+$section = new Form_Section('Graph settings');
+
+$group = new Form_Group('');
+
+$group->add(new Form_Select(
+	'if',
+	null,
+	$curif,
+	iflist()
+))->setHelp('Interface');
+
+$group->add(new Form_Select(
+	'sort',
+	null,
+	$cursort,
+	array (
+		'in'	=> 'Bandwidth In',
+		'out'	=> 'Bandwidth Out'
+	)
+))->setHelp('Sort by');
+
+$group->add(new Form_Select(
+	'filter',
+	null,
+	$curfilter,
+	array (
+		'local'	=> 'Local',
+		'remote'=> 'Remote',
+		'all'	=> 'All'
+	)
+))->setHelp('Filter');
+
+$group->add(new Form_Select(
+	'hostipformat',
+	null,
+	$curhostipformat,
+	array (
+		''			=> 'IP Address',
+		'hostname'	=> 'Host Name',
+		'fqdn'		=> 'FQDN'
+	)
+))->setHelp('Display');
+
+$section->add($group);
+
+$form->add($section);
+print $form;
+
 ?>
+<script>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+function updateBandwidth(){
+	$.ajax(
+		'/bandwidth_by_ip.php',
+		{
+			type: 'get',
+			data: $(document.forms[0]).serialize(),
+			success: function (data) {
+				var hosts_split = data.split("|");
 
-<script type="text/javascript">
-//<![CDATA[
-function updateBandwidth() {
-	var hostinterface = jQuery("#if").val();
-	var sorting = jQuery("#sort").val();
-	var filter = jQuery("#filter").val();
-	var hostipformat = jQuery("#hostipformat").val();
-	bandwidthAjax(hostinterface, sorting, filter, hostipformat);
+				$('#top10-hosts').empty();
+
+				//parse top ten bandwidth abuser hosts
+				for (var y=0; y<10; y++){
+					if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
+						hostinfo = hosts_split[y].split(";");
+
+						$('#top10-hosts').append('<tr>'+
+							'<td>'+ hostinfo[0] +'</td>'+
+							'<td>'+ hostinfo[1] +' Bits/sec</td>'+
+							'<td>'+ hostinfo[2] +' Bits/sec</td>'+
+						'</tr>');
+					}
+				}
+			},
+	});
 }
 
-function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&filter=" + filter + "&hostipformat=" + hostipformat;
-	var opt = {
-		// Use GET
-		type: 'get',
-		error: function(req) {
-			/* XXX: Leave this for debugging purposes: Handle 404
-			if (req.status == 404)
-				alert('Error 404: location "' + uri + '" was not found.');
-			*/
-			/* Handle other errors
-			else
-				alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
-			*/
-		},
-		success: function(data) {
-			updateBandwidthHosts(data);
-		}
-	}
-	jQuery.ajax(uri, opt);
-}
+events.push(function(){
+	$('form.auto-submit').on('change', function(){
+		$(this).submit();
+	});
 
-function updateBandwidthHosts(data) {
-	var hosts_split = data.split("|");
-	d = document;
-	//parse top ten bandwidth abuser hosts
-	for (var y = 0; y < 10; y++) {
-		if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
-			hostinfo = hosts_split[y].split(";");
+	setInterval('updateBandwidth()', 1000);
 
-			//update host ip info
-			var HostIpID = "hostip" + y;
-			var hostip = d.getElementById(HostIpID);
-			hostip.innerHTML = hostinfo[0];
-
-			//update bandwidth inbound to host
-			var hostbandwidthInID = "bandwidthin" + y;
-			var hostbandwidthin = d.getElementById(hostbandwidthInID);
-			hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
-
-			//update bandwidth outbound from host
-			var hostbandwidthOutID = "bandwidthout" + y;
-			var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-			hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
-
-			//make the row appear if hidden
-			var rowid = "#host" + y;
-			if (jQuery(rowid).css('display') == "none") {
-				//hide rows that contain no data
-				jQuery(rowid).show(1000);
-			}
-		} else {
-			var rowid = "#host" + y;
-			if (jQuery(rowid).css('display') != "none") {
-				//hide rows that contain no data
-				jQuery(rowid).fadeOut(2000);
-			}
-		}
-	}
-
-	setTimeout('updateBandwidth()', 1000);
-}
-//]]>
+	updateBandwidth();
+});
 </script>
-
 <?php
 
 /* link the ipsec interface magically */
@@ -205,148 +230,34 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 }
 
 ?>
-<form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
-<?=gettext("Interface"); ?>:
-	<select id="if" name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-<?php
-		foreach ($ifdescrs as $ifn => $ifd) {
-			echo "<option value=\"$ifn\"";
-			if ($ifn == $curif) {
-				echo " selected=\"selected\"";
-			}
-			echo ">" . htmlspecialchars($ifd) . "</option>\n";
-		}
-?>
-	</select>
-, Sort by:
-	<select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-		<option value="">Bw In</option>
-		<option value="out"<?php if ($cursort == "out") echo " selected=\"selected\"";?>>Bw Out</option>
-	</select>
-, Filter:
-	<select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-		<option value="local"<?php if ($curfilter == "local") echo " selected=\"selected\"";?>>Local</option>
-		<option value="remote"<?php if ($curfilter == "remote") echo " selected=\"selected\"";?>>Remote</option>
-		<option value="all"<?php if ($curfilter == "all") echo " selected=\"selected\"";?>>All</option>
-	</select>
-, Display:
-	<select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-		<option value="">IP Address</option>
-		<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
-		<option value="descr"<?php if ($curhostipformat == "descr") echo " selected=\"selected\"";?>>Description</option>
-		<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected=\"selected\"";?>>FQDN</option>
-	</select>
-</form>
-<p>&nbsp;</p>
-<div id="niftyOutter">
-	<div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-		<object	data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
-			<param name="id" value="graph" />
-			<param name="type" value="image/svg+xml" />
-			<param name="width" value="<? echo $width; ?>" />
-			<param name="height" value="<? echo $height; ?>" />
-			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
-		</object>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Traffic graph</h2>
 	</div>
-	<div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
-			<tr>
-				<td class="listtopic" valign="top"><?=(($curhostipformat == "") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
-				<td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
-				<td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
-			</tr>
-			<tr id="host0" style="display:none">
-				<td id="hostip0" class="vncell">
-				</td>
-				<td id="bandwidthin0" class="listr">
-				</td>
-				<td id="bandwidthout0" class="listr">
-				</td>
-			</tr>
-			<tr id="host1" style="display:none">
-				<td id="hostip1" class="vncell">
-				</td>
-				<td id="bandwidthin1" class="listr">
-				</td>
-				<td id="bandwidthout1" class="listr">
-				</td>
-			</tr>
-			<tr id="host2" style="display:none">
-				<td id="hostip2" class="vncell">
-				</td>
-				<td id="bandwidthin2" class="listr">
-				</td>
-				<td id="bandwidthout2" class="listr">
-				</td>
-			</tr>
-			<tr id="host3" style="display:none">
-				<td id="hostip3" class="vncell">
-				</td>
-				<td id="bandwidthin3" class="listr">
-				</td>
-				<td id="bandwidthout3" class="listr">
-				</td>
-			</tr>
-			<tr id="host4" style="display:none">
-				<td id="hostip4" class="vncell">
-				</td>
-				<td id="bandwidthin4" class="listr">
-				</td>
-				<td id="bandwidthout4" class="listr">
-				</td>
-			</tr>
-			<tr id="host5" style="display:none">
-				<td id="hostip5" class="vncell">
-				</td>
-				<td id="bandwidthin5" class="listr">
-				</td>
-				<td id="bandwidthout5" class="listr">
-				</td>
-			</tr>
-			<tr id="host6" style="display:none">
-				<td id="hostip6" class="vncell">
-				</td>
-				<td id="bandwidthin6" class="listr">
-				</td>
-				<td id="bandwidthout6" class="listr">
-				</td>
-			</tr>
-			<tr id="host7" style="display:none">
-				<td id="hostip7" class="vncell">
-				</td>
-				<td id="bandwidthin7" class="listr">
-				</td>
-				<td id="bandwidthout7" class="listr">
-				</td>
-			</tr>
-			<tr id="host8" style="display:none">
-				<td id="hostip8" class="vncell">
-				</td>
-				<td id="bandwidthin8" class="listr">
-				</td>
-				<td id="bandwidthout8" class="listr">
-				</td>
-			</tr>
-			<tr id="host9" style="display:none">
-				<td id="hostip9" class="vncell">
-				</td>
-				<td id="bandwidthin9" class="listr">
-				</td>
-				<td id="bandwidthout9" class="listr">
-				</td>
-			</tr>
-		</table>
+	<div class="panel-body">
+		<div class="col-sm-6">
+			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
+				<param name="id" value="graph" />
+				<param name="type" value="image/svg+xml" />
+				<param name="width" value="<? echo $width; ?>" />
+				<param name="height" value="<? echo $height; ?>" />
+				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+			</object>
+		</div>
+		<div class="col-sm-6">
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
+						<th><?=gettext("Bandwidth In"); ?></th>
+						<th><?=gettext("Bandwidth Out"); ?></th>
+					</tr>
+				</thead>
+				<tbody id="top10-hosts">
+					<!-- to be added by javascript -->
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<div style="clear: both;"></div>
 </div>
-<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.</p>
-
-<?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-//<![CDATA[
-jQuery(document).ready(updateBandwidth);
-//]]>
-</script>
-</body>
-</html>
+<?php include("foot.inc");

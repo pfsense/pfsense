@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -48,6 +48,7 @@ require_once("shaper.inc");
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 }
+
 $a_pool = &$config['load_balancer']['lbpool'];
 
 
@@ -91,69 +92,102 @@ $mondex = array();
 for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 	$mondex[$config['load_balancer']['monitor_type'][$i]['name']] = $i;
 }
+
 for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">" . htmlspecialchars($a_pool[$i]['monitor']) . "</a>";
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
 $shortcut_section = "relayd";
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+if (is_subsystem_dirty('loadbalancer'))
+	print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));
+
+/* active tabs */
+$tab_array = array();
+$tab_array[] = array(gettext("Pools"), true, "load_balancer_pool.php");
+$tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
+$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
+display_top_tabs($tab_array);
+
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <form action="load_balancer_pool.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
-<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer pools">
-	<tr><td class="tabnavtbl">
-	<?php
-		/* active tabs */
-		$tab_array = array();
-		$tab_array[] = array(gettext("Pools"), true, "load_balancer_pool.php");
-		$tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
-		$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
-		$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
-		display_top_tabs($tab_array);
-	?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool')?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext('Name')?></th>
+						<th><?=gettext('Mode')?></th>
+						<th><?=gettext('Servers')?></th>
+						<th><?=gettext('Port')?></th>
+						<th><?=gettext('Monitor')?></th>
+						<th><?=gettext('Description')?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
-				$t = new MainTable();
-				$t->edit_uri('load_balancer_pool_edit.php');
-				$t->my_uri('load_balancer_pool.php');
-				$t->add_column(gettext('Name'), 'name', 10);
-				$t->add_column(gettext('Mode'), 'mode', 10);
-				$t->add_column(gettext('Servers'), 'servers', 15);
-				$t->add_column(gettext('Port'), 'port', 10);
-				$t->add_column(gettext('Monitor'), 'monitor', 10);
-				$t->add_column(gettext('Description'), 'descr', 25);
-				$t->add_button('edit');
-				$t->add_button('dup');
-				$t->add_button('del');
-				$t->add_content_array($a_pool);
-				$t->display();
+
+$idx = 0;
+foreach($a_pool as $pool) {
 ?>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<br />
-			<span class="red"><strong><?=gettext("Hint:");?></strong></span>
-			<br />
-			<?= sprintf(gettext("The Load Balancer in %s 2.0 is for server load balancing, not Multi-WAN. For load balancing or failover for multiple WANs, use "), $g['product_name']);?>
-			<a href="/system_gateway_groups.php"><?= gettext("Gateway Groups"); ?></a>
-		</td>
-	</tr>
-</table>
+					<tr>
+						<td>
+							<?=$pool['name']?>
+						</td>
+						<td>
+							<?=htmlspecialchars($pool['mode'])?>
+						</td>
+						<td>
+<?php
+	$numsvrs = count($pool['servers']) - 1;
+
+	foreach ($pool['servers'] as $server => $ip) {
+		print($ip);
+		print(($server < $numsvrs) ? '<br />':'');
+	}
+
+?>
+						</td>
+						<td>
+							<?=$pool['port']?>
+						</td>
+						<td>
+							<?=$pool['monitor']?>
+						</td>
+						<td>
+							<?=htmlspecialchars($pool['descr'])?>
+						</td>
+						<td>
+							<a href="load_balancer_pool_edit.php?id=<?=$idx?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+							<a href="load_balancer_pool.php?act=del&id=<?=$idx?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+							<a href="load_balancer_pool_edit.php?act=dup&id=<?=$idx?>" class="btn btn-xs btn-default"><?=gettext('Duplicate')?></a>
+						</td>
+					</tr>
+<?php
+	$idx++;
+}
+?>
+				</tbody>
+			</table>
+		</div>
+
+		<nav class="action-buttons">
+			<a href="load_balancer_pool_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
+		</nav>
+
+	</div>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php include("foot.inc");

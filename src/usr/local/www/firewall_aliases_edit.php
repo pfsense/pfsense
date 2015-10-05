@@ -2,40 +2,64 @@
 /* $Id$ */
 /*
 	firewall_aliases_edit.php
-	Copyright (C) 2004 Scott Ullrich
-	Copyright (C) 2009 Ermal Luçi
-	Copyright (C) 2010 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004 Scott Ullrich
+ *	Copyright (c)  2009 Ermal Luçi
+ *	Copyright (c)  2010 Jim Pingle
+ *	originally part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_BUILDER_BINARIES:	/bin/rm	/bin/mkdir	/usr/bin/fetch
-	pfSense_MODULE:	aliases
+	pfSense_BUILDER_BINARIES:	/bin/rm /bin/mkdir	/usr/bin/fetch
+	pfSense_MODULE: aliases
 */
 
 ##|+PRIV
@@ -94,9 +118,10 @@ function alias_same_type($name, $type) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
-			    in_array($alias['type'], array("host", "network"))) {
+				in_array($alias['type'], array("host", "network"))) {
 				return true;
 			}
+
 			if ($type == $alias['type']) {
 				return true;
 			} else {
@@ -157,12 +182,10 @@ if ($_POST) {
 		}
 	}
 	/* check for name conflicts */
-	if (empty($a_aliases[$id])) {
-		foreach ($a_aliases as $alias) {
-			if ($alias['name'] == $_POST['name']) {
-				$input_errors[] = gettext("An alias with this name already exists.");
-				break;
-			}
+	foreach ($a_aliases as $key => $alias) {
+		if (($alias['name'] == $_POST['name']) && (empty($a_aliases[$id]) || ($key != $id))) {
+			$input_errors[] = gettext("An alias with this name already exists.");
+			break;
 		}
 	}
 
@@ -405,7 +428,7 @@ if ($_POST) {
 				if (!alias_same_type($input_address, $_POST['type'])) {
 					// But alias type network can include alias type urltable. Feature#1603.
 					if (!($_POST['type'] == 'network' &&
-					    preg_match("/urltable/i", alias_get_type($input_address)))) {
+						preg_match("/urltable/i", alias_get_type($input_address)))) {
 						$wrongaliases .= " " . $input_address;
 					}
 				}
@@ -415,7 +438,7 @@ if ($_POST) {
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 				if (is_subnet($input_address) ||
-				    (!is_ipaddr($input_address) && !is_hostname($input_address))) {
+					(!is_ipaddr($input_address) && !is_hostname($input_address))) {
 					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $_POST['type']);
 				}
 			}
@@ -446,8 +469,8 @@ if ($_POST) {
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = implode("||", $final_address_details);
 
-		/*   Check to see if alias name needs to be
-		 *   renamed on referenced rules and such
+		/*	 Check to see if alias name needs to be
+		 *	 renamed on referenced rules and such
 		 */
 		if ($_POST['name'] <> $_POST['origname']) {
 			// Firewall rules
@@ -514,6 +537,7 @@ if ($_POST) {
 			header("Location: firewall_aliases.php");
 		}
 		exit;
+
 	} else {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
@@ -528,363 +552,238 @@ if ($_POST) {
 	}
 }
 
+
 include("head.inc");
 
-$jscriptstr = <<<EOD
+$section_str = array(
+	'network' => gettext("Network(s)"),
+	'host'	=> gettext("Host(s)"),
+	'port' => gettext("Port(s)"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL Table (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)")
+	);
+	
+$btn_str = array(
+	'network' => gettext("Add Network"),
+	'host'	=> gettext("Add Host"),
+	'port' => gettext("Add Port"),
+	'url' => gettext("Add URL"),
+	'url_ports' => gettext("Add URL"),
+	'urltable' => gettext("Add URL Table"),
+	'urltable_ports' => gettext("Add URL Table")
+	);
 
-<script type="text/javascript">
-//<![CDATA[
-var objAlias = new Array(4999);
-function typesel_change() {
-	var field_disabled = 0;
-	var field_value = "";
-	var set_value = false;
-	switch (document.iform.type.selectedIndex) {
-		case 0:	/* host */
-			field_disabled = 1;
-			field_value = "";
-			set_value = true;
-			break;
-		case 1:	/* network */
-			field_disabled = 0;
-			break;
-		case 2:	/* port */
-			field_disabled = 1;
-			field_value = "128";
-			set_value = true;
-			break;
-		case 3:	/* url */
-			field_disabled = 1;
-			break;
-		case 4:	/* url_ports */
-			field_disabled = 1;
-			break;
-		case 5:	/* urltable */
-			field_disabled = 0;
-			break;
-		case 6:	/* urltable_ports */
-			field_disabled = 0;
-			break;
-	}
+$label_str = array(
+	'network' => gettext("Network or FQDN"),
+	'host'	=> gettext("IP or FQDN"),
+	'port' => gettext("Port"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)")
+	);
 
-	jQuery("select[id^='address_subnet']").prop("disabled", field_disabled);
-	if (set_value == true) {
-		jQuery("select[id^='address_subnet']").prop("value", field_value);
-	}
-}
+$help = array(
+	'network' => "Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.",
+	'host' => "Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used. You may also enter an IP range such as 192.168.1.1-192.168.1.10 or a small subnet such as 192.168.1.16/28 and a list of individual IP addresses will be generated.",
+	'port' => "Enter as many ports as you wish.	 Port ranges can be expressed by separating with a colon.",
+	'url' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000).",
+	'url_ports' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000).",
+	'urltable' => "Enter a single URL containing a large number of IPs and/or Subnets. After saving we will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers." . "<br /><b>The value after the \"/\" is the " .
+				  "update frequency in days.</b>",
+	'urltable_ports' => "Enter a single URL containing a list of Port numbers and/or Port ranges. After saving we will download the URL." . "<br /><b>The value after the \"/\" is the " .
+						 "update frequency in days.</b>"
+);
 
-function add_alias_control() {
-	var name = "address" + (totalrows - 1);
-	obj = document.getElementById(name);
-	obj.setAttribute('class', 'formfldalias');
-	obj.setAttribute('autocomplete', 'off');
-	objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
-}
-EOD;
+$types = array(
+	'host' => 'Host(s)',
+	'network' => 'Network(s)',
+	'port' => 'Port(s)',
+	'url' => 'URL (IPs)',
+	'url_ports' => 'URL (Ports)',
+	'urltable' => 'URL Table (IPs)',
+	'urltable_ports' => 'URL Table (Ports)',
+);
 
-$network_str = gettext("Network or FQDN");
-$networks_str = gettext("Network(s)");
-$cidr_str = gettext("CIDR");
-$description_str = gettext("Description");
-$hosts_str = gettext("Host(s)");
-$ip_str = gettext("IP or FQDN");
-$ports_str = gettext("Port(s)");
-$port_str = gettext("Port");
-$url_str = gettext("URL (IPs)");
-$url_ports_str = gettext("URL (Ports)");
-$urltable_str = gettext("URL Table (IPs)");
-$urltable_ports_str = gettext("URL Table (Ports)");
-$update_freq_str = gettext("Update Freq. (days)");
-
-$networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
-$hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used. You may also enter an IP range such as 192.168.1.1-192.168.1.10 or a small subnet such as 192.168.1.16/28 and a list of individual IP addresses will be generated.");
-$ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by separating with a colon.");
-$url_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."), $g['product_name']);
-$url_ports_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000)."), $g['product_name']);
-$urltable_help = sprintf(gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving %s will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers."), $g['product_name']);
-$urltable_ports_help = sprintf(gettext("Enter a single URL containing a list of Port numbers and/or Port ranges. After saving %s will download the URL."), $g['product_name']);
-
-$openvpn_str = gettext("Username");
-$openvpn_user_str = gettext("OpenVPN Users");
-$openvpn_help = gettext("Enter as many usernames as you wish.");
-$openvpn_freq = "";
-
-$jscriptstr .= <<<EOD
-
-function update_box_type() {
-	var indexNum = document.forms[0].type.selectedIndex;
-	var selected = document.forms[0].type.options[indexNum].text;
-	if (selected == '{$networks_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$networks_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$network_str}";
-		document.getElementById ("twocolumn").firstChild.data = "{$cidr_str}";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$networks_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$hosts_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$hosts_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$ip_str}";
-		document.getElementById ("twocolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$hosts_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$ports_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$ports_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$port_str}";
-		document.getElementById ("twocolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$ports_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$url_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
-		document.getElementById ("twocolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$url_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$url_ports_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$url_ports_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$url_ports_str}";
-		document.getElementById ("twocolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$url_ports_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$openvpn_user_str}') {
-		document.getElementById ("addressnetworkport").firstChild.data = "{$openvpn_user_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$openvpn_str}";
-		document.getElementById ("twocolumn").firstChild.data = "{$openvpn_freq}";
-		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("threecolumn").style.display = 'block';
-		document.getElementById ("itemhelp").firstChild.data = "{$openvpn_help}";
-		document.getElementById ("addrowbutton").style.display = 'block';
-	} else if (selected == '{$urltable_str}') {
-		if ((typeof(totalrows) == "undefined") || (totalrows < 1)) {
-			addRowTo('maintable', 'formfldalias');
-			typesel_change();
-			add_alias_control(this);
-		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$urltable_str}";
-		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
-		document.getElementById ("threecolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").style.display = 'none';
-		document.getElementById ("itemhelp").firstChild.data = "{$urltable_help}";
-		document.getElementById ("addrowbutton").style.display = 'none';
-	} else if (selected == '{$urltable_ports_str}') {
-		if ((typeof(totalrows) == "undefined") || (totalrows < 1)) {
-			addRowTo('maintable', 'formfldalias');
-			typesel_change();
-			add_alias_control(this);
-		}
-		document.getElementById ("addressnetworkport").firstChild.data = "{$urltable_ports_str}";
-		document.getElementById ("onecolumn").firstChild.data = "{$urltable_ports_str}";
-		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
-		document.getElementById ("threecolumn").firstChild.data = "";
-		document.getElementById ("threecolumn").style.display = 'none';
-		document.getElementById ("itemhelp").firstChild.data = "{$urltable_ports_help}";
-		document.getElementById ("addrowbutton").style.display = 'none';
-	}
-}
-//]]>
-</script>
-
-EOD;
-
-?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php
-	include("fbegin.inc");
-	echo $jscriptstr;
-?>
-
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/row_helper.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js?rev=1"></script>
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
-
-<input type='hidden' name='address_type' value='textbox' />
-<input type='hidden' name='address_subnet_type' value='select' />
-
-<script type="text/javascript">
-//<![CDATA[
-	rowname[0] = "address";
-	rowtype[0] = "textbox,ipv4v6";
-	rowsize[0] = "30";
-
-	rowname[1] = "address_subnet";
-	rowtype[1] = "select,ipv4v6";
-	rowsize[1] = "1";
-
-	rowname[2] = "detail";
-	rowtype[2] = "textbox";
-	rowsize[2] = "50";
-//]]>
-</script>
-
-<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_input_errors"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<div id="inputerrors"></div>
-
-<form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
-<?php
 if (empty($tab)) {
-	if (preg_match("/url/i", $pconfig['type'])) {
+	if (preg_match("/url/i", $pconfig['type']))
 		$tab = 'url';
-	} else if ($pconfig['type'] == 'host') {
+	else if ($pconfig['type'] == 'host')
 		$tab = 'ip';
-	} else {
+	else
 		$tab = $pconfig['type'];
-	}
 }
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+require('classes/Form.class.php');
+$form = new Form;
+
+$form->addGlobal(new Form_Input(
+	'tab',
+	null,
+	'hidden',
+	$tab
+));
+
+$form->addGlobal(new Form_Input(
+	'tab',
+	null,
+	'hidden',
+	$tab
+));
+
+$form->addGlobal(new Form_Input(
+	'origname',
+	null,
+	'hidden',
+	$pconfig['name']
+));
+
+if (isset($id) && $a_aliases[$id])
+{
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$section = new Form_Section('Properties');
+
+$section->addInput(new Form_Input(
+	'name',
+	'Name',
+	'text',
+	$pconfig['name']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.
+	'of the characters "a-z, A-Z, 0-9 and _".');
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed).');
+
+$section->addInput(new Form_Select(
+	'type',
+	'Type',
+	isset($pconfig['type']) ? $pconfig['type'] : $tab,
+	$types
+));
+
+$form->add($section);
+
+$section = new Form_Section($section_str[$tab]);
+// Make somewhere to park the help text, and give it a class so we can update it later
+$section->addInput(new Form_StaticText(
+	'Hint',
+	'<span class="helptext">' . $help[$tab] . '</span>'
+));
+
+// If no addresses have been defined, we'll make up a blank set
+if ($pconfig['address'] == "") {
+	$pconfig['address'] = '';
+	$pconfig['address_subnet'] = '';
+	$pconfig['detail'] = '';
+}
+
+$counter = 0;
+$addresses = explode(" ", $pconfig['address']);
+$details = explode("||", $pconfig['detail']);
+
+while ($counter < count($addresses)) {
+	if (($pconfig['type'] != "host") && is_subnet($addresses[$counter])) {
+		list($address, $address_subnet) = explode("/", $addresses[$counter]);
+	} else {
+		$address = $addresses[$counter];
+		$address_subnet = "";
+	}
+
+	$group = new Form_Group($counter == 0 ? $label_str[$tab]:'');
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'address' . $counter,
+		'Address',
+		$address
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
+
+	$group->add(new Form_Input(
+		'detail' . $counter,
+		'Description',
+		'text',
+		$details[$counter]
+	))->setWidth(4);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+
+	$section->add($group);
+	$counter++;
+}
+
+$form->addGlobal(new Form_Button(
+	'addrow',
+	$btn_str[$tab]
+))->removeClass('btn-primary')->addClass('btn-success');
+
+$form->add($section);
+
+print $form;
 ?>
-<input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($tab);?>" />
-<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall aliases edit">
-	<tr>
-		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
-	</tr>
-	<tr>
-		<td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
-		<td class="vtable">
-			<input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-			<input name="name" type="text" id="name" class="formfld unknown" size="40" maxlength="31" value="<?=htmlspecialchars($pconfig['name']);?>" />
-			<?php if (isset($id) && $a_aliases[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-			<?php endif; ?>
-			<br />
-			<span class="vexpl">
-				<?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and _\"."); ?>
-			</span>
-		</td>
-	</tr>
-	<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/after_first_tr"); ?>
-	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-		<td width="78%" class="vtable">
-			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-			<br />
-			<span class="vexpl">
-				<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
-			</span>
-		</td>
-	</tr>
-	<tr>
-		<td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
-		<td class="vtable">
-			<select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
-				<option value="host" <?php if ($pconfig['type'] == "host") echo "selected=\"selected\""; ?>><?=gettext("Host(s)"); ?></option>
-				<option value="network" <?php if ($pconfig['type'] == "network") echo "selected=\"selected\""; ?>><?=gettext("Network(s)"); ?></option>
-				<option value="port" <?php if (($pconfig['type'] == "port") || (empty($pconfig['type']) && ($tab == "port"))) echo "selected=\"selected\""; ?>><?=gettext("Port(s)"); ?></option>
-				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected=\"selected\""; ?>><?=gettext("OpenVPN Users"); ?></option> -->
-				<option value="url" <?php if (($pconfig['type'] == "url") || (empty($pconfig['type']) && ($tab == "url"))) echo "selected=\"selected\""; ?>><?=gettext("URL (IPs)");?></option>
-				<option value="url_ports" <?php if ($pconfig['type'] == "url_ports") echo "selected=\"selected\""; ?>><?=gettext("URL (Ports)");?></option>
-				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected=\"selected\""; ?>><?=gettext("URL Table (IPs)"); ?></option>
-				<option value="urltable_ports" <?php if ($pconfig['type'] == "urltable_ports") echo "selected=\"selected\""; ?>><?=gettext("URL Table (Ports)"); ?></option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Host(s)"); ?></div></td>
-		<td width="78%" class="vtable">
-			<table id="maintable" summary="maintable">
-				<tbody>
-					<tr>
-						<td colspan="4">
-							<div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp"><?=gettext("Item information"); ?></div>
-						</td>
-					</tr>
-					<tr>
-						<td><div id="onecolumn"><?=gettext("Network"); ?></div></td>
-						<td><div id="twocolumn">CIDR</div></td>
-						<td><div id="threecolumn"><?=gettext("Description"); ?></div></td>
-					</tr>
 
-					<?php
-					$counter = 0;
-					if ($pconfig['address'] <> ""):
-						$addresses = explode(" ", $pconfig['address']);
-						$details = explode("||", $pconfig['detail']);
-						while ($counter < count($addresses)):
-							if (($pconfig['type'] != "host") && is_subnet($addresses[$counter])) {
-								list($address, $address_subnet) = explode("/", $addresses[$counter]);
-							} else {
-								$address = $addresses[$counter];
-								$address_subnet = "";
-							}
-					?>
-					<tr>
-						<td>
-							<input autocomplete="off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
-						</td>
-						<td>
-							<select name="address_subnet<?php echo $counter; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $counter; ?>">
-								<option></option>
-								<?php for ($i = 128; $i >= 1; $i--): ?>
-									<option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected=\"selected\""; ?>><?=$i;?></option>
-								<?php endfor; ?>
-							</select>
-						</td>
-						<td>
-							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=htmlspecialchars($details[$counter]);?>" />
-						</td>
-						<td>
-							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-						</td>
-					</tr>
-					<?php
-						$counter++;
-
-						endwhile;
-					endif;
-					?>
-				</tbody>
-			</table>
-			<div id="addrowbutton">
-				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
-					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" />
-				</a>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top">&nbsp;</td>
-		<td width="78%">
-			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-			<input name="referer" type="hidden" value="<?=$referer;?>" />
-		</td>
-	</tr>
-</table>
-</form>
-
-<script type="text/javascript">
+<script>
 //<![CDATA[
-	field_counter_js = 3;
-	rows = 1;
-	totalrows = <?php echo $counter; ?>;
-	loaded = <?php echo $counter; ?>;
-	typesel_change();
-	update_box_type();
+events.push(function(){
+	
+	function typechange() {
+		var tab = $('#type').find('option:selected').val();
+		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
 
+		// Set the help text to match the tab
+		var helparray = <?php echo json_encode($help); ?>;
+		$('.helptext').html(helparray[tab]);
+
+		// Set the section heading by tab type
+		var sectionstr = <?php echo json_encode($section_str); ?>;
+		$('.panel-title:last').text(sectionstr[tab]);
+		
+		var buttonstr = <?php echo json_encode($btn_str); ?>;
+		$('.btn-success').prop('value', buttonstr[tab]);
+		
+		// Set the input field label by tab
+		var labelstr = <?php echo json_encode($label_str); ?>;
+		$('.repeatable:first').find('label').text(labelstr[tab]);
+	}
+
+	// On load . .
+	typechange();
+
+	// Autocomplete
 	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
 
-	function createAutoSuggest() {
-		<?php
-		for ($jv = 0; $jv < $counter; $jv++) {
-			echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
-		}
-		?>
-	}
+	$('[id^=address]').autocomplete({
+		source: addressarray
+	});
 
-	setTimeout("createAutoSuggest();", 500);
+	// on click . .
+	$('#type').on('change', function() {
+		typechange();
+	});
+
+	// Disable address_subnet if type == 'host'
+	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
+});
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php
+include("foot.inc");

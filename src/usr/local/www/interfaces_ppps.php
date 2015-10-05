@@ -31,7 +31,7 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -46,6 +46,7 @@ require_once("functions.inc");
 
 function ppp_inuse($num) {
 	global $config, $g;
+
 	$iflist = get_configured_interface_list(false, true);
 	if (!is_array($config['ppps']['ppp'])) {
 		return false;
@@ -56,6 +57,7 @@ function ppp_inuse($num) {
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -79,81 +81,73 @@ if (!is_array($config['ppps']['ppp'])) {
 }
 $a_ppps = $config['ppps']['ppp'];
 
-$pgtitle = gettext("Interfaces: PPPs");
+$pgtitle = array(gettext("Interfaces"),gettext("PPPs"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
+$tab_array = array();
+$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), true, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+display_top_tabs($tab_array);
 ?>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+			  <th><?=gettext("Interface"); ?></th>
+			  <th><?=gettext("Interface(s)/Port(s)"); ?></th>
+			  <th><?=gettext("Description"); ?></th>
+			  <th></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces ppps">
-	<tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), true, "interfaces_ppps.php");
-	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
-	display_top_tabs($tab_array);
+$i = 0;
+
+foreach ($a_ppps as $id => $ppp) {
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-				<tr>
-					<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Interface(s)/Port(s)");?></td>
-					<td width="40%" class="listhdr"><?=gettext("Description");?></td>
-					<td width="10%" class="list"></td>
-				</tr>
+			<tr>
+				<td>
+					<?=htmlspecialchars($ppp['if'])?>
+				</td>
+				<td>
 <?php
-	$i = 0;
-	foreach ($a_ppps as $id => $ppp):
+	$portlist = explode(",", $ppp['ports']);
+	foreach ($portlist as $portid => $port) {
+		if ($port != get_real_interface($port) && $ppp['type'] != "ppp")
+			$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
+	}
+					echo htmlspecialchars(implode(",", $portlist));
 ?>
-				<tr ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
-					<td class="listr">
-						<?=htmlspecialchars($ppp['if']);?>
-					</td>
-					<td class="listr">
+				</td>
+				<td>
+					<?=htmlspecialchars($ppp['descr'])?>
+				</td>
+				<td>
+					<a href="interfaces_ppps_edit.php?id=<?=$i?>" class="btn btn-default btn-xs"><?=gettext("Edit")?></a>
+					<a href="interfaces_ppps.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
+				</td>
+			</tr>
 <?php
-		$portlist = explode(",", $ppp['ports']);
-		foreach ($portlist as $portid => $port) {
-			if ($port != get_real_interface($port) && $ppp['type'] != "ppp") {
-				$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
-			}
-		}
-		echo htmlspecialchars(implode(",", $portlist));
+	$i++;
+}
 ?>
-					</td>
-					<td class="listbg">
-						<?=htmlspecialchars($ppp['descr']);?>&nbsp;
-					</td>
-					<td valign="middle" class="list nowrap"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-						&nbsp;<a href="interfaces_ppps.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a>
-					</td>
-				</tr>
+		</tbody>
+	</table>
+
+	<nav class="action-buttons">
+	   <a href="interfaces_ppps_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	</nav>
+</div>
 <?php
-		$i++;
-	endforeach;
-?>
-				<tr>
-					<td class="list" colspan="3">&nbsp;</td>
-					<td class="list"> <a href="interfaces_ppps_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+include("foot.inc");
+

@@ -51,12 +51,7 @@ function wol_sort() {
 }
 
 require("guiconfig.inc");
-
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_wol.php');
-}
+require_once('classes/Form.class.php');
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
@@ -121,60 +116,44 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("Wake on LAN"), gettext("Edit"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="services_wol_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="wol edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit WOL entry");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
-			<td width="78%" class="vtable">
-				<select name="interface" class="formfld">
-				<?php
-					$interfaces = get_configured_interface_with_descr();
-					foreach ($interfaces as $iface => $ifacename): ?>
-					<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-						<?=htmlspecialchars($ifacename);?>
-					</option>
-				<?php endforeach; ?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Choose which interface this host is connected to.");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
-			<td width="78%" class="vtable">
-				<input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_wol[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$form = new Form;
+
+if (isset($id) && $a_wol[$id]) {
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$section = new Form_Section('Edit WOL entry');
+
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface',
+	(link_interface_to_bridge($pconfig['interface']) ? null : $pconfig['interface']),
+	get_configured_interface_with_descr()
+))->setHelp('Choose which interface this host is connected to.');
+
+$section->addInput(new Form_Input(
+	'mac',
+	'MAC address',
+	'text',
+	$pconfig['mac']
+))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp(gettext('You may enter a description here for your reference (not parsed).'));
+
+$form->add($section);
+print $form;
+
+include("foot.inc");

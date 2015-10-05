@@ -3,33 +3,58 @@
 /* $Id$ */
 /*
 	diag_routes.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2006 Fernando Lamos
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-
 */
-
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2006 Fernando Lamos
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
 	pfSense_MODULE:	routing
@@ -43,6 +68,9 @@
 
 include('guiconfig.inc');
 
+$limit = '100';
+$filter = '';
+
 if (isset($_REQUEST['isAjax'])) {
 	$netstat = "/usr/bin/netstat -rW";
 	if (isset($_REQUEST['IPv6'])) {
@@ -51,6 +79,7 @@ if (isset($_REQUEST['isAjax'])) {
 	} else {
 		$netstat .= " -f inet";
 		echo "IPv4\n";
+
 	}
 	if (!isset($_REQUEST['resolve'])) {
 		$netstat .= " -n";
@@ -76,172 +105,138 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
+require_once('classes/Form.class.php');
+
+$form = new Form('Update');
+$form->addGlobal(new Form_Input(
+	'isAjax',
+	null,
+	'hidden',
+	1
+));
+$section = new Form_Section('Traceroute');
+
+$section->addInput(new Form_Checkbox(
+	'resolve',
+	'Resolve names',
+	'Enable',
+	$resolve
+))->setHelp('Enabling name resolution may cause the query to take longer.'.
+	' You can stop it at any time by clicking the Stop button in your browser.');
+
+$validLimits = array('10', '50', '100', '200', '500', '1000', 'all');
+$section->addInput(new Form_Select(
+	'limit',
+	'Rows to display',
+	$limit,
+	array_combine($validLimits, $validLimits)
+));
+
+$section->addInput(new Form_Input(
+	'filter',
+	'Filter',
+	'text',
+	$host
+))->setHelp('Use a regular expression to filter IP address or hostnames');
+
+$form->add($section);
+print $form;
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script>
+function update_routes(section) {
+	$.ajax(
+		'/diag_routes.php',
+		{
+			type: 'post',
+			data: $(document.forms[0]).serialize() +'&'+ section +'=true',
+			success: update_routes_callback,
+	});
+}
 
-<?php include("fbegin.inc"); ?>
+function update_routes_callback(html) {
+	// First line contains section
+	var responseTextArr = html.split("\n");
+	var section = responseTextArr.shift();
+	var tbody = '';
+	var field = '';
+	var tr_class = '';
+	var thead = '<tr>';
 
-<script type="text/javascript">
-//<![CDATA[
-
-	function update_routes(section) {
-		var url = "diag_routes.php";
-		var limit = jQuery('#limit option:selected').text();
-		var filter = jQuery('#filter').val();
-		var params = "isAjax=true&limit=" + limit + "&filter=" + filter;
-		if (jQuery('#resolve').is(':checked')) {
-			params += "&resolve=true";
-		}
-		if (section == "IPv6") {
-			params += "&IPv6=true";
-		}
-		var myAjax = new Ajax.Request(
-			url,
-			{
-				method: 'post',
-				parameters: params,
-				onComplete: update_routes_callback
-			});
-	}
-
-	function update_routes_callback(transport) {
-		// First line contains section
-		var responseTextArr = transport.responseText.split("\n");
-		var section = responseTextArr.shift();
-		var tbody = '';
-		var field = '';
-		var elements = 8;
-		var tr_class = '';
-
-		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '<\/strong><\/td><\/tr>' + "\n";
-		for (var i = 0; i < responseTextArr.length; i++) {
-			if (responseTextArr[i] == "") {
+	for (var i = 0; i < responseTextArr.length; i++) {
+		if (responseTextArr[i] == "")
+			continue;
+		var tmp = '<tr>';
+		var j = 0;
+		var entry = responseTextArr[i].split(" ");
+		for (var k = 0; k < entry.length; k++) {
+			if (entry[k] == "")
 				continue;
-			}
-			var tmp = '';
-			if (i == 0) {
-				tr_class = 'listhdrr';
-				tmp += '<tr class="sortableHeaderRowIdentifier">' + "\n";
-			} else {
-				tr_class = 'listlr';
-				tmp += '<tr>' + "\n";
-			}
-			var j = 0;
-			var entry = responseTextArr[i].split(" ");
-			for (var k = 0; k < entry.length; k++) {
-				if (entry[k] == "") {
-					continue;
-				}
-				if (i == 0 && j == (elements - 1)) {
-					tr_class = 'listhdr';
-				}
-				tmp += '<td class="' + tr_class + '">' + entry[k] + '<\/td>' + "\n";
-				if (i > 0) {
-					tr_class = 'listr';
-				}
-				j++;
-			}
-			// The 'Expire' field might be blank
-			if (j == (elements - 1)) {
-				tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
-			}
-			tmp += '<\/tr>' + "\n";
-			if (i == 0) {
-				thead += tmp;
-			} else {
-				tbody += tmp;
-			}
+			if (i == 0)
+				tmp += '<th>' + entry[k] + '<\/th>';
+			else
+				tmp += '<td>' + entry[k] + '<\/td>';
+			j++;
 		}
-		jQuery('#' + section + ' > thead').html(thead);
-		jQuery('#' + section + ' > tbody').html(tbody);
+
+		tmp += '<td><\/td>';
+
+		if (i == 0)
+			thead += tmp;
+		else
+			tbody += tmp;
 	}
 
-//]]>
+	$('#' + section + ' > thead').html(thead);
+	$('#' + section + ' > tbody').html(tbody);
+}
+
+function update_all_routes() {
+	update_routes("IPv4");
+	update_routes("IPv6");
+}
+
+events.push(function(){
+	setInterval('update_all_routes()', 5000);
+	update_all_routes();
+
+	$(document.forms[0]).on('submit', function(e){
+		update_all_routes();
+
+		e.preventDefault();
+	});
+});
 </script>
 
-<script type="text/javascript">
-//<![CDATA[
-
-	function update_all_routes() {
-		update_routes("IPv4");
-		update_routes("IPv6");
-	}
-
-	jQuery(document).ready(function() {setTimeout('update_all_routes()', 5000);});
-
-//]]>
-</script>
-
-<div id="mainarea">
-<form action="diag_routes.php" method="post">
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="diag routes">
-	<tr>
-		<td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
-		<td class="vtable" width="78%">
-			<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo "checked=\"checked\""; ?> /><?=gettext("Enable");?>
-			<br />
-			<span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
-		</td>
-	</tr>
-
-	<tr>
-		<td class="vncellreq" width="22%"><?=gettext("Number of rows");?></td>
-		<td class="vtable" width="78%">
-			<select id="limit" name="limit">
-<?php
-	foreach (array("10", "50", "100", "200", "500", "1000", gettext("all")) as $item) {
-		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected=\"selected\"" : "") . ">{$item}</option>\n";
-	}
-?>
-			</select>
-			<br />
-			<span class="expl"><?=gettext("Select how many rows to display.");?></span>
-		</td>
-	</tr>
-
-	<tr>
-		<td class="vncellreq" width="22%"><?=gettext("Filter expression");?></td>
-		<td class="vtable" width="78%">
-			<input type="text" class="formfld search" name="filter" id="filter" />
-			<br />
-			<span class="expl"><?=gettext("Use a regular expression to filter IP address or hostnames.");?></span>
-		</td>
-	</tr>
-
-	<tr>
-		<td class="vncellreq" width="22%">&nbsp;</td>
-		<td class="vtable" width="78%">
-			<input type="button" class="formbtn" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" />
-			<br />
-			<br />
-			<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
-		</td>
-	</tr>
-</table>
-</form>
-
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv4" summary="ipv4 routes">
-	<thead>
-		<tr><td class="listtopic"><strong>IPv4</strong></td></tr>
-	</thead>
-	<tbody>
-		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
-	</tbody>
-</table>
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv6" summary="ipv6 routes">
-	<thead>
-		<tr><td class="listtopic"><strong>IPv6</strong></td></tr>
-	</thead>
-	<tbody>
-		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
-	</tbody>
-</table>
-
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
+	<div class="panel panel-body">
+		<table class="table table-striped table-compact" id="IPv4">
+		<thead>
+			<!-- filled by xhr -->
+		</thead>
+		<tbody>
+			<tr>
+				<td><?=gettext("Gathering data, please wait...")?></td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
 </div>
 
-<?php
-include('fend.inc');
-?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
+	<div class="panel panel-body">
+		<table class="table table-striped table-compact" id="IPv6">
+		<thead>
+			<!-- filled by xhr -->
+		</thead>
+		<tbody>
+			<tr>
+				<td><?=gettext("Gathering data, please wait...")?></td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+</div>
 
-</body>
-</html>
+<?php include("foot.inc");

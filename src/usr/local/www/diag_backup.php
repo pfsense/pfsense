@@ -2,39 +2,62 @@
 /* $Id$ */
 /*
 	diag_backup.php
-	Copyright (C) 2004-2009 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/shutdown
-	pfSense_MODULE:	backup
+	pfSense_MODULE: backup
 */
 
 ##|+PRIV
@@ -178,70 +201,6 @@ function check_and_returnif_section_exists($section) {
 	return false;
 }
 
-function spit_out_select_items($name, $showall) {
-	global $config;
-
-	$areas = array("aliases" => gettext("Aliases"),
-		"captiveportal" => gettext("Captive Portal"),
-		"voucher" => gettext("Captive Portal Vouchers"),
-		"dnsmasq" => gettext("DNS Forwarder"),
-		"unbound" => gettext("DNS Resolver"),
-		"dhcpd" => gettext("DHCP Server"),
-		"dhcpdv6" => gettext("DHCPv6 Server"),
-		"filter" => gettext("Firewall Rules"),
-		"interfaces" => gettext("Interfaces"),
-		"ipsec" => gettext("IPSEC"),
-		"nat" => gettext("NAT"),
-		"openvpn" => gettext("OpenVPN"),
-		"installedpackages" => gettext("Package Manager"),
-		"pptpd" => gettext("PPTP Server"),
-		"rrddata" => gettext("RRD Data"),
-		"cron" => gettext("Scheduled Tasks"),
-		"syslog" => gettext("Syslog"),
-		"system" => gettext("System"),
-		"staticroutes" => gettext("Static routes"),
-		"sysctl" => gettext("System tunables"),
-		"snmpd" => gettext("SNMP Server"),
-		"shaper" => gettext("Traffic Shaper"),
-		"vlans" => gettext("VLANS"),
-		"wol" => gettext("Wake on LAN")
-		);
-
-	$select = "<select name=\"{$name}\" id=\"{$name}\">";
-	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
-
-	if ($showall == true) {
-		foreach ($areas as $area => $areaname) {
-			$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
-		}
-	} else {
-		foreach ($areas as $area => $areaname) {
-			if ($area === "rrddata" || check_and_returnif_section_exists($area) == true) {
-				$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
-			}
-		}
-	}
-
-	$select .= "</select>\n";
-
-	if ($name === "backuparea") {
-		$select .= <<<END_SCRIPT_BLOCK
-			<script type="text/javascript">
-			//<![CDATA[
-				jQuery(function (\$) {
-					$("#{$name}").change(function () {
-						backuparea_change(this);
-					}).trigger("change");
-				});
-			//]]>
-			</script>
-END_SCRIPT_BLOCK;
-	}
-
-	echo $select;
-
-}
-
 if ($_POST['apply']) {
 	ob_flush();
 	flush();
@@ -319,7 +278,7 @@ if ($_POST) {
 				//unlock($lockbckp);
 
 				/*
-				 *  Backup RRD Data
+				 *	Backup RRD Data
 				 */
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
@@ -603,216 +562,258 @@ $id = rand() . '.' . time();
 $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
+function build_area_list($showall) {
+	global $config;
+
+	$areas = array(
+		"aliases" => gettext("Aliases"),
+		"captiveportal" => gettext("Captive Portal"),
+		"voucher" => gettext("Captive Portal Vouchers"),
+		"dnsmasq" => gettext("DNS Forwarder"),
+		"unbound" => gettext("DNS Resolver"),
+		"dhcpd" => gettext("DHCP Server"),
+		"dhcpdv6" => gettext("DHCPv6 Server"),
+		"filter" => gettext("Firewall Rules"),
+		"interfaces" => gettext("Interfaces"),
+		"ipsec" => gettext("IPSEC"),
+		"nat" => gettext("NAT"),
+		"openvpn" => gettext("OpenVPN"),
+		"installedpackages" => gettext("Package Manager"),
+		"rrddata" => gettext("RRD Data"),
+		"cron" => gettext("Scheduled Tasks"),
+		"syslog" => gettext("Syslog"),
+		"system" => gettext("System"),
+		"staticroutes" => gettext("Static routes"),
+		"sysctl" => gettext("System tunables"),
+		"snmpd" => gettext("SNMP Server"),
+		"shaper" => gettext("Traffic Shaper"),
+		"vlans" => gettext("VLANS"),
+		"wol" => gettext("Wake on LAN")
+		);
+
+	$list = array("" => gettext("All"));
+
+	if ($showall) {
+		return($list + $areas);
+	} else {
+		foreach ($areas as $area => $areaname) {
+			if ($area === "rrddata" || check_and_returnif_section_exists($area) == true) {
+				$list[$area] = $areaname;
+			}
+		}
+
+		return($list);
+	}
+}
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
 include("head.inc");
 
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+if (is_subsystem_dirty('restore')):
+?>
+	<br/>
+	<form action="reboot.php" method="post">
+		<input name="Submit" type="hidden" value="Yes" />
+		<?=print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?>
+		<br />
+	</form>
+<?php
+endif;
+
+$tab_array = array();
+$tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
+$tab_array[] = array(gettext("Backup/Restore"), true, "diag_backup.php");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+
+$form = new Form(false);
+$form->setMultipartEncoding();	// Allow file uploads
+
+$section = new Form_Section('Backup configuration');
+
+$section->addInput(new Form_Select(
+	'backuparea',
+	'Backup area',
+	'',
+	build_area_list(false)
+));
+
+$section->addInput(new Form_Checkbox(
+	'nopackages',
+	'Skip packages',
+	'Do not backup package information.',
+	false
+));
+
+$section->addInput(new Form_Checkbox(
+	'donotbackuprrd',
+	'Skip RRD data',
+	'Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)',
+	true
+));
+
+$section->addInput(new Form_Checkbox(
+	'encrypt',
+	'Encryption',
+	'Encrypt this configuration file.',
+	false
+));
+
+$section->addInput(new Form_Input(
+	'encrypt_password',
+	null,
+	'password',
+	null,
+	['placeholder' => 'Password']
+));
+
+$section->addInput(new Form_Input(
+	'encrypt_passconf',
+	null,
+	'password',
+	null,
+	['placeholder' => 'Confirm password']
+));
+
+$group = new Form_Group('');
+$group->add(new Form_Button(
+	'Submit',
+	'Download configuration as XML'
+));
+
+$section->add($group);
+$form->add($section);
+
+$section = new Form_Section('Restore backup');
+
+$section->addInput(new Form_StaticText(
+	null,
+	gettext("Open a ") . $g['[product_name'] . gettext(" configuration XML file and click the button below to restore the configuration.")
+));
+
+$section->addInput(new Form_Select(
+	'restorearea',
+	'Restore area',
+	'',
+	build_area_list(false)
+));
+
+$section->addInput(new Form_Input(
+	'conffile',
+	'Configuration file',
+	'file',
+	null
+));
+
+$section->addInput(new Form_Checkbox(
+	'decrypt',
+	'Encryption',
+	'Configuration file is encrypted.',
+	false
+));
+
+$section->addInput(new Form_Input(
+	'decrypt_password',
+	null,
+	'password',
+	null,
+	['placeholder' => 'Password']
+));
+
+$section->addInput(new Form_Input(
+	'decrypt_passconf',
+	null,
+	'password',
+	null,
+	['placeholder' => 'Confirm password']
+));
+
+$group = new Form_Group('');
+$group->add(new Form_Button(
+	'Submit',
+	'Restore configuration'
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger');
+
+$section->add($group);
+
+$form->add($section);
+
+if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
+	$section = new Form_Section('Package functions');
+
+	if ($config['installedpackages']['package'] != "") {
+		$group = new Form_Group('');
+		$group->add(new Form_Button(
+			'Submit',
+			'Reinstall packages'
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-warning');
+
+		$section->add($group);
+	}
+
+	if (is_subsystem_dirty("packagelock")) {
+		$group = new Form_Group('');
+		$group->add(new Form_Button(
+			'Submit',
+			'Clear Package Lock'
+		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning');
+
+		$section->add($group);
+	}
+
+	$form->add($section);
+}
+
+print($form);
+?>
 <script type="text/javascript">
 //<![CDATA[
+events.push(function(){
 
-function encrypt_change() {
-
-	if (!document.iform.encrypt.checked) {
-		document.getElementById("encrypt_opts").style.display="none";
-	} else {
-		document.getElementById("encrypt_opts").style.display="";
+	// ------- Show/hide sections based on checkbox settings --------------------------------------
+	
+	function hideSections(hide) {
+		hidePasswords();
 	}
-}
 
-function decrypt_change() {
+	function hidePasswords() {
 
-	if (!document.iform.decrypt.checked) {
-		document.getElementById("decrypt_opts").style.display="none";
-	} else {
-		document.getElementById("decrypt_opts").style.display="";
+		encryptHide = !($('input[name="encrypt"]').is(':checked'));
+		decryptHide = !($('input[name="decrypt"]').is(':checked'));
+
+		hideInput('encrypt_password', encryptHide);
+		hideInput('encrypt_passconf', encryptHide);
+		hideInput('decrypt_password', decryptHide);
+		hideInput('decrypt_passconf', decryptHide);
 	}
-}
 
-function backuparea_change(obj) {
-	if (obj.value == "rrddata") {
-		document.getElementById("nopackages").disabled      = true;
-		document.getElementById("dotnotbackuprrd").disabled = true;
-	} else {
-		document.getElementById("nopackages").disabled      = false;
-		document.getElementById("dotnotbackuprrd").disabled = false;
-	}
-}
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	$('input[name="encrypt"]').on('change', function() {
+		hidePasswords();
+	});
+
+	$('input[name="decrypt"]').on('change', function() {
+		hidePasswords();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	hideSections();
+});
 //]]>
 </script>
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('restore')): ?><br/>
-<form action="reboot.php" method="post">
-<input name="Submit" type="hidden" value="Yes" />
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
-</form>
-<?php endif; ?>
-<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="diag backup">
-	<tr>
-		<td>
 <?php
-		$tab_array = array();
-		$tab_array[0] = array(gettext("Config History"), false, "diag_confbak.php");
-		$tab_array[1] = array(gettext("Backup/Restore"), true, "diag_backup.php");
-		display_top_tabs($tab_array);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Backup configuration"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<p><?=gettext("Click this button to download the system configuration in XML format."); ?><br /><br /> <?=gettext("Backup area:"); ?> <?php spit_out_select_items("backuparea", false); ?></p>
-						<table>
-							<tr>
-								<td>
-									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Do not backup package information."); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>
-									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="encrypt_change()" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Encrypt this configuration file."); ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked="checked" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table id="encrypt_opts">
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("Password:"); ?> </span>
-								</td>
-								<td>
-									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("confirm:"); ?> </span>
-								</td>
-								<td>
-									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="download" value="<?=gettext("Download configuration"); ?>" /></p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Restore configuration"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?>
-						<br /><br />
-						<?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
-						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40" /></p>
-						<table>
-							<tr>
-								<td>
-									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="decrypt_change()" />
-								</td>
-								<td>
-									<span class="vexpl"><?=gettext("Configuration file is encrypted."); ?></span>
-								</td>
-							</tr>
-						</table>
-						<table id="decrypt_opts">
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("Password :"); ?></span>
-								</td>
-								<td>
-									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="vexpl"><?=gettext("confirm :"); ?></span>
-								</td>
-								<td>
-									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>" /></p>
-						<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
-					</td>
-				</tr>
-				<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) { ?>
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Package Functions"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-					<td width="78%" class="vtable">
-						<?php if ($config['installedpackages']['package'] != "") { ?>
-							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>" />
-							<br />
-							<br />
-						<?php } ?>
-						<?php if (is_subsystem_dirty("packagelock")) { ?>
-							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>" />
-						<?php } ?>
-							</p>
-					</td>
-				</tr>
-				<?php } ?>
-			</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-
-<script type="text/javascript">
-//<![CDATA[
-encrypt_change();
-decrypt_change();
-//]]>
-</script>
-
-<?php include("fend.inc"); ?>
-</body>
-</html>
-<?php
+include("foot.inc");
 
 if (is_subsystem_dirty('restore')) {
 	system_reboot();
 }
-
-?>

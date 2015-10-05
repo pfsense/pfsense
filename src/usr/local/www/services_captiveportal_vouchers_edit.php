@@ -70,6 +70,7 @@ if (!is_array($config['voucher'])) {
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
 	$config['voucher'][$cpzone]['roll'] = array();
 }
+
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
 if (is_numericint($_GET['id'])) {
@@ -87,8 +88,8 @@ if (isset($id) && $a_roll[$id]) {
 	$pconfig['descr'] = $a_roll[$id]['descr'];
 }
 
-$maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;    // Highest Roll#
-$maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;   // Highest Ticket#
+$maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;	// Highest Roll#
+$maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;	 // Highest Ticket#
 
 if ($_POST) {
 
@@ -134,14 +135,15 @@ if ($_POST) {
 
 		/* New Roll or modified voucher count: create bitmask */
 		$voucherlck = lock("voucher{$cpzone}");
+
 		if ($_POST['count'] != $rollent['count']) {
 			$rollent['count'] = $_POST['count'];
-			$len = ($rollent['count']>>3) + 1;   // count / 8 +1
-			$rollent['used'] = base64_encode(str_repeat("\000", $len)); // 4 bitmask
+			$len = ($rollent['count']>>3) + 1;	 // count / 8 +1
+			$rollent['used'] = base64_encode(str_repeat("\000",$len)); // 4 bitmask
 			$rollent['active'] = array();
 			voucher_write_used_db($rollent['number'], $rollent['used']);
-			voucher_write_active_db($rollent['number'], array());   // create empty DB
-			voucher_log(LOG_INFO, sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
+			voucher_write_active_db($rollent['number'], array());	// create empty DB
+			voucher_log(LOG_INFO,sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
 		} else {
 			// existing roll has been modified but without changing the count
 			// read active and used DB from ramdisk and store it in XML config
@@ -149,7 +151,7 @@ if ($_POST) {
 			$activent = array();
 			$db = array();
 			$active_vouchers = voucher_read_active_db($rollent['number'], $rollent['minutes']);
-			foreach ($active_vouchers as $voucher => $line) {
+			foreach($active_vouchers as $voucher => $line) {
 				list($timestamp, $minutes) = explode(",", $line);
 				$activent['voucher'] = $voucher;
 				$activent['timestamp'] = $timestamp;
@@ -158,13 +160,13 @@ if ($_POST) {
 			}
 			$rollent['active'] = $db;
 		}
+
 		unlock($voucherlck);
 
-		if (isset($id) && $a_roll[$id]) {
+		if (isset($id) && $a_roll[$id])
 			$a_roll[$id] = $rollent;
-		} else {
+		else
 			$a_roll[] = $rollent;
-		}
 
 		write_config();
 
@@ -174,57 +176,65 @@ if ($_POST) {
 }
 
 include("head.inc");
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<form action="services_captiveportal_vouchers_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="content pane">
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Roll"); ?>#</td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=htmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Minutes per Ticket"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Count"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=htmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
-			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
-				<?php if (isset($id) && $a_roll[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
+
+require_once('classes/Form.class.php');
+
+$form = new Form();
+
+$section = new Form_Section('Voucher rolls');
+
+$section->addInput(new Form_Input(
+	'number',
+	'Roll #',
+	'text',
+	$pconfig['number']
+))->setHelp('Enter the Roll# (0..%d) found on top of the generated/printed vouchers', [$maxnumber]);
+
+$section->addInput(new Form_Input(
+	'minutes',
+	'Minutes per ticket',
+	'text',
+	$pconfig['minutes']
+))->setHelp('Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication.');
+
+$section->addInput(new Form_Input(
+	'count',
+	'Count',
+	'text',
+	$pconfig['count']
+))->setHelp('Enter the number of vouchers (1..%d) found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again', [$maxcount]);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Comment',
+	'text',
+	$pconfig['descr']
+))->setHelp('Can be used to further identify this roll. Ignored by the system.');
+
+$section->addInput(new Form_Input(
+	'zone',
+	null,
+	'hidden',
+	$cpzone
+));
+
+if (isset($id) && $a_roll[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$pconfig['id']
+	));
+}
+
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

@@ -51,10 +51,11 @@ if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
 }
 
+$home = getcwd();
 $rrddbpath = "/var/db/rrd/";
 chdir($rrddbpath);
 $databases = glob("*.rrd");
-
+chdir($home);
 
 if ($_GET['cat']) {
 	$curcat = htmlspecialchars($_GET['cat']);
@@ -66,14 +67,17 @@ if ($_GET['cat']) {
 	}
 }
 
-if ($_GET['zone']) {
-	$curzone = $_GET['zone'];
-} else {
-	$curzone = '';
+if ($_POST['cat']) {
+	$curcat = htmlspecialchars($_POST['cat']);
 }
 
-if ($_GET['period']) {
-	$curperiod = $_GET['period'];
+if ($_GET['zone'])
+	$curzone = $_GET['zone'];
+else
+	$curzone = '';
+
+if ($_POST['period']) {
+	$curperiod = $_POST['period'];
 } else {
 	if (!empty($config['rrd']['period'])) {
 		$curperiod = $config['rrd']['period'];
@@ -82,10 +86,20 @@ if ($_GET['period']) {
 	}
 }
 
-if ($_GET['option']) {
-	$curoption = $_GET['option'];
+if ($_POST['style']) {
+	$curstyle = $_POST['style'];
 } else {
-	switch ($curcat) {
+	if(! empty($config['rrd']['style'])) {
+		$curstyle = $config['rrd']['style'];
+	} else {
+		$curstyle = "absolute";
+	}
+}
+
+if ($_POST['option']) {
+	$curoption = $_POST['option'];
+} else {
+	switch($curcat) {
 		case "system":
 			$curoption = "processor";
 			break;
@@ -154,12 +168,15 @@ if ($curcat == "custom") {
 		if ($start < ($now - (3600 * 24 * 365 * 5))) {
 			$start = $now - (8 * 3600);
 		}
-		$start = $_GET['start'];
-	} else if ($_GET['start']) {
-		$start = strtotime($_GET['start']);
+
+		$start = $_POST['start'];
+	} else if ($_POST['start']) {
+		$start = strtotime($_POST['start']);
+
 		if ($start === FALSE || $start === -1) {
-			$input_errors[] = gettext("Invalid start date/time:") . " '{$_GET['start']}'";
-			$start = $now - (8 * 3600);
+			$input_errors[] = gettext("Invalid start date/time:") . " '{$_POST['start']}'";
+
+		$start = $now - (8 * 3600);
 		}
 	} else {
 		$start = $now - (8 * 3600);
@@ -171,8 +188,9 @@ if (is_numeric($_GET['end'])) {
 } else if ($_GET['end']) {
 	$end = strtotime($_GET['end']);
 	if ($end === FALSE || $end === -1) {
-		$input_errors[] = gettext("Invalid end date/time:") . " '{$_GET['end']}'";
-		$end = $now;
+		$input_errors[] = gettext("Invalid end date/time:") . " '{$_POST['end']}'";
+
+	$end = $now;
 	}
 } else {
 	$end = $now;
@@ -189,38 +207,21 @@ $seconds = $end - $start;
 $styles = array('inverse' => gettext('Inverse'),
 	'absolute' => gettext('Absolute'));
 
-// Set default and override later
-$curstyle = "inverse";
-
-if ($_GET['style']) {
-	foreach ($styles as $style) {
-		if (strtoupper($style) == strtoupper($_GET['style'])) {
-			$curstyle = $_GET['style'];
-		}
-	}
-} else {
-	if (!empty($config['rrd']['style'])) {
-		$curstyle = $config['rrd']['style'];
-	} else {
-		$curstyle = "inverse";
-	}
-}
-
 /* sort names reverse so WAN comes first */
 rsort($databases);
 
 /* these boilerplate databases are required for the other menu choices */
 $dbheader = array("allgraphs-traffic.rrd",
-	"allgraphs-quality.rrd",
-	"allgraphs-wireless.rrd",
-	"allgraphs-cellular.rrd",
-	"allgraphs-vpnusers.rrd",
-	"allgraphs-packets.rrd",
-	"system-allgraphs.rrd",
-	"system-throughput.rrd",
-	"outbound-quality.rrd",
-	"outbound-packets.rrd",
-	"outbound-traffic.rrd");
+		"allgraphs-quality.rrd",
+		"allgraphs-wireless.rrd",
+		"allgraphs-cellular.rrd",
+		"allgraphs-vpnusers.rrd",
+		"allgraphs-packets.rrd",
+		"system-allgraphs.rrd",
+		"system-throughput.rrd",
+		"outbound-quality.rrd",
+		"outbound-packets.rrd",
+		"outbound-traffic.rrd");
 
 /* additional menu choices for the custom tab */
 $dbheader_custom = array("system-throughput.rrd");
@@ -284,34 +285,6 @@ if ($captiveportal && is_array($config['captiveportal'])) {
 		$cp_zones_tab_array[] = array($cp['zone'], $tabactive, "status_rrd_graph.php?cat=captiveportal&zone=$cpkey");
 	}
 }
-
-include("head.inc");
-?>
-
-<?php if ($curcat === "custom") { ?>
-	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui-1.11.1.css")) { ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui-1.11.1.css" />
-	<?php } else { ?>
-		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
-	<?php } ?>
-	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
-	<script type="text/javascript">
-	//<![CDATA[
-		jQuery(function ($) {
-			var options = {
-				dateFormat: 'mm/dd/yy',
-				timeFormat: 'hh:mm:ss',
-				showSecond: true
-			};
-			$("#startDateTime").datetimepicker(options);
-			$("#endDateTime").datetimepicker(options);
-		});
-	//]]>
-	</script>
-<?php } ?>
-
-<?php
 
 function get_dates($curperiod, $graph) {
 	global $graph_length;
@@ -413,290 +386,309 @@ function get_dates($curperiod, $graph) {
 	return $dates;
 }
 
-?>
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors && count($input_errors)) { print_input_errors($input_errors); } ?>
-<form name="form1" action="status_rrd_graph.php" method="get">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rrd graphs">
-		<tr>
-			<td>
-				<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>" />
-				<?php
-					$tab_array = array();
-					if ($curcat == "system") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
-					if ($curcat == "traffic") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
-					if ($curcat == "packets") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
-					if ($curcat == "quality") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
-					if ($queues) {
-						if ($curcat == "queues") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
-						if ($curcat == "queuedrops") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
-					}
-					if ($wireless) {
-						if ($curcat == "wireless") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
-					}
-					if ($cellular) {
-						if ($curcat == "cellular") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
-					}
-					if ($vpnusers) {
-						if ($curcat == "vpnusers") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpnusers");
-					}
-					if ($captiveportal) {
-						if ($curcat == "captiveportal") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array("Captive Portal", $tabactive, "status_rrd_graph.php?cat=captiveportal");
-					}
-					if ($ntpd) {
-						if ($curcat == "ntpd") {
-							$tabactive = True;
-						} else {
-							$tabactive = False;
-						}
-						$tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
-					}
-					if ($curcat == "custom") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
-					if ($curcat == "settings") {
-						$tabactive = True;
-					} else {
-						$tabactive = False;
-					}
-					$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
-					display_top_tabs($tab_array);
-				?>
-			</td>
-		</tr>
-<?php if ($curcat == "captiveportal") : ?>
-		<tr>
-			<td class="tabnavtbl">
-				<?php display_top_tabs($cp_zones_tab_array); ?>
-			</td>
-		</tr>
-<?php endif; ?>
-		<tr>
-			<td>
-				<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
-					<tr>
-						<td colspan="2" class="list"><p><b><?=gettext("Note: Change of color and/or style may not take effect until the next refresh");?></b></p></td>
-					</tr>
-					<tr>
-						<td colspan="2" class="list">
-							<?=gettext("Graphs:");?>
-							<?php if (!empty($curzone)): ?>
-								<input type="hidden" name="zone" value="<?= htmlspecialchars($curzone) ?>" />
-							<?php endif; ?>
-							<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-							<?php
-								if ($curcat == "custom") {
-									foreach ($custom_databases as $db => $database) {
-										$optionc = explode("-", $database);
-										$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc[0]));
-										if (empty($friendly)) {
-											$friendly = $optionc[0];
-										}
-										$search = array("-", ".rrd", $optionc[0]);
-										$replace = array(" :: ", "", $friendly);
-										echo "<option value=\"{$database}\"";
-										$prettyprint = ucwords(str_replace($search, $replace, $database));
-										if ($curoption == $database) {
-											echo " selected=\"selected\"";
-										}
-										echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
-									}
-								}
-								foreach ($ui_databases as $db => $database) {
-									if (!preg_match("/($curcat)/i", $database)) {
-										continue;
-									}
+function make_tabs() {
+	global $curcat;
 
-									if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database)) {
-										continue;
-									}
+	$tab_array = array();
+	$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
+	$tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_graph.php?cat=traffic");
+	$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
+	$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
-									$optionc = explode("-", $database);
-									$search = array("-", ".rrd", $optionc);
-									$replace = array(" :: ", "", $friendly);
-
-									switch ($curcat) {
-										case "captiveportal":
-											$optionc = str_replace($search, $replace, $optionc[2]);
-											echo "<option value=\"$optionc\"";
-											$prettyprint = ucwords(str_replace($search, $replace, $optionc));
-											break;
-										case "system":
-											$optionc = str_replace($search, $replace, $optionc[1]);
-											echo "<option value=\"$optionc\"";
-											$prettyprint = ucwords(str_replace($search, $replace, $optionc));
-											break;
-										default:
-											/* Deduce a interface if possible and use the description */
-											$optionc = "$optionc[0]";
-											$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-											if (empty($friendly)) {
-												$friendly = $optionc;
-											}
-											$search = array("-", ".rrd", $optionc);
-											$replace = array(" :: ", "", $friendly);
-											echo "<option value=\"$optionc\"";
-											$prettyprint = ucwords(str_replace($search, $replace, $friendly));
-									}
-									if ($curoption == $optionc) {
-										echo " selected=\"selected\"";
-									}
-									echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
-								}
-							?>
-							</select>
-
-							<?=gettext("Style:");?>
-							<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-							<?php
-								foreach ($styles as $style => $styled) {
-									echo "<option value=\"$style\"";
-									if ($style == $curstyle) {
-										echo " selected=\"selected\"";
-									}
-									echo ">" . htmlspecialchars($styled) . "</option>\n";
-								}
-							?>
-							</select>
-
-<?php
-	if ($curcat == "custom") {
-		// Custom tab displays start and end time selectors.
-		$tz = date_default_timezone_get();
-		$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
-		$start_fmt = strftime("%m/%d/%Y %H:%M:%S", $start);
-		$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
-?>
-							<?=gettext("Start:");?>
-							<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfld unknown" size="24" value="<?= htmlentities($start_fmt); ?>" />
-							<?=gettext("End:");?>
-							<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfld unknown" size="24" value="<?= htmlentities($end_fmt); ?>" />
-							<input type="submit" name="Submit" value="<?=gettext("Go"); ?>" />
-<?php
-	} else {
-		// Not on the custom tab - show the Period selector
-?>
-							<?=gettext("Period:");?>
-							<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-							<?php
-								foreach ($periods as $period => $value) {
-									echo "<option value=\"$period\"";
-									if ($period == $curperiod) {
-										echo " selected=\"selected\"";
-									}
-									echo ">" . htmlspecialchars($value) . "</option>\n";
-								}
-							?>
-							</select>
-<?php
+	if($queues) {
+		$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
+		$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 	}
-?>
-						</td>
-					</tr>
-<?php
-	if ($curcat == "custom") {
-		// Insert the chosen graph
-		$curdatabase = $curoption;
-		$graph = "custom-$curdatabase";
-		if (in_array($curdatabase, $custom_databases)) {
-			$id = "{$graph}-{$curoption}-{$curdatabase}";
-			$id = preg_replace('/\./', '_', $id);
 
-			echo "<tr><td colspan=\"2\" class=\"list\">\n";
-			echo "<img border=\"0\" name=\"{$id}\" ";
-			echo "id=\"{$id}\" alt=\"$prettydb Graph\" ";
-			echo "src=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
-			echo "<br /><hr /><br />\n";
-			echo "</td></tr>\n";
+	if($wireless) {
+		$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
+	}
+
+	if($cellular) {
+		$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
+	}
+
+	if($vpnusers) {
+		$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
+	}
+
+	if($captiveportal) {
+		$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
+	}
+
+	if(isset($config['ntpd']['statsgraph'])) {
+		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+	}
+
+	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
+	$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");
+
+	return($tab_array);
+}
+
+// Create the selectable list of graphs
+function build_options() {
+	global $curcat, $custom_databases, $ui_databases;
+
+	$optionslist = array();
+
+	if($curcat == "custom") {
+		foreach ($custom_databases as $db => $database) {
+			$optionc = explode("-", $database);
+			$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc[0]));
+			if (empty($friendly)) {
+				$friendly = $optionc[0];
+			}
+
+			$search = array("-", ".rrd", $optionc[0]);
+			$replace = array(" :: ", "", $friendly);
+			$prettyprint = ucwords(str_replace($search, $replace, $database));
+			$optionslist[$database] = htmlspecialchars($prettyprint);
+			}
 		}
-	} else {
-		// Insert each of the graphs for the various set time periods
-		foreach ($graphs as $graph) {
+
+	foreach ($ui_databases as $db => $database) {
+		if(! preg_match("/($curcat)/i", $database))
+			continue;
+
+		if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database))
+			continue;
+
+		$optionc = explode("-", $database);
+		$search = array("-", ".rrd", $optionc);
+		$replace = array(" :: ", "", $friendly);
+
+		switch($curcat) {
+			case "captiveportal":
+				$optionc = str_replace($search, $replace, $optionc[2]);
+				$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+				$optionslist[$optionc] = htmlspecialchars($prettyprint);
+				break;
+			case "system":
+				$optionc = str_replace($search, $replace, $optionc[1]);
+				$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+				$optionslist[$optionc] = htmlspecialchars($prettyprint);
+				break;
+			default:
+				/* Deduce an interface if possible and use the description */
+				$optionc = "$optionc[0]";
+				$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+				if(empty($friendly)) {
+					$friendly = $optionc;
+				}
+				$search = array("-", ".rrd", $optionc);
+				$replace = array(" :: ", "", $friendly);
+				$prettyprint = ucwords(str_replace($search, $replace, $friendly));
+				$optionslist[$optionc] = htmlspecialchars($prettyprint);
+		}
+	}
+
+	return($optionslist);
+}
+include("head.inc");
+
+display_top_tabs(make_tabs());
+
+if ($input_errors && count($input_errors))
+	print_input_errors($input_errors);
+
+require_once('classes/Form.class.php');
+
+$form = new Form(new Form_Button(
+	'submit',
+	'Go!'
+	));
+
+$form->addClass('auto-submit');
+
+$section = new Form_Section('Graph settings');
+
+$group = new Form_Group('Options');
+
+$group->add(new Form_Select(
+	'option',
+	'Graphs',
+	$curoption,
+	build_options()
+))->setHelp('Graph');
+
+$group->add(new Form_Select(
+	'style',
+	'Style',
+	$curstyle,
+	$styles
+))->setHelp('Style');
+
+$group->add(new Form_Select(
+	'period',
+	'Period',
+	$curperiod,
+	$periods
+))->setHelp('Period');
+
+if($curcat == 'custom')
+	$group->setHelp('Any changes to these option may not take affect until the next auto-refresh.');
+
+$section->add($group);
+
+if($curcat == 'custom') {
+
+	$section->addInput(new Form_Input(
+		'cat',
+		null,
+		'hidden',
+		'custom'
+	 ));
+
+	$tz = date_default_timezone_get();
+	$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
+	$start_fmt = strftime("%m/%d/%Y %H:%M:%S", $start);
+	$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'start',
+		'Start',
+		'datetime',
+		$start_fmt
+	))->setHelp('Start');
+
+	$group->add(new Form_Input(
+		'end',
+		'End',
+		'datetime',
+		$end_fmt
+	))->setHelp('End');
+
+	if($curcat != 'custom')
+		$group->setHelp('Any changes to these option may not take affect until the next auto-refresh');
+
+	$section->add($group);
+
+	$form->add($section);
+	print($form);
+
+	$curdatabase = $curoption;
+	$graph = "custom-$curdatabase";
+	if(in_array($curdatabase, $custom_databases)) {
+		$id = "{$graph}-{$curoption}-{$curdatabase}";
+		$id = preg_replace('/\./', '_', $id);
+?>
+		<div class="panel panel-default">
+			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+		</div>
+<?php
+
+	}
+} else {
+	$form->add($section);
+	print($form);
+
+	foreach($graphs as $graph) {
+		/* check which databases are valid for our category */
+		foreach($ui_databases as $curdatabase) {
+			if(! preg_match("/($curcat)/i", $curdatabase))
+				continue;
+
+			if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase))
+				continue;
+
+			$optionc = explode("-", $curdatabase);
+			$search = array("-", ".rrd", $optionc);
+			$replace = array(" :: ", "", $friendly);
+
+			switch($curoption) {
+				case "outbound":
+					/* make sure we do not show the placeholder databases in the outbound view */
+					if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						continue 2;
+					}
+					/* only show interfaces with a gateway */
+					$optionc = "$optionc[0]";
+					if(!interface_has_gateway($optionc)) {
+						if(!isset($gateways_arr)) {
+							if(preg_match("/quality/i", $curdatabase))
+								$gateways_arr = return_gateways_array();
+							else
+								$gateways_arr = array();
+						}
+						$found_gateway = false;
+						foreach ($gateways_arr as $gw) {
+							if ($gw['name'] == $optionc) {
+								$found_gateway = true;
+								break;
+							}
+						}
+						if(!$found_gateway) {
+							continue 2;
+						}
+					}
+
+					if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+						continue 2;
+					}
+					break;
+				case "allgraphs":
+					/* make sure we do not show the placeholder databases in the all view */
+					if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						continue 2;
+					}
+					break;
+				default:
+					/* just use the name here */
+					if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+						continue 2;
+					}
+			}
+
+			if(in_array($curdatabase, $ui_databases)) {
+				$id = "{$graph}-{$curoption}-{$curdatabase}";
+				$id = preg_replace('/\./', '_', $id);
+
+				$dates = get_dates($curperiod, $graph);
+				$start = $dates['start'];
+				$end = $dates['end'];
+?>
+				<div class="panel panel-default" align="center">
+					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+				</div>
+<?php
+			}
+		}
+	}
+}
+
+?>
+<script type="text/javascript">
+//<![CDATA[
+	function update_graph_images() {
+		//alert('updating');
+		var randomid = Math.floor(Math.random()*11);
+		<?php
+		foreach($graphs as $graph) {
 			/* check which databases are valid for our category */
-			foreach ($ui_databases as $curdatabase) {
-				if (!preg_match("/($curcat)/i", $curdatabase)) {
+			foreach($ui_databases as $curdatabase) {
+				if(! stristr($curdatabase, $curcat)) {
 					continue;
 				}
-
-				if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase)) {
-					continue;
-				}
-
 				$optionc = explode("-", $curdatabase);
 				$search = array("-", ".rrd", $optionc);
 				$replace = array(" :: ", "", $friendly);
-				switch ($curoption) {
+				switch($curoption) {
 					case "outbound":
 						/* make sure we do not show the placeholder databases in the outbound view */
-						if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 							continue 2;
 						}
 						/* only show interfaces with a gateway */
 						$optionc = "$optionc[0]";
-						if (!interface_has_gateway($optionc)) {
-							if (!isset($gateways_arr)) {
-								if (preg_match("/quality/i", $curdatabase)) {
+						if(!interface_has_gateway($optionc)) {
+							if(!isset($gateways_arr))
+								if(preg_match("/quality/i", $curdatabase))
 									$gateways_arr = return_gateways_array();
-								} else {
+								else
 									$gateways_arr = array();
-								}
-							}
 							$found_gateway = false;
 							foreach ($gateways_arr as $gw) {
 								if ($gw['name'] == $optionc) {
@@ -704,131 +696,52 @@ function get_dates($curperiod, $graph) {
 									break;
 								}
 							}
-							if (!$found_gateway) {
+							if(!$found_gateway) {
 								continue 2;
 							}
 						}
-						if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+						if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 						break;
 					case "allgraphs":
 						/* make sure we do not show the placeholder databases in the all view */
-						if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 							continue 2;
 						}
 						break;
 					default:
 						/* just use the name here */
-						if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+						if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 				}
-				if (in_array($curdatabase, $ui_databases)) {
-					$id = "{$graph}-{$curoption}-{$curdatabase}";
-					$id = preg_replace('/\./', '_', $id);
-
-					$dates = get_dates($curperiod, $graph);
-					$start = $dates['start'];
+				$dates = get_dates($curperiod, $graph);
+				$start = $dates['start'];
+				if($curperiod == "current") {
 					$end = $dates['end'];
-					echo "<tr><td colspan=\"2\" class=\"list\">\n";
-					echo "<img border=\"0\" name=\"{$id}\" ";
-					echo "id=\"{$id}\" alt=\"$prettydb Graph\" ";
-					echo "src=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
-					echo "<br /><hr /><br />\n";
-					echo "</td></tr>\n";
+				}
+				/* generate update events utilizing jQuery('') feature */
+				$id = "{$graph}-{$curoption}-{$curdatabase}";
+				$id = preg_replace('/\./', '_', $id);
+
+				echo "\n";
+				echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 				}
 			}
-		}
+		?>
+		window.setTimeout('update_graph_images()', 355000);
 	}
-?>
-					<tr>
-						<td colspan="2" class="list">
-							<script type="text/javascript">
-							//<![CDATA[
-								function update_graph_images() {
-									//alert('updating');
-									var randomid = Math.floor(Math.random()*11);
-									<?php
-									foreach ($graphs as $graph) {
-										/* check which databases are valid for our category */
-										foreach ($ui_databases as $curdatabase) {
-											if (!stristr($curdatabase, $curcat)) {
-												continue;
-											}
-											$optionc = explode("-", $curdatabase);
-											$search = array("-", ".rrd", $optionc);
-											$replace = array(" :: ", "", $friendly);
-											switch ($curoption) {
-												case "outbound":
-													/* make sure we do not show the placeholder databases in the outbound view */
-													if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
-														continue 2;
-													}
-													/* only show interfaces with a gateway */
-													$optionc = "$optionc[0]";
-													if (!interface_has_gateway($optionc)) {
-														if (!isset($gateways_arr)) {
-															if (preg_match("/quality/i", $curdatabase)) {
-																$gateways_arr = return_gateways_array();
-															} else {
-																$gateways_arr = array();
-															}
-														}
-														$found_gateway = false;
-														foreach ($gateways_arr as $gw) {
-															if ($gw['name'] == $optionc) {
-																$found_gateway = true;
-																break;
-															}
-														}
-														if (!$found_gateway) {
-															continue 2;
-														}
-													}
-													if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
-														continue 2;
-													}
-													break;
-												case "allgraphs":
-													/* make sure we do not show the placeholder databases in the all view */
-													if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
-														continue 2;
-													}
-													break;
-												default:
-													/* just use the name here */
-													if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
-														continue 2;
-													}
-											}
-											$dates = get_dates($curperiod, $graph);
-											$start = $dates['start'];
-											if ($curperiod == "current") {
-												$end = $dates['end'];
-											}
-											/* generate update events utilizing jQuery('') feature */
-											$id = "{$graph}-{$curoption}-{$curdatabase}";
-											$id = preg_replace('/\./', '_', $id);
+	window.setTimeout('update_graph_images()', 355000);
+//]]>
+</script>
 
-											echo "\n";
-											echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
-										}
-									}
-									?>
-									window.setTimeout('update_graph_images()', 355000);
-								}
-								window.setTimeout('update_graph_images()', 355000);
-							//]]>
-							</script>
-						</td>
-					</tr>
-				</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<script>
+events.push(function(){
+	$('.auto-submit').on('change', function(){
+		$(this).submit();
+	});
+});
+</script>
+
+<?php include("foot.inc");

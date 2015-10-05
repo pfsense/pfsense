@@ -12,4 +12,8 @@ if [ ! -L /conf ]; then
 	ln -sf /cf/conf /conf
 fi
 
+if [ ! -d /cf/conf/backup ]; then
+	mkdir /cf/conf/backup
+fi
+
 exit 0

@@ -2,36 +2,61 @@
 /* $Id$ */
 /*
 	load_balancer_virtual_server.php
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
-	pfSense_MODULE:	routing
+	pfSense_MODULE: routing
 */
 
 ##|+PRIV
@@ -87,6 +112,8 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 }
 for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	if ($a_vs[$i]) {
+		$a_vs[$i]['mode'] = htmlspecialchars($a_vs[$i]['mode']);
+		$a_vs[$i]['relay_protocol'] = htmlspecialchars($a_vs[$i]['relay_protocol']);
 		$a_vs[$i]['poolname'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['poolname']]}\">" . htmlspecialchars($a_vs[$i]['poolname']) . "</a>";
 		if ($a_vs[$i]['sitedown'] != '') {
 			$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">" . htmlspecialchars($a_vs[$i]['sitedown']) . "</a>";
@@ -101,52 +128,83 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg);
+
+if (is_subsystem_dirty('loadbalancer'))
+	print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+
+/* active tabs */
+$tab_array = array();
+$tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
+$tab_array[] = array(gettext("Virtual Servers"), true, "load_balancer_virtual_server.php");
+$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
+display_top_tabs($tab_array);
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
 <form action="load_balancer_virtual_server.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
-<?php print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer virtual server">
-	<tr><td class="tabnavtbl">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual ervers')?></h2></div>
+		<div class="panel-body table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th><?=gettext('Name')?></th>
+						<th><?=gettext('Protocol')?></th>
+						<th><?=gettext('IP Address'); ?></th>
+						<th><?=gettext('Port'); ?></th>
+						<th><?=gettext('Pool'); ?></th>
+						<th><?=gettext('Fallback pool'); ?></th>
+						<th><?=gettext('Description'); ?></th>
+						<th><!-- Action buttons --></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
-		/* active tabs */
-		$tab_array = array();
-		$tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
-		$tab_array[] = array(gettext("Virtual Servers"), true, "load_balancer_virtual_server.php");
-		$tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
-		$tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
-		display_top_tabs($tab_array);
+if(!empty($a_vs)) {
+	$i = 0;
+	foreach($a_vs as $a_v) {
 ?>
-	</td></tr>
-	<tr>
-		<td>
-			<div id="mainarea">
+					<tr>
+						<td><?=htmlspecialchars($a_v['name'])?></td>
+						<td><?=htmlspecialchars($a_v['relay_protocol'])?></td>
+						<td><?=htmlspecialchars($a_v['ipaddr'])?></td>
+						<td><?=htmlspecialchars($a_v['port'])?></td>
+						<td><?=$a_v['poolname']?></td>
+						<td><?=$a_v['sitedown']?></td>
+						<td><?=htmlspecialchars($a_v['descr'])?></td>
+						<td>
+							<a type="button" class="btn btn-info btn-xs" href="load_balancer_virtual_server_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
+							<a type="button" class="btn btn-warning btn-xs" href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"><?=gettext('Copy')?></a>
+							<a type="button" class="btn btn-danger btn-xs" href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"><?=gettext('Del')?></a>
+						</td>
+					</tr>
 <?php
-				$t = new MainTable();
-				$t->edit_uri('load_balancer_virtual_server_edit.php');
-				$t->my_uri('load_balancer_virtual_server.php');
-				$t->add_column(gettext('Name'), 'name', 10);
-				$t->add_column(gettext('Protocol'), 'relay_protocol', 10);
-				$t->add_column(gettext('IP Address'), 'ipaddr', 15);
-				$t->add_column(gettext('Port'), 'port', 10);
-				$t->add_column(gettext('Pool'), 'poolname', 15);
-				$t->add_column(gettext('Fall Back Pool'), 'sitedown', 15);
-				$t->add_column(gettext('Description'), 'descr', 30);
-				$t->add_button('edit');
-				$t->add_button('dup');
-				$t->add_button('del');
-				$t->add_content_array($a_vs);
-				$t->display();
+		$i++;
+	}
+} else {
+?>						<tr>
+							<td	 colspan="8"> <?php
+								print_info_box(gettext('No virtual servers have been configured'));
+?>							</td>
+						</tr> <?php
+}
 ?>
-			</div>
-		</td>
-	</tr>
-</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<nav class="action-buttons">
+		<a href="load_balancer_virtual_server_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	</nav>
+
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+<?php
+
+include("foot.inc");

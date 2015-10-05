@@ -55,7 +55,7 @@ function restore_rrd() {
 
 	$rrdrestore = "";
 	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != "pfSense")) {
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != $g['product_name'])) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
@@ -87,7 +87,7 @@ function restore_rrd() {
 		unset($rrdrestore);
 		@unlink("{$g['tmp_path']}/rrd_restore");
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
 		}
 		return true;

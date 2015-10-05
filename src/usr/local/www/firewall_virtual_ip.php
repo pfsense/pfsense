@@ -2,44 +2,63 @@
 /* $Id$ */
 /*
 	firewall_virtual_ip.php
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Includes code from m0n0wall which is:
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Includes code from pfSense which is:
-	Copyright (C) 2004-2005 Scott Ullrich <geekgod@pfsense.com>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  22003-2005 Manuel Kasper <mk@neon1.net>
+ *	part of pfSense (https://www.pfsense.org/)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -57,6 +76,7 @@ require_once("shaper.inc");
 if (!is_array($config['virtualip']['vip'])) {
 	$config['virtualip']['vip'] = array();
 }
+
 $a_vip = &$config['virtualip']['vip'];
 
 if ($_POST) {
@@ -107,7 +127,7 @@ if ($_GET['act'] == "del") {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
-				if ($rule['destination']['address'] <> "") {
+				if ($rule['destination']['address'] != "") {
 					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
@@ -166,6 +186,7 @@ if ($_GET['act'] == "del") {
 					continue;
 				}
 
+
 				if (ip_in_subnet($gateway['gateway'], $subnet)) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Gateway.");
 					break;
@@ -184,6 +205,7 @@ if ($_GET['act'] == "del") {
 			}
 
 			$vipiface = $a_vip[$_GET['id']]['interface'];
+
 			foreach ($a_vip as $vip_id => $vip) {
 				if ($vip_id == $_GET['id']) {
 					continue;
@@ -215,10 +237,12 @@ if ($_GET['act'] == "del") {
 				session_start();
 			}
 			$user = getUserEntry($_SESSION['Username']);
+
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				header("Location: firewall_virtual_ip.php");
 				exit;
 			}
+
 			session_commit();
 
 			// Special case since every proxyarp vip is handled by the same daemon.
@@ -242,132 +266,102 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 }
 
+$types = array('proxyarp' => 'Proxy ARP',
+			   'carp' => 'CARP',
+			   'other' => 'Other',
+			   'ipalias' => 'IP Alias'
+			   );
+
 $pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+else if ($savemsg)
+	print_info_box($savemsg, 'success');
+else if (is_subsystem_dirty('vip'))
+	print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+
+/* active tabs 
+$tab_array = array();
+$tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
+ $tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");
+display_top_tabs($tab_array);
+*/
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="firewall_virtual_ip.php" method="post">
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual IP Address')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><?=gettext("Virtual IP address")?></th>
+					<th><?=gettext("Interface")?></th>
+					<th><?=gettext("Type")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><!--Buttons--></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	} else if ($savemsg) {
-		print_info_box($savemsg);
-	} else if (is_subsystem_dirty('vip')) {
-		print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
-	}
+$interfaces = get_configured_interface_with_descr(false, true);
+$carplist = get_configured_carp_interface_list();
+
+foreach ($carplist as $cif => $carpip)
+	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+
+$interfaces['lo0'] = "Localhost";
+
+$i = 0;
+foreach ($a_vip as $vipent):
+	if ($vipent['subnet'] != "" or $vipent['range'] != "" or
+		$vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
 ?>
-<br />
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="virtual ip">
-	<tr><td class="tabnavtbl">
-	<?php
-		/* active tabs */
-		$tab_array = array();
-		$tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
-		$tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");
-		display_top_tabs($tab_array);
-	?>
-	</td></tr>
-	<tr>
-		<td><input type="hidden" id="id" name="id" value="<?php echo htmlspecialchars($id); ?>" /></td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainarea">
-				<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-					<tr>
-						<td width="30%" class="listhdrr"><?=gettext("Virtual IP address");?></td>
-						<td width="10%" class="listhdrr"><?=gettext("Interface");?></td>
-						<td width="10%" class="listhdrr"><?=gettext("Type");?></td>
-						<td width="40%" class="listhdr"><?=gettext("Description");?></td>
-						<td width="10%" class="list">
-							<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-								<tr>
-									<td width="17"></td>
-									<td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<?php
-						$interfaces = get_configured_interface_with_descr(false, true);
-						$carplist = get_configured_carp_interface_list();
-						foreach ($carplist as $cif => $carpip) {
-							$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
-						}
-						$interfaces['lo0'] = "Localhost";
-						$i = 0;
-						foreach ($a_vip as $vipent):
-							if ($vipent['subnet'] <> "" or $vipent['range'] <> "" or $vipent['subnet_bits'] <> "" or (isset($vipent['range']['from']) && $vipent['range']['from'] <> "")):
-					?>
-					<tr>
-						<td class="listlr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-						<?php
-							if (($vipent['type'] == "single") || ($vipent['type'] == "network")) {
-								if ($vipent['subnet_bits']) {
-									echo "{$vipent['subnet']}/{$vipent['subnet_bits']}";
-								}
-							}
-							if ($vipent['type'] == "range") {
-								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
-							}
-							if ($vipent['mode'] == "carp") {
-								echo " (vhid {$vipent['vhid']})";
-							}
-						?>
-						</td>
-						<td class="listr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-							<?=htmlspecialchars($interfaces[$vipent['interface']]);?>&nbsp;
-						</td>
-						<td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-							<?php if ($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP' alt='proxy arp' />"; elseif ($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP' alt='carp' />"; elseif ($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other' alt='other' />"; elseif ($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias' alt='ip alias' />";?>
-						</td>
-						<td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-							<?=htmlspecialchars($vipent['descr']);?>&nbsp;
-						</td>
-						<td class="list nowrap">
-							<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-								<tr>
-									<td valign="middle"><a href="firewall_virtual_ip_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-									<td valign="middle"><a href="firewall_virtual_ip.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this entry?');?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<?php
-							endif;
-							$i++;
-						endforeach;
-					?>
-				<tfoot>
-					<tr>
-						<td class="list" colspan="4"></td>
-						<td class="list">
-							<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-								<tr>
-									<td width="17"></td>
-									<td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="5">
-							<p>
-								<span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span>
-								<?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
-								<?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span>
-							</p>
-						</td>
-					</tr>
-				</tfoot>
-				</table>
-			</div><!-- div:mainarea -->
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+				<tr>
+					<td>
+<?php
+	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))
+		if ($vipent['subnet_bits'])
+			print("{$vipent['subnet']}/{$vipent['subnet_bits']}");
+
+		if ($vipent['type'] == "range")
+			print("{$vipent['range']['from']}-{$vipent['range']['to']}");
+
+		if ($vipent['mode'] == "carp")
+			print(" (vhid: {$vipent['vhid']})");
+?>
+					</td>
+					<td>
+						<?=htmlspecialchars($interfaces[$vipent['interface']])?>&nbsp;
+					</td>
+					<td>
+						<?=$types[$vipent['mode']]?>
+					</td>
+					<td>
+						<?=htmlspecialchars($vipent['descr'])?>
+					</td>
+					<td>
+						<a href="firewall_virtual_ip_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+					</td>
+				</tr>
+<?php
+	endif;
+	$i++;
+endforeach;
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<nav class="action-buttons">
+	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success"><?=gettext('Add Virtual IP')?></a>
+</nav>
+
+<?php
+
+print_info_box(gettext('The virtual IP addresses defined on this page may be used in ') . '<a href="firewall_nat.php">' . gettext('NAT') . '</a>' . gettext(' mappings.') . '<br />' .
+			   gettext('You can check the status of your CARP Virtual IPs and interfaces ') . '<a href="carp_status.php">' . gettext('here') . '</a>');
+
+include("foot.inc");

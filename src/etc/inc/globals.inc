@@ -63,7 +63,7 @@ $g = array(
 	"product_copyright_url" => "http://www.electricsheepfencing.com",
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"product_website" => "www.pfsense.org",
-	"product_website_footer" => "https://www.pfsense.org/?gui22",
+	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
 	"hidedownloadbackup" => false,
@@ -74,7 +74,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "12.1",
+	"latest_config" => "12.2",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -88,7 +88,8 @@ $g = array(
 	"services_dhcp_server_enable" => true,
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
 	"help_base_url" => "/help.php",
-	"pkg_prefix" => "pfSense-pkg-"
+	"pkg_prefix" => "pfSense-pkg-",
+	"default_timezone" => "Etc/UTC"
 );
 
 /* IP TOS flags */

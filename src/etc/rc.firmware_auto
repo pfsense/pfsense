@@ -10,7 +10,8 @@ FMBASEURL=$1
 FMFILENAME=$2
 FETCHFILENAME=$1/$2
 
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
+# Read product_name from $g, defaults to pfSense
+product=$(/usr/local/sbin/read_global_var product_name pfSense)
 
 # wait 5 seconds before beginning
 sleep 5
@@ -56,12 +57,12 @@ if [ "$DLHASH" = "$FILEHASH" ]; then
 		/usr/local/bin/php-cgi /etc/rc.conf_mount_rw
 	fi
 	if [ -r "/tmp/custom.tgz" ]; then
-		sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
+		sh /etc/rc.firmware ${product}upgrade /tmp/latest.tgz /tmp/custom.tgz
 	else
 		if [ "$PLATFORM" = "nanobsd" ]; then
-			sh /etc/rc.firmware pfSenseNanoBSDupgrade /tmp/latest.tgz
+			sh /etc/rc.firmware ${product}NanoBSDupgrade /tmp/latest.tgz
 		else
-			sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+			sh /etc/rc.firmware ${product}upgrade /tmp/latest.tgz
 		fi
 	fi
 	exit 0

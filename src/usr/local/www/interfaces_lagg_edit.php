@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -41,19 +41,65 @@
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_lagg.php');
-}
-
-if (!is_array($config['laggs']['lagg'])) {
+if (!is_array($config['laggs']['lagg']))
 	$config['laggs']['lagg'] = array();
-}
 
 $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
+$laggprotos	  = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
+$laggprotosuc = array("NONE", "LACP", "FAILOVER", "FEC", "LOADBALANCE", "ROUNDROBIN");
+
+$protohelp =
+'<ul>' .
+	'<li>' .
+		 '<strong>' . gettext($laggprotos[0]) . '</strong><br />' .
+		 gettext('This protocol is intended to do nothing: it disables any ' .
+				 'traffic without disabling the lagg interface itself') .
+	'</li>' .
+	'<li>' .
+		 '<strong>' . gettext($laggprotos[1]) . '</strong><br />' .
+		 gettext('Supports the IEEE 802.3ad Link Aggregation Control Protocol ' .
+				  '(LACP) and the Marker Protocol.	LACP will negotiate a set ' .
+				  'of aggregable links with the peer in to one or more Link ' .
+				  'Aggregated Groups.  Each LAG is composed of ports of the ' .
+				  'same speed, set to full-duplex operation.  The traffic will ' .
+				  'be balanced across the ports in the LAG with the greatest ' .
+				  'total speed, in most cases there will only be one LAG which ' .
+				  'contains all ports.	In the event of changes in physical ' .
+				  'connectivity, Link Aggregation will quickly converge to a ' .
+				  'new configuration.') .
+	'</li>' .
+	'<li>' .
+		'<strong>' . gettext($laggprotos[2]) . '</strong><br />' .
+		gettext('Sends and receives traffic only through the master port.  If ' .
+				'the master port becomes unavailable, the next active port is ' .
+				'used.	The first interface added is the master port; any ' .
+				'interfaces added after that are used as failover devices.') .
+	'</li>' .
+	'<li>' .
+		'<strong>' . gettext($laggprotos[3]) . '</strong><br />' .
+		gettext('Supports Cisco EtherChannel.  This is a static setup and ' .
+				 'does not negotiate aggregation with the peer or exchange ' .
+				 'frames to monitor the link.') .
+	'</li>' .
+	'<li>' .
+		 '<strong>' . gettext($laggprotos[4]) . '</strong><br />' .
+		 gettext('Balances outgoing traffic across the active ports based on ' .
+				 'hashed protocol header information and accepts incoming ' .
+				 'traffic from any active port.	 This is a static setup and ' .
+				 'does not negotiate aggregation with the peer or exchange ' .
+				 'frames to monitor the link.  The hash includes the Ethernet ' .
+				 'source and destination address, and, if available, the VLAN ' .
+				 'tag, and the IP source and destination address') .
+	'</li>' .
+	'<li>' .
+		 '<strong>' . gettext($laggprotos[5]) . '</strong><br />' .
+		 gettext('Distributes outgoing traffic using a round-robin scheduler ' .
+				 'through all active ports and accepts incoming traffic from ' .
+				 'any active port') .
+	'</li>' .
+'</ul>';
 
 $realifchecklist = array();
 /* add LAGG interfaces */
@@ -68,15 +114,15 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 }
 
 $checklist = get_configured_interface_list(false, true);
+
 foreach ($checklist as $tmpif) {
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 }
 
-$laggprotos = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
-
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -93,7 +139,6 @@ if (isset($id) && $a_laggs[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -140,9 +185,8 @@ if ($_POST) {
 			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
-			if ($confif <> "") {
+			if ($confif != "")
 				interface_configure($confif);
-			}
 
 			header("Location: interfaces_lagg.php");
 			exit;
@@ -150,129 +194,69 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("LAGG"), gettext("Edit"));
+function build_member_list() {
+	global $pconfig, $portlist, $realifchecklist;
+
+	$memberlist = array('list' => array(),
+						'selected' => array());
+
+	$members_array = explode(',', $pconfig['members']);
+	foreach ($portlist as $ifn => $ifinfo) {
+		if (array_key_exists($ifn, $realifchecklist))
+			continue;
+
+		$memberlist['list'][$ifn] = $ifn . '(' . $ifinfo['mac'] . ')';
+
+		if (stristr($pconfig['members'], $ifn))
+			array_push($memberlist['selected'], $ifn);
+	}
+
+	return($memberlist);
+}
+
+$pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
+require_once('classes/Form.class.php');
 
-?>
+$form = new Form();
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="interfaces_lagg_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces lagg edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("LAGG configuration"); ?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface"); ?></td>
-			<td width="78%" class="vtable">
-				<select name="members[]" multiple="multiple" size="4" class="formselect">
-<?php
-		foreach ($portlist as $ifn => $ifinfo) {
-			if (array_key_exists($ifn, $realifchecklist)) {
-				continue;
-			}
-			echo "<option value=\"{$ifn}\"";
-			if (stristr($pconfig['members'], $ifn)) {
-				echo " selected=\"selected\"";
-			}
-			echo ">". $ifn ."(".$ifinfo['mac'] .")</option>";
-		}
-?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Choose the members that will be used for the link aggregation"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("Lag proto"); ?></td>
-			<td class="vtable">
-				<select name="proto" class="formselect" id="proto">
-<?php
-		foreach ($laggprotos as $proto) {
-			echo "<option value=\"{$proto}\"";
-			if ($proto == $pconfig['proto']) {
-				echo " selected=\"selected\"";
-			}
-			echo ">".strtoupper($proto)."</option>";
-		}
-?>
-				</select>
-				<br />
-				<ul class="vexpl">
-					<li>
-						<b><?=gettext("failover"); ?></b><br />
-						<?=gettext("Sends and receives traffic only through the master port.  If " .
-						"the master port becomes unavailable, the next active port is " .
-						"used.  The first interface added is the master port; any " .
-						"interfaces added after that are used as failover devices."); ?>
-					</li>
-					<li>
-						<b><?=gettext("fec"); ?></b><br />
-						<?=gettext("Supports Cisco EtherChannel.  This is a static setup and " .
-						"does not negotiate aggregation with the peer or exchange " .
-						"frames to monitor the link."); ?>
-					</li>
-					<li>
-						<b><?=gettext("lacp"); ?></b><br />
-						<?=gettext("Supports the IEEE 802.3ad Link Aggregation Control Protocol " .
-						"(LACP) and the Marker Protocol.  LACP will negotiate a set " .
-						"of aggregable links with the peer in to one or more Link " .
-						"Aggregated Groups.  Each LAG is composed of ports of the " .
-						"same speed, set to full-duplex operation.  The traffic will " .
-						"be balanced across the ports in the LAG with the greatest " .
-						"total speed, in most cases there will only be one LAG which " .
-						"contains all ports.  In the event of changes in physical " .
-						"connectivity, Link Aggregation will quickly converge to a " .
-						"new configuration."); ?>
-					</li>
-					<li>
-						<b><?=gettext("loadbalance"); ?></b><br /> 
-						<?=gettext("Balances outgoing traffic across the active ports based on " .
-						"hashed protocol header information and accepts incoming " .
-						"traffic from any active port.  This is a static setup and " .
-						"does not negotiate aggregation with the peer or exchange " .
-						"frames to monitor the link.  The hash includes the Ethernet " .
-						"source and destination address, and, if available, the VLAN " .
-						"tag, and the IP source and destination address") ?>.
-					</li>
-					<li>
-						<b><?=gettext("roundrobin"); ?></b><br />
-						<?=gettext("Distributes outgoing traffic using a round-robin scheduler " .
-						"through all active ports and accepts incoming traffic from " .
-						"any active port"); ?>.
-					</li>
-					<li>
-						<b><?=gettext("none"); ?></b><br />
-						<?=gettext("This protocol is intended to do nothing: it disables any " .
-						"traffic without disabling the lagg interface itself"); ?>.
-					</li>
-				</ul>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input type="hidden" name="laggif" value="<?=htmlspecialchars($pconfig['laggif']); ?>" />
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-			<?php if (isset($id) && $a_laggs[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-			<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+$section = new Form_Section('LAGG Configuration');
+
+$memberslist = build_member_list();
+
+$section->addInput(new Form_Select(
+	'members[]',
+	'Parent Interfaces',
+	$memberslist['selected'],
+	$memberslist['list'],
+	true // Allow multiples
+))->setHelp('Choose the members that will be used for the link aggregation.');
+
+$section->addInput(new Form_Select(
+	'proto',
+	'LAGG Protocol',
+	$pconfig['proto'],
+	array_combine($laggprotos, $laggprotosuc)
+))->setHelp($protohelp);
+
+$section->addInput(new Form_Input(
+	'laggif',
+	null,
+	'hidden',
+	$pconfig['laggif']
+));
+
+if (isset($id) && $a_laggs[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

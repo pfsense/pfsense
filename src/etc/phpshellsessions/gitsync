@@ -75,7 +75,7 @@ if (!file_exists($GIT_BIN)) {
 	require_once("pkg-utils.inc");
 
 	echo "Cannot find git, installing...\n";
-	if (!pkg_call('install -y -q git-lite')) {
+	if (!pkg_call('install -y -q git')) {
 		echo "\nERROR: Unable to install git pkg.\n";
 		return;
 	}
@@ -146,6 +146,7 @@ $found = false;
 foreach ($branches as $branchname => $branchdesc) {
 	if ($branchname == $branch) {
 		$found = true;
+		break;
 	}
 }
 if (!$found) {
@@ -217,7 +218,7 @@ if (!$args[0] && !$upgrading) {
 	} while (!empty($merge_repo));
 }
 
-if ($branch == "RESTORE" && $g['platform'] == "pfSense") {
+if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
 	if (!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
 		conf_mount_ro();
@@ -311,26 +312,26 @@ exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name CVS -exec rm -rf
 exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
 
 // Remove files that we do not want to overwrite the system with
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/group 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/conf*");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.shrc");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.tcshrc");
-exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/platform 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
+exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
-if ($g['platform'] == "pfSense") {
+if ($g['platform'] == $g['product_name']) {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
 } else {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
@@ -409,7 +410,7 @@ function isUrl($url = "") {
 	if ($url) {
 		if (strstr($url, "rcs.pfsense.org") or
 			strstr($url, "mainline") or
-			strstr($url, ".git") or 
+			strstr($url, ".git") or
 			strstr($url, "git://")) {
 			return true;
 		}

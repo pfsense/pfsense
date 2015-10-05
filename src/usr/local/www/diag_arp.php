@@ -1,35 +1,58 @@
 <?php
 /*
 	diag_arp.php
-	part of the pfSense project	(https://www.pfsense.org)
-	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, 
+ *  are permitted provided that the following conditions are met: 
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution. 
+ *
+ *  3. All advertising materials mentioning features or use of this software 
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+  *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /*
 	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
@@ -268,13 +291,9 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-
+<!-- On modern hardware the table will load so fast you may never see this! -->
 <div id="loading">
-	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /><?= gettext("Loading, please wait..."); ?>
-	<p>&nbsp;</p>
+	<?= gettext(" Loading, please wait...")?>
 </div>
 
 <?php
@@ -316,50 +335,48 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag arp">
-	<tr>
-		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcont">
-				<tr>
-					<td class="listhdrr"><?= gettext("IP address"); ?></td>
-					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
-					<td class="listhdrr"><?= gettext("Hostname"); ?></td>
-					<td class="listhdr"><?= gettext("Interface"); ?></td>
-					<td class="list"></td>
-				</tr>
-				<?php foreach ($data as $entry): ?>
-					<tr>
-						<td class="listlr"><?=$entry['ip'];?></td>
-						<td class="listr">
-						<?php
-						$mac=trim($entry['mac']);
-						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-						print $mac;
-						if (isset($mac_man[$mac_hi])) { print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
-						?>
-						</td>
-						<td class="listr">
-							<?php
-							echo trim(str_replace("Z_ ", "", $entry['dnsresolve']));
-							?>
-						</td>
-						<td class="listr"><?=$hwif[$entry['interface']];?></td>
-					</tr>
-				<?php endforeach; ?>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td><br /><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
-	</tr>
-</table>
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th><?= gettext("Interface")?></th>
+				<th><?= gettext("IP address")?></th>
+				<th><?= gettext("MAC address")?></th>
+				<th><?= gettext("Hostname")?></th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($data as $entry): ?>
+			<tr>
+				<td><?=$hwif[$entry['interface']]?></td>
+				<td><?=$entry['ip']?></td>
+				<td>
+					<?=trim($entry['mac'])?>
+				<?php
+					$mac = trim($entry['mac']);
+					$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 
-<?php include("fend.inc"); ?>
+					if (isset($mac_man[$mac_hi]))
+						print '<small>('. $mac_man[$mac_hi] .')</small>';
+	?>
+				</td>
+				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
+			</tr>
+		<?php endforeach?>
+		</tbody>
+	</table>
+</div>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
-	jQuery('#loading').html('');
-//]]>
+// Clear the "loading" div once the page has loaded"
+events.push(function(){   
+	$('#loading').empty();
+});
+//]]>  
 </script>
-</body>
-</html>
+
+<?php 
+print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP"), 'info');
+
+include("foot.inc")?>

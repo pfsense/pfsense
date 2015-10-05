@@ -1,31 +1,58 @@
 <?php
 /*
 	vpn_ipsec_settings.php
-
-	Copyright (C) 2015 Electric Sheep Fencing, LLC
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-settings
@@ -46,6 +73,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 	}
 }
+
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
@@ -58,7 +86,6 @@ $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -111,7 +138,7 @@ if ($_POST) {
 		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
 	}
 	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] <> '') {
+		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
 		}
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
@@ -162,7 +189,7 @@ if ($_POST) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
 		}
-		
+
 		if ($_POST['strictcrlpolicy'] == "yes") {
 			$config['ipsec']['strictcrlpolicy'] = true;
 		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
@@ -175,7 +202,9 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		if ($_POST['noshuntlaninterfaces'] == "yes") {
+		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with 
+		// noshuntlaninterfaces which is the reverse true/false logic setting - #4655
+		if ($_POST['autoexcludelanaddress'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
 				unset($config['ipsec']['noshuntlaninterfaces']);
 			}
@@ -228,9 +257,11 @@ if ($_POST) {
 		return;
 	}
 
-	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// The logic value sent by $POST for autoexcludelanaddress is opposite to
+	// the way it is stored in the config as noshuntlaninterfaces.
 	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
-	if ($_POST['noshuntlaninterfaces'] == "yes") {
+	// This helps a redrawn UI page after Save to correctly display the most recently entered setting.
+	if ($_POST['autoexcludelanaddress'] == "yes") {
 		$pconfig['noshuntlaninterfaces'] = false;
 	} else {
 		$pconfig['noshuntlaninterfaces'] = true;
@@ -242,9 +273,6 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -260,186 +288,143 @@ function maxmss_checked(obj) {
 //]]>
 </script>
 
-<form action="vpn_ipsec_settings.php" method="post" name="iform" id="iform">
-
 <?php
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
+if ($savemsg)
+	print_info_box($savemsg);
+
+if ($input_errors)
+	print_input_errors($input_errors);
+
+$tab_array = array();
+$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
+display_top_tabs($tab_array);
+
+require_once('classes/Form.class.php');
+$form = new Form;
+
+$section = new Form_Section('Start IPsec in debug mode based on sections selected');
+
+foreach ($ipsec_loglevels as $lkey => $ldescr)
+{
+	$section->addInput(new Form_Select(
+		'ipsec_' . $lkey,
+		$ldescr,
+		$pconfig['ipsec_' . $lkey],
+		array('Silent', 'Audit', 'Control', 'Diag', 'Raw', 'Highest')
+	))->setWidth(2);
+}
+
+$section->addInput(new Form_StaticText('', ''))->setHelp(
+	'Launches IPsec in debug mode so that more verbose logs will be generated to aid in troubleshooting.'
+);
+
+$form->add($section);
+
+$section = new Form_Section('IPsec Advanced Settings');
+
+$section->addInput(new Form_Select(
+	'uniqueids',
+	'Configure Unique IDs as',
+	$pconfig['uniqueids'],
+	$ipsec_idhandling
+))->setHelp(
+	'Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
+	'deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new ' .
+	'IKE_SA using the same ID is almost invariably intended to replace an old one. ' .
+	'The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an ' .
+	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. ' .
+	'The daemon also accepts the value <b>keep</b> to reject ' .
+	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.'
+);
+
+$section->addInput(new Form_Checkbox(
+	'compression',
+	'IP Compression',
+	'Enable IPCompression',
+	$pconfig['compression']
+))->setHelp('IPComp compression of content is proposed on the connection.');
+
+$section->addInput(new Form_Checkbox(
+	'enableinterfacesuse',
+	'Strict interface binding',
+	'Enable strict interface binding',
+	$pconfig['enableinterfacesuse']
+))->setHelp('Enable strongSwan\'s interfaces_use option to bind specific interfaces only. This option is known to break IPsec with dynamic IP interfaces. This is not recommended at this time.');
+
+$section->addInput(new Form_Checkbox(
+	'acceptunencryptedmainmode',
+	'Unencrypted payloads in IKEv1 Main Mode',
+	'Accept unencrypted ID and HASH payloads in IKEv1 Main Mode',
+	$pconfig['acceptunencryptedmainmode']
+))->setHelp(
+	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication.' .
+	'This is very similar to Aggressive Mode, and has the same security implications: ' .
+	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload.' .
+	'It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).'
+);
+
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable',
+	'Enable Maximum MSS',
+	'Enable MSS clamping on VPN traffic',
+	$pconfig['maxmss_enable']
+))->toggles('.toggle-maxmss', 'collapse');
+
+$group = new Form_Group('Maximum MSS');
+$group->addClass('toggle-maxmss collapse');
+
+if (!empty($pconfig['maxmss_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'maxmss',
+	'Maximum MSS',
+	'text',
+	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400')
+))->setHelp(
+	'Enable MSS clamping on TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
+);
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'unityplugin',
+	'Disable Cisco Extensions',
+	'Disable Unity Plugin',
+	$pconfig['unityplugin']
+))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+
+$section->addInput(new Form_Checkbox(
+	'strictcrlpolicy',
+	'Strict CRL Checking',
+	'Enable strict Certificate Revocation List checking',
+	$pconfig['strictcrlpolicy']
+))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed.');
+
+$section->addInput(new Form_Checkbox(
+	'makebeforebreak',
+	'Make before Break',
+	'Initiate IKEv2 reauthentication with a make-before-break',
+	$pconfig['makebeforebreak']
+))->setHelp('instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication ' .
+			'by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps ' .
+			'during reauthentication, but requires support for overlapping SAs by the peer');
+
+$section->addInput(new Form_Checkbox(
+	'autoexcludelanaddress',
+	'Auto-exclude LAN address',
+	'Enable bypass for LAN interface IP',
+	!$pconfig['noshuntlaninterfaces']
+))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
+
+$form->add($section);
+
+print $form;
+
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec settings">
-	<tr>
-		<td class="tabnavtbl">
-			<?php
-				$tab_array = array();
-				$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
-				$tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
-				display_top_tabs($tab_array);
-			?>
-		</td>
-	</tr>
-	<tr>
-		<td id="mainarea">
-			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
-						<td width="78%" class="vtable">
-							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
-							<br />
-							<table summary="ipsec debug">
-							<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
-								<tr>
-									<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
-									<td width="78%" valign="top" class="vncell">
-										<?php
-										echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
-										foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
-											echo "<option value=\"{$lidx}\" ";
-											if ($pconfig["ipsec_{$lkey}"] == $lidx) {
-												echo "selected=\"selected\"";
-											}
-											echo ">{$lvalue}</option>\n";
-										}
-										?>
-										</select>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-								<tr style="display:none;">
-									<td></td>
-								</tr>
-							</table>
-							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
-							"will be generated to aid in troubleshooting."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Unique IDs"); ?></td>
-						<td width="78%" class="vtable">
-							<strong><?=gettext("Configure Unique IDs as: "); ?></strong>
-							<?php
-								echo "<select name=\"uniqueids\" id=\"uniqueids\">\n";
-								foreach ($ipsec_idhandling as $value => $lvalue) {
-									echo "<option value=\"{$value}\" ";
-									if ($pconfig['uniqueids'] == $value) {
-										echo "selected=\"selected\"";
-									}
-									echo ">{$lvalue}</option>\n";
-								}
-							?>
-							</select>
-							<br />
-							<?=gettext("whether a particular participant ID should be kept unique, with any new IKE_SA using an ID " .
-								"deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new " .
-								"IKE_SA using the same ID is almost invariably intended to replace an old one. " .
-								"The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an " .
-								"INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. " .
-								"The daemon also accepts the value <b>keep</b> to reject " .
-								"new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IP Compression"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="compression" type="checkbox" id="compression" value="yes" <?php if ($pconfig['compression']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable IPCompression"); ?></strong>
-							<br />
-							<?=gettext("IPComp compression of content is proposed on the connection."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Strict interface binding"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="enableinterfacesuse" type="checkbox" id="enableinterfacesuse" value="yes" <?php if ($pconfig['enableinterfacesuse']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable strict interface binding"); ?></strong>
-							<br />
-							<?=gettext("Enable strongSwan's interfaces_use option to bind specific interfaces only. This option is known to break IPsec with dynamic IP interfaces. This is not recommended at this time."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Unencrypted payloads in IKEv1 Main Mode"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="acceptunencryptedmainmode" type="checkbox" id="acceptunencryptedmainmode" value="yes" <?php if ($pconfig['acceptunencryptedmainmode']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"); ?></strong>
-							<br />
-							<?=gettext("Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication." .
-							"This is very similar to Aggressive Mode, and has the same security implications: " .
-							"A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload." .
-							" It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
-							<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
-							<br />
-							<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo htmlspecialchars($pconfig['maxmss']); else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
-							<br />
-							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
-							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Cisco Extensions"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="unityplugin" type="checkbox" id="unityplugin" value="yes" <?php if ($pconfig['unityplugin'] == true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
-							<br />
-							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Strict CRL Checking"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="strictcrlpolicy" type="checkbox" id="strictcrlpolicy" value="yes" <?php if ($pconfig['strictcrlpolicy'] == true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable strict Certificate Revocation List checking"); ?></strong>
-							<br />
-							<?=gettext("Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Make before Break"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="makebeforebreak" type="checkbox" id="makebeforebreak" value="yes" <?php if ($pconfig['makebeforebreak'] == true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Initiate IKEv2 reauthentication with a make-before-break"); ?></strong>
-							<br />
-							<?=gettext("instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication " .
-								"by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps " .
-								"during reauthentication, but requires support for overlapping SAs by the peer.");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Auto-exclude LAN address"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="noshuntlaninterfaces" type="checkbox" id="noshuntlaninterfaces" value="yes" <?php if ($pconfig['noshuntlaninterfaces'] != true) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Enable bypass for LAN interface IP"); ?></strong>
-							<br />
-							<?=gettext("Exclude traffic from LAN subnet to LAN IP address from IPsec."); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+<?php include("foot.inc"); ?>

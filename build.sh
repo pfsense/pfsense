@@ -71,8 +71,8 @@ usage() {
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports - Update poudriere ports tree"
-	echo "		--update-pkg-repo - Rebuild necessary ports on poudriere and update pkg repo"
+	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
 	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
@@ -87,6 +87,7 @@ unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
 unset SNAPSHOTS
+unset ARCH_LIST
 BUILDACTION="images"
 
 # Maybe use options for nocleans etc?
@@ -169,17 +170,15 @@ while test "$1" != ""; do
 			;;
 		--update-poudriere-jails)
 			BUILDACTION="update_poudriere_jails"
+			;;
+		-a)
 			shift
-			unset ARCH_LIST
-			if [ "${1}" = "-a" ]; then
-				shift
-				if [ $# -eq 0 ]; then
-					echo "-a needs extra parameter."
-					echo
-					usage
-				fi
-				export ARCH_LIST="${1}"
+			if [ $# -eq 0 ]; then
+				echo "-a needs extra parameter."
+				echo
+				usage
 			fi
+			export ARCH_LIST="${1}"
 			;;
 		--update-poudriere-ports)
 			BUILDACTION="update_poudriere_ports"
@@ -201,8 +200,8 @@ while test "$1" != ""; do
 			;;
 		--snapshot-update-status)
 			shift
-			[ -n "${1}" ] \
-				&& snapshot_status_message="${1}"
+			snapshot_status_message="${1}"
+			BUILDACTION="snapshot_status_message"
 			;;
 		*)
 			usage
@@ -223,7 +222,7 @@ if [ -n "${var_to_print}"  ]; then
 fi
 
 # Update snapshot status and exit
-if [ -n "${snapshot_status_message}"  ]; then
+if [ "${BUILDACTION}" = "snapshot_status_message" ]; then
 	export SNAPSHOTS=1
 	snapshots_update_status "${snapshot_status_message}"
 	exit 0
@@ -275,6 +274,10 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	update_pkg_repo)
+		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
+			echo "ERROR: rsync is not installed, aborting..."
+			exit 1
+		fi
 		poudriere_bulk
 	;;
 	*)
@@ -288,23 +291,28 @@ if [ "${BUILDACTION}" != "images" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-	if [ -z "${RSYNCIP}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCIP is not defined"
-		exit 1
-	fi
+	_required=" \
+		RSYNCIP \
+		RSYNCUSER \
+		RSYNCPATH \
+		RSYNCLOGS \
+		PKG_RSYNC_HOSTNAME \
+		PKG_RSYNC_USERNAME \
+		PKG_RSYNC_SSH_PORT \
+		PKG_RSYNC_DESTDIR \
+		PKG_REPO_SERVER \
+		PKG_REPO_CONF_BRANCH"
 
-	if [ -z "${RSYNCUSER}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCUSER is not defined"
-		exit 1
-	fi
+	for _var in ${_required}; do
+		eval "_value=\${$_var}"
+		if [ -z "${_value}" ]; then
+			echo ">>> ERROR: ${_var} is not defined"
+			exit 1
+		fi
+	done
 
-	if [ -z "${RSYNCPATH}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCPATH is not defined"
-		exit 1
-	fi
-
-	if [ -z "${RSYNCLOGS}" -a -z "${DO_NOT_UPLOAD}" ]; then
-		echo ">>> ERROR: RSYNCLOGS is not defined"
+	if [ ! -f /usr/local/bin/rsync ]; then
+		echo "ERROR: rsync is not installed, aborting..."
 		exit 1
 	fi
 fi
@@ -332,9 +340,6 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -n "${SNAPSHOTS}" ]; then
-	echo "" > $SNAPSHOTSLOGFILE
-	echo "" > $SNAPSHOTSLASTUPDATE
-
 	snapshots_rotate_logfile
 
 	snapshots_update_status ">>> Starting snapshot build operations"
@@ -384,18 +389,22 @@ fi
 
 export DEFAULT_KERNEL=${DEFAULT_KERNEL_ISO:-"${PRODUCT_NAME}"}
 
+# XXX: Figure out why wait is failing and proper fix
+# Global variable to keep track of process running in bg
+export _bg_pids=""
+
 for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	# Clean up items that should be cleaned each run
 	staginareas_clean_each_run
 
 	if [ "${_IMGTOBUILD}" = "iso" ]; then
-		(create_iso_image)
+		create_iso_image
 	elif [ "${_IMGTOBUILD}" = "memstick" ]; then
-		(create_memstick_image)
+		create_memstick_image
 	elif [ "${_IMGTOBUILD}" = "memstickserial" ]; then
-		(create_memstick_serial_image)
+		create_memstick_serial_image
 	elif [ "${_IMGTOBUILD}" = "memstickadi" ]; then
-		(create_memstick_adi_image)
+		create_memstick_adi_image
 	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
 		create_Full_update_tarball
 	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
@@ -410,13 +419,36 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 	elif [ "${_IMGTOBUILD}" = "ova" ]; then
 		install_pkg_install_ports ${PRODUCT_NAME}-vmware
-		(create_ova_image)
+		create_ova_image
 		install_pkg_install_ports
 	fi
 done
 
-echo ">>> NOTE: waiting for jobs: `jobs -l` to finish..."
-wait
+core_pkg_create_repo
+
+if [ -n "${_bg_pids}" ]; then
+	if [ -n "${SNAPSHOTS}" ]; then
+		snapshots_update_status ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	else
+		echo ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	fi
+	wait
+
+	# XXX: For some reason wait is failing, workaround it tracking all PIDs
+	while [ -n "${_bg_pids}" ]; do
+		_tmp_pids="${_bg_pids}"
+		unset _bg_pids
+		for p in ${_tmp_pids}; do
+			[ -z "${p}" ] \
+				&& continue
+
+			kill -0 ${p} >/dev/null 2>&1 \
+				&& _bg_pids="${_bg_pids}${_bg_pids:+ }${p}"
+		done
+		[ -n "${_bg_pids}" ] \
+			&& sleep 1
+	done
+fi
 
 if [ -n "${SNAPSHOTS}" ]; then
 	snapshots_copy_to_staging_iso_updates
@@ -427,10 +459,10 @@ if [ -n "${SNAPSHOTS}" ]; then
 	fi
 	# Alert the world that we have some snapshots ready.
 	snapshots_update_status ">>> Builder run is complete."
-else
-	echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-	ls -lah ${IMAGES_FINAL_DIR}
 fi
+
+echo ">>> ${IMAGES_FINAL_DIR} now contains:"
+ls -lah ${IMAGES_FINAL_DIR}
 
 set -e
 # Run final finish routines

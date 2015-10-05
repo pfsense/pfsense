@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	captiveportal
+	pfSense_MODULE: captiveportal
 */
 
 ##|+PRIV
@@ -139,129 +139,152 @@ if ($_POST) {
 
 include("head.inc");
 
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal file manager">
-	<tr>
-		<td class="tabnavtbl">
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
-	display_top_tabs($tab_array, true);
-?>
-		</td>
-	</tr>
-	<tr>
-		<td class="tabcont">
-			<table width="80%" border="0" cellpadding="0" cellspacing="0" summary="main">
-				<tr>
-					<td width="70%" class="listhdrr"><?=gettext("Name"); ?></td>
-					<td width="20%" class="listhdr"><?=gettext("Size"); ?></td>
-					<td width="10%" class="list">
-						<table border="0" cellspacing="0" cellpadding="1" summary="icons">
-							<tr>
-								<td width="17" height="17"></td>
-								<td>
-									<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0" alt="add" /></a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-<?php
-	if (is_array($a_cp[$cpzone]['element'])):
-		$i = 0;
-		foreach ($a_cp[$cpzone]['element'] as $element):
-?>
-				<tr>
-					<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
-					<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
-					<td valign="middle" class="list nowrap">
-						<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0" alt="delete" /></a>
-					</td>
-				</tr>
-<?php
-			$i++;
-		endforeach;
-	endif;
-?>
+if ($input_errors)
+	print_input_errors($input_errors);
 
-<?php
-	if ($total_size > 0):
-?>
-				<tr>
-					<td class="listlr" style="background-color: #eee"><strong><?=gettext("TOTAL"); ?></strong></td>
-					<td class="listr" style="background-color: #eee" align="right"><strong><?=format_bytes($total_size);?></strong></td>
-					<td valign="middle" class="list nowrap"></td>
-				</tr>
-<?php
-	endif;
+$tab_array = array();
+$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
+display_top_tabs($tab_array, true);
 
-	if ($_GET['act'] == 'add'):
+require_once('classes/Form.class.php');
+
+if ($_GET['act'] == 'add') {
+
+	$form = new Form(new Form_Button(
+		'Submit',
+		'Upload'
+	));
+
+	$form->setMultipartEncoding();
+
+	$section = new Form_Section('Upload a new file');
+
+	$section->addInput(new Form_Input(
+		'zone',
+		null,
+		'hidden',
+		$cpzone
+	));
+
+	$section->addInput(new Form_Input(
+		'new',
+		'File',
+		'file'
+	));
+
+
+	$form->add($section);
+	print($form);
+}
+
+if (is_array($a_cp[$cpzone]['element'])):
 ?>
-				<tr>
-					<td class="listlr" colspan="2">
-						<input type="file" name="new" class="formfld file" size="40" id="new" />
-						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upload"); ?>" />
-					</td>
-					<td valign="middle" class="list nowrap">
-						<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0" alt="delete" /></a>
-					</td>
-				</tr>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Installed Files")?></h2></div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Name"); ?></th>
+							<th><?=gettext("Size"); ?></th>
+							<th>
+								<!-- Buttons -->
+							</th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
-	else:
+	$i = 0;
+	foreach ($a_cp[$cpzone]['element'] as $element):
 ?>
-				<tr>
-					<td class="list" colspan="2"></td>
-					<td class="list">
-						<table border="0" cellspacing="0" cellpadding="1" summary="add">
-							<tr>
-								<td width="17" height="17"></td>
-								<td>
-									<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0" alt="add" /></a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
+						<tr>
+							<td><?=htmlspecialchars($element['name'])?></td>
+							<td><?=format_bytes($element['size'])?></td>
+							<td>
+								<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+							</td>
+						</tr>
 <?php
-	endif;
+		$i++;
+	endforeach;
+
+	if($total_size > 0) :
 ?>
-			</table>
-			<span class="vexpl">
-				<span class="red">
-					<strong>
-						<?=gettext("Note:"); ?><br />
-					</strong>
-				</span>
-				<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
-					"be made available in the root directory of the captive portal HTTP(S) server. " .
-					"You may reference them directly from your portal page HTML code using relative paths. " .
-					"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
-					"file manager. Then you can include it in your portal page like this:"); ?>
-				<br /><br />
-				<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
-				<br /><br />
-				<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
-					"to your custom page from the initial page by using text similar to:"); ?>
-				<br /><br />
-				<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</tt>
-				<br /><br />
-				<?php printf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']));?>
-			</span>
-		</td>
-	</tr>
-</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+						<tr>
+							<th>
+								Total
+							</th>
+							<th>
+								<?=format_bytes($total_size);?>
+							</th>
+							<th></th>
+						</tr>
+<?php endif; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<?php
+endif;
+
+?>
+	   <nav class="action-buttons">
+		   <button id="btnnotes" class="btn btn-default">Show Notes</button>
+<?php if (!$_GET['act'] == 'add'): ?>
+		   <a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+<?php endif; ?>
+	   </nav>
+<?php
+// The notes displayed on the page are large, the page content comparitively small. A "Note" button
+// is provided so that you only see the notes if you ask for them
+?>
+<div class="help-block panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">Notes</h2></div>
+	<div class="panel-body">
+	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
+	"be made available in the root directory of the captive portal HTTP(S) server. " .
+	"You may reference them directly from your portal page HTML code using relative paths. " .
+	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
+	"file manager. Then you can include it in your portal page like this:")?><br /><br />
+	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br /><br />
+	<?=gettext("In addition, you can also upload .php files for execution.	You can pass the filename " .
+	"to your custom page from the initial page by using text similar to:")?><br /><br />
+	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br /><br />
+	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
+	</div>
+</div>
+
+<script>
+//<![CDATA[
+events.push(function(){
+
+	var hidenotes = true;
+
+	// Hides all elements of the specified class.
+	function hideClass(s_class, hide) {
+		if(hide)
+			$('.' + s_class).hide();
+		else
+			$('.' + s_class).show();
+	}
+
+	hideClass('help-block', hidenotes);
+
+	$(function () {
+		$('#btnnotes').on('click', function () {
+			hidenotes = !hidenotes;
+			hideClass('notes', hidenotes);
+		});
+	});
+});
+</script>
+<?php
+
+include("foot.inc");

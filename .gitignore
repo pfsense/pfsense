@@ -5,3 +5,11 @@ _notes/
 /build.conf
 # Ignore Vim swap files
 .*.swp
+upload.sh
+# eclipse
+.buildpath
+.project
+.settings/
+# PhpStorm
+.idea
+*.php-e

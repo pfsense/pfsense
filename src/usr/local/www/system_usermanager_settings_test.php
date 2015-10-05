@@ -49,54 +49,35 @@ if (isset($config['system']['authserver'][0]['host'])) {
 	$authcfg = auth_get_authserver($authserver);
 }
 
-?>
-
-<html>
-<HEAD>
-	<STYLE type="text/css">
-		TABLE {
-			border-width: 1px;
-			border-spacing: 0px;
-			border-style: solid solid solid solid;
-			border-color: gray gray gray gray;
-			border-collapse: separate;
-			background-color: collapse;
-		}
-		TD {
-			border-width: 1px 1px 1px 1px;
-			border-spacing: 0px;
-			border-style: solid solid solid solid;
-			border-color: gray gray gray gray;
-			border-collapse: collapse;
-			background-color: #dddddd;
-		}
-	</STYLE>
-</HEAD>
-<body>
-	<form method="post" name="iform" id="iform">
-
+?><!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Test Authentication server"); ?></title>
+</head>
+<body id="system_usermanager_settings_test" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+				<pre>
 <?php
-$theme = $config['theme'];
 
 if (!$authcfg) {
 	printf(gettext("Could not find settings for %s%s"), htmlspecialchars($authserver), "<p/>");
 } else {
-	if ($theme != "" && file_exists("/usr/local/www/themes/{$theme}/images/logo.gif")) {
-		echo "<p><img src='/themes/{$theme}/images/logo.gif' style='float: left'><br/><br/><br/></p>";
-	}
 	echo "<b>" . sprintf(gettext("Testing %s LDAP settings... One moment please..."), $g['product_name']) . "</b>";
 
-	echo "<table width='100%'>";
+	echo "<table>";
 
-	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>$auth_server</b></center></td>";
+	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 	if (ldap_test_connection($authcfg)) {
 		echo "<td><center><font color=green>OK</center></td></tr>";
 
-		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>$auth_server</b></center></td>";
+		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 		if (ldap_test_bind($authcfg)) {
 			echo "<td><center><font color=green>OK</center></td></tr>";
 
-			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>$auth_server</b></center></td>";
+			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
 			if (count($ous)>1) {
 				echo "<td><center><font color=green>OK</center></td></tr>";
@@ -126,9 +107,11 @@ if (!$authcfg) {
 }
 
 ?>
-	<p/>
-	<input type="Button" value="<?=gettext("Close"); ?>" onClick='Javascript:window.close();'>
+				</pre>
 
-	</form>
+				<a href="javascript:window.close();" class="btn btn-primary">Return</a>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

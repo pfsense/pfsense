@@ -42,15 +42,8 @@
 
 require("guiconfig.inc");
 
-if (isset($_POST['referer'])) {
-	$referer = $_POST['referer'];
-} else {
-	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_vlan.php');
-}
-
-if (!is_array($config['vlans']['vlan'])) {
+if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
-}
 
 $a_vlans = &$config['vlans']['vlan'];
 
@@ -132,9 +125,8 @@ if ($_POST) {
 					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
 					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
 				}
-				if ($confif <> "") {
+				if ($confif != "")
 					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
-				}
 			}
 		}
 		$vlan = array();
@@ -142,7 +134,6 @@ if ($_POST) {
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['descr'] = $_POST['descr'];
 		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
-
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
 		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
@@ -155,10 +146,8 @@ if ($_POST) {
 
 			write_config();
 
-			if ($confif <> "") {
+			if ($confif != "")
 				interface_configure($confif);
-			}
-
 			header("Location: interfaces_vlan.php");
 			exit;
 		}
@@ -169,68 +158,66 @@ $pgtitle = array(gettext("Interfaces"), gettext("VLAN"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-?>
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<form action="interfaces_vlan_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces vlan edit">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("VLAN configuration");?></td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
-			<td width="78%" class="vtable">
-				<select name="if" class="formselect">
-				<?php
-					foreach ($portlist as $ifn => $ifinfo) {
-						if (is_jumbo_capable($ifn)) {
-							echo "<option value=\"{$ifn}\"";
-							if ($ifn == $pconfig['if']) {
-								echo " selected=\"selected\"";
-							}
-							echo ">";
-							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-							echo "</option>";
-						}
-					}
-			  ?>
-				</select>
-				<br />
-				<span class="vexpl"><?=gettext("Only VLAN capable interfaces will be shown.");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
-			<td class="vtable">
-				<input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br />
-				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input type="hidden" name="vlanif" value="<?=htmlspecialchars($pconfig['vlanif']); ?>" />
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
-				<input name="referer" type="hidden" value="<?=$referer;?>" />
-				<?php if (isset($id) && $a_vlans[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+require_once('classes/Form.class.php');
+$form = new Form;
+$section = new Form_Section('Interface VLAN	Edit');
+
+$section->addInput(new Form_Select(
+	'if',
+	'Parent Interface',
+	$pconfig['if'],
+	array_combine(
+		array_keys($portlist),
+		array_map(
+			function($key, $value) {
+				return (is_jumbo_capable($key)) ? "{$key} ({$value['mac']})" : $value;
+			},
+			array_keys($portlist),
+			array_values($portlist)
+		)
+	),
+	false
+))->setWidth(6)->setHelp('Only VLAN capable interfaces will be shown.');
+
+$section->addInput(new Form_Input(
+	'tag',
+	'VLAN Tag',
+	'text',
+	$pconfig['tag'],
+	['placeholder' => '1']
+))->setWidth(6)->setHelp(gettext('802.1Q VLAN tag (between 1 and 4094).'));
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr'],
+	['placeholder' => 'Description']
+))->setWidth(6)->setHelp('You may enter a group description here '.
+	'for your reference (not parsed).');
+
+$form->addGlobal(new Form_Input(
+	'vlanif',
+	'vlanif',
+	'hidden',
+	$pconfig['vlanif']
+));
+
+if (isset($id) && $a_vlans[$id]) {
+	$form->addGlobal(new Form_Input(
+		'id',
+		'id',
+		'hidden',
+		$id
+	));
+}
+
+$form->add($section);
+print $form;
+
+include("foot.inc");
+

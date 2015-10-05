@@ -90,66 +90,39 @@ session_commit();
 
 include("head.inc");
 
-?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php
-include("fbegin.inc");
-
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
+
 if ($savemsg) {
 	print_info_box($savemsg);
 }
 
 if ($islocal == false) {
 	echo gettext("Sorry, you cannot change the password for a non-local user.");
-	include("fend.inc");
+	include("foot.inc");
 	exit;
 }
 
-?>
+require_once('classes/Form.class.php');
 
-<div id="mainarea">
-	<div class="tabcont">
-		<form action="system_usermanager_passwordmg.php" method="post" name="iform" id="iform">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-				<tr>
-<?php
-	if (!session_id()) {
-		session_start();
-	}
-?>
-					<td colspan="2" valign="top" class="listtopic"><?=$_SESSION['Username']?>'s <?=gettext("Password"); ?></td>
-<?php session_commit(); ?>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell" rowspan="2"><?=gettext("Password"); ?></td>
-					<td width="78%" class="vtable">
-						<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
-					</td>
-				</tr>
-				<tr>
-					<td width="78%" class="vtable">
-						<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
-						&nbsp;<?=gettext("(confirmation)");?>
-						<br />
-						<span class="vexpl">
-							<?=gettext("Select a new password");?>
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					</td>
-				</tr>
-			</table>
-		</form>
-	</div>
-</div>
-<?php include("fend.inc");?>
-</body>
-</html>
+$form = new Form();
+
+$section = new Form_Section('Update Password');
+
+$section->addInput(new Form_Input(
+	'passwordfld1',
+	'Password',
+	'password'
+));
+
+$section->addInput(new Form_Input(
+	'passwordfld2',
+	'Confirmation',
+	'password'
+))->setHelp('Select a new password');
+
+$form->add($section);
+print($form);
+
+include("foot.inc");

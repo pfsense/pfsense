@@ -40,7 +40,7 @@ require_once("/usr/local/www/widgets/include/carp_status.inc");
 $carp_enabled = get_carp_status();
 
 ?>
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="carp status">
+<table>
 <?php
 	if (is_array($config['virtualip']['vip'])) {
 		$carpint=0;
@@ -56,12 +56,13 @@ $carp_enabled = get_carp_status();
 			$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 ?>
 <tr>
-	<td class="vncellt" width="35%">
-		<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif" alt="cablenic" />&nbsp;
-		<strong><a href="/system_hasync.php">
-		<span style="color:#000000"><?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?></span></a></strong>
+	<td>
+		<i class="icon icon-inbox"></i>
+		<a href="/system_hasync.php">
+			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?>
+		</a>
 	</td>
-	<td width="65%"  class="listr">
+	<td>
 <?php
 			if ($carp_enabled == false) {
 				$status = "DISABLED";
@@ -80,6 +81,6 @@ $carp_enabled = get_carp_status();
 				<?=htmlspecialchars($ipaddress);}?>
 </td></tr><?php	}
 	} else { ?>
-		<tr><td class="listr">No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
+		<tr><td>No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
 <?php	} ?>
 </table>

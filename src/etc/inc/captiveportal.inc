@@ -500,12 +500,11 @@ function captiveportal_init_rules($reinit = false) {
 			$cpipm = get_interface_ip($cpifgrp);
 			if (is_ipaddr($cpipm)) {
 				$cpips[] = $cpipm;
-				if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
-					continue;
-				}
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
-						$cpips[] = $vip['subnet'];
+				if (is_array($config['virtualip']['vip'])) {
+					foreach ($config['virtualip']['vip'] as $vip) {
+						if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+							$cpips[] = $vip['subnet'];
+						}
 					}
 				}
 			}

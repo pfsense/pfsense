@@ -134,7 +134,7 @@ if ($_POST['apply']) {
 	}
 }
 
-if ($_POST['submit']) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -278,463 +278,334 @@ $shortcut_section = "ipsec";
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+	<script type="text/javascript">
+		//<![CDATA[
 
-<script type="text/javascript">
-//<![CDATA[
+		function pool_change() {
 
-function pool_change() {
-
-	if (document.iform.pool_enable.checked) {
-		document.iform.pool_address.disabled = 0;
-		document.iform.pool_netbits.disabled = 0;
-	} else {
-		document.iform.pool_address.disabled = 1;
-		document.iform.pool_netbits.disabled = 1;
-	}
-}
-
-function dns_domain_change() {
-
-	if (document.iform.dns_domain_enable.checked) {
-		document.iform.dns_domain.disabled = 0;
-	} else {
-		document.iform.dns_domain.disabled = 1;
-	}
-}
-
-function dns_split_change() {
-
-	if (document.iform.dns_split_enable.checked) {
-		document.iform.dns_split.disabled = 0;
-	} else {
-		document.iform.dns_split.disabled = 1;
-	}
-}
-
-function dns_server_change() {
-
-	if (document.iform.dns_server_enable.checked) {
-		document.iform.dns_server1.disabled = 0;
-		document.iform.dns_server2.disabled = 0;
-		document.iform.dns_server3.disabled = 0;
-		document.iform.dns_server4.disabled = 0;
-	} else {
-		document.iform.dns_server1.disabled = 1;
-		document.iform.dns_server2.disabled = 1;
-		document.iform.dns_server3.disabled = 1;
-		document.iform.dns_server4.disabled = 1;
-	}
-}
-
-function wins_server_change() {
-
-	if (document.iform.wins_server_enable.checked) {
-		document.iform.wins_server1.disabled = 0;
-		document.iform.wins_server2.disabled = 0;
-	} else {
-		document.iform.wins_server1.disabled = 1;
-		document.iform.wins_server2.disabled = 1;
-	}
-}
-
-function pfs_group_change() {
-
-	if (document.iform.pfs_group_enable.checked) {
-		document.iform.pfs_group.disabled = 0;
-	} else {
-		document.iform.pfs_group.disabled = 1;
-	}
-}
-
-function login_banner_change() {
-
-	if (document.iform.login_banner_enable.checked) {
-		document.iform.login_banner.disabled = 0;
-	} else {
-		document.iform.login_banner.disabled = 1;
-	}
-}
-
-//]]>
-</script>
-
-<form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
-
-<?php
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec')) {
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-	}
-	foreach ($a_phase1 as $ph1ent) {
-		if (isset($ph1ent['mobile'])) {
-			$ph1found = true;
+			if (document.iform.pool_enable.checked) {
+				document.iform.pool_address.disabled = 0;
+				document.iform.pool_netbits.disabled = 0;
+			} else {
+				document.iform.pool_address.disabled = 1;
+				document.iform.pool_netbits.disabled = 1;
+			}
 		}
-	}
-	if ($pconfig['enable'] && !$ph1found) {
-		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), gettext("create"), gettext("Create Phase1"));
-	}
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
-?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec mobile">
-	<tr>
-		<td class="tabnavtbl">
-			<?php
-				$tab_array = array();
-				$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-				$tab_array[1] = array(gettext("Mobile clients"), true, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
-				$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-				display_top_tabs($tab_array);
-			?>
-		</td>
-	</tr>
-	<tr>
-		<td id="mainarea">
-			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("IKE Extensions"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="ike extensions">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['enable'], $chk); ?>
-										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?> />
-									</td>
-									<td>
-										<strong><?=gettext("Enable IPsec Mobile Client Support"); ?></strong>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">
-							<?=gettext("Extended Authentication (Xauth)"); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("User Authentication"); ?></td>
-						<td width="78%" class="vtable">
-							<?=gettext("Source"); ?>:&nbsp;&nbsp;
-							<select name="user_source[]" class="formselect" id="user_source" multiple="multiple" size="3">
-							<?php
-								$authmodes = explode(",", $pconfig['user_source']);
-								$auth_servers = auth_get_authserver_list();
-								foreach ($auth_servers as $auth_server) {
-									$selected = "";
-									if (in_array($auth_server['name'], $authmodes)) {
-										$selected = "selected=\"selected\"";
-									}
-									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
-								}
-							?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Group Authentication"); ?></td>
-						<td width="78%" class="vtable">
-							<?=gettext("Source"); ?>:&nbsp;&nbsp;
-							<select name="group_source" class="formselect" id="group_source">
-								<option value="none"><?=gettext("none"); ?></option>
-								<option value="system" <?php if ($pconfig['group_source'] == "system") echo "selected=\"selected\""; ?> ><?=gettext("system"); ?></option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">
-							<?=gettext("Client Configuration (mode-cfg)"); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual Address Pool"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable pool">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['pool_enable'], $chk); ?>
-										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onclick="pool_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a virtual IP address to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="virtual address pool">
-								<tr>
-									<td>
-										<?=gettext("Network"); ?>:&nbsp;
-										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=htmlspecialchars($pconfig['pool_address']);?>" />
-										/
-										<select name="pool_netbits" class="formselect" id="pool_netbits">
-											<?php for ($i = 32; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected=\"selected\""; ?>>
-												<?=$i;?>
-											</option>
-											<?php endfor; ?>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Network List"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="network list">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['net_list_enable'], $chk); ?>
-										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?> />
-									</td>
-									<td>
-										<?=gettext("Provide a list of accessible networks to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Save Xauth Password"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="password">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['save_passwd_enable'], $chk); ?>
-										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?> />
-									</td>
-									<td>
-										<?=gettext("Allow clients to save Xauth passwords (Cisco VPN client only)."); ?><br />
-										<?=gettext("NOTE: With iPhone clients, this does not work when deployed via the iPhone configuration utility, only by manual entry."); ?><br />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns default domain">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['dns_domain_enable'], $chk); ?>
-										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onclick="dns_domain_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a default domain name to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="dns default domain">
-								<tr>
-									<td>
-										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Split DNS"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable split dns">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['dns_split_enable'], $chk); ?>
-										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onclick="dns_split_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a list of split DNS domain names to clients. Enter a space separated list."); ?><br />
-										<?=gettext("NOTE: If left blank, and a default domain is set, it will be used for this value."); ?>
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="split dns">
-								<tr>
-									<td>
-										<input name="dns_split" type="text" class="formfld unknown" id="dns_split" size="30" value="<?=htmlspecialchars($pconfig['dns_split']);?>" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns servers">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['dns_server_enable'], $chk); ?>
-										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onclick="dns_server_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a DNS server list to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="dns servers">
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #3:&nbsp;
-										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #4:&nbsp;
-										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable wins servers">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['wins_server_enable'], $chk); ?>
-										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onclick="wins_server_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a WINS server list to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="wins servers">
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=htmlspecialchars($pconfig['wins_server1']);?>" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=htmlspecialchars($pconfig['wins_server2']);?>" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Phase2 PFS Group"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable pfs group">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['pfs_group_enable'], $chk); ?>
-										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onclick="pfs_group_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="phase-2 pfs group">
-								<tr>
-									<td>
-										<?=gettext("Group"); ?>:&nbsp;&nbsp;
-										<select name="pfs_group" class="formselect" id="pfs_group">
-										<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-											<option value="<?=$keygroup;?>" <?php if ($pconfig['pfs_group'] == $keygroup) echo "selected=\"selected\""; ?>>
-												<?=htmlspecialchars($keygroupname);?>
-											</option>
-										<?php endforeach; ?>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Login Banner"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0" summary="enable login banner">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['login_banner_enable'], $chk); ?>
-										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onclick="login_banner_change()" />
-									</td>
-									<td>
-										<?=gettext("Provide a login banner to clients"); ?><br />
-									</td>
-								</tr>
-							</table>
-							<table border="0" cellspacing="2" cellpadding="0" summary="banner">
-								<tr>
-									<td>
-										<?php $banner = htmlspecialchars($pconfig['login_banner']); ?>
-										<textarea name="login_banner" cols="65" rows="7" id="login_banner" class="formpre"><?=htmlspecialchars($banner);?></textarea>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
-</form>
-<script type="text/javascript">
-//<![CDATA[
-pool_change();
-dns_domain_change();
-dns_split_change();
-dns_server_change();
-wins_server_change();
-pfs_group_change();
-login_banner_change();
-//]]>
-</script>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+		function dns_domain_change() {
+
+			if (document.iform.dns_domain_enable.checked)
+				document.iform.dns_domain.disabled = 0;
+			else
+				document.iform.dns_domain.disabled = 1;
+		}
+
+		function dns_split_change() {
+
+			if (document.iform.dns_split_enable.checked)
+				document.iform.dns_split.disabled = 0;
+			else
+				document.iform.dns_split.disabled = 1;
+		}
+
+		function dns_server_change() {
+
+			if (document.iform.dns_server_enable.checked) {
+				document.iform.dns_server1.disabled = 0;
+				document.iform.dns_server2.disabled = 0;
+				document.iform.dns_server3.disabled = 0;
+				document.iform.dns_server4.disabled = 0;
+			} else {
+				document.iform.dns_server1.disabled = 1;
+				document.iform.dns_server2.disabled = 1;
+				document.iform.dns_server3.disabled = 1;
+				document.iform.dns_server4.disabled = 1;
+			}
+		}
+
+		function wins_server_change() {
+
+			if (document.iform.wins_server_enable.checked) {
+				document.iform.wins_server1.disabled = 0;
+				document.iform.wins_server2.disabled = 0;
+			} else {
+				document.iform.wins_server1.disabled = 1;
+				document.iform.wins_server2.disabled = 1;
+			}
+		}
+
+		function pfs_group_change() {
+
+			if (document.iform.pfs_group_enable.checked)
+				document.iform.pfs_group.disabled = 0;
+			else
+				document.iform.pfs_group.disabled = 1;
+		}
+
+		function login_banner_change() {
+
+			if (document.iform.login_banner_enable.checked)
+				document.iform.login_banner.disabled = 0;
+			else
+				document.iform.login_banner.disabled = 1;
+		}
+
+		//]]>
+	</script>
 
 <?php
+if ($savemsg)
+	print_info_box($savemsg);
+if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
+	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+foreach ($a_phase1 as $ph1ent)
+	if (isset($ph1ent['mobile']))
+		$ph1found = true;
+if ($pconfig['enable'] && !$ph1found)
+	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
+if ($input_errors)
+	print_input_errors($input_errors);
 
-/* local utility functions */
+$tab_array = array();
+$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[1] = array(gettext("Mobile clients"), true, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+display_top_tabs($tab_array);
 
-function set_checked($var,& $chk) {
-	if ($var) {
-		$chk = "checked=\"checked\"";
-	} else {
-		$chk = "";
-	}
+require_once('classes/Form.class.php');
+$form = new Form;
+
+$section = new Form_Section('Enable IPsec Mobile Client Support');
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'IKE Extensions',
+	'Enable IPsec Mobile Client Support',
+	$pconfig['enable']
+));
+
+$form->add($section);
+
+$section = new Form_Section('Extended Authentication (Xauth)');
+
+$authServers = array();
+
+foreach (auth_get_authserver_list() as $authServer)
+	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+
+$section->addInput(new Form_Select(
+	'user_source',
+	'User Authentication',
+	explode(",", $pconfig['user_source']),
+	$authServers,
+	true
+))->setHelp('Source');
+
+$section->addInput(new Form_Select(
+	'group_source',
+	'Group Authentication',
+	$pconfig['group_source'],
+	array(
+		'none' => 'none',
+		'system' => 'system',
+	)
+))->setHelp('Source');
+
+$form->add($section);
+
+$section = new Form_Section('Client Configuration (mode-cfg)');
+
+$section->addInput(new Form_Checkbox(
+	'pool_enable',
+	'Virtual Address Pool',
+	'Provide a virtual IP address to clients',
+	$pconfig['pool_enable']
+))->toggles('.toggle-pool_enable');
+
+// TODO: Refactor this manual setup
+$group = new Form_Group('');
+$group->addClass('toggle-pool_enable collapse');
+
+if (!empty($pconfig['pool_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'pool_address',
+	'Network',
+	'text',
+	htmlspecialchars($pconfig['pool_address'])
+))->setWidth(4)->setHelp('Network configuration for Virtual Address Pool');
+
+$netBits = array();
+
+for ($i = 32; $i >= 0; $i--)
+	$netBits[$i] = $i;
+
+$group->add(new Form_Select(
+	'pool_netbits',
+	'',
+	$pconfig['pool_netbits'],
+	$netBits
+))->setWidth(2);
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'net_list_enable',
+	'Network List',
+	'Provide a list of accessible networks to clients',
+	$pconfig['net_list_enable']
+));
+
+$section->addInput(new Form_Checkbox(
+	'save_passwd_enable',
+	'Save Xauth Password',
+	'Allow clients to save Xauth passwords (Cisco VPN client only).',
+	$pconfig['save_passwd_enable']
+))->setHelp('NOTE: With iPhone clients, this does not work when deployed via the iPhone configuration utility, only by manual entry.');
+
+$section->addInput(new Form_Checkbox(
+	'dns_domain_enable',
+	'DNS Default Domain',
+	'Provide a default domain name to clients',
+	$pconfig['dns_domain_enable']
+))->toggles('.toggle-dns_domain');
+
+$group = new Form_Group('');
+$group->addClass('toggle-dns_domain collapse');
+
+if (!empty($pconfig['dns_domain_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'dns_domain',
+	'',
+	'text',
+	htmlspecialchars($pconfig['dns_domain'])
+))->setHelp('Specify domain as DNS Default Domain');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'dns_split_enable',
+	'Split DNS',
+	'Provide a list of split DNS domain names to clients. Enter a space separated list.',
+	$pconfig['dns_split_enable']
+))->toggles('.toggle-dns_split');
+
+$group = new Form_Group('');
+$group->addClass('toggle-dns_split collapse');
+
+if (!empty($pconfig['dns_split_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'dns_split',
+	'',
+	'text',
+	htmlspecialchars($pconfig['dns_split'])
+))->setHelp('NOTE: If left blank, and a default domain is set, it will be used for this value.');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'dns_server_enable',
+	'DNS Servers',
+	'Provide a DNS server list to clients',
+	$pconfig['dns_server_enable']
+))->toggles('.toggle-dns_server_enable');
+
+for ($i = 1; $i <= 4; $i++)
+{
+	$group = new Form_Group('Server #' . $i);
+	$group->addClass('toggle-dns_server_enable collapse');
+
+	if (!empty($pconfig['dns_server_enable']))
+		$group->addClass('in');
+
+	$group->add(new Form_Input(
+		'dns_server' . $i,
+		'Server #' . $i,
+		'text',
+		htmlspecialchars($pconfig['dns_server' . $i])
+	));
+
+	$section->add($group);
 }
 
-?>
+$section->addInput(new Form_Checkbox(
+	'wins_server_enable',
+	'WINS Servers',
+	'Provide a WINS server list to clients',
+	$pconfig['wins_server_enable']
+))->toggles('.toggle-wins_server_enable');
+
+for ($i = 1; $i <= 2; $i++)
+{
+	$group = new Form_Group('Server #' . $i);
+	$group->addClass('toggle-wins_server_enable collapse');
+
+	if (!empty($pconfig['wins_server_enable']))
+		$group->addClass('in');
+
+	$group->add(new Form_Input(
+		'wins_server' . $i,
+		'Server #' . $i,
+		'text',
+		htmlspecialchars($pconfig['wins_server' . $i]),
+		array('size' => 20)
+	));
+
+	$section->add($group);
+}
+
+$section->addInput(new Form_Checkbox(
+	'pfs_group_enable',
+	'Phase2 PFS Group',
+	'Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )',
+	$pconfig['pfs_group_enable']
+))->toggles('.toggle-pfs_group');
+
+$group = new Form_Group('Group');
+$group->addClass('toggle-pfs_group collapse');
+
+if (!empty($pconfig['pfs_group_enable']))
+	$group->addClass('in');
+
+$group->add(new Form_Select(
+	'pfs_group',
+	'Group',
+	$pconfig['pfs_group'],
+	$p2_pfskeygroups
+))->setWidth(2);
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'login_banner_enable',
+	'Login Banner',
+	'Provide a login banner to clients',
+	$pconfig['login_banner_enable']
+))->toggles('.toggle-login_banner');
+
+$group = new Form_Group('');
+$group->addClass('toggle-login_banner collapse');
+
+if (!empty($pconfig['login_banner_enable']))
+	$group->addClass('in');
+
+// TODO: should be a textarea
+$group->add(new Form_Input(
+	'login_banner',
+	'',
+	'text',
+	htmlspecialchars($pconfig['login_banner'])
+));
+
+$section->add($group);
+
+$form->add($section);
+
+print $form;
+
+include("foot.inc");

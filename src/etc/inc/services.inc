@@ -38,8 +38,8 @@
 	pfSense_MODULE:	utils
 */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dhs dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DHS,DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -471,7 +471,7 @@ function services_dhcpdv4_configure() {
 			}
 		}
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
 		}
 	}
@@ -728,9 +728,28 @@ EOPP;
 			if (!(ip_in_subnet($poolconf['range']['from'], "{$subnet}/{$ifcfgsn}") && ip_in_subnet($poolconf['range']['to'], "{$subnet}/{$ifcfgsn}"))) {
 				// If the user has changed the subnet from the interfaces page and applied,
 				// but has not updated the DHCP range, then the range to/from of the pool can be outside the subnet.
-				// In that case, ignore the pool and post an error.
+				// This can also happen when implementing the batch of changes when the setup wizard reloads the new settings.
 				$error_msg = sprintf(gettext("Invalid DHCP pool %s - %s for %s subnet %s/%s detected. Please correct the settings in Services, DHCP Server"), $poolconf['range']['from'], $poolconf['range']['to'], convert_real_interface_to_friendly_descr($dhcpif), $subnet, $ifcfgsn);
-				file_notice("DHCP", $error_msg);
+				$do_file_notice = true;
+				$conf_ipv4_address = $ifcfg['ipaddr'];
+				$conf_ipv4_subnetmask = $ifcfg['subnet'];
+				if (is_ipaddrv4($conf_ipv4_address) && is_subnet("{$conf_ipv4_address}/{$conf_ipv4_subnetmask}")) {
+					$conf_subnet_base = gen_subnet($conf_ipv4_address, $conf_ipv4_subnetmask);
+					if (ip_in_subnet($poolconf['range']['from'], "{$conf_subnet_base}/{$conf_ipv4_subnetmask}") &&
+					    ip_in_subnet($poolconf['range']['to'], "{$conf_subnet_base}/{$conf_ipv4_subnetmask}")) {
+						// Even though the running interface subnet does not match the pool range,
+						// the interface subnet in the config file contains the pool range.
+						// We are somewhere part-way through a settings reload, e.g. after running the setup wizard.
+						// services_dhcpdv4_configure will be called again later when the new interface settings from
+						// the config are applied and at that time everything will match up.
+						// Ignore this pool on this interface for now and just log the error to the system log.
+						log_error($error_msg);
+						$do_file_notice = false;
+					}
+				}
+				if ($do_file_notice) {
+					file_notice("DHCP", $error_msg);
+				}
 				continue;
 			}
 			$dhcpdconf .= "	pool {\n";
@@ -920,6 +939,8 @@ EOD;
 				$dhcpdconf .= "	if option arch = 00:06 {\n";
 				$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
 				$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
+				$dhcpdconf .= "	} else if option arch = 00:09 {\n";
 				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
 				$dhcpdconf .= "	} else {\n";
 				$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
@@ -1164,7 +1185,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	if (platform_booting()) {
-		if ($g['platform'] != "pfSense") {
+		if ($g['platform'] != $g['product_name']) {
 			/* restore the leases, if we have them */
 			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
 				$dhcprestore = "";
@@ -1606,8 +1627,8 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
-	
-	$srvips = explode(",", $dhcrelaycfg['server']);	
+
+	$srvips = explode(",", $dhcrelaycfg['server']);
 	if (!is_array($srvips)) {
 		log_error("No destination IP has been configured!");
 		return;

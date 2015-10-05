@@ -564,6 +564,16 @@ $section_str = array(
 	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)")
 	);
+	
+$btn_str = array(
+	'network' => gettext("Add Network"),
+	'host'	=> gettext("Add Host"),
+	'port' => gettext("Add Port"),
+	'url' => gettext("Add URL"),
+	'url_ports' => gettext("Add URL"),
+	'urltable' => gettext("Add URL Table"),
+	'urltable_ports' => gettext("Add URL Table")
+	);
 
 $label_str = array(
 	'network' => gettext("Network or FQDN"),
@@ -700,16 +710,16 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		null,
+		'Address',
 		$address
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
 
 	$group->add(new Form_Input(
 		'detail' . $counter,
-		null,
+		'Description',
 		'text',
 		$details[$counter]
-	))->setHelp('Description')->setWidth(4);
+	))->setWidth(4);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
@@ -722,7 +732,7 @@ while ($counter < count($addresses)) {
 
 $form->addGlobal(new Form_Button(
 	'addrow',
-	'Add host'
+	$btn_str[$tab]
 ))->removeClass('btn-primary')->addClass('btn-success');
 
 $form->add($section);
@@ -745,7 +755,10 @@ events.push(function(){
 		// Set the section heading by tab type
 		var sectionstr = <?php echo json_encode($section_str); ?>;
 		$('.panel-title:last').text(sectionstr[tab]);
-
+		
+		var buttonstr = <?php echo json_encode($btn_str); ?>;
+		$('.btn-success').prop('value', buttonstr[tab]);
+		
 		// Set the input field label by tab
 		var labelstr = <?php echo json_encode($label_str); ?>;
 		$('.repeatable:first').find('label').text(labelstr[tab]);

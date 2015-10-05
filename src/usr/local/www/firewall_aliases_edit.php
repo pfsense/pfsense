@@ -564,7 +564,7 @@ $section_str = array(
 	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)")
 	);
-	
+
 $btn_str = array(
 	'network' => gettext("Add Network"),
 	'host'	=> gettext("Add Host"),
@@ -733,7 +733,7 @@ while ($counter < count($addresses)) {
 $form->addGlobal(new Form_Button(
 	'addrow',
 	$btn_str[$tab]
-))->removeClass('btn-primary')->addClass('btn-success');
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 
@@ -743,7 +743,7 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
-	
+
 	function typechange() {
 		var tab = $('#type').find('option:selected').val();
 		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
@@ -755,13 +755,22 @@ events.push(function(){
 		// Set the section heading by tab type
 		var sectionstr = <?php echo json_encode($section_str); ?>;
 		$('.panel-title:last').text(sectionstr[tab]);
-		
+
 		var buttonstr = <?php echo json_encode($btn_str); ?>;
 		$('.btn-success').prop('value', buttonstr[tab]);
-		
+
 		// Set the input field label by tab
 		var labelstr = <?php echo json_encode($label_str); ?>;
 		$('.repeatable:first').find('label').text(labelstr[tab]);
+
+		// The add button and delete buttons must not show on  URL Table IP or URL table ports
+		if((tab == 'urltable') || (tab == 'urltable_ports')) {
+			hideClass('addbtn', true);
+			$('[id^=deleterow]').hide();
+		} else {
+			hideClass('addbtn', false);
+			$('[id^=deleterow]').show();
+		}
 	}
 
 	// On load . .

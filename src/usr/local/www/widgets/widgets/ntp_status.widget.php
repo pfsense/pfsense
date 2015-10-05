@@ -1,37 +1,57 @@
 <?php
 /*
 	ntp_status.widget.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-X
-	Copyright 2007 Scott Dale
-	Part of pfSense widgets (https://www.pfsense.org)
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-	and Jonathan Watt <jwatt@jwatt.org>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+*//* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 $nocsrf = true;
 
@@ -45,8 +65,8 @@ function getServerDateItems($inDate) {
 	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
 	// year (4-digit),month,day,hours (0-23),minutes,seconds
 	// use intval to strip leading zero from minutes and seconds
-	//   so JavaScript won't try to interpret them in octal
-	//   (use intval instead of ltrim, which translates '00' to '')
+	//	 so JavaScript won't try to interpret them in octal
+	//	 (use intval instead of ltrim, which translates '00' to '')
 }
 
 function clockTimeString($inDate, $showSeconds) {
@@ -90,7 +110,7 @@ if ($_REQUEST['updateme']) {
 			$tmp = $tmp[1];
 			if (substr($tmp, 0, 6) == '$GPRMC') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok  = ($gps_vars[2] == "A");
+				$gps_ok	 = ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
 				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
@@ -103,7 +123,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lo = $gps_vars[6];
 			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok  = $gps_vars[6];
+				$gps_ok	 = $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
 				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
@@ -119,7 +139,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lo = $gps_vars[5];
 			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok  = ($gps_vars[6] == "A");
+				$gps_ok	 = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
@@ -152,7 +172,7 @@ if ($_REQUEST['updateme']) {
 <table class="table" id="ntp_status_widget">
 	<tr>
 		<th>Server Time</th>
-		<td id="ntpStatusClock">
+		<td id="ClockTime"> <!-- ntpStatusClock -->
 			<script>var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');</script>
 			<!-- display initial value before javascript takes over -->
 			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
@@ -221,7 +241,7 @@ function ntpWidgetUpdateDisplay(){
 
 	$('#ntpStatusClock').html(ntpServerTime.toString());
 }
-
+</script>
 <script type="text/javascript">
 //<![CDATA[
 /* set up variables used to init clock in BODY's onLoad handler;
@@ -276,15 +296,15 @@ page content).
 
 Compatibility: IE 4.x and 5.0, Netscape 4.x and 6.0, Mozilla 1.0. Mac & Windows.
 
-History:  1.0   2000-05-09 GIF-image digits
-          2.0   2000-06-29 Uses text DIV layers (so 4.0 browsers req'd), &
-                         cookies to work around Win IE stale-time bug
-		  2.1   2002-10-12 Noted Mozilla 1.0 compatibility; released PHP version.
+History:  1.0	2000-05-09 GIF-image digits
+		  2.0	2000-06-29 Uses text DIV layers (so 4.0 browsers req'd), &
+						 cookies to work around Win IE stale-time bug
+		  2.1	2002-10-12 Noted Mozilla 1.0 compatibility; released PHP version.
 		  2.1.1 2002-10-20 Fixed octal bug in the PHP translation; the number of
-		  				minutes & seconds were misinterpreted when less than 10
+						minutes & seconds were misinterpreted when less than 10
 		  2.1.2 2003-08-07 The previous fix had introduced a bug when the
-		                minutes or seconds were exactly 0. Thanks to Man Bui
-		                for reporting the bug.
+						minutes or seconds were exactly 0. Thanks to Man Bui
+						for reporting the bug.
 */
 var clockIncrementMillis = 1000;
 var localTime;
@@ -301,7 +321,7 @@ function clockInit(localDateObject, serverDateObject)
 	// May be stale (WinIE); will check against cookie later
 	// Can't use the millisec. ctor here because of client inconsistencies.
 	var newLocalClock = localDateObject.getTime();
-	var maxClockAge = 60 * 60 * 1000;   // get new time from server every 1hr
+	var maxClockAge = 60 * 60 * 1000;	// get new time from server every 1hr
 
 	if (newRemoteClock != origRemoteClock) {
 		// new clocks are up-to-date (newer than any cookies)
@@ -309,7 +329,7 @@ function clockInit(localDateObject, serverDateObject)
 		document.cookie = "localClock=" + newLocalClock;
 		clockOffset = newRemoteClock - newLocalClock;
 		clockExpirationLocal = newLocalClock + maxClockAge;
-		localTime = newLocalClock;  // to keep clockUpdate() happy
+		localTime = newLocalClock;	// to keep clockUpdate() happy
 	} else if (origLocalClock != origLocalClock) {
 		// error; localClock cookie is invalid (parsed as NaN)
 		clockOffset = null;
@@ -374,7 +394,7 @@ function clockDisplayTime(inHours, inMinutes, inSeconds) {
 function clockWriteToDiv(divName, newValue) // APS 6/29/00
 {
 	var divObject = simpleFindObj(divName);
-	newValue = '<b>' + newValue + '<' + '/b>';
+	newValue =	newValue + ' (' + new Date().toString().match(/([A-Z]+[\+-][0-9]+)/)[1] + ')';
 	if (divObject && divObject.innerHTML) {
 		divObject.innerHTML = newValue;
 	} else if (divObject && divObject.document) {
@@ -414,7 +434,7 @@ function clockGetCookieData(label) {
 					return unescape(c.substring(cStart + labelLen + 1,cEnd));
 				}
 			}
-			cEnd = cStart - 1;  // skip semicolon
+			cEnd = cStart - 1;	// skip semicolon
 		}
 	}
 	return null;
@@ -428,20 +448,20 @@ function clockUpdate()
 	var lastLocalTime = localTime;
 	localTime = (new Date()).getTime();
 
-	/* Sanity-check the diff. in local time between successive calls;
-	   reload if user has reset system clock */
+	// Sanity-check the diff. in local time between successive calls;
+	//	 reload if user has reset system clock
 	if (clockOffset == null) {
 		clockDisplayTime(null, null, null);
 	} else if (localTime < lastLocalTime || clockExpirationLocal < localTime) {
-		/* Clock expired, or time appeared to go backward (user reset
-		   the clock). Reset cookies to prevent infinite reload loop if
-		   server doesn't give a new time. */
+		// Clock expired, or time appeared to go backward (user reset
+		// the clock). Reset cookies to prevent infinite reload loop if
+		// server doesn't give a new time.
 		document.cookie = 'remoteClock=-';
 		document.cookie = 'localClock=-';
-		location.reload();      // will refresh time values in cookies
+		location.reload();		// will refresh time values in cookies
 	} else {
 		// Compute what time would be on server
-		var serverTime = new Date(localTime + clockOffset);
+		var serverTime = new Date(localTime);
 		clockDisplayTime(serverTime.getHours(), serverTime.getMinutes(),
 			serverTime.getSeconds());
 
@@ -458,7 +478,7 @@ clockUpdate();
 //]]>
 </script>
 
-
+<!--
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
 	<tbody>
 		<tr>
@@ -471,7 +491,7 @@ clockUpdate();
 		</tr>
 	</tbody>
 </table>
-
+-->
 <div id='ntpstatus'>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
 	<tbody>
@@ -500,6 +520,7 @@ clockUpdate();
 		// Refresh the status every 1 minute
 		setTimeout('ntp_getstatus()', 1*60*1000);
 	}
+
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText

@@ -2490,6 +2490,8 @@ $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
 
 function build_ipv6interface_list() {
+	global $config, $section;
+
 	$list = array('' => '');
 
 	$interfaces = get_configured_interface_with_descr(false, true);
@@ -3673,7 +3675,7 @@ events.push(function(){
 	setDHCPoptions()
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
    $('#type').on('change', function() {
 		updateType( this.value );
 	});

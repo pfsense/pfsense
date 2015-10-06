@@ -292,6 +292,9 @@ function add_row() {
 	$('[id^=address]').autocomplete({
 		source: addressarray
 	});
+
+	// Show any deleterow buttons.
+	$('[id^=deleterow]').show();
 }
 
 // These are action buttons, not submit buttons
@@ -309,7 +312,14 @@ $('[id^=delete]').click(function(event) {
 			moveHelpText(event.target.id);
 
 		delete_row(event.target.id);
-	}
-	else
+	} else {
+		// This should not happen because when there is only 1 row remaining the delete button is hidden,
+		// so there should be no way for the user to click it.
 		alert('You may not delete the last row!');
+	}
+
+	// If there are less than 2 rows remaining, then hide the delete button.
+	if($('.repeatable').length < 2) {
+		$('[id^=deleterow]').hide();
+	}
 });

@@ -1735,11 +1735,24 @@ function build_mediaopts_list() {
 }
 
 function build_gateway_list() {
-	global $a_gateways;
+	global $a_gateways, $if;
 
 	$list = array("none" => "None");
 	foreach ($a_gateways as $gateway) {
 		if (($gateway['interface'] == $if) && (is_ipaddrv4($gateway['gateway']))) {
+			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
+		}
+	}
+
+	return($list);
+}
+
+function build_gatewayv6_list() {
+	global $a_gateways, $if;
+
+	$list = array("none" => "None");
+	foreach ($a_gateways as $gateway) {
+		if (($gateway['interface'] == $if) && (is_ipaddrv6($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
 	}
@@ -1944,8 +1957,8 @@ $group = new Form_Group('IPv6 Upstream gateway');
 $group->add(new Form_Select(
 	'gatewayv6',
 	'IPv4 Upstream Gateway',
-	$pconfig['gateway'],
-	build_gateway_list()
+	$pconfig['gatewayv6'],
+	build_gatewayv6_list()
 ));
 
 $group->add(new Form_Button(

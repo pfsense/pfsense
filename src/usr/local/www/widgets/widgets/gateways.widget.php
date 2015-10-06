@@ -223,3 +223,4 @@ $gateways_status = return_gateways_status(true);
 	<br /><br />
 	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
+</div>

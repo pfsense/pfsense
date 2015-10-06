@@ -70,7 +70,7 @@ function gmirror_html_status() {
 	$output = "";
 	if (count($mirrors) < 1) {
 ?>
-<div class="alert">
+<div class="alert alert-warning" role="alert">
 	<p>No Mirrors Found</p>
 </div>
 <?php

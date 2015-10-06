@@ -118,7 +118,6 @@ $sk_servers = openvpn_get_active_servers("p2p");
 $clients = openvpn_get_active_clients();
 ?>
 
-<br />
 <script type="text/javascript">
 //<![CDATA[
 	function killClient(mport, remipp) {
@@ -150,7 +149,7 @@ $clients = openvpn_get_active_clients();
 	}
 //]]>
 </script>
-
+<div class="content">
 <?php foreach ($servers as $server): ?>
 
 <table>
@@ -314,3 +313,4 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	echo "No OpenVPN instances defined";
 }
 ?>
+</div>

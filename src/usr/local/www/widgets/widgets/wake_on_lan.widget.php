@@ -39,6 +39,7 @@ if (is_array($config['wol']['wolentry'])) {
 }
 
 ?>
+<div class="content">
 <table>
 	<tr>
 		<?php
@@ -78,3 +79,4 @@ if (count($wolcomputers) > 0) {
 ?>
 </table>
 <center><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></center>
+</div>

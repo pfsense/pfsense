@@ -78,7 +78,7 @@ if($_REQUEST['getdyndnsstatus']) {
 }
 
 ?>
-
+<div class="content">
 <table>
 	<tr>
 		<td width="5%"  class="listhdrr"><?=gettext("Int.");?></td>
@@ -144,6 +144,7 @@ if($_REQUEST['getdyndnsstatus']) {
 	</tr>
 	<?php $i++; endforeach;?>
 </table>
+</div>
 <script type="text/javascript">
 //<![CDATA[
 	function dyndns_getstatus() {

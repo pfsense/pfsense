@@ -363,14 +363,14 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?=$widgetconfig['name']?>
 				<span class="icons">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="icon icon-wrench"></i>
+						<i class="icon-white icon-wrench"></i>
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon icon-plus-sign"></i>
+						<i class="icon-white icon-plus-sign"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="icon icon-remove-sign"></i>
+						<i class="icon-white icon-remove-sign"></i>
 					</a>
 				</span>
 			</div>
@@ -413,20 +413,22 @@ events.push(function() {
 
 	// Initial state & toggle icons of collapsed panel
 	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body'), isOpen = body.hasClass('in');
-		$(el).toggleClass('icon-plus-sign', !isOpen);
-		$(el).toggleClass('icon-minus-sign', isOpen);
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
+		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
 
 		body.on('shown.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', true);
-			$(el).toggleClass('icon-plus-sign', false);
+			$(el).children('i').toggleClass('icon-minus-sign', true);
+			$(el).children('i').toggleClass('icon-plus-sign', false);
 
 			updateWidgets();
 		});
 
 		body.on('hidden.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', false);
-			$(el).toggleClass('icon-plus-sign', true);
+			$(el).children('i').toggleClass('icon-minus-sign', false);
+			$(el).children('i').toggleClass('icon-plus-sign', true);
 
 			updateWidgets();
 		});

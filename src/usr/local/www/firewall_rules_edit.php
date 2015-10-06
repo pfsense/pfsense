@@ -1245,12 +1245,12 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	if ($pconfig[$type] == 'any') {
 		$ruleType = 'any';
-	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
-			(is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
-			(is_alias($pconfig[$type]))) {
-		$ruleType = 'single';
-	} else {
+	} elseif (!is_specialnet($pconfig[$type])) {
 		$ruleType = 'network';
+	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
+	    (is_ipaddrv4($pconfig[$type]) && $pconfig[$type.'mask'] == 32) ||
+	    (is_alias($pconfig[$type]))) {
+		$ruleType = 'single';
 	}
 
 	$ruleValues = array(

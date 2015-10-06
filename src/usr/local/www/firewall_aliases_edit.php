@@ -763,13 +763,18 @@ events.push(function(){
 		var labelstr = <?php echo json_encode($label_str); ?>;
 		$('.repeatable:first').find('label').text(labelstr[tab]);
 
-		// The add button and delete buttons must not show on  URL Table IP or URL table ports
+		// The delete button at the end of each row is only shown when there is more than 1 row.
+		if($('[id^=deleterow]').length > 1) {
+			$('[id^=deleterow]').show();
+		} else {
+			$('[id^=deleterow]').hide();
+		}
+
+		// The add button must not show on URL Table IP or URL table ports
 		if((tab == 'urltable') || (tab == 'urltable_ports')) {
 			hideClass('addbtn', true);
-			$('[id^=deleterow]').hide();
 		} else {
 			hideClass('addbtn', false);
-			$('[id^=deleterow]').show();
 		}
 	}
 

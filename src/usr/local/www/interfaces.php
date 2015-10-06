@@ -1973,12 +1973,12 @@ $modal->addInput(new Form_Input(
 	'name6',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GW"
+	$wancfg['descr'] . "GWv6"
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
-	'Gateway IPv4',
+	'Gateway IPv6',
 	null
 ));
 
@@ -3480,11 +3480,11 @@ events.push(function(){
 	function hide_add_gatewaysave_v6() {
 
 		var iface = $('#if').val();
-		name = $('#namev6').val();
-		var descr = $('#gatewaydescrv6').val();
-		gatewayip = $('#gatewayipv6').val();
+		name = $('#name6').val();
+		var descr = $('#gatewaydescr6').val();
+		gatewayip = $('#gatewayip6').val();
 		var defaultgw = '';
-		if ($('#defaultgwv6').is(':checked')) {
+		if ($('#defaultgw6').is(':checked')) {
 			defaultgw = '&defaultgw=on';
 		}
 		var url_v6 = "system_gateways_edit.php";

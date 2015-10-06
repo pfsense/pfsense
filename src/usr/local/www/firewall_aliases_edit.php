@@ -581,7 +581,7 @@ $label_str = array(
 	'port' => gettext("Port"),
 	'url' => gettext("URL (IPs)"),
 	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL (IPs)"),
+	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)")
 	);
 

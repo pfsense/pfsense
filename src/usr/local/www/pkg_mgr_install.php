@@ -130,7 +130,9 @@ display_top_tabs($tab_array);
 ?>
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+			<div class="content">
+				<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+			</div>
 		</div>
 		<div class="panel-footer">
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />

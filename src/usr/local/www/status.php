@@ -140,7 +140,7 @@ function listCmds() {
 	print('<div class="panel panel-default">');
 	print(	  '<div class="panel-heading">' . gettext("System status on ") . $currentDate . '</div>');
 	print(	  '<div class="panel-body">');
-
+	print(	  '    <div class="content">');
 	print("\n<p>" . gettext("This status page includes the following information") . ":\n");
 	print("<ul>\n");
 	for ($i = 0; isset($commands[$i]); $i++ ) {
@@ -148,6 +148,7 @@ function listCmds() {
 	}
 
 	print("</ul>\n");
+	print('	       </div>');
 	print('	   </div>');
 	print('</div>');
 }

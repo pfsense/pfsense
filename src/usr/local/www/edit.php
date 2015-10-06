@@ -126,26 +126,27 @@ require("head.inc");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a file from the filesystem")?></h2></div>
 	<div class="panel-body">
-		<form>
-			<input type="text" class="form-control" id="fbTarget"/>
-			<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
-			<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
-			<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
-		</form>
+		<div class="content">
+			<form>
+				<input type="text" class="form-control" id="fbTarget"/>
+				<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
+				<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
+				<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+			</form>
 
-		<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
+			<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
 
-		<div style="background:#eeeeee;" id="fileOutput">
-			<script type="text/javascript">
-			//<![CDATA[
-			window.onload=function(){
-				document.getElementById("fileContent").wrap='off';
-			}
-			//]]>
-			</script>
-			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
+			<div style="background:#eeeeee;" id="fileOutput">
+				<script type="text/javascript">
+				//<![CDATA[
+				window.onload=function(){
+					document.getElementById("fileContent").wrap='off';
+				}
+				//]]>
+				</script>
+				<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
+			</div>
 		</div>
-
 	</div>
 </div>
 

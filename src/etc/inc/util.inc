@@ -1425,58 +1425,44 @@ function exec_command($command) {
 	return(implode("\n", $output));
 }
 
-/* wrapper for exec() */
-function mwexec($command, $mute = false, $clearsigmask = false) {
+/* wrapper for exec()
+   Executes in background or foreground.
+   For background execution, returns PID of background process to allow calling code control */
+function mwexec($command, $nologentry = false, $clearsigmask = false, $background = false) {
 	global $g;
+	$retval = 0;
 
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR']) {
-			echo "mwexec(): $command\n";
+			echo "mwexec(): $command" . ($background ? " [BG]":"") . "\n";
 		}
 	}
-	$oarr = array();
-	$retval = 0;
-
 	if ($clearsigmask) {
 		$oldset = array();
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
-	$garbage = exec("$command 2>&1", $oarr, $retval);
+
+	if ($background) {
+		// start background process and return PID
+		$retval = exec("/usr/bin/nohup $command > /dev/null 2>&1 & echo $!");
+	} else {
+		// run in foreground, and (optionally) log if nonzero return
+		$outputarray = array();
+		exec("$command 2>&1", $outputarray, $retval);
+		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew'])))
+			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
+	}
+
 	if ($clearsigmask) {
 		pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	}
 
-	if (isset($config['system']['developerspew'])) {
-		$mute = false;
-	}
-	if (($retval <> 0) && ($mute === false)) {
-		$output = implode(" ", $oarr);
-		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
-		unset($output);
-	}
-	unset($oarr);
 	return $retval;
 }
 
 /* wrapper for exec() in background */
 function mwexec_bg($command, $clearsigmask = false) {
-	global $g;
-
-	if ($g['debug']) {
-		if (!$_SERVER['REMOTE_ADDR']) {
-			echo "mwexec(): $command\n";
-		}
-	}
-
-	if ($clearsigmask) {
-		$oldset = array();
-		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
-	}
-	$_gb = exec("/usr/bin/nohup $command > /dev/null 2>&1 &");
-	if ($clearsigmask) {
-		pcntl_sigprocmask(SIG_SETMASK, $oldset);
-	}
-	unset($_gb);
+	return mwexec($command, false, $clearsigmask, true);
 }
 
 /* unlink a file, if it exists */

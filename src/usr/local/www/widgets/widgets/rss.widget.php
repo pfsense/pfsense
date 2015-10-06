@@ -155,7 +155,7 @@ if ($config['widgets']['rssfeed']) {
 	<div class="form-group">
 		<label for="rsswidgettextlength" class="col-sm-3 control-label">Content limit</label>
 		<div class="col-sm-6">
-			<input type="number" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="100" class="form-control" />
+			<input type="number" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="10" class="form-control" />
 		</div>
 	</div>
 

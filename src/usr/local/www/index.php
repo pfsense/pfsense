@@ -292,7 +292,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <div class="panel panel-default" id="widget-available">
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
 		<span class="icons">
-			<a data-toggle="collapse" href="#widget-available .panel-body">
+			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
 				<i class="icon-white icon-plus-sign"></i>
 			</a>
 		</span>
@@ -429,14 +429,18 @@ events.push(function() {
 			$(el).children('i').toggleClass('icon-minus-sign', true);
 			$(el).children('i').toggleClass('icon-plus-sign', false);
 
-			updateWidgets();
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
 		});
 
 		body.on('hidden.bs.collapse', function(){
 			$(el).children('i').toggleClass('icon-minus-sign', false);
 			$(el).children('i').toggleClass('icon-plus-sign', true);
 
-			updateWidgets();
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
 		});
 	});
 

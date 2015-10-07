@@ -458,7 +458,7 @@ events.push(function() {
 
 	// On clicking a widget to install . .
 	$('[name^=btnadd-]').click(function(event) {
-		// Extract hte widget name from the button name that got us here
+		// Extract the widget name from the button name that got us here
 		var widgetToAdd = this.name.replace('btnadd-', '');
 
 		// Set its display type to 'close'
@@ -467,7 +467,7 @@ events.push(function() {
 		// Add it to the list of displayed widgets
 		updateWidgets(widgetToAdd);
 
-		// We don't want to see hte "Store" button because we are doing that automatically
+		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();
 
 		// Submit the form save/display all selected widgets

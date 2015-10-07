@@ -1264,7 +1264,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	);
 
 	if($type == 'dst') {
-		$ruleValues['self'] = "This firewall (self)";
+		$ruleValues['(self)'] = "This firewall (self)";
 	}
 
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules")

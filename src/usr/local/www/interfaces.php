@@ -1956,7 +1956,7 @@ $group = new Form_Group('IPv6 Upstream gateway');
 
 $group->add(new Form_Select(
 	'gatewayv6',
-	'IPv4 Upstream Gateway',
+	'IPv6 Upstream Gateway',
 	$pconfig['gatewayv6'],
 	build_gatewayv6_list()
 ));

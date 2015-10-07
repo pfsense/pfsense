@@ -788,8 +788,6 @@ events.push(function(){
 		typechange();
 	});
 
-	// Disable address_subnet if type == 'host'
-	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
 });
 //]]>
 </script>

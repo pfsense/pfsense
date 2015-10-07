@@ -1197,9 +1197,9 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 			$columns['dst'] = $alias_id;
 		elseif ($alias_name['name'] == $dstport)
 			$columns['dstport'] = $alias_id;
-
-		return $columns;
 	}
+
+	return $columns;
 }
 
 function form_output_row($name, $label, $content) {

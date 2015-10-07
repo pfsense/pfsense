@@ -407,6 +407,11 @@ if (isset($id) && $a_dyndns[$id]) {
 		'hidden',
 		$id
 	));
+
+	$form->addGlobal(new Form_Button(
+		'force',
+		'Save & Force Update'
+	))->removeClass('btn-primary')->addClass('btn-info');
 }
 
 $form->add($section);

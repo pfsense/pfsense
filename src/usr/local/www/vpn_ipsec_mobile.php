@@ -62,6 +62,8 @@ if (count($a_client)) {
 
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
+	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
+	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
 	$pconfig['net_list'] = $a_client['net_list'];
 	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
@@ -83,6 +85,12 @@ if (count($a_client)) {
 		$pconfig['pool_enable'] = true;
 	} else {
 		$pconfig['pool_netbits'] = 24;
+	}
+
+	if ($pconfig['pool_address_v6']&&$pconfig['pool_netbits_v6']) {
+		$pconfig['pool_enable_v6'] = true;
+	} else {
+		$pconfig['pool_netbits_v6'] = 120;
 	}
 
 	if (isset($pconfig['net_list'])) {
@@ -151,6 +159,11 @@ if ($_POST['save']) {
 	if ($pconfig['pool_enable']) {
 		if (!is_ipaddr($pconfig['pool_address'])) {
 			$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
+		}
+	}
+	if ($pconfig['pool_enable_v6']) {
+		if (!is_ipaddrv6($pconfig['pool_address_v6'])) {
+			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
 	}
 	if ($pconfig['dns_domain_enable']) {
@@ -226,6 +239,11 @@ if ($_POST['save']) {
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
 
+		if ($pconfig['pool_enable_v6']) {
+			$client['pool_address_v6'] = $pconfig['pool_address_v6'];
+			$client['pool_netbits_v6'] = $pconfig['pool_netbits_v6'];
+		}
+
 		if ($pconfig['net_list_enable']) {
 			$client['net_list'] = true;
 		}
@@ -289,6 +307,17 @@ include("head.inc");
 			} else {
 				document.iform.pool_address.disabled = 1;
 				document.iform.pool_netbits.disabled = 1;
+			}
+		}
+
+		function pool_change_v6() {
+
+			if (document.iform.pool_enable_v6.checked) {
+				document.iform.pool_address_v6.disabled = 0;
+				document.iform.pool_netbits_v6.disabled = 0;
+			} else {
+				document.iform.pool_address_v6.disabled = 1;
+				document.iform.pool_netbits_v6.disabled = 1;
 			}
 		}
 
@@ -447,6 +476,41 @@ $group->add(new Form_Select(
 	$pconfig['pool_netbits'],
 	$netBits
 ))->setWidth(2);
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'pool_enable_v6',
+	'Virtual IPv6 Address Pool',
+	'Provide a virtual IPv6 address to clients',
+	$pconfig['pool_enable_v6']
+))->toggles('.toggle-pool_enable_v6');
+
+// TODO: Refactor this manual setup
+$group = new Form_Group('');
+$group->addClass('toggle-pool_enable_v6 collapse');
+
+if (!empty($pconfig['pool_enable_v6']))
+	$group->addClass('in');
+
+$group->add(new Form_Input(
+	'pool_address_v6',
+	'IPv6 Network',
+	'text',
+	htmlspecialchars($pconfig['pool_address_v6'])
+))->setWidth(4)->setHelp('Network configuration for Virtual IPv6 Address Pool');
+
+$netBits = array();
+
+for ($i = 128; $i >= 0; $i--)
+	$netBitsv6[$i] = $i;
+
+$group->add(new Form_Select(
+	'pool_netbits_v6',
+	'',
+	$pconfig['pool_netbits_v6'],
+	$netBitsv6
+))->setWidth(3);
 
 $section->add($group);
 

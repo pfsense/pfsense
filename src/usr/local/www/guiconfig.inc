@@ -1191,11 +1191,11 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
 		if ($alias_name['name'] == $src)
 			$columns['src'] = $alias_id;
-		elseif ($alias_name['name'] == $srcport)
+		if ($alias_name['name'] == $srcport)
 			$columns['srcport'] = $alias_id;
-		elseif ($alias_name['name'] == $dst )
+		if ($alias_name['name'] == $dst )
 			$columns['dst'] = $alias_id;
-		elseif ($alias_name['name'] == $dstport)
+		if ($alias_name['name'] == $dstport)
 			$columns['dstport'] = $alias_id;
 	}
 

@@ -556,6 +556,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				echo '</u></span>';
 			}
 		} else echo "*";
+
 	?>
 						</td>
 						<td>
@@ -578,7 +579,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 							<?php if (isset($alias['dst'])): ?>

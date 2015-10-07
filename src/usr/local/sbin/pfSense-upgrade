@@ -104,7 +104,7 @@ _exec() {
 	else
 		[ -n "${_stdout}" ] \
 			&& _echo "failed."
-		return 1
+		exit 1
 	fi
 }
 

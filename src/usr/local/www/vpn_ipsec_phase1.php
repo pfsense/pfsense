@@ -278,7 +278,7 @@ if ($_POST) {
 		}
 	}
 
-	if (is_array($a_phase2) && (count($a_phase2))) {
+	if (($pconfig['iketype'] == "ikev1") && is_array($a_phase2) && (count($a_phase2))) {
 		foreach ($a_phase2 as $phase2) {
 			if ($phase2['ikeid'] == $pconfig['ikeid']) {
 				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {

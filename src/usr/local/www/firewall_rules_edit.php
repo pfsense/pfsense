@@ -1230,6 +1230,7 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 // Source and destination share a lot of logic. Loop over the two
+// ToDo: Unfortunately they seem to differ more than they share. This needs to be unrolled
 foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$section = new Form_Section($name);
 
@@ -1261,6 +1262,11 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		'single' => 'Single host or alias',
 		'network' => 'Network',
 	);
+
+	if($type == 'dst') {
+		$ruleValues['self'] = "This firewall (self)";
+	}
+
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules")
 		$ruleValues['(self)'] = 'This Firewall (self)';
 	if (have_ruleint_access("pppoe"))

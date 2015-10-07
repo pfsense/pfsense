@@ -1009,8 +1009,7 @@ EOD;
 					}
 					break;
 				case 'hybrid_rsa_server':
-					$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
-					$authentication .= "\n\trightauth2 = xauth";
+					$authentication = "leftauth = pubkey\n\trightauth = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 					}

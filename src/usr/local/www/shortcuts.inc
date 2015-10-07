@@ -207,7 +207,7 @@ $shortcuts['openvpn']['service'] = "openvpn";
 
 $shortcuts['firewall'] = array();
 $shortcuts['firewall']['main'] = "firewall_rules.php";
-$shortcuts['firewall']['log'] = "diag_logs.php?logfile=filter";
+$shortcuts['firewall']['log'] = "diag_logs_filter.php";
 $shortcuts['firewall']['status'] = "status_filter_reload.php";
 
 $shortcuts['routing'] = array();

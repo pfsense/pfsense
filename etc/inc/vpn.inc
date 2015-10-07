@@ -933,10 +933,19 @@ EOD;
 
 			$rightsourceip = NULL;
 			if (isset($ph1ent['mobile'])) {
-				if (!empty($a_client['pool_address'])) {
-					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
-				} elseif ($ph1ent['authentication_method'] == "eap-radius") {
-					$rightsourceip = "\trightsourceip = %radius\n";
+				$rightsourceips = array();
+				if (!empty($a_client['pool_address']) ) {
+/*					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n"; */
+					$rightsourceips[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+				}
+				if (!empty($a_client['pool_address_v6'])) {
+					$rightsourceips[] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
+				}
+				if ($ph1ent['authentication_method'] == "eap-radius" && !count($rightsourceips)){
+					$rightsourceips[] = "%radius";
+				}
+				if (count($rightsourceips)) {
+					$rightsourceip = "\trightsourceip = " . implode(',', $rightsourceips) . "\n";
 				}
 			}
 

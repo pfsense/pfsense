@@ -60,6 +60,8 @@ if (count($a_client)) {
 
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
+	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
+	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
 	$pconfig['net_list'] = $a_client['net_list'];
 	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
@@ -80,6 +82,11 @@ if (count($a_client)) {
 		$pconfig['pool_enable'] = true;
 	else
 		$pconfig['pool_netbits'] = 24;
+
+	if ($pconfig['pool_address_v6'] && $pconfig['pool_netbits_v6'])
+		$pconfig['pool_enable_v6'] = true;
+	else
+		$pconfig['pool_netbits_v6'] = 120;
 
 	if (isset($pconfig['net_list']))
 		$pconfig['net_list_enable'] = true;
@@ -140,6 +147,10 @@ if ($_POST['submit']) {
 		if (!is_ipaddr($pconfig['pool_address']))
 			$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
 
+	if ($pconfig['pool_enable_v6'])
+		if (!is_ipaddrv6($pconfig['pool_address_v6']))
+			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
+
 	if ($pconfig['dns_domain_enable'])
 		if (!is_domain($pconfig['dns_domain']))
 			$input_errors[] = gettext("A valid value for 'DNS Default Domain' must be specified.");
@@ -198,6 +209,11 @@ if ($_POST['submit']) {
 		if ($pconfig['pool_enable']) {
 			$client['pool_address'] = $pconfig['pool_address'];
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
+		}
+
+		if ($pconfig['pool_enable_v6']) {
+			$client['pool_address_v6'] = $pconfig['pool_address_v6'];
+			$client['pool_netbits_v6'] = $pconfig['pool_netbits_v6'];
 		}
 
 		if ($pconfig['net_list_enable'])
@@ -260,6 +276,16 @@ function pool_change() {
 	} else {
 		document.iform.pool_address.disabled = 1;
 		document.iform.pool_netbits.disabled = 1;
+	}
+}
+
+function pool_change_v6() {
+	if (document.iform.pool_enable_v6.checked) {
+		document.iform.pool_address_v6.disabled = 0;
+		document.iform.pool_netbits_v6.disabled = 0;
+	} else {
+		document.iform.pool_address_v6.disabled = 1;
+		document.iform.pool_netbits_v6.disabled = 1;
 	}
 }
 
@@ -393,7 +419,7 @@ function login_banner_change() {
 									$selected = "";
 									if (in_array($auth_server['name'], $authmodes))
 										$selected = "selected=\"selected\"";
-									echo "<option value=\"" . htmlspecialchars($auth_server['name']). "\" {$selected}>" . htmlspecialchars($auth_server['name']). "</option>\n";
+									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
 								}
 							?>
 							</select>
@@ -440,6 +466,38 @@ function login_banner_change() {
 										<select name="pool_netbits" class="formselect" id="pool_netbits">
 											<?php for ($i = 32; $i >= 0; $i--): ?>
 											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected=\"selected\""; ?>>
+												<?=$i;?>
+											</option>
+											<?php endfor; ?>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual IPv6 Address Pool"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable v6 pool">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['pool_enable_v6'],$chk); ?>
+										<input name="pool_enable_v6" type="checkbox" id="pool_enable_v6" value="yes" <?=$chk;?> onclick="pool_change_v6()" />
+									</td>
+									<td>
+										<?=gettext("Provide a virtual IPv6 address to clients"); ?><br />
+									</td>
+								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0" summary="virtual IPv6 address pool">
+								<tr>
+									<td>
+										<?=gettext("Network"); ?>:&nbsp;
+										<input name="pool_address_v6" type="text" class="formfld unknown" id="pool_address_v6" size="20" value="<?=htmlspecialchars($pconfig['pool_address_v6']);?>" />
+										/
+										<select name="pool_netbits_v6" class="formselect" id="pool_netbits_v6">
+											<?php for ($i = 128; $i >= 0; $i--): ?>
+											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits_v6']) echo "selected=\"selected\""; ?>>
 												<?=$i;?>
 											</option>
 											<?php endfor; ?>

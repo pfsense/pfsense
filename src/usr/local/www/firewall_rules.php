@@ -564,36 +564,24 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_address($filterent['source']))?>
-							<?php if (isset($alias['src'])): ?>
-								<i class='icon icon-pencil'></i></a>
-							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
-							<?php if (isset($alias['srcport'])): ?>
-								<i class='icon icon-pencil'></i></a>
-							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_address($filterent['destination']))?>
-							<?php if (isset($alias['dst'])): ?>
-								<i class='icon icon-pencil'></i></a>
-							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
-							<?php if (isset($alias['dstport'])): ?>
-								<i class='icon icon-pencil'></i></a>
-							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])):?>

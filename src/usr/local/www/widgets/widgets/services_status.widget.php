@@ -103,7 +103,7 @@ if (count($services) > 0) {
 			<td><i class="icon icon-<?=get_service_status($service)? 'ok' : 'remove'?>-sign"></i></td>
 			<td><?=$service['name']?></td>
 			<td><?=$service_desc[0]?></td>
-			<td><?=get_service_control_links($service)?></td>
+			<td><?=get_service_control_GET_links($service)?></td>
 		</tr>
 <?php
 	}

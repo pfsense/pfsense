@@ -50,27 +50,89 @@
 # Script is a simple wrapper around pfSense-upgrade. It is called from pkg_install.php to perform an
 # installation or remval.
 # FIFO is set up, log files named 
+
+message () {
+if ( $VERBOSE ) ; then
+	echo "$1"
+fi
+}
+
+usage () {
+	echo "pfSense-upgrade-GUI.sh [flags] [-i || -r] PACKAGE_NAME"
+	echo "Allows the web GUI to invoke the package installation script"
+	echo "  -f : Force (Ignore lockfile)"
+	echo "  -h : This help"
+	echo "  -r : Install package"
+	echo "  -i : Remove package"
+	echo "  -v : Verbose"
+}
+
 if [ $# -lt 2 ] ; then
 	echo "Usage: inst.sh [-i || -r] PACKAGE"
 	echo "e.g.: inst.sh -i pfSense-pkg-sudo"
 fi
 
-if [ "$1" == "-i" ] ; then
-	echo "Installing $2"
-elif [ "$1" == "-r" ] ; then
-	echo "Removing $2"
-else
-	echo "Error: Unsupported option $1"
-	exit
+VERBOSE=false
+FORCE=false
+
+while getopts fhirv opt; do
+	case ${opt} in
+		f)
+			FORCE=true
+			;;
+		h)
+			usage
+			exit 0
+			;;
+		i)
+			ACTION="-i"
+			;;
+		r)
+			ACTION="-r"
+			;;
+		v)
+			VERBOSE=true
+			;;
+		*)
+			echo "Error: Unsupported option $(opt)"
+			usage
+			exit 1
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+PKG=$1
+
+if [ $ACTION == "-i" ] ; then
+	message "Installing $PKG"
+elif [ $ACTION == "-r" ] ; then
+	message "Removing $PKG"
 fi
 
-PKG="$2"
-ACTION="$2"
+UPDATEINPROGRESS=2
+LOCKFILE=/tmp/pkg-upgate_GUI.lck
 LOGFILE="webgui-log.txt"
 FIFO=/tmp/upgr.fifo
 JSONFILE="/cf/conf/webgui-log.json"
 
-if [ -a $FIFO ] ; then
+if [ -e $LOCKFILE ] ; then
+	eval $(stat -s $LOCKFILE)
+	NOW=`date +%s`
+	let AGE="$NOW-$st_ctime" >/dev/null
+
+	if [ $AGE -lt 300 ] && ( ! $FORCE ) ; then
+		message "Update in progress!"
+		exit $UPDATEINPROGRESS
+	else
+		message "Removing stale lockfile $INPROGRESS"
+		rm -f $INPROGRESS
+	fi
+fi
+
+touch $LOCKFILE
+
+if [ -e $FIFO ] ; then
 	rm $FIFO 2>/dev/null
 fi
 
@@ -80,7 +142,12 @@ mkfifo $FIFO
 tail -f $FIFO >$JSONFILE &
 TAILPID=$!
 
+message "Calling pfSense-upgrade with -l $LOGFILE -p $FIFO $ACTION $PKG"
+
 /usr/local/sbin/pfSense-upgrade -l $LOGFILE -p $FIFO $ACTION $PKG >/dev/null
 
 kill $TAILPID
 rm $FIFO 2>/dev/null
+rm $LOCKFILE
+
+exit 0

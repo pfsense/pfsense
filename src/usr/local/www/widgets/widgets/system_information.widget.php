@@ -80,7 +80,7 @@ if ($_REQUEST['getupdatestatus']) {
 </div>
 <?php
 			} elseif ($version_compare == 1) {
-				echo "You are on a later version than the official release.";
+				echo "You are on a later version than<br />the official release.";
 			} else {
 				echo "You are on the latest version.";
 			}
@@ -97,7 +97,7 @@ $filesystems = get_mounted_filesystems();
 <table class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<th><?=gettext("Name");?></td>
+			<th><?=gettext("Name");?></th>
 			<td><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
 		</tr>
 		<tr>
@@ -119,7 +119,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if (!$g['hideplatform']): ?>
 		<tr>
-			<th><?=gettext("Platform");?></td>
+			<th><?=gettext("Platform");?></th>
 			<td>
 				<?=htmlspecialchars($g['platform']);?>
 				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
@@ -137,7 +137,7 @@ $filesystems = get_mounted_filesystems();
 			$rw = is_writable("/") ? "(rw)" : "(ro)";
 			?>
 		<tr>
-			<th><?=gettext("NanoBSD Boot Slice");?></td>
+			<th><?=gettext("NanoBSD Boot Slice");?></th>
 			<td>
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
@@ -148,7 +148,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("CPU Type");?></td>
+			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
@@ -161,20 +161,20 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($hwcrypto): ?>
 		<tr>
-			<th><?=gettext("Hardware crypto");?></td>
+			<th><?=gettext("Hardware crypto");?></th>
 			<td><?=htmlspecialchars($hwcrypto);?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("Uptime");?></td>
+			<th><?=gettext("Uptime");?></th>
 			<td id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
 		</tr>
 		<tr>
-			<th><?=gettext("Current date/time");?></td>
+			<th><?=gettext("Current date/time");?></th>
 			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
 		</tr>
 		<tr>
-			<th><?=gettext("DNS server(s)");?></td>
+			<th><?=gettext("DNS server(s)");?></th>
 			<td>
 				<ul>
 				<?php
@@ -188,26 +188,25 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if ($config['revision']): ?>
 		<tr>
-			<th><?=gettext("Last config change");?></td>
+			<th><?=gettext("Last config change");?></th>
 			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("State table size");?></td>
+			<th><?=gettext("State table size");?></th>
 			<td>
 				<?php	$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
 				<div class="progress">
-					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
-						<span><?=$pfstateusage?>% (<?= htmlspecialchars($pfstatetext)?>)</span>
+					<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
 				</div>
-				<a href="diag_dump_states.php"><?=gettext("Show states");?></a>
+				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span> (<?= htmlspecialchars($pfstatetext)?>)<span>. <a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("MBUF Usage");?></td>
+			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
 					$mbufstext = get_mbuf();
@@ -222,7 +221,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php if (get_temp() != ""): ?>
 		<tr>
-			<th><?=gettext("Temperature");?></td>
+			<th><?=gettext("Temperature");?></th>
 			<td>
 				<?php $TempMeter = $temp = get_temp(); ?>
 				<div id="tempPB"></div>
@@ -231,32 +230,33 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("Load average");?></td>
+			<th><?=gettext("Load average");?></th>
 			<td>
 			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("CPU usage");?></td>
+			<th><?=gettext("CPU usage");?></th>
 			<td>
 				<div id="cpuPB"></div>
 				<span id="cpumeter">(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
-			<th><?=gettext("Memory usage");?></td>
+			<th><?=gettext("Memory usage");?></th>
 			<td>
 				<?php $memUsage = mem_usage(); ?>
-				<div class="progress">
-					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
-						<span><?=$memUsage?>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
+
+					<div class="progress" >
+						<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+						</div>
 					</div>
-				</div>
+					<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
 			</td>
 		</tr>
 		<?php if ($showswap == true): ?>
 		<tr>
-			<th><?=gettext("SWAP usage");?></td>
+			<th><?=gettext("SWAP usage");?></th>
 			<td>
 				<?php $swapusage = swap_usage(); ?>
 				<div class="progress">
@@ -268,7 +268,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<th><?=gettext("Disk usage");?></td>
+			<th><?=gettext("Disk usage");?></th>
 			<td>
 				<table class="table">
 <?PHP foreach ($filesystems as $fs): ?>
@@ -292,6 +292,7 @@ $filesystems = get_mounted_filesystems();
 </table>
 
 <script>
+
 function systemStatusGetUpdateStatus() {
 	$.ajax({
 		type: 'get',
@@ -308,7 +309,210 @@ function systemStatusGetUpdateStatus() {
 	});
 }
 
-events.push(function(){
+function updateMeters() {
+	url = '/getstats.php';
+
+	jQuery.ajax(url, {
+		type: 'get',
+		success: function(data) {
+			response = data || "";
+			if (response != "")
+				stats(data);
+		}
+	});
+        setTimer();
+}
+
+events.push(function(){ 
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
+
+/*   Most widgets update their backend data every 10 seconds.  11 seconds
+ *   will ensure that we update the GUI right after the stats are updated.
+ *   Seconds * 1000 = value
+ */
+
+var Seconds = 11;
+var update_interval = (Math.abs(Math.ceil(Seconds))-1)*1000 + 990;
+
+function setProgress(barName, percent) {
+	jQuery('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
+}
+
+function setTimer() {
+         timeout = window.setTimeout('updateMeters()', update_interval); 
+}
+
+function stats(x) {
+	var values = x.split("|");
+	if (jQuery.each(values,function(key,value){
+		if (value == 'undefined' || value == null)
+			return true;
+		else
+			return false;
+	}))
+
+        updateUptime(values[2]);
+        updateDateTime(values[5]);
+        updateCPU(values[0]);
+        updateMemory(values[1]);
+        updateState(values[3]);
+        updateTemp(values[4]);
+        updateInterfaceStats(values[6]);
+        updateInterfaces(values[7]);
+        updateGatewayStats(values[8]);
+        updateCpuFreq(values[9]);
+        updateLoadAverage(values[10]);
+        updateMbuf(values[11]);
+        updateMbufMeter(values[12]);
+        updateStateMeter(values[13]);
+}
+
+function updateMemory(x) {
+	if(jQuery('#memusagemeter'))
+		jQuery("#memusagemeter").html(x);
+	if(jQuery('#memUsagePB')) {
+		setProgress('memUsagePB', parseInt(x));
+	}
+}
+
+function updateMbuf(x) {
+	if(jQuery('#mbuf'))
+		jQuery("#mbuf").html(x);
+}
+
+function updateMbufMeter(x) {
+	if(jQuery('#mbufusagemeter'))
+		jQuery("#mbufusagemeter").html(x + '%');
+	if(jQuery('#mbufPB'))
+		jQuery('#mbufPB').progressbar( { value: parseInt(x) } );
+}
+
+function updateCPU(x) {
+	if(jQuery('#cpumeter'))
+		jQuery("#cpumeter").html(x + '%');
+	if(jQuery('#cpuPB'))
+		jQuery('#cpuPB').progressbar( { value: parseInt(x) } );
+	/* Load CPU Graph widget if enabled */
+	if(widgetActive('cpu_graphs')) {
+		GraphValue(graph[0], x);
+	}
+}
+
+function updateTemp(x) {
+	if(jQuery("#tempmeter"))
+		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
+        if(jQuery('#tempPB'))
+		jQuery("#tempPB").progressbar( { value: parseInt(x) } );
+}
+
+function updateDateTime(x) {
+	if(jQuery('#datetime'))
+		jQuery("#datetime").html(x);
+}
+
+function updateUptime(x) {
+	if(jQuery('#uptime'))
+		jQuery("#uptime").html(x);
+}
+
+function updateState(x) {
+	if(jQuery('#pfstate'))
+		jQuery("#pfstate").html(x);
+}
+
+function updateStateMeter(x) {
+	if(jQuery('#pfstateusagemeter'))
+		jQuery("#pfstateusagemeter").html(x + '%');
+	if(jQuery('#statePB'))
+		setProgress('statePB', parseInt(x));
+}
+
+function updateGatewayStats(x){
+	if (widgetActive("gateways")){
+		gateways_split = x.split(",");
+		for (var y=0; y<gateways_split.length; y++){
+			gateways_field_split = gateways_split[y].split("^");
+			if(jQuery('#gateway' + (y + 1))) {
+				jQuery('#gateway' + (y + 1)).html(gateways_field_split[0]);
+				if(gateways_field_split[1]) {
+					jQuery('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
+				}
+			}
+		}
+	}
+}
+
+function updateCpuFreq(x) {
+	if(jQuery('#cpufreq'))
+		jQuery("#cpufreq").html(x);
+}
+
+function updateLoadAverage(x) {
+	if(jQuery('#load_average'))
+		jQuery("#load_average").html(x);
+}
+
+function updateInterfaceStats(x){
+	if (widgetActive("interface_statistics")){
+		statistics_split = x.split(",");
+		var counter = 1;
+		for (var y=0; y<statistics_split.length-1; y++){
+			if(jQuery('#stat' + counter)) {
+				jQuery('#stat' + counter).html(statistics_split[y]);
+				counter++;	
+			}
+		}
+	}
+}
+
+function updateInterfaces(x){
+	if (widgetActive("interfaces")){
+		interfaces_split = x.split("~");
+		interfaces_split.each(function(iface){
+			details = iface.split("^");
+			if (details[2] == '')
+				ipv4_details = '';
+			else
+				ipv4_details = details[2] + '<br />';
+			switch(details[1]) {
+				case "up":
+					jQuery('#' + details[0] + '-up').css("display","inline");
+					jQuery('#' + details[0] + '-down').css("display","none");
+					jQuery('#' + details[0] + '-block').css("display","none");
+					jQuery('#' + details[0] + '-ip').html(ipv4_details);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
+					break;
+				case "down":
+					jQuery('#' + details[0] + '-down').css("display","inline");
+					jQuery('#' + details[0] + '-up').css("display","none");
+					jQuery('#' + details[0] + '-block').css("display","none");
+					jQuery('#' + details[0] + '-ip').html(ipv4_details);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
+					break;
+				case "block":
+					jQuery('#' + details[0] + '-block').css("display","inline");
+					jQuery('#' + details[0] + '-down').css("display","none");
+					jQuery('#' + details[0] + '-up').css("display","none");
+					break;
+			}
+		});
+	}
+}
+
+function widgetActive(x) {
+	var widget = jQuery('#' + x + '-container');
+	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none"))
+		return true;
+	else
+		return false;
+}
+
+/* start updater */
+events.push(function(){
+	setTimer();
+});
+
 </script>

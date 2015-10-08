@@ -111,22 +111,27 @@ elif [ $ACTION == "-r" ] ; then
 fi
 
 UPDATEINPROGRESS=2
-LOCKFILE=/tmp/pkg-upgate_GUI.lck
+LOCKFILE=/tmp/pkg-upgate-GUI.lck
 LOGFILE="webgui-log.txt"
 FIFO=/tmp/upgr.fifo
 JSONFILE="/cf/conf/webgui-log.json"
 
 if [ -e $LOCKFILE ] ; then
-	eval $(stat -s $LOCKFILE)
-	NOW=`date +%s`
-	let AGE="$NOW-$st_ctime" >/dev/null
-
-	if [ $AGE -lt 300 ] && ( ! $FORCE ) ; then
-		message "Update in progress!"
-		exit $UPDATEINPROGRESS
+	if ( $FORCE ) ; then
+		message "Removing lockfile $LOCKFILE"
+		rm -f $LOCKFILE
 	else
-		message "Removing stale lockfile $INPROGRESS"
-		rm -f $INPROGRESS
+		eval $(stat -s $LOCKFILE)
+		NOW=`date +%s`
+		let AGE="$NOW-$st_ctime" >/dev/null
+	
+		if [ $AGE -lt 300 ] ; then
+			message "Update in progress!"
+			exit $UPDATEINPROGRESS
+		else	
+			message "Removing stale lockfile $LOCKFILE"	
+			rm -f $LOCKFILE
+		fi
 	fi
 fi
 

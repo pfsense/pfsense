@@ -409,13 +409,13 @@ function updateMbuf(x) {
 
 function updateMbufMeter(x) {
 	if(jQuery('#mbufusagemeter'))
-		jQuery("#mbufusagemeter").html(x);
+		jQuery("#mbufusagemeter").html(x + '%');
 	if(jQuery('#mbufPB'))
 		setProgress('mbufPB', parseInt(x));
 }
 
 function updateCPU(x) {
-	x = 33;
+
 	if(jQuery('#cpumeter'))
 		jQuery("#cpumeter").html(x + '%');
 	if(jQuery('#cpuPB'))

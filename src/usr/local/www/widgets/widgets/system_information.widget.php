@@ -202,7 +202,7 @@ $filesystems = get_mounted_filesystems();
 					<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
 				</div>
-				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span> (<?= htmlspecialchars($pfstatetext)?>)<span>. <a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
+				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
 		<tr>
@@ -418,7 +418,7 @@ function updateUptime(x) {
 
 function updateState(x) {
 	if(jQuery('#pfstate'))
-		jQuery("#pfstate").html(x);
+		jQuery("#pfstate").html('(' + x + ')');
 }
 
 function updateStateMeter(x) {

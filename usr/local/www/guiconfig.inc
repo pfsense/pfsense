@@ -1065,7 +1065,7 @@ function add_package_tabs($tabgroup, & $tab_array) {
 function alias_info_popup($alias_id){
 	global $config;
 	$maxlength = 60;
-	$close_title="title='".gettext('move mouse out this alias to hide')."'";
+	$close_title="title='".gettext('move mouse out of this alias to hide')."'";
 	if (is_array($config['aliases']['alias'][$alias_id])){
 		$alias_name=$config['aliases']['alias'][$alias_id];
 		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";

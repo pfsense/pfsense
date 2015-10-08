@@ -51,6 +51,7 @@ usage() {
 	echo "	-b          - Platform is booting" >&2
 	echo "	-d          - Turn on debug" >&2
 	echo "	-h          - Show this usage help" >&2
+	echo "	-l          - Logfile name in /cf/conf/ (defaults to upgrade_log.txt)" >&2
 	echo "	-p FIFO     - Write pkg progress to FIFO"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
@@ -546,7 +547,7 @@ unset yes
 unset progress_fifo
 unset action
 unset action_pkg
-while getopts b:di:hp:r:uy opt; do
+while getopts b:di:hp:l:r:uy opt; do
 	case ${opt} in
 		b)
 			booting=1
@@ -566,6 +567,9 @@ while getopts b:di:hp:r:uy opt; do
 		h)
 			usage
 			_exit 0
+			;;
+		l)
+			logfile="/cf/conf/${OPTARG}"
 			;;
 		p)
 			progress_fifo="${OPTARG}"

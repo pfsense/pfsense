@@ -287,9 +287,9 @@ $filesystems = get_mounted_filesystems();
 				<?php $swapusage = swap_usage(); ?>
 				<div class="progress">
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
-						<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
 					</div>
 				</div>
+			<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -303,11 +303,14 @@ $filesystems = get_mounted_filesystems();
 					<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
 					<td><?=$fs['total_size']?></td>
 					<td>
+						<span><?=$fs['percent_used']?>%</span>
+<!--
 						<div class="progress">
 							<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
 								<span><?=$fs['percent_used']?>%</span>
 							</div>
 						</div>
+-->
 					</td>
 				</tr>
 <?PHP endforeach; ?>

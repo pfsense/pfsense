@@ -184,17 +184,19 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			</td>
 
 <?php
-/*	// We no longer have a package revision history URL
 	 if (!$g['disablepackagehistory']):?>
 			<td>
-				<!-- XXX: $changeloglink is undefined -->
+<!-- We no longer have a package revision history URL
+	$changeloglink is undefined
 				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
-					<?=htmlspecialchars($index['version'])?>
+-->
+				<?=htmlspecialchars($index['version'])?>
+<!--
 				</a>
+-->
 			</td>
 <?php 
 endif;
-*/
 ?>
 			<td>
 				<?=$index['desc']?>

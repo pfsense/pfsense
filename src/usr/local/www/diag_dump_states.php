@@ -209,8 +209,8 @@ print $form;
 			<td><?= $state ?></td>
 
 			<td>
-				<a class="btn btn-xs btn-danger" data-entry="<?=$srcip?>|<?=$dstip?>"
-					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>">Remove</a>
+				<a class="btn icon icon-remove" data-entry="<?=$srcip?>|<?=$dstip?>"
+					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
 			</td>
 		</tr>
 <?php $row++; } ?>

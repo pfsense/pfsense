@@ -175,9 +175,11 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 		}
 
 		// Check to see if it is already installed
-		foreach($config['installedpackages']['package'] as $installedpkg) {
-			if($installedpkg['name'] == $shortname) {
-				continue(2);
+		if(isset($config['installedpackages']['package'])) {
+			foreach($config['installedpackages']['package'] as $installedpkg) {
+				if($installedpkg['name'] == $shortname) {
+					continue(2);
+				}
 			}
 		}
 

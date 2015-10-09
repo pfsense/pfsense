@@ -20,8 +20,10 @@ $thermal_sensors_widget_title = "Thermal Sensors";
 function getThermalSensorsData() {
 
 	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
-	$thermalSensorsData = join("|", $dfout);
-	return $thermalSensorsData;
+	$dfout_filtered = array_filter($dfout, function($v) {
+		return strpos($negsign, ' -') === false;
+	});
+	return join("|", $dfout_filtered);
 
 }
 ?>

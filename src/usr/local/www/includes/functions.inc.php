@@ -233,8 +233,14 @@ function get_temp() {
 		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
 	}
 
-	// Remove 'C' from the end
-	return rtrim($temp_out, 'C');
+	// Remove 'C' from the end and spaces
+	$temp_out = trim(rtrim($temp_out, 'C'));
+
+	if ($temp_out[0] == '-') {
+		return '';
+	}
+
+	return $temp_out;
 }
 
 /* Get mounted filesystems and usage. Do not display entries for virtual filesystems (e.g. devfs, nullfs, unionfs) */

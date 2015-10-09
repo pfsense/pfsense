@@ -160,7 +160,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 
 	// Sort case insensitve (so we get AbCdEf not ACEcdf)
 	usort($pkg_info, 'compareName');
-	
+
 	foreach($pkg_info as $index):
 
 		if(get_package_id($index['name']) >= 0 ) {
@@ -173,6 +173,17 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
 		}
+
+		// Get the package basename (because e.g.: sudo is known as pfSense-pkg-sudo)
+		$basename = str_replace("pfSense-pkg-", "", $index['name']);
+
+		// Check to see if it is already installed
+		foreach($config['installedpackages']['package'] as $installedpkg) {
+			if($installedpkg['name'] == $basename) {
+				continue(2);
+			}
+		}
+
 ?>
 		<tr>
 			<td>
@@ -195,7 +206,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 				</a>
 -->
 			</td>
-<?php 
+<?php
 endif;
 ?>
 			<td>

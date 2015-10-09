@@ -174,12 +174,9 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			continue;
 		}
 
-		// Get the package basename (because e.g.: sudo is known as pfSense-pkg-sudo)
-		$basename = str_replace("pfSense-pkg-", "", $index['name']);
-
 		// Check to see if it is already installed
 		foreach($config['installedpackages']['package'] as $installedpkg) {
-			if($installedpkg['name'] == $basename) {
+			if($installedpkg['name'] == $shortname) {
 				continue(2);
 			}
 		}

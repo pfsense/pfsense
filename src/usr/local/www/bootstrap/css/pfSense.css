@@ -282,7 +282,7 @@ form .btn + .btn {
     width: 1px;
 }
 
-/** Override hte bootstrap progress bar margins */
+/** Override the bootstrap progress bar margins */
 .progress {
 	margin-bottom: 0px;
 }

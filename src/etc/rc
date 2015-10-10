@@ -341,11 +341,8 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
-# Finish update
-if [ -f /cf/conf/upgrade_in_progress ]; then
-	echo "Running second stage of upgrade process..."
-	/usr/local/sbin/${product}-upgrade -y
-fi
+# Second upgrade stage
+/usr/local/sbin/${product}-upgrade -y -b 2
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
@@ -420,6 +417,8 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	# Setup monitoring/notifications
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
+
+/usr/local/sbin/${product}-upgrade -y -b 3
 
 # Log product version to syslog
 BUILDTIME=`cat /etc/version.buildtime`

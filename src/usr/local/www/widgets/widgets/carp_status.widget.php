@@ -40,6 +40,7 @@ require_once("/usr/local/www/widgets/include/carp_status.inc");
 $carp_enabled = get_carp_status();
 
 ?>
+<div class="content">
 <table>
 <?php
 	if (is_array($config['virtualip']['vip'])) {
@@ -84,3 +85,4 @@ $carp_enabled = get_carp_status();
 		<tr><td>No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
 <?php	} ?>
 </table>
+</div>

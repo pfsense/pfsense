@@ -127,6 +127,12 @@ tr.disabled th {
 	padding: 0 12px;
 }
 
+.panel-default>.panel-heading {
+	color: #fff;
+	background-color: #424242;
+	letter-spacing: 1px;
+}
+
 .panel {
 	margin-bottom: 10px;
 }
@@ -274,4 +280,9 @@ form .btn + .btn {
     padding: 0;
     position: absolute;
     width: 1px;
+}
+
+/** Override the bootstrap progress bar margins */
+.progress {
+	margin-bottom: 0px;
 }

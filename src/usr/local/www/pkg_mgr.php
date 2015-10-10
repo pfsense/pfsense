@@ -160,7 +160,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 
 	// Sort case insensitve (so we get AbCdEf not ACEcdf)
 	usort($pkg_info, 'compareName');
-	
+
 	foreach($pkg_info as $index):
 
 		if(get_package_id($index['name']) >= 0 ) {
@@ -173,6 +173,16 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
 		}
+
+		// Check to see if it is already installed
+		if(isset($config['installedpackages']['package'])) {
+			foreach($config['installedpackages']['package'] as $installedpkg) {
+				if($installedpkg['name'] == $shortname) {
+					continue(2);
+				}
+			}
+		}
+
 ?>
 		<tr>
 			<td>
@@ -184,17 +194,19 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			</td>
 
 <?php
-/*	// We no longer have a package revision history URL
 	 if (!$g['disablepackagehistory']):?>
 			<td>
-				<!-- XXX: $changeloglink is undefined -->
+<!-- We no longer have a package revision history URL
+	$changeloglink is undefined
 				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
-					<?=htmlspecialchars($index['version'])?>
+-->
+				<?=htmlspecialchars($index['version'])?>
+<!--
 				</a>
+-->
 			</td>
-<?php 
+<?php
 endif;
-*/
 ?>
 			<td>
 				<?=$index['desc']?>

@@ -46,8 +46,10 @@ if(is_array($config['installedpackages']['package'])) {
 	foreach ($config['installedpackages']['package'] as $instpkg)
 		$instpkgs[ $instpkg['name'] ] = $instpkg;
 	ksort($instpkgs);
+
 	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
 }
+
 ?>
 
 <?php if (empty($config['installedpackages']['package'])): ?>
@@ -66,6 +68,8 @@ if(is_array($config['installedpackages']['package'])) {
 	</thead>
 	<tbody>
 <?php
+
+
 foreach ($instpkgs as $pkgname => $pkg):
 	if (empty($pkgname))
 		continue;

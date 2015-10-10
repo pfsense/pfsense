@@ -485,6 +485,7 @@ function build_options() {
 
 	return($optionslist);
 }
+
 include("head.inc");
 
 display_top_tabs(make_tabs());
@@ -494,12 +495,7 @@ if ($input_errors && count($input_errors))
 
 require_once('classes/Form.class.php');
 
-$form = new Form(new Form_Button(
-	'submit',
-	'Go!'
-	));
-
-$form->addClass('auto-submit');
+$form = new Form(false);
 
 $section = new Form_Section('Graph settings');
 
@@ -532,7 +528,6 @@ if($curcat == 'custom')
 $section->add($group);
 
 if($curcat == 'custom') {
-
 	$section->addInput(new Form_Input(
 		'cat',
 		null,
@@ -660,6 +655,7 @@ if($curcat == 'custom') {
 }
 
 ?>
+
 <script type="text/javascript">
 //<![CDATA[
 	function update_graph_images() {
@@ -737,11 +733,13 @@ if($curcat == 'custom') {
 </script>
 
 <script>
+//<![CDATA[
 events.push(function(){
-	$('.auto-submit').on('change', function(){
-		$(this).submit();
+	$('#option, #style, #period').on('change', function(){
+		$(this).parents('form').submit();
 	});
 });
+//]]>
 </script>
 
 <?php include("foot.inc");

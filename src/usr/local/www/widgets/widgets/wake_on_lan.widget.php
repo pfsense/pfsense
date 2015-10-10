@@ -39,6 +39,7 @@ if (is_array($config['wol']['wolentry'])) {
 }
 
 ?>
+<div class="content">
 <table>
 	<tr>
 		<?php
@@ -56,20 +57,20 @@ if (count($wolcomputers) > 0) {
 		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-		if($is_active == 1) {
+		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
+		if ($status == 'expires') {
 			echo '<td class="listr" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\" alt=\"pass\" /> " . gettext("Online") . "</td>\n";
+		} else if ($status == 'permanent') {
+			echo '<td class="listr" align="center">' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass_d.gif\" alt=\"pass\" /> " . gettext("Static ARP") . "</td>\n";
 		} else {
 			echo '<td class="listbg" align="center">' . "\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\" alt=\"block\" />&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";
 		}
 		echo '<td valign="middle" class="list nowrap">';
-		/*if($is_active) { */
-			/* Will always show wake-up button even if pfsense thinks it is awake */
-		/* } else { */
-			echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";
-			echo "<img title='" . gettext("Wake Up") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_wol_all.gif' alt='wol' /></a>\n";
-		/* } */
+		echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";
+		echo "<img title='" . gettext("Wake Up") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_wol_all.gif' alt='wol' /></a>\n";
 		echo "</td></tr>\n";
 	}
 } else {
@@ -78,3 +79,4 @@ if (count($wolcomputers) > 0) {
 ?>
 </table>
 <center><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></center>
+</div>

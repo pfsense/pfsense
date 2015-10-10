@@ -645,20 +645,18 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	if (!$pconfig['shared_key']) {
-		$section->addInput(new Form_checkbox(
-			'autokey_enable',
-			'Auto generate',
-			'Automatically generate a shared key',
-			$pconfig['autokey_enable']
-		));
+	$section->addInput(new Form_checkbox(
+		'autokey_enable',
+		'Auto generate',
+		'Automatically generate a shared key',
+		$pconfig['autokey_enable'] && empty($pconfig['shared_key'])
+	));
 
-		$section->addInput(new Form_TextArea(
-			'shared_key',
-			'Shared Key',
-			$pconfig['shared_key']
-		))->setHelp('Paste your shared key here');
-	}
+	$section->addInput(new Form_TextArea(
+		'shared_key',
+		'Shared Key',
+		$pconfig['shared_key']
+	))->setHelp('Paste your shared key here');
 
 	$section->addInput(new Form_Select(
 		'certref',
@@ -917,7 +915,7 @@ events.push(function(){
 
 	// Process "Enable authentication of TLS packets" checkbox
 	function tlsauth_change() {
-		hideCheckbox('autotls_enable', !$('#tlsauth_enable').prop('checked')  && ($('#mode').val() != 'p2p_shared_key'));
+		hideCheckbox('autotls_enable', !($('#tlsauth_enable').prop('checked'))  || ($('#mode').val() == 'p2p_shared_key'));
 		autotls_change();
 	}
 

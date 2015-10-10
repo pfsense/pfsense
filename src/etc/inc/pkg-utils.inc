@@ -6,37 +6,63 @@
 		This file contains various functions used by the pfSense package system.
 	HISTORY
 		$Id$
-
-	Copyright (C) 2010 Ermal Luçi
-	Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
-	All rights reserved.
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-
+*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Copyright (c)  2005-2006 Colin Smith (ethethlay@gmail.com)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
  */
-
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/cd	/usr/bin/tar	/usr/sbin/fifolog_create	/bin/chmod
+	pfSense_BUILDER_BINARIES:	/usr/bin/cd /usr/bin/tar	/usr/sbin/fifolog_create	/bin/chmod
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pkg_add	/usr/sbin/pkg_info	/usr/sbin/pkg_delete	/bin/rm
-	pfSense_MODULE:	pkg
+	pfSense_MODULE: pkg
 */
 
 require_once("globals.inc");
@@ -111,7 +137,7 @@ function pkg_call($params, $mute = false) {
 
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
-		2 => array("pipe", "w")  /* stderr */
+		2 => array("pipe", "w")	 /* stderr */
 	);
 
 	pkg_debug("pkg_call(): {$params}\n");
@@ -127,6 +153,8 @@ function pkg_call($params, $mute = false) {
 	/* XXX: should be a tunnable? */
 	$timeout = 300; // seconds
 	$error_log = '';
+	$started = time();
+	$maxwaittime = 10; // Number of seconds to wait for a response fromteh pacakge we are calling
 
 	do {
 		$write = array();
@@ -151,13 +179,26 @@ function pkg_call($params, $mute = false) {
 				}
 			}
 		}
+
 		$status = proc_get_status($process);
+
+		$now = time();
+
+		if(($now - $started) >= $maxwaittime) {
+			$rc = -1;
+			proc_terminate($process);
+			break;
+		}
+
 	} while ($status['running']);
+
 	fclose($pipes[1]);
 	fclose($pipes[2]);
 	proc_close($process);
 
-	$rc = $status['exitcode'];
+	if(!isset($rc)) {
+		$rc = $status['exitcode'];
+	}
 
 	pkg_debug("pkg_call(): rc = {$rc}\n");
 	if ($rc == 0) {
@@ -169,6 +210,7 @@ function pkg_call($params, $mute = false) {
 		$static_output .= "\n\n" . sprintf(gettext("ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"), $rc, $params) . "\n" . $error_log;
 		update_output_window($static_output);
 	}
+
 	return false;
 }
 
@@ -201,7 +243,7 @@ function pkg_exec($params, &$stdout, &$stderr) {
 
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
-		2 => array("pipe", "w")  /* stderr */
+		2 => array("pipe", "w")	 /* stderr */
 	);
 
 	pkg_debug("pkg_exec(): {$params}\n");
@@ -281,7 +323,7 @@ function get_package_id($package_name) {
 
 	foreach ($config['installedpackages']['package'] as $idx => $pkg) {
 		if ($pkg['name'] == $package_name ||
-		    get_package_internal_name($pkg) == $package_name) {
+			get_package_internal_name($pkg) == $package_name) {
 			return $idx;
 		}
 	}
@@ -304,7 +346,7 @@ function get_package_internal_name($package_data) {
 	}
 }
 
-/* Get information about packages */
+// Get information about packages.
 function get_pkg_info($pkgs = 'all', $info = 'all') {
 	global $g, $static_output, $input_errors;
 
@@ -315,15 +357,18 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
 
+
 	/* Make sure repo metadata is up2date */
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
 	update_status($static_output);
+
 	if (!pkg_call("update")) {
 		$input_errors[] = gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		$static_output .= "\n" . gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		update_status($static_output);
 		return array();
 	}
+
 
 	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
 
@@ -435,7 +480,7 @@ function sync_package($package_name) {
 	}
 
 	if (!is_array($config['installedpackages']['package'][$pkg_id])) {
-		return;  // No package belongs to the pkg_id passed to this function.
+		return;	 // No package belongs to the pkg_id passed to this function.
 	}
 
 	$package =& $config['installedpackages']['package'][$pkg_id];
@@ -595,9 +640,9 @@ function install_package_xml($package_name) {
 		update_output_window($static_output);
 		/* modify system files */
 
-		/*   if a require exists, include it.  this will
-		 *   show us where an error exists in a package
-		 *   instead of making us blindly guess
+		/* if a require exists, include it.  this will
+		 * show us where an error exists in a package
+		 * instead of making us blindly guess
 		 */
 		$missing_include = false;
 		if ($pkg_config['include_file'] <> "") {
@@ -813,12 +858,12 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		}
 		/*
 		 * XXX: Otherwise inclusion of config.inc again invalidates actions taken.
-		 * 	Same is done during installation.
+		 *	Same is done during installation.
 		 */
 		write_config("Intermediate config write during package removal for {$package_name}.");
 
 		/*
-		 * If a require exists, include it.  this will
+		 * If a require exists, include it.	 this will
 		 * show us where an error exists in a package
 		 * instead of making us blindly guess
 		 */

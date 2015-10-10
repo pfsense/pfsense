@@ -549,13 +549,13 @@ create_nanobsd_diskimage () {
 		[ -f "${LOADERCONF}" ] \
 			&& sed -i "" -Ee "/(console|boot_multicons|boot_serial|hint.uart)/d" ${LOADERCONF}
 		# Activate serial console+video console in loader.conf
-		echo 'autoboot_delay="5"' >> ${LOADERCONF}
 		echo 'loader_color="NO"' >> ${LOADERCONF}
 		echo 'beastie_disable="YES"' >> ${LOADERCONF}
 		echo 'boot_serial="YES"' >> ${LOADERCONF}
 		echo 'console="comconsole"' >> ${LOADERCONF}
 		echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	fi
+	echo 'autoboot_delay="5"' >> ${LOADERCONF}
 
 	for _NANO_MEDIASIZE in ${2}; do
 		if [ -z "${_NANO_MEDIASIZE}" ]; then

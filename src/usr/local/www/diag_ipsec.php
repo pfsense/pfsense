@@ -491,7 +491,7 @@ foreach ($a_phase1 as $ph1ent):
 <?php
 	endif;
 ?>
-					<td>>
+					<td>
 					</td>
 				</tr>
 <?php

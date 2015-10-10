@@ -1735,11 +1735,24 @@ function build_mediaopts_list() {
 }
 
 function build_gateway_list() {
-	global $a_gateways;
+	global $a_gateways, $if;
 
 	$list = array("none" => "None");
 	foreach ($a_gateways as $gateway) {
 		if (($gateway['interface'] == $if) && (is_ipaddrv4($gateway['gateway']))) {
+			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
+		}
+	}
+
+	return($list);
+}
+
+function build_gatewayv6_list() {
+	global $a_gateways, $if;
+
+	$list = array("none" => "None");
+	foreach ($a_gateways as $gateway) {
+		if (($gateway['interface'] == $if) && (is_ipaddrv6($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
 	}
@@ -1943,9 +1956,9 @@ $group = new Form_Group('IPv6 Upstream gateway');
 
 $group->add(new Form_Select(
 	'gatewayv6',
-	'IPv4 Upstream Gateway',
-	$pconfig['gateway'],
-	build_gateway_list()
+	'IPv6 Upstream Gateway',
+	$pconfig['gatewayv6'],
+	build_gatewayv6_list()
 ));
 
 $group->add(new Form_Button(
@@ -1973,12 +1986,12 @@ $modal->addInput(new Form_Input(
 	'name6',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GW"
+	$wancfg['descr'] . "GWv6"
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
-	'Gateway IPv4',
+	'Gateway IPv6',
 	null
 ));
 
@@ -2490,6 +2503,8 @@ $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
 
 function build_ipv6interface_list() {
+	global $config, $section;
+
 	$list = array('' => '');
 
 	$interfaces = get_configured_interface_with_descr(false, true);
@@ -3480,11 +3495,11 @@ events.push(function(){
 	function hide_add_gatewaysave_v6() {
 
 		var iface = $('#if').val();
-		name = $('#namev6').val();
-		var descr = $('#gatewaydescrv6').val();
-		gatewayip = $('#gatewayipv6').val();
+		name = $('#name6').val();
+		var descr = $('#gatewaydescr6').val();
+		gatewayip = $('#gatewayip6').val();
 		var defaultgw = '';
-		if ($('#defaultgwv6').is(':checked')) {
+		if ($('#defaultgw6').is(':checked')) {
 			defaultgw = '&defaultgw=on';
 		}
 		var url_v6 = "system_gateways_edit.php";
@@ -3673,7 +3688,7 @@ events.push(function(){
 	setDHCPoptions()
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
    $('#type').on('change', function() {
 		updateType( this.value );
 	});

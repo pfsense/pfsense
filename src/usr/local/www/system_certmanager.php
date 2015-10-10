@@ -899,7 +899,7 @@ $section->addInput(new Form_Input(
 	'Common Name',
 	'text',
 	$pconfig['dn_commonname'],
-	['placeholder' => 'e.g. internal-ca']
+	['placeholder' => 'e.g. www.example.com']
 ));
 
 if (empty($pconfig['altnames']['item']))

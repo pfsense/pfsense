@@ -289,9 +289,15 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 ?>
 
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Available Widgets"); ?></h2></div>
-	<div class="panel-body">
+<div class="panel panel-default" id="widget-available">
+	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
+		<span class="icons">
+			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
+				<i class="icon-white icon-plus-sign"></i>
+			</a>
+		</span>
+	</div>
+	<div class="panel-body collapse out">
 		<div class="content">
 			<div class="row">
 <?php
@@ -363,14 +369,14 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?=$widgetconfig['name']?>
 				<span class="icons">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="icon icon-wrench"></i>
+						<i class="icon-white icon-wrench"></i>
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon icon-plus-sign"></i>
+						<i class="icon-white icon-plus-sign"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="icon icon-remove-sign"></i>
+						<i class="icon-white icon-remove-sign"></i>
 					</a>
 				</span>
 			</div>
@@ -413,22 +419,28 @@ events.push(function() {
 
 	// Initial state & toggle icons of collapsed panel
 	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body'), isOpen = body.hasClass('in');
-		$(el).toggleClass('icon-plus-sign', !isOpen);
-		$(el).toggleClass('icon-minus-sign', isOpen);
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
+		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
 
 		body.on('shown.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', true);
-			$(el).toggleClass('icon-plus-sign', false);
+			$(el).children('i').toggleClass('icon-minus-sign', true);
+			$(el).children('i').toggleClass('icon-plus-sign', false);
 
-			updateWidgets();
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
 		});
 
 		body.on('hidden.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', false);
-			$(el).toggleClass('icon-plus-sign', true);
+			$(el).children('i').toggleClass('icon-minus-sign', false);
+			$(el).children('i').toggleClass('icon-plus-sign', true);
 
-			updateWidgets();
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
 		});
 	});
 
@@ -450,7 +462,7 @@ events.push(function() {
 
 	// On clicking a widget to install . .
 	$('[name^=btnadd-]').click(function(event) {
-		// Extract hte widget name from the button name that got us here
+		// Extract the widget name from the button name that got us here
 		var widgetToAdd = this.name.replace('btnadd-', '');
 
 		// Set its display type to 'close'
@@ -459,7 +471,7 @@ events.push(function() {
 		// Add it to the list of displayed widgets
 		updateWidgets(widgetToAdd);
 
-		// We don't want to see hte "Store" button because we are doing that automatically
+		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();
 
 		// Submit the form save/display all selected widgets

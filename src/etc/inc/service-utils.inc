@@ -483,6 +483,59 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	return $output;
 }
 
+
+// This version proved GET formatted links
+function get_service_control_GET_links($service, $addname = false) {
+	global $g;
+	$output = "";
+	$stitle = ($addname) ? $service['name'] . " " : "";
+
+	switch ($service['name']) {
+		case "openvpn":
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'] . '&amp;vpnmode=' . $service['mode'] . '&amp;id=' . $service['vpnid'] . '">';
+		break;
+		case "captiveportal":
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service=' . $service['name'] . '&amp;zone=' . $service['zone'] . '">';
+		break;
+		default:
+			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service=' . $service['name'] . '">';
+	}
+
+	if (get_service_status($service)) {
+		switch ($service['name']) {
+			case "openvpn":
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				break;
+			case "captiveportal":
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				break;
+			default:
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
+		}
+		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+		switch ($service['name']) {
+			case "openvpn":
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				break;
+			case "captiveportal":
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				break;
+			default:
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
+		}
+		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+	} else {
+		$service_enabled = is_service_enabled($service['name']);
+
+		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
+			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
+			$output .= '<i class="icon icon-play-circle"></i></a> ';
+		}
+	}
+
+	return $output;
+}
+
 function get_service_control_links($service, $addname = false) {
 	global $g;
 	$output = "";

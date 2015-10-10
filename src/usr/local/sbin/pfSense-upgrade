@@ -47,9 +47,11 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 usage() {
-	echo "Usage: $(basename ${0}) [-dy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "Usage: $(basename ${0}) [-bdy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "	-b          - Platform is booting" >&2
 	echo "	-d          - Turn on debug" >&2
 	echo "	-h          - Show this usage help" >&2
+	echo "	-l          - Logfile name in /cf/conf/ (defaults to upgrade_log.txt)" >&2
 	echo "	-p FIFO     - Write pkg progress to FIFO"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
@@ -104,23 +106,26 @@ _exec() {
 	else
 		[ -n "${_stdout}" ] \
 			&& _echo "failed."
-		return 1
+		exit 1
 	fi
 }
 
 _exit() {
 	trap "-" 1 2 15 EXIT
 
-	if [ -n "${kernel_pkg}" ]; then
-		if [ "$(pkg query %k ${kernel_pkg})" = "0" ]; then
-			_exec "pkg lock ${kernel_pkg}" "Locking kernel package" mute ignore_result
-		fi
-	fi
+	pkg_lock ${kernel_pkg}
+
 	if [ -f "${pid_file}" ]; then
 		rm -f ${pid_file}
 	fi
 
-	/etc/rc.conf_mount_ro
+	if [ -n "${chroot_dir}" ]; then
+		umount -f ${chroot_dir} >/dev/null 2>&1
+	fi
+
+	if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
+		/etc/rc.conf_mount_ro
+	fi
 
 	local _rc=${1:-"0"}
 
@@ -131,88 +136,67 @@ _exit() {
 	exit ${_rc}
 }
 
-pkg_upgrade_first_step() {
-	# figure out which kernel variant is running
-	kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
+fetch_upgrade_packages() {
+	local _pkgs_to_fetch=""
+	if [ "${platform}" = "nanobsd" ]; then
+		local _pkg=""
 
-	if [ -z "${kernel_pkg}" ]; then
-		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"
-		_exit 1
+		# Check if all non-auto packages installed on 2nd partition are
+		# installed on current one, if not, mark them to be deleted by
+		# pkg autoremove
+		for _pkg in $(pkg ${pkg_chroot} query -e '%a == 0' %n); do
+			if ! pkg info -e ${_pkg}; then
+				_exec "pkg ${pkg_chroot} set -A 1 ${_pkg}" "Scheduling package ${_pkg} for removal"
+			fi
+		done
+
+		# Check if all non-auto packages installed on current partition are
+		# installed on 2nd one, if not, we need to fetch them
+		for _pkg in $(pkg query -e '%a == 0' %n); do
+			if ! pkg ${pkg_chroot} info -e ${_pkg}; then
+				_pkgs_to_fetch="${_pkgs_to_fetch}${_pkgs_to_fetch:+ }${_pkg}"
+			fi
+		done
+
 	fi
 
-	if [ "$(compare_pkg_version pkg)" = "<" ]; then
-		_exec "pkg upgrade pkg" "Upgrading pkg" mute
-		pkg_update force
-	fi
-
-	if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
-		_echo "Your packages are up to date"
-		_exit 0
-	fi
-
-	kernel_version_compare=$(compare_pkg_version ${kernel_pkg})
-
-	if [ "${kernel_version_compare}" = "<" ]; then
-		kernel_update=1
-		if [ "$(pkg query %k ${kernel_pkg})" = "1" ]; then
-			_exec "pkg unlock ${kernel_pkg}" "Unlocking kernel package" mute ignore_result
-		fi
-	elif [ "${kernel_version_compare}" = "=" ]; then
-		kernel_update=0
-	elif [ "${kernel_version_compare}" = ">" ]; then
-		_echo "ERROR: You are using a newer kernel version than remote repository"
-		_exit 1
-	else
-		_echo "ERROR: Error comparing ${product} kernel local and remote versions"
-		_exit 1
-	fi
-
-	if [ -z "${yes}" ]; then
-		# Show user which packages are going to be upgraded
-		pkg upgrade -nq 2>&1 | tee -a ${logfile}
-
-		_echo ""
-		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
-			_echo "**** WARNING ****"
-			_echo "Reboot will be required!!"
-		fi
-		_echo -n "Proceed with upgrade? (y/N) "
-		read answer
-		if [ "${answer}" != "y" ]; then
-			_echo "Aborting..."
-			_exit 0
-		fi
-	fi
-
-	_echo ">>> Downloading packages..."
-	if ! pkg upgrade -F 2>&1 | tee -a ${logfile}; then
+	_echo ">>> Downloading upgrade packages..."
+	if ! pkg ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: It was not possible to download packages"
 		_exit 1
 	fi
 
-	# First upgrade kernel and reboot
-	if [ ${kernel_update} -eq 1 ]; then
-		_exec "pkg upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
-		touch ${upgrade_in_progress}
-		_echo "Rebooting..."
-		/etc/rc.reboot &
-		_exit 0
+	if [ -n "${_pkgs_to_fetch}" ]; then
+		_echo ">>> Fetching packages not present on upgrade partition..."
+		if ! pkg ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
+			_echo "ERROR: It was not possible to fetch packages"
+			_exit 1
+		fi
 	fi
 }
 
-pkg_upgrade_second_step() {
-	_echo "Upgrading necessary packages..."
-	if ! pkg upgrade 2>&1 | tee -a ${logfile}; then
-		_echo "ERROR: An error occurred when upgrade was running..."
-		_exit 1
+pkg_lock() {
+	local _pkg="${1}"
+
+	if [ -z "${_pkg}" ]; then
+		return
 	fi
 
-	_exec "pkg autoremove" "Removing unnecessary packages" mute ignore_result
-	_exec "pkg clean" "Cleanup pkg cache" mute ignore_result
+	if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "0" ]; then
+		_exec "pkg ${pkg_chroot} lock ${_pkg}" "Locking package ${_pkg}" mute
+	fi
+}
 
-	# cleanup caches
+pkg_unlock() {
+	local _pkg="${1}"
 
-	rm -f ${upgrade_in_progress}
+	if [ -z "${_pkg}" ]; then
+		return
+	fi
+
+	if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "1" ]; then
+		_exec "pkg ${pkg_chroot} unlock ${_pkg}" "Unlocking package ${_pkg}" mute
+	fi
 }
 
 pkg_update() {
@@ -237,58 +221,236 @@ pkg_update() {
 	[ -z "${_run_update}" ] \
 		&& return 0
 
-	_exec "pkg update" "Updating repositories" mute
+	_exec "pkg ${pkg_chroot} update" "Updating repositories" mute
 	date +%s > ${last_update_file}
 }
 
 pkg_upgrade() {
-	unset need_reboot
-	if [ ! -f "${upgrade_in_progress}" ]; then
-		pkg_update
+	# figure out which kernel variant is running
+	export kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
 
+	if [ -z "${kernel_pkg}" ]; then
+		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"
+		_exit 1
+	fi
+
+	export next_stage=$(pkg annotate -q -S ${kernel_pkg} next_stage)
+
+	if [ -n "${next_stage}" -a -n "${booting}" -a -n "${boot_stage}" ]; then
+		if [ ${boot_stage} != ${next_stage} ]; then
+			_exit 0
+		fi
+	fi
+
+	# If it's booting and first stage didn't run, just exit
+	if [ -n "${booting}" -a -z "${next_stage}" ]; then
+		_exit 0
+	fi
+
+	unset need_reboot
+	# First upgrade stage
+	if [ -z "${next_stage}" ]; then
 		if [ -f "${logfile}" ]; then
 			rm -f ${logfile}
 		fi
 
-		pkg_upgrade_first_step
+		pkg_update
 
-		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -le 1 ]; then
+		if [ "$(compare_pkg_version pkg)" = "<" ]; then
+			_exec "pkg upgrade pkg" "Upgrading pkg" mute
+			pkg_update force
+		fi
+
+		if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
+			_echo "Your packages are up to date"
+			_exit 0
+		fi
+
+		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
+			setup_nanobsd_env
 			need_reboot=1
+		fi
+
+		pkg_unlock ${kernel_pkg}
+
+		if [ "${platform}" = "nanobsd" ] && \
+		   [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -le 1 ]; then
+			_echo "**** WARNING ****"
+			_echo "Reboot will be required!!"
+			_echo "Secondary partition is up to date"
+			if [ -z "${yes}" ]; then
+				_echo -n "Proceed with upgrade? (y/N) "
+				read answer
+				if [ "${answer}" != "y" ]; then
+					_echo "Aborting..."
+					_exit 0
+				fi
+			fi
+			switch_active_nanobsd_partition
+			/etc/rc.reboot &
+			_exit 0
+		fi
+
+		if [ -z "${yes}" ]; then
+			# Show user which packages are going to be upgraded
+			pkg ${pkg_chroot} upgrade -nq 2>&1 | tee -a ${logfile}
+
+			_echo ""
+			if [ -n "${need_reboot}" ]; then
+				_echo "**** WARNING ****"
+				_echo "Reboot will be required!!"
+			fi
+			_echo -n "Proceed with upgrade? (y/N) "
+			read answer
+			if [ "${answer}" != "y" ]; then
+				_echo "Aborting..."
+				_exit 0
+			fi
+		fi
+
+		# Download all upgrade packages first
+		fetch_upgrade_packages
+
+		if [ $(pkg ${pkg_chroot} upgrade -nq ${kernel_pkg} | wc -l) -gt 1 ]; then
+			_exec "pkg ${pkg_chroot} upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
+		fi
+
+		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 2
+		next_stage=2
+
+		if [ -n "${need_reboot}" -a "${platform}" != "nanobsd" ]; then
+			_echo "Rebooting..."
+			/etc/rc.reboot &
+			_exit 0
 		fi
 	fi
 
-	pkg_upgrade_second_step
+	if [ "${next_stage}" = "2" ]; then
+		pkg_lock "${pkg_prefix}*"
 
-	if [ -n "${need_reboot}" ]; then
-		_echo "Rebooting..."
-		/etc/rc.reboot &
-		_exit 0
+		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
+			_echo "Upgrading necessary packages..."
+			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
+				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
+				pkg_unlock "${pkg_prefix}*"
+				_echo "ERROR: An error occurred when upgrade was running..."
+				_exit 1
+			fi
+		fi
+
+		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 3
+		next_stage=3
+
+		pkg_unlock "${pkg_prefix}*"
+
+		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
+			switch_active_nanobsd_partition
+			_echo "Rebooting..."
+			/etc/rc.reboot &
+			_exit 0
+		fi
+
+		if [ -n "${booting}" ]; then
+			_exit 0
+		fi
 	fi
+
+	if [ "${next_stage}" = "3" ]; then
+		if [ $(pkg upgrade -nq | wc -l) -gt 1 ]; then
+			_echo "Upgrading necessary packages..."
+			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
+				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
+				_echo "ERROR: An error occurred when upgrade was running..."
+				_exit 1
+			fi
+		fi
+
+		pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
+
+		# cleanup caches
+		_exec "pkg ${pkg_chroot} autoremove" "Removing unnecessary packages" mute ignore_result
+		_exec "pkg ${pkg_chroot} clean" "Cleanup pkg cache" mute ignore_result
+	fi
+}
+
+setup_nanobsd_env() {
+	if [ "${platform}" != "nanobsd" ]; then
+		return;
+	fi
+
+	chroot_dir=/tmp/nanobsd_upgrade
+	mkdir -p ${chroot_dir} 2>/dev/null
+	local _cur_partition=$(mount -p / | cut -f1)
+	local _update_partition=$(echo ${_cur_partition} | sed -e 's,0$,2,; s,1$,0,; s,2$,1,')
+
+	if [ ! -e "${_update_partition}" ]; then
+		_echo "Secondary partition (${_update_partition}), used for upgrade not found"
+		_exit 1
+	fi
+
+	_exec "mount ${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
+
+	pkg_chroot="-c ${chroot_dir}"
+
+	pkg_update force
+
+	if [ "$(compare_pkg_version pkg)" = "<" ]; then
+		_exec "pkg ${pkg_chroot} upgrade pkg" "Upgrading pkg" mute
+		pkg_update force
+	fi
+
+}
+
+switch_active_nanobsd_partition() {
+	if [ "${platform}" != "nanobsd" ]; then
+		return;
+	fi
+
+	local _cur_partition=$(mount -p / | cut -f1 | sed 's,^/dev/,,')
+	local _disk=$(glabel status -s | \
+		awk "\$1 == \"${_cur_partition}\" { print substr(\$3, 0, length(\$3)-3)}")
+	local _i=$(echo ${_cur_partition} | cut -c ${#_cur_partition})
+
+	if ! echo "${_i}" | egrep -q '^[0-9]$'; then
+		_echo "Invalid partition label ${_cur_partition}"
+		_exit 1
+	fi
+
+	# pfsense0 == part 1 / pfsense1 == part 2
+	if [ ${_i} -eq 0 ]; then
+		_i=2
+	else
+		_i=1
+	fi
+
+	_exec "gpart set -a active -i ${_i} ${_disk}" "Setting secondary partition as active" mute
 }
 
 is_pkg_installed() {
 	local _pkg_name="${1}"
+	shift
+	local _pkg_chroot="$@"
 
-	pkg info -e ${_pkg_name}
+	pkg ${_pkg_chroot} info -e ${_pkg_name}
 	return $?
 }
 
 compare_pkg_version() {
 	local _pkg_name="${1}"
 
-	if ! is_pkg_installed ${_pkg_name}; then
+	if ! is_pkg_installed ${_pkg_name} ${pkg_chroot}; then
 		echo '!'
 		return -1
 	fi
 
-	local _lver=$(pkg query %v ${_pkg_name})
+	local _lver=$(pkg ${pkg_chroot} query %v ${_pkg_name})
 
 	if [ -z "${_lver}" ]; then
 		_echo "ERROR: It was not possible to determine ${_pkg_name} local version"
 		_exit 1
 	fi
 
-	local _rver=$(pkg rquery %v ${_pkg_name})
+	local _rver=$(pkg ${pkg_chroot} rquery %v ${_pkg_name})
 
 	if [ -z "${_rver}" ]; then
 		_echo "ERROR: It was not possible to determine ${_pkg_name} remote version"
@@ -359,9 +521,6 @@ last_update_file="/var/run/$(basename $0)-last-update"
 logfile=/cf/conf/upgrade_log.txt
 stdout='/dev/null'
 
-# File used to detect second call, after kernel update and reboot
-upgrade_in_progress="/cf/conf/upgrade_in_progress"
-
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 
@@ -369,13 +528,31 @@ export ASSUME_ALWAYS_YES=true
 export REPO_AUTOUPDATE=false
 
 export product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+export pkg_prefix=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var pkg_prefix pfSense-pkg-)
+export platform=$(cat /etc/platform)
 
+USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+if [ "${platform}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
+	export PKG_DBDIR=/root/var/db/pkg
+	export PKG_CACHEDIR=/root/var/cache/pkg
+fi
+
+# Upgrade process on nanobsd will happen in chroot
+export pkg_chroot=""
+export chroot_dir=""
+
+unset booting
+unset boot_stage
 unset yes
 unset progress_fifo
 unset action
 unset action_pkg
-while getopts di:hp:r:uy opt; do
+while getopts b:di:hp:l:r:uy opt; do
 	case ${opt} in
+		b)
+			booting=1
+			boot_stage="${OPTARG}"
+			;;
 		d)
 			stdout=''
 			;;
@@ -390,6 +567,9 @@ while getopts di:hp:r:uy opt; do
 		h)
 			usage
 			_exit 0
+			;;
+		l)
+			logfile="/cf/conf/${OPTARG}"
 			;;
 		p)
 			progress_fifo="${OPTARG}"
@@ -427,7 +607,9 @@ if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 	exit 1
 fi
 
-/etc/rc.conf_mount_rw
+if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
+	/etc/rc.conf_mount_rw
+fi
 
 echo $$ > ${pid_file}
 

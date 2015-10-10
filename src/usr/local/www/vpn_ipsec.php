@@ -305,7 +305,7 @@ display_top_tabs($tab_array);
 						<th></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="p1-entries">
 <?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
 	$iconfn = "pass";
@@ -390,7 +390,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 					<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
-					<button class="btn btn-xs btn-default" type="submit" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("move selected entries before this")?></button>
+					<button class="btn btn-xs btn-default" type="submit" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
 							<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("edit phase1 entry"); ?>">edit</a>
 							<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>">delete</button>
 		<?php if (!isset($ph1ent['mobile'])): ?>
@@ -437,7 +437,7 @@ display_top_tabs($tab_array);
 									<th>&nbsp;</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody class="p2-entries">
 <?php $j = 0; foreach ($a_phase2 as $ph2index => $ph2ent): ?>
 <?php
 						if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
@@ -504,7 +504,7 @@ display_top_tabs($tab_array);
 									</td>
 									<td>
 										<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
-										<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("move selected entries before this")?></button>
+										<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("Move checked P2s here")?></button>
 										<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("edit phase2 entry"); ?>">edit</a>
 										<button class="btn btn-xs btn-danger" type="submit" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 										<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("add a new Phase 2 based on this one"); ?>">copy</a>
@@ -582,5 +582,15 @@ function show_phase2(id, buttonid) {
 	var visible = id + '-visible';
 	document.getElementById(visible).value = "1";
 }
+
+events.push(function() {
+	// Make rules sortable
+	$('table tbody.p2-entries').sortable({
+		cursor: 'grabbing',
+		update: function(event, ui) {
+			$('#order-store').removeAttr('disabled');
+		}
+	});
+});
 //]]>
 </script>

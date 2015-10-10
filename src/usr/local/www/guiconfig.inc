@@ -1171,8 +1171,29 @@ function alias_info_popup($alias_id) {
 	{
 		$alias_addresses = explode (" ", $alias['address']);
 		$alias_details = explode ("||", $alias['detail']);
+		$idx = 0;
 
-		$content .= '<ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
+		$content .= "<table>\n";
+		$content .= "<thead>\n";
+		$content .= "<tr>\n";
+		$content .= "<th>" . gettext("Value") . "</th><th  style='padding-left: 10px;'>" . gettext("Description") . "</th></tr>\n";
+		$content .= "</thead>\n";
+		$content .= "<tbody>\n";
+
+		foreach ($alias_addresses as $ap) {
+			$content .= "	<tr>\n";
+			$content .= "		<td>\n";
+			$content .= 			$ap;
+			$content .=	"		</td>\n";
+			$content .= "		<td style='padding-left: 10px;'>\n";
+			$content .= 			$alias_details[$idx];
+			$content .=	"		</td>\n";
+			$content .= "	</tr>\n";
+			$idx++;
+		}
+
+		$content .= "</tbody>\n";
+		$content .= "<table>\n";
 	}
 
 	if (strlen($alias['descr']) >= $maxlength)
@@ -1191,15 +1212,15 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
 		if ($alias_name['name'] == $src)
 			$columns['src'] = $alias_id;
-		elseif ($alias_name['name'] == $srcport)
+		if ($alias_name['name'] == $srcport)
 			$columns['srcport'] = $alias_id;
-		elseif ($alias_name['name'] == $dst )
+		if ($alias_name['name'] == $dst )
 			$columns['dst'] = $alias_id;
-		elseif ($alias_name['name'] == $dstport)
+		if ($alias_name['name'] == $dstport)
 			$columns['dstport'] = $alias_id;
-
-		return $columns;
 	}
+
+	return $columns;
 }
 
 function form_output_row($name, $label, $content) {

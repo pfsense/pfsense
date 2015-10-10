@@ -194,32 +194,33 @@ $gateways_status = return_gateways_status(true);
 <input type="hidden" id="gateways-config" name="gateways-config" value="" />
 
 <div id="gateways-settings" class="widgetconfigdiv" >
-<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
-	Display:
-		<?php
-			$display_type_gw_ip="checked=\"checked\"";
-			$display_type_monitor_ip="";
-			$display_type_both_ip="";
-			if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-				$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
-				if ($selected_radio == "gw_ip") {
-					$display_type_gw_ip = "checked=\"checked\"";
-					$display_type_monitor_ip="";
-					$display_type_both_ip="";
-				} else if ($selected_radio == "monitor_ip") {
-					$display_type_gw_ip = "";
-					$display_type_monitor_ip="checked=\"checked\"";
-					$display_type_both_ip="";
-				} else if ($selected_radio == "both_ip") {
-					$display_type_gw_ip = "";
-					$display_type_monitor_ip="";
-					$display_type_both_ip="checked=\"checked\"";
+	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
+		Display:
+			<?php
+				$display_type_gw_ip="checked=\"checked\"";
+				$display_type_monitor_ip="";
+				$display_type_both_ip="";
+				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
+					if ($selected_radio == "gw_ip") {
+						$display_type_gw_ip = "checked=\"checked\"";
+						$display_type_monitor_ip="";
+						$display_type_both_ip="";
+					} else if ($selected_radio == "monitor_ip") {
+						$display_type_gw_ip = "";
+						$display_type_monitor_ip="checked=\"checked\"";
+						$display_type_both_ip="";
+					} else if ($selected_radio == "both_ip") {
+						$display_type_gw_ip = "";
+						$display_type_monitor_ip="";
+						$display_type_both_ip="checked=\"checked\"";
+					}
 				}
-			}
-		?>
-	<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?php echo $display_type_gw_ip; ?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
-	<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?php echo $display_type_monitor_ip; ?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
-	<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?php echo $display_type_both_ip; ?> onchange="updateGatewayDisplays();" /> <span>Both</span>
-	<br /><br />
-	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
-</form>
+			?>
+		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?php echo $display_type_gw_ip; ?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
+		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?php echo $display_type_monitor_ip; ?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
+		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?php echo $display_type_both_ip; ?> onchange="updateGatewayDisplays();" /> <span>Both</span>
+		<br /><br />
+		<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	</form>
+</div>

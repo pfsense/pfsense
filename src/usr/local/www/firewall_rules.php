@@ -322,7 +322,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="btn btn-xs btn-primary" title="<?=gettext("edit rule");?>">edit</a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="btn btn-xs btn-primary" title="<?=gettext("edit rule");?>">edit</a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -340,7 +340,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="btn btn-xs btn-primary">edit</a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="btn btn-xs btn-primary">edit</a>
 						</td>
 					</tr>
 <?php endif;?>

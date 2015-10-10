@@ -3088,15 +3088,15 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 			} else if ($pppoe_mtu != 0) {
 				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
 			} else {
-				if (get_interface_mtu($vlan['vlanif']) != $mtu) {
-					pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
+					pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
 				}
 			}
 		} else {
 			if ($pppoe_mtu != 0) {
 				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
-			} else if (get_interface_mtu($vlan['vlanif']) != $mtu) {
-				pfSense_interface_mtu($vlan['vlanif'], $mtu);
+			} else if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
+				pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
 			}
 		}
 	}
@@ -3288,6 +3288,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				break;
 			}
 		}
+	}
+
+	// Limit the MTU to 1500 if no explicit MTU configured
+	if ($wantedmtu == 0 && get_interface_mtu($mtuif) > 1500) {
+		$wantedmtu = 1500;
 	}
 
 	if ($wantedmtu != 0) {

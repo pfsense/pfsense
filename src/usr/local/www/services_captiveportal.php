@@ -805,14 +805,14 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['radiusport2']
-))->setHelp('Leave blank for default (1812)');
+))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
 	'radiuskey3',
 	null,
 	'text',
 	$pconfig['radiuskey3']
-))->setHelp('Leave blank to not use a RADIUS shared secret (not recommended)');
+))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
 
@@ -858,14 +858,14 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['radiusport']
-))->setHelp('Leave blank for default (1812)');
+))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
 	'radiuskey',
 	null,
 	'text',
 	$pconfig['radiuskey']
-))->setHelp('Leave blank to not use a RADIUS shared secret (not recommended)');
+))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
 $form->add($section);

@@ -90,14 +90,22 @@ if ($_POST['act'] == "deluser") {
 		exit;
 	}
 
-	conf_mount_rw();
-	local_user_del($a_user[$id]);
-	conf_mount_ro();
-	$userdeleted = $a_user[$id]['name'];
-	unset($a_user[$id]);
-	write_config();
-	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br />";
+	$saved_username = $a_user[$id]['name'];
+
+	if ($a_user[$id]['scope'] != "system") {
+		conf_mount_rw();
+		local_user_del($a_user[$id]);
+		conf_mount_ro();
+		unset($a_user[$id]);
+		write_config();
+		$savemsg = gettext("User") . " {$saved_username} " .
+				gettext("successfully deleted") . "<br />";
+	} else {
+		unset($id);
+		unset($deletion_errors);
+		$deletion_errors[] = gettext("User") . " {$saved_username} " .
+				gettext("is a system user. Deletion is not allowed.");
+	}
 }
 else if ($_POST['act'] == "delpriv") {
 
@@ -486,6 +494,8 @@ function sshkeyClicked(obj) {
 <?php
 	if ($input_errors)
 		print_input_errors($input_errors);
+	if ($deletion_errors)
+		print_input_errors($deletion_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>

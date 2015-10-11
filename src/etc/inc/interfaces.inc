@@ -3117,20 +3117,24 @@ function interface_mtu_wanted_for_pppoe($realif) {
 						// use the MTU configured on the interface ...
 						if (is_array($config['interfaces'])) {
 							foreach ($config['interfaces'] as $interface) {
-								if ($interface['if'] != $ppp['if'])
+								if ($interface['if'] != $ppp['if']) {
 									continue;
-								if (!empty($interface['mtu']))
+								}
+								if (!empty($interface['mtu'])) {
 									$mtu_wanted = intval($interface['mtu']) + 8;
+								}
 							}
 						}
 						// ... unless there is an MTU configured on the port in question
 						if (!empty($ppp['mtu'])) {
 							$mtus = explode(',',$ppp['mtu']);
-							if (!empty($mtus[$pid]))
+							if (!empty($mtus[$pid])) {
 								$mtu_wanted = intval($mtus[$pid]) + 8;
+							}
 						}
-						if ($mtu_wanted > $mtu)
+						if ($mtu_wanted > $mtu) {
 							$mtu = $mtu_wanted;
+						}
 					}
 				}
 			}

@@ -37,6 +37,7 @@ if [ "${2}" == "inet" ]; then
 	pfSctl -c "interface newip ${1}"
 
 elif [ "${2}" == "inet6" ]; then
+	/usr/local/sbin/ppp-ipv6 ${1} up
 	# let the configuration system know that the ipv6 has changed.
 	echo ${4} |cut -d% -f1 > /tmp/${1}_routerv6
 	echo ${3} |cut -d% -f1 > /tmp/${1}_ipv6

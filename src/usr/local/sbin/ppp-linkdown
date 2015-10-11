@@ -14,7 +14,7 @@ fi
 if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
 	GW=`head -n 1 /tmp/${IF}_defaultgw`
 	[ -n "${GW}" ] \
-		&& /sbin/route delete default ${GW}
+		&& /sbin/route -q delete default ${GW}
 fi
 if [ "${PROTOCOL}" == "inet6" ]; then
 	/usr/local/sbin/ppp-ipv6 ${IF} down
@@ -24,7 +24,7 @@ fi
 if [ -f "/var/etc/nameserver_${IF}" ]; then
 	# Remove old entries
 	for nameserver in `cat /var/etc/nameserver_${IF}`; do
-		/sbin/route delete ${nameserver} >/dev/null 2>&1
+		/sbin/route -q delete ${nameserver} >/dev/null 2>&1
 	done
 	/bin/rm -f /var/etc/nameserver_${IF}
 fi

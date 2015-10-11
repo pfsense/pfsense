@@ -1181,7 +1181,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating']))
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
-	'TCP/IP Version',
+	'Address Family',
 	$pconfig['ipprotocol'],
 	array(
 		'inet' => 'IPv4',

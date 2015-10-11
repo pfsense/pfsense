@@ -70,14 +70,22 @@ if ($act == "delgroup") {
 		exit;
 	}
 
-	conf_mount_rw();
-	local_group_del($a_group[$id]);
-	conf_mount_ro();
-	$groupdeleted = $a_group[$id]['name'];
-	unset($a_group[$id]);
-	write_config();
-	$savemsg = gettext("Group")." {$groupdeleted} ".
-		gettext("successfully deleted")."<br />";
+	$saved_groupname = $a_group[$id]['name'];
+
+	if ($a_group[$id]['scope'] != "system") {
+		conf_mount_rw();
+		local_group_del($a_group[$id]);
+		conf_mount_ro();
+		unset($a_group[$id]);
+		write_config();
+		$savemsg = gettext("Group")." {$saved_groupname} ".
+			gettext("successfully deleted")."<br />";
+	} else {
+		unset($id);
+		unset($deletion_errors);
+		$deletion_errors[] = gettext("Group") . " {$saved_groupname} " .
+				gettext("is a system group. Deletion is not allowed.");
+	}
 }
 
 if ($act == "delpriv") {
@@ -277,6 +285,8 @@ function presubmit() {
 <?php
 	if ($input_errors)
 		print_input_errors($input_errors);
+	if ($deletion_errors)
+		print_input_errors($deletion_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>

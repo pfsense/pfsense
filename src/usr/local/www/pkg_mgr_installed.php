@@ -99,6 +99,7 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<th><?=gettext("Category")?></th>
 			<th><?=gettext("Version")?></th>
 			<th><?=gettext("Description")?></th>
+			<th><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>

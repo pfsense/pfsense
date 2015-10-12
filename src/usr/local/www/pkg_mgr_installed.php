@@ -166,11 +166,11 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<?=$pkgdescr?>
 		</td>
 		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-danger">remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info">reinstall</a>
-			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
+			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn icon icon-remove" title="Remove"></a>
+			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn icon icon-repeat" title="Reinstall"></a>
+			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn icon icon-refresh" title="<?=gettext("reinstall GUI")?>"></a>
 <?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-default">info</a>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn ivon icon-info-sign"></a>
 <?php endif;?>
 		</td>
 	</tr>

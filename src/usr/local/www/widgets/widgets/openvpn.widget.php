@@ -148,7 +148,7 @@ $clients = openvpn_get_active_clients();
 <div class="content">
 <?php foreach ($servers as $server): ?>
 
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?></h2></div>
 	<div class="table-responsive">
 		<table class="table table striped table-hover table-condensed">
@@ -190,18 +190,13 @@ $clients = openvpn_get_active_clients();
 				</tr>
 		<?php endforeach; ?>
 			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="3" class="list" height="12"></td>
-				</tr>
-			</tfoot>
 		</table>
 	</div>
 </div>
 
 <?php endforeach; ?>
 <?php if (!empty($sk_servers)) { ?>
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics");?></h2></div>
 	<div class="table-responsive">
 		<table class="table table striped table-hover table-condensed">
@@ -251,7 +246,7 @@ $clients = openvpn_get_active_clients();
 <?php
 } ?>
 <?php if (!empty($clients)) { ?>
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics");?></h2></div>
 	<div class="table-responsive">
 		<table class="table table striped table-hover table-condensed">

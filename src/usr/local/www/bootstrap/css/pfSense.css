@@ -228,6 +228,10 @@ form .btn + .btn {
 }
 
 /** Homepage / dashboard */
+.widget .panel-heading {
+    background-color: #757575;
+}
+
 #widgetSequence {
 	position: fixed;
 	left: 0;

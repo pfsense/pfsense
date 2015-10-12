@@ -429,12 +429,7 @@ function create_port($pkg) {
 
 function usage() {
 	global $argv;
-	echo "Usage: {$argv[0]} -x <path to pkg xml> [-p <package name>]\n";
-	echo "  Flags:\n";
-	echo "    -s Product version to pass to set_version.sh during chroot build\n";
-	echo "    -U Do NOT run build.sh --update-sources\n";
-	echo "  Examples:\n";
-	echo "     {$argv[0]} -x /home/packages/pkg_info.10.xml -p squid -s RELENG_2_2\n";
+	echo "Usage: {$argv[0]} -x <path to pkg xml> -t <path to ports tree> [-p <package name>]\n";
 	exit;
 }
 ?>

@@ -349,6 +349,13 @@ $section->addInput(new Form_Input(
 	$pconfig['smtppassword']
 ))->setHelp('Enter the e-mail address password for SMTP authentication.');
 
+$section->addInput(new Form_Select(
+	'smtpauthmech',
+	'Notification E-Mail auth mechanism',
+	$pconfig['smtpauthmech'],
+	$smtp_authentication_mechanisms
+))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN. ');
+
 $section->addInput(new Form_Input(
 	'test-smtp',
 	'Test SMTP',

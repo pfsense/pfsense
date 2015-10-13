@@ -338,7 +338,7 @@ exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/cf 2>/dev/null");
 exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.shrc");
 exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.tcshrc");
 exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
-chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/tmp", 1777)
+@chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/tmp", 1777);
 
 echo "===> Installing new files...\n";
 

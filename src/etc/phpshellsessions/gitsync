@@ -307,27 +307,24 @@ exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verif
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
-// Nuke CVS and pfSense tarballs
-exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
-exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
-
 // Remove files that we do not want to overwrite the system with
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/group 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
-exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf 2>/dev/null");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/passwd");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/ttys");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/group");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/platform");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/device.hints");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.conf");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.rc");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
+exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
+exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
+@chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 01777);
 
 echo "===> Installing new files...\n";
 

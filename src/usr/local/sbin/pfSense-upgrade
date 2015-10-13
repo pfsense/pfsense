@@ -47,9 +47,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 usage() {
-	echo "Usage: $(basename ${0}) [-bdy] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "Usage: $(basename ${0}) [-bdyf] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
 	echo "	-b          - Platform is booting" >&2
 	echo "	-d          - Turn on debug" >&2
+	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile name in /cf/conf/ (defaults to upgrade_log.txt)" >&2
 	echo "	-p FIFO     - Write pkg progress to FIFO"
@@ -338,6 +339,10 @@ pkg_upgrade() {
 			fi
 		fi
 
+		# XXX: workaround for #5300
+		sort -u ${chroot_dir}/usr/local/etc/php/extensions.ini > /tmp/extensions.ini
+		mv /tmp/extensions.ini ${chroot_dir}/usr/local/etc/php/extensions.ini
+
 		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 3
 		next_stage=3
 
@@ -471,6 +476,11 @@ compare_pkg_version() {
 pkg_install() {
 	local _pkg_name="${1}"
 
+	local _force=""
+	if [ -n "${2}" ]; then
+		_force="-f"
+	fi
+
 	if [ -z "${_pkg_name}" ]; then
 		_echo "ERROR: Blank package name"
 		_exit 1
@@ -488,7 +498,7 @@ pkg_install() {
 			_echo "Installed ${_pkg_name} version is newer than remote"
 			_exit 0
 		fi
-		local _cmd="upgrade"
+		local _cmd="upgrade ${_force}"
 		local _msg="Upgrading"
 	else
 		local _cmd="install"
@@ -543,11 +553,12 @@ export chroot_dir=""
 
 unset booting
 unset boot_stage
+unset force
 unset yes
 unset progress_fifo
 unset action
 unset action_pkg
-while getopts b:di:hp:l:r:uy opt; do
+while getopts b:dfi:hp:l:r:uy opt; do
 	case ${opt} in
 		b)
 			booting=1
@@ -555,6 +566,9 @@ while getopts b:di:hp:l:r:uy opt; do
 			;;
 		d)
 			stdout=''
+			;;
+		f)
+			force=1
 			;;
 		i)
 			if [ -n "${action}" ]; then
@@ -623,6 +637,12 @@ if [ -n "${progress_fifo}" ]; then
 		_echo "ERROR: ${progress_fifo} is not a FIFO"
 		_exit 1
 	fi
+	if [ -e "${progress_fifo}.json" ]; then
+		rm -f ${progress_fifo}.json
+	fi
+	# Read fifo and save content to a file in background
+	# GUI will read progress from file
+	tail -f ${progress_fifo} > ${progress_fifo}.json &
 	export EVENT_PIPE="${progress_fifo}"
 fi
 
@@ -634,7 +654,7 @@ case "${action}" in
 		pkg_update force
 		;;
 	install)
-		pkg_install ${action_pkg}
+		pkg_install ${action_pkg} ${force}
 		;;
 	delete)
 		pkg_delete ${action_pkg}

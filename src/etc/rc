@@ -345,9 +345,9 @@ echo "done."
 /usr/local/sbin/${product}-upgrade -y -b 2
 
 # Run the php.ini setup file and populate
-# /usr/local/etc/php.ini and /usr/local/lib/php.ini
+# /usr/local/etc/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
-/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then

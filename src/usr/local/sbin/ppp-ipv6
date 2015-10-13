@@ -1,0 +1,123 @@
+#!/usr/local/bin/php -f
+<?php
+/*
+	ppp-ipv6
+
+	PPP IPv6 helper
+
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/local/sbin/dhcp6c
+
+*/
+
+require_once("globals.inc");
+require_once("interfaces.inc");
+
+function interface_ipv6_lower($interface_real) {
+	global $g, $config;
+
+	if (!empty($interface_real)) {
+		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+
+		if (!empty($interface) && is_array($config['interfaces'][$interface]) && interface_isppp_type($interface)) {
+			$ifcfg = $config['interfaces'][$interface];
+
+            if (!empty($ifcfg['ipaddrv6'])) {
+                switch ($ifcfg['ipaddrv6']) {
+                    case 'slaac':
+                    case 'dhcp6':
+                        // bring down dhcp6c if it is running
+                        $pidv6 = find_dhcp6c_process($interface_real);
+                        if ($pidv6) {
+                            posix_kill($pidv6, SIGTERM);
+                            sleep(3);
+                        }
+                        unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+
+                        // disable router advertisements (and therefore SLAAC)
+                        mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 -accept_rtadv");
+
+                        // remove any autoconfigured IPv6 addresses
+                        exec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6", $ifconfig_output);
+                        foreach ($ifconfig_output as $output) {
+                            if (preg_match('{ \A \s+ inet6 \s+ (\S+) .* autoconf .* \Z}xmsi', $output, $matches)) {
+                                mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 " . escapeshellarg($matches[1]) . " delete");
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+		}
+	}
+}
+
+function interface_ipv6_raise($interface_real) {
+	global $config;
+
+	if (!empty($interface_real)) {
+		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+
+		if (!empty($interface) && is_array($config['interfaces'][$interface]) && interface_isppp_type($interface)) {
+			$ifcfg = $config['interfaces'][$interface];
+
+            if (!empty($ifcfg['ipaddrv6'])) {
+                switch ($ifcfg['ipaddrv6']) {
+                    case 'slaac':
+                    case 'dhcp6':
+                        $pidv6 = find_dhcp6c_process($interface_real);
+                        if (empty($pidv6)) {
+                            // only fire if router advertisements off
+                            // (if router advertisements are on, rtsold might be primed to fire dhcp6c already)
+                            exec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6", $ifconfig_output);
+                            $start = true;
+                            foreach ($ifconfig_output as $output) {
+                                if (preg_match('{ \A .* ACCEPT_RTADV .* \Z}xmsi', $output)) {
+                                    $start = false;
+                                    break;
+                                }
+                            }
+                            if ($start) {
+                                interface_dhcpv6_configure($interface, $ifcfg);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+		}
+	}
+}
+
+// main entry point
+if ($argc != 3) {
+	goto error;
+}
+
+$interface_real = trim($argv[1], " \n\t");
+if (empty($interface_real)) {
+	goto error;
+}
+
+switch (strtolower($argv[2])) {
+	case 'up':
+		interface_ipv6_raise($interface_real);
+		break;
+	case 'down':
+		interface_ipv6_lower($interface_real);
+		break;
+	default:
+		goto error;
+		break;
+}
+
+exit(0);
+
+error:
+if (!empty($argv[0])) {
+	echo("Usage: " . substr(strrchr('/' . $argv[0], '/'), 1) . " <PPP interface> up|down\n");
+}
+exit(1);
+
+?>

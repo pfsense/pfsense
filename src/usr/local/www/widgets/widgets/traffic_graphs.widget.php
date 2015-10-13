@@ -159,7 +159,6 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 		</object>
 	</div>
-	<br />
 <?php endif; ?>
 <?php endforeach; ?>
 

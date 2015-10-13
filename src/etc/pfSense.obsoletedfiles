@@ -436,7 +436,6 @@
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
 /usr/local/etc/pkg.conf
-/usr/local/include
 /usr/local/info
 /usr/local/lib/engines
 /usr/local/lib/engines/lib4758cca.so
@@ -580,6 +579,7 @@
 /usr/local/lib/olsrd_power.so.0.3
 /usr/local/lib/olsrd_secure.so.0.5
 /usr/local/lib/olsrd_txtinfo.so.0.1
+/usr/local/lib/php.ini
 /usr/local/lib/php/20060613
 /usr/local/lib/php/20090626
 /usr/local/lib/php/20121212

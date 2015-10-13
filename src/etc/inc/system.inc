@@ -1501,13 +1501,26 @@ EOD;
 function system_get_timezone_list() {
 	global $g;
 
-	$file_list = glob("/usr/share/zoneinfo/*/*");
+	$file_list = array_merge(
+		glob("/usr/share/zoneinfo/[A-Z]*"),
+		glob("/usr/share/zoneinfo/*/*")
+	);
 
 	if (empty($file_list)) {
 		$file_list[] = $g['default_timezone'];
+	} else {
+		/* Remove directories from list */
+		$file_list = array_filter($file_list, function($v) {
+			return !is_dir($v);
+		});
 	}
 
-	return str_replace('/usr/share/zoneinfo/', '', $file_list);
+	/* Remove directory prefix */
+	$file_list = str_replace('/usr/share/zoneinfo/', '', $file_list);
+
+	sort($file_list);
+
+	return $file_list;
 }
 
 function system_timezone_configure() {

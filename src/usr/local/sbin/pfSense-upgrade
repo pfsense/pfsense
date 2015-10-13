@@ -627,6 +627,12 @@ if [ -n "${progress_fifo}" ]; then
 		_echo "ERROR: ${progress_fifo} is not a FIFO"
 		_exit 1
 	fi
+	if [ -e "${progress_fifo}.json" ]; then
+		rm -f ${progress_fifo}.json
+	fi
+	# Read fifo and save content to a file in background
+	# GUI will read progress from file
+	tail -f ${progress_fifo} > ${progress_fifo}.json &
 	export EVENT_PIPE="${progress_fifo}"
 fi
 

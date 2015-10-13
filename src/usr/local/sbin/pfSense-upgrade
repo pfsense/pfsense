@@ -586,6 +586,10 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			;;
 		l)
 			logfile="${OPTARG}"
+			if [ -z "${logfile}" ]; then
+				usage
+				_exit 1
+			fi
 			;;
 		p)
 			progress_fifo="${OPTARG}"

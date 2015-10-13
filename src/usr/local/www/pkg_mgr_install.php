@@ -324,64 +324,22 @@ if ($_GET) {
 
 	switch ($_POST['mode']) {
 		case 'delete':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade-GUI.sh -r ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -r ' . $pkgid, false, false, true);
 			$start_polling = true;
 			filter_configure();
 			break;
 
-		case 'reinstallpkg':
-			delete_package_xml($pkgid);
-			if (install_package($pkgid) != 0) {
-				update_status(gettext("Package reinstallation failed."));
-				$static_output .= "\n" . gettext("Package reinstallation failed.");
-				update_output_window($static_output);
-			} else {
-				update_status(gettext("Package reinstalled."));
-				$static_output .= "\n" . gettext("Package reinstalled.");
-				update_output_window($static_output);
-				filter_configure();
-			}
-			@file_put_contents("/tmp/{$pkgid}.info", $static_output);
-			$pkgid = htmlspecialchars($pkgid);
-			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
-			send_event("service restart packages");
-			break;
 		case 'reinstallall':
-			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
-				$todo = array();
-				foreach ($config['installedpackages']['package'] as $package) {
-					$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-				}
-				foreach ($todo as $pkgtodo) {
-					$static_output = "";
-					if ($pkgtodo['name']) {
-						update_output_window($static_output);
-						uninstall_package($pkgtodo['name']);
-						install_package($pkgtodo['name']);
-					}
-				}
-				update_status(gettext("All packages reinstalled."));
-				$static_output .= "\n" . gettext("All packages reinstalled.");
-				update_output_window($static_output);
-				filter_configure();
-				send_event("service restart packages");
-			} else {
-				update_output_window(gettext("No packages are installed."));
-			}
+		case 'reinstallpkg':
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid . ' -f', false, false, true);
+			filter_configure();
+			$start_polling = true;
 			break;
+
 		case 'installed':
 		default:
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade-GUI.sh -i ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid, false, false, true);
 			$start_polling = true;
-
-			if ($status != 0) {
-				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED! "));
-				$static_output .= "\n" . gettext("Installation halted.");
-				update_output_window($static_output);
-			} else {
-				$status_a = gettext(sprintf("Installation of %s completed.", $pkgid));
-			}
-
 			filter_configure();
 			break;
 	}

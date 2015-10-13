@@ -80,6 +80,7 @@ global $static_output;
 $static_output = "";
 $static_status = "";
 $sendto = "output";
+$start_polling = false;
 
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
@@ -210,8 +211,6 @@ $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.ph
 $tab_array[] = array(gettext("Package Installer"), true, "");
 display_top_tabs($tab_array);
 
-$start_polling = false;
-
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
 	<h2>Add / remove package</h2>
@@ -224,15 +223,9 @@ $start_polling = false;
 		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
 	} else if ($_GET['mode'] == 'reinstallall') {
 		$pkgmode = 'reinstallall';
-	}
+	} 
 
 	switch ($pkgmode) {
-		case 'reinstallall':
-			$pkgname = 'All packages';
-			$pkgtxt = 'reinstalled';
-			break;
-		case 'reinstallxml':
-			$pkg_gui_xml_text = " GUI XML components";
 		case 'reinstallpkg':
 			$pkgtxt = 'reinstalled';
 			break;
@@ -267,7 +260,14 @@ if($_POST['mode'] == 'delete') {
 	$modetxt = gettext("installation");
 }
 
-if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):?>
+if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
+	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+	if(isvalidpid($pidfile)) {
+		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+//		$pid = $output[0];
+//		$start_polling = true;
+	}
+?>
 
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
@@ -314,7 +314,7 @@ if ($_GET) {
 		default:
 			break;
 	}
-} else if ($_POST) {
+} else if ($_POST && ! $start_polling) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
 	/* All other cases make changes, so mount rw fs */

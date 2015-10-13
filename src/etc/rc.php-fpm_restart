@@ -5,7 +5,7 @@ echo ">>> Killing php-fpm"
 sleep 2
 
 # Run the php.ini setup file and populate
-# /usr/local/etc/php.ini and /usr/local/lib/php.ini
+# /usr/local/etc/php.ini
 /etc/rc.conf_mount_rw
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
 /bin/rm -f /var/run/php-fpm.pid 2>/dev/null
@@ -13,5 +13,5 @@ sleep 2
 /etc/rc.conf_mount_ro
 echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 echo ">>> Starting php-fpm"
-/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 

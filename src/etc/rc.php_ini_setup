@@ -151,9 +151,6 @@ PHP_ZEND_MODULES=""
 if [ -f /usr/local/etc/php.ini ]; then
 	/bin/rm /usr/local/etc/php.ini
 fi
-if [ -f /usr/local/lib/php.ini ]; then
-	/bin/rm /usr/local/lib/php.ini
-fi
 LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\["`
 
 unset TIMEZONE
@@ -176,7 +173,7 @@ fi
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
 # not being able to boot back up.
-/bin/cat >/usr/local/lib/php.ini <<EOF
+/bin/cat >/usr/local/etc/php.ini <<EOF
 ; File generated from /etc/rc.php_ini_setup
 output_buffering = "0"
 expose_php = Off
@@ -206,9 +203,6 @@ date.timezone="${TIMEZONE}"
 
 EOF
 
-# Copy php.ini file to etc/ too (cli)
-/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini
-
 # Loop through and generate modules to load.
 # Take into account modules built into php.
 for EXT in $PHPMODULES; do
@@ -222,7 +216,7 @@ for EXT in $PHPMODULES; do
 	if [ "$SHOULDADD" = "true" ]; then
 		# Ensure extension exists before adding.
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-			echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
+			echo "extension=${EXT}.so" >> /usr/local/etc/php.ini
 		fi
 	fi
 done
@@ -231,13 +225,13 @@ done
 for EXT in $PHP_ZEND_MODULES; do
 	# Ensure extension exists before adding.
 	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension=${EXT}.so" >> /usr/local/lib/php.ini
+		echo "zend_extension=${EXT}.so" >> /usr/local/etc/php.ini
 	fi
 done
 
 if [ "$LOWMEM" != "TRUE" ]; then
 
-	/bin/cat >>/usr/local/lib/php.ini <<EOF
+	/bin/cat >>/usr/local/etc/php.ini <<EOF
 
 ; opcache Settings
 opcache.enabled="1"
@@ -246,13 +240,13 @@ opcache.memory_consumption="${OPCACHEMEMSIZE}"
 
 EOF
 else
-	/bin/cat >>/usr/local/lib/php.ini <<EOF
+	/bin/cat >>/usr/local/etc/php.ini <<EOF
 ; opcache Settings
 opcache.enabled="0"
 EOF
 fi
 
-	/bin/cat >>/usr/local/lib/php.ini <<EOF
+	/bin/cat >>/usr/local/etc/php.ini <<EOF
 
 [suhosin]
 suhosin.get.max_array_depth = 5000
@@ -343,9 +337,6 @@ EOF
 
 fi
 
-# Copy php.ini file to etc/ too (cli)
-/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini
-
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then
 	/bin/rm /var/run/php_modules_load_errors.txt
@@ -376,12 +367,9 @@ for EXT in $PHPMODULESLC; do
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
-			/bin/cat /usr/local/lib/php.ini | /usr/bin/grep -v $EXT > /tmp/php.ini
-			/bin/rm -f /usr/local/lib/php.ini
-			/bin/mv /tmp/php.ini /usr/local/lib/php.ini
+			/bin/cat /usr/local/etc/php.ini | /usr/bin/grep -v $EXT > /tmp/php.ini
+			/bin/rm -f /usr/local/etc/php.ini
+			/bin/mv /tmp/php.ini /usr/local/etc/php.ini
 		fi
 	fi
 done
-
-# Copy php.ini file to etc/ too (cli)
-/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini

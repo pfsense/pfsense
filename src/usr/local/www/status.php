@@ -249,7 +249,6 @@ if(isset($config['system']['usefifolog']))  {
 	defCmdT("last 1000 resolver log entries","/usr/sbin/fifolog_reader /var/log/resolver.log 2>&1 | tail -n 1000");
 	defCmdT("last 1000 routing log entries","/usr/sbin/fifolog_reader /var/log/routing.log 2>&1 | tail -n 1000");
 	defCmdT("last 1000 wireless log entries","/usr/sbin/fifolog_reader /var/log/wireless.log 2>&1 | tail -n 1000");
-	
 } else {
 	defCmdT("last 1000 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 1000");
 	defCmdT("last 1000 DHCP log entries","/usr/local/sbin/clog /var/log/dhcpd.log 2>&1 | tail -n 1000");
@@ -265,7 +264,6 @@ if(isset($config['system']['usefifolog']))  {
 	defCmdT("last 1000 resolver log entries","/usr/local/sbin/clog /var/log/resolver.log 2>&1 | tail -n 1000");
 	defCmdT("last 1000 routing log entries","/usr/local/sbin/clog /var/log/routing.log 2>&1 | tail -n 1000");
 	defCmdT("last 1000 wireless log entries","/usr/local/sbin/clog /var/log/wireless.log 2>&1 | tail -n 1000");
-	
 }
 if (file_exists("/tmp/PHP_errors.log")) {
 	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");

@@ -491,12 +491,14 @@ pkg_install() {
 	if is_pkg_installed ${_pkg_name}; then
 		local _cversion=$(compare_pkg_version ${_pkg_name})
 
-		if [ "${_cversion}" = "=" ]; then
-			_echo "Package ${_pkg_name} is up to date"
-			_exit 0
-		elif [ "${_cversion}" = ">" ]; then
-			_echo "Installed ${_pkg_name} version is newer than remote"
-			_exit 0
+		if [ -z "${_force}" ]; then
+			if [ "${_cversion}" = "=" ]; then
+				_echo "Package ${_pkg_name} is up to date"
+				_exit 0
+			elif [ "${_cversion}" = ">" ]; then
+				_echo "Installed ${_pkg_name} version is newer than remote"
+				_exit 0
+			fi
 		fi
 		local _cmd="upgrade ${_force}"
 		local _msg="Upgrading"

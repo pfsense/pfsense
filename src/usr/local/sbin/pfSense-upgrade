@@ -635,6 +635,10 @@ echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
 
+if [ "${action}" != "upgrade" -a -f "${logfile}" ]; then
+	rm -f ${logfile}
+fi
+
 if [ -n "${progress_fifo}" ]; then
 	if [ ! -e "${progress_fifo}" ]; then
 		mkfifo ${progress_fifo}

@@ -101,6 +101,8 @@ $sendto = "output";
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
+// isvalidpid($g['varrun_path']/$g['product_name']-upgrade.pid)
+
 if($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;

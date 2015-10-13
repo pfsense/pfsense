@@ -203,7 +203,7 @@ pkg_unlock() {
 pkg_update() {
 	local _run_update=1
 
-	unset _force
+	local _force=""
 	if [ "${1}" = "force" ]; then
 		local _force=1
 	fi

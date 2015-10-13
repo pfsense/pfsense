@@ -381,7 +381,7 @@ function post_cvssync_commands() {
 
 	if (file_exists("/etc/rc.php_ini_setup")) {
 		echo "===> Running /etc/rc.php_ini_setup...";
-		exec("/etc/rc.php_ini_setup");
+		exec("/etc/rc.php_ini_setup >/dev/null 2>&1");
 		echo "\n";
 	}
 

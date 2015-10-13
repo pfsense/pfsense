@@ -436,7 +436,6 @@
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
 /usr/local/etc/pkg.conf
-/usr/local/include
 /usr/local/info
 /usr/local/lib/engines
 /usr/local/lib/engines/lib4758cca.so

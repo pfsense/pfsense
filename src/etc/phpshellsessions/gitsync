@@ -324,7 +324,7 @@ exec("mkdir -p /tmp/lighttpd/cache/compress/");
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
 exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
 exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
-@chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/tmp", 1777)
+@chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 1777)
 
 echo "===> Installing new files...\n";
 

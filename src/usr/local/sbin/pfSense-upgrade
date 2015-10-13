@@ -530,7 +530,7 @@ pkg_delete() {
 
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
-logfile=/cf/conf/upgrade_log.txt
+logfile="/cf/conf/upgrade_log.txt"
 stdout='/dev/null'
 
 # pkg should not ask for confirmations

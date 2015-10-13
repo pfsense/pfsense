@@ -141,6 +141,9 @@ if [ -e $FIFO ] ; then
 	rm $FIFO 2>/dev/null
 fi
 
+rm -f $JSONFILE
+rm -f /cf/conf/$LOGFILE
+
 mkfifo $FIFO
 
 # Capture the JSON progress status and send it to the file we are watching

@@ -212,9 +212,9 @@ endif;
 				<?=$index['desc']?>
 			</td>
 			<td>
-				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success">install</a>
+				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
 <?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
-				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default">info</a>
+				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
 <?php endif;?>
 			</td>
 		</tr>

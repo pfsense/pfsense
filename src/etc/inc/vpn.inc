@@ -172,6 +172,11 @@ function vpn_ipsec_configure($restart = false) {
 	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
 	}
+	// delete these paths first to ensure old CAs, certs and CRLs aren't left behind. redmine #5238
+	rmdir_recursive($capath);
+	rmdir_recursive($keypath);
+	rmdir_recursive($crlpath);
+	rmdir_recursive($certpath);
 	if (!is_dir($capath)) {
 		mkdir($capath);
 	}

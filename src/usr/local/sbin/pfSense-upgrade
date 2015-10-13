@@ -52,7 +52,7 @@ usage() {
 	echo "	-d          - Turn on debug" >&2
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
-	echo "	-l          - Logfile name in /cf/conf/ (defaults to upgrade_log.txt)" >&2
+	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
 	echo "	-p FIFO     - Write pkg progress to FIFO"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
@@ -585,7 +585,7 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			_exit 0
 			;;
 		l)
-			logfile="/cf/conf/${OPTARG}"
+			logfile="${OPTARG}"
 			;;
 		p)
 			progress_fifo="${OPTARG}"

@@ -2064,34 +2064,24 @@ snapshots_copy_to_staging_nanobsd() {
 }
 
 snapshots_copy_to_staging_iso_updates() {
-	# Copy ISOs
-	md5 ${ISOPATH}.gz > ${ISOPATH}.md5
-	sha256 ${ISOPATH}.gz > ${ISOPATH}.sha256
-	cp ${ISOPATH}* $STAGINGAREA/ 2>/dev/null
-	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${ISOPATH})
+	local _img=""
 
-	# Copy memstick items
-	md5 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.md5
-	sha256 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.sha256
-	cp ${MEMSTICKPATH}* $STAGINGAREA/ 2>/dev/null
-	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKPATH})
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${UPDATES_TARBALL_FILENAME}; do
+		if [ ! -f "${_img}.gz" ]; then
+			continue
+		fi
+		md5 ${_img}.gz > ${_img}.md5
+		sha256 ${_img}.gz > ${_img}.sha256
+		cp ${_img}* $STAGINGAREA/ 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
+	done
 
-	md5 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.md5
-	sha256 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.sha256
-	cp ${MEMSTICKSERIALPATH}* $STAGINGAREA/ 2>/dev/null
-	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKSERIALPATH})
-
-	if [ "${TARGET}" = "amd64" ]; then
+	if [ "${TARGET}" = "amd64" -a -f "${MEMSTICKADIPATH}.gz" ]; then
 		md5 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.md5
 		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
 		cp ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKADIPATH})
 	fi
-
-	md5 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.md5
-	sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
-	cp ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
-	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
 
 	# NOTE: Updates need a file with output similar to date output
 	# Use the file generated at start of snapshots_dobuilds() to be consistent on times

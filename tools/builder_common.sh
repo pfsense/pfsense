@@ -2021,8 +2021,10 @@ snapshots_create_latest_symlink() {
 
 	if [ -f "${_image}.gz" ]; then
 		local _image_fixed="${_image}.gz"
-	else
+	elif [ -f "${_image}" ]; then
 		local _image_fixed=${_image}
+	else
+		return
 	fi
 
 	local _symlink=$(echo ${_image_fixed} | sed "s,${TIMESTAMP_SUFFIX},-latest,")

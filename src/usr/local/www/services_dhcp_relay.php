@@ -66,6 +66,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
 require_once('classes/Form.class.php');
 
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
@@ -147,7 +148,7 @@ if ($_POST) {
 		$retval = 0;
 		$retval = services_dhcrelay_configure();
 		$savemsg = get_std_save_message($retval);
-
+		filter_configure();
 	}
 }
 

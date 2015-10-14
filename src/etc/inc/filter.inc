@@ -3333,6 +3333,19 @@ EOD;
 					}
 
 				}
+				/* allow access to DHCP relay on interfaces */
+				if(isset($config['dhcrelay']['enable'])) {
+					$dhcifaces = explode(",", $dhcrelaycfg['interface']);
+					foreach ($dhcifaces as $dhcrelayif) {
+						if ($dhcrelayif = $on) {
+							$ipfrules .= <<<EOD
+# allow access to DHCP relay on {$oc['descr']}
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP relay"
+
+EOD;
+						}
+					}
+				}
 				break;
 		}
 

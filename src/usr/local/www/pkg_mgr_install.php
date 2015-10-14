@@ -357,21 +357,21 @@ if ($_GET) {
 
 	switch ($_POST['mode']) {
 		case 'delete':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -r ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -r ' . $pkgid, false, false, true);
 			$start_polling = true;
 			filter_configure();
 			break;
 
 		case 'reinstallall':
 		case 'reinstallpkg':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -i ' . $pkgid . ' -f', false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid . ' -f', false, false, true);
 			filter_configure();
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -i ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid, false, false, true);
 			$start_polling = true;
 			filter_configure();
 			break;

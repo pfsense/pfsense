@@ -2008,6 +2008,29 @@ snapshots_rotate_logfile() {
 
 }
 
+snapshots_create_latest_symlink() {
+	local _image="${1}"
+
+	if [ -z "${_image}" ]; then
+		return
+	fi
+
+	if [ -z "${TIMESTAMP_SUFFIX}" ]; then
+		return
+	fi
+
+	if [ -f "${_image}.gz" ]; then
+		local _image_fixed="${_image}.gz"
+	else
+		local _image_fixed=${_image}
+	fi
+
+	local _symlink=$(echo ${_image_fixed} | sed "s,${TIMESTAMP_SUFFIX},-latest,")
+	ln -sf $(basename ${_image_fixed}) ${_symlink}
+	ln -sf $(basename ${_image}).md5 ${_symlink}.md5
+	ln -sf $(basename ${_image}).sha256 ${_symlink}.sha256
+}
+
 snapshots_copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
@@ -2045,25 +2068,31 @@ snapshots_copy_to_staging_iso_updates() {
 	md5 ${ISOPATH}.gz > ${ISOPATH}.md5
 	sha256 ${ISOPATH}.gz > ${ISOPATH}.sha256
 	cp ${ISOPATH}* $STAGINGAREA/ 2>/dev/null
+	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${ISOPATH})
 
 	# Copy memstick items
 	md5 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.md5
 	sha256 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.sha256
 	cp ${MEMSTICKPATH}* $STAGINGAREA/ 2>/dev/null
+	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKPATH})
 
 	md5 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.md5
 	sha256 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.sha256
 	cp ${MEMSTICKSERIALPATH}* $STAGINGAREA/ 2>/dev/null
+	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKSERIALPATH})
 
 	if [ "${TARGET}" = "amd64" ]; then
 		md5 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.md5
 		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
 		cp ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKADIPATH})
 	fi
 
 	md5 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.md5
 	sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
 	cp ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
+	snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
+
 	# NOTE: Updates need a file with output similar to date output
 	# Use the file generated at start of snapshots_dobuilds() to be consistent on times
 	if [ -z "${_IS_RELEASE}" ]; then

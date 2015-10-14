@@ -53,7 +53,7 @@ usage() {
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
-	echo "	-p FIFO     - Write pkg progress to FIFO"
+	echo "	-p socket   - Write pkg progress to socket"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
 	echo "Following parameters are mutually exclusive:" >&2
@@ -128,17 +128,34 @@ _exit() {
 		/etc/rc.conf_mount_ro
 	fi
 
-	if [ -n "${progress_fifo_tail_pid}" ]; then
-		kill ${progress_fifo_tail_pid}
-	fi
-
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
-	[ -n "${EVENT_PIPE}" ] \
+	[ -n "${progress_socket}" ] \
 		&& _echo "__RC=${_rc}"
 
 	exit ${_rc}
+}
+
+pkg_with_pb() {
+	local _event_pipe=""
+
+	if [ -n "${progress_socket}" ]; then
+		if [ -e "${progress_socket}" ]; then
+			rm -f ${progress_socket}
+		fi
+
+		_event_pipe="-o EVENT_PIPE=${progress_socket}"
+
+		nc -lU ${progress_socket} >> ${progress_file} &
+
+		while [ ! -e "${progress_socket}" ]; do
+			sleep 0.1
+		done
+	fi
+
+	pkg ${_event_pipe} $@
+	return $?
 }
 
 fetch_upgrade_packages() {
@@ -166,14 +183,14 @@ fetch_upgrade_packages() {
 	fi
 
 	_echo ">>> Downloading upgrade packages..."
-	if ! pkg ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
+	if ! pkg_with_pb ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: It was not possible to download packages"
 		_exit 1
 	fi
 
 	if [ -n "${_pkgs_to_fetch}" ]; then
 		_echo ">>> Fetching packages not present on upgrade partition..."
-		if ! pkg ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
+		if ! pkg_with_pb ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
 			_echo "ERROR: It was not possible to fetch packages"
 			_exit 1
 		fi
@@ -511,7 +528,7 @@ pkg_install() {
 		local _msg="Installing"
 	fi
 
-	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg_with_pb ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
 	_exec "pkg clean" "Cleaning up cache" mute ignore_result
 }
 
@@ -528,7 +545,7 @@ pkg_delete() {
 		_exit 1
 	fi
 
-	_exec "pkg delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg_with_pb delete ${_pkg_name}" "Removing ${_pkg_name}"
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
@@ -561,7 +578,8 @@ unset booting
 unset boot_stage
 unset force
 unset yes
-unset progress_fifo
+unset progress_file
+unset progress_socket
 unset action
 unset action_pkg
 while getopts b:dfi:hp:l:r:uy opt; do
@@ -596,7 +614,11 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			fi
 			;;
 		p)
-			progress_fifo="${OPTARG}"
+			progress_socket="${OPTARG}"
+			if [ -z "${progress_socket}" ]; then
+				usage
+				_exit 1
+			fi
 			;;
 		r)
 			if [ -n "${action}" ]; then
@@ -643,25 +665,10 @@ if [ "${action}" != "upgrade" -a -f "${logfile}" ]; then
 	rm -f ${logfile}
 fi
 
-if [ -n "${progress_fifo}" ]; then
-	if [ ! -e "${progress_fifo}" ]; then
-		mkfifo ${progress_fifo}
-	fi
-	if [ ! -p "${progress_fifo}" ]; then
-		_echo "ERROR: ${progress_fifo} is not a FIFO"
-		_exit 1
-	fi
-	if [ -e "${progress_fifo}.json" ]; then
-		rm -f ${progress_fifo}.json
-	fi
-	
-	# Read fifo and save content to a file in background
-	# GUI will read progress from file
-	# json file - logfile - ".txt" + ".json"
-	progress_file=${logfile%.*}.json
-	tail -f ${progress_fifo} > ${progress_file} &
-	progress_fifo_tail_pid=$!
-	export EVENT_PIPE="${progress_fifo}"
+progress_file=${logfile%.*}.json
+
+if [ -e "${progress_file}" ]; then
+	rm -f ${progress_file}
 fi
 
 case "${action}" in

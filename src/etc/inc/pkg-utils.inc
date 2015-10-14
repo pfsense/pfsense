@@ -154,7 +154,8 @@ function pkg_call($params, $mute = false) {
 
 	$env = array(
 		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true"
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
 	);
 
 	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
@@ -260,7 +261,8 @@ function pkg_exec($params, &$stdout, &$stderr) {
 
 	$env = array(
 		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true"
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
 	);
 
 	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";

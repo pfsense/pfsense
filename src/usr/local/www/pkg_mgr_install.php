@@ -109,11 +109,11 @@ if($_REQUEST['ajax']) {
 	$code = 0;
 
 	// Process log file -----------------------------------------------------------------------------------------------
-	$logfile = fopen($_REQUEST['logfilename'] . '.txt', "r") or die("Unable to open " . $_REQUEST['logfilename']);
+	$logfile = @fopen($_REQUEST['logfilename'] . '.txt', "r");
 
 	if($logfile != FALSE) {
 		$resparray = array();
-		$statusarray = array('exitstatus' => 'success');
+		$statusarray = array();
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
@@ -122,7 +122,7 @@ if($_REQUEST['ajax']) {
 				$code = str_replace("__RC=", "", $logline);
 
 				if($code == 0) {
-					$logline = gettext("Success"). "\n";
+					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";
 				}
@@ -138,12 +138,15 @@ if($_REQUEST['ajax']) {
 		$resparray['log'] = $response;
 	} else {
 		$resparray['log'] = "not_ready";
+		print(json_encode($resparray));
+		exit;
 	}
 
 	// Process progress file ------------------------------------------------------------------------------------------
 	$progress = "";
+	$progarray = array();
 
-	$JSONfile = fopen($_REQUEST['logfilename'] . '.json', "r") or die("Unable to open " . $_REQUEST['logfilename']);
+	$JSONfile = @fopen($_REQUEST['logfilename'] . '.json', "r");
 
 	if($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
@@ -154,19 +157,20 @@ if($_REQUEST['ajax']) {
 
 		fclose($JSONfile);
 
-		$progarray = array();
-		if(strlen($progress) > 0)
+		if(strlen($progress) > 0) {
 			$progarray = json_decode($progress, true);
-
-		if(!$progarray)
-			$progarray = array();
+			if($progarray == NULL) {
+				$progarray = array();
+			}
+		}
 	}
+
 
 	// Check to see if our process is still running
 	$pidarray = array('pid' => (file_exists("/proc/" . $_REQUEST['pid']) ? "running":"stopped"));
 
-	// Glob all the arrays we have made togethr, and convert to JSON
-	print(json_encode($progarray + $resparray + $pidarray + $statusarray));
+	// Glob all the arrays we have made together, and convert to JSON
+	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
 	exit;
 }
 
@@ -223,7 +227,7 @@ display_top_tabs($tab_array);
 		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
 	} else if ($_GET['mode'] == 'reinstallall') {
 		$pkgmode = 'reinstallall';
-	} 
+	}
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
@@ -261,12 +265,12 @@ if($_POST['mode'] == 'delete') {
 }
 
 if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
-	if(isvalidpid($pidfile)) {
-		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+//	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+//	if(isvalidpid($pidfile)) {
+//		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
 //		$pid = $output[0];
 //		$start_polling = true;
-	}
+//	}
 ?>
 
 	<div class="progress" style="display: none;">
@@ -314,7 +318,7 @@ if ($_GET) {
 		default:
 			break;
 	}
-} else if ($_POST && ! $start_polling) {
+} else if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
 	/* All other cases make changes, so mount rw fs */
@@ -324,21 +328,21 @@ if ($_GET) {
 
 	switch ($_POST['mode']) {
 		case 'delete':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -r ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -r ' . $pkgid, false, false, true);
 			$start_polling = true;
 			filter_configure();
 			break;
 
 		case 'reinstallall':
 		case 'reinstallpkg':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid . ' -f', false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -i ' . $pkgid . ' -f', false, false, true);
 			filter_configure();
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid, false, false, true);
+			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.fifo -i ' . $pkgid, false, false, true);
 			$start_polling = true;
 			filter_configure();
 			break;
@@ -400,13 +404,14 @@ function getLogsStatus() {
 			type: "post",
 			data: { ajax: "ajax",
 					pid: "<?=$pid?>",
-					logfilename: "/cf/conf/webgui-log",
+					logfilename: "/tmp/webgui-log",
 					next_log_line: "0"
 				  }
 		});
 
 	// Deal with the results of the above ajax call
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
+//		alert(response);
 		var json = new Object;
 		json = jQuery.parseJSON(response);
 
@@ -423,11 +428,12 @@ function getLogsStatus() {
 			}
 
 			// Now we need to determine if the installation/removal was successful, and tell the user. Not as easy as it sounds :)
+
 			if((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
 			}
-
+/*
 			if((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
 				show_failure();
 				repeat = false;
@@ -437,7 +443,7 @@ function getLogsStatus() {
 				show_failure();
 				repeat = false;
 			}
-
+*/
 			// ToDo: THere are more end conditions we need to catch
 		}
 
@@ -448,7 +454,7 @@ function getLogsStatus() {
 }
 
 if("<?=$start_polling?>") {
-	setTimeout(getLogsStatus, 500);
+	setTimeout(getLogsStatus, 1000);
 	show_info();
 }
 

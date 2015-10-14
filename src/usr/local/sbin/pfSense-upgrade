@@ -650,9 +650,13 @@ if [ -n "${progress_fifo}" ]; then
 	if [ -e "${progress_fifo}.json" ]; then
 		rm -f ${progress_fifo}.json
 	fi
+	
 	# Read fifo and save content to a file in background
 	# GUI will read progress from file
-	tail -f ${progress_fifo} > ${progress_fifo}.json &
+	# json file - logfile - ".txt" + ".json"
+	progress_file=${logfile%.*}.json
+	tail -f ${progress_fifo} > ${progress_file} &
+	tailpid=$!
 	export EVENT_PIPE="${progress_fifo}"
 fi
 
@@ -673,5 +677,7 @@ case "${action}" in
 		_echo "ERROR: Invalid action!"
 		_exit 1
 esac
+
+kill ${tailpid}
 
 _exit 0

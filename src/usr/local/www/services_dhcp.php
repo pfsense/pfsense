@@ -645,7 +645,7 @@ if ($act == "del") {
 	}
 }
 
-// Build an HTML table that can be inseted into a Form_StaticText element
+// Build an HTML table that can be inserted into a Form_StaticText element
 function build_pooltable() {
 	global $a_pools;
 

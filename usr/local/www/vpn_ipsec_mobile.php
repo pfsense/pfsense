@@ -728,6 +728,7 @@ function login_banner_change() {
 <script type="text/javascript">
 //<![CDATA[
 pool_change();
+pool_change_v6();
 dns_domain_change();
 dns_split_change();
 dns_server_change();

@@ -97,31 +97,42 @@ $start_polling = false;
 //		log:
 //		exitcode:
 //		data:{current:, total}
-//		pid:
 //
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
-// isvalidpid($g['varrun_path']/$g['product_name']-upgrade.pid)
 
-if($_REQUEST['ajax']) {
+if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
+
+	// Check to see if our process is still running
+	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+
+	if (!isvalidpid($pidfile)) {
+		$running = "stopped";
+		// The log files may not be complete when the process terminates so we need wait
+		waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+	} else {
+		$running = "running";
+	}
+
+	$pidarray = array('pid' => $running);
 
 	// Process log file -----------------------------------------------------------------------------------------------
 	$logfile = @fopen($_REQUEST['logfilename'] . '.txt', "r");
 
-	if($logfile != FALSE) {
+	if ($logfile != FALSE) {
 		$resparray = array();
 		$statusarray = array();
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if(strpos($logline, "_RC=") != false) {
+			if (strpos($logline, "_RC=") != false) {
 				$code = str_replace("__RC=", "", $logline);
 
-				if($code == 0) {
+				if ($code == 0) {
 					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";
@@ -148,30 +159,48 @@ if($_REQUEST['ajax']) {
 
 	$JSONfile = @fopen($_REQUEST['logfilename'] . '.json', "r");
 
-	if($JSONfile != FALSE) {
+	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
-			 if(strpos($logline, 'INFO_PROGRESS_TICK')) {
-				$progress = $logline;
-			 }
+			if (!feof($JSONfile)	 && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
+				if (strpos($logline, '}}') !== false) {
+					$progress = $logline;
+				}
+			}
 		}
 
 		fclose($JSONfile);
 
-		if(strlen($progress) > 0) {
+		if (strlen($progress) > 0) {
 			$progarray = json_decode($progress, true);
-			if($progarray == NULL) {
-				$progarray = array();
-			}
 		}
 	}
-
-
-	// Check to see if our process is still running
-	$pidarray = array('pid' => (file_exists("/proc/" . $_REQUEST['pid']) ? "running":"stopped"));
 
 	// Glob all the arrays we have made together, and convert to JSON
 	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
 	exit;
+}
+
+function waitfor_string_in_file($filename, $string, $timeout) {
+	$start = $now = time();
+
+	while (($now - $start) < $timeout) {
+		$testfile = @fopen($filename, "r");
+
+		if ($testfile != FALSE) {
+			while (($line = fgets($testfile)) !== false) {
+				if (strpos($line, $string) !== false) {
+					fclose($testfile);
+					return(true);
+				}
+			}
+
+			fclose($testfile);
+		}
+	usleep(100000);
+	$now = time();
+	}
+
+	return(false);
 }
 
 if ($_POST) {
@@ -256,21 +285,21 @@ display_top_tabs($tab_array);
 	</div>
 <?php endif;
 
-if($_POST['mode'] == 'delete') {
+if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
-} else if($_POST['mode'] == 'reinstallpkg') {
+} else if ($_POST['mode'] == 'reinstallpkg') {
 	$modetxt = gettext("reinstallation");
 } else {
 	$modetxt = gettext("installation");
 }
 
 if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
-//	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
-//	if(isvalidpid($pidfile)) {
-//		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
-//		$pid = $output[0];
-//		$start_polling = true;
-//	}
+	// What if the user navigates away from this page and then come back via his/her "Back" button?
+	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+
+	if (isvalidpid($pidfile)) {
+		$start_polling = true;
+	}
 ?>
 
 	<div class="progress" style="display: none;">
@@ -361,10 +390,10 @@ if ($_GET) {
 	conf_mount_ro();
 }
 
-include('foot.inc')?>
+?>
 
 <script>
-
+//<![CDATA[
 //	Update the progress indicator
 function setProgress(barName, percent) {
 	$('.progress').show()
@@ -388,7 +417,8 @@ function show_failure() {
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />(Some packages may take several minutes!)");
+	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
+	"<?=gettext("(Some packages may take several minutes!)")?>");
 	$('#final').show();
 }
 
@@ -403,7 +433,6 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					pid: "<?=$pid?>",
 					logfilename: "/tmp/webgui-log",
 					next_log_line: "0"
 				  }
@@ -411,51 +440,49 @@ function getLogsStatus() {
 
 	// Deal with the results of the above ajax call
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
-//		alert(response);
 		var json = new Object;
+
 		json = jQuery.parseJSON(response);
 
-		if(json.log != "not ready") {
+		if (json.log != "not ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
 			$('#output').scrollTop($('#output')[0].scrollHeight);
 
 			// Update the progress bar
 			progress = 0;
-			if(json.data) {
+			if (json.data) {
 				setProgress('progressbar', ((json.data.current * 100) / json.data.total));
 				progress = json.data.total - json.data.current
 			}
 
 			// Now we need to determine if the installation/removal was successful, and tell the user. Not as easy as it sounds :)
-
-			if((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
+			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
 			}
-/*
-			if((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
-				show_failure();
-				repeat = false;
-			}
 
-			if((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
+			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
 				show_failure();
 				repeat = false;
 			}
-*/
-			// ToDo: THere are more end conditions we need to catch
+			// ToDo: There are more end conditions we need to catch
 		}
 
 		// And maybe do it again
-		if(repeat)
+		if (repeat)
 			setTimeout(getLogsStatus, 500);
 	});
 }
 
-if("<?=$start_polling?>") {
-	setTimeout(getLogsStatus, 1000);
-	show_info();
-}
-
+events.push(function(){
+	if ("<?=$start_polling?>") {
+		setTimeout(getLogsStatus, 1000);
+		show_info();
+	}
+});
+//]]>
 </script>
+
+<?php
+include('foot.inc');

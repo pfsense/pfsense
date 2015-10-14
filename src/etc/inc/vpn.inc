@@ -1686,10 +1686,16 @@ function vpn_l2tp_configure() {
 				$l2tp_listen="set l2tp self $ipaddr";
 			}
 
-			if ($l2tpcfg['paporchap'] == "chap") {
-				$paporchap = "set link enable chap";
-			} else {
-				$paporchap = "set link enable pap";
+			switch ($l2tpcfg['paporchap']) {
+				case 'chap':
+					$paporchap = "set link enable chap";
+					break;
+				case 'chap-msv2':
+					$paporchap = "set link enable chap-msv2";
+					break;
+				default:
+					$paporchap = "set link enable pap";
+					break;
 			}
 
 			/* write mpd.conf */

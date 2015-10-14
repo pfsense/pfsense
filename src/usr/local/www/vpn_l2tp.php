@@ -364,13 +364,13 @@ foreach ($interfaces as $iface => $ifacename): ?>
 				<div class="col-sm-2">
 					<select id="l2tp_subnet" name="l2tp_subnet" class="form-control">
 <?php
-					 for($x=0; $x<33; $x++) {
+					for($x=0; $x<33; $x++) {
 						if($x == $pconfig['l2tp_subnet'])
 								$SELECTED = " selected=\"selected\"";
 						else
 								$SELECTED = "";
 						echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
-					 }
+					}
 ?>
 					</select>
 					<span class="help-block">
@@ -384,13 +384,13 @@ foreach ($interfaces as $iface => $ifacename): ?>
 				<div class="col-sm-2">
 					<select id="n_l2tp_units" name="n_l2tp_units" class="form-control">
 <?php
-					 for($x=0; $x<255; $x++) {
+					for($x=0; $x<255; $x++) {
 						if($x == $pconfig['n_l2tp_units'])
 								$SELECTED = " selected=\"selected\"";
 						else
 								$SELECTED = "";
 						echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
-					 }
+					}
 ?>
 					</select>
 					<span class="help-block">
@@ -414,6 +414,7 @@ foreach ($interfaces as $iface => $ifacename): ?>
 				<div class="col-sm-2">
 					<?=$mandfldhtml?><select name="paporchap" id="paporchap" class="form-control">
 						<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " selected=\"selected\""?>><?=gettext("CHAP")?></option>
+						<option value='chap-msv2'<?php if ($pconfig['paporchap'] == "chap-msv2") echo " selected=\"selected\""?>><?=gettext("MS-CHAPv2")?></option>
 						<option value='pap'<?php if($pconfig['paporchap'] == "pap") echo " selected=\"selected\""?>><?=gettext("PAP")?></option>
 					</select>
 					<span class="help-block">
@@ -426,18 +427,18 @@ foreach ($interfaces as $iface => $ifacename): ?>
 				<label for="l2tp_dns1" class="col-sm-2 control-label"><?=gettext("L2TP DNS Servers")?></label>
 				<div class="col-sm-10">
 					<?=$mandfldhtml?><input name="l2tp_dns1" type="text" class="formfld unknown form-control" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1'])?>" />
-		    		<input name="l2tp_dns2" type="text" class="formfld unknown form-control" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2'])?>" />
+					<input name="l2tp_dns2" type="text" class="formfld unknown form-control" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2'])?>" />
 					<span class="help-block">
-			            <?=gettext("primary and secondary DNS servers assigned to L2TP clients")?>
+						<?=gettext("primary and secondary DNS servers assigned to L2TP clients")?>
 					</span>
-			    </div>
+				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="wins" class="col-sm-2 control-label"><?=gettext("WINS Server")?></label>
 				<div class="col-sm-10">
 					<input name="wins" class="formfld unknown form-control" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins'])?>" />
-		        </div>
+			</div>
 			</div>
 		</div>
 	</div>
@@ -456,7 +457,7 @@ foreach ($interfaces as $iface => $ifacename): ?>
 						<?=gettext("Use a RADIUS server for authentication")?>
 					</label>
 					<span class="help-block">
-					  <?=gettext("When set, all users will be authenticated using the RADIUS server specified below. The local user database will not be used.")?>
+						<?=gettext("When set, all users will be authenticated using the RADIUS server specified below. The local user database will not be used.")?>
 					</span>
 				</div>
 			</div>

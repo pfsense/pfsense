@@ -198,7 +198,7 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs">Reinstall</a>
 <!--			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs"><?=gettext("reinstall GUI")?></a> 
 <?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-info btn-xs">Info</a>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-info btn-xs">Info</a>
 <?php endif;?>
 -->
 		</td>

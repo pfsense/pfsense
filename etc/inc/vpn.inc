@@ -944,7 +944,6 @@ EOD;
 			if (isset($ph1ent['mobile'])) {
 				$rightsourceips = array();
 				if (!empty($a_client['pool_address']) ) {
-/*					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n"; */
 					$rightsourceips[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
 				}
 				if (!empty($a_client['pool_address_v6'])) {

@@ -2027,7 +2027,6 @@ snapshots_create_latest_symlink() {
 
 	local _symlink=$(echo ${_image_fixed} | sed "s,${TIMESTAMP_SUFFIX},-latest,")
 	ln -sf $(basename ${_image_fixed}) ${_symlink}
-	ln -sf $(basename ${_image}).md5 ${_symlink}.md5
 	ln -sf $(basename ${_image}).sha256 ${_symlink}.sha256
 }
 
@@ -2043,11 +2042,9 @@ snapshots_copy_to_staging_nanobsd() {
 			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
-				md5 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.md5 2>/dev/null
 				sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.sha256 2>/dev/null
 			fi
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				md5 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.md5 2>/dev/null
 				sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.sha256 2>/dev/null
 			fi
 
@@ -2070,14 +2067,12 @@ snapshots_copy_to_staging_iso_updates() {
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
-		md5 ${_img}.gz > ${_img}.md5
 		sha256 ${_img}.gz > ${_img}.sha256
 		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done
 
 	if [ "${TARGET}" = "amd64" -a -f "${MEMSTICKADIPATH}.gz" ]; then
-		md5 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.md5
 		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
 		cp -l ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKADIPATH})

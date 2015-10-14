@@ -128,6 +128,10 @@ _exit() {
 		/etc/rc.conf_mount_ro
 	fi
 
+	if [ -n "${progress_fifo_tail_pid}" ]; then
+		kill ${progress_fifo_tail_pid}
+	fi
+
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
@@ -656,7 +660,7 @@ if [ -n "${progress_fifo}" ]; then
 	# json file - logfile - ".txt" + ".json"
 	progress_file=${logfile%.*}.json
 	tail -f ${progress_fifo} > ${progress_file} &
-	tailpid=$!
+	progress_fifo_tail_pid=$!
 	export EVENT_PIPE="${progress_fifo}"
 fi
 
@@ -677,7 +681,5 @@ case "${action}" in
 		_echo "ERROR: Invalid action!"
 		_exit 1
 esac
-
-kill ${tailpid}
 
 _exit 0

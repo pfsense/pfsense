@@ -2132,8 +2132,7 @@ snapshots_scp_files() {
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	LATESTFILENAME="`ls $UPDATESDIR/*.tgz | grep Full | grep -v md5 | grep -v sha256 | tail -n1`"
-	LATESTFILENAME=`basename ${LATESTFILENAME}`
+	LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
 		${RSYNCPATH}/.updaters/latest.tgz"
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \

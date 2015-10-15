@@ -432,15 +432,9 @@ cisco_unity = {$unity_enabled}
 {$ifacesuse}
 {$makebeforebreak}
 
-# And two loggers using syslog. The subsections define the facility to log
-# to, currently one of: daemon, auth.
 syslog {
 	identifier = charon
 	daemon {
-		ike_name = yes
-{$strongswanlog}
-	}
-	auth {
 		ike_name = yes
 {$strongswanlog}
 	}

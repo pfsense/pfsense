@@ -52,8 +52,8 @@ usage() {
 	echo "	-d          - Turn on debug" >&2
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
-	echo "	-l          - Logfile name in /cf/conf/ (defaults to upgrade_log.txt)" >&2
-	echo "	-p FIFO     - Write pkg progress to FIFO"
+	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
+	echo "	-p socket   - Write pkg progress to socket"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
 	echo "Following parameters are mutually exclusive:" >&2
@@ -131,10 +131,31 @@ _exit() {
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
-	[ -n "${EVENT_PIPE}" ] \
+	[ -n "${progress_socket}" ] \
 		&& _echo "__RC=${_rc}"
 
 	exit ${_rc}
+}
+
+pkg_with_pb() {
+	local _event_pipe=""
+
+	if [ -n "${progress_socket}" ]; then
+		if [ -e "${progress_socket}" ]; then
+			rm -f ${progress_socket}
+		fi
+
+		_event_pipe="-o EVENT_PIPE=${progress_socket}"
+
+		nc -lU ${progress_socket} >> ${progress_file} &
+
+		while [ ! -e "${progress_socket}" ]; do
+			sleep 0.1
+		done
+	fi
+
+	pkg ${_event_pipe} $@
+	return $?
 }
 
 fetch_upgrade_packages() {
@@ -162,14 +183,14 @@ fetch_upgrade_packages() {
 	fi
 
 	_echo ">>> Downloading upgrade packages..."
-	if ! pkg ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
+	if ! pkg_with_pb ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
 		_echo "ERROR: It was not possible to download packages"
 		_exit 1
 	fi
 
 	if [ -n "${_pkgs_to_fetch}" ]; then
 		_echo ">>> Fetching packages not present on upgrade partition..."
-		if ! pkg ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
+		if ! pkg_with_pb ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
 			_echo "ERROR: It was not possible to fetch packages"
 			_exit 1
 		fi
@@ -203,7 +224,7 @@ pkg_unlock() {
 pkg_update() {
 	local _run_update=1
 
-	unset _force
+	local _force=""
 	if [ "${1}" = "force" ]; then
 		local _force=1
 	fi
@@ -491,12 +512,14 @@ pkg_install() {
 	if is_pkg_installed ${_pkg_name}; then
 		local _cversion=$(compare_pkg_version ${_pkg_name})
 
-		if [ "${_cversion}" = "=" ]; then
-			_echo "Package ${_pkg_name} is up to date"
-			_exit 0
-		elif [ "${_cversion}" = ">" ]; then
-			_echo "Installed ${_pkg_name} version is newer than remote"
-			_exit 0
+		if [ -z "${_force}" ]; then
+			if [ "${_cversion}" = "=" ]; then
+				_echo "Package ${_pkg_name} is up to date"
+				_exit 0
+			elif [ "${_cversion}" = ">" ]; then
+				_echo "Installed ${_pkg_name} version is newer than remote"
+				_exit 0
+			fi
 		fi
 		local _cmd="upgrade ${_force}"
 		local _msg="Upgrading"
@@ -505,7 +528,7 @@ pkg_install() {
 		local _msg="Installing"
 	fi
 
-	_exec "pkg ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg_with_pb ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
 	_exec "pkg clean" "Cleaning up cache" mute ignore_result
 }
 
@@ -522,13 +545,24 @@ pkg_delete() {
 		_exit 1
 	fi
 
-	_exec "pkg delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg_with_pb delete ${_pkg_name}" "Removing ${_pkg_name}"
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
+}
+
+pkg_reinstall_all() {
+	for _pkg in $(pkg query -e '%a == 0' %n); do
+		case "${_pkg}" in
+			"${platform}"-pkg-* )
+				echo reinstalling ${_pkg}
+				pkg_install ${_pkg} 1
+			;;
+		esac
+	done
 }
 
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
-logfile=/cf/conf/upgrade_log.txt
+logfile="/cf/conf/upgrade_log.txt"
 stdout='/dev/null'
 
 # pkg should not ask for confirmations
@@ -555,7 +589,8 @@ unset booting
 unset boot_stage
 unset force
 unset yes
-unset progress_fifo
+unset progress_file
+unset progress_socket
 unset action
 unset action_pkg
 while getopts b:dfi:hp:l:r:uy opt; do
@@ -583,10 +618,18 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			_exit 0
 			;;
 		l)
-			logfile="/cf/conf/${OPTARG}"
+			logfile="${OPTARG}"
+			if [ -z "${logfile}" ]; then
+				usage
+				_exit 1
+			fi
 			;;
 		p)
-			progress_fifo="${OPTARG}"
+			progress_socket="${OPTARG}"
+			if [ -z "${progress_socket}" ]; then
+				usage
+				_exit 1
+			fi
 			;;
 		r)
 			if [ -n "${action}" ]; then
@@ -629,21 +672,14 @@ echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
 
-if [ -n "${progress_fifo}" ]; then
-	if [ ! -e "${progress_fifo}" ]; then
-		mkfifo ${progress_fifo}
-	fi
-	if [ ! -p "${progress_fifo}" ]; then
-		_echo "ERROR: ${progress_fifo} is not a FIFO"
-		_exit 1
-	fi
-	if [ -e "${progress_fifo}.json" ]; then
-		rm -f ${progress_fifo}.json
-	fi
-	# Read fifo and save content to a file in background
-	# GUI will read progress from file
-	tail -f ${progress_fifo} > ${progress_fifo}.json &
-	export EVENT_PIPE="${progress_fifo}"
+if [ "${action}" != "upgrade" -a -f "${logfile}" ]; then
+	rm -f ${logfile}
+fi
+
+progress_file=${logfile%.*}.json
+
+if [ -e "${progress_file}" ]; then
+	rm -f ${progress_file}
 fi
 
 case "${action}" in
@@ -654,7 +690,12 @@ case "${action}" in
 		pkg_update force
 		;;
 	install)
-		pkg_install ${action_pkg} ${force}
+		if [ ${action_pkg} == "ALL_PACKAGES" ] && [ -n ${force} ]; then
+			echo "Reinstalling every single package"
+			pkg_reinstall_all
+		else
+			pkg_install ${action_pkg} ${force}
+		fi
 		;;
 	delete)
 		pkg_delete ${action_pkg}

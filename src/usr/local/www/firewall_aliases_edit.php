@@ -744,9 +744,14 @@ print $form;
 //<![CDATA[
 events.push(function(){
 
+	var disable_subnets;
+
 	function typechange() {
 		var tab = $('#type').find('option:selected').val();
-		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
+
+		disable_subnets = (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports');
+
+		$("[id^='address_subnet']").prop("disabled", disable_subnets);
 
 		// Set the help text to match the tab
 		var helparray = <?php echo json_encode($help); ?>;
@@ -763,6 +768,9 @@ events.push(function(){
 		var labelstr = <?php echo json_encode($label_str); ?>;
 		$('.repeatable:first').find('label').text(labelstr[tab]);
 
+		// Hide and disable rows other than the first
+		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));
+
 		// The add button and delete buttons must not show on  URL Table IP or URL table ports
 		if((tab == 'urltable') || (tab == 'urltable_ports')) {
 			hideClass('addbtn', true);
@@ -771,6 +779,33 @@ events.push(function(){
 			hideClass('addbtn', false);
 			$('[id^=deleterow]').show();
 		}
+	}
+
+	// Hide and disable all rows >= that specified
+	function hideRowsAfter(row, hide) {
+		var idx = 0;
+
+		$('.repeatable').each(function(el) {
+			if ( idx >= row ) {
+				hideRow(idx, hide);
+			}
+
+			idx++;
+		});
+	}
+
+	function hideRow(row, hide) {
+		if (hide) {
+			$('#deleterow' + row).parent('div').parent().addClass('hidden');
+		} else {
+			$('#deleterow' + row).parent('div').parent().removeClass('hidden');
+		}
+
+		// We need to disable the elements so they are not submitted in the POST
+		$('#address' + row).prop("disabled", hide);
+		$('#address_subnet' + row).prop("disabled", hide || disable_subnets);
+		$('#detail' + row).prop("disabled", hide);
+		$('#deleterow' + row).prop("disabled", hide);
 	}
 
 	// On load . .

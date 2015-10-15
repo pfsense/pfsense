@@ -2008,6 +2008,30 @@ snapshots_rotate_logfile() {
 
 }
 
+snapshots_create_latest_symlink() {
+	local _image="${1}"
+
+	if [ -z "${_image}" ]; then
+		return
+	fi
+
+	if [ -z "${TIMESTAMP_SUFFIX}" ]; then
+		return
+	fi
+
+	if [ -f "${_image}.gz" ]; then
+		local _image_fixed="${_image}.gz"
+	elif [ -f "${_image}" ]; then
+		local _image_fixed=${_image}
+	else
+		return
+	fi
+
+	local _symlink=$(echo ${_image_fixed} | sed "s,${TIMESTAMP_SUFFIX},-latest,")
+	ln -sf $(basename ${_image_fixed}) ${_symlink}
+	ln -sf $(basename ${_image}).sha256 ${_symlink}.sha256
+}
+
 snapshots_copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
@@ -2016,21 +2040,19 @@ snapshots_copy_to_staging_nanobsd() {
 			mkdir -p $STAGINGAREA/nanobsd
 			mkdir -p $STAGINGAREA/nanobsdupdates
 
-			cp $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
-			cp $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
+			cp -l $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
+			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
-				md5 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.md5 2>/dev/null
 				sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.sha256 2>/dev/null
 			fi
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				md5 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.md5 2>/dev/null
 				sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.sha256 2>/dev/null
 			fi
 
 			# Copy NanoBSD auto update:
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				cp $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
+				cp -l $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
 				sha256 $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz > $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz.sha256 2>/dev/null
 				# NOTE: Updates need a file with output similar to date output
 				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
@@ -2041,29 +2063,23 @@ snapshots_copy_to_staging_nanobsd() {
 }
 
 snapshots_copy_to_staging_iso_updates() {
-	# Copy ISOs
-	md5 ${ISOPATH}.gz > ${ISOPATH}.md5
-	sha256 ${ISOPATH}.gz > ${ISOPATH}.sha256
-	cp ${ISOPATH}* $STAGINGAREA/ 2>/dev/null
+	local _img=""
 
-	# Copy memstick items
-	md5 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.md5
-	sha256 ${MEMSTICKPATH}.gz > ${MEMSTICKPATH}.sha256
-	cp ${MEMSTICKPATH}* $STAGINGAREA/ 2>/dev/null
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${UPDATES_TARBALL_FILENAME}; do
+		if [ ! -f "${_img}.gz" ]; then
+			continue
+		fi
+		sha256 ${_img}.gz > ${_img}.sha256
+		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
+	done
 
-	md5 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.md5
-	sha256 ${MEMSTICKSERIALPATH}.gz > ${MEMSTICKSERIALPATH}.sha256
-	cp ${MEMSTICKSERIALPATH}* $STAGINGAREA/ 2>/dev/null
-
-	if [ "${TARGET}" = "amd64" ]; then
-		md5 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.md5
+	if [ "${TARGET}" = "amd64" -a -f "${MEMSTICKADIPATH}.gz" ]; then
 		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
-		cp ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
+		cp -l ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKADIPATH})
 	fi
 
-	md5 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.md5
-	sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
-	cp ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
 	# NOTE: Updates need a file with output similar to date output
 	# Use the file generated at start of snapshots_dobuilds() to be consistent on times
 	if [ -z "${_IS_RELEASE}" ]; then
@@ -2113,8 +2129,7 @@ snapshots_scp_files() {
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	LATESTFILENAME="`ls $UPDATESDIR/*.tgz | grep Full | grep -v md5 | grep -v sha256 | tail -n1`"
-	LATESTFILENAME=`basename ${LATESTFILENAME}`
+	LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
 		${RSYNCPATH}/.updaters/latest.tgz"
 	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \

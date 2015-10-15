@@ -951,6 +951,21 @@ EOD;
 				}
 			}
 
+			if (!empty($ph1ent['caref'])) {
+				$ca = lookup_ca($ph1ent['caref']);
+				if ($ca) {
+					$casubarr = cert_get_subject_array($ca['crt']);
+					$casub = "";
+					foreach ($casubarr as $casubfield) {
+						if (empty($casub)) {
+							$casub = "/";
+						}
+						$casub .= "{$casubfield['a']}={$casubfield['v']}/";
+					}
+
+				}
+			}
+
 			$authentication = "";
 			switch ($ph1ent['authentication_method']) {
 				case 'eap-mschapv2':
@@ -975,6 +990,9 @@ EOD;
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 						}
 					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
+					}
 					break;
 				case 'eap-radius':
 					if (isset($ph1ent['mobile'])) {
@@ -996,6 +1014,9 @@ EOD;
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
+					}
 					break;
 				case 'xauth_psk_server':
 					$authentication = "leftauth = psk\n\trightauth = psk";
@@ -1008,6 +1029,9 @@ EOD;
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
 					}
 					break;
 				case 'hybrid_rsa_server':
@@ -1686,10 +1710,16 @@ function vpn_l2tp_configure() {
 				$l2tp_listen="set l2tp self $ipaddr";
 			}
 
-			if ($l2tpcfg['paporchap'] == "chap") {
-				$paporchap = "set link enable chap";
-			} else {
-				$paporchap = "set link enable pap";
+			switch ($l2tpcfg['paporchap']) {
+				case 'chap':
+					$paporchap = "set link enable chap";
+					break;
+				case 'chap-msv2':
+					$paporchap = "set link enable chap-msv2";
+					break;
+				default:
+					$paporchap = "set link enable pap";
+					break;
 			}
 
 			/* write mpd.conf */

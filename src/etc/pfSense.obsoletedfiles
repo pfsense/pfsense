@@ -635,6 +635,7 @@
 /usr/local/sbin/pbi_makeport_chroot
 /usr/local/sbin/pbi_pbid
 /usr/local/sbin/pfsense-upgrade.sh
+/usr/local/sbin/pfsense-upgrade-GUI.sh
 /usr/local/sbin/pftpx
 /usr/local/sbin/racoon
 /usr/local/sbin/racoon_watch.sh

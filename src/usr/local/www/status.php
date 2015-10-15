@@ -235,13 +235,35 @@ if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
 }
 if(isset($config['system']['usefifolog']))  {
-	defCmdT("last 500 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 500");
-	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
-	defCmdT("last 100 IPsec log entries","/usr/sbin/fifolog_reader /var/log/ipsec.log 2>&1 | tail -n 100");
+	defCmdT("last 1000 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 DHCP log entries","/usr/sbin/fifolog_reader /var/log/dhcpd.log 2>&1 | tail -n 1000");
+	defCmdT("last 500 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 500");
+	defCmdT("last 1000 gateways log entries","/usr/sbin/fifolog_reader /var/log/gateways.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 IPsec log entries","/usr/sbin/fifolog_reader /var/log/ipsec.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 L2TP log entries","/usr/sbin/fifolog_reader /var/log/l2tps.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 NTP log entries","/usr/sbin/fifolog_reader /var/log/ntpd.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 OpenVPN log entries","/usr/sbin/fifolog_reader /var/log/openvpn.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 Captive Portal auth log entries","/usr/sbin/fifolog_reader /var/log/portalauth.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 PPP log entries","/usr/sbin/fifolog_reader /var/log/poes.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 relayd log entries","/usr/sbin/fifolog_reader /var/log/relayd.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 resolver log entries","/usr/sbin/fifolog_reader /var/log/resolver.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 routing log entries","/usr/sbin/fifolog_reader /var/log/routing.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 wireless log entries","/usr/sbin/fifolog_reader /var/log/wireless.log 2>&1 | tail -n 1000");
 } else {
-	defCmdT("last 500 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 500");
-	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
-	defCmdT("last 100 IPsec log entries","/usr/local/sbin/clog /var/log/ipsec.log 2>&1 | tail -n 100");
+	defCmdT("last 1000 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 DHCP log entries","/usr/local/sbin/clog /var/log/dhcpd.log 2>&1 | tail -n 1000");
+	defCmdT("last 500 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 500");
+	defCmdT("last 1000 gateways log entries","/usr/local/sbin/clog /var/log/gateways.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 IPsec log entries","/usr/local/sbin/clog /var/log/ipsec.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 L2TP log entries","/usr/local/sbin/clog /var/log/l2tps.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 NTP log entries","/usr/local/sbin/clog /var/log/ntpd.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 OpenVPN log entries","/usr/local/sbin/clog /var/log/openvpn.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 Captive Portal auth log entries","/usr/local/sbin/clog /var/log/portalauth.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 PPP log entries","/usr/local/sbin/clog /var/log/poes.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 relayd log entries","/usr/local/sbin/clog /var/log/relayd.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 resolver log entries","/usr/local/sbin/clog /var/log/resolver.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 routing log entries","/usr/local/sbin/clog /var/log/routing.log 2>&1 | tail -n 1000");
+	defCmdT("last 1000 wireless log entries","/usr/local/sbin/clog /var/log/wireless.log 2>&1 | tail -n 1000");
 }
 if (file_exists("/tmp/PHP_errors.log")) {
 	defCmdT("PHP Error Log", "/bin/cat /tmp/PHP_errors.log");

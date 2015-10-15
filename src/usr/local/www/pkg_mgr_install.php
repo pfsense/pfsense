@@ -80,6 +80,7 @@ global $static_output;
 $static_output = "";
 $static_status = "";
 $sendto = "output";
+$start_polling = false;
 
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
@@ -96,32 +97,50 @@ $sendto = "output";
 //		log:
 //		exitcode:
 //		data:{current:, total}
-//		pid:
 //
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
-// isvalidpid($g['varrun_path']/$g['product_name']-upgrade.pid)
 
-if($_REQUEST['ajax']) {
+if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
 
-	// Process log file -----------------------------------------------------------------------------------------------
-	$logfile = fopen($_REQUEST['logfilename'] . '.txt', "r") or die("Unable to open " . $_REQUEST['logfilename']);
+	// Check to see if our process is still running
+	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+	$running = "running";
 
-	if($logfile != FALSE) {
+	// When we do a reinstallall, it is technically possible that we might catch the system in-between
+	// packages, hence the de-bounce here
+	if (!isvalidpid($pidfile)) {
+		usleep(100000);
+		if (!isvalidpid($pidfile)) {
+			$running = "stopped";
+			// The log files may not be complete when the process terminates so we need wait until we see the
+			// exit status (__RC=x)
+			waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+			filter_configure();
+			send_event("service restart packages");
+		}
+	}
+
+	$pidarray = array('pid' => $running);
+
+	// Process log file -----------------------------------------------------------------------------------------------
+	$logfile = @fopen($_REQUEST['logfilename'] . '.txt', "r");
+
+	if ($logfile != FALSE) {
 		$resparray = array();
-		$statusarray = array('exitstatus' => 'success');
+		$statusarray = array();
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if(strpos($logline, "_RC=") != false) {
+			if (strpos($logline, "_RC=") != false) {
 				$code = str_replace("__RC=", "", $logline);
 
-				if($code == 0) {
-					$logline = gettext("Success"). "\n";
+				if ($code == 0) {
+					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";
 				}
@@ -137,36 +156,58 @@ if($_REQUEST['ajax']) {
 		$resparray['log'] = $response;
 	} else {
 		$resparray['log'] = "not_ready";
+		print(json_encode($resparray));
+		exit;
 	}
 
 	// Process progress file ------------------------------------------------------------------------------------------
 	$progress = "";
+	$progarray = array();
 
-	$JSONfile = fopen($_REQUEST['logfilename'] . '.json', "r") or die("Unable to open " . $_REQUEST['logfilename']);
+	$JSONfile = @fopen($_REQUEST['logfilename'] . '.json', "r");
 
-	if($JSONfile != FALSE) {
+	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
-			 if(strpos($logline, 'INFO_PROGRESS_TICK')) {
-				$progress = $logline;
-			 }
+			if (!feof($JSONfile)	 && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
+				if (strpos($logline, '}}') !== false) {
+					$progress = $logline;
+				}
+			}
 		}
 
 		fclose($JSONfile);
 
-		$progarray = array();
-		if(strlen($progress) > 0)
+		if (strlen($progress) > 0) {
 			$progarray = json_decode($progress, true);
-
-		if(!$progarray)
-			$progarray = array();
+		}
 	}
 
-	// Check to see if our process is still running
-	$pidarray = array('pid' => (file_exists("/proc/" . $_REQUEST['pid']) ? "running":"stopped"));
-
-	// Glob all the arrays we have made togethr, and convert to JSON
-	print(json_encode($progarray + $resparray + $pidarray + $statusarray));
+	// Glob all the arrays we have made together, and convert to JSON
+	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
 	exit;
+}
+
+function waitfor_string_in_file($filename, $string, $timeout) {
+	$start = $now = time();
+
+	while (($now - $start) < $timeout) {
+		$testfile = @fopen($filename, "r");
+
+		if ($testfile != FALSE) {
+			while (($line = fgets($testfile)) !== false) {
+				if (strpos($line, $string) !== false) {
+					fclose($testfile);
+					return(true);
+				}
+			}
+
+			fclose($testfile);
+		}
+	usleep(100000);
+	$now = time();
+	}
+
+	return(false);
 }
 
 if ($_POST) {
@@ -210,11 +251,9 @@ $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.ph
 $tab_array[] = array(gettext("Package Installer"), true, "");
 display_top_tabs($tab_array);
 
-$start_polling = false;
-
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-	<h2>Add / remove package</h2>
+	<h2>Install / remove package</h2>
 <?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
@@ -227,17 +266,11 @@ $start_polling = false;
 	}
 
 	switch ($pkgmode) {
-		case 'reinstallall':
-			$pkgname = 'All packages';
-			$pkgtxt = 'reinstalled';
-			break;
-		case 'reinstallxml':
-			$pkg_gui_xml_text = " GUI XML components";
 		case 'reinstallpkg':
 			$pkgtxt = 'reinstalled';
 			break;
 		case 'delete':
-			$pkgtxt = 'deleted';
+			$pkgtxt = 'removed';
 			break;
 		default:
 			$pkgtxt = $pkgmode;
@@ -247,7 +280,17 @@ $start_polling = false;
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<div class="content">
+<?php
+			if ($pkgmode == 'reinstallall') {
+?>
+				<p><?=gettext("All packages will be reinstalled.");?></p>
+<?php
+			} else {
+?>
 				<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+<?php
+			}
+?>
 			</div>
 		</div>
 		<div class="panel-footer">
@@ -259,15 +302,22 @@ $start_polling = false;
 	</div>
 <?php endif;
 
-if($_POST['mode'] == 'delete') {
+if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
-} else if($_POST['mode'] == 'reinstallpkg') {
+} else if ($_POST['mode'] == 'reinstallpkg') {
 	$modetxt = gettext("reinstallation");
 } else {
 	$modetxt = gettext("installation");
 }
 
-if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):?>
+if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
+	// What if the user navigates away from this page and then come back via his/her "Back" button?
+	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+
+	if (isvalidpid($pidfile)) {
+		$start_polling = true;
+	}
+?>
 
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
@@ -275,7 +325,7 @@ if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'ins
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title" id="status"><?=gettext("Beginning package ") . $modetxt?>.</h2>
+			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
 		</div>
 
 		<div class="panel-body">
@@ -322,25 +372,31 @@ if ($_GET) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
+	$progbar = true;
+
 	switch ($_POST['mode']) {
 		case 'delete':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -r ' . $pkgid, false, false, true);
+			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -r ' . $pkgid, false, false, true);
 			$start_polling = true;
-			filter_configure();
 			break;
 
 		case 'reinstallall':
+			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
+				$progbar = false; // We don't show the progress bar for reinstallall. It would be far too confusing
+				mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . "ALL_PACKAGES" . ' -f', false, false, true);
+				$start_polling = true;
+			}
+
+			break;
 		case 'reinstallpkg':
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid . ' -f', false, false, true);
-			filter_configure();
+			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid . ' -f', false, false, true);
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			$pid = mwexec('/usr/local/sbin/pfSense-upgrade -l webgui-log.txt -p /cf/conf/webgui-log -i ' . $pkgid, false, false, true);
+			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid, false, false, true);
 			$start_polling = true;
-			filter_configure();
 			break;
 	}
 
@@ -357,10 +413,10 @@ if ($_GET) {
 	conf_mount_ro();
 }
 
-include('foot.inc')?>
+?>
 
 <script>
-
+//<![CDATA[
 //	Update the progress indicator
 function setProgress(barName, percent) {
 	$('.progress').show()
@@ -370,7 +426,11 @@ function setProgress(barName, percent) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+	if("<?=$progbar?>")
+		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+	else
+		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
+
 	$('#final').show();
 }
 
@@ -384,7 +444,8 @@ function show_failure() {
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />(Some packages may take several minutes!)");
+	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
+	"<?=gettext("(Some packages may take several minutes!)")?>");
 	$('#final').show();
 }
 
@@ -399,8 +460,7 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					pid: "<?=$pid?>",
-					logfilename: "/cf/conf/webgui-log",
+					logfilename: "/tmp/webgui-log",
 					next_log_line: "0"
 				  }
 		});
@@ -408,48 +468,50 @@ function getLogsStatus() {
 	// Deal with the results of the above ajax call
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
 		var json = new Object;
+
 		json = jQuery.parseJSON(response);
 
-		if(json.log != "not ready") {
+		if (json.log != "not ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
 			$('#output').scrollTop($('#output')[0].scrollHeight);
 
 			// Update the progress bar
 			progress = 0;
-			if(json.data) {
-				setProgress('progressbar', ((json.data.current * 100) / json.data.total));
-				progress = json.data.total - json.data.current
-			}
 
+			if("<?=$progbar?>") {
+				if (json.data) {
+					setProgress('progressbar', ((json.data.current * 100) / json.data.total));
+					progress = json.data.total - json.data.current
+				}
+			}
 			// Now we need to determine if the installation/removal was successful, and tell the user. Not as easy as it sounds :)
-			if((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
+			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
 			}
 
-			if((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
+			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
 				show_failure();
 				repeat = false;
 			}
-
-			if((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
-				show_failure();
-				repeat = false;
-			}
-
-			// ToDo: THere are more end conditions we need to catch
+			// ToDo: There are more end conditions we need to catch
 		}
 
 		// And maybe do it again
-		if(repeat)
+		if (repeat)
 			setTimeout(getLogsStatus, 500);
 	});
 }
 
-if("<?=$start_polling?>") {
-	setTimeout(getLogsStatus, 500);
-	show_info();
-}
-
+events.push(function(){
+	if ("<?=$start_polling?>") {
+		setTimeout(getLogsStatus, 1000);
+		show_info();
+	}
+});
+//]]>
 </script>
+
+<?php
+include('foot.inc');

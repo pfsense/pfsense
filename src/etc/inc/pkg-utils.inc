@@ -108,6 +108,37 @@ function pkg_remove_prefix(&$pkg_name) {
 	}
 }
 
+/* Execute pkg update when it's necessary */
+function pkg_update($force = false) {
+	global $g;
+
+	$now = strftime('%s');
+	if (!$force) {
+		$last_update_file="{$g['varrun_path']}/{$g['product_name']}-upgrade-last-update";
+
+		if (file_exists($last_update_file)) {
+			$last_update = rtrim(file_get_contents($last_update_file), "\n");
+			if (!is_numericint($last_update)) {
+				$last_update = 0;
+			}
+		}
+
+		if ($last_update > 0) {
+			if ($now > $last_update && ($now - $last_update) <= (60 * 60)) {
+				return true;
+			}
+		}
+	}
+
+	$rc = pkg_call("update");
+
+	if ($rc) {
+		file_put_contents($last_update_file, $now . "\n");
+	}
+
+	return $rc;
+}
+
 /* Execute a pkg call */
 function pkg_call($params, $mute = false) {
 	global $static_output, $g, $config;
@@ -123,7 +154,8 @@ function pkg_call($params, $mute = false) {
 
 	$env = array(
 		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true"
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
 	);
 
 	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
@@ -229,7 +261,8 @@ function pkg_exec($params, &$stdout, &$stderr) {
 
 	$env = array(
 		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true"
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
 	);
 
 	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
@@ -362,7 +395,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
 	update_status($static_output);
 
-	if (!pkg_call("update")) {
+	if (!pkg_update()) {
 		$input_errors[] = gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		$static_output .= "\n" . gettext("ERROR: An error occurred when updating packages repository. Aborting...") . "\n";
 		update_status($static_output);

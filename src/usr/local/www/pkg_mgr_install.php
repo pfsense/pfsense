@@ -246,7 +246,7 @@ display_top_tabs($tab_array);
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-	<h2>Add / remove package</h2>
+	<h2>Install / remove package</h2>
 <?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
@@ -263,7 +263,7 @@ display_top_tabs($tab_array);
 			$pkgtxt = 'reinstalled';
 			break;
 		case 'delete':
-			$pkgtxt = 'deleted';
+			$pkgtxt = 'removed';
 			break;
 		default:
 			$pkgtxt = $pkgmode;
@@ -273,7 +273,11 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<div class="content">
-				<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+<?php if ($pkgmode == 'reinstallall') { ?>
+			<p><?=gettext("All packages will be reinstalled.");?></p>
+<?php } else { ?>
+			<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+<?php } ?>
 			</div>
 		</div>
 		<div class="panel-footer">
@@ -308,7 +312,7 @@ if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'ins
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title" id="status"><?=gettext("Beginning package ") . $modetxt?>.</h2>
+			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
 		</div>
 
 		<div class="panel-body">

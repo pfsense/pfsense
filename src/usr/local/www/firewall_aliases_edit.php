@@ -771,12 +771,17 @@ events.push(function(){
 		// Hide and disable rows other than the first
 		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));
 
-		// The add button and delete buttons must not show on  URL Table IP or URL table ports
-		if((tab == 'urltable') || (tab == 'urltable_ports')) {
+		// The add button must not show on URL Table IP or URL table ports
+		if ((tab == 'urltable') || (tab == 'urltable_ports')) {
 			hideClass('addbtn', true);
-			$('[id^=deleterow]').hide();
 		} else {
 			hideClass('addbtn', false);
+		}
+
+		// The delete button must not show on URL Table IP or URL table ports or if there are less than 2 rows
+		if ((tab == 'urltable') || (tab == 'urltable_ports') || ($('.repeatable').length < 2)) {
+			$('[id^=deleterow]').hide();
+		} else {
 			$('[id^=deleterow]').show();
 		}
 	}

@@ -549,6 +549,17 @@ pkg_delete() {
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
+pkg_reinstall_all() {
+	for _pkg in $(pkg query -e '%a == 0' %n); do
+		case "${_pkg}" in
+			"${platform}"-pkg-* )
+				echo reinstalling ${_pkg}
+				pkg_install ${_pkg} 1
+			;;
+		esac
+	done
+}
+
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile="/cf/conf/upgrade_log.txt"
@@ -679,7 +690,12 @@ case "${action}" in
 		pkg_update force
 		;;
 	install)
-		pkg_install ${action_pkg} ${force}
+		if [ ${action_pkg} == "ALL_PACKAGES" ] && [ -n ${force} ]; then
+			echo "Reinstalling every single package"
+			pkg_reinstall_all
+		else
+			pkg_install ${action_pkg} ${force}
+		fi
 		;;
 	delete)
 		pkg_delete ${action_pkg}

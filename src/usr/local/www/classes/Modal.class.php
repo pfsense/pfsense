@@ -1,6 +1,6 @@
 <?php
 
-require_once('classes/Form.class.php');
+require_once('/usr/local/www/classes/Form.class.php');
 
 class Modal extends Form_Section
 {

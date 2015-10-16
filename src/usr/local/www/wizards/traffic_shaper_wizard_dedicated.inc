@@ -238,7 +238,7 @@ function step2_stepbeforeformdisplay() {
 		$field['displayname'] = "Download";
 		$field['name'] = "conn{$i}download";
 		$field['type'] = "input";
-		$field['bindstofield'] = "ezshaper->step2->conn{$i}download";
+		$field['bindstofieldnext'] = "ezshaper->step2->conn{$i}download";
 		$field['combinefieldsbegin'] = "true";
 		$fields[] = $field;
 
@@ -357,11 +357,6 @@ function step3_stepbeforeformdisplay() {
 	$voipfields[] = $field;
 
 	$field = array();
-	$field['name'] = "Next";
-	$field['type'] = "submit";
-	$voipfields[] = $field;
-
-	$field = array();
 	$field['name'] = "VOIP specific settings";
 	$field['type'] = "listtopic";
 	$voipfields[] = $field;
@@ -409,7 +404,7 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = array();
-		$field['displayname'] = "Upload";
+		$field['displayname'] = "Upload rate";
 		$field['name'] = "conn{$i}upload";
 		$enablefields[] = "conn{$i}upload";
 		$field['type'] = "input";
@@ -418,6 +413,7 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = array();
+		$field['displayname'] = "Units";
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
@@ -442,7 +438,7 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = array();
-		$field['displayname'] = "Download";
+		$field['displayname'] = "Download rate";
 		$field['name'] = "local{$i}download";
 		$enablefields[] = "local{$i}download";
 		$field['type'] = "input";
@@ -452,6 +448,7 @@ function step3_stepbeforeformdisplay() {
 
 		$field = array();
 		$field['combinefieldsend'] = "true";
+		$field['displayname'] = "Units";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
 		$field['name'] = "local{$i}downloadspeed";

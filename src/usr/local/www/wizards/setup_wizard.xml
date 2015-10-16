@@ -128,25 +128,29 @@
 		<![CDATA[
 		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			include("head.inc");
-			print_info_box("Hostname is invalid. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Hostname is invalid. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
 			include("head.inc");
-			print_info_box("Domain is invalid. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Domain is invalid. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
 			include("head.inc");
-			print_info_box("Primary DNS server is invalid. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Primary DNS server is invalid. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
 			include("head.inc");
-			print_info_box("Second DNS server is invalid. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Second DNS server is invalid. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
@@ -178,7 +182,9 @@
 		<![CDATA[
 		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
 			if (!is_domain($ts)) {
-				print_info_box_np(gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct."));
+				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.";
+				print_input_errors($input_errors);
+				include("foot.inc");
 				die;
 			}
 		}
@@ -433,20 +439,23 @@
 		<![CDATA[
 		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
 			include("head.inc");
-			print_info_box("MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
 			include("head.inc");
-			print_info_box("Invalid MAC Address. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Invalid MAC Address. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
 				include("head.inc");
-				print_info_box("Invalid WAN IP Address. Please press back in your browser window and correct.", 'danger');
+				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
+				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
@@ -454,26 +463,30 @@
 			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
 			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
 			    include("head.inc"); 
-				print_info_box("Invalid WAN IP Address. Please press back in your browser window and correct.", 'danger');
+				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
+				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
 		}
 		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
 			include("head.inc");
-			print_info_box("Invalid DHCP Hostname. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Invalid DHCP Hostname. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
 		    include("head.inc");
-			print_info_box("Invalid PPTP Local IP Address. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
 			include("head.inc");
-			print_info_box("Invalid PPTP Remote IP Address. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
@@ -568,19 +581,22 @@
 		if ($_POST['subnetmask'] < 31) {
 			if ($_POST['lanipaddress'] == $lowestip) {
 				include("head.inc");
-				print_info_box("LAN IP Address equals subnet network address. This is not allowed. Please press back in your browser window and correct.", 'danger');
+				$input_errors[] = "LAN IP Address equals subnet network address. This is not allowed. Please press back in your browser window and correct.";
+				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
 			if ($_POST['lanipaddress'] == $highestip) {
 				include("head.inc");
-				print_info_box("LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in your browser window and correct.", 'danger');
+				$input_errors[] = "LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in your browser window and correct.";
+				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
 		} else {
 			include("head.inc");
-			print_info_box("Invalid subnet mask, choose a mask less than 31. Please press back in your browser window and correct.", 'danger');
+			$input_errors[] = "Invalid subnet mask, choose a mask less than 31. Please press back in your browser window and correct.";
+			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}

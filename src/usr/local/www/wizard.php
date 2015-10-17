@@ -533,7 +533,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'text',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
 
 				break;
 			case "text":
@@ -554,7 +554,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$onchange = "";
 
 				if ($field['validate']) {
-					$onchange="FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+					$onchange="FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")";
 				}
 
 				$section->addInput(new Form_Input(
@@ -642,7 +642,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'password',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] .")":"");
 
 				break;
 			case "certca_selection":
@@ -800,7 +800,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$value
 				))->setHelp($field['description'])
 				  ->setAttribute('rows', $field['rows'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
 
 				break;
 			case "submit":

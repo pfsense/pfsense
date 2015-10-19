@@ -10,27 +10,16 @@ if (is_array($command_split)) {
 	$args = array_slice($argv, 2);
 }
 
-$pkg_name = $args[0];
+$pkg_name = $args[1];
 
-echo "Installing package \"{$pkg_name}\"...\n";
+pkg_remove_prefix($pkg_name);
 
-echo "Trying to fetch package info...";
-$pkg_info = get_pkg_info();
-if ($pkg_info) {
-	echo " Done.\n";
+echo "Installing package \"{$pkg_name}\"... ";
+
+if (mwexec("/usr/local/sbin/{$g['product_name']}-upgrade -y -i {$g['pkg_prefix']}{$pkg_name}") == 0) {
+	echo "Done.\n";
+	return true;
 } else {
-	echo "\n" . gettext(' >>> Unable to get pkg info.') . "\n";
-	return;
+	echo "Failed.\n";
+	return false;
 }
-
-$static_output = "";
-$pkg_interface = "console";
-
-if (empty($pkg_info[$pkg_name])) {
-	echo "\nPackage not found.\n";
-	return;
-}
-
-install_package($pkg_name);
-
-echo "\nDone.\n";

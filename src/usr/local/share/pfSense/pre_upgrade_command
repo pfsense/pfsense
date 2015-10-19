@@ -12,6 +12,36 @@ echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 # De-activate sync on the root slice only. This will not match NanoBSD since it already has sync,noatime
 /usr/bin/sed -i '' 's/^\(\/.*[[:space:]]*\/[[:space:]]*ufs[[:space:]]*\)rw,sync\([[:space:]]*[[:digit:]][[:space:]]*[[:digit:]]\)$/\1rw\2/' /etc/fstab
 
+# Cleanup PBIs
+if which pbi_info >/dev/null 2>&1; then
+	for pbi in $(pbi_info); do
+		pbi_prefix=$(pbi_info ${pbi} | awk '$1 == "Prefix:" { print $2  }')
+		if [ ! -d "${pbi_prefix}" ]; then
+			continue
+		fi
+
+		for subdir in bin sbin; do
+			if [ ! -d "${pbi_prefix}/${subdir}" ]; then
+				continue
+			fi
+
+			for pbiopt in ${pbi_prefix}/${subdir}/*.pbiopt; do
+				link_name=$(awk '$1 == "TARGET:" { print $2 }' ${pbiopt})
+
+				if [ -z "${link_name}" ]; then
+					continue
+				fi
+
+				if [ -L /usr/local/${link_name} ]; then
+					rm -f /usr/local/${link_name}
+				fi
+			done
+		done
+
+		pbi_delete ${pbi}
+	done
+fi
+
 # Hack to workaround ticket #3749
 if [ ${PRIOR_VERSION} -le 8 ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware; then
 	PROC=$(ps axwww | grep '/etc/rc.firmware *pfSenseupgrade')

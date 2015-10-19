@@ -550,11 +550,10 @@ pkg_delete() {
 }
 
 # Reinstall every pfSense-pkg-* package
-# (using cheap hack to implement "string begins with)
 pkg_reinstall_all() {
 	for _pkg in $(pkg query -e '%a == 0' %n); do
 		case ${_pkg} in "${platform}"-pkg-* )
-			echo "Reinstalling ${_pkg}"
+			_echo "Reinstalling ${_pkg}"
 			pkg_install ${_pkg} 1
 			;;
 		esac

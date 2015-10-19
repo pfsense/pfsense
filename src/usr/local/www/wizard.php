@@ -70,7 +70,7 @@ require("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
 
-// This causes the step #, filed type and field name to be printed at hte top of the page
+// This causes the step #, field type and field name to be printed at the top of the page
 define(DEBUG, false);
 
 function gentitle_pkg($pgname) {

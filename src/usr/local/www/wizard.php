@@ -70,6 +70,9 @@ require("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
 
+// This causes the step #, filed type and field name to be printed at hte top of the page
+define(DEBUG, false);
+
 function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
@@ -517,7 +520,11 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 			eval($toeval);
 		}
 
-//		print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . '<br />');
+
+		if(DEBUG) {
+			print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . ', Name: ' . $name . '<br />');
+		}
+
 		switch ($field['type']) {
 			case "input":
 				if ($field['displayname']) {
@@ -696,8 +703,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$name = strtolower($name);
 
 				$etitle = (fixup_string($field['displayname']) ? $field['displayname'] : $field['name']);
-
-				echo "<select id='{$name}' name='{$name}' {$size}>\n";
 
 				if ($field['add_to_cert_selection'] != "") {
 					if ($field['add_to_cert_selection'] == $value) {

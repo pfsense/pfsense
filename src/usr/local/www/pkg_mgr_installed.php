@@ -86,14 +86,6 @@ if (is_subsystem_dirty('packagelock')) {
 
 include("head.inc");
 
-if(is_array($config['installedpackages']['package'])) {
-	$tocheck = array();
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$tocheck[] = $g['pkg_prefix'] . get_package_internal_name($instpkg);
-	}
-
-	$current_info = get_pkg_info($tocheck);
-}
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Manager"));
 
@@ -102,7 +94,16 @@ $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-if(!is_array($config['installedpackages']['package'])):?>
+$installed_packages = array();
+$package_list = get_pkg_info();
+foreach ($package_list as $pkg) {
+	if (!isset($pkg['installed'])) {
+		continue;
+	}
+	$installed_packages[] = $pkg;
+}
+
+if(empty($installed_packages)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
@@ -121,44 +122,33 @@ if(!is_array($config['installedpackages']['package'])):?>
 	</thead>
 	<tbody>
 <?php
-	$instpkgs = array();
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$instpkgs[] = $instpkg['name'];
-	}
-	natcasesort($instpkgs);
-
-	foreach ($instpkgs as $index => $pkgname):
-		$pkg = $config['installedpackages']['package'][$index];
+	foreach ($installed_packages as $pkg):
 		if(!$pkg['name']) {
 			continue;
 		}
 
-		$full_name = $g['pkg_prefix'] . get_package_internal_name($pkg);
+		$shortname = $pkg['name'];
+		pkg_remove_prefix($shortname);
 
-		unset($latest_package);
-		foreach ($current_info as $pkg_info) {
-			if ($full_name != $pkg_info['name']) {
-				continue;
-			}
+		$id = get_package_id($shortname);
 
-			$latest_package = $pkg_info['version'];
-			$pkgdescr = $pkg_info['desc'];
-			$pkgwww = $pkg_info['www'];
+		if ($id == -1) {
+			continue;
 		}
 
 		// get history/changelog git dir
-		$commit_dir=explode("/",$pkg['config_file']);
+		$commit_dir=explode("/",$config['installedpackages']['package'][$id]['config_file']);
 		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 		#check package version
-		if (isset($latest_package)) {
-			$version_compare = pkg_version_compare($pkg['version'], $latest_package);
+		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+			$version_compare = pkg_version_compare($pkg['version'], $pkg['installed_version']);
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
-				$status = 'Newer then available ('. $latest_package .')';
+				$status = 'Newer then available ('. $pkg['version'] .')';
 				$statusicon = 'exclamation';
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
-				$status = 'Upgrade available to '.$latest_package;
+				$status = 'Upgrade available to '.$pkg['version'];
 				$statusicon = 'plus';
 			} else if ($version_compare == '=') {
 				// we're running the current version
@@ -181,7 +171,7 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
 		</td>
 		<td>
-			<?=$pkg['name']?>
+			<?=$shortname?>
 		</td>
 		<td>
 			<?=$pkg['category']?>
@@ -194,13 +184,13 @@ if(!is_array($config['installedpackages']['package'])):?>
 			</a>
 		</td>
 		<td>
-			<?=$pkgdescr?>
+			<?=$pkg['desc']?>
 		</td>
 		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-warning btn-xs">Remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs">Reinstall</a>
-<?php if(!isset($g['disablepackageinfo']) && $pkgwww != 'UNKNOWN'):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkgwww)?>" class="btn btn-info btn-xs">Info</a>
+			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="btn btn-warning btn-xs">Remove</a>
+			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="btn btn-info btn-xs">Reinstall</a>
+<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="btn btn-info btn-xs">Info</a>
 <?php endif; ?>
 		</td>
 	</tr>

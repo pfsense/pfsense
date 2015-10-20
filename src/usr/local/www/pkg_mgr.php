@@ -134,10 +134,6 @@ if($pkg_info) {
 		display_top_tabs($tab_array);
 }
 
-function compareName($a, $b) {
-    return(strcasecmp ($a['name'], $b['name']));
-}
-
 if(!$pkg_info || !is_array($pkg_info)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are currently no packages available for installation.")?>
@@ -159,7 +155,9 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php
 
 	// Sort case insensitve (so we get AbCdEf not ACEcdf)
-	usort($pkg_info, 'compareName');
+	usort($pkg_info, function($a, $b) {
+		return(strcasecmp ($a['name'], $b['name']));
+	});
 
 	foreach($pkg_info as $index):
 

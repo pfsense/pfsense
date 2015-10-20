@@ -12,11 +12,11 @@
 	<footer class="footer">
 		<div class="container">
 			<p class="text-muted">
-				<a href="#" title="<?=gettext('Top of page')?>"><i class="icon icon-arrow-up pull-left"></i></a>
+				<a id="tpl" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="icon icon-arrow-up pull-left"></i></a>
 				<a target="_blank" href="<?=$g['product_website_footer']?>"><?=$g['product_name']?></a> is &copy;
 				<?=$g['product_copyright_years']?> by <a href="<?=$g['product_copyright_url']?>" class="tblnk"><?=$g['product_copyright']?></a>. All Rights Reserved.
 				[<a href="/license.php" class="tblnk">view license</a>]
-				<a href="#" title="<?=gettext('Top of page')?>"><i class="icon icon-arrow-up pull-right"></i></a>
+				<a id="tpr" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="icon icon-arrow-up pull-right"></i></a></span>
 			</p>
 		</div>
 	</footer>
@@ -27,5 +27,11 @@
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
 
+	<script>
+		// Un-hide the "Top of page" icons if the page is larger than the window
+		if ($(document).height() > $(window).height()) {
+		    $('[id^=tp]').show();
+		}
+	</script>
 </body>
 </html>

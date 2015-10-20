@@ -456,6 +456,11 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		unset($pkg_info);
 	}
 
+	/* Sort result alphabetically */
+	usort($result, function($a, $b) {
+		return(strcasecmp ($a['name'], $b['name']));
+	});
+
 	return $result;
 }
 

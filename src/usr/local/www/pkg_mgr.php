@@ -154,11 +154,6 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 	<tbody>
 <?php
 
-	// Sort case insensitve (so we get AbCdEf not ACEcdf)
-	usort($pkg_info, function($a, $b) {
-		return(strcasecmp ($a['name'], $b['name']));
-	});
-
 	foreach($pkg_info as $index):
 		if (isset($index['installed'])) {
 			continue;

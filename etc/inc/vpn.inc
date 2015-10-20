@@ -434,9 +434,14 @@ cisco_unity = {$unity_enabled}
 
 syslog {
 	identifier = charon
+	# log everything under daemon since it ends up in the same place regardless with our syslog.conf
 	daemon {
 		ike_name = yes
 {$strongswanlog}
+	}
+	# disable logging under auth so logs aren't duplicated 
+	auth {
+		default = -1
 	}
 }
 

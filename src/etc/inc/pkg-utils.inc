@@ -388,10 +388,15 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$out = '';
 	$err = '';
 
+	unset($pkg_filter);
+	if (is_array($pkgs)) {
+		$pkg_filter = $pkgs;
+		$pkgs = 'all';
+	}
+
 	if ($pkgs == 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
-
 
 	/* Make sure repo metadata is up2date */
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
@@ -421,6 +426,10 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	foreach ($pkgs_info as $pkg_info_json) {
 		$pkg_info = json_decode($pkg_info_json, true);
 		if (!isset($pkg_info['name'])) {
+			continue;
+		}
+
+		if (isset($pkg_filter) && !in_array($pkg_info['name'], $pkg_filter)) {
 			continue;
 		}
 

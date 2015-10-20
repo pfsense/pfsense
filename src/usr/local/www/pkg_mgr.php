@@ -160,8 +160,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 	});
 
 	foreach($pkg_info as $index):
-
-		if(get_package_id($index['name']) >= 0 ) {
+		if (isset($index['installed'])) {
 			continue;
 		}
 
@@ -170,15 +169,6 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
-		}
-
-		// Check to see if it is already installed
-		if(isset($config['installedpackages']['package'])) {
-			foreach($config['installedpackages']['package'] as $installedpkg) {
-				if($installedpkg['name'] == $shortname) {
-					continue(2);
-				}
-			}
 		}
 
 ?>

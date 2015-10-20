@@ -160,10 +160,12 @@ if ($_POST) {
 	$method = $pconfig['authentication_method'];
 	// Unset ca and cert if not required to avaoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server"){
-		unset($pconfig['caref']);
 		unset($pconfig['certref']);
 	}
 
+	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
+		unset($pconfig['caref']);
+	}
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
@@ -496,23 +498,16 @@ function methodsel_change() {
 
 	switch (value) {
 	case 'eap-mschapv2':
-	case 'eap-tls':
 	case 'eap-radius':
-		document.getElementById('opt_psk').style.display = 'none';
-		document.getElementById('opt_peerid').style.display = '';
-		document.getElementById('opt_cert').style.display = '';
-		document.getElementById('opt_ca').style.display = '';
-		document.getElementById('opt_cert').disabled = false;
-		document.getElementById('opt_ca').disabled = false;
-		break;
 	case 'hybrid_rsa_server':
 		document.getElementById('opt_psk').style.display = 'none';
 		document.getElementById('opt_peerid').style.display = '';
 		document.getElementById('opt_cert').style.display = '';
-		document.getElementById('opt_ca').style.display = '';
+		document.getElementById('opt_ca').style.display = 'none';
 		document.getElementById('opt_cert').disabled = false;
-		document.getElementById('opt_ca').disabled = false;
+		document.getElementById('opt_ca').disabled = true;
 		break;
+	case 'eap-tls':
 	case 'xauth_rsa_server':
 	case 'rsasig':
 		document.getElementById('opt_psk').style.display = 'none';
@@ -829,7 +824,7 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr id="opt_ca">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate Authority"); ?></td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Authority"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="caref" class="formselect">
 							<?php

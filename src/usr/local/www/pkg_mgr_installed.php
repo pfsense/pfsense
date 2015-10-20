@@ -141,7 +141,7 @@ if(empty($installed_packages)):?>
 		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 		#check package version
 		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
-			$version_compare = pkg_version_compare($pkg['version'], $pkg['installed_version']);
+			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
 				$status = 'Newer then available ('. $pkg['version'] .')';
@@ -180,7 +180,7 @@ if(empty($installed_packages)):?>
 <?php if (!$g['disablepackagehistory']):?>
 			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
 <?php endif;?>
-				<?=htmlspecialchars($pkg['version'])?>
+				<?=htmlspecialchars($pkg['installed_version'])?>
 			</a>
 		</td>
 		<td>

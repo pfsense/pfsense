@@ -1899,9 +1899,16 @@ function filter_nat_rules_generate() {
 	if (is_array($config['ipsec']) && isset($config['ipsec']['enable'])) {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
+				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
 					if (!function_exists('ipsec_idinfo_to_cidr')) {
 						require_once("ipsec.inc");
+					}
+					ipsec_lookup_phase1($ph2ent, $ph1ent);
+					if (!is_array($ph1ent)) {
+						continue;
+					}
+					if (isset($ph1ent['disabled'])) {
+						continue;
 					}
 					if (!is_array($ph2ent['localid'])) {
 						$ph2ent['localid'] = array();

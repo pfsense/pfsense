@@ -138,7 +138,6 @@ $helppages = array(
 	'pkg_mgr.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_install.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_installed.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
-	'pkg_mgr_settings.php' => 'https://doc.pfsense.org/index.php/Package_Manager_Settings',
 	'interfaces.php' => 'https://doc.pfsense.org/index.php/Interface_Settings',
 	'interfaces_assign.php' => 'https://doc.pfsense.org/index.php/Assign_Interfaces',
 	'interfaces_bridge.php' => 'https://doc.pfsense.org/index.php/Interface_Bridges',

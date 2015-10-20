@@ -545,19 +545,13 @@ EOD;
 	$rulenum++;
 	$cprules .= "add {$rulenum} pass ip from table(100) to any out\n";
 	$rulenum++;
-	$ips = "";
-	foreach ($cpips as $cpip) {
+	foreach ($cpips as $cpip)
 		$cprules .= "table 100 add {$cpip}\n";
-	}
-	$cprules .= "table 100 add 255.255.255.255\n";
-	$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
+	$cprules .= "add {$rulenum} pass ip from any to 255.255.255.255 in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
+	$cprules .= "add {$rulenum} pass ip from 255.255.255.255 to any out\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from {$ips} to any out icmptype 0\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
-	$rulenum++;
+
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} pipe tablearg ip from table(3) to any in\n";
 	$rulenum++;

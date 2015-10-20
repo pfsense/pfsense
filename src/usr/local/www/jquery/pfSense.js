@@ -154,8 +154,12 @@ $(function() {
 		}
 	});
 
+	// The need to NOT hide the advanced options if the elements therein are not set to the system
+	// default values makes it better to handle advanced option hiding in each PHP file so this is being
+	// disabled for now changing hte class name it acts on to "auto-advanced"
+
 	// Hide advanced inputs by default
-	if ($('.advanced').length > 0)
+	if ($('.auto-advanced').length > 0)
 	{
 		var advButt = $('<a id="toggle-advanced" class="btn btn-default">toggle advanced options</a>');
 		advButt.on('click', function() {
@@ -164,7 +168,7 @@ $(function() {
 
 		advButt.insertAfter($('#save'));
 
-		$('.advanced').parents('.form-group').collapse({toggle: true});
+		$('.auto-advanced').parents('.form-group').collapse({toggle: true});
 	}
 
 	// Enable popovers globally

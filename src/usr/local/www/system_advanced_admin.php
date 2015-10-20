@@ -493,7 +493,7 @@ if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['pl
 		'serialspeed',
 		'Serial Speed',
 		$pconfig['serialspeed'],
-		array(115200, 57600, 38400, 19200, 14400, 9600)
+		array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
 	))->setHelp('Allows selection of different speeds for the serial console port.');
 
 	$section->addInput(new Form_Select(

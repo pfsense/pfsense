@@ -621,8 +621,6 @@ function install_package_xml($package_name) {
 
 	pkg_debug(gettext("Beginning package installation.") . "\n");
 	log_error(sprintf(gettext('Beginning package installation for %s .'), $pkg_info['name']));
-	$static_output .= sprintf(gettext("Beginning package installation for %s .\n"), $pkg_info['name']);
-	update_status($static_output);
 
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);

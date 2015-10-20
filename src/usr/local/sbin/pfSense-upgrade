@@ -549,11 +549,14 @@ pkg_delete() {
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
+# Reinstall every pfSense-pkg-* package
 pkg_reinstall_all() {
 	for _pkg in $(pkg query -e '%a == 0' %n); do
-		if [ ${_pkg%-*} == "${platform}"-pkg ] ; then
+		case ${_pkg} in "${platform}"-pkg-* )
+			_echo "Reinstalling ${_pkg}"
 			pkg_install ${_pkg} 1
-		fi
+			;;
+		esac
 	done
 }
 

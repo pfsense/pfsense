@@ -98,6 +98,7 @@ function is_aoadv_used($rule_config) {
 		($rule_config['statetimeout'] != "")) {
 		return true;
 	}
+
 	return false;
 }
 
@@ -1376,17 +1377,21 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference.');
 
+$adv_open = is_aoadv_used($pconfig);
+
 $btnadvanced = new Form_Button(
 	'toggle-advanced',
 	'Advanced options'
 );
 
-$btnadvanced->removeClass('btn-primary')->addClass('btn-info');
+$btnadvanced->removeClass('btn-primary')->addClass('btn-default');
 
-$section->addInput(new Form_StaticText(
-	null,
-	$btnadvanced
-));
+if(!$adv_open) {
+	$section->addInput(new Form_StaticText(
+		null,
+		$btnadvanced
+	));
+}
 
 $form->add($section);
 
@@ -1844,11 +1849,13 @@ events.push(function(){
 
 	typesel_change();
 
-	hideClass('advanced-options', true);
+	hideClass('advanced-options',  ! "<?=$adv_open?>");
 	hideClass('srcportrange', true);
 
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
+		srcportsvisible = true;
 		show_source_port_range();
+		hideInput('btnsrcadv', true);
 	<?php endif; ?>
 
 	// Make it a regular button, not a submit
@@ -1895,7 +1902,6 @@ events.push(function(){
 	$('#ipprotocol').on('change', function() {
 		proto_change();
 	});
-
 
 	$('#toggle-advanced').click(function() {
 		optionsvisible = 1;

@@ -1,35 +1,57 @@
 <?xml version="1.0"?>
 <pfsensewizard>
 	<copyright><![CDATA[
-	/*
-	traffic_shaper_wizard_dedicated.xml
-        part of pfSense (https://www.pfsense.org/)
-
-        Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
-	Copyright (C) 2008-2010 Ermal Luçi
-        All rights reserved.
-
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
-
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
-
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
-
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
-	*/]]></copyright>
+	/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */]]></copyright>
 
 	<totalsteps>9</totalsteps>
 	<step>
@@ -89,11 +111,7 @@
 				<bindstofield>ezshaper-&gt;step3-&gt;enable</bindstofield>
 			</field>
 			<field>
-				<name>Next</name>
-				<type>submit</type>
-			</field>
-			<field>
-				<name>VOIP specific settings</name>
+				<name>VOIP specific settingsX</name>
 				<type>listtopic</type>
 			</field>
 			<field>
@@ -132,7 +150,7 @@
 				<name>Bandwidth</name>
 				<type>input</type>
 				<validate>^[0-9]*$</validate>
-				<typehint>Total bandwidth in percentage(%)(should be between 5 and 40) guarantee for VOIP traffic.</typehint>
+				<description>Total bandwidth in percentage(%)(should be between 5 and 40) guarantee for VOIP traffic.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;bandwidth</bindstofield>
 			</field>
 			<field>
@@ -160,10 +178,6 @@
 				<bindstofield>ezshaper-&gt;step4-&gt;enable</bindstofield>
 			</field>
 			<field>
-				<name>Next</name>
-				<type>submit</type>
-			</field>
-			<field>
 				<name>PenaltyBox specific settings</name>
 				<type>listtopic</type>
 			</field>
@@ -187,14 +201,15 @@
 				<dontdisplayname>true</dontdisplayname>
 				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
-                                <name>BandwidthSpeed</name>
+				<displayname>Units</displayname>
+                <name>BandwidthSpeed</name>
 				<description>The limit you want to apply.</description>
-                                <type>select</type>
+                <type>select</type>
 				<options>
 				<option>
-                                        <name>%</name>
-                                        <value>%</value>
-                                </option>
+                    <name>%</name>
+                    <value>%</value>
+                    </option>
 				<option>
 					<name>bit/s</name>
 					<value>b</value>
@@ -212,8 +227,8 @@
 					<value>Gb</value>
 				</option>
 				</options>
-                                <bindstofield>ezshaper->step4->bandwidthunit</bindstofield>
-                        </field>
+                <bindstofield>ezshaper->step4->bandwidthunit</bindstofield>
+             </field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>
@@ -236,10 +251,6 @@
 				<description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
 				<enablefields>p2pCatchAll,Bandwidth,BandwidthSpeed,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
 				<bindstofield>ezshaper-&gt;step5-&gt;enable</bindstofield>
-			</field>
-			<field>
-				<name>Next</name>
-				<type>submit</type>
 			</field>
 			<field>
 				<name>p2p Catch all</name>
@@ -265,6 +276,7 @@
                                 <dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
                                 <name>BandwidthSpeed</name>
+                                <displayname>Units</displayname>
                                 <description>The limit you want to apply.</description>
                                 <type>select</type>
                                 <options>
@@ -443,10 +455,6 @@
 				<enablefields>BattleNET,EAOrigin,GameForWindowsLive,PlayStationConsoles,Steam,WiiConsoles,XboxConsoles,ARMA2,ARMA3,Battlefield2,Battlefield3,BattlefieldBC2,Borderlands,CallOfDuty,Counterstrike,Crysis2,Crysis3,DeltaForce,DeadSpace2,DeadSpace3,Dirt3,DOOM3,DragonAge2,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,FarCry3,GunZOnline,HalfLife,LeagueofLegends,Lineage2,MassEffect3,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,QuakeIII,QuakeIV,StarWarsTOR,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
-			</field>
-			<field>
-				<name>Next</name>
-				<type>submit</type>
 			</field>
 			<field>
 				<name>Enable/Disable specific game consoles and services</name>
@@ -765,10 +773,6 @@
 				<enablefields>AppleRemoteDesktop,MSRDP,PCAnywhere,VNC,AIM,Facetime,GoogleHangouts,ICQ,IRC,Jabber,MSN,TeamSpeak,TeamSpeak3,Ventrilo,PPTP,IPSEC,iTunesRadio,StreamingMP3,RTSP,RTMP,HTTP,IMAP,LotusNotes,POP3,SMTP,BattleNETDownloader,SteamDownloader,APNS,AppleMobileSync,CrashPlan,CVSUP,DNS,GIT,HBCI,ICMP,MySqlServer,NNTP,Slingbox,SMB,SNMP,Subversion</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step7-&gt;enable</bindstofield>
-			</field>
-			<field>
-				<name>Next</name>
-				<type>submit</type>
 			</field>
 			<field>
 				<name>Remote Service / Terminal emulation</name>

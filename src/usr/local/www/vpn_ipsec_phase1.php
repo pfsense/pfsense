@@ -199,10 +199,11 @@ if ($_POST) {
 	$method = $pconfig['authentication_method'];
 	// Unset ca and cert if not required to avoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
-		unset($pconfig['caref']);
 		unset($pconfig['certref']);
 	}
-
+	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
+		unset($pconfig['caref']);
+	}
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
@@ -413,6 +414,17 @@ if ($_POST) {
 			}
 		}
 	}
+
+	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
+	
+	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
+		$auth_server_name  = $config['ipsec']['client']['user_source'];
+		$auth_server       = auth_get_authserver($auth_server_name);
+		if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+			$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+		}
+	}
+
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
@@ -755,7 +767,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'caref',
-	'My Certificate Authority',
+	'Peer Certificate Authority',
 	$pconfig['caref'],
 	build_ca_list()
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
@@ -935,8 +947,15 @@ events.push(function(){
 		switch ($('#authentication_method').val()) {
 			case 'eap-mschapv2':
 			case 'eap-radius':
-			case 'eap-tls':
 			case 'hybrid_rsa_server':
+				hideInput('pskey', true);
+				hideClass('peeridgroup', false);
+				hideInput('certref', false);
+				hideInput('caref', true);
+				disableInput('certref', false);
+				disableInput('caref', true);
+				break;
+			case 'eap-tls':
 			case 'xauth_rsa_server':
 			case 'rsasig':
 				hideInput('pskey', true);

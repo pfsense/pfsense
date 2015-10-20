@@ -710,12 +710,6 @@ $priv_list['page-system-packagemanager-installed']['descr'] = gettext("Allow acc
 $priv_list['page-system-packagemanager-installed']['match'] = array();
 $priv_list['page-system-packagemanager-installed']['match'][] = "pkg_mgr_installed.php*";
 
-$priv_list['page-pkg-mgr-settings'] = array();
-$priv_list['page-pkg-mgr-settings']['name'] = gettext("WebCfg - Packages: Settings page");
-$priv_list['page-pkg-mgr-settings']['descr'] = gettext("Allow access to the 'Packages: Settings' page.");
-$priv_list['page-pkg-mgr-settings']['match'] = array();
-$priv_list['page-pkg-mgr-settings']['match'][] = "pkg_mgr_settings.php*";
-
 $priv_list['page-diagnostics-rebootsystem'] = array();
 $priv_list['page-diagnostics-rebootsystem']['name'] = gettext("WebCfg - Diagnostics: Reboot System page");
 $priv_list['page-diagnostics-rebootsystem']['descr'] = gettext("Allow access to the 'Diagnostics: Reboot System' page.");

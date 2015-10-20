@@ -70,6 +70,9 @@ require("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
 
+// This causes the step #, field type and field name to be printed at the top of the page
+define(DEBUG, false);
+
 function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
@@ -217,16 +220,11 @@ $pgtitle = array($title);
 $notitle = true;
 include("head.inc");
 
-if (file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) {
-	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
-} else {
-	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
-}
-
 if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+
+
 	function FieldValidate(userinput, regexp, message) {
 		if (!userinput.match(regexp)) {
 			alert(message);
@@ -234,62 +232,74 @@ events.push(function(){
 	}
 
 	function enablechange() {
+
 	<?php
+
 		foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 			if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
-				print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked) {' . "\n";
+				print "\t" . 'if ( $("#" + "' . strtolower($field['name']) . '").prop("checked") ) {' . "\n";
+
 				if (isset($field['enablefields'])) {
 					$enablefields = explode(',', $field['enablefields']);
 					foreach ($enablefields as $enablefield) {
 						$enablefield = strtolower($enablefield);
-						print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+						print "\t\t" . '$("#" + "' . $enablefield . '").prop("disabled", false);' . "\n";
 					}
 				}
+
 				if (isset($field['checkenablefields'])) {
 					$checkenablefields = explode(',', $field['checkenablefields']);
 					foreach ($checkenablefields as $checkenablefield) {
 						$checkenablefield = strtolower($checkenablefield);
-						print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+						print "\t\t" . '$("#" + "' . $checkenablefield . '").prop("checked", true);' . "\n";
 					}
 				}
+
 				print "\t" . '} else {' . "\n";
 				if (isset($field['enablefields'])) {
 					$enablefields = explode(',', $field['enablefields']);
 					foreach ($enablefields as $enablefield) {
 						$enablefield = strtolower($enablefield);
-						print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+						print "\t\t" . '$("#" + "' . $enablefield . '").prop("disabled", true);' . "\n";
+
 					}
 				}
-				if (isset($field['checkenablefields'])) {
-					$checkenablefields = explode(',', $field['checkenablefields']);
-					foreach ($checkenablefields as $checkenablefield) {
-						$checkenablefield = strtolower($checkenablefield);
-						print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+
+			if (isset($field['checkdisablefields'])) {
+				$checkenablefields = explode(',', $field['checkdisablefields']);
+				foreach ($checkenablefields as $checkenablefield) {
+					$checkenablefield = strtolower($checkenablefield);
+						print "\t\t" . '$("#" + "' . $checkenablefield . '").prop("checked", false);' . "\n";
 					}
 				}
+
 				print "\t" . '}' . "\n";
 			}
 		}
 	?>
+
 	}
 
 	function disablechange() {
 	<?php
 		foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 			if (isset($field['disablefields']) or isset($field['checkdisablefields'])) {
-				print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked) {' . "\n";
+
+				print "\t" . 'if ( $("#" + "' . strtolower($field['name']) . '").prop("checked") ) {' . "\n";
+
 				if (isset($field['disablefields'])) {
 					$enablefields = explode(',', $field['disablefields']);
 					foreach ($enablefields as $enablefield) {
 						$enablefield = strtolower($enablefield);
-						print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+
+						print "\t\t" . '$("#" + "' . $enablefield . '").prop("disabled", true);' . "\n";
 					}
 				}
 				if (isset($field['checkdisablefields'])) {
 					$checkenablefields = explode(',', $field['checkdisablefields']);
 					foreach ($checkenablefields as $checkenablefield) {
 						$checkenablefield = strtolower($checkenablefield);
-						print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+						print "\t\t" . '$("#" + "' . $checkenablefield . '").prop("checked", true);' . "\n";
 					}
 				}
 				print "\t" . '} else {' . "\n";
@@ -297,14 +307,14 @@ events.push(function(){
 					$enablefields = explode(',', $field['disablefields']);
 					foreach ($enablefields as $enablefield) {
 						$enablefield = strtolower($enablefield);
-						print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+						print "\t\t" . '$("#" + "' . $enablefield . '").prop("disabled", false);' . "\n";
 					}
 				}
 				if (isset($field['checkdisablefields'])) {
 					$checkenablefields = explode(',', $field['checkdisablefields']);
 					foreach ($checkenablefields as $checkenablefield) {
 						$checkenablefield = strtolower($checkenablefield);
-						print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+						print "\t\t" . '$("#" + "' . $checkenablefield . '").prop("checked", false);' . "\n";
 					}
 				}
 				print "\t" . '}' . "\n";
@@ -340,7 +350,7 @@ events.push(function(){
 		}
 ?>
 	}
-});
+
 //]]>
 </script>
 <?php }
@@ -510,6 +520,11 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 			eval($toeval);
 		}
 
+
+		if(DEBUG) {
+			print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . ', Name: ' . $name . '<br />');
+		}
+
 		switch ($field['type']) {
 			case "input":
 				if ($field['displayname']) {
@@ -525,7 +540,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'text',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
 
 				break;
 			case "text":
@@ -546,7 +561,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$onchange = "";
 
 				if ($field['validate']) {
-					$onchange="FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+					$onchange="FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")";
 				}
 
 				$section->addInput(new Form_Input(
@@ -634,7 +649,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'password',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] .")":"");
 
 				break;
 			case "certca_selection":
@@ -688,8 +703,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$name = strtolower($name);
 
 				$etitle = (fixup_string($field['displayname']) ? $field['displayname'] : $field['name']);
-
-				echo "<select id='{$name}' name='{$name}' {$size}>\n";
 
 				if ($field['add_to_cert_selection'] != "") {
 					if ($field['add_to_cert_selection'] == $value) {
@@ -792,7 +805,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$value
 				))->setHelp($field['description'])
 				  ->setAttribute('rows', $field['rows'])
-				  ->setOnchange(($field['validate']) ? 'FieldValidate(this.value, "{$field[\'validate\']}", "{$field[\'message\']}");':'');
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
 
 				break;
 			case "submit":
@@ -857,9 +870,9 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				}
 
 				if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
-					$onclick = "Javascript:enablechange()";
+					$onclick = "enablechange()";
 				} else if (isset($field['disablefields']) or isset($field['checkdisablefields'])) {
-					$onclick = "Javascript:disablechange()";
+					$onclick = "disablechange()";
 				}
 
 				$section->addInput(new Form_Checkbox(
@@ -882,7 +895,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+
 		if (typeof ext_change != 'undefined') {
 			ext_change();
 		}
@@ -924,7 +937,7 @@ events.push(function(){
 		}
 ?>
 	}
-});
+
 //]]>
 </script>
 
@@ -983,9 +996,11 @@ if ($pkg['step'][$stepid]['disableallfieldsbydefault'] != "") {
 
 <script type="text/javascript">
 //<![CDATA[
+events.push(function(){
 	enablechange();
 	disablechange();
 	showchange();
+});
 //]]>
 </script>
 

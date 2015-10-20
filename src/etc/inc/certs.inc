@@ -284,6 +284,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	$ca['crt'] = base64_encode($str_crt);
 	$ca['prv'] = base64_encode($str_key);
 	$ca['serial'] = 0;
+	$ca['caref'] = $caref;
 
 	return true;
 }

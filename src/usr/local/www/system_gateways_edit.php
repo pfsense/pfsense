@@ -785,21 +785,36 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
-$btnadvanced = new Form_Button(
-	'toggle-advanced',
-	'Advanced options'
-);
+// If any of the advanced options are non-default, we will not show the "Advanced" button
+// and will display the advanced section
+if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) ||
+	!empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
+	(isset($pconfig['interval']) && ($pconfig['interval'] > $apinger_default['interval'])) ||
+	(isset($pconfig['down']) && !($pconfig['down'] == $apinger_default['down'])))) {
 
-$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
-$btnadvanced->removeClass('btn-primary')->addClass('btn-info');
+	$btnadvanced = new Form_Button(
+		'toggle-advanced',
+		'Advanced options'
+	);
 
-$section->addInput(new Form_StaticText(
-	null,
-	$btnadvanced
-));
+	$advdflt = true;
+
+	$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
+	$btnadvanced->removeClass('btn-primary')->addClass('btn-default');
+
+	$section->addInput(new Form_StaticText(
+		null,
+		$btnadvanced
+	));
+}
 
 $form->add($section);
 $section = new Form_Section('Advanced');
+
+if(isset($advdflt)) {
+	$section->addClass('collapse');
+}
+
 $section->addClass('advanced-options');
 
 $section->addInput(new Form_Select(

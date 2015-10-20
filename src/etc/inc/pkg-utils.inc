@@ -1036,14 +1036,4 @@ function stop_packages() {
 	}
 }
 
-function verify_all_package_servers() {
-	// XXX: Remove it after GUI is ready
-	return true;
-}
-
-function check_package_server_ssl() {
-	// XXX: Remove it after GUI is ready
-	return true;
-}
-
 ?>

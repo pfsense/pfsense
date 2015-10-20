@@ -276,11 +276,6 @@ foreach ($phpincludefiles as $includename) {
 $pgtitle = array(gettext("Status: Dashboard"));
 include("head.inc");
 
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers()) {
-	print_info_box(package_server_mismatch_message());
-}
-
 if ($savemsg) {
 	print_info_box($savemsg);
 }

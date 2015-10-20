@@ -442,28 +442,7 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 }
 
 /*****************************/
-$check_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.");
-
-$check_firmware_version_sig = array(
-	array(
-		$XML_RPC_String,
-		$XML_RPC_String
-	)
-);
-
-function check_firmware_version_xmlrpc($raw_params) {
-	global $xmlrpc_g, $XML_RPC_String;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
-}
-
-/*****************************/
-$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.");
+$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for host_firmware_version. This function will return the output of host_firmware_version upon completion.");
 
 $pfsense_firmware_version_sig = array (
 	array (
@@ -559,9 +538,6 @@ $server = new XML_RPC_Server(
 		'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
 			'signature' => $merge_config_section_sig,
 			'docstring' => $merge_config_section_doc),
-		'pfsense.check_firmware_version' => array('function' => 'check_firmware_version_xmlrpc',
-			'signature' => $check_firmware_version_sig,
-			'docstring' => $check_firmware_version_doc),
 		'pfsense.host_firmware_version' => array('function' => 'pfsense_firmware_version_xmlrpc',
 			'signature' => $pfsense_firmware_version_sig,
 			'docstring' => $host_firmware_version_doc),

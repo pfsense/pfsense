@@ -18,6 +18,7 @@
 /etc/inc/m0n0
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/etc/inc/zeromq.inc
 /etc/isdn
 /etc/locate.rc
 /etc/mail.rc
@@ -782,6 +783,7 @@
 /usr/local/www/niftycssprintCode.css
 /usr/local/www/niftyjsCode.js
 /usr/local/www/pool.js
+/usr/local/www/pkg_mgr_settings.php
 /usr/local/www/preload.php
 /usr/local/www/progress.php
 /usr/local/www/protochart

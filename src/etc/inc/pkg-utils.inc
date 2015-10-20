@@ -433,6 +433,10 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			continue;
 		}
 
+		if (is_pkg_installed($pkg_info['name'])) {
+			$pkg_info['installed'] = true;
+		}
+
 		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);
 
 		$result[] = $pkg_info;

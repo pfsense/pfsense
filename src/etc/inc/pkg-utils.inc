@@ -158,15 +158,6 @@ function pkg_call($params, $mute = false) {
 		"REPO_AUTOUPDATE" => "false"
 	);
 
-	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
-	if (!file_exists($debug_fifo)) {
-		posix_mkfifo($debug_fifo, 0600);
-	}
-
-	if (filetype($debug_fifo) == 'fifo') {
-		$env["EVENT_PIPE"] = $debug_fifo;
-	}
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
@@ -264,15 +255,6 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		"ASSUME_ALWAYS_YES" => "true",
 		"REPO_AUTOUPDATE" => "false"
 	);
-
-	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
-	if (!file_exists($debug_fifo)) {
-		posix_mkfifo($debug_fifo, 0600);
-	}
-
-	if (filetype($debug_fifo) == 'fifo') {
-		$env["EVENT_PIPE"] = $debug_fifo;
-	}
 
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */

@@ -283,6 +283,26 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	return proc_close($process);
 }
 
+/* Compare 2 pkg versions and return:
+ * '=' - versions are the same
+ * '>' - $v1 > $v2
+ * '<' - $v1 < $v2
+ * '?' - Error
+ */
+function pkg_version_compare($v1, $v2) {
+	if (empty($v1) || empty($v2)) {
+		return '?';
+	}
+
+	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr);
+
+	if ($rc != 0) {
+		return '?';
+	}
+
+	return str_replace("\n", "", $stdout);
+}
+
 /* Check if package is installed */
 function is_pkg_installed($pkg_name) {
 	global $g;

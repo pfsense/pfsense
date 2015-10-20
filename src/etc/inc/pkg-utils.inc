@@ -424,6 +424,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			continue;
 		}
 
+		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);
+
 		$result[] = $pkg_info;
 		unset($pkg_info);
 	}

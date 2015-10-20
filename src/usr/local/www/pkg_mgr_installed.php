@@ -174,7 +174,7 @@ if(empty($installed_packages)):?>
 			<?=$shortname?>
 		</td>
 		<td>
-			<?=$pkg['category']?>
+			<?=implode(" ", $pkg['categories'])?>
 		</td>
 		<td>
 <?php if (!$g['disablepackagehistory']):?>

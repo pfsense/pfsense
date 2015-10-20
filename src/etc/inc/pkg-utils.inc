@@ -435,6 +435,19 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
+
+			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err);
+
+			if ($rc != 0) {
+				$static_output .= "\n" . gettext("ERROR: Error trying to get package version. Aborting...") . "\n";
+				$static_output .= $err;
+				$input_errors[] =  gettext("ERROR: Error trying to get package version. Aborting...") . "\n";
+				$input_errors[] =  $err;
+				update_status($static_output);
+				return array();
+			}
+
+			$pkg_info['installed_version'] = str_replace("\n", "", $out);
 		}
 
 		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);

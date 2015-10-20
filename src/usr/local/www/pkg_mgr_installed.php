@@ -87,28 +87,18 @@ if (is_subsystem_dirty('packagelock')) {
 include("head.inc");
 
 if(is_array($config['installedpackages']['package'])) {
+	$tocheck = array();
 	foreach($config['installedpackages']['package'] as $instpkg) {
-		$tocheck[] = $instpkg['name'];
+		$tocheck[] = $g['pkg_prefix'] . get_package_internal_name($instpkg);
 	}
 
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
+	$current_info = get_pkg_info($tocheck);
 }
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Manager"));
 
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers())
-	print_info_box(package_server_mismatch_message());
-
-/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-if (check_package_server_ssl() === false)
-	print_info_box(package_server_ssl_failure_message());
-
 $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("{$g['product_version']} " . gettext("packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
-//	$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
@@ -139,38 +129,51 @@ if(!is_array($config['installedpackages']['package'])):?>
 
 	foreach ($instpkgs as $index => $pkgname):
 		$pkg = $config['installedpackages']['package'][$index];
-		if(!$pkg['name'])
+		if(!$pkg['name']) {
 			continue;
+		}
 
 		$full_name = $g['pkg_prefix'] . get_package_internal_name($pkg);
+
+		unset($latest_package);
+		foreach ($current_info as $pkg_info) {
+			if ($full_name != $pkg_info['name']) {
+				continue;
+			}
+
+			$latest_package = $pkg_info['version'];
+			$pkgdescr = $pkg_info['desc'];
+			$pkgwww = $pkg_info['www'];
+		}
 
 		// get history/changelog git dir
 		$commit_dir=explode("/",$pkg['config_file']);
 		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 		#check package version
-		$latest_package = $currentvers[$pkg['name']]['version'];
-		if ($latest_package) {
-			// we're running a newer version of the package
-			if(strcmp($pkg['version'], $latest_package) > 0) {
+		if (isset($latest_package)) {
+			$version_compare = pkg_version_compare($pkg['version'], $latest_package);
+			if ($version_compare == '>') {
+				// we're running a newer version of the package
 				$status = 'Newer then available ('. $latest_package .')';
 				$statusicon = 'exclamation';
-			}
-			// we're running an older version of the package
-			if(strcmp($pkg['version'], $latest_package) < 0) {
+			} else if ($version_compare == '<') {
+				// we're running an older version of the package
 				$status = 'Upgrade available to '.$latest_package;
 				$statusicon = 'plus';
-			}
-			// we're running the current version
-			if(!strcmp($pkg['version'], $latest_package)) {
+			} else if ($version_compare == '=') {
+				// we're running the current version
 				$status = 'Up-to-date';
 				$statusicon = 'ok';
+			} else {
+				$status = 'Error comparing version';
+				$statusicon = 'exclamation';
 			}
-			$pkgdescr = $currentvers[$pkg['name']]['descr'];
 		} else {
 			// unknown available package version
 			$status = 'Unknown';
 			$statusicon = 'question';
 			$pkgdescr = $pkg['descr'];
+			$pkgwww = 'UNKNOWN';
 		}
 ?>
 	<tr>
@@ -196,11 +199,9 @@ if(!is_array($config['installedpackages']['package'])):?>
 		<td>
 			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-warning btn-xs">Remove</a>
 			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs">Reinstall</a>
-<!--			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs"><?=gettext("reinstall GUI")?></a> 
-<?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-info btn-xs">Info</a>
-<?php endif;?>
--->
+<?php if(!isset($g['disablepackageinfo']) && $pkgwww != 'UNKNOWN'):?>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkgwww)?>" class="btn btn-info btn-xs">Info</a>
+<?php endif; ?>
 		</td>
 	</tr>
 <?php endforeach;?>

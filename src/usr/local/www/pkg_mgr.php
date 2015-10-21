@@ -149,7 +149,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			</a>
 		</span>
 	</div>
-	<div class="panel-body collapse out">
+	<div class="panel-body collapse in">
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
 				Search term

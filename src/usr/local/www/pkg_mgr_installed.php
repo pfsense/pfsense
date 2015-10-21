@@ -107,11 +107,12 @@ if(empty($installed_packages)):?>
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
 <?php else: ?>
+	<div class="panel panel-body">
 	<div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed">
 	<thead>
 		<tr>
-			<th><span class="sr-only"><?=gettext("Status")?></span></th>
+			<th><!-- Status icon --></th>
 			<th><?=gettext("Name")?></th>
 			<th><?=gettext("Category")?></th>
 			<th><?=gettext("Version")?></th>
@@ -132,6 +133,9 @@ if(empty($installed_packages)):?>
 		// XXX: Add it to globals.inc?
 		$changeloglink ="https://github.com/pfsense/FreeBSD-ports/commits/devel/{$pkg['categories'][0]}/{$pkg['name']}";
 		#check package version
+		$txtcolor = "black";
+		$upgradeavail = false;
+
 		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 			if ($version_compare == '>') {
@@ -141,7 +145,9 @@ if(empty($installed_packages)):?>
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
 				$status = 'Upgrade available to '.$pkg['version'];
-				$statusicon = 'plus';
+				$statusicon = 'refresh';
+				$txtcolor = "blue";
+				$upgradeavail = true;
 			} else if ($version_compare == '=') {
 				// we're running the current version
 				$status = 'Up-to-date';
@@ -160,10 +166,14 @@ if(empty($installed_packages)):?>
 ?>
 	<tr>
 		<td>
-			<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
+<?php if($upgradeavail) { ?>
+			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-refresh"></a>
+<?php } else { ?>
+			<i title="<?=$status?>" class="icon-large icon-ok"></i>
+<?php } ?>			
 		</td>
 		<td>
-			<?=$shortname?>
+			<font color="<?=$txtcolor?>"><?=$shortname?></font>
 		</td>
 		<td>
 			<?=implode(" ", $pkg['categories'])?>
@@ -179,10 +189,15 @@ if(empty($installed_packages)):?>
 			<?=$pkg['desc']?>
 		</td>
 		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="btn btn-warning btn-xs">Remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="btn btn-info btn-xs">Reinstall</a>
+			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-minus-sign"></a>
+<?php if($upgradeavail) { ?>
+			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-refresh"></a>
+<?php } else { ?>
+			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-retweet"></a>
+<?php } ?>
+
 <?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="btn btn-info btn-xs">Info</a>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="icon-large icon-info-sign"></a>
 <?php endif; ?>
 		</td>
 	</tr>
@@ -190,5 +205,19 @@ if(empty($installed_packages)):?>
 	</tbody>
 </table>
 </div>
+</div>
+<br />
+<div style="text-align: center;">
+	<span>
+		<i class="icon-large icon-refresh"></i> = Update, &nbsp;
+		<i class="icon-large icon-ok"></i> = Current, &nbsp;
+		<i class="icon-large icon-minus-sign"></i> = Remove, &nbsp;
+		<i class="icon-large icon-info-sign"></i> = Information, &nbsp;
+		<i class="icon-large icon-retweet"></i> = Reinstall.
+		<br />
+		<font color="blue"><?=gettext("Blue")?></font> = <?=gettext("Newer version available")?>
+	</span>
+</div>
+
 <?php endif; ?>
 <?php include("foot.inc")?>

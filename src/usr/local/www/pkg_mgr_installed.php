@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr_installed.php
 */
@@ -130,15 +129,8 @@ if(empty($installed_packages)):?>
 		$shortname = $pkg['name'];
 		pkg_remove_prefix($shortname);
 
-		$id = get_package_id($shortname);
-
-		if ($id == -1) {
-			continue;
-		}
-
-		// get history/changelog git dir
-		$commit_dir=explode("/",$config['installedpackages']['package'][$id]['config_file']);
-		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+		// XXX: Add it to globals.inc?
+		$changeloglink ="https://github.com/pfsense/FreeBSD-ports/commits/devel/{$pkg['categories'][0]}/{$pkg['name']}";
 		#check package version
 		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);

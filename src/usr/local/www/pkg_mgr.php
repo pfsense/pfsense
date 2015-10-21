@@ -221,7 +221,7 @@ endif;
 						<?=$index['desc']?>
 					</td>
 					<td>
-					<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
+						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
 <?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
 						<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
 <?php endif;?>
@@ -240,6 +240,20 @@ endif;?>
 events.push(function(){
 	$("#btnsearch").prop('type' ,'button');
 
+	// Initial state & toggle icons of collapsed panel
+	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
+		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
+
+		body.on('shown.bs.collapse', function(){
+			$(el).children('i').toggleClass('icon-minus-sign', true);
+			$(el).children('i').toggleClass('icon-plus-sign', false);
+		});
+	});
+
     $("#btnsearch").click(function() {
         alert("Sorry, this is not yet functional.\n\n\"" + $("#searchstr").val() + "\" may exist, or it may not!");
     });
@@ -247,4 +261,4 @@ events.push(function(){
 //]]>
 </script>
 
-<?php include("foot.inc")?>
+<?php include("foot.inc");

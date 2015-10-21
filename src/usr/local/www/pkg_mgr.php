@@ -159,7 +159,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 				<select id="where" class="form-control">
 					<option value="0"><?=gettext("Name")?></option>
 					<option value="1"><?=gettext("Description")?></option>
-					<option value="2"><?=gettext("Both")?></option>
+					<option value="2" selected><?=gettext("Both")?></option>
 				</select>
 			</div>
 			<div class="col-sm-3"><a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
@@ -246,8 +246,6 @@ endif;?>
 <script>
 //<![CDATA[
 events.push(function(){
-	$("#btnsearch").prop('type' ,'button');
-	$("#btnclear").prop('type' ,'button');
 
 	// Initial state & toggle icons of collapsed panel
 	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el){
@@ -263,6 +261,11 @@ events.push(function(){
 		});
 	});
 
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type' ,'button');
+	$("#btnclear").prop('type' ,'button');
+	
+	// Search for a term in the package name and/or description
 	$("#btnsearch").click(function() {
 		var searchstr = $('#searchstr').val().toLowerCase();
 		var table = $("table tbody");
@@ -275,7 +278,7 @@ events.push(function(){
 
 			regexp = new RegExp(searchstr);
 			if(searchstr.length > 0) {
-				if( !(regexp.test(shortname) && ((where == 0) || (where == 2))) && !(regexp.test(descr) && (( where == 1) || (where == 2)))) {
+				if( !(regexp.test(shortname) && (where != 1)) && !(regexp.test(descr) && (where != 0))) {
 					$(this).hide();
 				} else {
 					$(this).show();
@@ -286,13 +289,22 @@ events.push(function(){
 		});
 	});
 
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
 	$("#btnclear").click(function() {
 		var table = $("table tbody");
 
+		$('#searchstr').val("");
+
 		table.find('tr').each(function (i) {
 			$(this).show();
-			$('#searchstr').val("");
 		});
+	});
+	
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+	    if (event.keyCode==13) {
+	        $("#btnsearch").get(0).click();
+	    }
 	});
 });
 //]]>

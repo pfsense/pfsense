@@ -155,7 +155,15 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 				Search term
 			</label>
 			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
-			<div class="col-sm-5"><a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-default btn-sm"><?=gettext("Search")?></a></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="0"><?=gettext("Name")?></option>
+					<option value="1"><?=gettext("Description")?></option>
+					<option value="2"><?=gettext("Both")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3"><a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+			<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a></div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block">Enter a search string or *nix regular expression to seach package names and descriptions.</span>
 			</div>
@@ -166,7 +174,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover">
+		<table id="pkgtable" class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>
@@ -239,6 +247,7 @@ endif;?>
 //<![CDATA[
 events.push(function(){
 	$("#btnsearch").prop('type' ,'button');
+	$("#btnclear").prop('type' ,'button');
 
 	// Initial state & toggle icons of collapsed panel
 	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el){
@@ -254,9 +263,37 @@ events.push(function(){
 		});
 	});
 
-    $("#btnsearch").click(function() {
-        alert("Sorry, this is not yet functional.\n\n\"" + $("#searchstr").val() + "\" may exist, or it may not!");
-    });
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("table tbody");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				shortname = $tds.eq(0).text().trim().toLowerCase(),
+				descr = $tds.eq(2).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if(searchstr.length > 0) {
+				if( !(regexp.test(shortname) && ((where == 0) || (where == 2))) && !(regexp.test(descr) && (( where == 1) || (where == 2)))) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				 $(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	$("#btnclear").click(function() {
+		var table = $("table tbody");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+			$('#searchstr').val("");
+		});
+	});
 });
 //]]>
 </script>

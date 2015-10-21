@@ -9911,6 +9911,14 @@ msgid ""
 "changes in the GUI until this is complete."
 msgstr ""
 
+#: usr/local/www/head.inc:476
+msgid ""
+"<p>If the above message is still displayed after a couple of hours, use "
+"the 'Clear Package Lock' button on the "
+"<a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> "
+"and reinstall packages manually."
+msgstr ""
+
 #: usr/local/www/firewall_aliases.php:109
 #, php-format
 msgid "Cannot delete alias. Currently in use by %s"

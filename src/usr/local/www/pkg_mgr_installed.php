@@ -54,7 +54,7 @@
  *
  */
 /*
-	pfSense_MODULE:	pkgs
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -135,6 +135,7 @@ if(empty($installed_packages)):?>
 		#check package version
 		$txtcolor = "black";
 		$upgradeavail = false;
+		$vergetstr = "";
 
 		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
@@ -148,6 +149,7 @@ if(empty($installed_packages)):?>
 				$statusicon = 'refresh';
 				$txtcolor = "blue";
 				$upgradeavail = true;
+				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
 			} else if ($version_compare == '=') {
 				// we're running the current version
 				$status = 'Up-to-date';
@@ -167,10 +169,10 @@ if(empty($installed_packages)):?>
 	<tr>
 		<td>
 <?php if($upgradeavail) { ?>
-			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-refresh"></a>
+			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
 <?php } else { ?>
 			<i title="<?=$status?>" class="icon-large icon-ok"></i>
-<?php } ?>			
+<?php } ?>
 		</td>
 		<td>
 			<font color="<?=$txtcolor?>"><?=$shortname?></font>
@@ -191,7 +193,7 @@ if(empty($installed_packages)):?>
 		<td>
 			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-minus-sign"></a>
 <?php if($upgradeavail) { ?>
-			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-refresh"></a>
+			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
 <?php } else { ?>
 			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-retweet"></a>
 <?php } ?>

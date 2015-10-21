@@ -85,12 +85,11 @@ $start_polling = false;
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
-// The log file is read, the newest progress record retrieved, and the PID status obtained. The data is formatted
+// The log file is read and the newest progress record retrieved. The data is formatted
 // as JSON before being returned to the AJAX caller (at the bottom of this file)
 //
 // Arguments received here:
 //		logfilename = Passed to installation script to tell it how to name the log file we will parse
-//		pid = PID of the background install/remove process
 //		next_log_line = Send log file entries that come after this line number
 //
 // JSON items returned
@@ -203,12 +202,15 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 
 			fclose($testfile);
 		}
+
 	usleep(100000);
 	$now = time();
 	}
 
 	return(false);
 }
+
+$headline = "<br />";
 
 if ($_POST) {
 	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
@@ -220,29 +222,36 @@ if ($_POST) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
-} else if ($_GET) {
+} else if ($_GET && !$_GET['id']) {
+	if (empty($_GET['pkg'])) {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
+
 	switch ($_GET['mode']) {
 		case 'reinstallall':
+			$headline = gettext("Reinstall all packages");
 		case 'showlog':
 			break;
 		case 'installedinfo':
 		case 'reinstallpkg':
-		case 'delete':
-			if (empty($_GET['pkg'])) {
-				header("Location: pkg_mgr_installed.php");
-				return;
+			if($_GET['from'] && $_GET['from']) {
+				$headline = gettext("Upgrade package");
+			} else {
+				$headline = gettext("Reinstall package");
 			}
+
+			break;
+		case 'delete':
+			$headline = gettext("Remove package");
 			break;
 		default:
-			if (empty($_GET['id'])) {
-				header("Location: pkg_mgr_installed.php");
-				return;
-			}
+			$headline = gettext("Install package");
 			break;
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
 $tab_array = array();
@@ -253,7 +262,7 @@ display_top_tabs($tab_array);
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-	<h2>Install / remove package</h2>
+<!--	<h2><?=$headline?></h2> -->
 <?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
@@ -277,13 +286,18 @@ display_top_tabs($tab_array);
 			break;
 	}
 ?>
+	<br />
 	<div class="panel panel-default">
-		<div class="panel-body">
+		<div class="panel-heading">
 			<div class="content">
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
 				<p><?=gettext("All packages will be reinstalled.");?></p>
+<?php
+			} else if ($_GET['from'] && $_GET['from']) {
+?>
+				<p>Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.</p>
 <?php
 			} else {
 ?>
@@ -293,7 +307,8 @@ display_top_tabs($tab_array);
 ?>
 			</div>
 		</div>
-		<div class="panel-footer">
+		<div class="panel-body">
+		<br />
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>

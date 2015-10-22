@@ -263,7 +263,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
 <!--	<h2><?=$headline?></h2> -->
-<?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
+<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = 'installed';
@@ -333,6 +333,9 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] ==
 		$start_polling = true;
 	}
 ?>
+	<input type="hidden" name="id" value="<?=$_POST['id']?>" />
+	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
+	<input type="hidden" name="completed" value="true" />
 
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
@@ -344,7 +347,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] ==
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output"></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
 
@@ -379,7 +382,7 @@ if ($_GET) {
 		default:
 			break;
 	}
-} else if ($_POST) {
+} else if ($_POST && ($_POST['completed'] != "true") ) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
 	/* All other cases make changes, so mount rw fs */
@@ -428,21 +431,32 @@ if ($_GET) {
 	conf_mount_ro();
 }
 
+// $_POST['completed'] just means that we are refreshing the page to update any new menu items
+// that were installed
+if ($_POST['completed'] == "true") {
+	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
+}
+
 ?>
 
 <script>
 //<![CDATA[
-//	Update the progress indicator
-function setProgress(barName, percent) {
+// Update the progress indicator
+// transition = true allows the bar to move at default speed, false = instantaneous
+function setProgress(barName, percent, transition) {
 	$('.progress').show()
+	if (!transition) {
+		$('#' + barName).css('transition', 'width 0s ease-in-out');
+	}
+
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
 }
 
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if("<?=$progbar?>")
-		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
 	else
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
 
@@ -489,14 +503,14 @@ function getLogsStatus() {
 		if (json.log != "not ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
-			$('#output').scrollTop($('#output')[0].scrollHeight);
+			scrollToBottom();
 
 			// Update the progress bar
 			progress = 0;
 
 			if("<?=$progbar?>") {
 				if (json.data) {
-					setProgress('progressbar', ((json.data.current * 100) / json.data.total));
+					setProgress('progressbar', ((json.data.current * 100) / json.data.total), true);
 					progress = json.data.total - json.data.current
 				}
 			}
@@ -504,6 +518,7 @@ function getLogsStatus() {
 			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
+				$('form').submit();
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -519,10 +534,22 @@ function getLogsStatus() {
 	});
 }
 
+function scrollToBottom() {
+	$('#output').scrollTop($('#output')[0].scrollHeight);
+}
+
 events.push(function(){
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
 		show_info();
+	}
+
+	// If we are just re-drawing the page after a successful install/remove/reinstall,
+	// we only meed to re-populate the progress indicator and the status banner
+	if ( "<?=$_POST['completed']?>" == "true") {
+		setProgress('progressbar', 100, false);
+		scrollToBottom();
+		show_success();
 	}
 });
 //]]>

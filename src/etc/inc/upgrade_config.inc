@@ -3975,7 +3975,7 @@ function upgrade_121_to_122() {
 	}
 }
 
-function upgrade_122_123() {
+function upgrade_122_to_123() {
 	if (isset($config['system']['altpkgrepo'])) {
 		unset($config['system']['altpkgrepo']);
 	}

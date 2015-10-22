@@ -89,8 +89,6 @@ foreach (scandir("/usr/local/www/classes/") as $file) {
 	}
 }
 
-$g['theme'] = get_current_theme();
-
 /* Set the default interface language */
 if ($config['system']['language'] <> "") {
 	$g['language'] = $config['system']['language'];
@@ -353,19 +351,6 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
-
-	$themename = $g['theme'];
-
-	if (file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
-		eval($toeval);
-	}
-
-	if (file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
-		eval($toeval);
-	}
-
 
 	if (!$savebutton) {
 		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";

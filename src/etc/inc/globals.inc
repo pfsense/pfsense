@@ -68,7 +68,6 @@ $g = array(
 	"hideplatform" => false,
 	"hidedownloadbackup" => false,
 	"hidebackupbeforeupgrade" => false,
-	"disablethemeselection" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,

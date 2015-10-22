@@ -3979,6 +3979,10 @@ function upgrade_122_to_123() {
 	if (isset($config['system']['altpkgrepo'])) {
 		unset($config['system']['altpkgrepo']);
 	}
+
+	if (isset($config['theme'])) {
+		unset($config['theme']);
+	}
 }
 
 function upgrade_123_to_124() {

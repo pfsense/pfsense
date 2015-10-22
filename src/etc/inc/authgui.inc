@@ -130,7 +130,6 @@ function display_error_form($http_code, $desc) {
 	}
 
 ?>
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>

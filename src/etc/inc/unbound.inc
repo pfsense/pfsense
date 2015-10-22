@@ -470,7 +470,16 @@ function do_as_unbound_user($cmd) {
 			mwexec("echo '/usr/local/sbin/unbound-control reload' | /usr/bin/su -m unbound", true);
 			break;
 		case "unbound-anchor":
+			// sanity check root.key because unbound-anchor will fail without manual removal otherwise. redmine #5334
+			if (file_exists("{$g['unbound_chroot_path']}/root.key")) {
+				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$g['unbound_chroot_path']}/root.key", true);
+				if ($rootkeycheck != "0") {
+					log_error("Unbound root.key file is corrupt, removing and recreating.");
+					unlink_if_exists("{$g['unbound_chroot_path']}/root.key");
+				}
+			}
 			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/root.key' | /usr/bin/su -m unbound", true);
+			pfSense_fsync("{$g['unbound_chroot_path']}/root.key");
 			break;
 		case "unbound-control-setup":
 			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}' | /usr/bin/su -m unbound", true);

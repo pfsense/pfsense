@@ -82,6 +82,7 @@ core_pkg_create() {
 	local _flavor="${2}"
 	local _version="${3}"
 	local _root="${4}"
+	local _filter="${5}"
 
 	[ -d "${CORE_PKG_TMP}" ] \
 		&& rm -rf ${CORE_PKG_TMP}
@@ -106,7 +107,10 @@ core_pkg_create() {
 	if [ -f "${_templates_path}/pkg-plist" ]; then
 		cp ${_templates_path}/pkg-plist ${_plist}
 	else
-		(cd ${_root} && find . -type f -or -type l | sed 's,^.,,' | sort -u) > ${_plist}
+		if [ -n "${_filter}" ]; then
+			_filter="-name ${_filter}"
+		fi
+		(cd ${_root} && find . ${_filter} -type f -or -type l | sed 's,^.,,' | sort -u) > ${_plist}
 	fi
 
 	if [ -f "${_templates_path}/exclude_plist" ]; then
@@ -270,6 +274,10 @@ build_all_kernels() {
 		installkernel
 
 		ensure_kernel_exists $KERNEL_DESTDIR
+
+		echo -n ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
+		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \*.symbols
+		find ${KERNEL_DESTDIR} -name '*.symbols' -type f -delete
 
 		echo -n ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}
 		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR}

@@ -1098,28 +1098,28 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 <?php endif;
 }
 
-function add_package_tabs($pkgname, &$tab_array) {
+function add_package_tabs($tabgroup, &$tab_array) {
 	global $config, $g;
 
-//	$pkg = get_pkg_data($pkgname);
-
-	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
+	if (!isset($config['installedpackages']['package'])) {
 		return;
 	}
 
-	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg['configurationfile'], "packagegui");
+	foreach ($config['installedpackages']['package'] as $pkg){
+		$pkg_config = read_package_configurationfile($pkg['name']);
 
-	if (!isset($pkg_config['tabs']['tab'])) {
-		return;
-	}
+		if (!isset($pkg_config['tabs']['tab'])) {
+			continue;
+		}
 
-	foreach ($pkg_config['tabs']['tab'] as $tab) {
-		$tab_entry = array();
-		if ($tab['name']) {
-			$tab_entry[] = $tab['name'];
-			$tab_entry[] = false;
-			$tab_entry[] = $tab['url'];
-			$tab_array[] = $tab_entry;
+		foreach ($pkg_config['tabs']['tab'] as $tab) {
+			$tab_entry = array();
+			if ($tab['name']) {
+				$tab_entry[] = $tab['name'];
+				$tab_entry[] = false;
+				$tab_entry[] = $tab['url'];
+				$tab_array[] = $tab_entry;
+			}
 		}
 	}
 }

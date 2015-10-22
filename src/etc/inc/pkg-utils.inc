@@ -611,6 +611,28 @@ function read_package_config($package_name) {
 	return $pkg_info['package'][0];
 }
 
+/* Read package configurationfile and return an array */
+function read_package_configurationfile($package_name) {
+	global $config, $g;
+
+	$pkg_config = array();
+	$id = get_package_id($package_name);
+
+	if ($id < 0 || !isset($config['installedpackages']['package'][$id]['configurationfile'])) {
+		return $pkg_config;
+	}
+
+	$pkg_configurationfile = $config['installedpackages']['package'][$id]['configurationfile'];
+
+	if (empty($pkg_configurationfile) || !file_exists('/usr/local/pkg/' . $pkg_configurationfile)) {
+		return $pkg_config;
+	}
+
+	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg_configurationfile, "packagegui");
+
+	return $pkg_config;
+}
+
 function get_after_install_info($package_name) {
 	$pkg_config = read_package_config($package_name);
 

@@ -7,9 +7,8 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2004-2009 Scott Ullrich
- *	Copyright (c) 2003-2009 Manuel Kasper <mk@neon1.net>
- *	Jim Pingle jim@pingle.org
- *	originally based on m0n0wall (http://m0n0.ch/wall)
+ *	Copyright (c)  2003-2009 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  Jim Pingle jim@pingle.org
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -539,11 +538,6 @@ function resolve_ip_callback(transport) {
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
 	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
-	jQuery('img.ICON-' + resolve_class).removeAttr('title');
-	jQuery('img.ICON-' + resolve_class).removeAttr('alt');
-	jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
-	jQuery('img.ICON-' + resolve_class).prop('onclick', null);
-	  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
 }
 
 // From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities

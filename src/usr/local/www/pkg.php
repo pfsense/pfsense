@@ -212,7 +212,7 @@ events.push(function(){
 			});
 			function save_changes_to_xml(xml) {
 				var ids=jQuery('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
-				var strloading="<img src='/themes/<?= $g['theme']; ?>/images/misc/loader.gif' alt='loader' /> " + "<?=gettext('Saving changes...')?>";
+				var strloading="<?=gettext('Saving changes...')?>";
 				if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
 					jQuery.ajax({
 						type: 'get',
@@ -503,12 +503,12 @@ if ($savemsg)
 			#Show custom description to edit button if defined
 			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:"Edit this item");
 ?>
-								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" <?=domTT_title($edit_msg)?> alt="edit" /></a></td>
+								<td><a class="btn btn-xs btn-info" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>"><?=$edit_msg?></a></td>
 <?php
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:"Delete this item");
 ?>
-								<td valign="middle"><a href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?")?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" <?=domTT_title($delete_msg)?> alt="delete" /></a></td>
+								<td><a class="btn btn-xs btn-danger" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>"><?=gettext("Delete")?></a></td>
 							</tr>
 						</table>
 					</td>
@@ -562,12 +562,14 @@ if ($savemsg)
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:"Add a new item");
 ?>
-								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Add')?></a></td>
+								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-xs btn-success"><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {
 ?>
-								<td valign="middle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" <?=domTT_title($pkg['adddeleteeditpagefields']['description'])?> alt="info" /></td>
+								<td>
+									<i class="icon-large icon-info-sign"><?=$pkg['adddeleteeditpagefields']['description'])?></i>
+								</td>
 <?php
 	}
 ?>

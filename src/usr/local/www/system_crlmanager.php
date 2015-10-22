@@ -614,7 +614,6 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
-	$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
 	foreach($a_crl as $crl)

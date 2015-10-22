@@ -6,7 +6,6 @@
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
  *  Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
- *  part of m0n0wall (http://m0n0.ch/wall)
  *
  *  Redistribution and use in source and binary forms, with or without modification, 
  *  are permitted provided that the following conditions are met: 
@@ -136,9 +135,9 @@ function dump_clog_vpn($logfile, $tail) {
 		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
 		if ($llent[0] == "login") {
-			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\" alt=\"in\" /></td>\n";
+			echo "<td><i class=\"icon-large icon-arrow-left\" alt=\"in\"></i></td>\n";
 		} else {
-			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\" alt=\"out\" /></td>\n";
+			echo "<td><i class=\"icon-large icon-arrow-right\" alt=\"out\"></i></td>\n";
 		}
 
 		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";

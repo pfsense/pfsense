@@ -162,8 +162,10 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 					<option value="2" selected><?=gettext("Both")?></option>
 				</select>
 			</div>
-			<div class="col-sm-3"><a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
-			<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a></div>
+			<div class="col-sm-3">
+				<a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+				<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
+			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block">Enter a search string or *nix regular expression to seach package names and descriptions.</span>
 			</div>
@@ -213,14 +215,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php
 	 if (!$g['disablepackagehistory']):?>
 					<td>
-<!-- We no longer have a package revision history URL
-	$changeloglink is undefined
-				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
--->
 						<?=htmlspecialchars($index['version'])?>
-<!--
-				</a>
--->
 					</td>
 <?php
 endif;

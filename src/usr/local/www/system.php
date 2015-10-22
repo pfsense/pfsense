@@ -89,7 +89,6 @@ $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
-$pconfig['theme'] = $config['system']['theme'];
 $pconfig['language'] = $config['system']['language'];
 
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
@@ -214,11 +213,6 @@ if ($_POST) {
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
 			set_language($config['system']['language']);
-		}
-
-		/* pfSense themes */
-		if (!$g['disablethemeselection']) {
-			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */

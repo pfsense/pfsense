@@ -122,12 +122,6 @@ $width=200;             //SVG internal width : do not modify
 
 $fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
 
-/* check for custom theme colors */
-if (file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
-	$themetxt = file_get_contents("/usr/local/www/themes/{$g['theme']}/graph.php");
-	eval($themetxt);
-}
-
 /********* Graph DATA **************/
 print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
 <svg width="100%" height="100%" viewBox="0 0 <?=$width?> <?=$height?>" preserveAspectRatio="none" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init(evt)">

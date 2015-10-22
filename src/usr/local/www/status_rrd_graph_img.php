@@ -227,8 +227,7 @@ if ($altq_list_queues[$curif]) {
 
 $speedlimit = ($upstream + $downstream);
 
-/* Set default colors explicitly, the theme can then override them below.
-   This prevents missing colors in themes from crashing the graphs. */
+/* Set default colors explicitly.*/
 /* Traffic Outbound		Out-P-4,  Out-B-4,	Out-P-6,  Out-B-6 */
 $colortrafficup		= array('666666', 'CCCCCC', '2217AA', '625AE7');
 
@@ -286,17 +285,6 @@ $colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 /* Captive Portal Total Users	Total Users */
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
-
-/* select theme colors if the include file exists
-   Note: Themes are no longer used in pfSense 2.3.x so don't try this any more
-
-$rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
-if (file_exists($rrdcolors)) {
-	include($rrdcolors);
-} else {
-	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"), $g['theme']));
-}
-*/
 
 switch ($curstyle) {
 	case "absolute":
@@ -1291,8 +1279,8 @@ if (($graphcmdreturn <> 0) || (!$data)) {
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
-	$file= "/usr/local/www/themes/{$g['theme']}/images/misc/rrd_error.png";
-	readfile($file);
+	$input_errors[] = gettext("There has been an error in rendering the graph. Please check your system logs.");
+	print_input_errors($input_errors);
 } else {
 	$file = "$rrdtmppath$curdatabase-$curgraph.png";
 	if (file_exists("$file")) {

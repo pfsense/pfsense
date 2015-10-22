@@ -605,7 +605,9 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							?>
 						</td>
 						<td>
-							<?php if ($printicon) { ?><img src="./themes/<?= $g['theme'];?>/images/icons/<?=$image;?>.gif" title="<?=$alttext;?>" border="0" alt="icon" /><?php } ?>
+							<?php if ($printicon) { ?>
+								<i class="icon-large <?=$image;?>" title="<?=$alttext;?>" alt="icon" />
+							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>
 						<td>

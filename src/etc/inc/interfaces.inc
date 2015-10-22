@@ -2639,29 +2639,8 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "-wme";
 	}
 
-	/* set up wep if enabled */
-	$wepset = "";
-	if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-		switch ($wlcfg['wpa']['auth_algs']) {
-			case "1":
-				$wepset .= "authmode open wepmode on ";
-				break;
-			case "2":
-				$wepset .= "authmode shared wepmode on ";
-				break;
-			case "3":
-				$wepset .= "authmode mixed wepmode on ";
-		}
-		$i = 1;
-		foreach ($wlcfg['wep']['key'] as $wepkey) {
-			$wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
-			if (isset($wepkey['txkey'])) {
-				$wlcmd[] = "weptxkey {$i} ";
-			}
-			$i++;
-		}
-		$wlcmd[] = $wepset;
-	} else if (isset($wlcfg['wpa']['enable'])) {
+	/* Enable wpa if it's configured. No WEP support anymore. */
+	if (isset($wlcfg['wpa']['enable'])) {
 		$wlcmd[] = "authmode wpa wepmode off ";
 	} else {
 		$wlcmd[] = "authmode open wepmode off ";

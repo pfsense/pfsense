@@ -349,6 +349,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 	}
+
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
 
@@ -364,7 +365,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
+								&nbsp;&nbsp;&nbsp;<i class="icon-large icon-exclamation-sign"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>

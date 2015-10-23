@@ -475,7 +475,8 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
 		$info_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> and reinstall packages manually.");
 	}
-	print_info_box("{$info_text}<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
+
+	print_info_box($info_text);
 }
 
 $pgtitle_output = true;

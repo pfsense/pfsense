@@ -217,7 +217,7 @@ if(empty($installed_packages)):?>
 		<i class="icon-large icon-info-sign"></i> = Information, &nbsp;
 		<i class="icon-large icon-retweet"></i> = Reinstall.
 		<br />
-		<font color="blue"><?=gettext("Blue")?></font> = <?=gettext("Newer version available")?>
+		<font color="blue"><?=gettext("Blue package name")?></font> = <?=gettext("Newer version available")?>
 	</span>
 </div>
 

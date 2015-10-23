@@ -225,7 +225,7 @@ if (is_array($confvers)):
 					<td><?=gettext("Current configuration")?></td>
 				</tr>
 <?php
-	// And now for hte table of prior backups
+	// And now for the table of prior backups
 	$c = 0;
 	foreach ($confvers as $version):
 		if ($version['time'] != 0) {

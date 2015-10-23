@@ -185,7 +185,9 @@ if(empty($installed_packages)):?>
 			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
 <?php endif;?>
 				<?=htmlspecialchars($pkg['installed_version'])?>
+<?php if (!$g['disablepackagehistory']):?>
 			</a>
+<?php endif;?>
 		</td>
 		<td>
 			<?=$pkg['desc']?>

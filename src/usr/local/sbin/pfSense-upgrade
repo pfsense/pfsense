@@ -47,7 +47,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 usage() {
-	echo "Usage: $(basename ${0}) [-bdyf] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "Usage: $(basename ${0}) [-46bdyf] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "	-4          - Force IPv4"
+	echo "	-6          - Force IPv6"
 	echo "	-b          - Platform is booting" >&2
 	echo "	-d          - Turn on debug" >&2
 	echo "	-f          - Force package installation" >&2
@@ -593,8 +595,24 @@ unset progress_file
 unset progress_socket
 unset action
 unset action_pkg
-while getopts b:dfi:hp:l:r:uy opt; do
+unset force_ipv4
+unset force_ipv6
+while getopts 46b:dfi:hp:l:r:uy opt; do
 	case ${opt} in
+		4)
+			if [ -n "${force_ipv6}" ]; then
+				usage
+				_exit 1
+			fi
+			force_ipv4=1
+			;;
+		6)
+			if [ -n "${force_ipv4}" ]; then
+				usage
+				_exit 1
+			fi
+			force_ipv6=1
+			;;
 		b)
 			booting=1
 			boot_stage="${OPTARG}"
@@ -655,6 +673,12 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			;;
 	esac
 done
+
+if [ -n "${force_ipv4}" ]; then
+	export IP_VERSION="4"
+elif [ -n "${force_ipv6}" ]; then
+	export IP_VERSION="6"
+fi
 
 # Set default action when no parameter is set
 : ${action:="upgrade"}

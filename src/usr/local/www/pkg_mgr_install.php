@@ -418,10 +418,6 @@ if ($_GET) {
 			break;
 	}
 
-	// Delete all temporary package tarballs and staging areas.
-	unlink_if_exists("/tmp/apkg_*");
-	rmdir_recursive("/var/tmp/instmp*");
-
 	// close log
 	if ($fd_log) {
 		fclose($fd_log);

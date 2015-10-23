@@ -401,7 +401,7 @@ if ($_GET) {
 		case 'reinstallall':
 			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
 				$progbar = false; // We don't show the progress bar for reinstallall. It would be far too confusing
-				mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . "ALL_PACKAGES" . ' -f');
+				mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ALL_PACKAGES -f');
 				$start_polling = true;
 			}
 

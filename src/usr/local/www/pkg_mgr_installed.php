@@ -141,7 +141,7 @@ if(empty($installed_packages)):?>
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
-				$status = 'Newer then available ('. $pkg['version'] .')';
+				$status = 'Newer than available ('. $pkg['version'] .')';
 				$statusicon = 'exclamation';
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package

@@ -109,7 +109,7 @@ _exec() {
 	else
 		[ -n "${_stdout}" ] \
 			&& _echo "failed."
-		exit 1
+		_exit 1
 	fi
 }
 

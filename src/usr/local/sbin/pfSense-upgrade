@@ -96,11 +96,18 @@ _exec() {
 	_echo -n ">>> ${_msg}... "
 	if [ -z "${_stdout}" ]; then
 		_echo ""
-		${_cmd} 2>&1 | tee -a ${logfile}
+		# Ref. http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+		exec 4>&1
+		local _result=$({ { ${_cmd} 2>&1 3>&-; printf $? 1>&3; } 4>&- | \
+			tee -a ${logfile} 1>&4; } 3>&1)
+		exec 4>&-
 	else
-		${_cmd} >${_stdout} 2>&1 | tee -a ${logfile}
+		# Ref. http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+		exec 4>&1
+		local _result=$({ { ${_cmd} >${_stdout} 2>&1 3>&-; printf $? 1>&3; } 4>&- | \
+			tee -a ${logfile} 1>&4; } 3>&1)
+		exec 4>&-
 	fi
-	local _result=$?
 
 	if [ ${_result} -eq 0 -o -n "${_ignore_result}" ]; then
 		[ -n "${_stdout}" ] \

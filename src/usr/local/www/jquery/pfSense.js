@@ -93,7 +93,7 @@ $(function() {
 		});
 	})();
 
-	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPvd addresses
+	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
 			
@@ -156,7 +156,7 @@ $(function() {
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system
 	// default values makes it better to handle advanced option hiding in each PHP file so this is being
-	// disabled for now changing hte class name it acts on to "auto-advanced"
+	// disabled for now by changing the class name it acts on to "auto-advanced"
 
 	// Hide advanced inputs by default
 	if ($('.auto-advanced').length > 0)

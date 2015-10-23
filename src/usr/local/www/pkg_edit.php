@@ -616,7 +616,7 @@ $form->addGlobal(new Form_Input(
 ));
 
 /* If a package's XML has <advanced_options/> configured, then setup
- * ta section for the fields that have <advancedfield/> set.
+ * the section for the fields that have <advancedfield/> set.
  * These fields will be placed below other fields in a separate area titled 'Advanced Features'.
  * These advanced fields are not normally configured and generally left to default to 'default settings'.
  */
@@ -629,7 +629,7 @@ if ($pkg['advanced_options'] == "enabled") {
 
 $js_array = array();
 
-// Now loop through all of hte fields defined in the XML
+// Now loop through all of the fields defined in the XML
 foreach ($pkg['fields']['field'] as $pkga) {
 
 	if ($pkga['type'] == "sorting") {
@@ -719,7 +719,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			break;
 
 		case "password":
-		// Creat a password element
+			// Create a password element
 			if($grouping) {
 				$group->add(new Form_Input(
 					$pkga['fieldname'],
@@ -748,7 +748,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			break;
 
 		case "info":
-			// If the info containe a table we should detect and Bootstrap it
+			// If the info contains a table we should detect and Bootstrap it
 
 			if (strpos($pkga['description'], '<table') !== FALSE)
 				$info = bootstrapTable($pkga['description']);
@@ -971,7 +971,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			break;
 
-		// Creat textarea element
+		// Create a textarea element
 		case "textarea":
 			if ($pkga['rows']) {
 				$rows = " rows='{$pkga['rows']}' ";

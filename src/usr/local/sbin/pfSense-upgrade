@@ -258,7 +258,7 @@ pkg_update() {
 
 pkg_upgrade() {
 	# figure out which kernel variant is running
-	export kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
+	export kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\* | grep -v -- -debug-))
 
 	if [ -z "${kernel_pkg}" ]; then
 		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"

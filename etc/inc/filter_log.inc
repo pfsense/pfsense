@@ -54,10 +54,48 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
+	    if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/gateways.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/resolver.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/wireless.log")		{ $logfile_type = "tbd"; }
+
+	elseif ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
+	elseif ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "tbd"; }
+
+	elseif ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/pptps.log")		{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/poes.log")			{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
+
+	elseif ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "tbd"; }
+	elseif ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
+	elseif ($logfile == "{$g['varlog_path']}/ntpd.log")			{ $logfile_type = "system"; }
+
+	elseif ($logfile == "{$g['varlog_path']}/lighttpd.log")		{ $logfile_type = "tbd"; }
+	else 														{ $logfile_type = "tbd"; }
+
+	    if ($logfile_type == 'firewall') { 
+		$pattern = "filterlog:";
+	}
+	elseif ($logfile_type == 'system') { 
+		$pattern = "^\(.*?\ .*?\ .*?\)\ \(.*?\)\ \(.*?\)\(?::\ \)?\(?:\[[0-9]*\]\)?:\ \(.*\)$";
+		#$pattern = "^\([a-zA-Z]{3}\ [0-9]{1,2}\ [0-9]{2}:[0-9]{2}:[0-9]{2}\)\ \(.*?\)\ \(.+?\)\(?:\[[0-9]*\]\)?:\ \(.*\)$";
+	}
+	elseif ($logfile_type == 'tbd') { 
+		$pattern = "^\(.*\)$";
+	}
+	else { 
+		$pattern = "^\(.*\)$";
+	}
+
 	if(isset($config['system']['usefifolog']))
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 	else
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 
 	$filterlog = array();
 	$counter = 0;
@@ -67,7 +105,11 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		if($counter >= $nentries)
 			break;
 
-		$flent = parse_filter_line($logent);
+		    if ($logfile_type == 'firewall')	{ $flent = parse_firewall_log_filter_line($logent); }
+		elseif ($logfile_type == 'system')		{ $flent = parse_system_log_filter_line($logent); }
+		elseif ($logfile_type == 'tbd')			{ $flent = array(); }
+		else 									{ $flent = array(); }
+
 		if (!$filterinterface || ($filterinterface == $flent['interface']))
 		{
 			if ( ( ($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) || 
@@ -127,7 +169,37 @@ function in_arrayi($needle, $haystack) {
 	return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
-function parse_filter_line($line) {
+function parse_system_log_filter_line($line) {
+	global $config, $g;
+
+	$flent = array();
+	$log_split = "";
+
+	$pattern = "/^(.*?\s.*?\s.*?)\s(.*?)\s(.*?)(?::\s)?(?:\[([0-9:]*)\])?:?\s(.*)$/";
+#	$pattern = "/^([a-zA-Z]{3}\s[0-9]{1,2}\s[0-9]{2}:[0-9]{2}:[0-9]{2})\s(.*?)\s(.+?)(?::\s)?(?:\[([0-9:]*)\])?:?\s(.*)$/";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
+
+	if($g['debug']) {
+		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
+	return "";
+	}
+
+	/* If there is time, process, and message, fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
+		}
+		return "";
+	}
+}
+
+function parse_firewall_log_filter_line($line) {
 	global $config, $g;
 
 	$flent = array();

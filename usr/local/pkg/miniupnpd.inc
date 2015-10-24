@@ -100,7 +100,7 @@
 			$extif = convert_friendly_interface_to_real_interface_name($post['ext_iface']);
 			$extaddr = find_interface_ip($extif);
 			if (!is_ipaddrv4($extaddr)) {
-				$input_errors[] = "The selected external interface '{$iface}' has no IPv4 configured. UPnP does not support IPv6.";
+				$input_errors[] = "The selected external interface '{$extif}' has no IPv4 configured. UPnP does not support IPv6.";
 			}
 		}
 		if($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'],false))

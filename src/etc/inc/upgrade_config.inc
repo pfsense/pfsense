@@ -3825,10 +3825,6 @@ function upgrade_117_to_118() {
 			$ph1_entry['peerid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['peerid_data']);
 		}
-		// iketype 'auto' was removed and is really v2, update accordingly
-		if ($ph1_entry['iketype'] == "auto") {
-			$ph1_entry['iketype'] = "ikev2";
-		}
 	}
 }
 

@@ -93,14 +93,14 @@ $carp_enabled = get_carp_status();
 <?php
 			if ($carp_enabled == false) {
 				$status = "DISABLED";
-				echo "<img src='/themes/".$g['theme']."/images/icons/icon_block.gif' title=\"$status\" alt=\"$status\" />";
+				echo '<i class="icon-large icon-ban-circle"></i>';
 			} else {
 				if($status == "MASTER") {
-					echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass.gif' title=\"$status\" alt=\"$status\" />";
+					echo '<i class="icon-large icon-arrow-right"></i>';
 				} else if($status == "BACKUP") {
-					echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif' title=\"$status\" alt=\"$status\" />";
+					echo '<i class="icon-large icon-arrow-right"></i>';
 				} else if($status == "INIT") {
-					echo "<img src='/themes/".$g['theme']."/images/icons/icon_log.gif' title=\"$status\" alt=\"$status\" />";
+					echo '<i class="icon-large icon-list-alt"></i>';
 				}
 			}
 			if ($ipaddress){ ?> &nbsp;

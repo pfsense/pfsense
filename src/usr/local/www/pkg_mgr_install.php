@@ -319,7 +319,7 @@ display_top_tabs($tab_array);
 
 if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
-} else if ($_POST['mode'] == 'reinstallpkg') {
+} else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
 	$modetxt = gettext("reinstallation");
 } else {
 	$modetxt = gettext("installation");
@@ -462,15 +462,22 @@ function show_success() {
 // Display a failure banner
 function show_failure() {
 	$('#final').addClass("alert-danger");
-	$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");
+	else
+		$('#final').html("<?=gettext('Reinstallation of all packages failed')?>");
 	$('#final').show();
 }
 
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
-	"<?=gettext("(Some packages may take several minutes!)")?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
+			"<?=gettext("(Some packages may take several minutes!)")?>");
+	else
+		$('#final').html("Please wait while the reinstallation of all packages completes." + "<br />" +
+			"<?=gettext("(Some packages may take several minutes!)")?>");
 	$('#final').show();
 }
 

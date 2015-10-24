@@ -59,7 +59,7 @@
 			$ip_array[] = $ip;
 
 		/* validate ip */
-		if (!is_ipaddr($ip_array[0]))
+		if (!is_ipaddrv4($ip_array[0]))
 			return false;
 		return true;
 	}
@@ -77,17 +77,34 @@
 	}
 
 	function validate_form_miniupnpd($post, &$input_errors) {
-		if($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp']))
+		if($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp'])) {
 			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
-		if($post['iface_array'])
+		}
+		if($post['iface_array']) {
 			foreach($post['iface_array'] as $iface) {
-				if($iface == 'wan')
+				if($iface == 'wan') {
 					$input_errors[] = 'It is a security risk to specify WAN in the \'Interface\' field';
-				elseif ($iface == $post['ext_iface'])
+				} elseif ($iface == $post['ext_iface']) {
 					$input_errors[] = 'You cannot select the external interface as an internal interface.';
+				}
+				/* check that the interface has an IPv4 address */
+				$if = convert_friendly_interface_to_real_interface_name($iface);
+				$addr = find_interface_ip($if);
+				if (!is_ipaddrv4($addr)) {
+					$input_errors[] = "The selected interface '{$iface}' has no IPv4 configured. UPnP does not support IPv6.";
+				}
+
 			}
+		}
+		if($post['ext_iface']) {
+			$extif = convert_friendly_interface_to_real_interface_name($post['ext_iface']);
+			$extaddr = find_interface_ip($extif);
+			if (!is_ipaddrv4($extaddr)) {
+				$input_errors[] = "The selected external interface '{$iface}' has no IPv4 configured. UPnP does not support IPv6.";
+			}
+		}
 		if($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'],false))
-			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
+			$input_errors[] = 'You must specify a valid IPv4 address in the \'Override WAN address\' field';
 		if(($post['download'] && !$post['upload']) || ($post['upload'] && !$post['download']))
 			$input_errors[] = 'You must fill in both \'Maximum Download Speed\' and \'Maximum Upload Speed\' fields';
 		if($post['download'] && $post['download'] <= 0)
@@ -114,7 +131,7 @@
 							permissions {$i}' field";
 					/* verify ip address */
 					if(!upnp_validate_ip($perm[2],true))
-						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a valid IPv4 address in the 'User specified permissions {$i}' field";
 				}
 			}
 		}		
@@ -157,8 +174,8 @@
 				if($if!=$iface) {
 					$addr = find_interface_ip($if);
 					$bits = find_interface_subnet($if);
-					/* check that the interface has an ip address before adding parameters */
-					if (is_ipaddr($addr)) {
+					/* check that the interface has an IPv4 address before adding parameters */
+					if (is_ipaddrv4($addr)) {
 						$config_text .= "listening_ip={$if}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
@@ -166,7 +183,7 @@
 						} else
 							$ifaces_active .= ", {$iface}";
 					} else
-						upnp_warn("Interface {$iface} has no ip address, ignoring");
+						upnp_warn("Interface {$iface} has no IPv4 address, ignoring");
 				} else
 					upnp_warn("Could not resolve real interface for {$iface}");
 			}

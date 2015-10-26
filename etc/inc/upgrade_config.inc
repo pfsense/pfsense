@@ -3659,8 +3659,8 @@ function upgrade_119_to_120() {
 
 	// add 1 to configured log levels as part of redmine #5340
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-                if (isset($config['ipsec']['ipsec_{$lkey}'])) {
-                        $config['ipsec']['ipsec_{$lkey}'] = $config['ipsec']['ipsec_{$lkey}'] + 1;
+                if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+                        $config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
                 }
         }
 

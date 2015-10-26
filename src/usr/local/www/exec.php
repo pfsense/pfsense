@@ -275,8 +275,8 @@ if (!isBlank($_POST['txtCommand'])):?>
 		</div>
 	</div>
 <?php
-	// Experimentl version. Writes the user's php code to a file and executes it via a new instance of PHP
-	// THis is intended to prevent bad code from breaking the GUI
+	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
+	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
 		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
 		puts("<pre>");

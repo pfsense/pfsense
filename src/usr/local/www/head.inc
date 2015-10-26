@@ -75,6 +75,7 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 <html lang="en">
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 	<title><?=$tabtitle?></title>
 	<script>var events = events || [];</script>
 </head>

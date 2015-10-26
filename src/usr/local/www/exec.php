@@ -280,7 +280,8 @@ if (!isBlank($_POST['txtCommand'])):?>
 	if (!isBlank($_POST['txtPHPCommand'])) {
 		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
 		puts("<pre>");
-		$phpfile = fopen("/tmp/phpfile", "w");
+		$tmpname = tempnam("/tmp", "");
+		$phpfile = fopen($tmpname, "w");
 		fwrite($phpfile, "<?php\n");
 		fwrite($phpfile, "require_once(\"/etc/inc/config.inc\");\n");
 		fwrite($phpfile, "require_once(\"/etc/inc/functions.inc\");\n\n");
@@ -288,13 +289,13 @@ if (!isBlank($_POST['txtCommand'])):?>
 		fwrite($phpfile, "?>\n");
 		fclose($phpfile);
 
-		exec("/usr/local/bin/php /tmp/phpfile", $output);
+		exec("/usr/local/bin/php " . $tmpname, $output);
 
 		for ($i=0; $i < count($output); $i++) {
 			print($output[$i] . "\n");
 		}
 
-		unlink("/tmp/phpfile");
+		unlink($tmpname);
 
 //		echo eval($_POST['txtPHPCommand']);
 		puts("&nbsp;</pre>");

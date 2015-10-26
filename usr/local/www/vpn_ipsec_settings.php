@@ -61,52 +61,52 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	
-	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_dmn'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Daemon debug.";
 	}
-	if (!in_array($pconfig['ipsec_mgr'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_mgr'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for SA Manager debug.";
 	}
-	if (!in_array($pconfig['ipsec_ike'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_ike'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for IKE SA debug.";
 	}
-	if (!in_array($pconfig['ipsec_chd'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_chd'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for IKE Child SA debug.";
 	}
-	if (!in_array($pconfig['ipsec_job'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_job'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Job Processing debug.";
 	}
-	if (!in_array($pconfig['ipsec_cfg'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_cfg'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Configuration backend debug.";
 	}
-	if (!in_array($pconfig['ipsec_knl'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_knl'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Kernel Interface debug.";
 	}
-	if (!in_array($pconfig['ipsec_net'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_net'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Networking debug.";
 	}
-	if (!in_array($pconfig['ipsec_asn'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_asn'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for ASN Encoding debug.";
 	}
-	if (!in_array($pconfig['ipsec_enc'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_enc'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Message encoding debug.";
 	}
-	if (!in_array($pconfig['ipsec_imc'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_imc'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Integrity checker debug.";
 	}
-	if (!in_array($pconfig['ipsec_imv'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_imv'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Integrity Verifier debug.";
 	}
-	if (!in_array($pconfig['ipsec_pts'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_pts'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for Platform Trust Service debug.";
 	}
-	if (!in_array($pconfig['ipsec_tls'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_tls'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for TLS Handler debug.";
 	}
-	if (!in_array($pconfig['ipsec_esp'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_esp'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for IPsec Traffic debug.";
 	}
-	if (!in_array($pconfig['ipsec_lib'], array('0', '1', '2', '3', '4', '5'), true)) {
+	if (!in_array($pconfig['ipsec_lib'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
 	}
 	if (isset($pconfig['maxmss'])) {

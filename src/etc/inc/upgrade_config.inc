@@ -3982,7 +3982,6 @@ function upgrade_122_to_123() {
 }
 
 function upgrade_123_to_124() {
-	require_once("notices.inc");
 	global $config;
 
 	/* Find interfaces with WEP configured. */
@@ -3993,6 +3992,9 @@ function upgrade_123_to_124() {
 
 		/* Generate a notice, disable interface, remove WEP settings */
 		if (isset($intf['wireless']['wep']['enable'])) {
+			if (!function_exists("file_notice")) {
+				require_once("notices.inc");
+			}
 			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
 			unset($config['interfaces'][$ifname]['wireless']['wep']); 
 			if (isset($intf['enable'])) {

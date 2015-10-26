@@ -275,12 +275,28 @@ if (!isBlank($_POST['txtCommand'])):?>
 		</div>
 	</div>
 <?php
+	// Experimentl version. Writes the user's php code to a file and executes it via a new instance of PHP
+	// THis is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
 		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
 		puts("<pre>");
-		require_once("config.inc");
-		require_once("functions.inc");
-		echo eval($_POST['txtPHPCommand']);
+		$phpfile = fopen("/tmp/phpfile", "w");
+		fwrite($phpfile, "<?php\n");
+		fwrite($phpfile, "require_once(\"/etc/inc/config.inc\");\n");
+		fwrite($phpfile, "require_once(\"/etc/inc/functions.inc\");\n\n");
+		fwrite($phpfile, $_POST['txtPHPCommand'] . "\n");
+		fwrite($phpfile, "?>\n");
+		fclose($phpfile);
+
+		exec("/usr/local/bin/php /tmp/phpfile", $output);
+
+		for ($i=0; $i < count($output); $i++) {
+			print($output[$i] . "\n");
+		}
+
+		unlink("/tmp/phpfile");
+
+//		echo eval($_POST['txtPHPCommand']);
 		puts("&nbsp;</pre>");
 		puts("</div>");
 ?>

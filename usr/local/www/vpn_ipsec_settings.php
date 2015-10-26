@@ -300,7 +300,7 @@ function maxmss_checked(obj) {
 												$logselected = $logval;	
 											}
 										} else {
-											$logselected = "2";
+											$logselected = "3";
 										}
 										echo "<option value=\"{$logval}\" ";
 										 if ($logselected == $logval)

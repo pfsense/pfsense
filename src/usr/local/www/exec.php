@@ -71,7 +71,7 @@ $allowautocomplete = true;
 
 require("guiconfig.inc");
 
-if (($_POST['submit'] == gettext("Download")) && file_exists($_POST['dlPath'])) {
+if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
 	$fd = fopen($_POST['dlPath'], "rb");
 	header("Content-Type: application/octet-stream");
@@ -88,7 +88,7 @@ if (($_POST['submit'] == gettext("Download")) && file_exists($_POST['dlPath'])) 
 
 	fpassthru($fd);
 	exit;
-} else if (($_POST['submit'] == gettext("Upload")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+} else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
 	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
 	unset($_POST['txtCommand']);
@@ -246,9 +246,9 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<br /><br />
 			<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
 			<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
-			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute"); ?>" />
+			<button type="submit" class="btn btn-default btn-sm" value="EXEC"><?=gettext("Execute"); ?></button>
 			<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
-			<input type="button"  class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+			<input type="button" class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
 		</div>
 	</div>
 
@@ -257,7 +257,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 		<div class="panel-body">
 			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
 			<br /><br />
-			<input name="submit" type="submit"	class="btn btn-default btn-sm" id="download" value="<?=gettext("Download"); ?>" />
+			<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
 		</div>
 	</div>
 
@@ -270,7 +270,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 		<div class="panel-body">
 			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 			<br />
-			<input name="submit" type="submit" class="btn btn-default btn-sm pull-left" id="upload" value="<?=gettext("Upload"); ?>" />
+			<button name="submit" type="submit" class="btn btn-default btn-sm pull-left" id="upload" value="UPLOAD"><?=gettext("Upload")?></button>
 
 		</div>
 	</div>
@@ -283,6 +283,14 @@ if (!isBlank($_POST['txtCommand'])):?>
 		echo eval($_POST['txtPHPCommand']);
 		puts("&nbsp;</pre>");
 		puts("</div>");
+?>
+<script>
+	events.push(function(){
+		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
+		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
+	});
+</script>
+<?php
 }
 ?>
 	<div class="panel panel-default responsive">

@@ -283,9 +283,9 @@ function maxmss_checked(obj) {
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Logging Levels"); ?></td>
 						<td width="78%" class="vtable">
-							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
+							<strong><?=gettext("Use the following IPsec logging levels"); ?></strong>
 							<br />
 							<table summary="ipsec debug">
 						<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
@@ -314,8 +314,7 @@ function maxmss_checked(obj) {
 						<?php endforeach; ?>
 							<tr style="display:none;"><td></td></tr>
 							</table>
-							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
-							"will be generated to aid in troubleshooting."); ?>
+							<br /><?=gettext("Defines IPsec logging levels. Control is the default level for all log types."); ?>
 						</td>
 					</tr>
 					<tr>

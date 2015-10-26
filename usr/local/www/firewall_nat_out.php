@@ -78,7 +78,7 @@ if ($_POST['apply']) {
 	}
 }
 
-if (isset($_POST['save']) && $_POST['save'] == "Save") {
+if (isset($_POST['save']) && $_POST['save'] == gettext("Save")) {
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
 	if ($_POST['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {
 		/*

@@ -71,7 +71,7 @@ $allowautocomplete = true;
 
 require("guiconfig.inc");
 
-if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
+if (($_POST['submit'] == gettext("Download")) && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
 	$fd = fopen($_POST['dlPath'], "rb");
 	header("Content-Type: application/octet-stream");
@@ -88,7 +88,7 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 
 	fpassthru($fd);
 	exit;
-} else if (($_POST['submit'] == "Upload") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+} else if (($_POST['submit'] == gettext("Upload")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
 	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
 	unset($_POST['txtCommand']);

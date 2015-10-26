@@ -726,7 +726,6 @@ events.push(function() {
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
-	   alert();
 	});
 
 	// Replace direct delete with quicker front-end action

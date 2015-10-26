@@ -296,7 +296,9 @@ function maxmss_checked(obj) {
 									foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
 										$logval = $lidx + 1;
 										if (isset($pconfig["ipsec_{$lkey}"])) {
-											$logselected = $pconfig["ipsec_{$lkey}"];
+											if ($pconfig["ipsec_{$lkey}"] == $logval) {
+												$logselected = $logval;	
+											}
 										} else {
 											$logselected = "2";
 										}

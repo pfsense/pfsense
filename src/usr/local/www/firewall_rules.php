@@ -271,16 +271,16 @@ display_top_tabs($tab_array);
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
-						<th><?=gettext("Proto");?></th>
-						<th><?=gettext("Source");?></th>
-						<th><?=gettext("Port");?></th>
-						<th><?=gettext("Destination");?></th>
-						<th><?=gettext("Port");?></th>
-						<th><?=gettext("Gateway");?></th>
-						<th><?=gettext("Queue");?></th>
-						<th><?=gettext("Schedule");?></th>
-						<th><?=gettext("Description");?></th>
-						<th><!-- buttons --></th>
+						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Source")?></th>
+						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Destination")?></th>
+						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Queue")?></th>
+						<th><?=gettext("Schedule")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -304,7 +304,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Anti-Lockout Rule");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="btn btn-xs btn-primary">edit</a>
+							<a href="system_advanced_admin.php" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -322,7 +322,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="btn btn-xs btn-primary" title="<?=gettext("edit rule");?>">edit</a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit rule");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -340,7 +340,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="btn btn-xs btn-primary">edit</a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -614,10 +614,18 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<?=htmlspecialchars($filterent['descr']);?>
 						</td>
 						<td>
-							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="btn btn-xs btn-primary">edit</a>
-							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="btn btn-xs btn-default">copy</a>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-xs btn-warning"><?=(isset($filterent['disabled']) ? 'enable' : 'disable')?></a>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-xs btn-danger">delete</a>
+						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
+							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title=<?=gettext('Edit')?>"></a>
+							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+<?php if (isset($filterent['disabled'])) {
+?>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+<?php } else {
+?>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+<?php }
+?>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 						</td>
 					</tr>
 <?php

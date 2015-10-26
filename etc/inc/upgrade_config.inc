@@ -3647,6 +3647,23 @@ function upgrade_118_to_119() {
 			$ph1_entry['peerid_type'] = "any";	
 		}
 	}
+
+}
+
+function upgrade_119_to_120() {
+        global $config, $ipsec_loglevels;
+
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	// add 1 to configured log levels as part of redmine #5340
+	foreach ($ipsec_loglevels as $lkey => $ldescr) {
+                if (isset($config['ipsec']['ipsec_{$lkey}'])) {
+                        $config['ipsec']['ipsec_{$lkey}'] = $config['ipsec']['ipsec_{$lkey}'] + 1;
+                }
+        }
+
 }
 
 ?>

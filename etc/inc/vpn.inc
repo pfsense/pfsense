@@ -49,11 +49,11 @@ function vpn_ipsec_configure_loglevels($forconfig = false) {
 	$cfgtext = array();
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig) {
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- 1", false);
 		} else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
-		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5) {
-			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
-				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 6) {
+			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 2) :
+				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 2) , false);
 		}
 	}
 	if ($forconfig) {

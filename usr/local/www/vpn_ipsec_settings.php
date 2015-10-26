@@ -294,8 +294,14 @@ function maxmss_checked(obj) {
 								<td width="78%" valign="top" class="vncell">
 								<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
 									foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
-										echo "<option value=\"{$lidx}\" ";
-										 if ($pconfig["ipsec_{$lkey}"] == $lidx)
+										$logval = $lidx + 1;
+										if (isset($pconfig["ipsec_{$lkey}"])) {
+											$logselected = $pconfig["ipsec_{$lkey}"];
+										} else {
+											$logselected = "2";
+										}
+										echo "<option value=\"{$logval}\" ";
+										 if ($logselected == $logval)
 											echo "selected=\"selected\"";
 										echo ">{$lvalue}</option>\n";
 									}

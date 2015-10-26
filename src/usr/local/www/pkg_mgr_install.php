@@ -223,7 +223,7 @@ if ($_POST) {
 		return;
 	}
 } else if ($_GET && !$_GET['id']) {
-	if (empty($_GET['pkg'])) {
+	if (empty($_GET['pkg']) && ($_GET['mode'] != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}

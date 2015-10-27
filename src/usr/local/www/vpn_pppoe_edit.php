@@ -625,6 +625,9 @@ events.push(function(){
 	hide_radius2(!$('#radiussecenable').prop('checked'));
 	hide_radius(!$('#radiusenable').prop('checked'));
 
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
 });
 //]]>
 </script>

@@ -1528,6 +1528,9 @@ events.push(function(){
 	show_advldap();
 	show_advboot();
 	show_advopts();
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

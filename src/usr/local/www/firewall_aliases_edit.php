@@ -810,6 +810,9 @@ events.push(function(){
 
 	// On load . .
 	typechange();
+	
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 
 	// Autocomplete
 	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;

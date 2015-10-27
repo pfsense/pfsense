@@ -240,6 +240,15 @@ function renumber() {
 function delete_row(row) {
 	$('#' + row).parent('div').parent('div').remove();
 	renumber();
+	checkLastRow();
+}
+
+function checkLastRow() {
+	if($('.repeatable').length <= 1) {
+		$('#deleterow0').hide();
+	} else {
+		$('[id^=deleterow]').show();
+	}
 }
 
 function add_row() {
@@ -288,6 +297,8 @@ function add_row() {
 	});
 
 	setMasks();
+
+	checkLastRow();
 
 	$('[id^=address]').autocomplete({
 		source: addressarray

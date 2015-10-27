@@ -1096,6 +1096,9 @@ events.push(function(){
 
 	internalca_change();
 
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
 <?php endif; ?>
 
 

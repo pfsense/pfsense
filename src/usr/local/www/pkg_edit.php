@@ -1423,7 +1423,10 @@ if ($pkg['fields']['field'] != "") { ?>
 	// Hide on page load
 	$('.advancedoptions').hide();
 
-	// But show it if you click the showadv button
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
+	// Show advanced section if you click the showadv button
 	$('#showadv').prop('type', 'button');
 
 	$("#showadv").click(function() {

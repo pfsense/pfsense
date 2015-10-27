@@ -554,6 +554,9 @@ events.push(function(){
 	hideCheckbox('notrap', true);
 	hideInput('leaptext', true);
 	hideInput('leapfile', true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

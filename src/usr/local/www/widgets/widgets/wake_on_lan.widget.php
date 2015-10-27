@@ -88,17 +88,17 @@ if (count($wolcomputers) > 0) {
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 		if ($status == 'expires') {
 			echo '<td class="listr" align="center">' . "\n";
-			echo "<i class="icon-large icon-arrow-right"></i> " . gettext("Online") . "</td>\n";
+			echo '<i class="icon-large icon-arrow-right"></i> ' . gettext("Online") . "</td>\n";
 		} else if ($status == 'permanent') {
 			echo '<td class="listr" align="center">' . "\n";
-			echo "<i class="icon-large icon-arrow-right"></i> " . gettext("Static ARP") . "</td>\n";
+			echo '<i class="icon-large icon-arrow-right"></i> ' . gettext("Static ARP") . "</td>\n";
 		} else {
 			echo '<td class="listbg" align="center">' . "\n";
-			echo "<i class="icon-large icon-ban-circle"></i>&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";
+			echo '<i class="icon-large icon-ban-circle"></i>&nbsp;<font color="white">' . gettext("Offline") . "</font></td>\n";
 		}
 		echo '<td valign="middle" class="list nowrap">';
 		echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";
-		echo "<i class="icon-large icon-thumbs-up" alt="wol"></i></a>\n";
+		echo '<i class="icon-large icon-thumbs-up" alt="wol"></i></a>' . "\n";
 		echo "</td></tr>\n";
 	}
 } else {

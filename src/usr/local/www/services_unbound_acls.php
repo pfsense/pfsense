@@ -325,6 +325,15 @@ else // NOT 'edit' or 'add'
 		</nav>
 	</div>
 </div>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+});
+//]]>
+</script>
 <?php
 }
 

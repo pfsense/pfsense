@@ -33,7 +33,7 @@ class Form_Select extends Form_Input
 	protected $_values;
 	protected $_value;
 
-	public function __construct($name, $title, $value, array $values, $allowMultiple = false)
+	public function __construct($name, $title, $value, array $values, $allowMultiple = false, $optionDefault = true)
 	{
 		if ($allowMultiple)
 			$name .= '[]';
@@ -43,6 +43,7 @@ class Form_Select extends Form_Input
 		if ($allowMultiple)
 			$this->_attributes['multiple'] = 'multiple';
 
+		$this->option_default = $optionDefault;
 		$this->_value = $value;
 		$this->_values = $values;
 	}
@@ -52,6 +53,10 @@ class Form_Select extends Form_Input
 		$element = parent::_getInput();
 
 		$options = '';
+		if ($this->option_default) {
+			$options = "<option value=''>-- " . gettext('select') . " --</option>";
+		}
+
 		foreach ($this->_values as $value => $name)
 		{
 			// Things can get wierd if we have mixed types

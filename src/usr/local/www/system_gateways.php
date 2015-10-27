@@ -306,19 +306,20 @@ foreach ($a_gateways as $i => $gateway):
 			<?=htmlspecialchars($gateway['descr'])?>
 		</td>
 		<td>
-			<a class="btn btn-xs btn-primary" href="system_gateways_edit.php?id=<?=$i?>">
-				edit
-			</a>
-			<a class="btn btn-xs btn-default" href="system_gateways_edit.php?dup=<?=$i?>">
-				copy
-			</a>
+			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+			
 <? if (is_numeric($gateway['attribute'])): ?>
-			<a class="btn btn-xs btn-danger" href="system_gateways.php?act=del&amp;id=<?=$i?>">
-				delete
-			</a>
-			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">
-				toggle
-			</a>
+	<?php if (isset($gateway['disabled'])) {
+	?>	
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+	<?php } else {
+	?>
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+	<?php }
+	?>		
+			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this gateway?")?>')"></a>
+	
 <? endif?>
 		</td>
 	</tr>

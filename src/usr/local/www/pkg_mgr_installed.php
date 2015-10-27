@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr_installed.php
 */
@@ -55,7 +54,7 @@
  *
  */
 /*
-	pfSense_MODULE:	pkgs
+	pfSense_MODULE: pkgs
 */
 
 ##|+PRIV
@@ -86,42 +85,34 @@ if (is_subsystem_dirty('packagelock')) {
 
 include("head.inc");
 
-if(is_array($config['installedpackages']['package'])) {
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$tocheck[] = $instpkg['name'];
-	}
-
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
-}
 $closehead = false;
 $pgtitle = array(gettext("System"), gettext("Package Manager"));
 
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers())
-	print_info_box(package_server_mismatch_message());
-
-/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-if (check_package_server_ssl() === false)
-	print_info_box(package_server_ssl_failure_message());
-
 $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("{$g['product_version']} " . gettext("packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
-//	$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-if(!is_array($config['installedpackages']['package'])):?>
+$installed_packages = array();
+$package_list = get_pkg_info();
+foreach ($package_list as $pkg) {
+	if (!isset($pkg['installed'])) {
+		continue;
+	}
+	$installed_packages[] = $pkg;
+}
+
+if(empty($installed_packages)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
 <?php else: ?>
+	<div class="panel panel-body">
 	<div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed">
 	<thead>
 		<tr>
-			<th><span class="sr-only"><?=gettext("Status")?></span></th>
+			<th><!-- Status icon --></th>
 			<th><?=gettext("Name")?></th>
 			<th><?=gettext("Category")?></th>
 			<th><?=gettext("Version")?></th>
@@ -131,81 +122,106 @@ if(!is_array($config['installedpackages']['package'])):?>
 	</thead>
 	<tbody>
 <?php
-	$instpkgs = array();
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$instpkgs[] = $instpkg['name'];
-	}
-	natcasesort($instpkgs);
-
-	foreach ($instpkgs as $index => $pkgname):
-		$pkg = $config['installedpackages']['package'][$index];
-		if(!$pkg['name'])
+	foreach ($installed_packages as $pkg):
+		if(!$pkg['name']) {
 			continue;
+		}
 
-		$full_name = $g['pkg_prefix'] . get_package_internal_name($pkg);
+		$shortname = $pkg['name'];
+		pkg_remove_prefix($shortname);
 
-		// get history/changelog git dir
-		$commit_dir=explode("/",$pkg['config_file']);
-		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+		// XXX: Add it to globals.inc?
+		$changeloglink ="https://github.com/pfsense/FreeBSD-ports/commits/devel/{$pkg['categories'][0]}/{$pkg['name']}";
 		#check package version
-		$latest_package = $currentvers[$pkg['name']]['version'];
-		if ($latest_package) {
-			// we're running a newer version of the package
-			if(strcmp($pkg['version'], $latest_package) > 0) {
-				$status = 'Newer then available ('. $latest_package .')';
+		$txtcolor = "black";
+		$upgradeavail = false;
+		$vergetstr = "";
+
+		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
+			if ($version_compare == '>') {
+				// we're running a newer version of the package
+				$status = 'Newer than available ('. $pkg['version'] .')';
 				$statusicon = 'exclamation';
-			}
-			// we're running an older version of the package
-			if(strcmp($pkg['version'], $latest_package) < 0) {
-				$status = 'Upgrade available to '.$latest_package;
-				$statusicon = 'plus';
-			}
-			// we're running the current version
-			if(!strcmp($pkg['version'], $latest_package)) {
+			} else if ($version_compare == '<') {
+				// we're running an older version of the package
+				$status = 'Upgrade available to '.$pkg['version'];
+				$statusicon = 'refresh';
+				$txtcolor = "blue";
+				$upgradeavail = true;
+				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
+			} else if ($version_compare == '=') {
+				// we're running the current version
 				$status = 'Up-to-date';
 				$statusicon = 'ok';
+			} else {
+				$status = 'Error comparing version';
+				$statusicon = 'exclamation';
 			}
-			$pkgdescr = $currentvers[$pkg['name']]['descr'];
 		} else {
 			// unknown available package version
 			$status = 'Unknown';
 			$statusicon = 'question';
 			$pkgdescr = $pkg['descr'];
+			$pkgwww = 'UNKNOWN';
 		}
 ?>
 	<tr>
 		<td>
-			<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
+<?php if($upgradeavail) { ?>
+			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
+<?php } else { ?>
+			<i title="<?=$status?>" class="icon-large icon-ok"></i>
+<?php } ?>
 		</td>
 		<td>
-			<?=$pkg['name']?>
+			<font color="<?=$txtcolor?>"><?=$shortname?></font>
 		</td>
 		<td>
-			<?=$pkg['category']?>
+			<?=implode(" ", $pkg['categories'])?>
 		</td>
 		<td>
 <?php if (!$g['disablepackagehistory']):?>
 			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
 <?php endif;?>
-				<?=htmlspecialchars($pkg['version'])?>
+				<?=htmlspecialchars($pkg['installed_version'])?>
+<?php if (!$g['disablepackagehistory']):?>
 			</a>
-		</td>
-		<td>
-			<?=$pkgdescr?>
-		</td>
-		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-warning btn-xs">Remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs">Reinstall</a>
-<!--			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info btn-xs"><?=gettext("reinstall GUI")?></a> 
-<?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-info btn-xs">Info</a>
 <?php endif;?>
--->
+		</td>
+		<td>
+			<?=$pkg['desc']?>
+		</td>
+		<td>
+			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-minus-sign"></a>
+<?php if($upgradeavail) { ?>
+			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
+<?php } else { ?>
+			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-retweet"></a>
+<?php } ?>
+
+<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="icon-large icon-info-sign"></a>
+<?php endif; ?>
 		</td>
 	</tr>
 <?php endforeach;?>
 	</tbody>
 </table>
 </div>
+</div>
+<br />
+<div style="text-align: center;">
+	<span>
+		<i class="icon-large icon-refresh"></i> = Update, &nbsp;
+		<i class="icon-large icon-ok"></i> = Current, &nbsp;
+		<i class="icon-large icon-minus-sign"></i> = Remove, &nbsp;
+		<i class="icon-large icon-info-sign"></i> = Information, &nbsp;
+		<i class="icon-large icon-retweet"></i> = Reinstall.
+		<br />
+		<font color="blue"><?=gettext("Blue package name")?></font> = <?=gettext("Newer version available")?>
+	</span>
+</div>
+
 <?php endif; ?>
 <?php include("foot.inc")?>

@@ -1,0 +1,15 @@
+name: "%%PRODUCT_NAME%%-kernel-debug-%%FLAVOR%%"
+version: "%%VERSION%%"
+origin: "security/%%PRODUCT_NAME%%-kernel-debug"
+comment: <<EOD
+%%PRODUCT_NAME%% kernel-debug
+EOD
+maintainer: development@pfsense.org
+prefix: /
+deps: {
+"%%PRODUCT_NAME%%-kernel-%%FLAVOR%%": {origin: "security/%%PRODUCT_NAME%%-kernel", version: "%%VERSION%%"}
+}
+categories [ security,  ]
+licenselogic: single
+licenses: [ BSD2CLAUSE,  ]
+options: {  }

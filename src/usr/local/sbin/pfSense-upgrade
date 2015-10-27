@@ -47,7 +47,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 usage() {
-	echo "Usage: $(basename ${0}) [-bdyf] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "Usage: $(basename ${0}) [-46bdyf] [-u|-i PKG_NAME|-r PKG_NAME]" >&2
+	echo "	-4          - Force IPv4"
+	echo "	-6          - Force IPv6"
 	echo "	-b          - Platform is booting" >&2
 	echo "	-d          - Turn on debug" >&2
 	echo "	-f          - Force package installation" >&2
@@ -94,11 +96,18 @@ _exec() {
 	_echo -n ">>> ${_msg}... "
 	if [ -z "${_stdout}" ]; then
 		_echo ""
-		${_cmd} 2>&1 | tee -a ${logfile}
+		# Ref. http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+		exec 4>&1
+		local _result=$({ { ${_cmd} 2>&1 3>&-; printf $? 1>&3; } 4>&- | \
+			tee -a ${logfile} 1>&4; } 3>&1)
+		exec 4>&-
 	else
-		${_cmd} >${_stdout} 2>&1 | tee -a ${logfile}
+		# Ref. http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+		exec 4>&1
+		local _result=$({ { ${_cmd} >${_stdout} 2>&1 3>&-; printf $? 1>&3; } 4>&- | \
+			tee -a ${logfile} 1>&4; } 3>&1)
+		exec 4>&-
 	fi
-	local _result=$?
 
 	if [ ${_result} -eq 0 -o -n "${_ignore_result}" ]; then
 		[ -n "${_stdout}" ] \
@@ -107,7 +116,7 @@ _exec() {
 	else
 		[ -n "${_stdout}" ] \
 			&& _echo "failed."
-		exit 1
+		_exit 1
 	fi
 }
 
@@ -249,7 +258,7 @@ pkg_update() {
 
 pkg_upgrade() {
 	# figure out which kernel variant is running
-	export kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\*))
+	export kernel_pkg=$(pkg query %n $(pkg info ${product}-kernel-\* | grep -v -- -debug-))
 
 	if [ -z "${kernel_pkg}" ]; then
 		_echo "ERROR: It was not possible to identify which ${product} kernel is installed"
@@ -552,7 +561,7 @@ pkg_delete() {
 # Reinstall every pfSense-pkg-* package
 pkg_reinstall_all() {
 	for _pkg in $(pkg query -e '%a == 0' %n); do
-		case ${_pkg} in "${platform}"-pkg-* )
+		case ${_pkg} in "${pkg_prefix}"* )
 			_echo "Reinstalling ${_pkg}"
 			pkg_install ${_pkg} 1
 			;;
@@ -593,8 +602,24 @@ unset progress_file
 unset progress_socket
 unset action
 unset action_pkg
-while getopts b:dfi:hp:l:r:uy opt; do
+unset force_ipv4
+unset force_ipv6
+while getopts 46b:dfi:hp:l:r:uy opt; do
 	case ${opt} in
+		4)
+			if [ -n "${force_ipv6}" ]; then
+				usage
+				_exit 1
+			fi
+			force_ipv4=1
+			;;
+		6)
+			if [ -n "${force_ipv4}" ]; then
+				usage
+				_exit 1
+			fi
+			force_ipv6=1
+			;;
 		b)
 			booting=1
 			boot_stage="${OPTARG}"
@@ -655,6 +680,12 @@ while getopts b:dfi:hp:l:r:uy opt; do
 			;;
 	esac
 done
+
+if [ -n "${force_ipv4}" ]; then
+	export IP_VERSION="4"
+elif [ -n "${force_ipv6}" ]; then
+	export IP_VERSION="6"
+fi
 
 # Set default action when no parameter is set
 : ${action:="upgrade"}

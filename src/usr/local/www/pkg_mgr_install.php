@@ -85,12 +85,11 @@ $start_polling = false;
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
-// The log file is read, the newest progress record retrieved, and the PID status obtained. The data is formatted
+// The log file is read and the newest progress record retrieved. The data is formatted
 // as JSON before being returned to the AJAX caller (at the bottom of this file)
 //
 // Arguments received here:
 //		logfilename = Passed to installation script to tell it how to name the log file we will parse
-//		pid = PID of the background install/remove process
 //		next_log_line = Send log file entries that come after this line number
 //
 // JSON items returned
@@ -203,12 +202,15 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 
 			fclose($testfile);
 		}
+
 	usleep(100000);
 	$now = time();
 	}
 
 	return(false);
 }
+
+$headline = "<br />";
 
 if ($_POST) {
 	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
@@ -220,29 +222,36 @@ if ($_POST) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
-} else if ($_GET) {
+} else if ($_GET && !$_GET['id']) {
+	if (empty($_GET['pkg']) && ($_GET['mode'] != 'reinstallall')) {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
+
 	switch ($_GET['mode']) {
 		case 'reinstallall':
+			$headline = gettext("Reinstall all packages");
 		case 'showlog':
 			break;
 		case 'installedinfo':
 		case 'reinstallpkg':
-		case 'delete':
-			if (empty($_GET['pkg'])) {
-				header("Location: pkg_mgr_installed.php");
-				return;
+			if($_GET['from'] && $_GET['from']) {
+				$headline = gettext("Upgrade package");
+			} else {
+				$headline = gettext("Reinstall package");
 			}
+
+			break;
+		case 'delete':
+			$headline = gettext("Remove package");
 			break;
 		default:
-			if (empty($_GET['id'])) {
-				header("Location: pkg_mgr_installed.php");
-				return;
-			}
+			$headline = gettext("Install package");
 			break;
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
 $tab_array = array();
@@ -253,8 +262,8 @@ display_top_tabs($tab_array);
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-	<h2>Install / remove package</h2>
-<?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
+<!--	<h2><?=$headline?></h2> -->
+<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = 'installed';
@@ -277,13 +286,18 @@ display_top_tabs($tab_array);
 			break;
 	}
 ?>
+	<br />
 	<div class="panel panel-default">
-		<div class="panel-body">
+		<div class="panel-heading">
 			<div class="content">
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
 				<p><?=gettext("All packages will be reinstalled.");?></p>
+<?php
+			} else if ($_GET['from'] && $_GET['from']) {
+?>
+				<p>Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.</p>
 <?php
 			} else {
 ?>
@@ -293,7 +307,8 @@ display_top_tabs($tab_array);
 ?>
 			</div>
 		</div>
-		<div class="panel-footer">
+		<div class="panel-body">
+		<br />
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
@@ -304,7 +319,7 @@ display_top_tabs($tab_array);
 
 if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
-} else if ($_POST['mode'] == 'reinstallpkg') {
+} else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
 	$modetxt = gettext("reinstallation");
 } else {
 	$modetxt = gettext("installation");
@@ -318,6 +333,9 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] ==
 		$start_polling = true;
 	}
 ?>
+	<input type="hidden" name="id" value="<?=$_POST['id']?>" />
+	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
+	<input type="hidden" name="completed" value="true" />
 
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
@@ -329,7 +347,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] ==
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output"></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
 
@@ -364,7 +382,7 @@ if ($_GET) {
 		default:
 			break;
 	}
-} else if ($_POST) {
+} else if ($_POST && ($_POST['completed'] != "true") ) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
 	/* All other cases make changes, so mount rw fs */
@@ -376,33 +394,29 @@ if ($_GET) {
 
 	switch ($_POST['mode']) {
 		case 'delete':
-			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -r ' . $pkgid, false, false, true);
+			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -r ' . $pkgid);
 			$start_polling = true;
 			break;
 
 		case 'reinstallall':
 			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
 				$progbar = false; // We don't show the progress bar for reinstallall. It would be far too confusing
-				mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . "ALL_PACKAGES" . ' -f', false, false, true);
+				mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ALL_PACKAGES -f');
 				$start_polling = true;
 			}
 
 			break;
 		case 'reinstallpkg':
-			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid . ' -f', false, false, true);
+			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid . ' -f');
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			mwexec('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid, false, false, true);
+			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid);
 			$start_polling = true;
 			break;
 	}
-
-	// Delete all temporary package tarballs and staging areas.
-	unlink_if_exists("/tmp/apkg_*");
-	rmdir_recursive("/var/tmp/instmp*");
 
 	// close log
 	if ($fd_log) {
@@ -413,21 +427,32 @@ if ($_GET) {
 	conf_mount_ro();
 }
 
+// $_POST['completed'] just means that we are refreshing the page to update any new menu items
+// that were installed
+if ($_POST['completed'] == "true") {
+	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
+}
+
 ?>
 
 <script>
 //<![CDATA[
-//	Update the progress indicator
-function setProgress(barName, percent) {
+// Update the progress indicator
+// transition = true allows the bar to move at default speed, false = instantaneous
+function setProgress(barName, percent, transition) {
 	$('.progress').show()
+	if (!transition) {
+		$('#' + barName).css('transition', 'width 0s ease-in-out');
+	}
+
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
 }
 
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if("<?=$progbar?>")
-		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
 	else
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
 
@@ -437,15 +462,22 @@ function show_success() {
 // Display a failure banner
 function show_failure() {
 	$('#final').addClass("alert-danger");
-	$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");
+	else
+		$('#final').html("<?=gettext('Reinstallation of all packages failed')?>");
 	$('#final').show();
 }
 
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
-	"<?=gettext("(Some packages may take several minutes!)")?>");
+	if("<?=$_POST['mode']?>" != "reinstallall")
+		$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
+			"<?=gettext("(Some packages may take several minutes!)")?>");
+	else
+		$('#final').html("Please wait while the reinstallation of all packages completes." + "<br />" +
+			"<?=gettext("(Some packages may take several minutes!)")?>");
 	$('#final').show();
 }
 
@@ -474,21 +506,35 @@ function getLogsStatus() {
 		if (json.log != "not ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
-			$('#output').scrollTop($('#output')[0].scrollHeight);
+			scrollToBottom();
 
 			// Update the progress bar
 			progress = 0;
 
 			if("<?=$progbar?>") {
 				if (json.data) {
-					setProgress('progressbar', ((json.data.current * 100) / json.data.total));
+					/*
+					 * XXX: There appears to be a bug in pkg that can cause "total"
+					 * to be reported as zero
+					 *
+					 * https://github.com/freebsd/pkg/issues/1336
+					 */
+					if (json.data.total > 0) {
+						setProgress('progressbar', ((json.data.current * 100) / json.data.total), true);
+					}
+
 					progress = json.data.total - json.data.current
+					if (progress < 0) {
+						progress = 0;
+					}
+
 				}
 			}
 			// Now we need to determine if the installation/removal was successful, and tell the user. Not as easy as it sounds :)
 			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
+				$('form').submit();
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -504,10 +550,22 @@ function getLogsStatus() {
 	});
 }
 
+function scrollToBottom() {
+	$('#output').scrollTop($('#output')[0].scrollHeight);
+}
+
 events.push(function(){
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
 		show_info();
+	}
+
+	// If we are just re-drawing the page after a successful install/remove/reinstall,
+	// we only meed to re-populate the progress indicator and the status banner
+	if ( "<?=$_POST['completed']?>" == "true") {
+		setProgress('progressbar', 100, false);
+		show_success();
+		setTimeout(scrollToBottom, 200);
 	}
 });
 //]]>

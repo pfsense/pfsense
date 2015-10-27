@@ -2,7 +2,6 @@
 <pfsense>
 	<version>12.3</version>
 	<lastchange/>
-	<theme>pfsense_ng</theme>
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>

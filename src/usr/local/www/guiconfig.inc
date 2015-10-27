@@ -89,8 +89,6 @@ foreach (scandir("/usr/local/www/classes/") as $file) {
 	}
 }
 
-$g['theme'] = get_current_theme();
-
 /* Set the default interface language */
 if ($config['system']['language'] <> "") {
 	$g['language'] = $config['system']['language'];
@@ -351,21 +349,9 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 	}
+
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
-
-	$themename = $g['theme'];
-
-	if (file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
-		eval($toeval);
-	}
-
-	if (file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
-		eval($toeval);
-	}
-
 
 	if (!$savebutton) {
 		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
@@ -379,7 +365,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
+								&nbsp;&nbsp;&nbsp;<i class="icon-large icon-exclamation-sign"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>
@@ -1113,28 +1099,28 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 <?php endif;
 }
 
-function add_package_tabs($pkgname, &$tab_array) {
+function add_package_tabs($tabgroup, &$tab_array) {
 	global $config, $g;
 
-//	$pkg = get_pkg_data($pkgname);
-
-	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
+	if (!isset($config['installedpackages']['package'])) {
 		return;
 	}
 
-	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg['configurationfile'], "packagegui");
+	foreach ($config['installedpackages']['package'] as $pkg){
+		$pkg_config = read_package_configurationfile($pkg['name']);
 
-	if (!isset($pkg_config['tabs']['tab'])) {
-		return;
-	}
+		if (!isset($pkg_config['tabs']['tab'])) {
+			continue;
+		}
 
-	foreach ($pkg_config['tabs']['tab'] as $tab) {
-		$tab_entry = array();
-		if ($tab['name']) {
-			$tab_entry[] = $tab['name'];
-			$tab_entry[] = false;
-			$tab_entry[] = $tab['url'];
-			$tab_array[] = $tab_entry;
+		foreach ($pkg_config['tabs']['tab'] as $tab) {
+			$tab_entry = array();
+			if ($tab['name']) {
+				$tab_entry[] = $tab['name'];
+				$tab_entry[] = false;
+				$tab_entry[] = $tab['url'];
+				$tab_array[] = $tab_entry;
+			}
 		}
 	}
 }

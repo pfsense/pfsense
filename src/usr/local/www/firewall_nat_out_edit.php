@@ -4,13 +4,13 @@
 	firewall_nat_out_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2004 Scott Ullrich
  *  Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
  *	Originally part of pfSense (https://www.pfsense.org)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -18,12 +18,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -122,7 +122,7 @@ if (isset($id) && $a_out[$id]) {
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 		$pconfig['destination_subnet'], $pconfig['destination_not'],
 		$none, $none);
-		
+
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
@@ -130,11 +130,11 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
-	
+
 	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
 	}
-	
+
 	$pconfig['descr'] = $a_out[$id]['descr'];
 	$pconfig['nonat'] = $a_out[$id]['nonat'];
 	$pconfig['disabled'] = isset($a_out[$id]['disabled']);
@@ -156,7 +156,7 @@ if ($_POST) {
 		$_POST['destination'] = "any";
 		$_POST['destination_subnet'] = 24;
 	}
-	
+
 	if ($_POST['source_type'] == "any") {
 		$_POST['source'] = "any";
 		$_POST['source_subnet'] = 24;
@@ -222,21 +222,21 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid source must be specified.");
 		}
 	}
-	
+
 	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
-	
+
 	if ($_POST['destination_type'] != "any") {
 		if ($_POST['destination'] && !is_ipaddroralias($_POST['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");
 		}
 	}
-	
+
 	if ($_POST['destination_subnet'] && !is_numericint($_POST['destination_subnet'])) {
 		$input_errors[] = gettext("A valid destination bit count must be specified.");
 	}
-	
+
 	if ($_POST['destination_type'] == "any") {
 		if ($_POST['destination_not']) {
 			$input_errors[] = gettext("Negating destination address of \"any\" is invalid.");
@@ -251,7 +251,7 @@ if ($_POST) {
 		if (!is_ipaddr($_POST['targetip'])) {
 			$input_errors[] = gettext("A valid target IP must be specified when using the 'Other Subnet' type.");
 		}
-		
+
 		if (!is_numericint($_POST['targetip_subnet'])) {
 			$input_errors[] = gettext("A valid target bit count must be specified when using the 'Other Subnet' type.");
 		}
@@ -505,7 +505,7 @@ $group = new Form_Group('Source');
 $group->add(new Form_Select(
 	'source_type',
 	null,
-	$pconfig['source_type'],
+	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
 	array('any' => 'Any', '(self)' => 'This Firewall (self)', 'network' => 'Network')
 ))->setHelp('Type')->setWidth('3');
 
@@ -729,7 +729,7 @@ events.push(function(){
 	}
 
 	function proto_change() {
-		if (($('#protocol').find(":selected").index() > 0) && ($('#protocol').find(":selected").index() <= 3)) {
+		if (($('#protocol').find(":selected").index() >= 0) && ($('#protocol').find(":selected").index() <= 3)) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);

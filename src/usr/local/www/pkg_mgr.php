@@ -130,40 +130,68 @@ if($pkg_info) {
 	}
 
 	$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
-	if (count($categories) > 1)
-		display_top_tabs($tab_array);
-}
 
-function compareName($a, $b) {
-    return(strcasecmp ($a['name'], $b['name']));
+//	if (count($categories) > 1)
+//		display_top_tabs($tab_array);
 }
 
 if(!$pkg_info || !is_array($pkg_info)):?>
-	<div class="alert alert-warning">
-		<?=gettext("There are currently no packages available for installation.")?>
-	</div>
+<div class="alert alert-warning">
+	<?=gettext("There are currently no packages available for installation.")?>
+</div>
 <?php else: ?>
-	<div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
-	<tr>
-		<th><?=gettext("Name")?></th>
+
+<div class="panel panel-default" id="search-panel">
+	<div class="panel-heading"><?=gettext('Search')?>
+		<span class="icons pull-right">
+			<a data-toggle="collapse" href="#search-panel .panel-body" name="search-panel">
+				<i class="icon-white icon-plus-sign"></i>
+			</a>
+		</span>
+	</div>
+	<div class="panel-body collapse in">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				Search term
+			</label>
+			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="0"><?=gettext("Name")?></option>
+					<option value="1"><?=gettext("Description")?></option>
+					<option value="2" selected><?=gettext("Both")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3">
+				<a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+				<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
+			</div>
+			<div class="col-sm-10 col-sm-offset-2">
+				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table id="pkgtable" class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><?=gettext("Name")?></th>
 <?php if (!$g['disablepackagehistory']):?>
-		<th><?=gettext("Version")?></th>
+					<th><?=gettext("Version")?></th>
 <?php endif;?>
 
-		<th><?=gettext("Description")?></th>
-	</tr>
-	</thead>
-	<tbody>
+					<th><?=gettext("Description")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 
-	// Sort case insensitve (so we get AbCdEf not ACEcdf)
-	usort($pkg_info, 'compareName');
-
 	foreach($pkg_info as $index):
-
-		if(get_package_id($index['name']) >= 0 ) {
+		if (isset($index['installed'])) {
 			continue;
 		}
 
@@ -174,54 +202,107 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			continue;
 		}
 
-		// Check to see if it is already installed
-		if(isset($config['installedpackages']['package'])) {
-			foreach($config['installedpackages']['package'] as $installedpkg) {
-				if($installedpkg['name'] == $shortname) {
-					continue(2);
-				}
-			}
-		}
-
 ?>
-		<tr>
-			<td>
+				<tr>
+					<td>
 <?php if ($index['www']):?>
-				<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
+						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
 <?php endif; ?>
-					<?=htmlspecialchars($shortname)?>
-				</a>
-			</td>
+							<?=htmlspecialchars($shortname)?>
+						</a>
+					</td>
 
 <?php
 	 if (!$g['disablepackagehistory']):?>
-			<td>
-<!-- We no longer have a package revision history URL
-	$changeloglink is undefined
-				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
--->
-				<?=htmlspecialchars($index['version'])?>
-<!--
-				</a>
--->
-			</td>
+					<td>
+						<?=htmlspecialchars($index['version'])?>
+					</td>
 <?php
 endif;
 ?>
-			<td>
-				<?=$index['desc']?>
-			</td>
-			<td>
-				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
+					<td>
+						<?=$index['desc']?>
+					</td>
+					<td>
+						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
 <?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
-				<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
+						<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
 <?php endif;?>
-			</td>
-		</tr>
+					</td>
+				</tr>
 <?php
 	endforeach;
 endif;?>
-	</tbody>
-	</table>
+			</tbody>
+		</table>
 	</div>
-<?php include("foot.inc")?>
+</div>
+
+<script>
+//<![CDATA[
+events.push(function(){
+
+	// Initial state & toggle icons of collapsed panel
+	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
+		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
+
+		body.on('shown.bs.collapse', function(){
+			$(el).children('i').toggleClass('icon-minus-sign', true);
+			$(el).children('i').toggleClass('icon-plus-sign', false);
+		});
+	});
+
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type' ,'button');
+	$("#btnclear").prop('type' ,'button');
+	
+	// Search for a term in the package name and/or description
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("table tbody");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				shortname = $tds.eq(0).text().trim().toLowerCase(),
+				descr = $tds.eq(2).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if(searchstr.length > 0) {
+				if( !(regexp.test(shortname) && (where != 1)) && !(regexp.test(descr) && (where != 0))) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				 $(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
+	$("#btnclear").click(function() {
+		var table = $("table tbody");
+
+		$('#searchstr').val("");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+		});
+	});
+	
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+	    if (event.keyCode==13) {
+	        $("#btnsearch").get(0).click();
+	    }
+	});
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

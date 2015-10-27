@@ -158,15 +158,6 @@ function pkg_call($params, $mute = false) {
 		"REPO_AUTOUPDATE" => "false"
 	);
 
-	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
-	if (!file_exists($debug_fifo)) {
-		posix_mkfifo($debug_fifo, 0600);
-	}
-
-	if (filetype($debug_fifo) == 'fifo') {
-		$env["EVENT_PIPE"] = $debug_fifo;
-	}
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
@@ -265,15 +256,6 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		"REPO_AUTOUPDATE" => "false"
 	);
 
-	$debug_fifo = $g['tmp_path'] . "/pkg-debug.fifo";
-	if (!file_exists($debug_fifo)) {
-		posix_mkfifo($debug_fifo, 0600);
-	}
-
-	if (filetype($debug_fifo) == 'fifo') {
-		$env["EVENT_PIPE"] = $debug_fifo;
-	}
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
@@ -299,6 +281,26 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	fclose($pipes[2]);
 
 	return proc_close($process);
+}
+
+/* Compare 2 pkg versions and return:
+ * '=' - versions are the same
+ * '>' - $v1 > $v2
+ * '<' - $v1 < $v2
+ * '?' - Error
+ */
+function pkg_version_compare($v1, $v2) {
+	if (empty($v1) || empty($v2)) {
+		return '?';
+	}
+
+	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr);
+
+	if ($rc != 0) {
+		return '?';
+	}
+
+	return str_replace("\n", "", $stdout);
 }
 
 /* Check if package is installed */
@@ -386,10 +388,15 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$out = '';
 	$err = '';
 
+	unset($pkg_filter);
+	if (is_array($pkgs)) {
+		$pkg_filter = $pkgs;
+		$pkgs = 'all';
+	}
+
 	if ($pkgs == 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
-
 
 	/* Make sure repo metadata is up2date */
 	$static_output .= "\n" . gettext("Updating package repository metadada...") . "\n";
@@ -422,9 +429,37 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			continue;
 		}
 
+		if (isset($pkg_filter) && !in_array($pkg_info['name'], $pkg_filter)) {
+			continue;
+		}
+
+		if (is_pkg_installed($pkg_info['name'])) {
+			$pkg_info['installed'] = true;
+
+			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err);
+
+			if ($rc != 0) {
+				$static_output .= "\n" . gettext("ERROR: Error trying to get package version. Aborting...") . "\n";
+				$static_output .= $err;
+				$input_errors[] =  gettext("ERROR: Error trying to get package version. Aborting...") . "\n";
+				$input_errors[] =  $err;
+				update_status($static_output);
+				return array();
+			}
+
+			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+		}
+
+		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);
+
 		$result[] = $pkg_info;
 		unset($pkg_info);
 	}
+
+	/* Sort result alphabetically */
+	usort($result, function($a, $b) {
+		return(strcasecmp ($a['name'], $b['name']));
+	});
 
 	return $result;
 }
@@ -574,6 +609,28 @@ function read_package_config($package_name) {
 
 	/* it always returns an array with 1 item */
 	return $pkg_info['package'][0];
+}
+
+/* Read package configurationfile and return an array */
+function read_package_configurationfile($package_name) {
+	global $config, $g;
+
+	$pkg_config = array();
+	$id = get_package_id($package_name);
+
+	if ($id < 0 || !isset($config['installedpackages']['package'][$id]['configurationfile'])) {
+		return $pkg_config;
+	}
+
+	$pkg_configurationfile = $config['installedpackages']['package'][$id]['configurationfile'];
+
+	if (empty($pkg_configurationfile) || !file_exists('/usr/local/pkg/' . $pkg_configurationfile)) {
+		return $pkg_config;
+	}
+
+	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg_configurationfile, "packagegui");
+
+	return $pkg_config;
 }
 
 function get_after_install_info($package_name) {
@@ -1021,16 +1078,6 @@ function stop_packages() {
 			pclose($shell);
 		}
 	}
-}
-
-function verify_all_package_servers() {
-	// XXX: Remove it after GUI is ready
-	return true;
-}
-
-function check_package_server_ssl() {
-	// XXX: Remove it after GUI is ready
-	return true;
 }
 
 ?>

@@ -129,7 +129,7 @@ if ($_POST['apply']) {
 	}
 }
 
-if (isset($_POST['save']) && $_POST['save'] == "Save") {
+if ($_POST['save']) {
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
 	if ($_POST['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {
 		/*
@@ -140,9 +140,11 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();
 		}
+
 		if (empty($GatewaysList)) {
 			filter_generate_gateways();
 		}
+
 		$tonathosts = filter_nat_rules_automatic_tonathosts(true);
 		$automatic_rules = filter_nat_rules_outbound_automatic("");
 
@@ -345,18 +347,18 @@ print($form);
 
 						<td>
 <?php
-					if ($mode == "disabled" || $mode == "automatic"):
+				if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("This rule is being ignored")?>"></i>
 <?php
-					else:
+				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
 								<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
-					endif;
+				endif;
 ?>
 						</td>
 
@@ -497,9 +499,10 @@ print($form);
 
 						<!-- Action	 icons -->
 						<td>
-							<a class="btn btn-xs btn-info"	  title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"><?=gettext("Edit")?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="icon icon-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
+							<a class="icon icon-ban-circle"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"
+							onclick="return confirm('<?=gettext("Are you sure you want to delete this mapping?")?>')"></a>
+							<a class="icon icon-plus" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
 						</td>
 <?php
 				$i++;
@@ -667,7 +670,7 @@ function fr_bgcolor(id, prefix) {
 	var cells = row.getElementsByTagName('td');
 	var cellcnt = cells.length;
 
-	for (i = 0; i < cellcnt-1; i++) {
+	for (i = 0; i < cellcnt; i++) {
 		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
 	}
 }

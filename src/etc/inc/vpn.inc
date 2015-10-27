@@ -430,9 +430,14 @@ cisco_unity = {$unity_enabled}
 
 syslog {
 	identifier = charon
+	# log everything under daemon since it ends up in the same place regardless with our syslog.conf
 	daemon {
 		ike_name = yes
 {$strongswanlog}
+	}
+	# disable logging under auth so logs aren't duplicated 
+	auth {
+		default = -1
 	}
 }
 
@@ -464,9 +469,6 @@ EOD;
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-		if ($a_client['pool_address'] && $a_client['pool_netbits']) {
-			$strongswan .= "\t\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
-		}
 
 		$cfgservers = array();
 		if (!empty($a_client['dns_server1'])) {
@@ -518,6 +520,7 @@ EOD;
 			}
 
 			if (!empty($net_list)) {
+				$strongswan .= "\t\t\tsubnet = {$net_list}\n";
 				$strongswan .= "\t\t\tsplit-include = {$net_list}\n";
 				unset($net_list);
 			}

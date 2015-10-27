@@ -513,7 +513,12 @@ function getLogsStatus() {
 
 			if("<?=$progbar?>") {
 				if (json.data) {
-					// There appears to be a bug in pkg that can cause "total" to be reported as zero
+					/*
+					 * XXX: There appears to be a bug in pkg that can cause "total"
+					 * to be reported as zero
+					 *
+					 * https://github.com/freebsd/pkg/issues/1336
+					 */
 					if (json.data.total > 0) {
 						setProgress('progressbar', ((json.data.current * 100) / json.data.total), true);
 					}

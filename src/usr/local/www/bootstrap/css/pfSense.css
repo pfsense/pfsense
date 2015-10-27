@@ -290,3 +290,7 @@ form .btn + .btn {
 .progress {
 	margin-bottom: 0px;
 }
+
+.panel-body.collapse.in {
+	overflow-x: auto;
+}

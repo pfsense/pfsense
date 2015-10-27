@@ -2073,7 +2073,7 @@ snapshots_copy_to_staging_nanobsd() {
 snapshots_copy_to_staging_iso_updates() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${UPDATES_TARBALL_FILENAME}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH}; do
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
@@ -2081,6 +2081,12 @@ snapshots_copy_to_staging_iso_updates() {
 		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done
+
+	if [ -f "${UPDATES_TARBALL_FILENAME}" ]; then
+		sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
+		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
+	fi
 
 	if [ "${TARGET}" = "amd64" -a -f "${MEMSTICKADIPATH}.gz" ]; then
 		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256

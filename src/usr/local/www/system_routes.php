@@ -273,21 +273,20 @@ foreach ($a_routes as $i => $route):
 			<?=htmlspecialchars($route['descr'])?>
 		</td>
 		<td>
-			<a class="btn btn-xs btn-primary" href="system_routes_edit.php?id=<?=$i?>">
-				edit
-			</a>
+			<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
+			
+			<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+			
+	<?php if (isset($route['disabled'])) {
+	?>	
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+	<?php } else {
+	?>
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+	<?php }
+	?>		
+			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this route?")?>')"></a>
 
-			<a class="btn btn-xs btn-default" href="system_routes_edit.php?dup=<?=$i?>">
-				copy
-			</a>
-
-			<a class="btn btn-xs btn-danger" href="system_routes.php?act=del&amp;id=<?=$i?>">
-				delete
-			</a>
-
-			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">
-				toggle
-			</a>
 		</td>
 <? endforeach?>
 	</tr>

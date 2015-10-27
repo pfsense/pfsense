@@ -513,8 +513,16 @@ function getLogsStatus() {
 
 			if("<?=$progbar?>") {
 				if (json.data) {
-					setProgress('progressbar', ((json.data.current * 100) / json.data.total), true);
+					// There appears to be a bug in pkg that can cause "total" to be reported as zero
+					if (json.data.total > 0) {
+						setProgress('progressbar', ((json.data.current * 100) / json.data.total), true);
+					}
+
 					progress = json.data.total - json.data.current
+					if (progress < 0) {
+						progress = 0;
+					}
+
 				}
 			}
 			// Now we need to determine if the installation/removal was successful, and tell the user. Not as easy as it sounds :)
@@ -551,8 +559,8 @@ events.push(function(){
 	// we only meed to re-populate the progress indicator and the status banner
 	if ( "<?=$_POST['completed']?>" == "true") {
 		setProgress('progressbar', 100, false);
-		scrollToBottom();
 		show_success();
+		setTimeout(scrollToBottom, 200);
 	}
 });
 //]]>

@@ -505,7 +505,7 @@ $group = new Form_Group('Source');
 $group->add(new Form_Select(
 	'source_type',
 	null,
-	$pconfig['source_type'],
+	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
 	array('any' => 'Any', '(self)' => 'This Firewall (self)', 'network' => 'Network')
 ))->setHelp('Type')->setWidth('3');
 

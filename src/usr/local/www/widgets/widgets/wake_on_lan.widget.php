@@ -67,44 +67,47 @@ if (is_array($config['wol']['wolentry'])) {
 }
 
 ?>
-<div class="content">
-<table>
-	<tr>
-		<?php
-		echo '<td class="widgetsubheader" align="center">' . gettext("Computer / Device") . '</td>';
-		echo '<td class="widgetsubheader" align="center">' . gettext("Interface") . '</td>';
-		echo '<td class="widgetsubheader" align="center">' . gettext("Status") . '</td>';
-		?>
-		<td class="widgetsubheader">&nbsp;</td>
-	</tr>
+<div class="table-responsive">
+<table class="table table-hover table-striped table-condensed">
+	<thead>
+		<tr>
+			<th class="widgetsubheader"><?=gettext("Device")?></th>
+			<th class="widgetsubheader"><?=gettext("Interface")?></th>
+			<th class="widgetsubheader"><?=gettext("Status")?></th>
+			<th class="widgetsubheader"><?=gettext("Wake")?></th>
+		</tr>
+	</thead>
+	<tbody>
 <?php
-
 if (count($wolcomputers) > 0) {
 	foreach($wolcomputers as $wolent) {
-		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
-		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
+		echo '<tr><td>' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
+		echo '<td>' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
+
+		echo "<td>\n";
 		if ($status == 'expires') {
-			echo '<td class="listr" align="center">' . "\n";
-			echo '<i class="icon-large icon-arrow-right"></i> ' . gettext("Online") . "</td>\n";
+			echo '<i class="icon-large icon-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
 		} else if ($status == 'permanent') {
-			echo '<td class="listr" align="center">' . "\n";
-			echo '<i class="icon-large icon-arrow-right"></i> ' . gettext("Static ARP") . "</td>\n";
+			echo '<td align="center">' . "\n";
+			echo '<i class="icon-large icon-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
 		} else {
-			echo '<td class="listbg" align="center">' . "\n";
-			echo '<i class="icon-large icon-ban-circle"></i>&nbsp;<font color="white">' . gettext("Offline") . "</font></td>\n";
+			echo '<td" align="center">' . "\n";
+			echo '<i class="icon-large icon-ban-circle" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
 		}
-		echo '<td valign="middle" class="list nowrap">';
+
+		echo "</td>\n<td>";
 		echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";
-		echo '<i class="icon-large icon-thumbs-up" alt="wol"></i></a>' . "\n";
+		echo '<i class="fa fa-bed" data-toggle="tooltip" title="' . gettext("Wake up!") . '"></i></a>' . "\n";
 		echo "</td></tr>\n";
 	}
 } else {
 	echo "<tr><td colspan=\"4\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
+</tbody>
 </table>
 <center><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></center>
 </div>

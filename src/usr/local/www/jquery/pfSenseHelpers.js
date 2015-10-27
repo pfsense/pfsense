@@ -252,6 +252,9 @@ function checkLastRow() {
 }
 
 function add_row() {
+	// Show any deleterow buttons that may have been hidden when there was only 1 row.
+	$('[id^=deleterow]').show();
+
 	// Find the last repeatable group
 	var lastRepeatableGroup = $('.repeatable:last');
 
@@ -320,7 +323,14 @@ $('[id^=delete]').click(function(event) {
 			moveHelpText(event.target.id);
 
 		delete_row(event.target.id);
-	}
-	else
+	} else {
+		// This should not happen because when there is only 1 row remaining the delete button is hidden,
+		// so there should be no way for the user to click it.
 		alert('You may not delete the last row!');
+	}
+
+	// If there are less than 2 rows remaining, then hide the delete button.
+	if($('.repeatable').length < 2) {
+		$('[id^=deleterow]').hide();
+	}
 });

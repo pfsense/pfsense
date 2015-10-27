@@ -178,8 +178,6 @@ function add_base_packages_menu_items() {
 						$modified_config = true;
 					}
 				}
-				$static_output .= "done.\n";
-				update_output_window($static_output);
 			}
 		}
 	}

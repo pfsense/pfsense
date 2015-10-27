@@ -75,10 +75,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
 
-global $static_output;
-
-$static_output = "";
-$static_status = "";
 $sendto = "output";
 $start_polling = false;
 

@@ -104,6 +104,9 @@ tr.disabled th {
     padding: 0 12px;
     margin-bottom: 5px;
 }
+.form-control option {
+    padding: inherit;
+}
 
 #login .form-control {
 	height: 34px;

@@ -306,7 +306,7 @@ foreach ($a_gateways as $i => $gateway):
 			<?=htmlspecialchars($gateway['descr'])?>
 		</td>
 		<td>
-			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
 			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 			
 <? if (is_numeric($gateway['attribute'])): ?>

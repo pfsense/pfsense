@@ -3635,9 +3635,9 @@ function upgrade_117_to_118() {
 function upgrade_118_to_119() {
 	global $config;
 
-        if (!isset($config['ipsec']['phase1'])) {
-                return;
-        }
+	if (!isset($config['ipsec']['phase1'])) {
+		return;
+	}
 
 	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
 	$a_phase1 =& $config['ipsec']['phase1'];
@@ -3651,7 +3651,7 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
-        global $config, $ipsec_loglevels;
+	global $config, $ipsec_loglevels;
 
 	if (!is_array($config['ipsec'])) {
 		return;
@@ -3659,10 +3659,23 @@ function upgrade_119_to_120() {
 
 	// add 1 to configured log levels as part of redmine #5340
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-                if (isset($config['ipsec']["ipsec_{$lkey}"])) {
-                        $config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
-                }
-        }
+		if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+			$config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
+		}
+	}
+
+}
+
+function upgrade_120_to_121() {
+	global $config;
+
+	// If bindip is not already specified then migrate the old SNMP bindlan flag to a bindip setting
+	if (isset($config['snmpd']['bindlan'])) {
+		if (!isset($config['snmpd']['bindip'])) {
+			$config['snmpd']['bindip'] = 'lan';
+		}
+		unset($config['snmpd']['bindlan']);
+	}
 
 }
 

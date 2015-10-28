@@ -126,7 +126,7 @@ display_top_tabs($tab_array);
 				<th><?=gettext("Gateways")?></th>
 				<th><?=gettext("Priority")?></th>
 				<th><?=gettext("Description")?></th>
-				<th><!-- Action Buttons --></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 		<tbody>

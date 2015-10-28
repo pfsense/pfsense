@@ -266,7 +266,7 @@ display_top_tabs($tab_array);
 		<th><?=gettext("Gateway")?></th>
 		<th><?=gettext("Monitor IP")?></th>
 		<th><?=gettext("Description")?></th>
-		<th></th>
+		<th><th><?=gettext("Actions")?></th></th>
 	</tr>
 </thead>
 <tbody>

@@ -304,7 +304,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Anti-Lockout Rule");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+							<a href="system_advanced_admin.php" class="fa fa-pencil" title="<?=gettext("Edit");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -322,7 +322,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit rule");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("Edit rule");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -340,7 +340,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("Edit");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -615,7 +615,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
-							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title=<?=gettext('Edit')?>"></a>
+							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>

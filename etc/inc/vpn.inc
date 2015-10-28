@@ -1001,6 +1001,7 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;
@@ -1010,11 +1011,13 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					if (isset($casub)) {
@@ -1027,11 +1030,13 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-radius\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;

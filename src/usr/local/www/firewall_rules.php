@@ -698,19 +698,23 @@ function fr_toggle(id, prefix) {
 	fr_bgcolor(id, prefix);
 }
 
+// Change background color based on state of checkbox
+// On resetting background, reapply table striping
 function fr_bgcolor(id, prefix) {
 	if (!prefix)
 		prefix = 'fr';
 
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
+	var row = $('#' + prefix + id);
 
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
+	if ($('#' + prefix + 'c' + id).prop('checked') ) {
+		row.css("background-color", "#DDF4FF");
+		row.removeClass('active');
+	} else {
+		row.css("background-color", "#FFFFFF");
+		$("tr:odd").addClass('active');
 	}
 }
+
 </script>
 
 <script>

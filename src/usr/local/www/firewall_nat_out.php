@@ -304,7 +304,7 @@ print($form);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext('Mappings')?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox	  --></th>
@@ -499,10 +499,10 @@ print($form);
 
 						<!-- Action	 icons -->
 						<td>
-							<a class="icon icon-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
-							<a class="icon icon-ban-circle"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"
+							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"
 							onclick="return confirm('<?=gettext("Are you sure you want to delete this mapping?")?>')"></a>
-							<a class="icon icon-plus" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
 						</td>
 <?php
 				$i++;
@@ -534,7 +534,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Automatic rules:")?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><!-- status	  --></th>
@@ -652,37 +652,15 @@ endif;
 </div>
 
 <script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
 events.push(function() {
-	// Make rules draggable/sortable
+	stripe_table();
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			stripe_table();
 		}
 	});
 

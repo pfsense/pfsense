@@ -138,6 +138,46 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
+// Toggle table row chackboxes and background colors on the pages that use sortable tables:
+//	/usr/local/www/firewall_nat.php
+//	/usr/local/www/firewall_nat_1to1.php
+//	/usr/local/www/firewall_nat_out.php
+//	/usr/local/www/firewall_rules.php
+//	/usr/local/www/vpn_ipsec.php
+// Striping of the tables is handled here, NOT with hte Bootstrap table-striped class because it would
+// get confused when rows are sorted or deleted.
+
+function stripe_table() {
+	$("tr:odd").addClass('active');
+	$("tr:even").removeClass('active');
+}
+
+function fr_toggle(id, prefix) {
+	if (!prefix)
+		prefix = 'fr';
+
+	var checkbox = document.getElementById(prefix + 'c' + id);
+	checkbox.checked = !checkbox.checked;
+	fr_bgcolor(id, prefix);
+}
+
+// Change background color based on state of checkbox
+// On resetting background, reapply table striping
+function fr_bgcolor(id, prefix) {
+	if (!prefix)
+		prefix = 'fr';
+
+	var row = $('#' + prefix + id);
+
+	if ($('#' + prefix + 'c' + id).prop('checked') ) {
+		row.css("background-color", "#DDF4FF");
+		row.removeClass('active');
+	} else {
+		row.css("background-color", "#FFFFFF");
+		stripe_table();
+	}
+}
+
 // The following functions are used by Form_Groups assigned a class of "repeatable" and provide the ability
 // to add/delete rows of sequentially numbered elements, their labels and their help text
 // See firewall_aliases_edit.php for an example

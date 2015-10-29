@@ -245,9 +245,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="btn btn-xs btn-info"		  title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"><?=gettext("Edit")?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
 						</td>
 
 					</tr>
@@ -280,37 +280,16 @@ print_info_box(gettext('Depending on the way your WAN connection is setup, you m
 </div>
 
 <script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
 events.push(function() {
-	// Make rules draggable/sortable
+
+	stripe_table();
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			stripe_table();
 		}
 	});
 

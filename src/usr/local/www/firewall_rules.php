@@ -689,40 +689,6 @@ else
 ?>
 
 <script>
-function stripe_table() {
-	$("tr:odd").addClass('active');
-	$("tr:even").removeClass('active');
-}
-
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-// Change background color based on state of checkbox
-// On resetting background, reapply table striping
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = $('#' + prefix + id);
-
-	if ($('#' + prefix + 'c' + id).prop('checked') ) {
-		row.css("background-color", "#DDF4FF");
-		row.removeClass('active');
-	} else {
-		row.css("background-color", "#FFFFFF");
-		stripe_table();
-	}
-}
-
-</script>
-
-<script>
 
 events.push(function() {
 
@@ -741,14 +707,6 @@ events.push(function() {
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
 	});
-
-	// Replace direct delete with quicker front-end action
-/*FIXME: event ordering
-	$('.btn-danger').on('click', function(e){
-		$(this).parents('tr').remove();
-
-		$('#order-store').removeAttr('disabled');
-	});
-*/});
+});
 </script>
 <?php include("foot.inc");?>

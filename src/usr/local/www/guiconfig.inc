@@ -609,8 +609,7 @@ function clear_all_log_files() {
 	return;
 }
 
-// This version of dump_clog() does not output <td></td> or any other table elements. It can be renamed
-// and the dump_clog() removed once all of the diag_log*.php files have been converted to Bootstrap
+// This version of dump_clog() does not output <td></td> or any other table elements.
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";

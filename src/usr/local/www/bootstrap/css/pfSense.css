@@ -101,8 +101,12 @@ tr.disabled th {
 
 .form-control {
     height: 24px;
-    padding: 0 12px;
+    padding: 0 6px;
     margin-bottom: 5px;
+}
+
+.form-control-option {
+	padding: inherit;
 }
 
 #login .form-control {

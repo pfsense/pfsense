@@ -104,6 +104,9 @@ tr.disabled th {
     padding: 0 6px;
     margin-bottom: 5px;
 }
+.form-control option {
+    padding: inherit;
+}
 
 .form-control option {
 	padding: inherit;

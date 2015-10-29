@@ -144,7 +144,7 @@ function hideLabel(text, hide) {
 //	/usr/local/www/firewall_nat_out.php
 //	/usr/local/www/firewall_rules.php
 //	/usr/local/www/vpn_ipsec.php
-// Striping of the tables is handled here, NOT with hte Bootstrap table-striped class because it would
+// Striping of the tables is handled here, NOT with the Bootstrap table-striped class because it would
 // get confused when rows are sorted or deleted.
 
 function stripe_table() {

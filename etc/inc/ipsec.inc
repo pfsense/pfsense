@@ -426,53 +426,6 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 	return false;
 }
 
-function ipsec_smp_dump_status() {
-	global $config, $g, $custom_listtags;
-
-        if (isset($config['ipsec']['enable'])) {
-            if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-                log_error("IPsec daemon not running or has a problem!");
-                return;
-            }
-        } else {
-            return;
-        }
-
-	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
-	if (!$fd) {
-		log_error("Could not read status from IPsec");
-		return;
-	}
-	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
-	$query .= '<query><ikesalist/></query></message>';
-
-	@fwrite($fd, $query);
-	$response = "";
-	while (!strstr($sread, "</message>")) {
-		$sread = fgets($fd);
-		if ($sread === false) {
-			break;
-		}
-		$response .= $sread;
-	}
-	fclose($fd);
-
-	if ($sread === false) {
-		log_error("Error during reading of status from IPsec");
-		return;
-	}
-
-	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
-	unset($response, $sread);
-
-	$custom_listtags = array('ikesa', 'childsa', 'network', 'auth');
-	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
-	@unlink("{$g['tmp_path']}/smp_status.xml");
-	unset($custom_listtags);
-
-	return $response;
-}
-
 /*
  * Return dump of SPD table
  */

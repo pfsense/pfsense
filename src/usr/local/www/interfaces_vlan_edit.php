@@ -3,6 +3,7 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2004, 2005 Scott Ullrich
+ *	Originally from m0n0wall Copyright 2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -52,7 +53,7 @@
  *
  */
 /*
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE: interfaces
 */
 
 ##|+PRIV
@@ -200,7 +201,7 @@ if ($input_errors) {
 
 require_once('classes/Form.class.php');
 $form = new Form;
-$section = new Form_Section('Interface VLAN	Edit');
+$section = new Form_Section('Interface VLAN Edit');
 
 $section->addInput(new Form_Select(
 	'if',

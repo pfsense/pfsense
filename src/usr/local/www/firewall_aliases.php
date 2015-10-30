@@ -267,8 +267,8 @@ display_top_tabs($tab_array);
 				<?=htmlspecialchars($alias['descr'])?>&nbsp;
 			</td>
 			<td>
-				<a href="firewall_aliases_edit.php?id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-				<a href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
+				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
+				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this alias?")?>')"></a>
 				</td>
 			</tr>
 <?php endif?>

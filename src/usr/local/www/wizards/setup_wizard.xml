@@ -346,7 +346,6 @@
 			<name>Show PPPoE password</name>
 			<type>checkbox</type>
 			<typehint>Reveal password characters</typehint>
-			<bindstofield>wizardtemp->wan->ppoeshowpassword</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
@@ -385,7 +384,6 @@
 			<name>Show PPTP password</name>
 			<type>checkbox</type>
 			<typehint>Reveal password characters</typehint>
-			<bindstofield>wizardtemp->wan->pptpshowpassword</bindstofield>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>

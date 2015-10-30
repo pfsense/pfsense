@@ -214,6 +214,17 @@
 		}
 		document.forms[0].selectedtype.selectedIndex = selectedItem;
 		enableitems(selectedItem);
+
+		events.push(function(){
+			$('#showpppoepassword').click(function(event) {
+				if(this.checked) {
+					$('#pppoepassword').attr('type', 'text');
+				} else {
+					$('#pppoepassword').attr('type', 'password');
+				}
+			});
+		});
+
 	</javascriptafterformdisplay>
 	<fields>
 		<field>
@@ -234,7 +245,7 @@
 				<option>
 					<name>PPPoE</name>
 					<value>pppoe</value>
-					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>
+					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout,showpppoepassword</enablefields>
 				</option>
 				<option>
 					<name>PPTP</name>
@@ -320,8 +331,14 @@
 		</field>
 		<field>
 			<name>PPPoE Password</name>
-			<type>input</type>
+			<type>password</type>
 			<bindstofield>wizardtemp->wan->password</bindstofield>
+		</field>
+		<field>
+			<name>Show PPPoE password</name>
+			<type>checkbox</type>
+			<typehint>Reveal password characters</typehint>
+			<bindstofield>wizardtemp->wan->ppoeshowpassword</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
@@ -384,12 +401,12 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>			
+			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
-			<type>input</type>			
+			<type>input</type>
 			<bindstofield>wizardtemp->wan->pptpidletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
@@ -462,7 +479,7 @@
 			if ($_POST['subnetmask'] < 31 &&
 			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
 			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
-			    include("head.inc"); 
+			    include("head.inc");
 				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
@@ -533,13 +550,13 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if($_POST['selectedtype'] == "Static") { 
-			
+			if($_POST['selectedtype'] == "Static") {
+
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
-				if(!$config['interfaces']['lan']) 
+				if(!$config['interfaces']['lan'])
 					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -680,7 +697,7 @@
 	<id>9</id>
 	<title>Reload in progress</title>
 	<description>
-		A reload is now in progress.  Please wait. &lt;p&gt; 
+		A reload is now in progress.  Please wait. &lt;p&gt;
 		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
@@ -732,7 +749,7 @@
 		if($g['product_name'] <> 'pfSense') {
 			header("Location: " . fixup_string("\$myurl"));
 			exit;
-		}	
+		}
 	]]>
 	</stepbeforeformdisplay>
 	<description>

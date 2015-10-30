@@ -138,8 +138,8 @@ include("head.inc");
 						<td><?=count(captiveportal_read_db());?></td>
 						<td><?=htmlspecialchars($cpitem['descr']);?>&nbsp;</td>
 						<td>
-							<a type="button" class="btn btn-info btn-xs" href="services_captiveportal.php?zone=<?=$cpzone?>"><?=gettext('Edit')?></a>
-							<a type="button" class="btn btn-danger btn-xs" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>"><?=gettext('Del')?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit zone"); ?>" href="services_captiveportal.php?zone=<?=$cpzone?>"></a>
+							<a class="fa fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this zone?")?>')"></a>
 						</td>
 					</tr>
 <?php

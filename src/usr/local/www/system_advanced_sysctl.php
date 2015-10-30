@@ -205,9 +205,9 @@ if ($act != "edit" ): ?>
 						echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; ?>
 					</td>
 					<td>
-					<a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"><?=gettext('Edit'); ?></a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"><?=gettext('Delete/Reset'); ?></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
 						<?php endif; ?>
 					</td>
 				</tr>

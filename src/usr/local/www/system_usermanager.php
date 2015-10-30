@@ -504,9 +504,9 @@ foreach($a_user as $i => $userent):
 				<td><?php if(isset($userent['disabled'])) echo "*"?></td>
 				<td><?=implode(",",local_user_get_groups($userent))?></td>
 				<td>
-					<a href="?act=edit&amp;userid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if($userent['scope'] != "system"): ?>
-					<a href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" class="btn btn-xs btn-danger">delete</a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this user?")?>')"></a>
 <?php endif; ?>
 				</td>
 			</tr>

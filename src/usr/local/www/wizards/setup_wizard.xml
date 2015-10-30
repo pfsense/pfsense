@@ -223,6 +223,14 @@
 					$('#pppoepassword').attr('type', 'password');
 				}
 			});
+
+			$('#showpptppassword').click(function(event) {
+				if(this.checked) {
+					$('#pptppassword').attr('type', 'text');
+				} else {
+					$('#pptppassword').attr('type', 'password');
+				}
+			});
 		});
 
 	</javascriptafterformdisplay>
@@ -250,7 +258,7 @@
 				<option>
 					<name>PPTP</name>
 					<value>pptp</value>
-					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
+					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout,showpptppassword
 					</enablefields>
 				</option>
 			</options>
@@ -370,8 +378,14 @@
 		</field>
 		<field>
 			<name>PPTP Password</name>
-			<type>input</type>
+			<type>password</type>
 			<bindstofield>wizardtemp->wan->pptppassword</bindstofield>
+		</field>
+		<field>
+			<name>Show PPTP password</name>
+			<type>checkbox</type>
+			<typehint>Reveal password characters</typehint>
+			<bindstofield>wizardtemp->wan->pptpshowpassword</bindstofield>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>

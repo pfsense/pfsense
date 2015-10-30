@@ -328,85 +328,84 @@ $status = pfSense_ipsec_list_sa();
 					</thead>
 					<tbody>
 <?php
-				if (is_array($ikesa['child-sas'])) {
-					foreach ($ikesa['child-sas'] as $childid => $childsa) {
+				foreach ($ikesa['child-sas'] as $childid => $childsa) {
 ?>
 						<tr valign="top">
 							<td class="listlr nowrap">
 <?php
-							if (is_array($childsa['local-ts'])) {
-								foreach ($childsa['local-ts'] as $lnets) {
-									echo htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
-								}
-							} else {
-								echo gettext("Unknown");
+						if (is_array($childsa['local-ts'])) {
+							foreach ($childsa['local-ts'] as $lnets) {
+								echo htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
 							}
+						} else {
+							echo gettext("Unknown");
+						}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-							if (isset($childsa['spi-in'])) {
-								echo gettext("Local: ") . htmlspecialchars($childsa['spi-in']);
-							}
-							if (is_array($childsa['spi-out'])) {
-								echo "<br/>" . gettext("Remote: ") . htmlspecialchars($childsa['spi-out']);
-							}
+						if (isset($childsa['spi-in'])) {
+							echo gettext("Local: ") . htmlspecialchars($childsa['spi-in']);
+						}
+						if (isset($childsa['spi-out'])) {
+							echo "<br/>" . gettext("Remote: ") . htmlspecialchars($childsa['spi-out']);
+						}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-							if (is_array($childsa['remote-ts'])) {
-								foreach ($childsa['remote-ts'] as $rnets) {
-									echo htmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
-								}
-							} else {
-								echo gettext("Unknown");
+						if (is_array($childsa['remote-ts'])) {
+							foreach ($childsa['remote-ts'] as $rnets) {
+								echo htmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
 							}
+						} else {
+							echo gettext("Unknown");
+						}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-								echo gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds");
-								echo "<br/>" . gettext("Life: ") . htmlspecialchars($childsa['life-time']) . gettext(" seconds");
-								echo "<br/>" . gettext("Install: ") .htmlspecialchars($childsa['install-time']) . gettext(" seconds");
+							echo gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds");
+							echo "<br/>" . gettext("Life: ") . htmlspecialchars($childsa['life-time']) . gettext(" seconds");
+							echo "<br/>" . gettext("Install: ") .htmlspecialchars($childsa['install-time']) . gettext(" seconds");
 
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-								echo htmlspecialchars($childsa['encr-alg']);
+							echo htmlspecialchars($childsa['encr-alg']);
+							echo "<br/>";
+							echo htmlspecialchars($childsa['integ-alg']);
+							echo "<br/>";
+							if (!empty($childsa['prf-alg'])) {
+								echo htmlspecialchars($childsa['prf-alg']);
 								echo "<br/>";
-								echo htmlspecialchars($childsa['integ-alg']);
+							}
+							if (!empty($childsa['dh-group'])) {
+								echo htmlspecialchars($childsa['dh-group']);
 								echo "<br/>";
-								if (!empty($childsa['prf-alg'])) {
-									echo htmlspecialchars($childsa['prf-alg']);
-									echo "<br/>";
-								}
-								if (!empty($childsa['dh-group'])) {
-									echo htmlspecialchars($childsa['dh-group']);
-									echo "<br/>";
-								}
-								if (!empty($childsa['esn'])) {
-									echo htmlspecialchars($childsa['esn']);
-									echo "<br/>";
-								}
-								echo gettext("IPComp: ");
-								if (!empty($childsa['cpi-in']) || !empty($childsa['cpi-out'])) {
-									echo htmlspecialchars($childsa['cpi-in']) . " " . htmlspecialchars($childsa['cpi-out']);
-								} else {
-									echo gettext("none");
-								}
+							}
+							if (!empty($childsa['esn'])) {
+								echo htmlspecialchars($childsa['esn']);
+								echo "<br/>";
+							}
+							echo gettext("IPComp: ");
+							if (!empty($childsa['cpi-in']) || !empty($childsa['cpi-out'])) {
+								echo htmlspecialchars($childsa['cpi-in']) . " " . htmlspecialchars($childsa['cpi-out']);
+							} else {
+								echo gettext("none");
+							}
 ?>
 							</td>
 							<td class="listr nowrap">
 <?php
-								echo gettext("Bytes-In: ") . htmlspecialchars($childsa['bytes-in']);
-								echo "<br/>";
-								echo gettext("Packets-In: ") . htmlspecialchars($childsa['packets-in']);
-								echo "<br/>";
-								echo gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytes-out']);
-								echo "<br/>";
-								echo gettext("Packets-Out: ") . htmlspecialchars($childsa['packets-out']);
+							echo gettext("Bytes-In: ") . htmlspecialchars($childsa['bytes-in']);
+							echo "<br/>";
+							echo gettext("Packets-In: ") . htmlspecialchars($childsa['packets-in']);
+							echo "<br/>";
+							echo gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytes-out']);
+							echo "<br/>";
+							echo gettext("Packets-Out: ") . htmlspecialchars($childsa['packets-out']);
 ?>
 							</td>
 							<td>
@@ -422,7 +421,6 @@ $status = pfSense_ipsec_list_sa();
 						</tr>
 <?php
 					}
-				}
 ?>
 						<tr style="display:none;"><td></td></tr>
 					</tbody>

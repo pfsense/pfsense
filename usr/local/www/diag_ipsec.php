@@ -172,12 +172,11 @@ $status = pfSense_ipsec_list_sa();
 				<td class="listr">
 <?php
 				if (!empty($ikesa['local-host'])) {
-					echo htmlspecialchars($ikesa['local-host']) . '<br/>' .
-						gettext('Port: ') . htmlspecialchars($ikesa['local-port']);
+					echo htmlspecialchars($ikesa['local-host']);
 				} else {
 					echo gettext("Unknown");
 				}
-				if ($ikesa['local-port'] == '4500') {
+				if (isset($ikesa['local-nat-t'])) {
 					echo " NAT-T";
 				}
 
@@ -211,12 +210,11 @@ $status = pfSense_ipsec_list_sa();
 				<td class="listr">
 <?php
 				if (!empty($ikesa['remote-host'])) {
-					echo htmlspecialchars($ikesa['remote-host']) . '<br/>' .
-						gettext('Port: ') . htmlspecialchars($ikesa['remote-port']);
+					echo htmlspecialchars($ikesa['remote-host']);
 				} else {
 					echo gettext("Unknown");
 				}
-				if ($ikesa['remote-port'] == '4500') {
+				if (isset($ikesa['remote-nat-t'])) {
 					echo " NAT-T";
 				}
 ?>

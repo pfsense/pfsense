@@ -454,6 +454,9 @@
 /usr/local/lib/event2
 /usr/local/lib/event2/libevent_core-2.0.so.6
 /usr/local/lib/event2/libevent_pthreads-2.0.so.6
+/usr/local/lib/ipsec/plugins/libstrongswan-smp.so
+/usr/local/lib/ipsec/plugins/libstrongswan-smp.a
+/usr/local/lib/ipsec/plugins/libstrongswan-smp.la
 /usr/local/lib/libcrypto.a
 /usr/local/lib/libcrypto.so
 /usr/local/lib/libcrypto.so.8
@@ -714,6 +717,7 @@
 /usr/local/share/nls
 /usr/local/share/sgml
 /usr/local/share/skel
+/usr/local/share/strongswan/templates/config/plugins/smp.conf
 /usr/local/share/xml
 /usr/local/www/auto_complete_helper.js
 /usr/local/www/classes/maintable.inc

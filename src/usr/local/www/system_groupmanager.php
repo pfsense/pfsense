@@ -286,9 +286,9 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 						<?=$groupcount?>
 					</td>
 					<td>
-						<a href="?act=edit&amp;groupid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
 						<?php if($group['scope'] != "system"): ?>
-							<a href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" class="btn btn-xs btn-danger">delete</a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this group?")?>')"></a>
 						<?php endif;?>
 					</td>
 				</tr>

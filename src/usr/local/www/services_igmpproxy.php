@@ -149,8 +149,8 @@ foreach ($a_igmpproxy as $igmpentry):
 						<?=htmlspecialchars($igmpentry['descr'])?>&nbsp;
 					</td>
 					<td>
-						<a href="services_igmpproxy_edit.php?id=<?=$i?>" class="btn btn-info btn-xs"><?=gettext('Edit')?></a>
-						<a href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" 	href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>"	href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this IGMP entry?")?>')"></a>
 					</td>
 				</tr>
 <?php

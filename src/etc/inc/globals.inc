@@ -158,8 +158,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet6.ip6.rfc6204w3" => 1,
 	"net.enc.out.ipsec_bpf_mask" => "0x0001",
 	"net.enc.out.ipsec_filter_mask" => "0x0001",
-	"net.enc.in.ipsec_bpf_mask" => "0x0002",
-	"net.enc.in.ipsec_filter_mask" => "0x0002",
+	"net.enc.in.ipsec_bpf_mask" => "0x0003",
+	"net.enc.in.ipsec_filter_mask" => "0x0003",
 	"net.key.preferred_oldsa" => "0",
 	"net.inet.carp.senderr_demotion_factor" => 0, /* Do not demote CARP for interface send errors */
 	"net.pfsync.carp_demotion_factor" => 0 /* Do not demote CARP for pfsync errors */

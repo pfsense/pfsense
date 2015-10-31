@@ -170,16 +170,16 @@ foreach ($a_rfc2136 as $rfc2136):
 		                <?=htmlspecialchars($rfc2136['descr'])?>
 		            </td>
 		            <td>
-						<a class="fa fa-pencil"			title="<?=gettext('Edit client')?>"		href="services_rfc2136_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-pencil"		title="<?=gettext('Edit client')?>"	href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 				<?php if (isset($rfc2136['enable'])) {
 				?>	
-						<a  class="fa fa-ban"			title="<?=gettext('Disable client')?>"	href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a  class="fa fa-ban"		title="<?=gettext('Disable client')?>"	href="?act=toggle&amp;id=<?=$i?>"></a>
 				<?php } else {
 				?>
 						<a class="fa fa-check-square-o"	title="<?=gettext('Enable client')?>"	href="?act=toggle&amp;id=<?=$i?>" ></a>
 				<?php }
 				?>						
-						<a class="fa fa-trash"			title="<?=gettext('Delete client')?>"	href="services_rfc2136.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this client?")?>')"></a>
+						<a class="fa fa-trash"		title="<?=gettext('Delete client')?>"	href="services_rfc2136.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this client?")?>')"></a>
 			</td>
 		        </tr>
 <?php

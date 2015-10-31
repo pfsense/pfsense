@@ -925,8 +925,8 @@ if(is_array($a_maps)):
 						<?=htmlspecialchars($mapent['descr'])?>
 					</td>
 					<td>
-						<a href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>" class="btn btn-info btn-xs"/>Edit</a>
-						<a href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"/>Delete</a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>" 		href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"		href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this static mapping?")?>')"></a>
 					</td>
 				</tr>
 <?php
@@ -956,7 +956,7 @@ events.push(function(){
 		hideInput('ddnsdomainkey', hide);
 	}
 
-	// Make the ‘Copy My MAC’ button a plain button, not a submit button
+	// Make the 'Copy My MAC' button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
 
 	// On click, copy the hidden 'mymac' text to the 'mac' input
@@ -964,7 +964,7 @@ events.push(function(){
 		$('#mac').val('<?=$mymac?>');
 	});
 
-	// Make the ‘tftp’ button a plain button, not a submit button
+	// Make the 'tftp' button a plain button, not a submit button
 	$("#btntftp").prop('type','button');
 
 	// Show tftp controls
@@ -972,7 +972,7 @@ events.push(function(){
 		hideInput('tftp', false);
 	});
 
-	// Make the ‘ntp’ button a plain button, not a submit button
+	// Make the 'ntp' button a plain button, not a submit button
 	$("#btnntp").prop('type','button');
 
 	// Show ntp controls
@@ -980,7 +980,7 @@ events.push(function(){
 		hideClass('ntpclass', false);
 	});
 
-	// Make the ‘ddns’ button a plain button, not a submit button
+	// Make the 'ddns' button a plain button, not a submit button
 	$("#btndyndns").prop('type','button');
 
 	// Show ddns controls
@@ -988,7 +988,7 @@ events.push(function(){
 		hideDDNS(false);
 	});
 
-	// Make the ‘ldap’ button a plain button, not a submit button
+	// Make the 'ldap' button a plain button, not a submit button
 	$("#btnldap").prop('type','button');
 
 	// Show ldap controls
@@ -996,7 +996,7 @@ events.push(function(){
 		hideInput('ldap', false);
 	});
 
-	// Make the ‘netboot’ button a plain button, not a submit button
+	// Make the 'netboot' button a plain button, not a submit button
 	$("#btnnetboot").prop('type','button');
 
 	// Show netboot controls
@@ -1005,7 +1005,7 @@ events.push(function(){
 		hideCheckBox('shownetboot', false);
 	});
 
-	// Make the ‘aditional options’ button a plain button, not a submit button
+	// Make the 'aditional options' button a plain button, not a submit button
 	$("#btnadnl").prop('type','button');
 
 	// Show aditional  controls

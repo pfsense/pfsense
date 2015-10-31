@@ -61,9 +61,9 @@ require_once("ipsec.inc");
 
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
-	$tab_array[0] = array("Overview", true, "ipsec-Overview");
-	$tab_array[1] = array("Tunnels", false, "ipsec-tunnel");
-	$tab_array[2] = array("Mobile", false, "ipsec-mobile");
+	$tab_array[] = array("Overview", true, "ipsec-Overview");
+	$tab_array[] = array("Tunnels", false, "ipsec-tunnel");
+	$tab_array[] = array("Mobile", false, "ipsec-mobile");
 
 	display_widget_tabs($tab_array);
 
@@ -86,6 +86,7 @@ if (isset($config['ipsec']['phase1'])) {
 			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
 				continue;
 			}
+
 			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
 				continue;
 			}
@@ -96,11 +97,13 @@ if (isset($config['ipsec']['phase1'])) {
 				} else {
 					$ikenum[$ph1ent['ikeid']]++;
 				}
+
 				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
 			} else {
 				if (isset($ikenum[$ph1ent['ikeid']])) {
 					continue;
 				}
+
 				$ikeid = "con{$ph1ent['ikeid']}";
 				$ikenum[$ph1ent['ikeid']] = true;
 			}
@@ -149,7 +152,8 @@ if (isset($config['ipsec']['phase1'])) {
 }
 
 if (isset($config['ipsec']['phase2'])): ?>
-	<table class="table">
+<div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;"  class="table-responsive">
+	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
 			<th>Active Tunnels</td>
@@ -165,7 +169,8 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tr>
 		</tbody>
 	</table>
-
+</div>
+<div class="table-responsive" id="ipsec-tunnel" style="display:none;background-color:#EEEEEE;">
 	<table class="table table-striped table-hover">
 	<thead>
 		<th>Source</th>
@@ -190,8 +195,10 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<?php endforeach; ?>
 	</tbody>
 	</table>
+</div>
 
 	<?php if (is_array($mobile['pool'])): ?>
+<div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;" class="table-responsive">
 		<table class="table table-striped table-hover">
 		<thead>
 			<th>User</th>
@@ -215,10 +222,60 @@ if (isset($config['ipsec']['phase2'])): ?>
 		endforeach; ?>
 		</tbody>
 		</table>
+	</div>
 	<?php endif;?>
 <?php else: ?>
 	<div>
 		<h5 style="padding-left:10px;">There are no configured IPsec Tunnels</h5>
 		<p  style="padding-left:10px;">You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</p>
 	</div>
-<?php endif; ?>
+<?php endif;
+
+// This function was in index.php It seems that the ipsec widget is the only place it is used
+// so now it lives here. It wouldn't hurt to update this functions and the tab display, but it
+// looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match
+?>
+<script>
+//<![CDATA[
+function changeTabDIV(selectedDiv) {
+	var dashpos = selectedDiv.indexOf("-");
+	var tabclass = selectedDiv.substring(0, dashpos);
+	d = document;
+
+	//get deactive tabs first
+	tabclass = tabclass + "-class-tabdeactive";
+	var tabs = document.getElementsByClassName(tabclass);
+	var incTabSelected = selectedDiv + "-deactive";
+
+	for (i = 0; i < tabs.length; i++) {
+		var tab = tabs[i].id;
+		dashpos = tab.lastIndexOf("-");
+		var tab2 = tab.substring(0, dashpos) + "-deactive";
+
+		if (tab2 == incTabSelected) {
+			tablink = d.getElementById(tab2);
+			tablink.style.display = "none";
+			tab2 = tab.substring(0, dashpos) + "-active";
+			tablink = d.getElementById(tab2);
+			tablink.style.display = "table-cell";
+
+			//now show main div associated with link clicked
+			tabmain = d.getElementById(selectedDiv);
+			tabmain.style.display = "block";
+		} else {
+			tab2 = tab.substring(0, dashpos) + "-deactive";
+			tablink = d.getElementById(tab2);
+			tablink.style.display = "table-cell";
+			tab2 = tab.substring(0, dashpos) + "-active";
+			tablink = d.getElementById(tab2);
+			tablink.style.display = "none";
+
+			//hide sections we don't want to see
+			tab2 = tab.substring(0, dashpos);
+			tabmain = d.getElementById(tab2);
+			tabmain.style.display = "none";
+		}
+	}
+}
+//]]>
+</script>

@@ -1310,8 +1310,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 							<?=htmlspecialchars($mapent['descr'])?>
 						</td>
 						<td>
-							<a class="btn btn-xs btn-info" href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"><?=gettext('Edit')?></a>
-							<a class="btn btn-xs btn-danger" href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this static mapping?")?>')"></a>
 						</td>
 					</tr>
 <?php

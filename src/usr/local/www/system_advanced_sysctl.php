@@ -207,7 +207,7 @@ if ($act != "edit" ): ?>
 					<td>
 					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this tunable?")?>')"></a>
 						<?php endif; ?>
 					</td>
 				</tr>

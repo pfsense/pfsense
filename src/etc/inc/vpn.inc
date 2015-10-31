@@ -207,9 +207,6 @@ function vpn_ipsec_configure($restart = false) {
 		echo gettext("Configuring IPsec VPN... ");
 	}
 
-	/* fastforwarding is not compatible with ipsec tunnels */
-	set_single_sysctl("net.inet.ip.fastforwarding", "0");
-
 	/* resolve all local, peer addresses and setup pings */
 	$ipmap = array();
 	$rgmap = array();

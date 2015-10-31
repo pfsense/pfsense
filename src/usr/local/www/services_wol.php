@@ -212,12 +212,8 @@ print $form;
 								<?=htmlspecialchars($wolent['descr']);?>
 							</td>
 							<td>
-								<a class="btn btn-xs btn-primary" href="services_wol_edit.php?id=<?=$i?>">
-									edit
-								</a>
-								<a class="btn btn-xs btn-danger" href="services_wol.php?act=del&amp;id=<?=$i?>">
-									delete
-								</a>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete device')?>"	href="services_wol.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this device?")?>')"></a>
 							</td>
 						</tr>
 					<?php endforeach?>

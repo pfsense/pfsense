@@ -160,9 +160,9 @@ foreach($a_monitor as $monitor) {
 							<?=$monitor['descr']?>
 						</td>
 						<td>
-							<a href="load_balancer_monitor_edit.php?id=<?=$idx?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-							<a href="load_balancer_monitor.php?act=del&id=<?=$idx?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
-							<a href="load_balancer_monitor_edit.php?act=dup&id=<?=$idx?>" class="btn btn-xs btn-default"><?=gettext('Duplicate')?></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit monitor')?>"	href="load_balancer_monitor_edit.php?id=<?=$idx?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy monitor')?>"	href="load_balancer_monitor_edit.php?act=dup&id=<?=$idx?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete monitor')?>"	href="load_balancer_monitor.php?act=del&id=<?=$idx?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this monitor?")?>')"></a>
 						</td>
 					</tr>
 <?php

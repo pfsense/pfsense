@@ -157,8 +157,8 @@ foreach ($a_pppoes as $pppoe):
 					<?=htmlspecialchars($pppoe['descr'])?>
 				</td>
 				<td>
-					<a href="vpn_pppoe_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-					<a href="vpn_pppoe.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="vpn_pppoe_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete PPPoE instance')?>"	href="vpn_pppoe.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this PPPoE instance?")?>')"></a>
 				</td>
 			</tr>
 <?php

@@ -385,10 +385,10 @@ function show_advanced_dns() {
 	<?php $i = 0; foreach ($a_hosts as $hostent): ?>
 	<tr>
 		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
-			<?=strtolower($hostent['host']);?>&nbsp;
+			<?=$hostent['host'];?>&nbsp;
 		</td>
 		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
-			<?=strtolower($hostent['domain']);?>&nbsp;
+			<?=$hostent['domain'];?>&nbsp;
 		</td>
 		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
 			<?=$hostent['ip'];?>&nbsp;

@@ -391,8 +391,18 @@ if (!isset($config['syslog']['rawfilter'])) {
 ?>
 			<tr>
 				<td>
-					<a data-toggle="tooltip" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" class="btn btn-xs btn-info" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
-					<?=gettext('Block')?></a>
+<?php
+		if ($filterent['act'] == "block") {
+?>
+					<i  class="fa fa-times icon-danger" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php
+		 } 
+		 else {
+?>
+					<i class="fa fa-check icon-success" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php	
+		}
+?>
 <?php
 		if ($filterent['count'])
 			echo $filterent['count'];

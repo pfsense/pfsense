@@ -298,3 +298,13 @@ form .btn + .btn {
 .panel-body.collapse.in {
 	overflow-x: auto;
 }
+
+/** create icon colors */
+.icon-danger
+{
+	color: #D9534F;
+}
+.icon-success
+{
+	color: #5CB85C;
+}

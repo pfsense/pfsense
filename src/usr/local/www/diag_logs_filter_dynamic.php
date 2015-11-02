@@ -220,9 +220,19 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 						<td><?=htmlspecialchars($filterent['proto'])?></td>
 						<td>
-							<a href="#" class="btn btn-danger btn-xs" alt="<?=$filterent['act'];?>" title="<?=$filterent['act'];?> onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
-								<?=gettext('Block')?>
-							</a>
+<?php
+		if ($filterent['act'] == "block") {
+?>
+							<i  class="fa fa-times icon-danger" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php
+		 } 
+		 else {
+?>
+							<i class="fa fa-check icon-success" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php	
+		}
+?>
+
 						</td>
 					</tr>
 <?php

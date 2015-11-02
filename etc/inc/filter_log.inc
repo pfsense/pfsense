@@ -128,7 +128,7 @@ function in_arrayi($needle, $haystack) {
 }
 
 function parse_filter_line($line) {
-	global $config, $g;
+	global $config, $g, $buffer_rules_normal;
 
 	$flent = array();
 	$log_split = "";
@@ -149,6 +149,7 @@ function parse_filter_line($line) {
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
 	$flent['reason'] = $rule_data[$field++];
 	$flent['act'] = $rule_data[$field++];
+	$flent['acttype'] = $flent['act'];
 	$flent['direction'] = $rule_data[$field++];
 	$flent['version'] = $rule_data[$field++];
 
@@ -248,6 +249,14 @@ function parse_filter_line($line) {
 			$flent['version'] = $rule_data[$field++];
 			$flent['advskew'] = $rule_data[$field++];
 			$flent['advbase'] = $rule_data[$field++];
+		}
+		if ($flent['act'] == "block") {
+			// Check if the associated rule is actually a reject rule.
+			// A reject rule starts with "block return".
+			// A full block rule starts with "block drop".
+			if (substr($buffer_rules_normal[$flent['tracker']], 0 , 12) === "block return") {
+				$flent['acttype'] = "reject";
+			}
 		}
 	} else {
 		if($g['debug'])

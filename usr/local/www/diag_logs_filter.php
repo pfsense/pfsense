@@ -301,8 +301,10 @@ include("head.inc");
 			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$iflist = get_configured_interface_with_descr(false, true);
-	if ($iflist[$interfacefilter])
+	if ($iflist[$interfacefilter]) {
 		$interfacefilter = $iflist[$interfacefilter];
+	}
+	buffer_rules_load();
 	if ($filterlogentries_submit) 
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filterfieldsarray);
 	else
@@ -329,8 +331,6 @@ include("head.inc");
 			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
 			</tr>
 			<?php
-			if ($config['syslog']['filterdescriptions'])
-				buffer_rules_load();
 			$rowIndex = 0;
 			foreach ($filterlog as $filterent): 
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
@@ -339,7 +339,7 @@ include("head.inc");
 			  <td class="listMRlr nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
 			  <center>
 			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
-			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" />
+			  <img border="0" src="<?php echo find_action_image($filterent['acttype']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['acttype'] .'/'. $filterent['tracker'];?>" title="<?php echo $filterent['acttype'] .'/'. $filterent['tracker'];?>" />
 			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
 			  <td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
 			  <td class="listMRr nowrap">

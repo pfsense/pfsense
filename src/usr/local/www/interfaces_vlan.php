@@ -158,7 +158,7 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
 <!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -177,9 +177,11 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 events.push(function(){
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
-		$('#act').val('del');
-		$('#id').val(this.id.replace("del-", ""));
-		$(this).parents('form').submit();
+		if(confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')) {
+			$('#act').val('del');
+			$('#id').val(this.id.replace("del-", ""));
+			$(this).parents('form').submit();
+		}
 	});
 });
 //]]>

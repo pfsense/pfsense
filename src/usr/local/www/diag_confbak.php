@@ -280,16 +280,9 @@ if (is_array($confvers)):
 					<td><?= format_bytes($version['filesize']) ?></td>
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
-						<a href="diag_confbak.php?newver=<?=$version['time']?>" class="btn btn-xs btn-success" 
-							onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')">
-							<?=gettext("Revert")?>
-						</a>
-						<a href="diag_confbak.php?rmver=<?=$version['time']?>" class="btn btn-xs btn-danger">
-							<?=gettext("Delete")?>
-						</a>
-						<a href="diag_confbak.php?getcfg=<?=$version['time']?>" class="btn btn-xs btn-default">
-							<?=gettext("Download")?>
-						</a>
+						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')"></a>
+						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>						
+						<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="diag_confbak.php?rmver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Are you sure you want to delete this config?")?>')"></a>
 					</td>
 				</tr>
 <?php 

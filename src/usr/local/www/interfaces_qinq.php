@@ -169,8 +169,8 @@ print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging
 					<?=htmlspecialchars($qinq['descr'])?>&nbsp;
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q VLAN')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q VLAN')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this Q-in-Q VLAN?")?>')"></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this Q-in-Q interface?")?>')"></a>
 				</td>
 			</tr>
 <?php

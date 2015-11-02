@@ -252,7 +252,7 @@
 		</monitor_type>
 	</load_balancer>
 	<widgets>
-		<sequence>system_information-container:col1:show,captive_portal_status-container:col1:close,carp_status-container:col1:close,cpu_graphs-container:col1:close,gateways-container:col1:close,gmirror_status-container:col1:close,installed_packages-container:col1:close,interface_statistics-container:col1:close,interfaces-container:col2:show,ipsec-container:col2:close,load_balancer_status-container:col2:close,log-container:col2:close,picture-container:col2:close,rss-container:col2:close,services_status-container:col2:close,traffic_graphs-container:col2:close</sequence>
+		<sequence>system_information-container:col1:show,captive_portal_status-container:col1:none,carp_status-container:col1:none,cpu_graphs-container:col1:none,gateways-container:col1:none,gmirror_status-container:col1:none,installed_packages-container:col1:none,interface_statistics-container:col1:none,interfaces-container:col2:show,ipsec-container:col2:none,load_balancer_status-container:col2:none,log-container:col2:none,picture-container:col2:none,rss-container:col2:none,services_status-container:col2:none,traffic_graphs-container:col2:none</sequence>
 	</widgets>
 	<openvpn/>
 	<dnshaper/>

@@ -595,9 +595,8 @@ if (typeof getURL == 'undefined') {
 	};
 }
 
-$(document).ready(function(){
+events.push(function(){
     $('.fa').tooltip();
 });
-
 //]]>
 </script>

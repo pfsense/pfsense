@@ -445,13 +445,13 @@ function handle_ajax($nentries, $tail = 50) {
 		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
 		foreach ($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
-			$img = '<i class="icon-large '  . find_action_image($log_row['act']) . '" alt={$log_row[\'act\']} title={$log_row[\'act\']} ></i>"';
+			$img = '<i class="icon-large '  . find_action_image($log_row['act']) . '" alt={$log_row[\'act\']}/{$log_row[\'tracker\']} title={$log_row[\'act\']}/{$log_row[\'tracker\']} ></i>"';
 			if ($row_time > $lastsawtime) {
 				if ($log_row['proto'] == "TCP") {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">" . gettext("Block") . " </a>";
+				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['tracker']},{$log_row['act']}', outputrule);\">" . gettext("Block") . " </a>";
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

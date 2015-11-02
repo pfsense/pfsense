@@ -405,17 +405,18 @@ function handle_ajax($nentries, $tail = 50) {
 		 *  can update AJAX interface screen.
 		 */
 		$new_rules = "";
+		buffer_rules_load();
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
 		/* We need this to always be in forward order for the AJAX update to work properly */
 		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
 		foreach($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
-			$img = "<img border='0' src='" . find_action_image($log_row['act']) . "' alt={$log_row['act']} title={$log_row['act']} />";
+			$img = "<img border='0' src='" . find_action_image($log_row['acttype']) . "' alt={$log_row['acttype']}/{$log_row['tracker']} title={$log_row['acttype']}/{$log_row['tracker']} />";
 			if($row_time > $lastsawtime) {
 				if ($log_row['proto'] == "TCP")
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 
-				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">{$img}</a>";
+				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['tracker']},{$log_row['act']}', outputrule);\">{$img}</a>";
 				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

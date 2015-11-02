@@ -88,19 +88,19 @@ function vlan_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	if (!isset($_GET['id'])) {
+if ($_POST['act'] == "del") {
+	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_vlans[$_GET['id']])) {
+	} else if (empty($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (vlan_inuse($_GET['id'])) {
+	} else if (vlan_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	} else {
-		if (does_interface_exist($a_vlans[$_GET['id']]['vlanif'])) {
-			pfSense_interface_destroy($a_vlans[$_GET['id']]['vlanif']);
+		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {
+			pfSense_interface_destroy($a_vlans[$_POST['id']]['vlanif']);
 		}
-		unset($a_vlans[$_GET['id']]);
+		unset($a_vlans[$_POST['id']]);
 
 		write_config();
 
@@ -134,15 +134,19 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
 		'%s handbook for information on supported cards.'),$g['product_name']));
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext('Interface');?></th>
-				<th><?=gettext('VLAN tag');?></th>
-				<th><?=gettext('Description');?></th>
-			</tr>
-		</thead>
+<form action="interfaces_vlan.php" method="post">
+	<input id="act" type="hidden" name="act" value="" />
+	<input id="id" type="hidden" name="id" value=""/>
+
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><?=gettext('Interface');?></th>
+					<th><?=gettext('VLAN tag');?></th>
+					<th><?=gettext('Description');?></th>
+				</tr>
+			</thead>
 <?php
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
@@ -152,19 +156,33 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 				<td><?=htmlspecialchars($vlan['tag']);?></td>
 				<td><?=htmlspecialchars($vlan['descr']);?></td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	href="interfaces_vlan.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+<!--					<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
+					<a  class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>" role="button" id="del-<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
 				</td>
 			</tr>
-<?php
-		$i++;
+		<?php
+			$i++;
 	}
 ?>
-	</table>
-	<nav class="action-buttons">
-		<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
-	</nav>
-</div>
+		</table>
+		<nav class="action-buttons">
+			<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+		</nav>
+	</div>
+</form>
 
+<script>
+//<![CDATA[
+events.push(function(){
+	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
+	$('[id^=del-]').click(function(event) {
+		$('#act').val('del');
+		$('#id').val(this.id.replace("del-", ""));
+		$(this).parents('form').submit();
+	});
+});
+//]]>
+</script>
 <?php
 include("foot.inc");

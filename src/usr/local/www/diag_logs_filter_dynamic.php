@@ -250,4 +250,14 @@ if ($tcpcnt > 0)
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
 ?>
 
+<script type="text/javascript">
+//<![CDATA[
+events.push(function(){
+	$(document).ready(function(){
+	    $('.fa').tooltip();
+	});
+});
+//]]>
+</script>
+
 <?php include("foot.inc");

@@ -309,8 +309,12 @@ form .btn + .btn {
 	color: #5CB85C;
 }
 
+.icon-primary
+{
+	color: #337AB7;
+}
+/** icons are often used with onclick actions, so we need the cursor to change to a pointer */
 .icon-pointer
 {
 	cursor: pointer;
-	cursor: hand;
 }

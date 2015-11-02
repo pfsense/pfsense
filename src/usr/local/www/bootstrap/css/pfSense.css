@@ -308,3 +308,9 @@ form .btn + .btn {
 {
 	color: #5CB85C;
 }
+
+.icon-pointer
+{
+	cursor: pointer;
+	cursor: hand;
+}

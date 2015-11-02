@@ -151,17 +151,17 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
 ?>
-			<tr>
-				<td><?=htmlspecialchars($vlan['if']);?></td>
-				<td><?=htmlspecialchars($vlan['tag']);?></td>
-				<td><?=htmlspecialchars($vlan['descr']);?></td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
-<!--					<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-					<a  class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>" role="button" id="del-<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
-				</td>
-			</tr>
-		<?php
+				<tr>
+					<td><?=htmlspecialchars($vlan['if']);?></td>
+					<td><?=htmlspecialchars($vlan['tag']);?></td>
+					<td><?=htmlspecialchars($vlan['descr']);?></td>
+					<td>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+<!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
+						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
+					</td>
+				</tr>
+<?php
 			$i++;
 	}
 ?>

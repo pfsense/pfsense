@@ -4,11 +4,11 @@
 	diag_logs_filter_dynamic.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2004, 2005 Scott Ullrich
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +16,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -178,7 +178,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Destination")?></th>
 						<th><?=gettext("Proto")?></th>
-						<th></th> <!-- For the "Block" buttons-->
+						<th><?=gettext("Act")?></th> <!-- For the "Block" buttons-->
 					</tr>
 				</thead>
 				<tbody id="filter-log-entries">
@@ -225,11 +225,11 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 							<i class="fa fa-times icon-danger icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
-		 } 
+		 }
 		 else {
 ?>
 							<i class="fa fa-check icon-success icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
-<?php	
+<?php
 		}
 ?>
 

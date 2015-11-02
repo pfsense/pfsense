@@ -367,7 +367,6 @@ if (!isset($config['syslog']['rawfilter'])) {
 	   <div class="table-responsive">
 		<table class="table table striped table-hover table-compact">
 			<tr>
-				<th><?=gettext("Act")?></th>
 				<th><?=gettext("Time")?></th>
 				<th><?=gettext("IF")?></th>
 <?php
@@ -382,6 +381,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 				<th><?=gettext("Source")?></th>
 				<th><?=gettext("Destination")?></th>
 				<th><?=gettext("Proto")?></th>
+				<th><?=gettext("Act")?></th>
 			</tr>
 <?php
 	if ($config['syslog']['filterdescriptions'])
@@ -390,24 +390,6 @@ if (!isset($config['syslog']['rawfilter'])) {
 	foreach ($filterlog as $filterent) {
 ?>
 			<tr>
-				<td>
-<?php
-		if ($filterent['act'] == "block") {
-?>
-					<i  class="fa fa-times icon-danger icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
-<?php
-		 } 
-		 else {
-?>
-					<i class="fa fa-check icon-success icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
-<?php	
-		}
-?>
-<?php
-		if ($filterent['count'])
-			echo $filterent['count'];
-?>
-				</td>
 				<td>
 					<?=htmlspecialchars($filterent['time'])?>
 				</td>
@@ -464,7 +446,28 @@ if (!isset($config['syslog']['rawfilter'])) {
 		if ($filterent['proto'] == "TCP")
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
 ?>
-				<td><?=htmlspecialchars($filterent['proto'])?></td>
+				<td>
+					<?=htmlspecialchars($filterent['proto'])?>
+				</td>
+
+				<td>
+<?php
+		if ($filterent['act'] == "block") {
+?>
+					<i  class="fa fa-times icon-danger icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php
+		 }
+		 else {
+?>
+					<i class="fa fa-check icon-success icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+<?php
+		}
+?>
+<?php
+		if ($filterent['count'])
+			echo $filterent['count'];
+?>
+				</td>
 			</tr>
 <?php
 		if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2") {

@@ -451,7 +451,10 @@ function handle_ajax($nentries, $tail = 50) {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['tracker']},{$log_row['act']}', outputrule);\">" . gettext("Block") . " </a>";
+
+				$btn = '<i class="fa fa-times icon-danger icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'diag_logs_filter.php?getrulenum="' . $filterent['rulenum'] . ',' . $filterent['tracker'] . ',' . $filterent['act'] . '\'"; , outputrule);" ></i>';
+
+//				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['tracker']},{$log_row['act']}', outputrule);\">" . gettext("Block") . " </a>";
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

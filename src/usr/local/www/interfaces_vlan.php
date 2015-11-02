@@ -140,26 +140,28 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 
 	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
-			<tr>
-				<th><?=gettext('Interface');?></th>
-				<th><?=gettext('VLAN tag');?></th>
-				<th><?=gettext('Description');?></th>
-			</tr>
+			<thead>
+				<tr>
+					<th><?=gettext('Interface');?></th>
+					<th><?=gettext('VLAN tag');?></th>
+					<th><?=gettext('Description');?></th>
+				</tr>
+			</thead>
 <?php
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
 ?>
-			<tr>
-				<td><?=htmlspecialchars($vlan['if']);?></td>
-				<td><?=htmlspecialchars($vlan['tag']);?></td>
-				<td><?=htmlspecialchars($vlan['descr']);?></td>
-				<td>
-					<a class="btn btn-primary btn-xs" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-<!--					<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-					<a class="btn btn-danger btn-xs" role="button" id="del-<?=$i?>"><?=gettext('Delete')?></a></td>
-				</td>
-			</tr>
-		<?php
+				<tr>
+					<td><?=htmlspecialchars($vlan['if']);?></td>
+					<td><?=htmlspecialchars($vlan['tag']);?></td>
+					<td><?=htmlspecialchars($vlan['descr']);?></td>
+					<td>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+<!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
+						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')"></a>
+					</td>
+				</tr>
+<?php
 			$i++;
 	}
 ?>

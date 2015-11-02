@@ -156,8 +156,8 @@ foreach ($a_clones as $clone) {
 					<?=htmlspecialchars($clone['descr'])?>
 				</td>
 				<td>
-					<a href="interfaces_wireless_edit.php?id=<?=$i?>" class="btn btn-default btn-xs"><?=gettext("Edit")?></a>
-					<a href="interfaces_wireless.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext("Delete")?></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this WiFi interface?")?>')"></a>
 				</td>
 			</tr>
 <?php

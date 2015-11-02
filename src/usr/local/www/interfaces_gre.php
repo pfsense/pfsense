@@ -148,12 +148,8 @@ display_top_tabs($tab_array);
 					<?=htmlspecialchars($gre['descr'])?>
 				</td>
 				<td>
-					<a href="interfaces_gre_edit.php?id=<?=$i?>" class="btn btn-default btn-xs">
-						<?=gettext("Edit")?>
-					</a>
-					<a href="interfaces_gre.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs">
-						<?=gettext("Delete")?>
-					</a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this GRE interface?")?>')"></a>
 				</td>
 			</tr>
 <?php endforeach; ?>

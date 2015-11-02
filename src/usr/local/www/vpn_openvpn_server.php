@@ -1308,8 +1308,8 @@ else:
 						<?=htmlspecialchars($server['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-						<a href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>"	href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this server?")?>')"></a>
 					</td>
 				</tr>
 <?php

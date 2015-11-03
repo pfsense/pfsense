@@ -404,17 +404,12 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						<td>
 <?php
 		if ($filterent['act'] == "block") {
-?>
-							<i class="fa fa-times icon-danger icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
-<?php
-		 }
-		 else {
-?>
-							<i class="fa fa-check icon-success icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
-<?php
+			$icon_act = "fa-times icon-danger";
+		} else {
+			$icon_act = "fa-check icon-success";
 		}
 ?>
-
+							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
 					</tr>
 <?php

@@ -559,13 +559,21 @@ function ipsec_dump_mobile() {
 		return array();
 	}
 
-	/* This is needed for fixing #4130 */
-	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200) {
+	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") == 0) {
 		return array();
+	}
+
+	if (!function_exists('parse_xml_config')) {
+		require_once('xmlparse.inc');
 	}
 
 	$custom_listtags = array('lease', 'pool');
 	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
+
+	if ($response == -1) {
+		return array();
+	}
+
 	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
 	unset($custom_listtags, $_gb);
 

@@ -355,12 +355,12 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
+						<th><?=gettext("Act")?></th>
 						<th><?=gettext("Time")?></th>
 						<th><?=gettext("IF")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Destination")?></th>
 						<th><?=gettext("Proto")?></th>
-						<th><?=gettext("Act")?></th> <!-- For the "Block" buttons-->
 					</tr>
 				</thead>
 				<tbody id="filter-log-entries">
@@ -390,17 +390,6 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						$dstPort = "";
 ?>
 					<tr>
-						<td><?=htmlspecialchars($filterent['time'])?></td>
-						<td><?=htmlspecialchars($filterent['interface'])?></td>
-						<td><?=$srcIP . $srcPort?></td>
-						<td><?=$dstIP . $dstPort?></td>
-<?php
-						if ($filterent['proto'] == "TCP") {
-							$filterent['proto'] .= ":{$filterent['tcpflags']}";
-							$tcpcnt++;
-						}
-?>
-						<td><?=htmlspecialchars($filterent['proto'])?></td>
 						<td>
 <?php
 		if ($filterent['act'] == "block") {
@@ -416,6 +405,17 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 
 						</td>
+						<td><?=htmlspecialchars($filterent['time'])?></td>
+						<td><?=htmlspecialchars($filterent['interface'])?></td>
+						<td><?=$srcIP . $srcPort?></td>
+						<td><?=$dstIP . $dstPort?></td>
+<?php
+						if ($filterent['proto'] == "TCP") {
+							$filterent['proto'] .= ":{$filterent['tcpflags']}";
+							$tcpcnt++;
+						}
+?>
+						<td><?=htmlspecialchars($filterent['proto'])?></td>
 					</tr>
 <?php
 				} // e-o-foreach()

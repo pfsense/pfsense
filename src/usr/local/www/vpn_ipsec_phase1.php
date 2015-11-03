@@ -416,16 +416,18 @@ if ($_POST) {
 	}
 
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
-	
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
-		$auth_server_name  = $config['ipsec']['client']['user_source'];
-		$auth_server       = auth_get_authserver($auth_server_name);
-		if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
-			$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+		if (!empty($config['ipsec']['client']['user_source'])) {
+			$auth_server_list  = explode(',', $config['ipsec']['client']['user_source']);
+			foreach ($auth_server_list as $auth_server_name) {
+				$auth_server       = auth_get_authserver($auth_server_name);
+				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+					$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+				}
+			}
 		}
 	}
-
-
+	
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];

@@ -147,6 +147,11 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	foreach ($a_phase1 as $ph1ent) {
+		if (isset($ph1ent['mobile'])) {
+			$mobileph1 = $ph1ent;
+		}
+	}
 	/* input consolidation */
 
 	/* input validation */
@@ -219,6 +224,18 @@ if ($_POST['save']) {
 	if ($pconfig['login_banner_enable']) {
 		if (!strlen($pconfig['login_banner'])) {
 			$input_errors[] = gettext("A valid value for 'Login Banner' must be specified.");
+		}
+	}
+
+	if ($pconfig['user_source']) {
+		if (isset($mobileph1) && $mobileph1['authentication_method'] == 'eap-radius') {
+			foreach ($pconfig['user_source'] as $auth_server_name) {
+				$auth_server       = auth_get_authserver($auth_server_name);
+				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+					$input_errors[] = gettext("Only valid RADIUS servers may be selected as a user source when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+					$pconfig['user_source'] = implode(',', $pconfig['user_source']);
+				}
+			}
 		}
 	}
 

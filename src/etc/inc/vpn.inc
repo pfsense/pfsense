@@ -143,8 +143,9 @@ function vpn_ipsec_configure($restart = false) {
 		/* wait for process to die */
 		sleep(2);
 
-		/* IPSEC is off, shutdown enc interface. */
+		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
+		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
 
 		return 0;
 	}
@@ -159,6 +160,7 @@ function vpn_ipsec_configure($restart = false) {
 	$crlpath = "{$g['varetc_path']}/ipsec/ipsec.d/crls";
 
 	mwexec("/sbin/ifconfig enc0 up");
+	set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
 	if (php_uname('m') != "amd64") {
 		set_single_sysctl("net.inet.ipsec.directdispatch", "0");
 	}
@@ -205,6 +207,9 @@ function vpn_ipsec_configure($restart = false) {
 		echo gettext("Configuring IPsec VPN... ");
 	}
 
+	/* fastforwarding is not compatible with ipsec tunnels */
+	set_single_sysctl("net.inet.ip.fastforwarding", "0");
+
 	/* resolve all local, peer addresses and setup pings */
 	$ipmap = array();
 	$rgmap = array();
@@ -213,6 +218,7 @@ function vpn_ipsec_configure($restart = false) {
 	$aggressive_mode_psk = false;
 	unset($iflist);
 	$ifacesuse = array();
+	$mobile_ipsec_auth = "";
 	if (is_array($a_phase1) && count($a_phase1)) {
 
 		$ipsecpinghosts = "";
@@ -256,6 +262,7 @@ function vpn_ipsec_configure($restart = false) {
 			   try to resolve it now and add it to the list for filterdns */
 
 			if (isset ($ph1ent['mobile'])) {
+				$mobile_ipsec_auth = $ph1ent['authentication_method'];
 				continue;
 			}
 
@@ -440,6 +447,40 @@ EOD;
 
 	$strongswan .= "\tplugins {\n";
 
+	/* Find RADIUS servers designated for Mobile IPsec user auth */
+	$radius_server_txt = "";
+	$user_sources = explode(',', $config['ipsec']['client']['user_source']);
+	foreach ($user_sources as $user_source) {
+		$auth_server = auth_get_authserver($user_source);
+		$nice_user_source = strtolower(preg_replace('/\s+/', '_', $user_source));
+		if ($auth_server && $auth_server['type'] === 'radius') {
+			$radius_server_txt .= <<<EOD
+				{$nice_user_source} {
+					address = {$auth_server['host']}
+					secret = {$auth_server['radius_secret']}
+					auth_port = {$auth_server['radius_auth_port']}
+					acct_port = {$auth_server['radius_acct_port']}
+				}
+
+EOD;
+		}
+	}
+
+	/* write an eap-radius config section if appropriate */
+	if (strlen($radius_server_txt) && ($mobile_ipsec_auth === "eap-radius")) {
+		$strongswan .= <<<EOD
+		eap-radius {
+			class_group = yes
+			eap_start = no
+			servers {
+{$radius_server_txt}
+			}
+		}
+
+EOD;
+	}
+
+/*
 	$a_servers = auth_get_authserver_list();
 	foreach ($a_servers as $id => $pconfig) {
 		if ($id == $config['ipsec']['client']['user_source'] && $pconfig['type'] == "radius") {
@@ -461,6 +502,7 @@ EOD;
 			break;
 		}
 	}
+*/
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
@@ -990,7 +1032,6 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;
@@ -1000,13 +1041,11 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					if (isset($casub)) {
@@ -1019,13 +1058,11 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-radius\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;

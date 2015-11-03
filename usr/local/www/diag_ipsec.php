@@ -114,7 +114,7 @@ if (!is_array($config['ipsec']['phase1']))
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
-$status = pfSense_ipsec_list_sa();
+$status = ipsec_list_sa();
 
 ?>
 

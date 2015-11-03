@@ -427,6 +427,19 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 }
 
 /*
+ * Wrapper to call pfSense_ipsec_list_sa() when IPsec is enabled
+ */
+function ipsec_list_sa() {
+	global $config;
+
+	if (isset($config['ipsec']['enable'])) {
+		return pfSense_ipsec_list_sa();
+	}
+
+	return array();
+}
+
+/*
  * Return dump of SPD table
  */
 function ipsec_dump_spd() {

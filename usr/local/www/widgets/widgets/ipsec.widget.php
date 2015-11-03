@@ -51,20 +51,10 @@ if (isset($config['ipsec']['phase1'])) { ?>
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
-	$ipsec_status = ipsec_smp_dump_status();
+	$ipsec_status = pfSense_ipsec_list_sa();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
-
-	if (!is_array($ipsec_status['query'])) {
-		$ipsec_status['query'] = array();
-		$ipsec_status['query']['ikesalist'] = array();
-		$ipsec_status['query']['ikesalist']['ikesa'] = array();
-	} else if (!is_array($ipsec_status['query']['ikesalist'])) {
-		$ipsec_status['query']['ikesalist'] = array();
-		$ipsec_status['query']['ikesalist']['ikesa'] = array();
-	} else if (!is_array($ipsec_status['query']['ikesalist']['ikesa']))
-		$ipsec_status['query']['ikesalist']['ikesa'] = array();
 
 	$ipsec_detail_array = array();
 	$ikenum = array();
@@ -92,20 +82,20 @@ if (isset($config['ipsec']['phase1'])) { ?>
 			}
 
 			$found = false;
-			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
-				if (isset($ikesa['childsalist']) && isset($ikesa['childsalist']['childsa'])) {
-					foreach($ikesa['childsalist']['childsa'] as $childsa) {
-						if ($ikeid == $childsa['childconfig']) {
+			foreach ($ipsec_status as $id => $ikesa) {
+				if (isset($ikesa['child-sas'])) {
+					foreach($ikesa['child-sas'] as $childid =>$childsa) {
+						if ($ikeid == $childid) {
 							$found = true;
 							break;
 						}
 					}
-				} else if ($ikeid == $ikesa['peerconfig']) {
+				} else if ($ikeid == $id) {
 					$found = true;
 				}
 
 				if ($found === true) {
-					if ($ikesa['status'] == 'established') {
+					if ($ikesa['state'] == 'ESTABLISHED') {
 						/* tunnel is up */
 						$iconfn = "true";
 						$activecounter++;

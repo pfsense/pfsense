@@ -70,7 +70,7 @@ if (isset($config['ipsec']['phase1'])) {
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
-	$ipsec_status = pfSense_ipsec_list_sa();
+	$ipsec_status = ipsec_list_sa();
 
 	$activecounter = 0;
 	$inactivecounter = 0;

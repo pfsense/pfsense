@@ -158,7 +158,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 									'<div id="temperaturebarM' + i + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
 									'<div id="temperaturebarH' + i + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
 								'</div>' +
-								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + '">' + thermalSensorValue + ' °C</span>';
+								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + '">' + thermalSensorValue + ' &deg;C</span>';
 
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
@@ -247,5 +247,5 @@ function setTempProgress(bar, percent) {
 	$('#' + 'temperaturebarM' + bar).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
 	$('#' + 'temperaturebarH' + bar).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturemsg' + bar).html(percent + ' °C');
+	$('#' + 'temperaturemsg' + bar).html(percent + ' &deg;C');
 }

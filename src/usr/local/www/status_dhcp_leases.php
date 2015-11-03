@@ -439,27 +439,17 @@ foreach ($leases as $data):
 					<td><?=$data['act']?></td>
 					<td>
 <? if ($data['type'] == "dynamic"): ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>">
-							<?=gettext("add static mapping")?>
-						</a>
+						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <? else: ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>">
-							<?=gettext("edit static mapping")?>
-						</a>
+						<a class="fa fa-pencil"			title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <? endif; ?>
-						<a class="btn btn-xs btn-success" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>">
-							add WOL mapping
-						</a>
+						<a class="fa fa-plus-square"		title="<?=gettext("Add WOL mapping")?>"	href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <? if ($data['online'] != "online"):?>
-						<a class="btn btn-xs btn-warning" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>">
-							send WOL packet
-						</a>
+						<a class="fa fa-power-off"		title="<?=gettext("Send WOL packet")?>"	href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <? endif; ?>
 
 <? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
-						<a class="btn btn-xs btn-danger" href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>">
-							delete lease
-						</a>
+						<a class="fa fa-trash"			title="<?=gettext('Delete lease')?>"		href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this lease?")?>')"></a>
 <? endif?>
 					</td>
 <? endforeach; ?>

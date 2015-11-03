@@ -127,12 +127,12 @@ include("head.inc");
 		}
 
 		var line =
+			'<td>' + row[0] + '</td>' +
 			'<td>' + row[1] + '</td>' +
 			'<td>' + row[2] + '</td>' +
 			'<td>' + srcIP + srcPort + '</td>' +
 			'<td>' + dstIP + dstPort + '</td>' +
-			'<td>' + row[7] + '</td>' +
-			'<td>' + row[0] + '</td>';
+			'<td>' + row[7] + '</td>';
 
 		return line;
 	}

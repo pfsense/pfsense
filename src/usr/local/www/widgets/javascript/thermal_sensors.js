@@ -54,29 +54,31 @@
 
 warningTemp = 9999;
 criticalTemp = 100;
+ajaxBusy = false;
 
 //should be called from "thermal_sensors.widget.php"
 function showThermalSensorsData() {
+	if(!ajaxBusy) {
+		ajaxBusy = true;
+		//get data from thermal_sensors.widget.php
+		url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
+				//IE fix to disable cache when using http:// , just append timespan
+				+ new Date().getTime();
 
-	//get data from thermal_sensors.widget.php
-	url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
-			//IE fix to disable cache when using http:// , just append timespan
-			+ new Date().getTime();
+		jQuery.ajax(url, {
+			type: 'get',
+			success: function(data) {
+				var thermalSensorsData = data || "";
+				buildThermalSensorsData(thermalSensorsData);
+			},
+			error: function(jqXHR, status, error) {
+				warningTemp = 9999;
+				buildThermalSensorsDataRaw('<span class="alert-danger">Temperature data could not be read.</span>');
+			}
+		});
 
-	jQuery.ajax(url, {
-		type: 'get',
-		success: function(data) {
-			var thermalSensorsData = data || "";
-			buildThermalSensorsData(thermalSensorsData);
-		},
-		error: function(jqXHR, status, error) {
-			buildThermalSensorsDataRaw(
-				"Error getting data from [thermal_sensors.widget.php] - |" +
-				"status: [" + (status || "") + "]|" +
-				"error: [" + (error || "") + "]");
-		}
-	});
-
+		ajaxBusy = false;
+	}
 	//call itself in 11 seconds
 	window.setTimeout(showThermalSensorsData, 11000);
 }

@@ -233,7 +233,7 @@ function setTempProgress(bar, percent) {
 		barTempM = 0;
 		barTempH = 0;
 	} else if(percent <= criticalTemp) {
-		barTempL = WarningTemp;
+		barTempL = warningTemp;
 		barTempM = percent - warningTemp;
 		barTempH = 0;
 	} else {
@@ -241,6 +241,7 @@ function setTempProgress(bar, percent) {
 		barTempM = criticalTemp - warningTemp;
 		barTempH = percent - criticalTemp;
 	}
+
 
 	$('#' + 'temperaturebarL' + bar).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
 	$('#' + 'temperaturebarM' + bar).css('width', barTempM + '%').attr('aria-valuenow', barTempM);

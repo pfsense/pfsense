@@ -189,7 +189,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	</div>
 </div>
 <input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
-</div>
+
 <div id="thermal_sensors-settings" class="widgetconfigdiv panel-footer collapse" >
 	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" id="iform_thermal_sensors_settings" name="iform_thermal_sensors_settings">
 	<table>

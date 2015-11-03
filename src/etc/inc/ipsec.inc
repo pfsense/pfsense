@@ -427,6 +427,60 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 }
 
 /*
+ * Return dump of SPD table
+ */
+function ipsec_dump_spd() {
+	$fd = @popen("/sbin/setkey -DP", "r");
+	$spd = array();
+	if ($fd) {
+		while (!feof($fd)) {
+			$line = chop(fgets($fd));
+			if (!$line) {
+				continue;
+			}
+			if ($line == "No SPD entries.") {
+				break;
+			}
+			if ($line[0] != "\t") {
+				if (is_array($cursp)) {
+					$spd[] = $cursp;
+				}
+				$cursp = array();
+				$linea = explode(" ", $line);
+				$cursp['srcid'] = substr($linea[0], 0, strpos($linea[0], "["));
+				$cursp['dstid'] = substr($linea[1], 0, strpos($linea[1], "["));
+				$i = 0;
+			} else if (is_array($cursp)) {
+				$line = trim($line, "\t\r\n ");
+				$linea = explode(" ", $line);
+				switch ($i) {
+					case 1:
+						if ($linea[1] == "none")	/* don't show default anti-lockout rule */ {
+							unset($cursp);
+						} else {
+							$cursp['dir'] = $linea[0];
+						}
+						break;
+					case 2:
+						$upperspec = explode("/", $linea[0]);
+						$cursp['proto'] = $upperspec[0];
+						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
+						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						break;
+				}
+			}
+			$i++;
+		}
+		if (is_array($cursp) && count($cursp)) {
+			$spd[] = $cursp;
+		}
+		pclose($fd);
+	}
+
+	return $spd;
+}
+
+/*
  * Return dump of SAD table
  */
 function ipsec_dump_sad() {

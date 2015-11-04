@@ -366,6 +366,12 @@ $('[id^=delete]').click(function(event) {
 });
 
 // "More information" handlers
+
+// If there is an infoblock, automatically add an info icon that toggles its display
+if($('#infoblock').length != 0) {
+	$('#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
+}
+
 // Hide information on page load
 $('#infoblock').hide();
 

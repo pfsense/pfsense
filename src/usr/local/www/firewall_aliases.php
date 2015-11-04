@@ -291,7 +291,6 @@ display_top_tabs($tab_array);
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".
 	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
 <div>
-<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="<?=gettext('More information')?>"></i>
 	<div id="infoblock">
 		<?=print_info_box(gettext( 'Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .

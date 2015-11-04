@@ -241,17 +241,25 @@ endforeach;
 ?>
 				</tbody>
 			</table>
+		</div>
+	</div>
+</form>
+
 <?php
 if($rowsprinted > 0) {
 ?>
 			<nav class="action-buttons">
-				<input name="Submit" type="submit" class="btn btn-primary" value="<?= gettext("Save"); ?>" />
-				<input name="Reset"	 type="reset"  class="btn btn-danger" value="<?= gettext("Reset"); ?>" />
+				<button name="Submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
+					<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+					<?=gettext("Save")?>
+				</button>
+
+				<button name="Reset" type="reset"  class="btn btn-danger btn-sm" value="<?= gettext("Reset"); ?>">
+					<i class="fa fa-undo" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+					<?=gettext("Reset")?>
+				</button>
 			</nav>
 <?php
 }
-?>
-		</div>
-	</div>
-</form>
-<?php include("foot.inc");
+
+include("foot.inc");

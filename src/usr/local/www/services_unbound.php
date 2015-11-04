@@ -366,17 +366,7 @@ $section->addInput(new Form_TextArea (
 
 $form->add($section);
 print($form);
-
-print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
-" service (if enabled) will automatically serve the LAN IP".
-" address as a DNS server to DHCP clients so they will use".
-" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
-" entered in %sSystem: General setup%s".
-" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-" is checked."),'<a href="system.php">','</a>'));
 ?>
-
 <script>
 //<![CDATA[
 events.push(function(){
@@ -491,8 +481,11 @@ endforeach;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <div class="panel panel-default">
@@ -537,7 +530,21 @@ endforeach;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
+
+<div id="infoblock">
+	<?=print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
+		" service (if enabled) will automatically serve the LAN IP".
+		" address as a DNS server to DHCP clients so they will use".
+		" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
+		" entered in %sSystem: General setup%s".
+		" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
+		" is checked."),'<a href="system.php">','</a>'), info)?>
+</div>
 <?php include("foot.inc");

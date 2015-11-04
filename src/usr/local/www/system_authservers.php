@@ -407,7 +407,7 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 					<th><?=gettext("Server Name")?></th>
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("Host Name")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -428,8 +428,11 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 		</table>
 	</div>
 
-	<nav class="action-buttons">
-		<a href="?act=new" class="btn btn-success">add new</a>
+	<nav class="action-buttons" style="margin-top: 10px;">
+		<a href="?act=new" class="btn btn-success btn-sm">
+			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Add")?>
+		</a>
 	</nav>
 <?php
 	include("foot.inc");
@@ -824,7 +827,7 @@ events.push(function(){
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 <?php if ($act != 'edit') : ?>
 	ldap_tmplchange();
 <?php endif; ?>
@@ -852,7 +855,7 @@ events.push(function(){
 	}
 ?>
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();
 	});

@@ -55,13 +55,15 @@ if ($_REQUEST['type']) {
 }
 
 // Gather selected alias metadata.
-foreach ($config['aliases']['alias'] as $alias) {
-	if ( $alias['name'] == $tablename ) {
-		$tmp = array();
-		$tmp['type'] = $alias['type'];
-		$tmp['name'] = $alias['name'];
-		$tmp['url']  = $alias['url'];
-		$tmp['freq'] = $alias['updatefreq'];
+if (isset($config['aliases']['alias'])) {
+	foreach ($config['aliases']['alias'] as $alias) {
+		if ( $alias['name'] == $tablename ) {
+			$tmp = array();
+			$tmp['type'] = $alias['type'];
+			$tmp['name'] = $alias['name'];
+			$tmp['url']  = $alias['url'];
+			$tmp['freq'] = $alias['updatefreq'];
+		}
 	}
 }
 

@@ -940,8 +940,11 @@ endif;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_dhcpv6_edit.php?if=<?=$if?>" class="btn btn-sm btn-success"/>Add</a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_dhcpv6_edit.php?if=<?=$if?>" class="btn btn-sm btn-success"/>
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
 <script>

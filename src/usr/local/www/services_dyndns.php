@@ -93,7 +93,7 @@ else if ($_GET['act'] == "toggle") {
 		}
 		write_config();
 		services_dyndns_configure();
-		
+
 		header("Location: services_dyndns.php");
 		exit;
 	}
@@ -119,7 +119,7 @@ display_top_tabs($tab_array);
 					<th><?=gettext("Hostname")?></th>
 					<th><?=gettext("Cached IP")?></th>
 					<th><?=gettext("Description")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -207,14 +207,14 @@ foreach ($a_dyndns as $dyndns):
 					</td>
 					<td>
 						<a class="fa fa-pencil"			title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
-				<?php if (isset($dyndns['enable'])) {
-				?>	
+<?php if (isset($dyndns['enable'])) {
+?>
 						<a class="fa fa-ban"			title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
-				<?php } else {
-				?>
+<?php } else {
+?>
 						<a class="fa fa-check-square-o"	title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" ></a>
-				<?php }
-				?>	
+<?php }
+?>
 						<a class="fa fa-trash"			title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this service?")?>')"></a>
 					</td>
 				</tr>
@@ -228,7 +228,10 @@ foreach ($a_dyndns as $dyndns):
 </form>
 
 <nav class="action-buttons">
-	<a href="services_dyndns_edit.php" class="btn btn-sm btn-success"><i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i><?=gettext('Add')?></a>
+	<a href="services_dyndns_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <div>

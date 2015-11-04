@@ -322,11 +322,11 @@ print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" is checked. If you don't use that option (or if you use".
 	" a static IP address on WAN), you must manually specify at".
 	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'));
+	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), info);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Host Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -392,17 +392,20 @@ endforeach;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <?php
 print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				gettext("Use these for changing DNS results or for adding custom DNS records."));
+				gettext("Use these for changing DNS results or for adding custom DNS records."), info);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Domain Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -441,12 +444,15 @@ endforeach;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."));
+						" authoritative DNS server to be queried for that domain."), info);
 
 include("foot.inc");

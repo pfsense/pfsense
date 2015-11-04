@@ -1324,12 +1324,14 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 ?>
 		<table>
 	</div>
-
-	<nav class="action-buttons">
-		<br />
-		<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-sm btn-success"><?=gettext("Add")?></a>
-	</nav>
 </div>
+
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 }
 ?>

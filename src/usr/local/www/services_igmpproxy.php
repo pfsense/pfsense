@@ -160,17 +160,22 @@ endforeach;
 			</tbody>
 		</table>
 	</div>
-
-	<nav class="action-buttons">
-		<input id="submit" name="submit" type="submit" class="btn btn-primary" value="<?=gettext("Save")?>" />
-		<a href="services_igmpproxy_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
-	</nav>
-
 </form>
 
+<nav class="action-buttons" style="margin-top: 10px;">
+	<button id="submit" name="submit" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Save")?>">
+		<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Save")?>
+	</button>
+	<a href="services_igmpproxy_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
+</nav>
+
+<div id="infoblock">
+<?=print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
+					   'Only one "upstream" interface can be configured.'), info)?>
+</div>
 <?php
-
-print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
-					   'Only one "upstream" interface can be configured.'));
-
 include("foot.inc");

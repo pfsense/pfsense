@@ -100,19 +100,20 @@ if ($_GET['act'] == "del") {
 }
 
 include("head.inc");
-?>
 
-<?php if ($savemsg) print_info_box($savemsg)?>
-<?php if (isset($config['l2tp']['radius']['enable']))
-	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used."))?>
-<?php if (is_subsystem_dirty('l2tpusers')):?><br/>
-<?php print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>")?><br />
-<?php endif?>
+if ($savemsg)
+	print_info_box($savemsg, success);
+	
+if (isset($config['l2tp']['radius']['enable']))
+	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used."));
+	
+if (is_subsystem_dirty('l2tpusers'))
+	print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>");
 
-<?php
+
 	$tab_array = array();
-	$tab_array[0] = array(gettext("Configuration"), false, "vpn_l2tp.php");
-	$tab_array[1] = array(gettext("Users"), true, "vpn_l2tp_users.php");
+	$tab_array[] = array(gettext("Configuration"), false, "vpn_l2tp.php");
+	$tab_array[] = array(gettext("Users"), true, "vpn_l2tp_users.php");
 	display_top_tabs($tab_array);
 ?>
 <div class="table-responsive">
@@ -121,7 +122,7 @@ include("head.inc");
 			<tr>
 				<th><?=gettext("Username")?></th>
 				<th><?=gettext("IP address")?></th>
-				<th></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -151,5 +152,4 @@ include("head.inc");
 	</a>
 </nav>
 
-
-<?php include("foot.inc")?>
+<?php include("foot.inc");

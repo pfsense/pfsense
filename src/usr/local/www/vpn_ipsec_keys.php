@@ -157,7 +157,7 @@ if (is_subsystem_dirty('ipsec'))
 					<?=htmlspecialchars($secretent['pre-shared-key'])?>
 				</td>
 				<td>
-					<a class="btn btn-primary btn-xs" href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>">edit user</a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>"></a>
 				</td>
 			</tr>
 <?php $i++; endforeach; ?>
@@ -179,8 +179,8 @@ if (is_subsystem_dirty('ipsec'))
 					<?=htmlspecialchars($secretent['pre-shared-key'])?>
 				</td>
 				<td>
-					<a class="btn btn-primary btn-xs" href="vpn_ipsec_keys_edit.php?id=<?=$i?>">edit key</a>
-					<a class="btn btn-danger btn-xs" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>">delete key</a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit key')?>"	href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete key')?>"	href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this key?")?>')"></a>
 				</td>
 			</tr>
 <?php $i++; endforeach; ?>

@@ -637,8 +637,8 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>" class="btn btn-info btn-xs"><?=gettext('Edit')?></a>
-						<a href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this CSC Override?")?>')"></a>
 					</td>
 				</tr>
 <?php

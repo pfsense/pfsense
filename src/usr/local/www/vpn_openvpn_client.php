@@ -842,8 +842,8 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-						<a href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>"	href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this client?")?>')"></a>
 					</td>
 				</tr>
 <?php

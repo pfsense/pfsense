@@ -135,8 +135,8 @@ include("head.inc");
 					<?=htmlspecialchars($secretent['ip'])?>&nbsp;
 				</td>
 				<td>
-					<a class="btn btn-xs btn-primary" href="vpn_l2tp_users_edit.php?id=<?=$i?>"><?= gettext('edit') ?></a>
-			        <a class="btn btn-xs btn-danger" href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>"><?=gettext("delete")?></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this user?")?>')"></a>
 				</td>
 			</tr>
 <?php $i++; endforeach?>

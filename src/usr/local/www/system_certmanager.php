@@ -583,7 +583,7 @@ if (!($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)))
 			<th><?=gettext("Issuer")?></th>
 			<th><?=gettext("Distinguished Name")?></th>
 			<th><?=gettext("In Use")?></th>
-			<th></th>
+			<th><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -682,8 +682,11 @@ foreach($a_cert as $i => $cert):
 </table>
 </div>
 
-<nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">add new</a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 <?
 	include("foot.inc");
@@ -1087,7 +1090,7 @@ events.push(function(){
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
 	$('#caref').on('change', function() {
 		internalca_change();
 	});

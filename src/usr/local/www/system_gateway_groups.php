@@ -196,13 +196,17 @@ endforeach;
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a href="system_gateway_groups_edit.php" class="btn btn-default"><?=gettext('Add')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
-<?php
-	print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
+<div id="infoblock">
+	<?=print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
 						   'or policy-based routing.' . '<br />' .
-						   'Without rules directing traffic into the Gateway Groups, they will not be used.'));
-
+						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), info)?>
+</div>
+<?php
 include("foot.inc");

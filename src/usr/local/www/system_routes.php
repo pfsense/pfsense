@@ -298,17 +298,17 @@ foreach ($a_routes as $i => $route):
 		</td>
 		<td>
 			<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
-			
+
 			<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
-			
+
 	<?php if (isset($route['disabled'])) {
-	?>	
+	?>
 			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
 	<?php } else {
 	?>
 			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 	<?php }
-	?>		
+	?>
 			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this route?")?>')"></a>
 
 		</td>
@@ -316,9 +316,10 @@ foreach ($a_routes as $i => $route):
 	</tr>
 </table>
 
-<nav class="action-buttons">
-	<a href="system_routes_edit.php" role="button" class="btn btn-success">
-		<?=gettext("add new route")?>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
 	</a>
 </nav>
 <?php

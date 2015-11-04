@@ -246,7 +246,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 if ($savemsg)
 	print_info_box($savemsg, 'success');
-	
+
 if (is_subsystem_dirty('staticroutes'))
 	print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 
@@ -308,18 +308,18 @@ foreach ($a_gateways as $i => $gateway):
 		<td>
 			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
 			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
-			
+
 <? if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
-	?>	
+	?>
 			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
 	<?php } else {
 	?>
 			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 	<?php }
-	?>		
+	?>
 			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this gateway?")?>')"></a>
-	
+
 <? endif?>
 		</td>
 	</tr>
@@ -327,9 +327,10 @@ foreach ($a_gateways as $i => $gateway):
 </tbody>
 </table>
 
-<nav class="action-buttons">
+<nav class="action-buttons" style="margin-top: 10px;">
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
-		<?=gettext("Add new gateway");?>
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add");?>
 	</a>
 </nav>
 <?php

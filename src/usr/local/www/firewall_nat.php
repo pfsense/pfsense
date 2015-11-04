@@ -367,7 +367,7 @@ endforeach;
 		</div>
 	</div>
 
-	<div class="pull-right">
+	<nav class="action-buttons" style="margin-top: 10px;">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>">
 			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
 			<?=gettext('Add')?>
@@ -380,7 +380,7 @@ endforeach;
 			<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
 			<?=gettext("Save")?>
 		</button>
-	</div>
+	</nav>
 </form>
 
 <script>

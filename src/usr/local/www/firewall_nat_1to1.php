@@ -260,23 +260,30 @@ display_top_tabs($tab_array);
 		</div>
 	</div>
 
-	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>"	 />
-		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+	<nav class="action-buttons" style="margin-top: 10px;">
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
+			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>">
+			<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled">
+			<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Save")?>
+		</button>
 	</nav>
 </form>
 
-<div>
-<?php
-
-print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
+<div id="infoblock">
+<?=print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
 			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
-					   'using the WAN IP address will no longer function.'));
-?>
+					   'using the WAN IP address will no longer function.'), info)?>
+
 </div>
 
 <script>

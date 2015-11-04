@@ -651,12 +651,19 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</div>
 <?php endif;?>
 
-	<nav class="action-buttons">
-		<input type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled" />
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
+	<nav class="action-buttons" style="margin-top: 10px;">
 		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success">
-			<?=gettext("add new");?>
+			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Add");?>
 		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>">
+			<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled">
+			<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Save")?>
+		</button>
 	</nav>
 </form>
 <!-- Legend -->
@@ -672,22 +679,22 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</dl>
 </div>
 
-<?php
-if ("FloatingRules" != $if)
-	print_info_box(gettext("Rules are evaluated on a first-match basis (i.e. " .
-		"the action of the first rule to match a packet will be executed). ") . '<br />' .
-		gettext("This means that if you use block rules, you'll have to pay attention " .
-		"to the rule order. Everything that isn't explicitly passed is blocked " .
-		"by default. "));
-else
-	print_info_box(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
-		"the action of the first rule to match a packet will be executed) only " .
-		"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
-		"other rules match. Pay close attention to the rule order and options " .
-		"chosen. If no rule here matches, the per-interface or default rules are used. "));
-
-?>
-
+<div id="infoblock">
+	<?php
+	if ("FloatingRules" != $if)
+		print_info_box(gettext("Rules are evaluated on a first-match basis (i.e. " .
+			"the action of the first rule to match a packet will be executed). ") . '<br />' .
+			gettext("This means that if you use block rules, you'll have to pay attention " .
+			"to the rule order. Everything that isn't explicitly passed is blocked " .
+			"by default. "), info);
+	else
+		print_info_box(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
+			"the action of the first rule to match a packet will be executed) only " .
+			"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
+			"other rules match. Pay close attention to the rule order and options " .
+			"chosen. If no rule here matches, the per-interface or default rules are used. "), info);
+	?>
+</div>
 <script>
 
 events.push(function() {

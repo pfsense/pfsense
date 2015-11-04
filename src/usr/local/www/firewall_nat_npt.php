@@ -175,9 +175,15 @@ endforeach;
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success"><?=gettext("Add rule")?></a>
-	<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
+	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled">
+		<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Save")?>
+	</button>
 </nav>
 
 </form>

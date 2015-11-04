@@ -364,3 +364,12 @@ $('[id^=delete]').click(function(event) {
 	else
 		alert('You may not delete the last row!');
 });
+
+// "More information" handlers
+// Hide information on page load
+$('#infoblock').hide();
+
+// SHow the help on clicking the info icon
+$('#showinfo').click(function() {
+	$('#infoblock').toggle();
+});

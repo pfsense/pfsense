@@ -183,6 +183,7 @@ if (is_array($dhcpdconf)) {
 	list($pconfig['wins1'], $pconfig['wins2']) = $dhcpdconf['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
 	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $dhcpdconf['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $dhcpdconf['ddnsdomainkeyname'];
@@ -540,6 +541,7 @@ if (isset($_POST['submit'])) {
 		$dhcpdconf['domain'] = $_POST['domain'];
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
 		$dhcpdconf['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
 		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
@@ -772,6 +774,14 @@ $section->addInput(new Form_Checkbox(
 	'Only the clients defined below will get DHCP leases from this server.',
 	$pconfig['denyunknown']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'nonak',
+	'Ignore denied clients',
+	'Denied clients will be ignored rather than rejected.',
+	$pconfig['nonak']
+));
+
 
 if (is_numeric($pool) || ($act == "newpool")) {
 	$section->addInput(new Form_Input(

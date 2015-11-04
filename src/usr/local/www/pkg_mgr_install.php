@@ -360,15 +360,15 @@ if ($_GET) {
 		case 'showlog':
 			if (strpos($pkgname, ".")) {
 				update_output_window(gettext("Something is wrong on the request."));
-			} else if (file_exists("/tmp/pkg_mgr_{$pkgname}.log")) {
-				update_output_window(@file_get_contents("/tmp/pkg_mgr_{$pkgname}.log"));
+			} else if (file_exists("{$g['tmp_path']}/pkg_mgr_{$pkgname}.log")) {
+				update_output_window(@file_get_contents("{$g['tmp_path']}/pkg_mgr_{$pkgname}.log"));
 			} else {
 				update_output_window(gettext("Log was not retrievable."));
 			}
 			break;
 		case 'installedinfo':
-			if (file_exists("/tmp/{$pkgname}.info")) {
-				$status = @file_get_contents("/tmp/{$pkgname}.info");
+			if (file_exists("{$g['tmp_path']}/{$pkgname}.info")) {
+				$status = @file_get_contents("{$g['tmp_path']}/{$pkgname}.info");
 				update_status("{$pkgname} " . gettext("installation completed."));
 				update_output_window($status);
 			} else {
@@ -387,29 +387,30 @@ if ($_GET) {
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
+	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
 
 	switch ($_POST['mode']) {
 		case 'delete':
-			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -r ' . $pkgid);
+			mwexec_bg("{$upgrade_script} -r {$pkgid}");
 			$start_polling = true;
 			break;
 
 		case 'reinstallall':
 			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
 				$progbar = false; // We don't show the progress bar for reinstallall. It would be far too confusing
-				mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ALL_PACKAGES -f');
+				mwexec_bg("{$upgrade_script} -i ALL_PACKAGES -f");
 				$start_polling = true;
 			}
 
 			break;
 		case 'reinstallpkg':
-			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid . ' -f');
+			mwexec_bg("{$upgrade_script} -i {$pkgid} -f");
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			mwexec_bg('/usr/local/sbin/pfSense-upgrade -l /tmp/webgui-log.txt -p /tmp/webgui-log.sock -i ' . $pkgid);
+			mwexec_bg("{$upgrade_script} -i {$pkgid}");
 			$start_polling = true;
 			break;
 	}
@@ -488,7 +489,7 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					logfilename: "/tmp/webgui-log",
+					logfilename: "<?=$g['tmp_path'];?>/webgui-log",
 					next_log_line: "0"
 				  }
 		});

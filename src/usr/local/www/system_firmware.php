@@ -331,7 +331,7 @@ if ($sig_warning && !$input_errors) {
 				}
 
 				$section->addInput(new Form_Button(
-					'submit',
+					'Submit',
 					'Upgrade firmware'
 				))->addClass('btn-danger btn-sm')->setHelp('Click the "Upgrade firmware" button above to start the upgrade process');
 			}

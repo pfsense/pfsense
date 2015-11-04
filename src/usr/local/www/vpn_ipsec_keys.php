@@ -188,13 +188,16 @@ if (is_subsystem_dirty('ipsec'))
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a class="btn btn-success" href="vpn_ipsec_keys_edit.php"><?=gettext("add key")?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a class="btn btn-success btn-sm" href="vpn_ipsec_keys_edit.php">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
 <div class="alert alert-info">
-	<strong><?=gettext("Note"); ?>:</strong><br />
-	<?=gettext("PSK for any user can be set by using an identifier of any")?>
+	<strong><?=gettext("Note"); ?>:</strong>
+	<?=gettext(" PSK for any user can be set by using an identifier of any")?>
 </div>
 
 <?php include("foot.inc"); ?>

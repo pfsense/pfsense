@@ -1321,9 +1321,10 @@ else:
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success">
-		<?=gettext("Add server")?>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success btn-sm">
+	<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
 	</a>
 </nav>
 

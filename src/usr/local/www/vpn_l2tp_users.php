@@ -144,8 +144,11 @@ include("head.inc");
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a class="btn btn-success" href="vpn_l2tp_users_edit.php"><?=gettext("add user")?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a class="btn btn-success btn-sm" href="vpn_l2tp_users_edit.php">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
 

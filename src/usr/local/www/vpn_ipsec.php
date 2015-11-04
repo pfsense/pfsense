@@ -561,7 +561,7 @@ display_top_tabs($tab_array);
 	</div>
 </div>
 
-<nav class="action-buttons">
+<nav class="action-buttons" style="margin-top: 10px;">
 <?php
 /*
 	if ($i !== 0): ?>
@@ -569,9 +569,15 @@ display_top_tabs($tab_array);
 <?php endif;
 */
 ?>
-	<a href="vpn_ipsec_phase1.php" class="btn btn-success"><?=gettext("Add new P1")?></a>
+	<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add P1")?>
+	</a>
 <?php if ($i !== 0): ?>
-	<input type="submit" name="del" class="btn btn-danger" value="<?=gettext("Delete selected P1s")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase1 entries?")?>')" />
+	<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase1 entries?")?>')">
+		<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Delete P1s")?>
+	</button>
 <?php endif; ?>
 </nav>
 </form>

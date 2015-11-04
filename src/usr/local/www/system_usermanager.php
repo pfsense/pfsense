@@ -514,18 +514,23 @@ foreach($a_user as $i => $userent):
 		</tbody>
 	</table>
 </div>
-<nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">add new</a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="?act=new" class="btn btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
-<p>
-	<?=gettext("Additional users can be added here. User permissions for accessing " .
+
+<div id="infoblock">
+	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
 	"the webConfigurator can be assigned directly or inherited from group memberships. " .
 	"An icon that appears grey indicates that it is a system defined object. " .
-	"Some system object properties can be modified but they cannot be deleted.")?>
-	<br /><br />
-	<?=gettext("Accounts created here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal.")?>
-</p>
+	"Some system object properties can be modified but they cannot be deleted.") .
+	'<br /><br />' .
+	gettext("Accounts created here are also used for other parts of the system " .
+	"such as OpenVPN, IPsec, and Captive Portal."), info)?>
+</div>
+
 <?php
 	include("foot.inc");
 	exit;
@@ -834,32 +839,7 @@ print $form;
 <script>
 //<![CDATA[
 events.push(function(){
-	//---------- "Standard" show/hide functions ---------------------------------------------------
-	
-	// Hides all elements of the specified class.
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-    function hideCheckbox(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent().parent('div').removeClass('hidden');
-    }
-    
 	// Select every option in the specified multiselect
 	function AllServers(id, selectAll) {
 	   for (i = 0; i < id.length; i++)	   {

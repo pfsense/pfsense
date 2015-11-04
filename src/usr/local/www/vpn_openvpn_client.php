@@ -855,9 +855,10 @@ else:
 	</div>
 </div>
 
-<nav class="action-buttons">
+<nav class="action-buttons" style="margin-top: 10px;">
 	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
-		<?=gettext("Add client")?>
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
 	</a>
 </nav>
 

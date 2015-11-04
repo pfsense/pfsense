@@ -135,7 +135,7 @@ $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveporta
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
-                              
+
 ?>
 <div class="table-responsive">
 	<table class="table table-hover table-striped table-condensed">
@@ -185,12 +185,17 @@ endif;
 ?>
 </div>
 
-<nav class="action-buttons">
-	<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
-<?php
-print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .
-					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'));
+<div id="infoblock">
+<?=print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .
+					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'), info)?>
+</div>
 
+<?php
 include("foot.inc");

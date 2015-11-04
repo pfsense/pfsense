@@ -491,8 +491,11 @@ endforeach;
 <?php
 
 if ($pconfig['enable']) : ?>
-	<nav class="action-buttons">
-		<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>" class="btn btn-success"><?=gettext("Add Voucher")?></a>
+	<nav class="action-buttons" style="margin-top: 10px;">
+		<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>" class="btn btn-success">
+			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Add")?>
+		</a>
 	</nav>
 <?php
 endif;
@@ -633,7 +636,7 @@ print($form);
 <div class="rolledit">
 <?php
 	print_info_box(gettext('Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings. ' .
-							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'));
+							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'), info);
 ?>
 </div>
 

@@ -129,10 +129,6 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
-		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
-		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'),$g['product_name']));
 ?>
 <form action="interfaces_vlan.php" method="post">
 	<input id="act" type="hidden" name="act" value="" />
@@ -166,12 +162,21 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 	}
 ?>
 		</table>
-		<nav class="action-buttons">
-			<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+		<nav class="action-buttons" style="margin-top: 10px;">
+			<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
+				<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+				<?=gettext('Add'); ?>
+			</a>
 		</nav>
 	</div>
 </form>
 
+<div id="infoblock">
+	<?=print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
+		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
+		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
+		'%s handbook for information on supported cards.'),$g['product_name']), info)?>
+</div>
 <script>
 //<![CDATA[
 events.push(function(){

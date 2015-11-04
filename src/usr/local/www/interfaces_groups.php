@@ -106,9 +106,6 @@ $tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
-
-print_info_box(gettext('Interface Groups allow you to setup rules for multiple interfaces without duplicating the rules.<br />' .
-					   'If you remove members from an interface group, the group rules are no longer applicable to that interface.'));
 ?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed">
@@ -155,12 +152,18 @@ print_info_box(gettext('Interface Groups allow you to setup rules for multiple i
 	</table>
 </div>
 
-<nav class="action-buttons">
+<nav class="action-buttons" style="margin-top: 10px;">
 	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
-		<?=gettext("Add Group");?>
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add");?>
 	</a>
 </nav>
 
+<div id="infoblock">
+	<?=print_info_box(gettext('Interface Groups allow you to setup rules for multiple interfaces without duplicating the rules.<br />' .
+					   'If you remove members from an interface group, the group rules are no longer applicable to that interface.'), info)?>
+
+</div>
 <?php
 
 include("fend.inc");

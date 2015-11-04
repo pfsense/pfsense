@@ -158,8 +158,9 @@ display_top_tabs($tab_array);
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a href="interfaces_gif_edit.php" class="btn btn-success">
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="interfaces_gif_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

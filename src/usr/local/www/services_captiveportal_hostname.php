@@ -187,11 +187,19 @@ else :
 <?php
 endif;
 ?>
-	<nav class="action-buttons">
-		<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
-	</nav>
 </div>
+
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
+
+<div id="infoblock">
+	<?=print_info_box($notestr)?>
+</div>
+
 <?php
-print_info_box($notestr);
 
 include("foot.inc");

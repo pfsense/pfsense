@@ -271,12 +271,17 @@ endforeach;
 
 <?=($i > 0) ? gettext(CLOCK . ' Indicates that the schedule is currently active.'):''?>
 
-<nav class="action-buttons">
-	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
-<?php
+<div id="infoblock">
+	<?=print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'), info)?>
+</div>
 
-print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'));
+<?php
 
 include("foot.inc");

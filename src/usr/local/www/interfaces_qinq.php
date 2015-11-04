@@ -133,10 +133,6 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
-							   'QinQ tagging will still work, but the reduced MTU may cause problems.<br />' .
-							   'See the %s handbook for information on supported cards.'), $g['product_name']));
-
 ?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed">
@@ -180,10 +176,18 @@ endforeach;
 	</table>
 </div>
 
-<nav class="action-buttons">
-	<a href="interfaces_qinq_edit.php" class="btn btn-success">
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="interfaces_qinq_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>
+
+<div id="infoblock">
+	<?=print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
+		'QinQ tagging will still work, but the reduced MTU may cause problems.<br />' .
+		'See the %s handbook for information on supported cards.'), $g['product_name']), info)?>
+</div>
+
 <?php
 include("foot.inc");

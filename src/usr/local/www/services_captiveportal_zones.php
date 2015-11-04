@@ -94,18 +94,15 @@ $pgtitle = array(gettext("Captive Portal"), gettext("Zones"));
 $shortcut_section = "captiveportal";
 include("head.inc");
 
+if ($savemsg)
+	print_info_box($savemsg, success);
+
+if (is_subsystem_dirty('captiveportal'))
+	print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 ?>
-
-<html>
-	<body>
-		<form action="services_captiveportal_zones.php" method="post">
-			<?php if ($savemsg) print_info_box($savemsg); ?>
-			<?php if (is_subsystem_dirty('captiveportal')): ?><p>
-			<?php print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
-			<?php endif; ?>
-
-		<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive portal Zones')?></h2></div>
+<form action="services_captiveportal_zones.php" method="post">
+	<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive portal Zones')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
@@ -114,11 +111,11 @@ include("head.inc");
 						<th><?=gettext('Interfaces')?></th>
 						<th><?=gettext('Number of users'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><!-- Action buttons --></th>
+						<th><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
-			
+
 <?php
 	foreach ($a_cp as $cpzone => $cpitem):
 		if (!is_array($cpitem)) {
@@ -148,14 +145,14 @@ include("head.inc");
 				</tbody>
 			</table>
 		</div>
+	</div>
+</form>
 
-		<nav class="action-buttons">
-			<a href="services_captiveportal_zones_edit.php" class="btn btn-success"><?=gettext('Add')?></a>
-		</nav>
-
-		</div>
-		</form>
-	</body>
-</html>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="services_captiveportal_zones_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
+</nav>
 
 <?php include("foot.inc"); ?>

@@ -355,13 +355,17 @@ endforeach;
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success"><?=gettext('Add Virtual IP')?></a>
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
+<div id="infoblock">
+	<?=print_info_box(gettext('The virtual IP addresses defined on this page may be used in ') . '<a href="firewall_nat.php">' . gettext('NAT') . '</a>' . gettext(' mappings.') . '<br />' .
+			   gettext('You can check the status of your CARP Virtual IPs and interfaces ') . '<a href="carp_status.php">' . gettext('here') . '</a>', info)?>
+</div>
+
 <?php
-
-print_info_box(gettext('The virtual IP addresses defined on this page may be used in ') . '<a href="firewall_nat.php">' . gettext('NAT') . '</a>' . gettext(' mappings.') . '<br />' .
-			   gettext('You can check the status of your CARP Virtual IPs and interfaces ') . '<a href="carp_status.php">' . gettext('here') . '</a>');
-
 include("foot.inc");

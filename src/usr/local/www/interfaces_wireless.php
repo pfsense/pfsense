@@ -167,8 +167,10 @@ foreach ($a_clones as $clone) {
 		</tbody>
 	</table>
 
-	<nav class="action-buttons">
-		<a href="interfaces_wireless_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
+	<nav class="action-buttons" style="margin-top: 10px;">
+		<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
+			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<?=gettext("Add")?></a>
 	</nav>
 </div>
 <?php

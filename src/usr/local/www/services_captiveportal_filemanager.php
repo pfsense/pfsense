@@ -260,17 +260,19 @@ if (is_array($a_cp[$cpzone]['element'])):
 endif;
 
 ?>
-	   <nav class="action-buttons">
-		   <button id="btnnotes" class="btn btn-default">Show Notes</button>
+	   <nav class="action-buttons" style="margin-top: 10px;">
 <?php if (!$_GET['act'] == 'add'): ?>
-		   <a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">Add</a>
+			<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">
+		   		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		   		<?=gettext("Add")?>
+		   	</a>
 <?php endif; ?>
 	   </nav>
 <?php
 // The notes displayed on the page are large, the page content comparitively small. A "Note" button
 // is provided so that you only see the notes if you ask for them
 ?>
-<div class="help-block panel panel-default">
+<div id="infoblock" class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">Notes</h2></div>
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
@@ -278,38 +280,12 @@ endif;
 	"You may reference them directly from your portal page HTML code using relative paths. " .
 	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
 	"file manager. Then you can include it in your portal page like this:")?><br /><br />
-	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br /><br />
+	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br />
 	<?=gettext("In addition, you can also upload .php files for execution.	You can pass the filename " .
 	"to your custom page from the initial page by using text similar to:")?><br /><br />
-	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br /><br />
+	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br />
 	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
 	</div>
 </div>
-
-<script>
-//<![CDATA[
-events.push(function(){
-
-	var hidenotes = true;
-
-	// Hides all elements of the specified class.
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	hideClass('help-block', hidenotes);
-
-	$(function () {
-		$('#btnnotes').on('click', function () {
-			hidenotes = !hidenotes;
-			hideClass('notes', hidenotes);
-		});
-	});
-});
-</script>
 <?php
-
 include("foot.inc");

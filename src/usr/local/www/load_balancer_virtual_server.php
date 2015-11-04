@@ -198,13 +198,15 @@ if(!empty($a_vs)) {
 			</table>
 		</div>
 	</div>
-
-	<nav class="action-buttons">
-		<a href="load_balancer_virtual_server_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
-	</nav>
-
 </form>
 
+<nav class="action-buttons" style="margin-top: 10px;">
+	<a href="load_balancer_virtual_server_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
+	
 <?php
 
 include("foot.inc");

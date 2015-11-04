@@ -55,6 +55,19 @@ if ($_GET['act'] == "del") {
 	header("Location: services_rfc2136.php");
 	exit;
 }
+else if ($_GET['act'] == "toggle") {
+	if ($a_rfc2136[$_GET['id']]) {
+		if (isset($a_rfc2136[$_GET['id']]['enable'])) {
+			unset($a_rfc2136[$_GET['id']]['enable']);
+		} else {
+			$a_rfc2136[$_GET['id']]['enable'] = true;
+		}
+		write_config();
+				
+		header("Location: services_rfc2136.php");
+		exit;
+	}
+}
 
 $pgtitle = array(gettext("Services"), gettext("RFC 2136 clients"));
 include("head.inc");
@@ -152,15 +165,23 @@ foreach ($a_rfc2136 as $rfc2136):
 	}
 
 ?>
-		            </td>
-		            <td>
-		                <?=htmlspecialchars($rfc2136['descr'])?>
-		            </td>
-		            <td>
-						<a href="services_rfc2136_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_rfc2136.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
-					</td>
-		        </tr>
+			</td>
+			<td>
+				<?=htmlspecialchars($rfc2136['descr'])?>
+			</td>
+			<td>
+				<a class="fa fa-pencil"		title="<?=gettext('Edit client')?>"	href="services_rfc2136_edit.php?id=<?=$i?>"></a>
+			<?php if (isset($rfc2136['enable'])) {
+			?>	
+				<a  class="fa fa-ban"		title="<?=gettext('Disable client')?>"	href="?act=toggle&amp;id=<?=$i?>"></a>
+			<?php } else {
+			?>
+				<a class="fa fa-check-square-o"	title="<?=gettext('Enable client')?>"	href="?act=toggle&amp;id=<?=$i?>" ></a>
+			<?php }
+			?>						
+				<a class="fa fa-trash"		title="<?=gettext('Delete client')?>"	href="services_rfc2136.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this client?")?>')"></a>
+			</td>
+			</tr>
 <?php
     $i++;
 endforeach; ?>

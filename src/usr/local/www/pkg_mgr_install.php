@@ -227,9 +227,6 @@ if ($_POST) {
 	switch ($_GET['mode']) {
 		case 'reinstallall':
 			$headline = gettext("Reinstall all packages");
-		case 'showlog':
-			break;
-		case 'installedinfo':
 		case 'reinstallpkg':
 			if($_GET['from'] && $_GET['from']) {
 				$headline = gettext("Upgrade package");
@@ -259,7 +256,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
 <!--	<h2><?=$headline?></h2> -->
-<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
+<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = 'installed';
@@ -321,7 +318,7 @@ if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("installation");
 }
 
-if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):
+if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	// What if the user navigates away from this page and then come back via his/her "Back" button?
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
@@ -354,31 +351,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall" || $_GET['mode'] ==
 
 ob_flush();
 
-if ($_GET) {
-	$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
-	switch ($_GET['mode']) {
-		case 'showlog':
-			if (strpos($pkgname, ".")) {
-				update_output_window(gettext("Something is wrong on the request."));
-			} else if (file_exists("{$g['tmp_path']}/pkg_mgr_{$pkgname}.log")) {
-				update_output_window(@file_get_contents("{$g['tmp_path']}/pkg_mgr_{$pkgname}.log"));
-			} else {
-				update_output_window(gettext("Log was not retrievable."));
-			}
-			break;
-		case 'installedinfo':
-			if (file_exists("{$g['tmp_path']}/{$pkgname}.info")) {
-				$status = @file_get_contents("{$g['tmp_path']}/{$pkgname}.info");
-				update_status("{$pkgname} " . gettext("installation completed."));
-				update_output_window($status);
-			} else {
-				update_output_window(sprintf(gettext("Could not find %s."), $pkgname));
-			}
-			break;
-		default:
-			break;
-	}
-} else if ($_POST && ($_POST['completed'] != "true") ) {
+if ($_POST && ($_POST['completed'] != "true") ) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
 	/* All other cases make changes, so mount rw fs */

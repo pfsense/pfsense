@@ -436,20 +436,12 @@ foreach ($a_ca as $i => $ca):
 				</small>
 			</td>
 			<td>
-				<a href="system_camanager.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">
-					<?=gettext("edit")?>
-				</a>
-				<a href="system_camanager.php?act=exp&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-					<?=gettext("export cert")?>
-				</a>
-				<?php if ($ca['prv']): ?>
-					<a href="system_camanager.php?act=expkey&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-						<?=gettext("export private key")?>
-					</a>
-				<?php endif?>
-				<a href="system_camanager.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">
-					<?=gettext("delete")?>
-				</a>
+				<a class="fa fa-pencil"	title="<?=gettext("Edit")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
+				<a class="fa fa-sign-in"	title="<?=gettext("Export")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+			<?php if ($ca['prv']): ?>
+				<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
+			<?php endif?>
+				<a class="fa fa-trash" 	title="<?=gettext("Delete")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
 			</td>
 		</tr>
 <?php endforeach; ?>

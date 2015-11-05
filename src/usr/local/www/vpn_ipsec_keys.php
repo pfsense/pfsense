@@ -190,7 +190,7 @@ if (is_subsystem_dirty('ipsec'))
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a class="btn btn-success btn-sm" href="vpn_ipsec_keys_edit.php">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

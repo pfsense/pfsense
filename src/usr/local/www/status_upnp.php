@@ -150,7 +150,7 @@ foreach ($rdr_entries as $rdr_entry) {
 	<form action="status_upnp.php" method="post">
 		<nav class="action-buttons" style="margin-top: 10px;">
 			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>">
-				<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+				<i class="fa fa-trash icon-embed-btn"></i>
 				<?=gettext("Clear all sessions")?>
 			</button>
 		</nav>

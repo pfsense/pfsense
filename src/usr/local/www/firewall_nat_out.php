@@ -516,15 +516,15 @@ print($form);
 
 	<nav class="action-buttons" style="margin-top: 10px;">
 		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
-			<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>">
-			<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled" name="order-store">
-			<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>

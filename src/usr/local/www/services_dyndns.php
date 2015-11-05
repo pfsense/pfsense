@@ -229,7 +229,7 @@ foreach ($a_dyndns as $dyndns):
 
 <nav class="action-buttons">
 	<a href="services_dyndns_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

@@ -229,7 +229,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Router advertisements"));
+$pgtitle = array(gettext("Services"), gettext("Router Advertisements"));
 
 include("head.inc");
 

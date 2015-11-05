@@ -210,7 +210,7 @@ foreach($a_pool as $pool) {
 	</div>
 </form>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="load_balancer_pool_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>

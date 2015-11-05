@@ -514,7 +514,7 @@ print($form);
 		</div>
 	</div>
 
-	<nav class="action-buttons" style="margin-top: 10px;">
+	<nav class="action-buttons">
 		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext('Add')?>

@@ -152,7 +152,7 @@ display_top_tabs($tab_array);
 	</table>
 </div>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>

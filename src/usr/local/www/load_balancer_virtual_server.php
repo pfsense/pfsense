@@ -200,7 +200,7 @@ if(!empty($a_vs)) {
 	</div>
 </form>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="load_balancer_virtual_server_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>

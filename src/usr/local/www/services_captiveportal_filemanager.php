@@ -260,7 +260,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 endif;
 
 ?>
-	   <nav class="action-buttons" style="margin-top: 10px;">
+	   <nav class="action-buttons">
 <?php if (!$_GET['act'] == 'add'): ?>
 			<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">
 		   		<i class="fa fa-plus icon-embed-btn"></i>

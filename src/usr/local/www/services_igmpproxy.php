@@ -162,7 +162,7 @@ endforeach;
 	</div>
 </form>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<button id="submit" name="submit" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Save")?>">
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>

@@ -316,7 +316,7 @@ foreach ($a_routes as $i => $route):
 	</tr>
 </table>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>

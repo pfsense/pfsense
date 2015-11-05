@@ -651,7 +651,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</div>
 <?php endif;?>
 
-	<nav class="action-buttons" style="margin-top: 10px;">
+	<nav class="action-buttons">
 		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>

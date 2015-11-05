@@ -514,7 +514,7 @@ foreach($a_user as $i => $userent):
 		</tbody>
 	</table>
 </div>
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>

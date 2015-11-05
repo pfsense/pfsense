@@ -145,7 +145,7 @@ if (is_subsystem_dirty('l2tpusers'))
 	</table>
 </div>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a class="btn btn-success btn-sm" href="vpn_l2tp_users_edit.php">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>

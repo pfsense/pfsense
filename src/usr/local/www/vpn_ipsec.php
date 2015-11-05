@@ -561,7 +561,7 @@ display_top_tabs($tab_array);
 	</div>
 </div>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 <?php
 /*
 	if ($i !== 0): ?>

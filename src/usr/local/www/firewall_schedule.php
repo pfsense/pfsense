@@ -271,7 +271,7 @@ endforeach;
 
 <?=($i > 0) ? gettext(CLOCK . ' Indicates that the schedule is currently active.'):''?>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>

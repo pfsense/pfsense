@@ -235,7 +235,7 @@ display_top_tabs($tab_array);
 
 
 <form action="status_wireless.php" method="post">
-	<nav class="action-buttons" style="margin-top: 10px;">
+	<nav class="action-buttons">
 		<input type="hidden" name="if" id="if" value="<?=htmlspecialchars($if)?>" />
 		<button type="submit" class="btn btn-success" name="rescanwifi" id="rescanwifi" value="Rescan">
 			<i class="fa fa-undo icon-embed-btn"></i>

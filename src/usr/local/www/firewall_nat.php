@@ -367,7 +367,7 @@ endforeach;
 		</div>
 	</div>
 
-	<nav class="action-buttons" style="margin-top: 10px;">
+	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext('Add')?>

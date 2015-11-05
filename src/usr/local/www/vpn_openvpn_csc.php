@@ -650,7 +650,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 	</div>
 </div>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>

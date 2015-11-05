@@ -159,6 +159,7 @@ tr.disabled th {
 
 .action-buttons {
 	text-align: right;
+	margin-top: 10px;
 	margin-bottom: 20px;
 }
 

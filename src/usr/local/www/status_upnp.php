@@ -148,7 +148,7 @@ foreach ($rdr_entries as $rdr_entry) {
 		</table>
 	</div>
 	<form action="status_upnp.php" method="post">
-		<nav class="action-buttons" style="margin-top: 10px;">
+		<nav class="action-buttons">
 			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>">
 				<i class="fa fa-trash icon-embed-btn"></i>
 				<?=gettext("Clear all sessions")?>

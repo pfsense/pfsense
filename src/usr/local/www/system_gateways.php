@@ -327,7 +327,7 @@ foreach ($a_gateways as $i => $gateway):
 </tbody>
 </table>
 
-<nav class="action-buttons" style="margin-top: 10px;">
+<nav class="action-buttons">
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>

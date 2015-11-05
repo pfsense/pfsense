@@ -129,10 +129,10 @@ $(function() {
 			if(!msg)
 				var msg = $.trim(this.value).toLowerCase();
 
-			var q = 'Are you Sure you wish to '+ msg +'?';
+			var q = 'Are you sure you wish to '+ msg +'?';
 
 			if ($(this).attr('title') != undefined)
-				q = 'Are you Sure you wish to '+ $(this).attr('title') + '?';
+				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
 
 			if (!confirm(q))
 				e.preventDefault();

@@ -214,7 +214,7 @@ require_once('classes/Form.class.php');
 
 $form = new Form();
 
-$section = new Form_Section('Domain override options');
+$section = new Form_Section('Host override options');
 
 $section->addInput(new Form_Input(
 	'host',

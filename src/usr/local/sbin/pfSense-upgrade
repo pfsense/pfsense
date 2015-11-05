@@ -51,6 +51,7 @@ usage() {
 	echo "	-4          - Force IPv4"
 	echo "	-6          - Force IPv6"
 	echo "	-b          - Platform is booting" >&2
+	echo "	-c          - Check if upgrade is necessary" >&2
 	echo "	-d          - Turn on debug" >&2
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
@@ -408,6 +409,28 @@ pkg_upgrade() {
 	fi
 }
 
+check_upgrade() {
+	# figure out main meta package name
+	if is_pkg_installed ${product}-vmware; then
+		local _meta_pkg="${product}-vmware"
+	elif is_pkg_installed ${product}; then
+		local _meta_pkg="${product}"
+	else
+		_echo "ERROR: It was not possible to identify which ${product} meta package is installed"
+		_exit 1
+	fi
+
+	pkg_update
+
+	if [ "$(compare_pkg_version ${_meta_pkg})" = "<" ]; then
+		_echo "A new ${product} version is available"
+		_exit -1
+	else
+		_echo "Your system is up to date"
+		_exit 0
+	fi
+}
+
 setup_nanobsd_env() {
 	if [ "${platform}" != "nanobsd" ]; then
 		return;
@@ -604,7 +627,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:dfi:hp:l:r:uy opt; do
+while getopts 46b:cdfi:hp:l:r:uy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -623,6 +646,9 @@ while getopts 46b:dfi:hp:l:r:uy opt; do
 		b)
 			booting=1
 			boot_stage="${OPTARG}"
+			;;
+		c)
+			action="check"
 			;;
 		d)
 			stdout=''
@@ -714,6 +740,9 @@ if [ -e "${progress_file}" ]; then
 fi
 
 case "${action}" in
+	check)
+		check_upgrade
+		;;
 	upgrade)
 		pkg_upgrade
 		;;

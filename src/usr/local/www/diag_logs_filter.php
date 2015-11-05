@@ -121,7 +121,6 @@ if ($filterlogentries_submit) {
 
 	$actpass = getGETPOSTsettingvalue('actpass', null);
 	$actblock = getGETPOSTsettingvalue('actblock', null);
-
 	$filterfieldsarray['act'] = str_replace("  ", " ", trim($actpass . " " . $actblock));
 	$filterfieldsarray['act'] = $filterfieldsarray['act'] != "" ? $filterfieldsarray['act'] : 'All';
 	$filterfieldsarray['time'] = getGETPOSTsettingvalue('filterlogentries_time', null);
@@ -238,7 +237,8 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'actpass',
 		'Pass',
 		'Pass',
-		in_arrayi('Pass', $Include_Act)
+		in_arrayi('Pass', $Include_Act),
+		'Pass'
 	));
 
 	$group->add(new Form_Input(
@@ -277,7 +277,8 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'actblock',
 		'Block',
 		'Block',
-		in_arrayi('Block', $Include_Act)
+		in_arrayi('Block', $Include_Act),
+		'Block'
 	));
 
 	$group->add(new Form_Input(

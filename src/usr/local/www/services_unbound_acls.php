@@ -198,7 +198,7 @@ $actionHelp =
 
 
 $closehead = false;
-$pgtitle = "Services: DNS Resolver: Access Lists";
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 $shortcut_section = "resolver";
 include("head.inc");
 
@@ -212,7 +212,7 @@ if (is_subsystem_dirty('unbound'))
 	print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
 $tab_array = array();
-$tab_array[] = array(gettext("General Settings"), false, "/services_unbound.php");
+$tab_array[] = array(gettext("General settings"), false, "/services_unbound.php");
 $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
@@ -241,7 +241,7 @@ if($act=="new" || $act=="edit") {
 
 	$section->addInput(new Form_Input(
 		'aclname',
-		'Access LIst name',
+		'Access List name',
 		'text',
 		$pconfig['aclname']
 	))->setHelp('Provide an Access List name.');

@@ -319,3 +319,10 @@ form .btn + .btn {
 {
 	cursor: pointer;
 }
+
+.icon-embed-btn
+{
+	font-size: 15px;
+	vertical-align: middle;
+	margin-right: 6px;
+}

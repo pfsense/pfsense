@@ -692,7 +692,7 @@ function build_pooltable() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DHCP server"));
+$pgtitle = array(gettext("Services"), gettext("DHCP Server"));
 $shortcut_section = "dhcp";
 
 include("head.inc");
@@ -1047,15 +1047,15 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_IpAddress(
 	'ntp1',
-	'Allow',
+	null,
 	$pconfig['ntp1']
-));
+))->setAttribute('placeholder', 'NTP Server 1');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
-	'Deny',
+	null,
 	$pconfig['ntp2']
-));
+))->setAttribute('placeholder', 'NTP Server 2');
 
 // Advanced TFTP
 $btnadv = new Form_Button(
@@ -1072,7 +1072,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_IpAddress(
 	'tftp',
-	'Allow',
+	null,
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server')->setPattern('[.a-zA-Z0-9_]+');
 

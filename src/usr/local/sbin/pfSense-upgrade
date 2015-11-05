@@ -423,12 +423,25 @@ check_upgrade() {
 	pkg_update
 
 	if [ "$(compare_pkg_version ${_meta_pkg})" = "<" ]; then
-		_echo "A new ${product} version is available"
-		_exit -1
+		local _new_version=$(pkg rquery %v ${_meta_pkg})
+		_echo "${_new_version} version of ${product} is available"
+		_exit 2
 	else
-		_echo "Your system is up to date"
-		_exit 0
+		for _pkg in $(pkg query -e "%n ~ ${product}-*" %n); do
+			# Ignore additional packages
+			if echo "${_pkg}" | grep -q "^${pkg_prefix}"; then
+				continue
+			fi
+			if [ "$(compare_pkg_version ${_pkg})" = "<" ]; then
+				local _new_version=$(pkg rquery %v ${_pkg})
+				_echo "${_new_version} version of ${_pkg} is available"
+				_exit 2
+			fi
+		done
 	fi
+
+	_echo "Your system is up to date"
+	_exit 0
 }
 
 setup_nanobsd_env() {

@@ -570,12 +570,12 @@ display_top_tabs($tab_array);
 */
 ?>
 	<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add P1")?>
 	</a>
 <?php if ($i !== 0): ?>
 	<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase1 entries?")?>')">
-		<i class="fa fa-trash" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete P1s")?>
 	</button>
 <?php endif; ?>

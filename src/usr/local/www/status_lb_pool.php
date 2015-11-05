@@ -250,12 +250,12 @@ if($rowsprinted > 0) {
 ?>
 			<nav class="action-buttons">
 				<button name="Submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
-					<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+					<i class="fa fa-save icon-embed-btn"></i>
 					<?=gettext("Save")?>
 				</button>
 
 				<button name="Reset" type="reset"  class="btn btn-danger btn-sm" value="<?= gettext("Reset"); ?>">
-					<i class="fa fa-undo" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+					<i class="fa fa-undo icon-embed-btn"></i>
 					<?=gettext("Reset")?>
 				</button>
 			</nav>

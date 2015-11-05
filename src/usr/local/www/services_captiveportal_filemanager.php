@@ -263,7 +263,7 @@ endif;
 	   <nav class="action-buttons" style="margin-top: 10px;">
 <?php if (!$_GET['act'] == 'add'): ?>
 			<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">
-		   		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		   		<i class="fa fa-plus icon-embed-btn"></i>
 		   		<?=gettext("Add")?>
 		   	</a>
 <?php endif; ?>

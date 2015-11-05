@@ -394,7 +394,7 @@ endforeach;
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
@@ -446,7 +446,7 @@ endforeach;
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

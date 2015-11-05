@@ -273,7 +273,7 @@ endforeach;
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

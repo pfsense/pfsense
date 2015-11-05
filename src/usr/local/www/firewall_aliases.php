@@ -279,11 +279,11 @@ display_top_tabs($tab_array);
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 	<a href="firewall_aliases_import.php" role="button" class="btn btn-default btn-sm">
-		<i class="fa fa-download" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-download icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>
 </nav>

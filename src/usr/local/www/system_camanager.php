@@ -458,7 +458,7 @@ foreach ($a_ca as $i => $ca):
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

@@ -164,11 +164,11 @@ endforeach;
 
 <nav class="action-buttons" style="margin-top: 10px;">
 	<button id="submit" name="submit" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Save")?>">
-		<i class="fa fa-save" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>
 	<a href="services_igmpproxy_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus" style="font-size:15px; vertical-align: middle; margin-right: 6px;"></i>
+		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

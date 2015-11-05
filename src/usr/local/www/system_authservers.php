@@ -419,7 +419,7 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 					<td>
 					<?php if ($i < (count($a_server) - 1)): ?>
 						<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this server?")?>')"></a>
+						<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
 					<?php endif?>
 					</td>
 				</tr>

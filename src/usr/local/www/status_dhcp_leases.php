@@ -441,15 +441,15 @@ foreach ($leases as $data):
 <? if ($data['type'] == "dynamic"): ?>
 						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <? else: ?>
-						<a class="fa fa-pencil"			title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <? endif; ?>
-						<a class="fa fa-plus-square"		title="<?=gettext("Add WOL mapping")?>"	href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <? if ($data['online'] != "online"):?>
-						<a class="fa fa-power-off"		title="<?=gettext("Send WOL packet")?>"	href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
+						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <? endif; ?>
 
 <? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
-						<a class="fa fa-trash"			title="<?=gettext('Delete lease')?>"		href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this lease?")?>')"></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <? endif?>
 					</td>
 <? endforeach; ?>

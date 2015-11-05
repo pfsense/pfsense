@@ -321,14 +321,20 @@ form .btn + .btn {
 	cursor: pointer;
 }
 
+.fa-trash
+{
+	color: red;
+}
+
 .icon-embed-btn
 {
 	font-size: 15px;
 	vertical-align: middle;
-	margin-right: 6px;
+	color: white;
 }
 
-.fa-trash
+.btn
 {
-	color: red;
+	padding-right: 4px;
+	padding-left: 4px;
 }

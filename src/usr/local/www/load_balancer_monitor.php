@@ -162,7 +162,7 @@ foreach($a_monitor as $monitor) {
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit monitor')?>"	href="load_balancer_monitor_edit.php?id=<?=$idx?>"></a>
 							<a class="fa fa-clone"	title="<?=gettext('Copy monitor')?>"	href="load_balancer_monitor_edit.php?act=dup&id=<?=$idx?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete monitor')?>"	href="load_balancer_monitor.php?act=del&id=<?=$idx?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this monitor?")?>')"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete monitor')?>"	href="load_balancer_monitor.php?act=del&id=<?=$idx?>"></a>
 						</td>
 					</tr>
 <?php

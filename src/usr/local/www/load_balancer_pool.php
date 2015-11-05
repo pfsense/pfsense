@@ -197,7 +197,7 @@ foreach($a_pool as $pool) {
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit pool')?>"	href="load_balancer_pool_edit.php?id=<?=$idx?>"></a>
 							<a class="fa fa-clone"	title="<?=gettext('Copy pool')?>"	href="load_balancer_pool_edit.php?act=dup&id=<?=$idx?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&id=<?=$idx?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this pool?")?>')"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&id=<?=$idx?>"></a>
 						</td>
 					</tr>
 <?php

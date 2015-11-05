@@ -334,8 +334,8 @@ else // NOT 'edit' or 'add'
 							<?=htmlspecialchars($acl['description'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit ACL')?>"	href="services_unbound_acls.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete ACL')?>"	href="services_unbound_acls.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this ACL?")?>')"></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit ACL')?>" href="services_unbound_acls.php?act=edit&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete ACL')?>" href="services_unbound_acls.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php

@@ -506,7 +506,7 @@ foreach($a_user as $i => $userent):
 				<td>
 					<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if($userent['scope'] != "system"): ?>
-					<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this user?")?>')"></a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 				</td>
 			</tr>

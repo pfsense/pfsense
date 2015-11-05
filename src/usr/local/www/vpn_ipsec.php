@@ -396,7 +396,7 @@ display_top_tabs($tab_array);
 <?php if (!isset($ph1ent['mobile'])): ?>
 							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>"></a>
 <?php endif; ?>
-							<a	class="fa fa-trash" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
+							<a	class="fa fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
 							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
 
 						</td>
@@ -509,7 +509,7 @@ display_top_tabs($tab_array);
 									<!--	<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("Move checked P2s here")?></button> -->
 										<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
 										<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
-										<a	class="fa fa-trash" id="Xdelp2_<?=$i?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
+										<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$i?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
 										<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 									</td>
 								</tr>
@@ -530,7 +530,9 @@ display_top_tabs($tab_array);
 							endif;
 */
 ?>
-										<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>"><?=gettext("Add phase2 entry"); ?>
+										<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
+											<i class="fa fa-plus icon-embed-btn"></i>
+											<?=gettext("Add P2")?>
 										</a>
 <?php
 /*
@@ -574,7 +576,7 @@ display_top_tabs($tab_array);
 		<?=gettext("Add P1")?>
 	</a>
 <?php if ($i !== 0): ?>
-	<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase1 entries?")?>')">
+	<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>">
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete P1s")?>
 	</button>
@@ -582,11 +584,11 @@ display_top_tabs($tab_array);
 </nav>
 </form>
 
-<div class="alert alert-info">
-	<strong><?=gettext("Note:")?></strong><br />
-	<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
-	<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.<br />
-	<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.
+<div id="infoblock">
+	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
+	gettext("You can check your IPsec status at ") . '<a href="diag_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
+	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
+	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', info)?>
 </div>
 
 <script type="text/javascript">

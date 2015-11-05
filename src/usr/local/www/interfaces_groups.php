@@ -144,7 +144,7 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this group?")?>')"></a>
+					<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"></a>
 				</td>
 			</tr>
 <?php endforeach; ?>

@@ -123,18 +123,20 @@ $(function() {
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
-		var msg = $.trim(this.textContent);
-		
-		if(!msg)
-			var msg = $.trim(this.value).toLowerCase();
+		if(!($(this).hasClass('no-confirm'))) {
+			var msg = $.trim(this.textContent);
 			
-		var q = 'Are you Sure you wish to '+ msg +'?';
+			if(!msg)
+				var msg = $.trim(this.value).toLowerCase();
 
-		if ($(this).attr('title') != undefined)
-			q = $(this).attr('title')+'?';
+			var q = 'Are you Sure you wish to '+ msg +'?';
 
-		if (!confirm(q))
-			e.preventDefault();
+			if ($(this).attr('title') != undefined)
+				q = 'Are you Sure you wish to '+ $(this).attr('title') + '?';
+
+			if (!confirm(q))
+				e.preventDefault();
+		}
 	});
 
 	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons

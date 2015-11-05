@@ -457,7 +457,7 @@ if($_GET['act'] == "addopt") {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 server"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
 $shortcut_section = "dhcp6";
 
 include("head.inc");
@@ -566,7 +566,7 @@ if(is_ipaddrv6($ifcfgip)) {
 if($is_olsr_enabled) {
 	$section->addInput(new Form_Select(
 	'netmask',
-	'Subnetmask',
+	'Subnet Mask',
 	$pconfig['netmask'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
 	));
@@ -643,8 +643,9 @@ for($i=1;$i<=4; $i++) {
 		'dns' . $i,
 		null,
 		'text',
-		$pconfig['dns' . $i]
-	))->setHelp('DNS ' . $i);
+		$pconfig['dns' . $i],
+		['placeholder' => 'DNS ' . $i]
+	));
 }
 
 $group->setHelp('Leave blank to use the system default DNS servers,this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
@@ -759,7 +760,7 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Input(
 	'ntp2',
-	'NTP Server 1',
+	'NTP Server 2',
 	'text',
 	$pconfig['ntp2'],
 	['placeholder' => 'NTP 2']
@@ -797,7 +798,7 @@ $btnnetboot->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Network booting',
-	$btnnetboot . '&nbsp;' . 'Show Netwok booting'
+	$btnnetboot . '&nbsp;' . 'Show Network booting'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -823,7 +824,7 @@ $btnadnl->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
-	$btnadnl . '&nbsp;' . 'Aditional BOOTP/DHCP Options'
+	$btnadnl . '&nbsp;' . 'Additional BOOTP/DHCP Options'
 ));
 
 $form->add($section);
@@ -1008,10 +1009,10 @@ events.push(function(){
 		hideCheckBox('shownetboot', false);
 	});
 
-	// Make the 'aditional options' button a plain button, not a submit button
+	// Make the 'additional options' button a plain button, not a submit button
 	$("#btnadnl").prop('type','button');
 
-	// Show aditional  controls
+	// Show additional  controls
 	$("#btnadnl").click(function() {
 		hideClass('adnlopt', false);
 		hideInput('btnaddopt', false);

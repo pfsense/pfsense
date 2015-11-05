@@ -119,16 +119,16 @@ $(function() {
 		input.change();
 	});
 	
-	// Add confirm to all btn-danger buttons
+	// Add confirm to all btn-danger buttons and fa-trash icons
 	// Use element title in the confirmation message, or if not available
 	// the element value
-	$('.btn-danger').on('click', function(e){
+	$('.btn-danger, .fa-trash').on('click', function(e){
 		var msg = $.trim(this.textContent);
 		
 		if(!msg)
 			var msg = $.trim(this.value).toLowerCase();
 			
-		var q = 'Are you sure you wish to '+ msg +'?';
+		var q = 'Are you Sure you wish to '+ msg +'?';
 
 		if ($(this).attr('title') != undefined)
 			q = $(this).attr('title')+'?';
@@ -178,6 +178,7 @@ $(function() {
 	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function() {
 		$( $(this).data('target') ).addClass('collapse');
 	});
+
 	$('input[type=checkbox][data-toggle="disable"]:not(:checked)').each(function() {
 		$( $(this).data('target') ).prop('disabled', true);
 	});

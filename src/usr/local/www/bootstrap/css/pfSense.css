@@ -327,3 +327,8 @@ form .btn + .btn {
 	vertical-align: middle;
 	margin-right: 6px;
 }
+
+.fa-trash
+{
+	color: red;
+}

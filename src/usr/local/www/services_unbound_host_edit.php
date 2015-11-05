@@ -205,7 +205,7 @@ if($_GET['act'] == "addopt") {
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit host"));
+$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit Host Override"));
 $shortcut_section = "resolver";
 include("head.inc");
 
@@ -213,7 +213,7 @@ require_once('classes/Form.class.php');
 
 $form = new Form();
 
-$section = new Form_Section('Edit DNS Rersolver Entry');
+$section = new Form_Section('Host override options');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -277,7 +277,7 @@ if( $pconfig['aliases']['item']) {
 			null,
 			'text',
 			$item['domain']
-		))->setHelp($counter == $last ? 'Value':null);
+		))->setHelp($counter == $last ? 'Domain':null);
 
 		$group->add(new Form_Input(
 			'aliasdescription' . $counter,
@@ -301,7 +301,7 @@ if( $pconfig['aliases']['item']) {
 
 $btnaddopt = new Form_Button(
 	'btnaddopt',
-	'Add Option',
+	'Add Host name',
 	'services_unbound_host_edit.php?act=addopt'
 );
 

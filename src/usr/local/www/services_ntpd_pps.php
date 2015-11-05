@@ -161,7 +161,7 @@ $section = new Form_Section('NTP Serial PPS Configuration');
 
 $section->addInput(new Form_StaticText(
 	'Notes',
-	'Devices with a Pulse Per Second output such as radios that receive a time signal from DCF77 (DE), JJY (JP), MSF (GB) or WWVB (US) may be used as a PPS reference for NTP.' .
+	'Devices with a Pulse Per Second output such as radios that receive a time signal from DCF77 (DE), JJY (JP), MSF (GB) or WWVB (US) may be used as a PPS reference for NTP. ' .
 	'A serial GPS may also be used, but the serial GPS driver would usually be the better option. ' . 
 	'A PPS signal only provides a reference to the change of a second, so at least one other source to number the seconds is required.' . '<br /><br />' .
 	'At least 3 additional time sources should be configured under ' . 

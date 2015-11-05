@@ -218,7 +218,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ipaddrv6',
-	'Server 3',
+	'IPv6 address',
 	'text',
 	$pconfig['ipaddrv6']
 ))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.' . '<br />' .
@@ -243,14 +243,14 @@ if($netboot_enabled) {
 		'filename',
 		'Netboot filename',
 		'text',
-		$pconfig['remoteserver3']
+		$pconfig['filename']
 	))->setHelp('Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.');
 
 	$section->addInput(new Form_Input(
 		'rootpath',
 		'Root path',
 		'text',
-		$pconfig['remoteserver3']
+		$pconfig['rootpath']
 	))->setHelp('Enter the root-path string. This overrides setting on main page.');
 }
 

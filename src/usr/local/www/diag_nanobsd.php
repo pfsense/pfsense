@@ -168,7 +168,9 @@ $section->addInput(new Form_StaticText(
 if (is_writable("/")) {
 	$refcount = refcount_read(1000);
 	/* refcount_read returns -1 when shared memory section does not exist */
-	if ($refcount == 1 || $refcount == -1) {
+	/* refcount can be zero here when the user has set nanobsd_force_rw */
+	/* refcount 1 is normal, so only display the count for abnormal values */
+	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
 		$refdisplay = " (Reference count " . $refcount . ")";

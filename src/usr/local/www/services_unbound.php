@@ -5,7 +5,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2014 Warren Baker (warren@pfsense.org)
  *
  *	Redistribution and use in source and binary forms, with or without modification,

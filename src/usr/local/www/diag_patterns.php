@@ -8,7 +8,7 @@
  *	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
  *	Created by André Ribeiro and Hélder Pereira
  *
- *  Some or all of this file is based on the m0nowall project which is
+ *  Some or all of this file is based on the m0n0wall project which is
  *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *  Redistribution and use in source and binary forms, with or without modification, 

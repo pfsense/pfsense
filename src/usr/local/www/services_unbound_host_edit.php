@@ -6,7 +6,7 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2014 Warren Baker (warren@decoy.co.za)
- *  Copyright (c) 2 003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
+ *  Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
  *
  *  Some or all of this file is based on the m0n0wall project which is
  *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)

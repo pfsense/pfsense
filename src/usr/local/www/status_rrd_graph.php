@@ -5,7 +5,7 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c) 2 007 Seth Mos <seth.mos@dds.nl>
+ *  Copyright (c)  2007 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

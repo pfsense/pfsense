@@ -5,9 +5,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>
- *	originally part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *  Some or all of this file is based on the m0nowall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

@@ -4,9 +4,10 @@
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
  *	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
- *	Part of the pfSense project (https://www.pfsense.org)
+ *
+ *  Some or all of this file is based on the m0nowall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *  Redistribution and use in source and binary forms, with or without modification, 
  *  are permitted provided that the following conditions are met: 

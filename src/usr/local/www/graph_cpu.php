@@ -10,6 +10,9 @@
  *  Copyright (c)  2004-2006 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
  *							 and Jonathan Watt <jwatt@jwatt.org>
  *
+ *  Some or all of this file is based on the m0nowall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
  *  Redistribution and use in source and binary forms, with or without modification, 
  *  are permitted provided that the following conditions are met: 
  *

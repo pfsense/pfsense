@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2005-2009 Scott Ullrich
  *	Copyright (c) 2005 Colin Smith
  *
  *  Redistribution and use in source and binary forms, with or without modification, 

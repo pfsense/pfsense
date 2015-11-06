@@ -6,9 +6,11 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
+
  *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *  Some or all of this file is based on the m0nowall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

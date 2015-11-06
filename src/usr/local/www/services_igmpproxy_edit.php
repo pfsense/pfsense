@@ -93,27 +93,6 @@ if (isset($id) && $a_igmpproxy[$id]) {
 	$pconfig['descr'] = html_entity_decode($a_igmpproxy[$id]['descr']);
 }
 
-// Add a row to the network table
-if($_GET['act'] && $_GET['act'] == 'addrow')
-	$pconfig['address'] .= '/32';
-
-// Remove a row from the network table
-if($_GET['act'] && $_GET['act'] == 'delrow') {
-	$row = $_GET['row'];
-
-	$addresses = explode(" ", $pconfig['address']);
-
-	$pconfig['address'] = "";
-
-	$idx = 0;
-	foreach($addresses as $address) {
-		if($idx != $row)
-			$pconfig['address'] .= ($idx > 0 ? ' ':null) . $address;
-
-		$idx++;
-	}
-}
-
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -123,6 +102,7 @@ if ($_POST) {
 			if (isset($id) && $id == $pid) {
 				continue;
 			}
+
 			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface']) {
 				$input_errors[] = gettext("Only one 'upstream' interface can be configured.");
 			}
@@ -135,16 +115,19 @@ if ($_POST) {
 	$igmpentry['type'] = $_POST['type'];
 	$address = "";
 	$isfirst = 0;
+
 	/* item is a normal igmpentry type */
-	for ($x = 0; $x < 4999; $x++) {
-		if ($_POST["address{$x}"] <> "") {
-			if ($isfirst > 0) {
-				$address .= " ";
-			}
-			$address .= $_POST["address{$x}"];
-			$address .= "/" . $_POST["address_subnet{$x}"];
-			$isfirst++;
+	$x = 0;
+	while($_POST["address{$x}"]) {
+
+		if ($isfirst > 0) {
+			$address .= " ";
 		}
+
+		$address .= $_POST["address{$x}"];
+		$address .= "/" . $_POST["address_subnet{$x}"];
+		$isfirst++;
+		$x++;
 	}
 
 	if (!$input_errors) {
@@ -177,7 +160,7 @@ if ($input_errors)
 
 require_once('classes/Form.class.php');
 
-// These two inputs appear inthe original file. Don't know what they are for
+// These two inputs appear in the original file. Don't know what they are for
 // but they are here just in case.
 
 $h1 = new Form_Input(
@@ -248,65 +231,51 @@ if (isset($id) && $a_igmpproxy[$id]){
 $counter = 0;
 $address = $pconfig['address'];
 
-if ($address != "") {
-	$item = explode(" ", $address);
-	$rows = count($item) -1;
-	foreach($item as $ww) {
-		$address = $item[$counter];
-		$address_subnet = "";
-		$item2 = explode("/", $address);
-		foreach($item2 as $current) {
-			if($item2[1] != "") {
-				$address = $item2[0];
-				$address_subnet = $item2[1];
-			}
+//if ($address == "") {
+//	$address = "/";
+//}
+
+$item = explode(" ", $address);
+$rows = count($item) -1;
+
+foreach($item as $ww) {
+	$address = $item[$counter];
+	$address_subnet = "";
+	$item2 = explode("/", $address);
+
+	foreach($item2 as $current) {
+		if($item2[1] != "") {
+			$address = $item2[0];
+			$address_subnet = $item2[1];
 		}
-		$item4 = $item3[$counter];
-		$tracker = $counter;
+	}
 
-		$group = new Form_group($tracker == 0? 'Network':null);
+	$item4 = $item3[$counter];
+	$tracker = $counter;
 
-		$group->add(new Form_Input(
-			'address' . $tracker,
-			null,
-			'text',
-			$address,
-			['placeholder' => 'Address']
-		))->sethelp($tracker == $rows ? 'Network':null);
+	$group = new Form_group($tracker == 0? 'Networks':null);
+	$group->addClass("repeatable");
 
-		$group->add(new Form_Select(
-			'ifname',
-			'Interface',
-			$address_subnet,
-			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->sethelp($tracker == $rows ? 'CIDR':null);;
+	$group->add(new Form_IpAddress(
+		'address' . $tracker,
+		null,
+		$address,
+		['placeholder' => 'Address']
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
 
-		$btndel = new Form_Button (
-			'removerow',
-			'Remove',
-			'services_igmpproxy_edit.php?act=delrow&row=' . $tracker
-			);
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
 
-		$btndel->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-		$group->add($btndel);
+	$counter++;
+	$section->add($group);
+} // end foreach
 
-			$counter++;
-			$section->add($group);
-	} // end foreach
-} // end if
-
-$btnadd = new Form_Button (
-		'addrow',
-		'Add Network',
-		'services_igmpproxy_edit.php?act=addrow'
-		);
-
-$btnadd->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$section->addInput(new Form_StaticText(
-	null,
-	$btnadd . ' (Save after each Add or Delete)'
-));
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add network'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 

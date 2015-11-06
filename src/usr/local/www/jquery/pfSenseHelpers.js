@@ -371,8 +371,8 @@ $('[id^=delete]').click(function(event) {
 if($('#infoblock').length != 0) {
 	$('#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
 
-	// and remove the 'X' button from the text box
-	$('.close').remove();
+	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
+	$('.close :last').remove();
 }
 
 // Hide information on page load

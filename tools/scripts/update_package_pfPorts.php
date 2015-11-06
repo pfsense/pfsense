@@ -391,7 +391,9 @@ function create_port($pkg) {
 		$conflicts = $product_name . '-base-nanobsd-[0-9]*';
 	}
 	if (isset($pkg['conflicts']) && !empty($pkg['conflicts'])) {
-		$conflicts = trim($conflicts . ' ' . $port_name_prefix . $pkg['conflicts'] . '-[0-9]*');
+		foreach (preg_split('/[\s\t]+/', $pkg['conflicts']) as $conflict) {
+			$conflicts = trim($conflicts . ' ' . $port_name_prefix . $conflict . '-[0-9]*');
+		}
 	}
 	if (!empty($conflicts)) {
 		$makefile[] = "";

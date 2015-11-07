@@ -191,7 +191,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source address',
-	$pconfig['source'],
+	$sourceip,
 	create_sourceaddresslist()
 ))->setHelp('Select source address for the ping');
 

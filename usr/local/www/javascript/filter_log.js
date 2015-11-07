@@ -166,3 +166,12 @@ function toggleListDescriptions(){
 		}
 	}
 }
+
+function toggle_Filter_Form(style){
+	if (style.display === "none") {
+		style.display = "";
+	}
+	else {
+		style.display = "none";
+	}
+}

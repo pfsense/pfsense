@@ -84,7 +84,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit allowed IP address"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit allowed IP address"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];

@@ -111,7 +111,7 @@ if (empty($a_cp[$cpzone])) {
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -430,9 +430,9 @@ if ($savemsg)
 	print_info_box($savemsg. 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Captive Portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
@@ -613,7 +613,7 @@ $section->addInput(new Form_Input(
 	'vouchersyncpass',
 	'Voucher sync password',
 	'password',
-	$pconfig['vouchersyncuserpass']
+	$pconfig['vouchersyncpass']
 ))->setHelp('This is the password of the master voucher nodes webConfigurator.');
 
 $section->addInput(new Form_Input(

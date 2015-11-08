@@ -526,6 +526,8 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+display_top_tabs($tab_array);
+
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");

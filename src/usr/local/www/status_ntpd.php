@@ -56,7 +56,7 @@
  *
  *	====================================================================
  *
- */*/
+ */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ntpd	/usr/local/sbin/ntpq
 	pfSense_MODULE: ntpd

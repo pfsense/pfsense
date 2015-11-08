@@ -70,6 +70,8 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once('rrd.inc');
+require_once("shaper.inc");
 
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -569,6 +571,7 @@ if (isset($_POST['submit'])) {
 		unset($dhcpdconf['statsgraph']);
 		if ($_POST['statsgraph']) {
 			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
+			enable_rrd_graphing();
 		}
 
 		// Handle the custom options rowhelper

@@ -259,7 +259,7 @@ foreach ($iflist as $ifent => $ifname) {
 		$active = false;
 	}
 
-	$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
+	$tab_array[] = array($ifname, $active, "services_router_advertisements.php?if={$ifent}");
 	$tabscounter++;
 }
 

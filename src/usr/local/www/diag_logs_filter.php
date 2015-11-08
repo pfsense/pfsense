@@ -40,7 +40,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -310,8 +310,8 @@ else { // Simple log filter form
 	$section = new Form_Section('Log Filter');
 
 	$section->addInput(new Form_Select(
-		'filterdescriptions',
-		'Where to show rule descriptions',
+		'interface',
+		'Interface',
 		$interfacefilter,
 		build_if_list()
 	));

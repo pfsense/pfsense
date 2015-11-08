@@ -2,8 +2,8 @@
 /* $Id$ */
 /*
 	diag_confbak.php
-
- /* ====================================================================
+*/
+/* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2005 Colin Smith
  *
@@ -85,7 +85,7 @@ if (isset($_POST['backupcount'])) {
 
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	
+
 	if ($_GET['newver'] != "") {
 		if (config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
 			$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['newver']), htmlspecialchars($confvers[$_GET['newver']]['description']));
@@ -171,13 +171,13 @@ if ($diff) {
 			<tr>
 				<td valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
-<?php 
+<?php
 	}
 ?>
 		</table>
 	</div>
 </div>
-<?php 
+<?php
 }
 
 $tab_array = array();
@@ -216,13 +216,13 @@ if (is_array($confvers)) {
 	print_info_box(gettext('To view the differences between an older configuration and a newer configuration, ' .
 						   'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
 						   'then press the "Diff" button.'));
-}						   
-?>					
-					
+}
+?>
+
 <form action="diag_confbak.php" method="get">
 	<div class="table-resposive">
 		<table class="table table-striped table-hover table-condensed">
-<?php 
+<?php
 if (is_array($confvers)):
 ?>
 			<thead>
@@ -269,9 +269,9 @@ if (is_array($confvers)):
 		if ($c < (count($confvers) - 1)) {
 ?>
 								<input type="radio" name="newtime" value="<?=$version['time']?>" />
-<?php 
+<?php
 		}
-		$c++; 
+		$c++;
 ?>
 					</td>
 					<td><?= $date ?></td>
@@ -280,18 +280,18 @@ if (is_array($confvers)):
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
 						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')"></a>
-						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>						
+						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
 						<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="diag_confbak.php?rmver=<?=$version['time']?>"></a>
 					</td>
 				</tr>
-<?php 
+<?php
 	endforeach;
 ?>
 				<tr>
 					<td colspan="2"><input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" /></td>
 					<td colspan="5"></td>
 				</tr>
-<?php 
+<?php
 else:
 	print_info_box(gettext("No backups found."), 'danger');
 endif;

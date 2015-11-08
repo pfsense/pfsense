@@ -39,7 +39,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -606,7 +606,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
 include("head.inc");
 
 if ($input_errors)
@@ -778,7 +778,7 @@ print($form);
 events.push(function(){
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
-	
+
 	function hideSections(hide) {
 		hidePasswords();
 	}

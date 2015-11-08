@@ -4,14 +4,14 @@
 	diag_ipsec.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  portions Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
  *
  *  Parts of this code originally based on vpn_ipsec_sad.php from m0n0wall,
  *  Copyright (C) 2003-2004 Manuel Kasper (BSD 2 clause)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -19,12 +19,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -40,7 +40,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -154,7 +154,7 @@ $ipsecconnected = array();
 if (is_array($status)) {
 	foreach ($status as $ikeid => $ikesa) {
 	$con_id = substr($ikeid, 3);
-		
+
 		if ($ikesa['version'] == 1) {
 			$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 			$ipsecconnected[$ph1idx] = $ph1idx;
@@ -199,7 +199,7 @@ if (is_array($status)) {
 			print(" NAT-T");
 		}
 ?>
-					</td>	
+					</td>
 					<td>
 <?php
 		$identity = "";
@@ -337,7 +337,7 @@ if (is_array($status)) {
 				if (isset($childsa['spi-in'])) {
 					print(gettext("Local: ") . htmlspecialchars($childsa['spi-in']));
 				}
-					
+
 				if (isset($childsa['spi-out'])) {
 					print('<br/>' . gettext('Remote: ') . htmlspecialchars($childsa['spi-out']));
 				}
@@ -366,7 +366,7 @@ if (is_array($status)) {
 <?php
 				print(htmlspecialchars($childsa['encr-alg']) . '<br/>');
 				print(htmlspecialchars($childsa['integ-alg']) . '<br/>');
-				
+
 				if (!empty($childsa['prf-alg'])) {
 					print(htmlspecialchars($childsa['prf-alg']) . '<br/>');
 				}
@@ -376,7 +376,7 @@ if (is_array($status)) {
 				if (!empty($childsa['esn'])) {
 					print(htmlspecialchars($childsa['esn']) . '<br/>');
 				}
-				
+
 				print(gettext("IPComp: "));
 				if (!empty($childsa['cpi-in']) || !empty($childsa['cpi-out'])) {
 					print(htmlspecialchars($childsa['cpi-in']) . " " . htmlspecialchars($childsa['cpi-out']));
@@ -419,9 +419,9 @@ foreach ($a_phase1 as $ph1ent) {
 	if (isset($ph1ent['disabled'])) {
 		continue;
 	}
-		
+
 	$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
-	
+
 	if ($ipsecconnected[$ph1ent['ikeid']]) {
 		continue;
 	}
@@ -444,7 +444,7 @@ foreach ($a_phase1 as $ph1ent) {
 					<td>
 <?php
 	$ph1src = ipsec_get_phase1_src($ph1ent);
-	
+
 	if (empty($ph1src))
 		print(gettext("Unknown"));
 	else

@@ -98,11 +98,11 @@ if ($savemsg)
 	print_info_box($savemsg, success);
 
 if (is_subsystem_dirty('captiveportal'))
-	print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The Captive Portal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 ?>
 <form action="services_captiveportal_zones.php" method="post">
 	<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive portal Zones')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive Portal Zones')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>

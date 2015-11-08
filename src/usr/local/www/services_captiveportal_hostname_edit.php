@@ -1,4 +1,7 @@
 <?php
+/*
+	services_captiveportal_hostname_edit.php
+*/
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
@@ -78,7 +81,7 @@ require("captiveportal.inc");
 
 global $cpzone, $cpzoneid;
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit allowed Hostname"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit allowed Hostname"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
@@ -213,7 +216,7 @@ $section->addInput(new Form_Select(
 	'Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
-))->setHelp('Use "From" to always allow an Hostname through the captive portal (without authentication). ' .
+))->setHelp('Use "From" to always allow a Hostname through the captive portal (without authentication). ' .
 			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname.');
 
 $section->addInput(new Form_Input(

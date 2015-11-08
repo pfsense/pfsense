@@ -171,6 +171,15 @@ if ($_POST['option']) {
 					continue 2;
 				}
 			}
+		case "dhcpd":
+			foreach ($databases as $database) {
+				if (preg_match("/[-]dhcpd\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the dhcpd graph */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
 		case "captiveportal":
 			$curoption = "allgraphs";
 			break;

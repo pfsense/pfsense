@@ -52,19 +52,6 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 
 /* stuff the leases file in a proper format into a array by line */
 exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
-$leases_count = count($leases_content);
-exec("/usr/sbin/arp -an", $rawdata);
-$arpdata_ip = array();
-$arpdata_mac = array();
-foreach ($rawdata as $line) {
-	$elements = explode(' ', $line);
-	if ($elements[3] != "(incomplete)") {
-		$arpent = array();
-		$arpdata_ip[] = trim(str_replace(array('(', ')'), '', $elements[1]));
-		$arpdata_mac[] = strtolower(trim($elements[3]));
-	}
-}
-unset($rawdata);
 $pools = array();
 $leases = array();
 $i = 0;
@@ -155,27 +142,6 @@ foreach ($leases_content as $lease) {
 				/* skip the rewind binding statement */
 				$f = $f+3;
 				break;
-			case "hardware":
-				$leases[$l]['mac'] = $data[$f+2];
-				/* check if it's online and the lease is active */
-				if (in_array($leases[$l]['ip'], $arpdata_ip)) {
-					$leases[$l]['online'] = 'online';
-				} else {
-					$leases[$l]['online'] = 'offline';
-				}
-				$f = $f+2;
-				break;
-			case "client-hostname":
-				if ($data[$f+1] <> "") {
-					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
-				} else {
-					$hostname = gethostbyaddr($leases[$l]['ip']);
-					if ($hostname <> "") {
-						$leases[$l]['hostname'] = $hostname;
-					}
-				}
-				$f = $f+1;
-				break;
 			case "uid":
 				$f = $f+1;
 				break;
@@ -208,7 +174,6 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 			$slease = array();
 			$slease['ip'] = $static['ipaddr'];
 			$slease['act'] = "static";
-			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
 			$slease['staticmap_array_index'] = $staticmap_array_index;
 			$leases[] = $slease;
 			$staticmap_array_index++;

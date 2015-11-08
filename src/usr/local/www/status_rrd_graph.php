@@ -71,7 +71,6 @@ require("shaper.inc");
 require_once("rrd.inc");
 
 unset($input_errors);
-global $dhcpd;
 /* if the rrd graphs are not enabled redirect to settings page */
 if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");

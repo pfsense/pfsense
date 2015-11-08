@@ -703,9 +703,10 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+	<![CDATA[
 	if($_POST['adminpassword'] != "") {
 		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-			$admin_user =&amp; getUserEntryByUID(0);
+			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
 			write_config();
@@ -714,6 +715,7 @@
 			die;
 		}
 	}
+	]]>
 	</stepsubmitphpaction>
 </step>
 <step>

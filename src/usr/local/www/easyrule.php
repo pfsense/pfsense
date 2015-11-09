@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2009-2010 Jim Pingle (jpingle@gmail.com)
  *	Originally Sponsored By Anathematic @ pfSense Forums
  *
  *  Redistribution and use in source and binary forms, with or without modification,

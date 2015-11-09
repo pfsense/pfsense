@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	pfSense_MODULE: authgui
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
  *	Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>.
  *	Copyright (c)  2003-2006 Manuel Kasper <mk@neon1.net>.

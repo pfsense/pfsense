@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2010 Ermal Luçi
- *  Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
- *  Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ *	Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>
+ *	Copyright (C)  2003-2006 Manuel Kasper <mk@neon1.net>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

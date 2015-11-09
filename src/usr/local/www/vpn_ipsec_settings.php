@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -202,7 +201,7 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with 
+		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with
 		// noshuntlaninterfaces which is the reverse true/false logic setting - #4655
 		if ($_POST['autoexcludelanaddress'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {

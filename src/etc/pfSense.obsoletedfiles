@@ -17,8 +17,6 @@
 /etc/inc/lb.inc
 /etc/inc/m0n0
 /etc/inc/regdomain.inc
-/etc/inc/simplepie/LICENSE.txt
-/etc/inc/simplepie/simplepie.inc
 /etc/inc/sysctl.inc
 /etc/inc/zeromq.inc
 /etc/isdn

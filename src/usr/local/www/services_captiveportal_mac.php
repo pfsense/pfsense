@@ -4,10 +4,10 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
+ *	Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -84,13 +84,14 @@ if (isset($_POST['zone'])) {
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
+}
 
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 $actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;Pass',
@@ -193,9 +194,9 @@ if (is_subsystem_dirty('passthrumac'))
 	print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Captive Portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), true, "services_captiveportal_mac.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
@@ -254,7 +255,7 @@ endif;
 		<?=gettext("Add")?>
 	</a>
 </nav>
-	
+
 <div id="infoblock">
 	<?=print_info_box(gettext('Adding MAC addresses as "pass" MACs allows them access through the captive portal automatically without being taken to the portal page.'), info)?>
 </div>

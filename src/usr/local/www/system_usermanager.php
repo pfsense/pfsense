@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager.php
 */
@@ -8,8 +7,8 @@
  *	Copyright (c)  2008 Shrew Soft Inc.
  *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -670,7 +669,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not member of');
+	))->setHelp('Not member of')->setAttribute('style', 'height:400px;');
 
 	$group->add(new Form_Select(
 		'groups',
@@ -678,7 +677,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Member of');
+	))->setHelp('Member of')->setAttribute('style', 'height:400px;');
 
 	$section->add($group);
 

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <pfsensewizard>
 <copyright>
-/* $Id$ */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -703,9 +701,10 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+	<![CDATA[
 	if($_POST['adminpassword'] != "") {
 		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-			$admin_user =&amp; getUserEntryByUID(0);
+			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
 			write_config();
@@ -714,6 +713,7 @@
 			die;
 		}
 	}
+	]]>
 	</stepsubmitphpaction>
 </step>
 <step>

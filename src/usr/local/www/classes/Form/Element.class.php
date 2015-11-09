@@ -61,7 +61,7 @@ class Form_Element
 		$this->_attributes[ $key ] = $value;
 		return $this;
 	}
-	
+
 	public function __toString()
 	{
 		$attributes = '';
@@ -79,12 +79,27 @@ class Form_Element
 			if ($value === null)
 				continue;
 
+			if ($key == "icon")
+				continue;
+
 			$attributes .= ' '. $key;
 			if ($value !== true)
 				$attributes .= '="' . htmlspecialchars($value) . '"';
 		}
 
-		return '<'. $this->_tagName . $attributes . ($this->_tagSelfClosing ? '/' : '') .'>';
+		if (isset($this->_attributes['icon'])) {
+			$rv = '<'. $this->_tagName . $attributes .'>' .
+				'<i class="fa ' . $this->_attributes['icon'] . ' icon-embed-btn' . '">' . ' </i>' .
+				htmlspecialchars($this->_attributes['value']);
+
+			if ($this->_tagName != 'a') {
+				$rv .= '</' . $this->_tagName . '>';
+			}
+
+			return $rv;
+		} else {
+			return '<'. $this->_tagName . $attributes . ($this->_tagSelfClosing ? '/' : '') .'>';
+		}
 	}
 
 	protected function _setParent(Form_Element $parent)

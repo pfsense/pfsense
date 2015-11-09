@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_logs_filter.php
 */
@@ -40,7 +39,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -310,8 +309,8 @@ else { // Simple log filter form
 	$section = new Form_Section('Log Filter');
 
 	$section->addInput(new Form_Select(
-		'filterdescriptions',
-		'Where to show rule descriptions',
+		'interface',
+		'Interface',
 		$interfacefilter,
 		build_if_list()
 	));
@@ -366,7 +365,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 	</div>
 	<div class="panel-body">
 	   <div class="table-responsive">
-		<table class="table table striped table-hover table-compact">
+		<table class="table table-striped table-hover table-compact">
 			<tr>
 				<th><?=gettext("Act")?></th>
 				<th><?=gettext("Time")?></th>

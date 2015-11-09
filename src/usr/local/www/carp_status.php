@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	carp_status.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -156,7 +154,7 @@ $pgtitle = array(gettext("Status"), gettext("CARP"));
 $shortcut_section = "carp";
 
 include("head.inc");
-if ($savemsg) 
+if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $carpcount = 0;
@@ -178,7 +176,7 @@ if (is_array($config['virtualip']['vip'])) {
 <?php
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
-				   '<a href="system_hasync.php" class="alert-link">' . 
+				   '<a href="system_hasync.php" class="alert-link">' .
 				   gettext("You can configure high availability sync settings here") .
 				   '</a>');
 } else
@@ -190,8 +188,8 @@ if ($carpcount == 0) {
 		$carp_enabled = true;
 	else
 		$carp_enabled = false;
-	
-	// SAdly this needs to be here so that it is inside the form
+
+	// Sadly this needs to be here so that it is inside the form
 	if ($carp_detected_problems > 0) {
 		print_info_box(
 			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
@@ -210,11 +208,11 @@ if ($carpcount == 0) {
 ?>
 	<input type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
 	<input type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
-	
+
 	<br /><br />
-	
+
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Servers')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('CARP Interfaces')?></h2></div>
 			<div class="panel-body table-responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -230,11 +228,11 @@ if ($carpcount == 0) {
 		if ($carp['mode'] != "carp") {
 			continue;
 		}
-			
+
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
-		
+
 		if($carp_enabled == false) {
 			$icon = 'remove-sign';
 			$status = "DISABLED";

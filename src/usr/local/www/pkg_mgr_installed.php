@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -66,13 +65,6 @@
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
-
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
-	$timezone = "Etc/UTC";
-}
-
-date_default_timezone_set($timezone);
 
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock')) {

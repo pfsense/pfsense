@@ -302,10 +302,16 @@ form .btn + .btn {
 }
 
 /** create icon colors */
+.icon-black
+{
+	color: #000000;
+}
+
 .icon-danger
 {
 	color: #D9534F;
 }
+
 .icon-success
 {
 	color: #5CB85C;

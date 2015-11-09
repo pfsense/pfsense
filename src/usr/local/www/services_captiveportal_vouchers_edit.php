@@ -4,7 +4,7 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c) 2 007 Marcel Wiget <mwiget@mac.com>
+ *	Copyright (c)  2007 Marcel Wiget <mwiget@mac.com>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -71,7 +71,7 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit Voucher Rolls"));
 $shortcut_section = "captiveportal-vouchers";
 
 $cpzone = $_GET['zone'];

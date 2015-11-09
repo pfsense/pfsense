@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_dhcpv6.php
 */
@@ -7,8 +6,8 @@
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause) 
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -526,10 +525,12 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+display_top_tabs($tab_array);
+
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
-display_top_tabs($tab_array);
+display_top_tabs($tab_array, false, 'nav nav-tabs' );
 
 require_once('classes/Form.class.php');
 

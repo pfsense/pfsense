@@ -5,8 +5,8 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -65,7 +65,7 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-define('CLOCK', '&#x1f550;');
+define('CLOCK', '<i class="fa fa-clock-o icon-black"></i>');
 
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
@@ -138,7 +138,7 @@ foreach ($a_schedules as $schedule):
 ?>
 				<tr>
 					<td>
-						<?=($schedstatus) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
+						<?=(true) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
 					</td>
 					<td>
 						 <?=htmlspecialchars($schedule['name'])?>
@@ -269,7 +269,7 @@ endforeach;
 	</div>
 </div>
 
-<?=($i > 0) ? gettext(CLOCK . ' Indicates that the schedule is currently active.'):''?>
+<?=($i > 0) ? CLOCK . gettext(' Indicates that the schedule is currently active.'):''?>
 
 <nav class="action-buttons">
 	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">

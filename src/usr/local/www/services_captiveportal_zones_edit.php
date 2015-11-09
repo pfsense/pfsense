@@ -69,7 +69,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit Zones"));
 $shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal'])) {

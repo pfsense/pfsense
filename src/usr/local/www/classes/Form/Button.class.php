@@ -36,7 +36,7 @@ class Form_Button extends Form_Input
 		'type' => 'submit',
 	);
 
-	public function __construct($name, $title, $link = null)
+	public function __construct($name, $title, $link = null, $icon = null)
 	{
 		// If we have a link; we're actually an <a class='btn'>
 		if (isset($link))
@@ -45,6 +45,16 @@ class Form_Button extends Form_Input
 			$this->_tagName = 'a';
 			$this->addClass('btn-default');
 			unset($this->_attributes['type']);
+			if(isset($icon)) {
+				$this->_attributes['icon'] = $icon;
+			}
+		}
+		else if(isset($icon))
+		{
+			$this->_tagSelfClosing = false;
+			$this->_tagName = 'button';
+			$this->_attributes['value'] = $title;
+			$this->_attributes['icon'] = $icon;
 		}
 		else
 		{

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	status_rrd_graph_img.php
 */

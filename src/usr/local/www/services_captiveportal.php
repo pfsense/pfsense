@@ -5,8 +5,8 @@
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -96,7 +96,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
@@ -301,16 +301,16 @@ if ($_POST) {
 				}
 
 				if ($_POST['timeout'] > $deftime) {
-					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+					$input_errors[] = gettext("Hard timeout must be less than or equal to the Default lease time set on DHCP Server");
 				}
 			}
 		}
 	}
-	
+
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
-	
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -318,47 +318,47 @@ if ($_POST) {
 			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
 		}
 	}
-	
+
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
-	
+
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
-	
+
 	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
 	}
-	
+
 	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
-	
+
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
-	
+
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
-	
+
 	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
 	}
-	
+
 	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
-	
+
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	
+
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
-	
+
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
@@ -558,9 +558,9 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Captive Portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
@@ -594,7 +594,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maxprocperip'],
 	['min' => '0', 'max' => '100']
 ))->setHelp('Limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
-			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.'); 
+			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.');
 
 $section->addInput(new Form_Input(
 	'idletimeout',
@@ -785,7 +785,7 @@ $group->add(new Form_Checkbox(
 	null,
 	'MSCHAPv2',
 	$pconfig['radius_protocol'] == 'MSCHAPv2',
-	'SCHAPv2'
+	'MSCHAPv2'
 ))->displayasRadio();
 
 $section->add($group);
@@ -835,10 +835,10 @@ $group->add(new Form_Input(
 ))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey3',
+	'radiuskey2',
 	null,
 	'text',
-	$pconfig['radiuskey3']
+	$pconfig['radiuskey2']
 ))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
@@ -851,23 +851,23 @@ $section->addClass('Secondary');
 $group = new Form_Group('Primary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip4',
+	'radiusip3',
 	null,
-	$pconfig['radiusip4']
+	$pconfig['radiusip3']
 ));
 
 $group->add(new Form_Input(
-	'radiusport4',
+	'radiusport3',
 	null,
 	'number',
-	$pconfig['radiusport4']
+	$pconfig['radiusport3']
 ));
 
 $group->add(new Form_Input(
-	'radiuskey4',
+	'radiuskey3',
 	null,
 	'text',
-	$pconfig['radiuskey4']
+	$pconfig['radiuskey3']
 ));
 
 $section->add($group);
@@ -875,23 +875,23 @@ $section->add($group);
 $group = new Form_Group('Secondary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip',
+	'radiusip4',
 	null,
-	$pconfig['radiusip']
+	$pconfig['radiusip4']
 ))->setHelp('IP address of the RADIUS server to authenticate against.');
 
 $group->add(new Form_Input(
-	'radiusport',
+	'radiusport4',
 	null,
 	'number',
-	$pconfig['radiusport']
+	$pconfig['radiusport4']
 ))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey',
+	'radiuskey4',
 	null,
 	'text',
-	$pconfig['radiuskey']
+	$pconfig['radiuskey4']
 ))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
@@ -926,7 +926,7 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'Stop/stop Accounting',
+	'Stop/start Accounting',
 	$pconfig['reauthenticateacct'] == 'stopstart'
 ))->displayasRadio();
 
@@ -1042,7 +1042,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'SSL Certigicate',
+	'SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert Manager</a>');

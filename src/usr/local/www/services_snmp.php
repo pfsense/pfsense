@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	services_snmp.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -357,6 +356,13 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['regex']
 ));
 
+$group->add(new Form_MultiCheckbox(
+	'junk',
+	null,
+	null,
+	$pconfig['regex']
+))->displayAsRadio();
+
 $section->add($group);
 $form->add($section);
 
@@ -379,10 +385,32 @@ print($form);
 
 // hostres requires mibii so we force that here
 events.push(function(){
+
+	noMibii = false;
+
+	$('#junk').hide();
+	hostresChange();
+
+	function hostresChange() {
+		if($('#hostres').prop('checked')) {
+			$('#mibii').prop('checked', true);
+			noMibii = true;
+		} else {
+			noMibii = false;
+		}
+	}
+
 	$('#hostres').change(function(){
-		if($('#hostres').is(':checked'))
-			$('#mibii').attr('checked', 'checked');
+		hostresChange();
 	});
+
+
+	$('#mibii').change(function(){
+		if(noMibii) {
+			$('#mibii').prop('checked', 'true');
+		}
+	});
+
 });
 //]]>
 </script>

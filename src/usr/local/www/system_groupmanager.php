@@ -1,14 +1,14 @@
 <?php
 /*
-	$Id: system_groupmanager.php
+	system_groupmanager.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
- *  Copyright (c)  2008 Shrew Soft Inc
+ *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ *	Copyright (c)  2008 Shrew Soft Inc
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -407,7 +407,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not members');
+	))->setHelp('Not members')->setAttribute('style', 'height:400px;');
 
 	$group->add(new Form_Select(
 		'members',
@@ -415,7 +415,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Members');
+	))->setHelp('Members')->setAttribute('style', 'height:400px;');
 
 	$section->add($group);
 

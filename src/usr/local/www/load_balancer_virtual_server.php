@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_virtual_server.php
 */
@@ -205,7 +204,7 @@ if(!empty($a_vs)) {
 		<?=gettext("Add")?>
 	</a>
 </nav>
-	
+
 <?php
 
 include("foot.inc");

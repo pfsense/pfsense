@@ -201,7 +201,13 @@ $status = ipsec_list_sa();
 				} else {
 					echo gettext("Unknown");
 				}
-				if (isset($ikesa['local-nat-t'])) {
+				/*
+				 * XXX: local-nat-t was defined by pfSense
+				 * When strongswan team accepted the change, they changed it to
+				 * nat-local. Keep both for a while and remove local-nat-t in
+				 * the future
+				 */
+				if (isset($ikesa['local-nat-t']) || isset($ikesa('nat-local'))) {
 					echo " NAT-T";
 				}
 
@@ -239,7 +245,13 @@ $status = ipsec_list_sa();
 				} else {
 					echo gettext("Unknown");
 				}
-				if (isset($ikesa['remote-nat-t'])) {
+				/*
+				 * XXX: remote-nat-t was defined by pfSense
+				 * When strongswan team accepted the change, they changed it to
+				 * nat-remote. Keep both for a while and remove remote-nat-t in
+				 * the future
+				 */
+				if (isset($ikesa['remote-nat-t']) || isset($ikesa('nat-remote'))) {
 					echo " NAT-T";
 				}
 ?>

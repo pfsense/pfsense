@@ -210,6 +210,7 @@ display_top_tabs($tab_array);
 			<th><?=gettext("Name")?></th>
 			<th><?=gettext("Values")?></th>
 			<th><?=gettext("Description")?></th>
+			<th><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>

@@ -304,6 +304,7 @@ include("head.inc");
 for ($i = 0; $i < ob_get_level(); $i++) {
 	ob_end_flush();
 }
+
 ob_implicit_flush(1);
 
 // Resolve hostnames and replace Z_ with "".  The intention
@@ -338,7 +339,7 @@ $data = msort($data, "dnsresolve");
 $mac_man = load_mac_manufacturer_table();
 ?>
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="sortable-theme-bootstrap table table-striped table-hover" data-sortable>
 		<thead>
 			<tr>
 				<th><?= gettext("Interface")?></th>

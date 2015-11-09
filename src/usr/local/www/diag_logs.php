@@ -172,18 +172,29 @@ if ($logfile == 'dhcpd')
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
-	<pre><?php
+	<div class="table table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th class="col-sm-2"></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
 	if (($logfile == 'resolver') || ($logfile == 'system'))
 		$inverse = array("ppp");
 	else
 		$inverse = null;
 
 	if ($filtertext)
-		dump_clog_no_table($system_logfile, $nentries, true, array("$filtertext"), $inverse);
+		dump_clog($system_logfile, $nentries, true, array("$filtertext"), $inverse);
 	else
-		dump_clog_no_table($system_logfile, $nentries, true, array(), $inverse);
+		dump_clog($system_logfile, $nentries, true, array(), $inverse);
 ?>
-	</pre>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <?php include("foot.inc"); ?>

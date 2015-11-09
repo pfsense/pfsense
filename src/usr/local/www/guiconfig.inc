@@ -687,9 +687,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 			}
 		}
 	}
+
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
-		echo "<tr valign=\"top\">\n";
+		echo "<tr>\n";
 		if ($withorig) {
 			if (isset($config['system']['usefifolog'])) {
 				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
@@ -699,10 +700,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
 				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
-			echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
-			echo "<td class=\"listr\">{$entry_text}</td>\n";
+			echo "<td>{$entry_date_time}</td>\n";
+			echo "<td>{$entry_text}</td>\n";
 		} else {
-				echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
 		}
 		echo "</tr>\n";
 	}

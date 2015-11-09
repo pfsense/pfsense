@@ -200,7 +200,7 @@ if (is_array($status)) {
 		 * nat-local. Keep both for a while and remove local-nat-t in
 		 * the future
 		 */
-		if (isset($ikesa['local-nat-t']) || isset($ikesa('nat-local'))) {
+		if (isset($ikesa['local-nat-t']) || isset($ikesa['nat-local'])) {
 			print(" NAT-T");
 		}
 ?>

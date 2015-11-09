@@ -686,7 +686,7 @@ $sm = (!isset($pconfig['mobile']) || !isset($a_client['pfs_group']));
 $section->addInput(new Form_Select(
 	'pfsgroup',
 	'PFS key group',
-	$pconfig['psgroup'],
+	$pconfig['pfsgroup'],
 	$sm ? $p2_pfskeygroups:array()
 ))->setHelp($sm ? '':'Set globally in mobile client options');
 

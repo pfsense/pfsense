@@ -212,7 +212,7 @@ if ($carpcount == 0) {
 	<br /><br />
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Servers')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('CARP Interfaces')?></h2></div>
 			<div class="panel-body table-responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>

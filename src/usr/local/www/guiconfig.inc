@@ -1231,8 +1231,13 @@ var_dump($content);die;
 <?php
 }
 
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
+/* set timezone */
+if (isset($config['system']['timezone']) &&
+    !empty($config['system']['timezone'])) {
+	$timezone = $config['system']['timezone'];
+} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+	$timezone = $g['default_timezone'];
+} else {
 	$timezone = "Etc/UTC";
 }
 

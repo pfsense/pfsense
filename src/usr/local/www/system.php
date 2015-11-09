@@ -96,8 +96,13 @@ if (!isset($pconfig['timeupdateinterval'])) {
 	$pconfig['timeupdateinterval'] = 300;
 }
 if (!$pconfig['timezone']) {
-	$pconfig['timezone'] = "Etc/UTC";
+	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+		$pconfig['timezone'] = $g['default_timezone'];
+	} else {
+		$pconfig['timezone'] = "Etc/UTC";
+	}
 }
+
 if (!$pconfig['timeservers']) {
 	$pconfig['timeservers'] = "pool.ntp.org";
 }

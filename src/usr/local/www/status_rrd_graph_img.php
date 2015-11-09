@@ -251,7 +251,7 @@ $colorprocessor		= array('00AA00', '990000', '0000FF', 'DD9B00', '000000');
 /* Memory Usage			active,	 inact,	  free,	   cache,	wire */
 $colormemory		= array('00AA00', '990000', '0000FF', '666666', 'DD9B00');
 
-/* MBUF Usage			current, cache,	  total,   max */
+/* Usage			current, cache,	  total,   max */
 $colormbuf		= array('0080FF', '00E344', 'FF0000', '000000');
 
 /* Traffic Shaper Queues	q1,		 q2,	  q3,	   q4,		q5,		 q6,	  q7,	   q8,		q9 */
@@ -285,7 +285,7 @@ $colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
 
-$colordhcpd = array('990000');
+$colordhcpd = array('990000', '0000FF');
 
 switch ($curstyle) {
 	case "absolute":
@@ -1243,18 +1243,22 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "--vertical-label \"Dhcp Leases\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--base=1000 ";
-	$graphcmd .= "--lower-limit=0 ";
-	$graphcmd .= "--slope-mode ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-leases=$rrddbpath$curdatabase:leases:AVERAGE:step=$step\" ";
-	$graphcmd .= "AREA:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
+	$graphcmd .= "DEF:\"$curif-staticleases=$rrddbpath$curdatabase:staticleases:AVERAGE:step=$step\" ";
+	$graphcmd .= "LINE1:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
+	$graphcmd .= "LINE1:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t		maximum\\n\" ";
 	$graphcmd .= "COMMENT:\"Leases Active\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Leases Static\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } else {

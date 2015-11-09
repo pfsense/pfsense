@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	crash_reporter.php
 */

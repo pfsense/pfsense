@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	carp_status.php
 */

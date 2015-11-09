@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_system_pftop.php
 */

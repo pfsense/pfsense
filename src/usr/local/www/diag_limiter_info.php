@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_limiter_info.php
 */

@@ -4,7 +4,7 @@
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
+ *	Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  *
  *  Some or all of this file is based on the m0n0wall project which is
  *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)

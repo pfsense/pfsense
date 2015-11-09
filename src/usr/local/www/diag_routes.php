@@ -1,6 +1,4 @@
 <?php
-
-/* $Id$ */
 /*
 	diag_routes.php
 */

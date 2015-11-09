@@ -1,14 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	diag_ipsec.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  portions Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
+ *  portions Copyright (c) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
  *
  *  Parts of this code originally based on vpn_ipsec_sad.php from m0n0wall,
- *  Copyright (C) 2003-2004 Manuel Kasper (BSD 2 clause)
+ *  Copyright (c) 2003-2004 Manuel Kasper (BSD 2 clause)
  *
  *  Redistribution and use in source and binary forms, with or without modification,
  *  are permitted provided that the following conditions are met:

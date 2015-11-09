@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_logs_filter_dynamic.php
 */

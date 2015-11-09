@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_system_activity.php
 */

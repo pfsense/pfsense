@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	diag_ipsec_spd.php
 */

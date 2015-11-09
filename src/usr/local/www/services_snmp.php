@@ -356,6 +356,13 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['regex']
 ));
 
+$group->add(new Form_MultiCheckbox(
+	'junk',
+	null,
+	null,
+	$pconfig['regex']
+))->displayAsRadio();
+
 $section->add($group);
 $form->add($section);
 
@@ -378,10 +385,32 @@ print($form);
 
 // hostres requires mibii so we force that here
 events.push(function(){
+
+	noMibii = false;
+
+	$('#junk').hide();
+	hostresChange();
+
+	function hostresChange() {
+		if($('#hostres').prop('checked')) {
+			$('#mibii').prop('checked', true);
+			noMibii = true;
+		} else {
+			noMibii = false;
+		}
+	}
+
 	$('#hostres').change(function(){
-		if($('#hostres').is(':checked'))
-			$('#mibii').attr('checked', 'checked');
+		hostresChange();
 	});
+
+
+	$('#mibii').change(function(){
+		if(noMibii) {
+			$('#mibii').prop('checked', 'true');
+		}
+	});
+
 });
 //]]>
 </script>

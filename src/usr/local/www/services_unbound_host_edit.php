@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_unbound_host_edit.php
 */

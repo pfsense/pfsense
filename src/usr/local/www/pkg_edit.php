@@ -1,8 +1,8 @@
 <?php
-/* $Id$ */
 /*
 	pkg_edit.php
-*//* ====================================================================
+*/
+/* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2004, 2005 Scott Ullrich
  *

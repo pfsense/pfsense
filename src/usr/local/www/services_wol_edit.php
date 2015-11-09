@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_wol_edit.php
 */

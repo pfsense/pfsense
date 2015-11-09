@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	restart_httpd.php
 */

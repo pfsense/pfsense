@@ -1,8 +1,6 @@
 <?php
-/* $Id$ */
 /*
 	status_upnp.php
-	part of pfSense (https://www.pfsense.org/)
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.

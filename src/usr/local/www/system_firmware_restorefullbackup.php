@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_firmware_restorefullbackup.php
 */
@@ -90,7 +89,7 @@ if ($_GET['backupnow']) {
 
 if($_POST['downloadbackup']) {
 	$filename = basename($_POST['downloadbackup']);
-	
+
 	if(DEBUG)
 		print_info_box('DEBUG: Simulating download of ' . htmlspecialchars($filename));
 	else {

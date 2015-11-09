@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_router_advertisements.php
 */

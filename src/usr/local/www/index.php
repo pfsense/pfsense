@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	index.php
 */

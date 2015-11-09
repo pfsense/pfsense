@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr_install.php
 */

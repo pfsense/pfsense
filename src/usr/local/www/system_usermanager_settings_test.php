@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager_settings_test.php
 */

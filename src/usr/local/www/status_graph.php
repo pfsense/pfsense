@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	status_graph.php
 */

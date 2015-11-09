@@ -1,5 +1,7 @@
 <?php
-/* $Id$ */
+/*
+	status.php
+*/
 /* Run various commands and collect their output into HTML tables.
  * Jim McBeath <jimmc@macrovision.com> Nov 2003
  *

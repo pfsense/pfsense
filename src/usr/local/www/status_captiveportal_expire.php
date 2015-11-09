@@ -1,4 +1,7 @@
 <?php
+/*
+	status_captiveportal_expire.php
+*/
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2007 Marcel Wiget <mwiget@mac.com>

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_ntpd_pps.php
 */
@@ -143,7 +142,7 @@ include("head.inc");
 
 if ($input_errors)
     print_input_errors($input_errors);
-    
+
 if ($savemsg)
     print_info_box($savemsg, 'success');
 
@@ -155,16 +154,16 @@ display_top_tabs($tab_array);
 
 require_once('classes/Form.class.php');
 
-$form = new Form; 
+$form = new Form;
 
 $section = new Form_Section('NTP Serial PPS Configuration');
 
 $section->addInput(new Form_StaticText(
 	'Notes',
 	'Devices with a Pulse Per Second output such as radios that receive a time signal from DCF77 (DE), JJY (JP), MSF (GB) or WWVB (US) may be used as a PPS reference for NTP. ' .
-	'A serial GPS may also be used, but the serial GPS driver would usually be the better option. ' . 
+	'A serial GPS may also be used, but the serial GPS driver would usually be the better option. ' .
 	'A PPS signal only provides a reference to the change of a second, so at least one other source to number the seconds is required.' . '<br /><br />' .
-	'At least 3 additional time sources should be configured under ' . 
+	'At least 3 additional time sources should be configured under ' .
 	'<a href="services_ntpd.php">' . 'Services > NTP' . '</a>' . ' to reliably supply the time of each PPS pulse.'
 ));
 
@@ -172,12 +171,12 @@ $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
 if (!empty($serialports)) {
     $splist = array();
-    
+
     foreach ($serialports as $port) {
     	$shortport = substr($port,5);
     	$splist[$shortport] = $shortport;
     }
-    
+
     $section->addInput(new Form_Select(
     	'ppsport',
     	'Serial port',

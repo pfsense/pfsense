@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_igmpproxy_edit.php
 */

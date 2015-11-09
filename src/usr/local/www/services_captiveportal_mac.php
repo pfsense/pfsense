@@ -4,10 +4,10 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
+ *	Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -254,7 +254,7 @@ endif;
 		<?=gettext("Add")?>
 	</a>
 </nav>
-	
+
 <div id="infoblock">
 	<?=print_info_box(gettext('Adding MAC addresses as "pass" MACs allows them access through the captive portal automatically without being taken to the portal page.'), info)?>
 </div>

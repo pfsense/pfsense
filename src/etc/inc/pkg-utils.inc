@@ -4,12 +4,9 @@
 		pkg-utils.inc - Package subsystem
 	DESCRIPTION
 		This file contains various functions used by the pfSense package system.
-	HISTORY
-		$Id$
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2005-2006 Colin Smith (ethethlay@gmail.com)
  *
  *	Redistribution and use in source and binary forms, with or without modification,

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_gateway_groups_edit.php
 */

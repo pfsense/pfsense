@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager.php
 */
@@ -8,8 +7,8 @@
  *	Copyright (c)  2008 Shrew Soft Inc.
  *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

@@ -1,11 +1,10 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2007 Bill Marquette <bill.marquette@gmail.com>
+ *	Copyright (c)  2007 Bill Marquette <bill.marquette@gmail.com>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:

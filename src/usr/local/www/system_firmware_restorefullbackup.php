@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	system_firmware_restorefullbackup.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -90,7 +89,7 @@ if ($_GET['backupnow']) {
 
 if($_POST['downloadbackup']) {
 	$filename = basename($_POST['downloadbackup']);
-	
+
 	if(DEBUG)
 		print_info_box('DEBUG: Simulating download of ' . htmlspecialchars($filename));
 	else {

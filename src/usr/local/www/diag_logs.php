@@ -139,15 +139,28 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Filter text']
 ));
 
-$form->addGlobal(new Form_Button(
+$btnsubmit = new Form_Button(
 	'filtersubmit',
-	'Filter'
-))->removeClass('btn-primary')->addClass('btn-default')->addClass('btn-sm');
+	'Filter',
+	null,
+	'fa-filter'
+);
 
-$form->addGlobal(new Form_Button(
+$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+
+$btnclear = new Form_Button(
 	'clear',
-	'Clear log'
-))->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+	'Clear log',
+	null,
+	'fa-trash'
+);
+
+$btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'',
+	$btnsubmit . $btnclear
+));
 
 $form->add($section);
 print $form;
@@ -156,6 +169,7 @@ if ($logfile == 'dhcpd')
 	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
 
 ?>
+
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
 	<pre>

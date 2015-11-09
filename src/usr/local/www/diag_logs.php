@@ -172,8 +172,7 @@ if ($logfile == 'dhcpd')
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
-	<pre>
-<?php
+	<pre><?php
 	if (($logfile == 'resolver') || ($logfile == 'system'))
 		$inverse = array("ppp");
 	else

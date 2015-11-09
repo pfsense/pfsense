@@ -4,7 +4,7 @@
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  portions Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
+ *  portions Copyright (c) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
  *
  *  Parts of this code originally based on vpn_ipsec_sad.php from m0n0wall,
  *  Copyright (c) 2003-2004 Manuel Kasper (BSD 2 clause)

@@ -365,7 +365,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 	</div>
 	<div class="panel-body">
 	   <div class="table-responsive">
-		<table class="table table striped table-hover table-compact">
+		<table class="table table-striped table-hover table-compact">
 			<tr>
 				<th><?=gettext("Act")?></th>
 				<th><?=gettext("Time")?></th>

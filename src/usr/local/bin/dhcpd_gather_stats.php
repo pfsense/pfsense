@@ -31,14 +31,11 @@ echo "N:";
 $result = "NaN";
 $result_static="NaN";
 
-if (isset($argv[1])) {
+if (is_array($config['dhcpd'][$argv[1]])) {
 
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 	$leases_contents = file($leasesfile);
 	$dhcpif = $argv[1] ; 
-
-
-
 
 	function remove_duplicate($array, $field) {
 		foreach ($array as $sub) {
@@ -199,17 +196,12 @@ if (isset($argv[1])) {
 		if ($data['act'] != "static") {
 			if (($lip >= ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) && ($lip <= ip2ulong($config['dhcpd'][$dhcpif]['range']['to']))) {
 					$result = $result + 1;
-						
 			}
 		}
 		else {
-			
-			
 			if (($lip >= $subnet_start) && ($lip <= $subnet_end)) {
 				$result_static = $result_static + 1;
 			}
-				
-			
 		}
 	}
 }

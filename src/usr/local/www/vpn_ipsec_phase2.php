@@ -674,7 +674,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		'halgos[]',
 		null,
 		$algoname,
-		(in_array($algo, $pconfig['halgos'])),
+		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
 	))->addClass('multi');
 }

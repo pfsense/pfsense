@@ -559,9 +559,7 @@ function build_link_list() {
 		mwexec("/bin/mkdir -p /var/spool/lock");
 
 	if($pconfig['type'] == 'ppp') {
-		$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-		//DEBUG
-		$serialports = glob("/dev/tty?[0-9]{,.[0-9]}", GLOB_BRACE);
+		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 
 		$serport_count = 0;
 

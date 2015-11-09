@@ -440,7 +440,7 @@ if ($pconfig['gid'] != 1998) // all users group
 
 if ($_GET['act'] != "new")
 {
-	$section = new Form_Section('delpriv Privileges');
+	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(
 		null,

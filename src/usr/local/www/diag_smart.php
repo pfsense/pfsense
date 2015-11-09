@@ -289,10 +289,12 @@ switch ($action) {
 // Information
 		$devs = get_smart_drive_list();
 
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview = new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('Information');
 
@@ -354,14 +356,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
 // Tests
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btntest = new Form_Button(
 			'submit',
 			'Test'
-		));
+		);
 
 		$section = new Form_Section('Perform self-tests');
 
@@ -416,14 +425,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btntest
+		));
+
 		$form->add($section);
 		print($form);
 
 // Logs
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview =  new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('View logs');
 
@@ -461,6 +477,11 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
@@ -472,7 +493,7 @@ switch ($action) {
 
 		$btnabort->removeClass('btn-primary')->addClass('btn-danger');
 
-		$form = new Form($btnabort);
+		$form = new Form(false);
 
 		$section = new Form_Section('Abort');
 
@@ -488,6 +509,11 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
+		));
+
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnabort
 		));
 
 		$form->add($section);

@@ -1,4 +1,4 @@
-                                    <?php
+<?php
 /*
 	services_captiveportal_mac.php
 */

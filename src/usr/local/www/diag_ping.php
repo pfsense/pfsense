@@ -39,7 +39,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -200,7 +200,7 @@ $section->addInput(new Form_Select(
 	'Maximum number of pings',
 	$count,
 	array_combine(range(1, MAX_COUNT), range(1, MAX_COUNT))
-))->setHelp('Select the maximum number pings');
+))->setHelp('Select the maximum number of pings');
 
 $form->add($section);
 print $form;

@@ -1,15 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_shaper_vinterface.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2008 Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -460,32 +457,32 @@ else {
 </div>
 
 <script>
-//<![CDATA[   
+//<![CDATA[
 events.push(function(){
-	
+
     // Disables the specified input element
     function disableInput(id, disable) {
-        $('#' + id).prop("disabled", disable);    
-    }	
+        $('#' + id).prop("disabled", disable);
+    }
 
 	function change_masks() {
 		disableInput('maskbits', ($('#scheduler').val() == 'none'));
 		disableInput('maskbitsv6', ($('#scheduler').val() == 'none'));
 	}
-	
+
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	change_masks();
-	
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
     $('#scheduler').on('change', function() {
         change_masks();
-    });	
+    });
 });
-//]]>  
+//]]>
 </script>
-	
-	
+
+
 <?php
 include("foot.inc");

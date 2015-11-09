@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_notifications.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -176,7 +174,7 @@ if ($_POST) {
 		}
 
 		write_config();
-		
+
 		pfSenseHeader("system_advanced_notifications.php");
 		return;
 
@@ -192,7 +190,7 @@ if ($_POST) {
 		}
 	}
 
-	if (isset($_POST['test-smtp'])) {	
+	if (isset($_POST['test-smtp'])) {
 		// Send test message via smtp
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");

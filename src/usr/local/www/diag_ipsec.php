@@ -160,14 +160,6 @@ if (is_array($status)) {
 		} else {
 			$ipsecconnected[$con_id] = $ph1idx = $con_id;
 		}
-
-		if ($ikesa['state'] == "ESTABLISHED") {
-			$icon = "pass";
-		} elseif (!isset($config['ipsec']['enable'])) {
-			$icon = "block";
-		} else {
-			$icon = "reject";
-		}
 ?>
 				<tr>
 					<td>
@@ -285,7 +277,7 @@ if (is_array($status)) {
 					</td>
 					<td >
 <?php
-		if ($icon != "pass") {
+		if ($ikesa['state'] != 'ESTABLISHED') {
 ?>
 					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
 							<?=gettext("Connect VPN")?>

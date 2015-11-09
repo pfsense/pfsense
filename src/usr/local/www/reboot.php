@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	reboot.php
 */

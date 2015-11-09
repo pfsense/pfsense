@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_monitor.php
 */
@@ -181,7 +180,7 @@ foreach($a_monitor as $monitor) {
 		<?=gettext('Add')?>
 	</a>
 </nav>
-		
+
 <?php
 
 include("foot.inc");

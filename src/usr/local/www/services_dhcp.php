@@ -1,11 +1,10 @@
 <?php
-/* $Id$ */
 /*
 	services_dhcp.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
-  *
+ *
  *  Some or all of this file is based on the m0n0wall project which is
  *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *

@@ -184,7 +184,7 @@ include("head.inc"); ?>
 					</tr>
 				</thead>
 				<tbody>
-					
+
 					<?php
 							foreach ($server['conns'] as $conn):
 					?>
@@ -244,7 +244,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Target Network"); ?></th>
 						<th><?=gettext("Last Used"); ?></th>
 					</tr>
-				</thead>	
+				</thead>
 				<tbody>
 
 <?php
@@ -286,7 +286,7 @@ include("head.inc"); ?>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
-					<tr>  
+					<tr>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Addr"); ?></th>
@@ -341,7 +341,7 @@ include("head.inc"); ?>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
-					<tr>  
+					<tr>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
@@ -385,7 +385,7 @@ include("head.inc"); ?>
 		</div>
 </div>
 
-<?php 
+<?php
 }
 
 if ($DisplayNote) {

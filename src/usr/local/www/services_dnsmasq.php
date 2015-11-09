@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_dnsmasq.php
 */

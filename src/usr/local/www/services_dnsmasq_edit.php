@@ -1,11 +1,10 @@
 <?php
-/* $Id$ */
 /*
 	services_dnsmasq_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
+ *  Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
  *
  *  Some or all of this file is based on the m0n0wall project which is
  *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
@@ -227,7 +226,7 @@ if($_GET['act'] == "delopt") {
 if($_GET['act'] == "addopt") {
     if(!is_array($pconfig['aliases']['item']))
         $pconfig['aliases']['item'] = array();
-        
+
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 

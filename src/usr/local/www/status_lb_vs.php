@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	status_lb_vs.php
 */

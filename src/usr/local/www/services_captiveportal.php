@@ -306,11 +306,11 @@ if ($_POST) {
 			}
 		}
 	}
-	
+
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
-	
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -318,47 +318,47 @@ if ($_POST) {
 			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
 		}
 	}
-	
+
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
-	
+
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
-	
+
 	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
 	}
-	
+
 	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
-	
+
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
-	
+
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
-	
+
 	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
 	}
-	
+
 	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
-	
+
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	
+
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
-	
+
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
@@ -594,7 +594,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maxprocperip'],
 	['min' => '0', 'max' => '100']
 ))->setHelp('Limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
-			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.'); 
+			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.');
 
 $section->addInput(new Form_Input(
 	'idletimeout',

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	interfaces_ppps_edit.php
 */

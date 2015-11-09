@@ -428,7 +428,7 @@ if ($_POST) {
 			}
 		}
 	}
-	
+
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];
@@ -1085,8 +1085,8 @@ events.push(function(){
 	ealgosel_change(<?=$keyset?>);
 	dpdchkbox_change();
 
-	// ---------- On initial page load ------------------------------------------------------------ 
-	
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hideInput('ikeid', true);
 });
 //]]>

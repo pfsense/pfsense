@@ -1,6 +1,6 @@
 <?php
 /*
-	$Id$
+	status_graph_cpu.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.

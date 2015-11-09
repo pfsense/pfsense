@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	interfaces_bridge.php
 */

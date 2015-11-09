@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_dyndns_edit.php
 */
@@ -475,7 +474,7 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	setVisible($('#type').val());
 
 });

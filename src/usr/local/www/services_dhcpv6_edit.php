@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services_dhcpv6_edit.php
 */

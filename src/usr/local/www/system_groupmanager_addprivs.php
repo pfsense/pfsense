@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_groupmanager_addprivs.php
 */

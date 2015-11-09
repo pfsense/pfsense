@@ -1,12 +1,9 @@
 <?php
-/* $Id$ */
 /*
-
 	firewall_virtual_ip_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
-
  *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
  *
  *  Some or all of this file is based on the m0n0wall project which is
@@ -558,7 +555,7 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	check_mode();
 });
 //]]>

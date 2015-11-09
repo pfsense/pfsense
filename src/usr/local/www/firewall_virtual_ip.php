@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	firewall_virtual_ip.php
 */
@@ -40,7 +39,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -283,7 +282,7 @@ else if ($savemsg)
 else if (is_subsystem_dirty('vip'))
 	print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 
-/* active tabs 
+/* active tabs
 $tab_array = array();
 $tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
  $tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");

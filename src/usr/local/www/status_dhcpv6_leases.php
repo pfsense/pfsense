@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	status_dhcpv6_leases.php
 */

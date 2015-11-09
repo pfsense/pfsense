@@ -202,7 +202,7 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with 
+		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with
 		// noshuntlaninterfaces which is the reverse true/false logic setting - #4655
 		if ($_POST['autoexcludelanaddress'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {

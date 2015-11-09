@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_virtual_server_edit.php
 */

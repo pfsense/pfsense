@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_firewall.php
 */
@@ -776,7 +775,7 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	setOptText($('#optimization').val())
 });
 //]]>

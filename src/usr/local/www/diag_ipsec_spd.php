@@ -68,7 +68,6 @@
 ##|*MATCH=diag_ipsec_spd.php*
 ##|-PRIV
 
-define(DEBUG, true);
 define(RIGHTARROW, '&#x25ba;');
 define(LEFTARROW,  '&#x25c0;');
 
@@ -79,12 +78,7 @@ $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-if (DEBUG) { // Dummy data for testing. REMOVE for production
-	$spd = array ( 0 => array ( 'srcid' => '172.27.0.0/16', 'dstid' => '172.21.2.0/24', 'dir' => 'in' , 'proto' => 'esp', 'dst' => '184.57.8.247', 'src' => '208.123.73.7', 'reqid' => 'nique:1' ),
-				   1 => array ( 'srcid' => '172.21.2.0/24', 'dstid' => '172.27.0.0/16', 'dir' => 'out', 'proto' => 'esp', 'dst' => '208.123.73.7', 'src' => '184.57.8.247', 'reqid' => 'nique:1' ) );
-}
-else
-	$spd = ipsec_dump_spd();
+$spd = ipsec_dump_spd();
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");

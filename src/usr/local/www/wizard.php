@@ -854,7 +854,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$section->addInput(new Form_Select(
 					$name,
 					$etitle,
-					$value,
+					($value == "") ? $g['default_timezone'] : $value,
 					array_combine($timezonelist, $timezonelist)
 				))->setHelp($field['description']);
 

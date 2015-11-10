@@ -334,7 +334,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'txtsupport',
 	'TXT Comment Support',
-	'Register DHCP static mappings in the DNS Resolver',
+	'Create TXT records',
 	$pconfig['txtsupport']
 ))->setHelp('Any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.');
 
@@ -380,16 +380,16 @@ events.push(function(){
 		disableInput('btnadvdns', hide);
 	}
 
-	// Make the 'aditional options' button a plain button, not a submit button
+	// Make the 'additional options' button a plain button, not a submit button
 	$("#btnadvdns").prop('type','button');
 
-	// Un-hide aditional  controls
+	// Un-hide additional  controls
 	$("#btnadvdns").click(function() {
 		hideInput('custom_options', false);
 
 	});
 
-	// When 'enable' is clicked, diable/enable the following three checkboxes
+	// When 'enable' is clicked, disable/enable the following three checkboxes
 	$('#enable').click(function() {
 		disableDHCP();
 	});
@@ -534,9 +534,9 @@ endforeach;
 	<?=print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
 		" service (if enabled) will automatically serve the LAN IP".
 		" address as a DNS server to DHCP clients so they will use".
-		" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
+		" the DNS Resolver. If Forwarding is enabled, the DNS Resolver will use the DNS servers".
 		" entered in %sSystem: General setup%s".
-		" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
 		" is checked."),'<a href="system.php">','</a>'), info)?>
 </div>

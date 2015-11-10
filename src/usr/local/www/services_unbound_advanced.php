@@ -129,7 +129,7 @@ if ($_POST) {
 		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
 		}
-		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
+		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
 		}
 		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
@@ -262,7 +262,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'prefetchkey',
 	'Prefetch DNS Key Support',
-	'DNSKEYs are fetched earlier in the validation process when a  Delegation signer is encountered',
+	'DNSKEYs are fetched earlier in the validation process when a Delegation signer is encountered',
 	$pconfig['prefetchkey']
 ))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: <a href="http://en.wikipedia.org/wiki/List_of_DNS_record_types">Wikipedia</a>');
 
@@ -292,7 +292,7 @@ $section->addInput(new Form_Select(
 	'Incoming TCP Buffers',
 	$pconfig['incoming_num_tcp'],
 	array_combine(array("0", "10", "20", "30", "50", "50"), array("0", "10", "20", "30", "50", "50"))
-))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
+))->setHelp('The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
 
 $section->addInput(new Form_Select(
 	'edns_buffer_size',
@@ -369,7 +369,7 @@ $section->addInput(new Form_Checkbox(
 	'disable_auto_added_access_control',
 	'Disable auto-added access control',
 	'disable the automatically-added access control entries',
-	$pconfig['hdisable_auto_added_access_control']
+	$pconfig['disable_auto_added_access_control']
 ))->setHelp('By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. ' .
 			'Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.');
 

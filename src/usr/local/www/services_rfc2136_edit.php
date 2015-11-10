@@ -182,9 +182,9 @@ foreach ($iflist as $ifnam => $ifdescr)
 	$optionlist[$ifnam] = $ifdescr;
 
 $section->addInput(new Form_Select(
-	'ifname',
+	'interface',
 	'Interface',
-	$pconfig['ifname'],
+	$pconfig['interface'],
 	$optionlist
 ));
 

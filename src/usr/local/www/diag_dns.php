@@ -285,7 +285,7 @@ if (!$input_errors && $type) {
 	<div class="panel-heading"><h2 class="panel-title">More information</h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
-			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping")?></a></li>
+			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
 		</ul>
 		<p><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></p>

@@ -203,7 +203,7 @@
 		<![CDATA[
 		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
 			if (!is_domain($ts)) {
-				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.";
+				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.");
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;

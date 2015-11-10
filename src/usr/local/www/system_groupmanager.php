@@ -246,7 +246,9 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
 		$privhtml .=		'</tr>';
+		
 	}
 
 	$privhtml .=		'</tbody>';

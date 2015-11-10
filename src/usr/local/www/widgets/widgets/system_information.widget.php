@@ -354,7 +354,7 @@ function updateMeters() {
         setTimer();
 }
 
-events.push(function(){ 
+events.push(function(){
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
 
@@ -371,7 +371,7 @@ function setProgress(barName, percent) {
 }
 
 function setTimer() {
-         timeout = window.setTimeout('updateMeters()', update_interval); 
+         timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -493,7 +493,7 @@ function updateInterfaceStats(x){
 		for (var y=0; y<statistics_split.length-1; y++){
 			if(jQuery('#stat' + counter)) {
 				jQuery('#stat' + counter).html(statistics_split[y]);
-				counter++;	
+				counter++;
 			}
 		}
 	}

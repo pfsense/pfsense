@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
 	filterparser.php
 	part of pfSesne by Scott Ullrich

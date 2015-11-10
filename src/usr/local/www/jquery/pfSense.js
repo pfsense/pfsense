@@ -80,7 +80,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').removeAttr('value');			
+			clone.find('*').removeAttr('value');
 			clone.appendTo(group.parent());
 		});
 
@@ -96,7 +96,7 @@ $(function() {
 	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
-			
+
 		input.on('change', function(e){
 			var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
 			if (!isV6)
@@ -105,10 +105,10 @@ $(function() {
 			if (input.val() == "")
 				return;
 
-			// Eat all of the options with a value greater than max. We don't want them to be available 
+			// Eat all of the options with a value greater than max. We don't want them to be available
 			while (select.options[0].value > max)
 				select.remove(0);
-			
+
 			if (select.options.length < max) {
 				for (var i=select.options.length; i<=max; i++)
 					select.options.add(new Option(i, i), 0);
@@ -118,14 +118,14 @@ $(function() {
 		// Fire immediately
 		input.change();
 	});
-	
+
 	// Add confirm to all btn-danger buttons and fa-trash icons
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
 		if(!($(this).hasClass('no-confirm'))) {
 			var msg = $.trim(this.textContent);
-			
+
 			if(!msg)
 				var msg = $.trim(this.value).toLowerCase();
 
@@ -142,16 +142,16 @@ $(function() {
 	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons
 	$('.control-label + .checkbox.multi').each(function() {
 		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
-		
+
 		if(($(this).html().indexOf("type=\"radio\"") == -1)) {
 			a.on('click', function() {
 				var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
 					all = wrap.find('input[type=checkbox]'),
 					checked = wrap.find('input[type=checkbox]:checked');
-	
+
 				all.prop('checked', (all.length != checked.length));
 			});
-	
+
 			a.appendTo($(this));
 		}
 	});

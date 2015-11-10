@@ -167,6 +167,16 @@ if ($_POST['act'] == "delcert") {
 	$_POST['act'] = "edit";
 	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
 }
+if ($_POST['act'] == "delprivid") {		
+		
+		if ($a_user[$id] && !empty($_POST['privid'])) {
+			unset($a_user[$id]['priv'][$_POST['privid']]);
+			local_user_set($a_user[$id]);
+			write_config();
+			$_POST['act'] = "edit";
+			$savemsg = gettext("Privilege removed.") . "<br />";
+		}
+}
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -268,18 +278,9 @@ if ($_POST['save']) {
 		input_errors2Ajax($input_errors);
 		exit;
 	}
-	echo "privid: ";
-	echo $_POST['privid'];
+	
 	if (!$input_errors) {
-		// This used to be a separate act=delpriv
-		
-		if ($a_user[$id] && !empty($_POST['privid'])) {
-			foreach ($_POST['privid'] as $i)
-				unset($a_user[$id]['priv'][$i]);
 
-			local_user_set($a_user[$id]);
-			write_config();
-		}
 
 		conf_mount_rw();
 		$userent = array();
@@ -392,7 +393,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+		$privhtml .=			'<td><a class="fa fa-trash no-confirm" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
 		$privhtml .=		'</tr>';
 	}
 
@@ -898,7 +899,7 @@ events.push(function(){
 	});
 	$('[id^=delprivid]').click(function(event) {
 		if(confirm(event.target.title)) {
-			$('#privid).val(event.target.id.match(/\d+$/)[0]);
+			$('#privid').val(event.target.id.match(/\d+$/)[0]);
 			$('#userid').val('<?=$id;?>');
 			$('#act').val('delprivid');
 			$('form').submit();

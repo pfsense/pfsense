@@ -163,7 +163,7 @@ foreach ($a_rfc2136 as $rfc2136):
 		else
 			print('<font color="green">');
 
-		print(tmlspecialchars($cached_ip));
+		print(htmlspecialchars($cached_ip));
 		print('</font>');
 	} else {
 		print('IPv4: N/A');

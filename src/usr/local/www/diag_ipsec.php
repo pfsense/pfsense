@@ -299,7 +299,7 @@ if (is_array($status)) {
 				<tr>
 					<td colspan = 10>
 <?php
-		if (is_array($ikesa['child-sas'])) {
+		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 ?>
 						<div id="btnchildsa-<?=$ikeid?>">
 							<a type="button" onclick="show_childsa('childsa-<?=$ikeid?>','btnchildsa-<?=$ikeid?>');" class="btn btn-sm btn-default" />
@@ -397,14 +397,13 @@ if (is_array($status)) {
 ?>
 									</td>
 									<td>
-										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['reqid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
+										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
 											<?=gettext("Disconnect")?>
 										</a>
 									</td>
 								</tr>
 <?php
 			}
-		}
 ?>
 
 							</tbody>
@@ -412,9 +411,11 @@ if (is_array($status)) {
 					</td>
 				</tr>
 <?php
-	}
+		}
 
 		unset($con_id);
+	}
+
 }
 
 $rgmap = array();

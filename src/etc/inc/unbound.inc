@@ -119,6 +119,7 @@ function test_unbound_config($unboundcfg, &$output) {
 
 
 function unbound_generate_config() {
+	global $g;
 
 	$unboundcfgtxt = unbound_generate_config_text();
 

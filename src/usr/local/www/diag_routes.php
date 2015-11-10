@@ -192,17 +192,6 @@ function update_routes_callback(html) {
 
 	$('#' + section + ' > thead').html(thead);
 	$('#' + section + ' > tbody').html(tbody);
-
-	$('div.panel').find('*').removeAttr('data-sortable');
-	$('div.panel').find('*').removeAttr('data-sortable-initialized');
-	$('div.panel').find('*').removeAttr('data-sorted-direction');
-	$('div.panel').find('*').removeAttr('data-sorted');
-
-	exampleTable = document.querySelector('#IPv4');
-	Sortable.initTable(exampleTable);
-
-	exampleTable = document.querySelector('#IPv6');
-	Sortable.initTable(exampleTable);
 }
 
 function update_all_routes() {
@@ -225,7 +214,7 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4" data-sortable>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4">
 		<thead>
 			<tr>
 				<th><!-- filled by xhr --></th>
@@ -243,7 +232,7 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6" data-sortable>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6">
 		<thead>
 			<tr>
 				<th><!-- filled by xhr --></th>

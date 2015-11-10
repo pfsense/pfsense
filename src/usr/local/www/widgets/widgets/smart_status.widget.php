@@ -104,7 +104,7 @@ if (count($devs) > 0)  {
 			<td><?=ucfirst($dev_state)?></td>
 		</tr>
 <?php
-	} 
+	}
 }
 ?>
 	</tbody>

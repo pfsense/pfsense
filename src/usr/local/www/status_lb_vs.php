@@ -98,8 +98,9 @@ if(empty($a_vs))
 	print('<div class="alert alert-danger">No load balancers have been configured!</div>');
 else {
 ?>
-	<div class="table-responsive"></div>
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+<div class="table-responsive"></div>
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<thead>
 			<tr>
 				<th><?=gettext("Name"); ?></th>
 				<th><?=gettext("Address"); ?></th>
@@ -107,6 +108,8 @@ else {
 				<th><?=gettext("Status"); ?></th>
 				<th><?=gettext("Description"); ?></th>
 			</tr>
+		</thead>
+		<tbody>
 <?php
 			$i = 0;
 			foreach ($a_vs as $vsent): ?>
@@ -150,18 +153,24 @@ else {
 ?>
 				<td bgcolor="<?=$bgcolor?>">
 					<?=$rdr_a[$vsent['name']]['status']?>
-				</td>
-				<td>
+
 <?php
-					if (!empty($rdr_a[$vsent['name']]['total'])) { ?>
-						Total Sessions: <?=$rdr_a[$vsent['name']]['total']?><br>/><?php
+					if (!empty($rdr_a[$vsent['name']]['total'])) {
+?>
+						Total Sessions: <?=$rdr_a[$vsent['name']]['total']?><br>/>
+<?php
 					}
-					if (!empty($rdr_a[$vsent['name']]['last'])) { ?>
-						Last: <?=$rdr_a[$vsent['name']]['last']?><br>/><?php
+					if (!empty($rdr_a[$vsent['name']]['last'])) {
+?>
+						Last: <?=$rdr_a[$vsent['name']]['last']?><br>/>
+<?php
 					}
-					if (!empty($rdr_a[$vsent['name']]['average'])) { ?>
-						Average: <?=$rdr_a[$vsent['name']]['average']?><?php
-					} ?>
+					if (!empty($rdr_a[$vsent['name']]['average'])) {
+?>
+						Average: <?=$rdr_a[$vsent['name']]['average']?>
+<?php
+					}
+?>
 				</td>
 				<td>
 					<?=htmlspecialchars($vsent['descr'])?>
@@ -169,8 +178,9 @@ else {
 			</tr>
 
 <?php		$i++; endforeach; ?>
-		 </table>
-	</div>
+		</tbody>
+	</table>
+</div>
 
 <?php }
 

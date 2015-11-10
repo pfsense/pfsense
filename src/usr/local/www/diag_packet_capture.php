@@ -123,6 +123,7 @@ if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
@@ -136,9 +137,8 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
-	$interfaces['ipsec'] = "IPsec";
-}
+if (ipsec_enabled())
+	$interfaces['enc0'] = "IPsec";
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {

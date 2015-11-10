@@ -1171,7 +1171,7 @@ function filter_generate_optcfg_array() {
 		}
 	}
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (ipsec_enabled()) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';

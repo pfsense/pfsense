@@ -191,10 +191,8 @@ function build_if_list() {
 			$interfaces['pppoe'] = "PPPoE Server";
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
-		if (have_ruleint_access("enc0"))
-			$interfaces["enc0"] = "IPsec";
-	}
+	if (ipsec_enabled() && have_ruleint_access("enc0"))
+		$interfaces["enc0"] = "IPsec";
 
 	/* add openvpn/tun interfaces */
 	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])

@@ -507,7 +507,7 @@ display_top_tabs($tab_array);
 ?>
 											</td>
 											<td style="cursor: pointer;">
-											<!--	<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("Move checked P2s here")?></button> -->
+												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button>
 												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
 												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
 												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$i?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
@@ -577,14 +577,6 @@ function show_phase2(id, buttonid) {
 }
 
 events.push(function() {
-	// Make rules sortable
-	$('table tbody.p2-entries').sortable({
-		cursor: 'grabbing',
-		update: function(event, ui) {
-			$('#order-store').removeAttr('disabled');
-		}
-	});
-
 	$('[id^=Xmove_]').click(function (event) {
 		$('#' + event.target.id.slice(1)).click();
 	});

@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	rc.expireaccounts
 	part of pfSense

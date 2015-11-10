@@ -1,6 +1,7 @@
 #!/usr/local/bin/php-cgi -f
 <?php
 /*
+	rc.savevoucher
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.

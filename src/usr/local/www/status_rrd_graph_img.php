@@ -251,7 +251,7 @@ $colorprocessor		= array('00AA00', '990000', '0000FF', 'DD9B00', '000000');
 /* Memory Usage			active,	 inact,	  free,	   cache,	wire */
 $colormemory		= array('00AA00', '990000', '0000FF', '666666', 'DD9B00');
 
-/* Usage			current, cache,	  total,   max */
+/* MBUF Usage			current, cache,	  total,   max */
 $colormbuf		= array('0080FF', '00E344', 'FF0000', '000000');
 
 /* Traffic Shaper Queues	q1,		 q2,	  q3,	   q4,		q5,		 q6,	  q7,	   q8,		q9 */

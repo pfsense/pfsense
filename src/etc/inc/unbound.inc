@@ -129,9 +129,6 @@ function unbound_generate_config() {
 	// Configure Domain Overrides
 	unbound_add_domain_overrides();
 
-	// Configure Unbound statistics
-	$statistics = unbound_statistics();
-
 	// Configure Unbound access-lists
 	unbound_acls_config();
 
@@ -230,6 +227,9 @@ EOF;
 		}
 		$reverse_zones .= unbound_add_domain_overrides("reverse");
 	}
+
+	// Configure Unbound statistics
+	$statistics = unbound_statistics();
 
 	// Add custom Unbound options
 	if ($unboundcfg['custom_options']) {

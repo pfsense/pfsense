@@ -35,7 +35,7 @@ $result['range'] ="NaN";
 
 if (is_array($config['dhcpd'][$argv[1]])) {
 
-	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases.fake";
+	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 	$leases_contents = file($leasesfile);
 	$dhcpif = $argv[1] ; 
 

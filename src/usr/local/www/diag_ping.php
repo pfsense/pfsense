@@ -112,8 +112,10 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$sourceip = $_REQUEST['sourceip'];
-		$count = $_POST['count'];
+		if(isset($_REQUEST['sourceip'])) {
+			$sourceip = $_REQUEST['sourceip'];
+		}
+		$count = $_REQUEST['count'];
 		if (preg_match('/[^0-9]/', $count)) {
 			$count = DEFAULT_COUNT;
 		}

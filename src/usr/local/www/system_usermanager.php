@@ -470,7 +470,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 ?>
 
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th>&nbsp;</th>

@@ -138,7 +138,7 @@ foreach ($a_schedules as $schedule):
 ?>
 				<tr>
 					<td>
-						<?=(true) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
+						<?=($schedstatus) ? '<a title="' . gettext("Schedule is currently active") . '">' . CLOCK . '</a>':''?>
 					</td>
 					<td>
 						 <?=htmlspecialchars($schedule['name'])?>

@@ -208,7 +208,7 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv4">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable id="IPv4">
 		<thead>
 			<!-- filled by xhr -->
 		</thead>
@@ -224,7 +224,7 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv6">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable id="IPv6">
 		<thead>
 			<!-- filled by xhr -->
 		</thead>

@@ -150,7 +150,7 @@ $clients = openvpn_get_active_clients();
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Name/Time</th>

@@ -470,7 +470,7 @@ if ($do_tcpdump) :
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packets Captured')?></h2></div>
 	<div class="panel-body">
-
+		<div class="form-group">
 <?php
 		$detail_args = "";
 		switch ($detail) {
@@ -489,12 +489,13 @@ if ($do_tcpdump) :
 				break;
 		}
 
-		print('<pre>');
+		print('<textarea class="form-control" rows="20" style="font-size: 13px;">');
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
-		print('</pre>');
+		print('</textarea>');
 
 		conf_mount_ro();
 ?>
+		</div>
 	</div>
 </div>
 <?php

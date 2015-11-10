@@ -67,6 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 

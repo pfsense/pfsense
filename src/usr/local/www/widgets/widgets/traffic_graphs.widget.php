@@ -63,6 +63,7 @@ $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;

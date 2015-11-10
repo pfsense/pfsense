@@ -69,6 +69,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter_log.inc");
 
 # --- AJAX RESOLVE ---

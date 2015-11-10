@@ -1171,6 +1171,9 @@ function filter_generate_optcfg_array() {
 		}
 	}
 	/* add ipsec interfaces */
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
 	if (ipsec_enabled()) {
 		$oic = array();
 		$oic['if'] = 'enc0';

@@ -177,6 +177,21 @@ $p2_pfskeygroups = array(
 	30 => '30 (brainpool ecp512)'
 );
 
+function ipsec_enabled() {
+	global $config;
+
+	if (!isset($config['ipsec']) || !is_array($config['ipsec']))
+		return false;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']) ||
+	    empty($config['ipsec']['phase1'])) {
+		return false;
+	}
+
+	return true;
+}
+
 /*
  * ikeid management functions
  */

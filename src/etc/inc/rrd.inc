@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	rrd.inc
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>

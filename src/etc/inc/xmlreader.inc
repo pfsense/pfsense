@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	xmlreader.inc
 	functions to parse/dump configuration files in XML format

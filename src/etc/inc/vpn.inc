@@ -1,5 +1,4 @@
 <?php
-
 /*
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
@@ -432,7 +431,7 @@ syslog {
 		ike_name = yes
 {$strongswanlog}
 	}
-	# disable logging under auth so logs aren't duplicated 
+	# disable logging under auth so logs aren't duplicated
 	auth {
 		default = -1
 	}

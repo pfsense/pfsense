@@ -3995,13 +3995,13 @@ function upgrade_123_to_124() {
 				require_once("notices.inc");
 			}
 			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
-			unset($config['interfaces'][$ifname]['wireless']['wep']); 
+			unset($config['interfaces'][$ifname]['wireless']['wep']);
 			if (isset($intf['enable'])) {
 				unset($config['interfaces'][$ifname]['enable']);
 			}
 		}
 	}
 }
-	
+
 
 ?>

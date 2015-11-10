@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	rc.carpbackup
 	part of pfSense (https://www.pfsense.org)
@@ -54,7 +53,7 @@ $carp_iface = "{$friendly}_vip{$vhid}";
 if(is_array($vips)) {
 	foreach ($vips as $vip) {
 		$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "BACKUP" for vhid %3$s', $argument, $friendly_descr, $vhid);
-	
+
 		notify_via_smtp($notificationmsg);
 		notify_via_growl($notificationmsg);
 		log_error($notificationmsg);

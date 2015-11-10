@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	rc.initial.halt
 	part of pfSense (www.pfSense.com)

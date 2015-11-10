@@ -553,7 +553,10 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 <?php if ($ifname != 'wan'):?>
-				<input type="submit" name="del[<?=$ifname?>]" class="btn btn-danger" value="<?=gettext("delete interface")?>"/>
+				<button type="submit" name="del[<?=$ifname?>]" class="btn btn-danger btn-sm" title="<?=gettext("Delete interface")?>">
+					<i class="fa fa-trash icon-embed-btn"></i>
+					<?=gettext("Delete I/F")?>
+				</button>
 <?php endif;?>
 			</td>
 		</tr>
@@ -574,7 +577,10 @@ display_top_tabs($tab_array);
 				</select>
 			</td>
 			<td>
-				<input type="submit" name="add" title="<?=gettext("add selected interface")?>" value="add interface" class="btn btn-success" />
+				<button type="submit" name="add" title="<?=gettext("Add selected interface")?>" value="add interface" class="btn btn-success btn-sm" >
+					<i class="fa fa-plus icon-embed-btn"></i>
+					<?=gettext("Add I/F")?>
+				</button>
 			</td>
 		</tr>
 <?php endif;?>
@@ -582,9 +588,9 @@ display_top_tabs($tab_array);
 	</table>
 	</div>
 
-	<input name="Submit" type="submit" class="btn btn-default" value="<?=gettext("Save")?>" /><br /><br />
+	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><?=gettext('Save')?></button>
 </form>
-
+<br />
 <p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
 
 <?php include("foot.inc")?>

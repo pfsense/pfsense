@@ -489,9 +489,9 @@ if ($do_tcpdump) :
 				break;
 		}
 
-		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas;">');
+		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
-		print('</font></textarea>');
+		print('</textarea>');
 
 		conf_mount_ro();
 ?>

@@ -481,8 +481,6 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 			</tr>
 		</thead>
 		<tbody>
-		</tbody>
-		<tbody>
 <?php
 foreach($a_user as $i => $userent):
 	?>

@@ -101,11 +101,11 @@ else {
 	<div class="table-responsive"></div>
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<tr>
-				<td><?=gettext("Name"); ?></td>
-				<td><?=gettext("Address"); ?></td>
-				<td><?=gettext("Servers"); ?></td>
-				<td><?=gettext("Status"); ?></td>
-				<td><?=gettext("Description"); ?></td>
+				<th><?=gettext("Name"); ?></th>
+				<th><?=gettext("Address"); ?></th>
+				<th><?=gettext("Servers"); ?></th>
+				<th><?=gettext("Status"); ?></th>
+				<th><?=gettext("Description"); ?></th>
 			</tr>
 <?php
 			$i = 0;

@@ -489,7 +489,7 @@ if ($do_tcpdump) :
 				break;
 		}
 
-		print('<textarea class="form-control" rows="20" style="font-size: 13px;"><font face="consolas">');
+		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas;">');
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
 		print('</font></textarea>');
 

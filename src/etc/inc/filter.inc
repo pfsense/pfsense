@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	filter.inc
 	Copyright (C) 2004-2006 Scott Ullrich
@@ -2675,7 +2674,7 @@ function filter_generate_user_rule($rule) {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} 
+			}
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */

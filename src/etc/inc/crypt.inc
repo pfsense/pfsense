@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* crypt.inc */
 /*
 	Copyright (C) 2008 Shrew Soft Inc
 	All rights reserved.

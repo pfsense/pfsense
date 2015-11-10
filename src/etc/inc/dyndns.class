@@ -282,7 +282,7 @@
 			if ($this->_dnsVerboseLog) {
 				log_error("DynDNS ({$this->_dnsHost}): DynDns _update() starting.");
 			}
-			
+
 			if (strstr($this->_dnsRequestIf, "_vip")) {
 				$parentif = link_carp_interface_to_parent($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
@@ -697,12 +697,12 @@
 
 					// Get zone ID
 					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$bottom_host_name}";
-					curl_setopt($ch, CURLOPT_URL, $getZoneId); 	
+					curl_setopt($ch, CURLOPT_URL, $getZoneId);
 					$output = json_decode(curl_exec($ch));
 					$zone = $output->result[0]->id;
 					if ($zone){ // If zone ID was found get host ID
 						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_dnsHost}";
-						curl_setopt($ch, CURLOPT_URL, $getHostId); 
+						curl_setopt($ch, CURLOPT_URL, $getHostId);
 						$output = json_decode(curl_exec($ch));
 						$host = $output->result[0]->id;
 						if ($host){ // If host ID was found update host
@@ -715,7 +715,7 @@
 							);
 							$data_json = json_encode($hostData);
 							$updateHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records/{$host}";
-							curl_setopt($ch, CURLOPT_URL, $updateHostId); 
+							curl_setopt($ch, CURLOPT_URL, $updateHostId);
 							curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 							curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
 						}

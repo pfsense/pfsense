@@ -199,6 +199,38 @@ function vpn_ipsec_configure($restart = false) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 	}
 
+	if (file_exists("/usr/local/etc/ipsec.d") &&
+	    !is_link("/usr/local/etc/ipsec.d")) {
+		conf_mount_rw();
+		rmdir_recursive("/usr/local/etc/ipsec.d");
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
+		    "/usr/local/etc/ipsec.d");
+		conf_mount_ro();
+	}
+	if (file_exists("/usr/local/etc/strongswan.d") &&
+	    !is_link("/usr/local/etc/strongswan.d")) {
+		conf_mount_rw();
+		rmdir_recursive("/usr/local/etc/strongswan.d");
+		@symlink("{$g['varetc_path']}/ipsec/strongswan.d",
+		    "/usr/local/etc/strongswan.d");
+		conf_mount_ro();
+	}
+	if (file_exists("/usr/local/etc/strongswan.conf") &&
+	    !is_link("/usr/local/etc/strongswan.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/strongswan.conf");
+		@symlink("{$g['varetc_path']}/ipsec/strongswan.conf",
+		    "/usr/local/etc/strongswan.conf");
+		conf_mount_ro();
+	}
+	if (file_exists("/usr/local/etc/ipsec.conf") &&
+	    !is_link("/usr/local/etc/ipsec.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/ipsec.conf");
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.conf",
+		    "/usr/local/etc/ipsec.conf");
+		conf_mount_ro();
+	}
 
 	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
@@ -408,7 +440,8 @@ function vpn_ipsec_configure($restart = false) {
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.
 starter {
-load_warning = no
+	load_warning = no
+	config_file = {$g['varetc_path']}/ipsec/ipsec.conf
 }
 
 charon {
@@ -437,9 +470,12 @@ syslog {
 	}
 }
 
-EOD;
+	plugins {
+		stroke {
+			secrets_file = {$g['varetc_path']}/ipsec/ipsec.secrets
+		}
 
-	$strongswan .= "\tplugins {\n";
+EOD;
 
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
 	$radius_server_txt = "";

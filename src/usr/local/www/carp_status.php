@@ -214,7 +214,7 @@ if ($carpcount == 0) {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('CARP Interfaces')?></h2></div>
 			<div class="panel-body table-responsive">
-				<table class="table table-striped table-hover table-condensed">
+				<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap " data-sortable>
 					<thead>
 						<tr>
 							<th><?=gettext("CARP Interface")?></th>

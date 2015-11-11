@@ -213,13 +213,14 @@ if ($fd) {
 			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
 			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
 			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
-			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^aesni.: (.*?),/", $dmesgl, $matches)) {
+			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}
 	}
 	fclose($fd);
+	if (!isset($hwcrypto) && get_single_sysctl("dev.aesni.0.%desc"))
+		$hwcrypto = get_single_sysctl("dev.aesni.0.%desc");
 }
 
 ##build widget saved list information

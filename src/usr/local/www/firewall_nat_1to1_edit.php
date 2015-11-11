@@ -69,6 +69,7 @@
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
+require_once("ipsec.inc");
 require("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
@@ -407,9 +408,8 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0"))
+	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
 if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])

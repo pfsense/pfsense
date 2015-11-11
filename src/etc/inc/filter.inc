@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	filter.inc
 	Copyright (C) 2004-2006 Scott Ullrich
@@ -1172,7 +1171,10 @@ function filter_generate_optcfg_array() {
 		}
 	}
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
@@ -2675,7 +2677,7 @@ function filter_generate_user_rule($rule) {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} 
+			}
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */

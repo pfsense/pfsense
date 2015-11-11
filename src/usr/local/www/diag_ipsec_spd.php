@@ -91,7 +91,7 @@ display_top_tabs($tab_array);
 if (count($spd)) {
 ?>
 	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?= gettext("Source"); ?></th>

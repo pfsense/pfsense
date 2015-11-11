@@ -127,7 +127,7 @@ if ($_GET['order']) {
 	usort($cpdb_all, "clientcmp");
 }
 ?>
-<table class="table">
+<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
 	<thead>
 	<tr>
 		<th><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></td>

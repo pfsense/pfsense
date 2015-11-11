@@ -87,7 +87,7 @@ display_top_tabs($tab_array);
 if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 ?>
 	<div class="table-responsive">
-		<table class="table table-hover table-condensed">
+		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Pool")?></th>

@@ -67,6 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
@@ -1139,7 +1140,7 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 // add ipsec interfaces
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']) && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0"))
 	$interfaces["enc0"] = "IPsec";
 
 // add openvpn/tun interfaces

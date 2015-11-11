@@ -1,7 +1,5 @@
 <?php
 /*
-	$Id$
-
 	xmlrpc.inc
 	Copyright (C) 2005-2006 Colin Smith
 	All rights reserved.

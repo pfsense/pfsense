@@ -74,6 +74,7 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
 	<script>var events = events || [];</script>
 </head>

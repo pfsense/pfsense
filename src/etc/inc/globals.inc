@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	globals.inc
 	part of pfSense (https://www.pfsense.org)

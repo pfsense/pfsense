@@ -165,7 +165,7 @@ if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST[
 $form->add($section);
 print $form;
 ?>
-<table class="table table-striped">
+<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 	<thead>
 		<tr>
 			<th><?=gettext("Int")?></th>

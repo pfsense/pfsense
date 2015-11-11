@@ -69,6 +69,8 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once('rrd.inc');
+require_once("shaper.inc");
 
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -201,6 +203,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['rootpath'] = $dhcpdconf['rootpath'];
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
+	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -564,6 +567,11 @@ if (isset($_POST['submit'])) {
 		$dhcpdconf['filename32'] = $_POST['filename32'];
 		$dhcpdconf['filename64'] = $_POST['filename64'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
+		unset($dhcpdconf['statsgraph']);
+		if ($_POST['statsgraph']) {
+			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
+			enable_rrd_graphing();
+		}
 
 		// Handle the custom options rowhelper
 		if (isset($dhcpdconf['numberoptions']['item'])) {
@@ -955,6 +963,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['dhcpleaseinlocaltime']
 	))->setHelp('By default DHCP leases are displayed in UTC time.	By checking this box DHCP lease time will be displayed in local time and set to the time zone selected.' .
 				' This will be used for all DHCP interfaces lease time');
+	$section->addInput(new Form_Checkbox(
+		'statsgraph',
+		'RRD graphs',
+		'Enable RRD graphs',
+		$pconfig['statsgraph']
+	))->setHelp('By default RRD graphs are disabled.');
 }
 
 // DDNS

@@ -92,7 +92,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">
-	<table class="table table-hover table-compact table-striped">
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("Name"); ?></th>

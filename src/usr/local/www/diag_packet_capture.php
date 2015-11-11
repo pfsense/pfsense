@@ -123,6 +123,7 @@ if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
@@ -136,9 +137,8 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
-	$interfaces['ipsec'] = "IPsec";
-}
+if (ipsec_enabled())
+	$interfaces['enc0'] = "IPsec";
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -470,7 +470,7 @@ if ($do_tcpdump) :
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packets Captured')?></h2></div>
 	<div class="panel-body">
-
+		<div class="form-group">
 <?php
 		$detail_args = "";
 		switch ($detail) {
@@ -489,12 +489,13 @@ if ($do_tcpdump) :
 				break;
 		}
 
-		print('<pre>');
+		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
-		print('</pre>');
+		print('</textarea>');
 
 		conf_mount_ro();
 ?>
+		</div>
 	</div>
 </div>
 <?php

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	rrd.inc
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
@@ -229,6 +228,7 @@ function enable_rrd_graphing() {
 	$captiveportalconcurrent = "-concurrent.rrd";
 	$captiveportalloggedin = "-loggedin.rrd";
 	$ntpd = "ntpd.rrd";
+	$dhcpd = "-dhcpd.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -241,6 +241,7 @@ function enable_rrd_graphing() {
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
 	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
+	$dhcpd_gather = "/usr/local/bin/dhcpd_gather_stats.php";
 	$ntpq = "/usr/local/sbin/ntpq";
 
 	$rrdtrafficinterval = 60;
@@ -258,6 +259,7 @@ function enable_rrd_graphing() {
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
 	$rrdntpdinterval = 60;
+	$rrddhcpdinterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -274,7 +276,8 @@ function enable_rrd_graphing() {
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 	$ntpdvalid = $rrdntpdinterval * 2;
-
+	$dhcpdvalid = $rrddhcpdinterval * 2;
+	
 	/* Assume 2*10GigE for now */
 	$downstream = 2500000000;
 	$upstream = 2500000000;
@@ -911,6 +914,44 @@ function enable_rrd_graphing() {
 
 		}
 		/* End NTP statistics */
+		
+		/* Start dhcpd statistics */
+		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+			if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {	
+				if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
+					$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
+					$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
+					$rrdcreate .= "DS:staticleases:GAUGE:$dhcpdvalid:0:100000 ";
+					$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+					$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+					$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+					$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+					$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+					$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+					$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+					$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
+					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
+				}
+
+				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+				if (platform_booting()) {
+					mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
+				}
+
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# polling leases for dhcp \n";
+				$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
+				$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
+				
+			}
+		}
+
+		/* END dhcpd statistics */
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";

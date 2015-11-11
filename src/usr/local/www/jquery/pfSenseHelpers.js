@@ -378,7 +378,7 @@ if($('#infoblock').length != 0) {
 // Hide information on page load
 $('#infoblock').hide();
 
-// SHow the help on clicking the info icon
+// Show the help on clicking the info icon
 $('#showinfo').click(function() {
 	$('#infoblock').toggle();
 });

@@ -177,6 +177,21 @@ $p2_pfskeygroups = array(
 	30 => '30 (brainpool ecp512)'
 );
 
+function ipsec_enabled() {
+	global $config;
+
+	if (!isset($config['ipsec']) || !is_array($config['ipsec']))
+		return false;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']) ||
+	    empty($config['ipsec']['phase1'])) {
+		return false;
+	}
+
+	return true;
+}
+
 /*
  * ikeid management functions
  */
@@ -550,32 +565,52 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g, $custom_listtags;
+	global $g;
 
-	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
+	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
-	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
+	if ($rc != 0) {
 		log_error(gettext("Unable to find IPsec daemon leases file. Could not display mobile user stats!"));
 		return array();
 	}
 
-	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") == 0) {
-		return array();
+	$response = array();
+	$id = -1;
+
+	/* Leases in pool '10.7.200.0/24', usage: 1/254, 1 online */
+	$lease_regex='/^Leases *in *pool *\'(?P<name>.+)\', *usage: *(?P<usage>\d+)\/(?P<size>\d+), *(?P<online>\d+) *online/';
+	/* 10.7.200.1   online   'jimp' */
+	$pool_regex='/\s*(?P<host>[\d\.]+)\s+(?P<status>online|offline)\s+\'(?P<id>.*)\'/';
+	/* no matching leases found */
+	$nopool_regex='/no *matching *leases *found/';
+
+	$lease=false;
+	foreach ($output as $line) {
+		if (preg_match($lease_regex, $line, $matches)) {
+			$id++;
+			$response['pool'][$id] = array(
+			    'name'   => $matches['name'],
+			    'usage'  => $matches['usage'],
+			    'size'   => $matches['size'],
+			    'online' => $matches['online'],
+			);
+			$lease=true;
+		} else if ($lease) {
+			if (preg_match($nopool_regex, $line)) {
+				$response['pool'][$id]['lease'][] = array();
+				$lease=false;
+			} else if (preg_match($pool_regex, $line, $matches)) {
+				$response['pool'][$id]['lease'][] = array(
+				    'host'   => $matches['host'],
+				    'status' => $matches['status'],
+				    'id'     => $matches['id']
+				);
+			}
+		}
 	}
 
-	if (!function_exists('parse_xml_config')) {
-		require_once('xmlparse.inc');
-	}
-
-	$custom_listtags = array('lease', 'pool');
-	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
-
-	if ($response == -1) {
-		return array();
-	}
-
-	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
-	unset($custom_listtags, $_gb);
+	unset($_gb, $lease, $output, $rc, $id, $lease_regex, $pool_regex,
+	    $nopool_regex);
 
 	return $response;
 }

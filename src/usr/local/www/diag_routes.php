@@ -161,9 +161,15 @@ function update_routes_callback(html) {
 	var thead = '<tr>';
 
 	for (var i = 0; i < responseTextArr.length; i++) {
+
 		if (responseTextArr[i] == "")
 			continue;
-		var tmp = '<tr>';
+
+		if (i == 0)
+			var tmp = '';
+		else
+			var tmp = '<tr>';
+
 		var j = 0;
 		var entry = responseTextArr[i].split(" ");
 		for (var k = 0; k < entry.length; k++) {
@@ -176,12 +182,12 @@ function update_routes_callback(html) {
 			j++;
 		}
 
-		tmp += '<td><\/td>';
-
 		if (i == 0)
 			thead += tmp;
-		else
+		else {
+			tmp += '<td><\/td>'
 			tbody += tmp;
+		}
 	}
 
 	$('#' + section + ' > thead').html(thead);
@@ -208,9 +214,11 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv4">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4">
 		<thead>
-			<!-- filled by xhr -->
+			<tr>
+				<th><!-- filled by xhr --></th>
+			</tr>
 		</thead>
 		<tbody>
 			<tr>
@@ -224,9 +232,11 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv6">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6">
 		<thead>
-			<!-- filled by xhr -->
+			<tr>
+				<th><!-- filled by xhr --></th>
+			</tr>
 		</thead>
 		<tbody>
 			<tr>

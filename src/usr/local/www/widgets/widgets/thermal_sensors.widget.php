@@ -1,6 +1,6 @@
 <?php
 /*
-	$Id: thermal_sensors.widget.php
+	thermal_sensors.widget.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.

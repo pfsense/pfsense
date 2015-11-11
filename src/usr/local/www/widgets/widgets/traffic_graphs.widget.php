@@ -63,6 +63,7 @@ $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;
@@ -80,9 +81,8 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled())
 	$ifdescrs['enc0'] = "IPsec";
-}
 
 if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {

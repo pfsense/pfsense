@@ -182,9 +182,9 @@ foreach ($iflist as $ifnam => $ifdescr)
 	$optionlist[$ifnam] = $ifdescr;
 
 $section->addInput(new Form_Select(
-	'ifname',
+	'interface',
 	'Interface',
-	$pconfig['ifname'],
+	$pconfig['interface'],
 	$optionlist
 ));
 
@@ -271,7 +271,7 @@ $group->add(new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'A (IPv4)',
-	($pconfig['keytype']=='A'),
+	($pconfig['recordtype']=='A'),
 	'A'
 ))->displayAsRadio();
 
@@ -279,7 +279,7 @@ $group->add($input = new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'AAAA (IPv6)',
-	($pconfig['keytype']=='AAAA'),
+	($pconfig['recordtype']=='AAAA'),
 	'AAAA'
 ))->displayAsRadio();
 
@@ -287,7 +287,7 @@ $group->add($input = new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'Both',
-	($pconfig['keytype']=='both'),
+	($pconfig['recordtype']=='both'),
 	'both'
 ))->displayAsRadio();
 

@@ -409,7 +409,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not members')->setAttribute('style', 'height:400px;');
+	))->setHelp('Not members');
 
 	$group->add(new Form_Select(
 		'members',
@@ -417,7 +417,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Members')->setAttribute('style', 'height:400px;');
+	))->setHelp('Members');
 
 	$section->add($group);
 

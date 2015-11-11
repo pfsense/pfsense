@@ -1540,7 +1540,7 @@ $section->addInput(new Form_Select(
 	$vlanprio
 ))->setHelp('Choose 802.1p priority to apply');
 
-$schedules = array('none'); //leave none to leave rule enabled all the time
+$schedules = array();
 foreach ((array)$config['schedules']['schedule'] as $schedule)
 {
 	if ($schedule['name'] != "")
@@ -1551,7 +1551,7 @@ $section->addInput(new Form_Select(
 	'sched',
 	'Schedule',
 	$pconfig['sched'],
-	$schedules
+	['' => 'none'] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
 
 $gateways = array("" => 'default');

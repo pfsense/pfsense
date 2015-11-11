@@ -240,7 +240,7 @@ events.push(function(){
 		$(this).submit();
 	});
 
-	setInterval('updateBandwidth()', 1000);
+	setInterval('updateBandwidth()', 3000);
 
 	updateBandwidth();
 });

@@ -99,6 +99,7 @@ filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
 $if = $_GET['if'];
+
 if ($_POST['if']) {
 	$if = $_POST['if'];
 }
@@ -164,10 +165,10 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"), "<a href='status_filter_reload.php'>", "</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
+									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
-
 
 if ($_GET['act'] == "del") {
 	if ($a_filter[$_GET['id']]) {
@@ -349,10 +350,10 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	$display = "";
-
 	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
 		$display = 'style="display: none;"';
+	} else {
+		$display = "";
 	}
 ?>
 					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
@@ -673,15 +674,15 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		<dl class="dl-horizontal responsive">
 		<!-- Legend -->
 			<dt><?=gettext('Legend')?></dt>				<dd></dd>
-			<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("pass");?></dd>
-			<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("match");?></dd>
-			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("block");?></dd>
-			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("reject");?></dd>
-			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("log");?></dd>
-			<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("advanced filter");?></dd>
+			<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("Pass");?></dd>
+			<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
+			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("Block");?></dd>
+			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
+			<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 		</dl>
 
-	<?php
+<?php
 	if ("FloatingRules" != $if)
 		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
@@ -694,11 +695,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
 			"other rules match. Pay close attention to the rule order and options " .
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
-	?>
+?>
 	</div>
 </div>
-<script>
 
+<script>
 events.push(function() {
 
 	stripe_table();
@@ -718,4 +719,5 @@ events.push(function() {
 	});
 });
 </script>
+
 <?php include("foot.inc");?>

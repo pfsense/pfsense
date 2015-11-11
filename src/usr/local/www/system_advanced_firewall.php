@@ -431,14 +431,14 @@ $section->addInput(new Form_Checkbox(
 	'Clear invalid DF bits instead of dropping the packets',
 	isset($config['system']['scrubnodf'])
 ))->setHelp('This allows for communications with hosts that generate fragmented '.
-	'packets with the don"t fragment (DF) bit set. Linux NFS is known to do this. '.
-	'This will cause the filter to not drop such packets but instead clear the don"t '.
+	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
+	'This will cause the filter to not drop such packets but instead clear the don\'t '.
 	'fragment bit.');
 
 $section->addInput(new Form_Checkbox(
 	'scrubrnid',
 	'IP Random id generation',
-	'Insert a stronger id into IP header of packets passing through the filter.',
+	'Insert a stronger ID into IP header of packets passing through the filter.',
 	isset($config['system']['scrubrnid'])
 ))->setHelp('Replaces the IP identification field of packets with random values to '.
 	'compensate for operating systems that use predictable values. This option only '.

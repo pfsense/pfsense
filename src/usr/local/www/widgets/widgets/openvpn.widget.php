@@ -60,9 +60,6 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
-if($_GET)
-	print_r($_GET);
-
 if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];

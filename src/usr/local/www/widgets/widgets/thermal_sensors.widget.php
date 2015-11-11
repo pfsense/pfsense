@@ -97,11 +97,11 @@ function saveThresholdSettings(&$configArray, &$postArray, $warningValueKey, $cr
 	$warningValue = 0;
 	$criticalValue = 0;
 
-	if (isset($postArray[$warningValueKey])) {
+	if (isset($postArray[$warningValueKey]) && is_numeric($postArray[$warningValueKey])) {
 		$warningValue = (int) $postArray[$warningValueKey];
 	}
 
-	if (isset($postArray[$criticalValueKey])) {
+	if (isset($postArray[$criticalValueKey]) && is_numeric($postArray[$criticalValueKey])) {
 		$criticalValue = (int) $postArray[$criticalValueKey];
 	}
 

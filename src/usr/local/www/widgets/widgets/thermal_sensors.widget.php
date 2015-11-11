@@ -188,6 +188,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		(Updating...)<br /><br />
 	</div>
 </div>
+</div>
 <input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
 
 <div id="thermal_sensors-settings" class="widgetconfigdiv panel-footer collapse" >
@@ -277,8 +278,8 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 			</td>
 		</tr>
 	</table>
-	</form>
-</div>
+</form>
+
 
 <!-- needed to display the widget settings menu -->
 <script type="text/javascript">

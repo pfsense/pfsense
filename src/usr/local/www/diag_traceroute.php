@@ -78,6 +78,9 @@ include("head.inc");
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
+$do_traceroute = false;
+$host = '';
+$ttl = DEFAULT_TTL;
 $pconfig['ttl'] = DEFAULT_TTL;
 $pconfig['ipproto'] = 'IPv4';
 $pconfig['sourceip'] = 'Any';
@@ -114,24 +117,22 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 	}
 
-	if (!$input_errors)
+	if (!$input_errors) {
 		$host = $_REQUEST['host'];
+	}
 
 	$sourceip = $_REQUEST['sourceip'];
-	$do_traceroute = true;
 	$ttl = $_REQUEST['ttl'];
 	$resolve = $_REQUEST['resolve'];
 	$useicmp = $_REQUEST['useicmp'];
 
+	if ($_POST) {
+		$do_traceroute = true;
+	}
+
 } else {
 	$resolve = false;
 	$useicmp = false;
-}
-
-if (!isset($do_traceroute)) {
-	$do_traceroute = false;
-	$host = '';
-	$ttl = DEFAULT_TTL;
 }
 
 if ($input_errors)

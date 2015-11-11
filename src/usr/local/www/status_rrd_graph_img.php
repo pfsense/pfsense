@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
 	status_rrd_graph_img.php
 */
@@ -284,7 +285,7 @@ $colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
 
-$colordhcpd = array('990000', '0000FF');
+$colordhcpd = array('990000', '0000FF', '000000');
 
 switch ($curstyle) {
 	case "absolute":
@@ -1245,19 +1246,26 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-leases=$rrddbpath$curdatabase:leases:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"$curif-staticleases=$rrddbpath$curdatabase:staticleases:AVERAGE:step=$step\" ";
-	$graphcmd .= "LINE1:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
-	$graphcmd .= "LINE1:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
+	$graphcmd .= "DEF:\"$curif-dhcprange=$rrddbpath$curdatabase:dhcprange:AVERAGE:step=$step\" ";
+	$graphcmd .= "AREA:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
+	$graphcmd .= "LINE2:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
+	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:Dhcp Range\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t		maximum\\n\" ";
-	$graphcmd .= "COMMENT:\"Leases Active\t\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t\tmaximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Active Leases\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Leases Static\t\" ";
+	$graphcmd .= "COMMENT:\"Static Leases\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Dhcp Range\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } else {

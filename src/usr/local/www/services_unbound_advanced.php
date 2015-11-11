@@ -113,9 +113,6 @@ if (isset($config['unbound']['use_caps'])) {
 }
 
 if ($_POST) {
-	unset($input_errors);
-	$pconfig = $_POST;
-
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
@@ -123,6 +120,9 @@ if ($_POST) {
 			clear_subsystem_dirty('unbound');
 		}
 	} else {
+		unset($input_errors);
+		$pconfig = $_POST;
+
 		if (isset($_POST['msgcachesize']) && !in_array($_POST['msgcachesize'], array('4', '10', '20', '50', '100', '250', '512'), true)) {
 			$input_errors[] = "A valid value for Message Cache Size must be specified.";
 		}
@@ -225,6 +225,18 @@ $closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced"));
 $shortcut_section = "resolver";
 include_once("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+        print_info_box($savemsg, 'success');
+}
+
+if (is_subsystem_dirty('unbound')) {
+	print_info_box_np(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("General settings"), false, "services_unbound.php");

@@ -367,15 +367,19 @@ endforeach;
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>">
-			<i class="fa fa-plus icon-embed-btn"></i>
+		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm">
+		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled="disabled">
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled="disabled" title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>

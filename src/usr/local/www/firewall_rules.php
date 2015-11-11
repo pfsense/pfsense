@@ -99,6 +99,7 @@ filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
 $if = $_GET['if'];
+
 if ($_POST['if']) {
 	$if = $_POST['if'];
 }
@@ -164,10 +165,10 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"), "<a href='status_filter_reload.php'>", "</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
+									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
-
 
 if ($_GET['act'] == "del") {
 	if ($a_filter[$_GET['id']]) {
@@ -349,13 +350,13 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if ($filterent['interface'] != $if && !isset($filterent['floating']))
-		continue;
-
-	if (isset($filterent['floating']) && "FloatingRules" != $if)
-		continue;
+	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
+		$display = 'style="display: none;"';
+	} else {
+		$display = "";
+	}
 ?>
-					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -649,51 +650,56 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <?php endif;?>
 
 	<nav class="action-buttons">
-		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success">
-			<i class="fa fa-plus icon-embed-btn"></i>
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>">
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext("Add");?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled">
+		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled" title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>
 </form>
-<!-- Legend -->
-<div>
-	<dl class="dl-horizontal responsive">
-		<dt><?=gettext('Legend')?></dt>				<dd></dd>
-		<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("pass");?></dd>
-		<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("match");?></dd>
-		<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("block");?></dd>
-		<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("reject");?></dd>
-		<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("log");?></dd>
-		<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("advanced filter");?></dd>
-	</dl>
-</div>
 
 <div id="infoblock">
-	<?php
+	<div class="alert alert-info clearfix" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><div class="pull-left">
+		<dl class="dl-horizontal responsive">
+		<!-- Legend -->
+			<dt><?=gettext('Legend')?></dt>				<dd></dd>
+			<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("Pass");?></dd>
+			<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
+			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("Block");?></dd>
+			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
+			<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
+		</dl>
+
+<?php
 	if ("FloatingRules" != $if)
-		print_info_box(gettext("Rules are evaluated on a first-match basis (i.e. " .
+		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
 			gettext("This means that if you use block rules, you'll have to pay attention " .
 			"to the rule order. Everything that isn't explicitly passed is blocked " .
-			"by default. "), info);
+			"by default. "));
 	else
-		print_info_box(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
+		print(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed) only " .
-			"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
+			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
 			"other rules match. Pay close attention to the rule order and options " .
-			"chosen. If no rule here matches, the per-interface or default rules are used. "), info);
-	?>
+			"chosen. If no rule here matches, the per-interface or default rules are used. "));
+?>
+	</div>
 </div>
-<script>
 
+<script>
 events.push(function() {
 
 	stripe_table();
@@ -713,4 +719,5 @@ events.push(function() {
 	});
 });
 </script>
+
 <?php include("foot.inc");?>

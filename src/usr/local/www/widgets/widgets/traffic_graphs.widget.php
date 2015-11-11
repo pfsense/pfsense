@@ -85,7 +85,7 @@ if (ipsec_enabled())
 	$ifdescrs['enc0'] = "IPsec";
 
 if ($_POST) {
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numeric($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
 

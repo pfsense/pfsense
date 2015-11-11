@@ -75,6 +75,9 @@ require_once("guiconfig.inc");
 
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
+$do_ping = false;
+$host = '';
+$count = DEFAULT_COUNT;
 
 function create_sourceaddresslist() {
 	$sourceips = get_possible_traffic_source_addresses(true);
@@ -111,7 +114,9 @@ if ($_POST || $_REQUEST['host']) {
 	}
 
 	if (!$input_errors) {
-		$do_ping = true;
+		if ($_POST) {
+			$do_ping = true;
+		}
 		if(isset($_REQUEST['sourceip'])) {
 			$sourceip = $_REQUEST['sourceip'];
 		}
@@ -120,12 +125,6 @@ if ($_POST || $_REQUEST['host']) {
 			$count = DEFAULT_COUNT;
 		}
 	}
-}
-
-if (!isset($do_ping)) {
-	$do_ping = false;
-	$host = '';
-	$count = DEFAULT_COUNT;
 }
 
 if ($do_ping) {

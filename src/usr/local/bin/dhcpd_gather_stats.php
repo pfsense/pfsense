@@ -28,8 +28,10 @@ require_once("config.inc");
 require("interfaces.inc");
 /* echo the rrd required syntax */
 echo "N:";
-$result = "NaN";
-$result_static="NaN";
+$result = array();
+$result['active'] = "NaN";
+$result['static'] ="NaN";
+$result['range'] ="NaN";
 
 if (is_array($config['dhcpd'][$argv[1]])) {
 
@@ -187,7 +189,9 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	$ifcfgsn = get_interface_subnet($dhcpif);
 	$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 	$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-
+	
+	$result['range'] = (ip2ulong($config['dhcpd'][$dhcpif]['range']['to'])) - (ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) ;
+	
 	foreach ($leases as $data) {
 		$lip = ip2ulong($data['ip']);
 		
@@ -195,14 +199,14 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 			continue;
 		if ($data['act'] != "static") {
 			if (($lip >= ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) && ($lip <= ip2ulong($config['dhcpd'][$dhcpif]['range']['to']))) {
-					$result = $result + 1;
+					$result['active'] = $result['active'] + 1;
 			}
 		}
 		else {
 			if (($lip >= $subnet_start) && ($lip <= $subnet_end)) {
-				$result_static = $result_static + 1;
+				$result['static'] = $result['static'] + 1;
 			}
 		}
 	}
 }
-echo "$result:$result_static" ; 
+echo $result['active'].":".$result['static'].":".$result['range'] ; 

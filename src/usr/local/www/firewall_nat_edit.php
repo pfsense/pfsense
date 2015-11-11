@@ -695,6 +695,13 @@ $section->addInput(new Form_Select(
 
 $group = new Form_Group('Source');
 
+$group->add(new Form_Checkbox(
+	'srcnot',
+	'Source not',
+	'Invert match.',
+	$pconfig['srcnot']
+))->setWidth(2);
+
 $group->add(new Form_Select(
 	'srctype',
 	null,
@@ -756,6 +763,13 @@ $section->add($group);
 
 $group = new Form_Group('Destination');
 
+$group->add(new Form_Checkbox(
+	'dstnot',
+	'Destination not',
+	'Invert match.',
+	$pconfig['dstnot']
+))->setWidth(2);
+
 $group->add(new Form_Select(
 	'dsttype',
 	null,
@@ -809,14 +823,6 @@ $group->setHelp('Specify the port or port range for the destination of the packe
 
 $section->add($group);
 
-$section->addInput(new Form_Checkbox(
-	'dstnot',
-	null,
-	'Not (Invert the sense of the match)',
-	$pconfig['dstnot'],
-	'yes'
-));
-
 $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
@@ -859,7 +865,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'nosync',
 	'No XMLRPC Sync',
-	null,
+	'Do not automatically sync to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This prevents the rule on Master from automatically syncing to other CARP members. ' .
 			'This does NOT prevent the rule from being overwritten on Slave.');
@@ -1226,7 +1232,7 @@ events.push(function(){
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-	$('#localip, #ser, #dst').autocomplete({
+	$('#localip, #src, #dst').autocomplete({
 		source: addressarray
 	});
 

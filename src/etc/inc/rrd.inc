@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
 	rrd.inc
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
@@ -922,6 +923,7 @@ function enable_rrd_graphing() {
 					$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
 					$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
 					$rrdcreate .= "DS:staticleases:GAUGE:$dhcpdvalid:0:100000 ";
+					$rrdcreate .= "DS:dhcprange:GAUGE:$dhcpdvalid:0:100000 ";
 					$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 					$rrdcreate .= "RRA:MIN:0.5:5:720 ";
 					$rrdcreate .= "RRA:MIN:0.5:60:1860 ";

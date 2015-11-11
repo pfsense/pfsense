@@ -865,7 +865,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'nosync',
 	'No XMLRPC Sync',
-	null,
+	'Do not automatically sync to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This prevents the rule on Master from automatically syncing to other CARP members. ' .
 			'This does NOT prevent the rule from being overwritten on Slave.');

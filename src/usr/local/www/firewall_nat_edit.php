@@ -1232,7 +1232,7 @@ events.push(function(){
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-	$('#localip, #ser, #dst').autocomplete({
+	$('#localip, #src, #dst').autocomplete({
 		source: addressarray
 	});
 

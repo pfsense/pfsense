@@ -223,7 +223,7 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
-} else if($_POST['order-store']) {
+} else if($_POST['XXorder-store']) {
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
@@ -349,13 +349,13 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if ($filterent['interface'] != $if && !isset($filterent['floating']))
-		continue;
+	$display = "";
 
-	if (isset($filterent['floating']) && "FloatingRules" != $if)
-		continue;
+	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
+		$display = 'style="display: none;"';
+	}
 ?>
-					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -687,7 +687,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	else
 		print_info_box(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed) only " .
-			"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
+			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
 			"other rules match. Pay close attention to the rule order and options " .
 			"chosen. If no rule here matches, the per-interface or default rules are used. "), info);
 	?>

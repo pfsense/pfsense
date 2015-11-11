@@ -124,12 +124,14 @@ function remove_bad_chars($string) {
 if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
 }
+
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
 $old_ppps = $a_ppps;
+
 // Populate page descr if it does not exist.
 if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
@@ -220,6 +222,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
 	$pppid = count($a_ppps);
 }
+
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
@@ -360,8 +363,6 @@ switch ($wancfg['ipaddrv6']) {
 		}
 		break;
 }
-
-// print_r($pconfig);
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
@@ -1893,56 +1894,6 @@ $section->add($group);
 
 $form->add($section);
 
-// Add new gateway modal pop-up
-$modal = new Modal('New gateway', 'newgateway', 'large');
-
-$modal->addInput(new Form_Checkbox(
-	'defaultgw',
-	'Default',
-	'Default gateway',
-	($if == "wan" || $if == "WAN")
-));
-
-$modal->addInput(new Form_Input(
-	'name',
-	'Gateway name',
-	'text',
-	$wancfg['descr'] . "GW"
-));
-
-$modal->addInput(new Form_IpAddress(
-	'gatewayip',
-	'Gateway IPv4',
-	null
-));
-
-$modal->addInput(new Form_Input(
-	'gatewaydescr',
-	'Description',
-	'text'
-));
-
-$btnaddgw = new Form_Button(
-	'add',
-	'Add'
-);
-
-$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
-
-$btncnxgw = new Form_Button(
-	'cnx',
-	'Cancel'
-);
-
-$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
-
-$modal->addInput(new Form_StaticText(
-	null,
-	$btnaddgw . $btncnxgw
-));
-
-$form->add($modal);
-
 $section = new Form_Section('Static IPv6 configuration');
 $section->addClass('staticv6');
 
@@ -3326,25 +3277,80 @@ $form->addGlobal(new Form_Input(
 	$pconfig['ptpid']
 ));
 
+
+// Add new gateway modal pop-up
+$modal = new Modal('New gateway', 'newgateway', 'large');
+
+$modal->addInput(new Form_Checkbox(
+	'defaultgw',
+	'Default',
+	'Default gateway',
+	($if == "wan" || $if == "WAN")
+));
+
+$modal->addInput(new Form_Input(
+	'name',
+	'Gateway name',
+	'text',
+	$wancfg['descr'] . "GW"
+));
+
+$modal->addInput(new Form_IpAddress(
+	'gatewayip',
+	'Gateway IPv4',
+	null
+));
+
+$modal->addInput(new Form_Input(
+	'gatewaydescr',
+	'Description',
+	'text'
+));
+
+$btnaddgw = new Form_Button(
+	'add',
+	'Add'
+);
+
+$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
+
+$btncnxgw = new Form_Button(
+	'cnx',
+	'Cancel'
+);
+
+$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
+
+$modal->addInput(new Form_StaticText(
+	null,
+	$btnaddgw . $btncnxgw
+));
+
+$form->add($modal);
+
 print($form);
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
-
 	function updateType(t) {
+
 		switch (t) {
 			case "none": {
 				$('.dhcpadvanced, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				$('.dhcpadvanced, .none, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none, dhcp').hide();
+				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				$('.dhcpadvanced, .none, .staticv4, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none').hide();
+				$('.staticv4').hide();	// MYSTERY: This line makes the page very slow to load, but why? There is nothing special
+										//			about the staticv4 class
+				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "ppp": {
@@ -3547,7 +3553,6 @@ events.push(function(){
 	}
 
 	function country_list() {
-
 		$('#country').children().remove();
 		$('#provider_list').children().remove();
 		$('#providerplan').children().remove();
@@ -3671,6 +3676,25 @@ events.push(function(){
 		}
 	}
 
+	// DHCP preset actions
+	// Set presets from value of radio buttons
+	function setPresets(val) {
+		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
+		if (val == "DHCP")		setPresetsnow("60", "300", "0", "10", "120", "10");
+		if (val == "pfSense")	setPresetsnow("60", "15", "0", "", "", "1");
+		if (val == "SavedCfg")	setPresetsnow("<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
+		if (val == "Clear")		setPresetsnow("", "", "", "", "", "");
+	}
+
+	function setPresetsnow(timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
+		$('#adv_dhcp_pt_timeout').val(timeout);
+		$('#adv_dhcp_pt_retry').val(retry);
+		$('#adv_dhcp_pt_select_timeout').val(selecttimeout);
+		$('#adv_dhcp_pt_reboot').val(reboot);
+		$('#adv_dhcp_pt_backoff_cutoff').val(backoffcutoff);
+		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	updateType($('#type').val());
@@ -3687,9 +3711,17 @@ events.push(function(){
 	show_dhcp6adv();
 	setDHCPoptions()
 
+	// Set preset buttons on page load
+	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
+	if(sv == "")
+		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
+
+	// Set preset from value
+	setPresets(sv);
+	
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-   $('#type').on('change', function() {
+	$('#type').on('change', function() {
 		updateType( this.value );
 	});
 
@@ -3741,37 +3773,11 @@ events.push(function(){
 		show_dhcp6adv();
 	});
 
-	// DHCP preset actions
-	// Set presets from value of radio buttons
-	function setPresets(val) {
-		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
-		if (val == "DHCP")		setPresetsnow("60", "300", "0", "10", "120", "10");
-		if (val == "pfSense")	setPresetsnow("60", "15", "0", "", "", "1");
-		if (val == "SavedCfg")	setPresetsnow("<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
-		if (val == "Clear")		setPresetsnow("", "", "", "", "", "");
-	}
-
-	function setPresetsnow(timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
-		$('#adv_dhcp_pt_timeout').val(timeout);
-		$('#adv_dhcp_pt_retry').val(retry);
-		$('#adv_dhcp_pt_select_timeout').val(selecttimeout);
-		$('#adv_dhcp_pt_reboot').val(reboot);
-		$('#adv_dhcp_pt_backoff_cutoff').val(backoffcutoff);
-		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
-	}
-
-	// Set preset buttons on page load
-	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
-	if(sv == "")
-		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
-
-	// Set preset from value
-	setPresets(sv);
-
 	// On click . .
 	$('[id=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
+
 });
 //]]>
 </script>

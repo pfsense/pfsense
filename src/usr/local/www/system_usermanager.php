@@ -671,7 +671,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not member of')->setAttribute('style', 'height:400px;');
+	))->setHelp('Not member of');
 
 	$group->add(new Form_Select(
 		'groups',
@@ -679,7 +679,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Member of')->setAttribute('style', 'height:400px;');
+	))->setHelp('Member of');
 
 	$section->add($group);
 

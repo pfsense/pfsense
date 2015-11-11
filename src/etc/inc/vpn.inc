@@ -199,10 +199,12 @@ function vpn_ipsec_configure($restart = false) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 	}
 
-	if (file_exists("/usr/local/etc/ipsec.d") &&
+	if (!file_exists("/usr/local/etc/ipsec.d") ||
 	    !is_link("/usr/local/etc/ipsec.d")) {
 		conf_mount_rw();
-		rmdir_recursive("/usr/local/etc/ipsec.d");
+		if (file_exists("/usr/local/etc/ipsec.d")) {
+			rmdir_recursive("/usr/local/etc/ipsec.d");
+		}
 		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
 		    "/usr/local/etc/ipsec.d");
 		conf_mount_ro();

@@ -207,12 +207,12 @@ function vpn_ipsec_configure($restart = false) {
 		    "/usr/local/etc/ipsec.d");
 		conf_mount_ro();
 	}
-	if (file_exists("/usr/local/etc/strongswan.d") &&
-	    !is_link("/usr/local/etc/strongswan.d")) {
+	if (file_exists("{$g['varetc_path']}/etc/strongswan.d") &&
+	    !is_link("{$g['varetc_path']}/etc/strongswan.d")) {
 		conf_mount_rw();
-		rmdir_recursive("/usr/local/etc/strongswan.d");
-		@symlink("{$g['varetc_path']}/ipsec/strongswan.d",
-		    "/usr/local/etc/strongswan.d");
+		rmdir_recursive("{$g['varetc_path']}/etc/strongswan.d");
+		@symlink("/usr/local/etc/strongswan.d",
+		    "{$g['varetc_path']}/ipsec/strongswan.d");
 		conf_mount_ro();
 	}
 	if (file_exists("/usr/local/etc/strongswan.conf") &&

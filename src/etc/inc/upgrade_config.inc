@@ -4021,6 +4021,7 @@ function upgrade_124_to_125() {
 }
 
 function upgrade_125_to_126() {
+	require_once("ipsec.inc");
 	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$def_loglevel = 1;

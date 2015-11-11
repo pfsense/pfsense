@@ -97,7 +97,7 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
 
 <div class="panel-body panel-default">
 	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Port")?></th>

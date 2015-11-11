@@ -3845,6 +3845,23 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
+	global $config, $ipsec_log_cats;
+
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	// add 1 to configured log levels as part of redmine #5340
+	foreach ($ipsec_log_cats as $lkey => $ldescr) {
+		if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+			$config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
+		}
+	}
+
+}
+
+
+function upgrade_120_to_121() {
 	global $config;
 
 	if (!isset($config['installedpackages']['miniupnpd']['config'][0])) {
@@ -3863,7 +3880,7 @@ function upgrade_119_to_120() {
 	}
 }
 
-function upgrade_120_to_121() {
+function upgrade_121_to_122() {
 	global $config;
 	foreach ($config['system']['user'] as &$user) {
 		if (isset($user['nt-hash'])) {
@@ -3872,7 +3889,7 @@ function upgrade_120_to_121() {
 	}
 }
 
-function upgrade_121_to_122() {
+function upgrade_122_to_123() {
 	global $config;
 
 	// PPTP server was removed
@@ -3970,7 +3987,7 @@ function upgrade_121_to_122() {
 	}
 }
 
-function upgrade_122_to_123() {
+function upgrade_123_to_124() {
 	if (isset($config['system']['altpkgrepo'])) {
 		unset($config['system']['altpkgrepo']);
 	}
@@ -3980,7 +3997,7 @@ function upgrade_122_to_123() {
 	}
 }
 
-function upgrade_123_to_124() {
+function upgrade_124_to_125() {
 	global $config;
 
 	/* Find interfaces with WEP configured. */
@@ -4000,6 +4017,37 @@ function upgrade_123_to_124() {
 				unset($config['interfaces'][$ifname]['enable']);
 			}
 		}
+	}
+}
+
+function upgrade_125_to_126() {
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
+
+	$def_loglevel = 1;
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	if (!isset($config['ipsec']['logging']) || !is_array($config['ipsec']['logging'])) {
+		$config['ipsec']['logging'] = array();
+	}
+
+	/* subtract 2 from ipsec log levels. the value stored in the config.xml
+	 * will now match the strongswan level exactly.
+	 */
+	foreach(array_keys($ipsec_log_cats) as $cat) {
+		if (!isset($config['ipsec']["ipsec_{$cat}"])) {
+			$new_level = $def_loglevel;
+		} else {
+			$new_level = intval($config['ipsec']["ipsec_{$cat}"]) - 2;
+		}
+
+		if (in_array($new_level, array_keys($ipsec_log_sevs))) {
+			$config['ipsec']['logging'][$cat] = $new_level;
+		} else {
+			$config['ipsec']['logging'][$cat] = $def_loglevel;
+		}
+		unset($config['ipsec']["ipsec_{$cat}"]);
 	}
 }
 

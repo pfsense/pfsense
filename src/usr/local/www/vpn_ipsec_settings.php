@@ -67,9 +67,13 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-foreach ($ipsec_loglevels as $lkey => $ldescr) {
-	if (!empty($config['ipsec']["ipsec_{$lkey}"])) {
-		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
+$def_loglevel = '1';
+
+foreach (array_keys($ipsec_log_cats) as $cat) {
+	if (isset($config['ipsec']['logging'][$cat])) {
+		$pconfig[$cat] = $config['ipsec']['logging'][$cat];
+	} else {
+		$pconfig[$cat] = $def_loglevel;
 	}
 }
 
@@ -88,54 +92,12 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Daemon debug.";
+	foreach ($ipsec_log_cats as $cat => $desc) {
+		if (!in_array(intval($pconfig[$cat]), array_keys($ipsec_log_sevs), true)) {
+			$input_errors[] = "A valid value must be specified for {$desc} debug.";
+		}
 	}
-	if (!in_array($pconfig['ipsec_mgr'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for SA Manager debug.";
-	}
-	if (!in_array($pconfig['ipsec_ike'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IKE SA debug.";
-	}
-	if (!in_array($pconfig['ipsec_chd'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IKE Child SA debug.";
-	}
-	if (!in_array($pconfig['ipsec_job'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Job Processing debug.";
-	}
-	if (!in_array($pconfig['ipsec_cfg'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Configuration backend debug.";
-	}
-	if (!in_array($pconfig['ipsec_knl'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Kernel Interface debug.";
-	}
-	if (!in_array($pconfig['ipsec_net'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Networking debug.";
-	}
-	if (!in_array($pconfig['ipsec_asn'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for ASN Encoding debug.";
-	}
-	if (!in_array($pconfig['ipsec_enc'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Message encoding debug.";
-	}
-	if (!in_array($pconfig['ipsec_imc'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Integrity checker debug.";
-	}
-	if (!in_array($pconfig['ipsec_imv'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Integrity Verifier debug.";
-	}
-	if (!in_array($pconfig['ipsec_pts'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Platform Trust Service debug.";
-	}
-	if (!in_array($pconfig['ipsec_tls'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for TLS Handler debug.";
-	}
-	if (!in_array($pconfig['ipsec_esp'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IPsec Traffic debug.";
-	}
-	if (!in_array($pconfig['ipsec_lib'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
-	}
+
 	if (isset($pconfig['maxmss'])) {
 		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
 			$input_errors[] = "An integer must be specified for Maximum MSS.";
@@ -147,13 +109,16 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		foreach ($ipsec_loglevels as $lkey => $ldescr) {
-			if (empty($_POST["ipsec_{$lkey}"])) {
-				if (isset($config['ipsec']["ipsec_{$lkey}"])) {
-					unset($config['ipsec']["ipsec_{$lkey}"]);
-				}
-			} else {
-				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		/* log levels aren't set initially and use default. They all
+		 * get set when we save, even if it's to the default level.
+		 */
+		foreach (array_keys($ipsec_log_cats) as $cat) {
+			if (!isset($pconfig[$cat])) {
+				continue;
+			}
+			if ($pconfig[$cat] != $config['ipsec']['logging'][$cat]) {
+				$config['ipsec']['logging'][$cat] = $pconfig[$cat];
+				vpn_update_daemon_loglevel($cat, $pconfig[$cat]);
 			}
 		}
 
@@ -250,7 +215,6 @@ if ($_POST) {
 		}
 
 		vpn_ipsec_configure($needsrestart);
-		vpn_ipsec_configure_loglevels();
 
 		header("Location: vpn_ipsec_settings.php");
 		return;
@@ -306,13 +270,13 @@ $form = new Form;
 
 $section = new Form_Section('Start IPsec in debug mode based on sections selected');
 
-foreach ($ipsec_loglevels as $lkey => $ldescr)
+foreach ($ipsec_log_cats as $cat => $desc)
 {
 	$section->addInput(new Form_Select(
-		'ipsec_' . $lkey,
-		$ldescr,
-		$pconfig['ipsec_' . $lkey],
-		array('Silent', 'Audit', 'Control', 'Diag', 'Raw', 'Highest')
+		$cat,
+		$desc,
+		$pconfig[$cat],
+		$ipsec_log_sevs
 	))->setWidth(2);
 }
 

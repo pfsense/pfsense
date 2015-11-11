@@ -42,22 +42,33 @@
 require_once("ipsec.inc");
 require_once("filter.inc");
 
-function vpn_ipsec_configure_loglevels($forconfig = false) {
-	global $config, $ipsec_loglevels;
+function vpn_update_daemon_loglevel($category, $level) {
+	global $ipsec_log_cats, $ipsec_log_sevs;
+
+	if (in_array($category, array_keys($ipsec_log_cats), true) && in_array(intval($level), array_keys($ipsec_log_sevs), true)) {
+
+		/* if you're setting to -1, need to add "--" to args */
+		$argterm = "";
+		if ($level == "-1") {
+			$argterm = "--";
+		}
+
+		mwexec("/usr/local/sbin/ipsec stroke loglevel {$category} {$argterm} {$level}");
+	}
+}
+
+function vpn_logging_cfgtxt() {
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$cfgtext = array();
-	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig) {
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
-		} else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
-		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5) {
-			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
-				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (is_numeric($config['ipsec']['logging'][$cat]) &&
+		    in_array(intval($config['ipsec']['logging'][$cat]), array_keys($ipsec_log_sevs), true)) {
+			$cfgtext[] = "${cat} = {$config['ipsec']['logging'][$cat]}";
 		}
 	}
-	if ($forconfig) {
-		return $cfgtext;
-	}
+
+	return $cfgtext;
 }
 
 /* include all configuration functions */
@@ -436,7 +447,7 @@ function vpn_ipsec_configure($restart = false) {
 	unset($stronconf);
 
 	$strongswanlog = "";
-	$ipsecloglevels = vpn_ipsec_configure_loglevels(true);
+	$ipsecloglevels = vpn_logging_cfgtxt();
 	if (is_array($ipsecloglevels)) {
 		foreach ($ipsecloglevels as $loglevel) {
 			$strongswanlog .= "\t\t" . $loglevel . "\n";

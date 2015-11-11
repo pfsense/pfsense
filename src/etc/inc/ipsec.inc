@@ -42,6 +42,36 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
 	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSwan Lib");
 
+global $ipsec_log_sevs;
+$ipsec_log_sevs = array(
+	'-1' => 'Silent',
+	'0' => 'Audit',
+	'1' => 'Control',
+	'2' => 'Diag',
+	'3' => 'Raw',
+	'4' => 'Highest'
+);
+
+global $ipsec_log_cats;
+$ipsec_log_cats = array(
+	"dmn" => "Daemon",
+	"mgr" => "SA Manager",
+	"ike" => "IKE SA",
+	"chd" => "IKE Child SA",
+	"job" => "Job Processing",
+	"cfg" => "Configuration backend",
+	"knl" => "Kernel Interface",
+	"net" => "Networking",
+	"asn" => "ASN encoding",
+	"enc" => "Message encoding",
+	"imc" => "Integrity checker",
+	"imv" => "Integrity Verifier",
+	"pts" => "Platform Trust Service",
+	"tls" => "TLS handler",
+	"esp" => "IPsec traffic",
+	"lib" => "StrongSwan Lib"
+);
+
 global $my_identifier_list;
 $my_identifier_list = array(
 	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),

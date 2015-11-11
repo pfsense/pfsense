@@ -193,7 +193,7 @@ $section->addInput(new Form_Select(
 	$a_group['priv'],
 	$priv_list,
 	true
-))->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select');
+))->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select')->setAttribute('style', 'height:400px;');
 
 $form->add($section);
 

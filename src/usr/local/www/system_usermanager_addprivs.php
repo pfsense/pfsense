@@ -182,7 +182,7 @@ $section->addInput(new Form_Select(
 	null,
 	build_priv_list(),
 	true
-))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
+))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items')->setAttribute('style', 'height:400px;');
 
 if (isset($userid)) {
 	$section->addInput(new Form_Input(

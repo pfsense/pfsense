@@ -252,7 +252,7 @@ if (is_array($status)) {
 ?>
 					</td>
 					<td>
-						<?=htmlspecialchars($ikesa['reauth-time']) . gettext(" seconds");?>
+						<?=htmlspecialchars($ikesa['reauth-time']) . gettext(" seconds (") . convert_seconds_to_hms($ikesa['reauth-time']) . ")";?>
 					</td>
 					<td>
 						<?=htmlspecialchars($ikesa['encr-alg'])?>
@@ -272,7 +272,7 @@ if (is_array($status)) {
 		}
 ?>
 						<?=ucfirst(htmlspecialchars($ikesa['state']))?>
-						<br/><?=htmlspecialchars($ikesa['established']) . gettext(" seconds ago")?>
+						<br/><?=htmlspecialchars($ikesa['established']) . gettext(" seconds (" . convert_seconds_to_hms($ikesa['established']) . ") ago")?>
 						</span>
 					</td>
 					<td >
@@ -359,9 +359,9 @@ if (is_array($status)) {
 									</td>
 									<td>
 <?php
-				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds"));
-				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds"));
-				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds"));
+				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['rekey-time']) . ")");
+				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['life-time']) . ")" );
+				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['install-time']) . ")" );
 
 ?>
 									</td>

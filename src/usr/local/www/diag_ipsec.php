@@ -390,10 +390,10 @@ if (is_array($status)) {
 									</td>
 									<td>
 <?php
-				print(gettext("Bytes-In: ") . htmlspecialchars($childsa['bytes-in']) . '<br/>');
-				print(gettext("Packets-In: ") . htmlspecialchars($childsa['packets-in']) . '<br/>');
-				print(gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytes-out']) . '<br/>');
-				print(gettext("Packets-Out: ") . htmlspecialchars($childsa['packets-out']) . '<br/>');
+				print(gettext("Bytes-In: ") . htmlspecialchars(number_format($childsa['bytes-in'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-in'])) . ')<br/>');
+				print(gettext("Packets-In: ") . htmlspecialchars(number_format($childsa['packets-in'])) . '<br/>');
+				print(gettext("Bytes-Out: ") . htmlspecialchars(number_format($childsa['bytes-out'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-out'])) . ')<br/>');
+				print(gettext("Packets-Out: ") . htmlspecialchars(number_format($childsa['packets-out'])) . '<br/>');
 ?>
 									</td>
 									<td>

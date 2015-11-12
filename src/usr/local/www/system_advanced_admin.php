@@ -471,6 +471,7 @@ $section->addInput(new Form_Checkbox(
 	'host name.');
 
 $csslist = glob("/Bootstrap/css/*.css");
+unset($csslist['bootstrap.min.css'];
 
 $csslist = array_combine($csslist, $csslist);
 

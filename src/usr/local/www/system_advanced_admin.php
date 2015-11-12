@@ -470,6 +470,17 @@ $section->addInput(new Form_Checkbox(
 	'by the current page. Check this box to display the current page followed by the '.
 	'host name.');
 
+$csslist = glob("/Bootstrap/css/*.css");
+
+$csslist = array_combine($csslist, $csslist);
+
+$section->addInput(new Form_Select(
+	'webguicss',
+	'Web configurator style sheet',
+	$csslist,
+	$pconfig['webguicss']
+));
+
 $form->add($section);
 $section = new Form_Section('Secure Shell');
 

@@ -4067,10 +4067,6 @@ function upgrade_126_to_127() {
 		list($file, $col, $display) = explode(':', $widget);
 
 		switch ($display) {
-		case 'close':
-		case 'open':
-			/* keep already converted items */
-			break;
 		case 'hide':
 			$display = 'close';
 			break;

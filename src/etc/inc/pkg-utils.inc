@@ -1,10 +1,7 @@
 <?php
-/****h* pfSense/pkg-utils
-	NAME
-		pkg-utils.inc - Package subsystem
-	DESCRIPTION
-		This file contains various functions used by the pfSense package system.
-*/
+/*
+ * pkg-utils.inc
+ */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2005-2006 Colin Smith (ethethlay@gmail.com)
@@ -89,11 +86,6 @@ if (!function_exists("pkg_debug")) {
 		}
 		@fwrite($fd_log, $msg);
 	}
-}
-
-global $g;
-if (!isset($g['platform'])) {
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
 }
 
 /* Remove pkg_prefix from package name if it's present */

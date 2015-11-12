@@ -4048,5 +4048,44 @@ function upgrade_125_to_126() {
 	}
 }
 
+// prior to v2.3 <widgets><sequence> contains a list of widgets with display types:
+//		none, close, hide, & show
+// v2.3 & later uses:
+//		close & open
+// widgets not in use are simply not in the list
+function upgrade_126_to_127() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$new_widgets = array();
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		switch ($display) {
+		case 'hide':
+			$display = 'close';
+			break;
+		case 'show':
+			$display = 'open';
+			break;
+		default:
+			/* close, none or something is wrong here, ignore it */
+			continue;
+		}
+
+		/* Remove '-container' from widget name */
+		$file = preg_replace('/-container$/', '', $file);
+
+		$new_widgets[] = "{$file}:{$col}:{$display}";
+	}
+
+	$config['widgets']['sequence'] = implode(',', $new_widgets);
+
+}
 
 ?>

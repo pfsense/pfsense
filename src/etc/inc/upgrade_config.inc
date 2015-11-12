@@ -4067,15 +4067,14 @@ function upgrade_126_to_127() {
 		list($file, $col, $display) = explode(':', $widget);
 
 		switch ($display) {
-		case 'hide':
-			$display = 'close';
-			break;
-		case 'show':
-			$display = 'open';
-			break;
-		default:
-			/* close, none or something is wrong here, ignore it */
-			continue 2;
+			case 'hide':
+				$display = 'close';
+				break;
+			case 'show':
+				$display = 'open';
+				break;
+			default:
+				continue 2;
 		}
 
 		/* Remove '-container' from widget name */

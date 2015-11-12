@@ -472,7 +472,6 @@ $section->addInput(new Form_Checkbox(
 
 $csslist = glob("/Bootstrap/css/*.css");
 unset($csslist['bootstrap.min.css'];
-
 $csslist = array_combine($csslist, $csslist);
 
 $section->addInput(new Form_Select(

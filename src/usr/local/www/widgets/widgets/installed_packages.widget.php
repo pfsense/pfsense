@@ -2,14 +2,15 @@
 /*
 	installed_packages.widget.php
 */
-/* ====================================================================
+/*
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  Scott Dale
- *  Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
- *	and Jonathan Watt <jwatt@jwatt.org>
+ *	Copyright (c)  Scott Dale
+ *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>
+ *	Copyright (c)  Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  Jonathan Watt <jwatt@jwatt.org>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -54,8 +55,6 @@
  *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
  *
  */
 

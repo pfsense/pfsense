@@ -119,11 +119,6 @@ if(empty($installed_packages)):?>
 			continue;
 		}
 
-		$shortname = $pkg['name'];
-		pkg_remove_prefix($shortname);
-
-		// XXX: Add it to globals.inc?
-		$changeloglink ="https://github.com/pfsense/FreeBSD-ports/commits/devel/{$pkg['categories'][0]}/{$pkg['name']}";
 		#check package version
 		$txtcolor = "black";
 		$upgradeavail = false;
@@ -165,14 +160,14 @@ if(empty($installed_packages)):?>
 <?php } ?>
 		</td>
 		<td>
-			<font color="<?=$txtcolor?>"><?=$shortname?></font>
+			<font color="<?=$txtcolor?>"><?=$pkg['shortname']?></font>
 		</td>
 		<td>
 			<?=implode(" ", $pkg['categories'])?>
 		</td>
 		<td>
 <?php if (!$g['disablepackagehistory']):?>
-			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
+			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($pkg['changeloglink'])?>">
 <?php endif;?>
 				<?=htmlspecialchars($pkg['installed_version'])?>
 <?php if (!$g['disablepackagehistory']):?>

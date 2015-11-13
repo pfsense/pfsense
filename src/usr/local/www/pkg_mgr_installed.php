@@ -88,7 +88,7 @@ display_top_tabs($tab_array);
 $installed_packages = array();
 $package_list = get_pkg_info();
 foreach ($package_list as $pkg) {
-	if (!isset($pkg['installed'])) {
+	if (!isset($pkg['installed']) && !isset($pkg['broken'])) {
 		continue;
 	}
 	$installed_packages[] = $pkg;
@@ -125,34 +125,30 @@ if(empty($installed_packages)):?>
 		$missing = false;
 		$vergetstr = "";
 
-
 		print($name . '<br />');
 
-		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+		if (isset($pkg['broken'])) {
+			// package is configured, but does not exist in the system
+			$txtcolor = "red";
+			$missing = true;
+			$status = 'Package is configured, but not installed!';
+		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 
-			if ( is_package_installed($name) && !is_pkg_installed($g['pkg_prefix'] . get_package_internal_name($name))) {
-				// package is configured, but does not exist in the system
-				$txtcolor = "red";
-				$missing = true;
-				$status = 'Package is configured, but not installed!';
+			if ($version_compare == '>') {
+				// we're running a newer version of the package
+				$status = 'Newer than available ('. $pkg['version'] .')';
+			} else if ($version_compare == '<') {
+				// we're running an older version of the package
+				$status = 'Upgrade available to '.$pkg['version'];
+				$txtcolor = "blue";
+				$upgradeavail = true;
+				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
+			} else if ($version_compare == '=') {
+				// we're running the current version
+				$status = 'Up-to-date';
 			} else {
-
-				if ($version_compare == '>') {
-					// we're running a newer version of the package
-					$status = 'Newer than available ('. $pkg['version'] .')';
-				} else if ($version_compare == '<') {
-					// we're running an older version of the package
-					$status = 'Upgrade available to '.$pkg['version'];
-					$txtcolor = "blue";
-					$upgradeavail = true;
-					$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
-				} else if ($version_compare == '=') {
-					// we're running the current version
-					$status = 'Up-to-date';
-				} else {
-					$status = 'Error comparing version';
-				}
+				$status = 'Error comparing version';
 			}
 		} else {
 			// unknown available package version

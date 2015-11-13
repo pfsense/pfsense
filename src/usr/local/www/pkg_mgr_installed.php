@@ -99,20 +99,21 @@ if(empty($installed_packages)):?>
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
 <?php else: ?>
-	<div class="panel panel-body">
-	<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><!-- Status icon --></th>
-				<th><?=gettext("Name")?></th>
-				<th><?=gettext("Category")?></th>
-				<th><?=gettext("Version")?></th>
-				<th><?=gettext("Description")?></th>
-				<th><?=gettext("Actions")?></th>
-			</tr>
-		</thead>
-	<tbody>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed packages')?></h2></div> 
+		<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><!-- Status icon --></th>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Category")?></th>
+					<th><?=gettext("Version")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+		<tbody>
 <?php
 	foreach ($installed_packages as $pkg):
 		if(!$pkg['name']) {
@@ -124,8 +125,6 @@ if(empty($installed_packages)):?>
 		$upgradeavail = false;
 		$missing = false;
 		$vergetstr = "";
-
-		print($name . '<br />');
 
 		if (isset($pkg['broken'])) {
 			// package is configured, but does not exist in the system

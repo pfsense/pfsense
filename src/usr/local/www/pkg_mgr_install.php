@@ -75,6 +75,7 @@ require_once("pkg-utils.inc");
 
 $sendto = "output";
 $start_polling = false;
+$firmwareupdate = false;
 
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
@@ -242,10 +243,6 @@ if ($_POST) {
 	}
 }
 
-if($_GET && $_GET['id'] == "firmware") {
-	print_array(get_system_pkg_version());
-}
-
 $pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
@@ -254,6 +251,14 @@ $tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
 $tab_array[] = array(gettext("Package Installer"), true, "");
 display_top_tabs($tab_array);
+
+if($_GET && $_GET['id'] == "firmware") {
+	$firmwareupdate = true;
+	$firmwareversion = get_system_pkg_version();
+}
+
+if ($input_errors)
+	print_input_errors($input_errors);
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
@@ -281,7 +286,7 @@ display_top_tabs($tab_array);
 			break;
 	}
 ?>
-	<br />	
+	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
 <?php
@@ -293,6 +298,10 @@ display_top_tabs($tab_array);
 ?>
 				Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.
 <?php
+			} else if ($firmwareupdate) {
+?>
+				<?=$g['product_name']?> <?=gettext(" system firmware upgrade")?>
+<?php
 			} else {
 ?>
 				Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.
@@ -302,13 +311,62 @@ display_top_tabs($tab_array);
 		</div>
 		<div class="panel-body">
 		<br />
-			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+<?php
+	if ($firmwareupdate) {
+?>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Installed firmware")?>
+			</label>
+			<div class="col-sm-10">
+				<?=$firmwareversion['installed_version']?>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Newest firmware")?>
+			</label>
+			<div class="col-sm-10">
+				<?=$firmwareversion['version']?>
+			</div>
+		</div>
+<?php
+		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
+?>
+			<br />
+			<input type="hidden" name="id" value="pfSense-base" />
+			<!-- <input type="hidden" name="id" value="pfSense-base" /> -->
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
 			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
+<?php
+		} else {
+?>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+			</label>
+			<div class="col-sm-10">
+				<?=($firmwareversion) ? gettext("System firmware is up to date") : ""?>
+			</div>
+		</div>
+<?php
+		}
+	} else {
+?>
+			<input type="hidden" name="id" value="<?=$pkgname;?>" />
+			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
+<?php
+	}
+	?>
 		</div>
 	</div>
 <?php endif;
+
+if($firmwareupdate && !$firmwareversion) {
+	print_info_box(gettext("Unable to retrieve system firmware versions"), danger);
+}
 
 if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
@@ -345,11 +403,12 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	</div>
 
 	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+
+	<div id="clock" style="text-align: center;"></div>
+	<div id="countdown" style="text-align: center;"></div>
 <?php endif?>
 </form>
 
-<div id="clock" style="text-align: center;"></div>
-<div id="countdown" style="text-align: center;"></div>
 <?php
 
 ob_flush();
@@ -363,7 +422,7 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
-	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
+	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -R -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
 
 	switch ($_POST['mode']) {
 		case 'delete':
@@ -404,6 +463,18 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 // that were installed
 if ($_POST['completed'] == "true") {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
+
+	if($pkgid == "pfSense-base") {
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+		startCountdown(60);
+});
+//]]>
+</script>
+<?php
+	}
 }
 
 ?>
@@ -474,6 +545,7 @@ function getLogsStatus() {
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
 		var json = new Object;
 
+	alert(respone);
 		json = jQuery.parseJSON(response);
 
 		if (json.log != "not ready") {
@@ -529,10 +601,10 @@ function scrollToBottom() {
 
 function startCountdown(time) {
 	$('#clock').html('<img src="/321.gif" />');
-	
+
 	setInterval(function(){
-		$('#countdown').html('<h4>Rebooting in ' +time+ ' seconds.</h4>');
-	
+		$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' +time+ ' seconds.</h4>');
+
 		time-- != 0 || (window.location="/index.php");
 	},1000);
 }
@@ -550,8 +622,6 @@ events.push(function(){
 		show_success();
 		setTimeout(scrollToBottom, 200);
 	}
-	
-	startCountdown(60);
 
 });
 //]]>

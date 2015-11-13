@@ -427,6 +427,14 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			continue;
 		}
 
+		$pkg_info['shortname'] = $pkg_info['name'];
+		pkg_remove_prefix($pkg_info['shortname']);
+
+		/* XXX: Add it to globals.inc? */
+		$pkg_info['changeloglink'] =
+		    "https://github.com/pfsense/FreeBSD-ports/commits/devel/" .
+		    $pkg_info['categories'][0] . '/' . $pkg_info['name'];
+
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
 

@@ -242,6 +242,10 @@ if ($_POST) {
 	}
 }
 
+if($_GET && $_GET['id'] == "firmware") {
+	print_array(get_system_pkg_version());
+}
+
 $pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
@@ -277,26 +281,24 @@ display_top_tabs($tab_array);
 			break;
 	}
 ?>
-	<br />
+	<br />	
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<div class="content">
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<p><?=gettext("All packages will be reinstalled.");?></p>
+				<?=gettext("All packages will be reinstalled.");?>
 <?php
 			} else if ($_GET['from'] && $_GET['from']) {
 ?>
-				<p>Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.</p>
+				Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.
 <?php
 			} else {
 ?>
-				<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+				Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.
 <?php
 			}
 ?>
-			</div>
 		</div>
 		<div class="panel-body">
 		<br />
@@ -345,6 +347,9 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<div id="final" class="alert" role="alert" style=":display: none;"></div>
 <?php endif?>
 </form>
+
+<div id="clock" style="text-align: center;"></div>
+<div id="countdown" style="text-align: center;"></div>
 <?php
 
 ob_flush();
@@ -522,6 +527,16 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
+function startCountdown(time) {
+	$('#clock').html('<img src="/321.gif" />');
+	
+	setInterval(function(){
+		$('#countdown').html('<h4>Rebooting in ' +time+ ' seconds.</h4>');
+	
+		time-- != 0 || (window.location="/index.php");
+	},1000);
+}
+
 events.push(function(){
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
@@ -535,6 +550,9 @@ events.push(function(){
 		show_success();
 		setTimeout(scrollToBottom, 200);
 	}
+	
+	startCountdown(60);
+
 });
 //]]>
 </script>

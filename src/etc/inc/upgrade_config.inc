@@ -4073,6 +4073,8 @@ function upgrade_126_to_127() {
 			case 'show':
 				$display = 'open';
 				break;
+			case 'open':
+				break;
 			default:
 				continue 2;
 		}

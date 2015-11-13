@@ -164,7 +164,7 @@ if ($_POST) {
 		if ($_POST['webguicss']) {
 			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
 		} else {
-			unset($config['system']['primaryconsole']);
+			unset($config['system']['webgui']['webguicss']);
 		}
 
 		if ($_POST['webgui-redirect'] == "yes") {

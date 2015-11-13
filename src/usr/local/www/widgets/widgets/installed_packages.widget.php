@@ -66,18 +66,12 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if(is_array($config['installedpackages']['package'])) {
-	$instpkgs = array();
-	foreach ($config['installedpackages']['package'] as $instpkg)
-		$instpkgs[ $instpkg['name'] ] = $instpkg;
-	ksort($instpkgs);
+$package_list = get_pkg_info();
+$installed_packages = array_filter($package_list, function($v) {
+	return isset($v['installed']);
+});
 
-	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
-}
-
-?>
-
-<?php if (empty($config['installedpackages']['package'])): ?>
+if (empty($installed_packages)): ?>
 	<div class="alert alert-warning" role="alert">
 		<strong>No packages installed.</strong>
 		You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
@@ -86,35 +80,46 @@ if(is_array($config['installedpackages']['package'])) {
 	<table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th>Package Name</th>
+			<th>Name</th>
 			<th>Category</th>
-			<th>Package Version</th>
+			<th>Version</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
 
 
-foreach ($instpkgs as $pkgname => $pkg):
-	if (empty($pkgname))
+foreach ($installed_packages as $pkg):
+	if (!$pkg['name']) {
 		continue;
+	}
 
-	$latest_package = $currentvers[$pkg['name']]['version'];
-	if ($latest_package) {
-		// we're running a newer version of the package
-		if(strcmp($pkg['version'], $latest_package) > 0) {
-			$status = 'Newer then available ('. $latest_package .')';
+	$txtcolor = "black";
+	$upgradeavail = false;
+	$vergetstr = "";
+
+	if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+		$version_compare = pkg_version_compare(
+		    $pkg['installed_version'], $pkg['version']);
+		if ($version_compare == '>') {
+			// we're running a newer version of the package
+			$status = 'Newer then available ('. $pkg['version'] .')';
 			$statusicon = 'exclamation';
-		}
-		// we're running an older version of the package
-		if(strcmp($pkg['version'], $latest_package) < 0) {
-			$status = 'Upgrade available to '.$latest_package;
+		} else if ($version_compare == '<') {
+			// we're running an older version of the package
+			$status = 'Upgrade available to '.$pkg['version'];
 			$statusicon = 'plus';
-		}
-		// we're running the current version
-		if(!strcmp($pkg['version'], $latest_package)) {
+			$txtcolor = "blue";
+			$upgradeavail = true;
+			$vergetstr = '&amp;from=' . $pkg['installed_version'] .
+			    '&amp;to=' . $pkg['version'];
+		} else if ($version_compare == '=') {
+			// we're running the current version
 			$status = 'Up-to-date';
 			$statusicon = 'ok';
+		} else {
+			$status = 'Error comparing version';
+			$statusicon = 'exclamation';
 		}
 	} else {
 		// unknown available package version
@@ -123,11 +128,11 @@ foreach ($instpkgs as $pkgname => $pkg):
 	}
 ?>
 		<tr>
-			<td><?=$pkg['name']?></td>
-			<td><?=$pkg['category']?></td>
+			<td><?=$pkg['shortname']?></td>
+			<td><?=implode(' ', $pkg['categories'])?></td>
 			<td>
 				<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
-				<?=$pkg['version']?>
+				<?=$pkg['installed_version']?>
 			</td>
 		</tr>
 <?php endforeach; ?>

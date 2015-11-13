@@ -154,8 +154,6 @@ if(empty($installed_packages)):?>
 			// unknown available package version
 			$status = 'Unknown';
 			$statusicon = 'question';
-			$pkgdescr = $pkg['descr'];
-			$pkgwww = 'UNKNOWN';
 		}
 ?>
 	<tr>

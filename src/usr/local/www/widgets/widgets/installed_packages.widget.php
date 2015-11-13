@@ -68,7 +68,7 @@ require_once("pkg-utils.inc");
 
 $package_list = get_pkg_info();
 $installed_packages = array_filter($package_list, function($v) {
-	return isset($v['installed']);
+	return (isset($v['installed']) || isset($v['broken']));
 });
 
 if (empty($installed_packages)): ?>
@@ -99,8 +99,13 @@ foreach ($installed_packages as $pkg):
 	$txtcolor = "black";
 	$upgradeavail = false;
 	$vergetstr = "";
+	$missing = false;
 
-	if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+	if (isset($pkg['broken'])) {
+		$txtcolor = "red";
+		$missing = true;
+		$status = 'Package is configured, but not installed!';
+	} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 		$version_compare = pkg_version_compare(
 		    $pkg['installed_version'], $pkg['version']);
 		if ($version_compare == '>') {

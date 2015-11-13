@@ -72,19 +72,21 @@ $installed_packages = array_filter($package_list, function($v) {
 });
 
 if (empty($installed_packages)): ?>
-	<div class="alert alert-warning" role="alert">
-		<strong>No packages installed.</strong>
-		You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
-	</div>
+<div class="alert alert-warning" role="alert">
+	<strong>No packages installed.</strong>
+	You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
+</div>
 <?php else: ?>
-	<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Category</th>
-			<th>Version</th>
-		</tr>
-	</thead>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Category</th>
+				<th>Version</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
 	<tbody>
 <?php
 
@@ -108,15 +110,15 @@ foreach ($installed_packages as $pkg):
 		} else if ($version_compare == '<') {
 			// we're running an older version of the package
 			$status = 'Upgrade available to '.$pkg['version'];
-			$statusicon = 'plus';
+			$statusicon = 'plus-circle';
 			$txtcolor = "blue";
 			$upgradeavail = true;
 			$vergetstr = '&amp;from=' . $pkg['installed_version'] .
 			    '&amp;to=' . $pkg['version'];
 		} else if ($version_compare == '=') {
 			// we're running the current version
-			$status = 'Up-to-date';
-			$statusicon = 'ok';
+			$status = 'ok';
+			$statusicon = 'check';
 		} else {
 			$status = 'Error comparing version';
 			$statusicon = 'exclamation';
@@ -127,15 +129,32 @@ foreach ($installed_packages as $pkg):
 		$statusicon = 'question';
 	}
 ?>
-		<tr>
-			<td><?=$pkg['shortname']?></td>
-			<td><?=implode(' ', $pkg['categories'])?></td>
-			<td>
-				<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
-				<?=$pkg['installed_version']?>
-			</td>
-		</tr>
-<?php endforeach; ?>
-	</tbody>
-	</table>
+			<tr>
+				<td><font color="<?=$txtcolor?>"><?=$pkg['shortname']?></font></td>
+				<td><?=implode(' ', $pkg['categories'])?></td>
+				<td>
+					<i title="<?=$status?>" class="fa fa-<?=$statusicon?>"></i>
+					<?=$pkg['installed_version']?>
+				</td>
+				<td>
+					<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>
+<?php if($upgradeavail) { ?>
+					<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php } else { ?>
+					<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
+<?php } ?>
+
+<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+					<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
 <?php endif; ?>
+				</td>
+			</tr>
+<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+<?php endif; ?>
+
+<div style="text-align: center;">
+	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>
+</div>

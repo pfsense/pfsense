@@ -102,16 +102,16 @@ if(empty($installed_packages)):?>
 	<div class="panel panel-body">
 	<div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed">
-	<thead>
-		<tr>
-			<th><!-- Status icon --></th>
-			<th><?=gettext("Name")?></th>
-			<th><?=gettext("Category")?></th>
-			<th><?=gettext("Version")?></th>
-			<th><?=gettext("Description")?></th>
-			<th><?=gettext("Actions")?></th>
-		</tr>
-	</thead>
+		<thead>
+			<tr>
+				<th><!-- Status icon --></th>
+				<th><?=gettext("Name")?></th>
+				<th><?=gettext("Category")?></th>
+				<th><?=gettext("Version")?></th>
+				<th><?=gettext("Description")?></th>
+				<th><?=gettext("Actions")?></th>
+			</tr>
+		</thead>
 	<tbody>
 <?php
 	foreach ($installed_packages as $pkg):
@@ -122,28 +122,37 @@ if(empty($installed_packages)):?>
 		#check package version
 		$txtcolor = "black";
 		$upgradeavail = false;
+		$missing = false;
 		$vergetstr = "";
+
+
+		print($name . '<br />');
 
 		if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
-			if ($version_compare == '>') {
-				// we're running a newer version of the package
-				$status = 'Newer than available ('. $pkg['version'] .')';
-				$statusicon = 'exclamation';
-			} else if ($version_compare == '<') {
-				// we're running an older version of the package
-				$status = 'Upgrade available to '.$pkg['version'];
-				$statusicon = 'refresh';
-				$txtcolor = "blue";
-				$upgradeavail = true;
-				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
-			} else if ($version_compare == '=') {
-				// we're running the current version
-				$status = 'Up-to-date';
-				$statusicon = 'ok';
+
+			if ( is_package_installed($name) && !is_pkg_installed($g['pkg_prefix'] . get_package_internal_name($name))) {
+				// package is configured, but does not exist in the system
+				$txtcolor = "red";
+				$missing = true;
+				$status = 'Package is configured, but not installed!';
 			} else {
-				$status = 'Error comparing version';
-				$statusicon = 'exclamation';
+
+				if ($version_compare == '>') {
+					// we're running a newer version of the package
+					$status = 'Newer than available ('. $pkg['version'] .')';
+				} else if ($version_compare == '<') {
+					// we're running an older version of the package
+					$status = 'Upgrade available to '.$pkg['version'];
+					$txtcolor = "blue";
+					$upgradeavail = true;
+					$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
+				} else if ($version_compare == '=') {
+					// we're running the current version
+					$status = 'Up-to-date';
+				} else {
+					$status = 'Error comparing version';
+				}
 			}
 		} else {
 			// unknown available package version
@@ -154,9 +163,11 @@ if(empty($installed_packages)):?>
 	<tr>
 		<td>
 <?php if($upgradeavail) { ?>
-			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
+			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php } else if ($missing) { ?>
+			<font color="red"><i title="<?=$status?>" class="fa fa-exclamation"></i></font>
 <?php } else { ?>
-			<i title="<?=$status?>" class="icon-large icon-ok"></i>
+			<i title="<?=$status?>" class="fa fa-check"></i>
 <?php } ?>
 		</td>
 		<td>
@@ -178,15 +189,15 @@ if(empty($installed_packages)):?>
 			<?=$pkg['desc']?>
 		</td>
 		<td>
-			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-minus-sign"></a>
+			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>
 <?php if($upgradeavail) { ?>
-			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="icon-large icon-refresh"></a>
+			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
 <?php } else { ?>
-			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="icon-large icon-retweet"></a>
+			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
 <?php } ?>
 
 <?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="icon-large icon-info-sign"></a>
+			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
 <?php endif; ?>
 		</td>
 	</tr>
@@ -198,13 +209,15 @@ if(empty($installed_packages)):?>
 <br />
 <div style="text-align: center;">
 	<span>
-		<i class="icon-large icon-refresh"></i> = Update, &nbsp;
-		<i class="icon-large icon-ok"></i> = Current, &nbsp;
-		<i class="icon-large icon-minus-sign"></i> = Remove, &nbsp;
-		<i class="icon-large icon-info-sign"></i> = Information, &nbsp;
-		<i class="icon-large icon-retweet"></i> = Reinstall.
+		<i class="fa fa-refresh"></i> = Update, &nbsp;
+		<i class="fa fa-check"></i> = Current, &nbsp;
+		<i class="fa fa-minus-circle"></i> = Remove, &nbsp;
+		<i class="fa fa-info"></i> = Information, &nbsp;
+		<i class="fa fa-retweet"></i> = Reinstall.
 		<br />
 		<font color="blue"><?=gettext("Blue package name")?></font> = <?=gettext("Newer version available")?>
+		<br />
+		<font color="red"><?=gettext("Red")?></font> = <?=gettext("Package is configured but not (fully) installed")?>
 	</span>
 </div>
 

@@ -57,6 +57,7 @@ usage() {
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
 	echo "	-p socket   - Write pkg progress to socket"
+	echo "	-R          - Do not reboot (it can be dangerous)"
 	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
 	echo "" >&2
 	echo "Following parameters are mutually exclusive:" >&2
@@ -319,10 +320,7 @@ pkg_upgrade() {
 				fi
 			fi
 			switch_active_nanobsd_partition
-			_echo "Upgrade is complete.  Rebooting in 10 seconds."
-			echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
-			/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
-			(sleep 10 && /etc/rc.reboot) &
+			do_reboot
 			_exit 0
 		fi
 
@@ -354,10 +352,7 @@ pkg_upgrade() {
 		next_stage=2
 
 		if [ -n "${need_reboot}" -a "${platform}" != "nanobsd" ]; then
-			_echo "Upgrade is complete.  Rebooting in 10 seconds."
-			echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
-			/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
-			(sleep 10 && /etc/rc.reboot) &
+			do_reboot
 			_exit 0
 		fi
 	fi
@@ -386,10 +381,7 @@ pkg_upgrade() {
 
 		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
 			switch_active_nanobsd_partition
-			_echo "Upgrade is complete.  Rebooting in 10 seconds."
-			echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
-			/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
-			(sleep 10 && /etc/rc.reboot) &
+			do_reboot
 			_exit 0
 		fi
 
@@ -612,6 +604,15 @@ pkg_reinstall_all() {
 	done
 }
 
+do_reboot() {
+	_echo "Upgrade is complete.  Rebooting in 10 seconds."
+	echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
+	/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
+	if [ -z "${dont_reboot}" ]; then
+		(sleep 10 && /etc/rc.reboot) &
+	fi
+}
+
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile="/cf/conf/upgrade_log.txt"
@@ -637,6 +638,7 @@ fi
 export pkg_chroot=""
 export chroot_dir=""
 
+unset dont_reboot
 unset booting
 unset boot_stage
 unset force
@@ -647,7 +649,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:cdfi:hp:l:r:uy opt; do
+while getopts 46b:cdfi:hp:l:r:Ruy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -709,6 +711,9 @@ while getopts 46b:cdfi:hp:l:r:uy opt; do
 			fi
 			action="delete"
 			action_pkg="${OPTARG}"
+			;;
+		R)
+			dont_reboot=1
 			;;
 		u)
 			if [ -n "${action}" ]; then

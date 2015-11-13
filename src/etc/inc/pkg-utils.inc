@@ -294,9 +294,11 @@ function pkg_version_compare($v1, $v2) {
 function is_pkg_installed($pkg_name) {
 	global $g;
 
-	pkg_remove_prefix($pkg_name);
+	if (empty($pkg_name)) {
+		return false;
+	}
 
-	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name, true);
+	return pkg_call("info -e " . $pkg_name, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */
@@ -304,16 +306,17 @@ function pkg_install($pkg_name, $force = false) {
 	global $g;
 	$result = false;
 
-	pkg_remove_prefix($pkg_name);
+	$shortname = $pkg_name;
+	pkg_remove_prefix($shortname);
 
 	$pkg_force = "";
 	if ($force) {
 		$pkg_force = "-f ";
 	}
 
-	pkg_debug("Installing package {$pkg_name}\n");
+	pkg_debug("Installing package {$shortname}\n");
 	if ($force || !is_pkg_installed($pkg_name)) {
-		$result = pkg_call("install -y " . $pkg_force . $g['pkg_prefix'] . $pkg_name);
+		$result = pkg_call("install -y " . $pkg_force . $pkg_name);
 		/* Cleanup cacke to free disk space */
 		pkg_call("clean -y");
 	}
@@ -325,11 +328,12 @@ function pkg_install($pkg_name, $force = false) {
 function pkg_delete($pkg_name) {
 	global $g;
 
-	pkg_remove_prefix($pkg_name);
+	$shortname = $pkg_name;
+	pkg_remove_prefix($shortname);
 
-	pkg_debug("Removing package {$pkg_name}\n");
+	pkg_debug("Removing package {$shortname}\n");
 	if (is_pkg_installed($pkg_name)) {
-		pkg_call("delete -y " . $g['pkg_prefix'] . $pkg_name);
+		pkg_call("delete -y " . $pkg_name);
 		/* Cleanup unecessary dependencies */
 		pkg_call("autoremove -y");
 	}
@@ -516,11 +520,12 @@ function uninstall_package($package_name) {
 		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
 		stop_service($internal_name);
 	}
+	$pkg_name = $g['pkg_prefix'] . $internal_name;
 
-	if (is_pkg_installed($internal_name)) {
+	if (is_pkg_installed($pkg_name)) {
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
-		pkg_delete($internal_name);
+		pkg_delete($pkg_name);
 	} else {
 		delete_package_xml($package_name);
 	}
@@ -1057,7 +1062,7 @@ function package_reinstall_all() {
 	/* Obsoleted packages were removed, lets reinstall all remaining */
 	foreach ($config['installedpackages']['package'] as $package) {
 		$internal_name = get_package_internal_name($package);
-		pkg_install($internal_name, true);
+		pkg_install($g['pkg_prefix'] . $internal_name, true);
 	}
 
 	return true;

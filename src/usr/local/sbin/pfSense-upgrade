@@ -60,7 +60,7 @@ usage() {
 	echo "	-R          - Do not reboot (this can be dangerous)"
 	echo "	-y          - Assume yes as the answer to any possible interaction" >&2
 	echo "" >&2
-	echo "Following parameters are mutually exclusive:" >&2
+	echo "The following parameters are mutually exclusive:" >&2
 	echo "	-i PKG_NAME - Install package PKG_NAME" >&2
 	echo "	-r PKG_NAME - Remove package PKG_NAME" >&2
 	echo "	-u          - Update repository information" >&2

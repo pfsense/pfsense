@@ -405,7 +405,6 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		return array();
 	}
 
-
 	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
 
 	if ($rc != 0) {
@@ -1116,6 +1115,77 @@ function stop_packages() {
 			pclose($shell);
 		}
 	}
+}
+
+/* Identify which meta package is installed */
+function get_meta_pkg_name() {
+	global $g;
+
+	/* XXX: Use pkg annotation */
+	if (is_pkg_installed($g['product_name'])) {
+		return $g['product_name'];
+	} else if (is_pkg_installed($g['product_name'] . '-vmware')) {
+		return $g['product_name'] . '-vmware';
+	}
+	return false;
+}
+
+/* Identify which base package is installed */
+function get_base_pkg_name() {
+	global $g;
+
+	/* XXX: Use pkg annotation */
+	if (is_pkg_installed($g['product_name'] . '-base-' . $g['platform'])) {
+		return $g['product_name'];
+		return $g['product_name'] . '-base-' . $g['platform'];
+	} else if (is_pkg_installed($g['product_name'] . '-base')) {
+		return $g['product_name'] . '-base';
+	}
+	return false;
+}
+
+/* Verify if system needs upgrade (meta package or base) */
+function get_system_pkg_version() {
+	global $g;
+
+	$base_pkg = get_base_pkg_name();
+	$meta_pkg = get_meta_pkg_name();
+
+	if (!$base_pkg || !$meta_pkg) {
+		return false;
+	}
+
+	$info = get_pkg_info($base_pkg);
+	$pkg_name = $base_pkg;
+
+	$pkg_info = array();
+	foreach ($info as $item) {
+		if ($item['name'] == $base_pkg) {
+			$pkg_info = $item;
+		}
+	}
+
+	if (empty($pkg_info) ||
+	    $pkg_info['version'] == $pkg_info['installed_version']) {
+		$info = get_pkg_info($meta_pkg);
+		$pkg_name = $meta_pkg;
+
+		foreach ($info as $item) {
+			if ($item['name'] == $base_pkg) {
+				$pkg_info = $item;
+			}
+		}
+	}
+
+	if (empty($pkg_info)) {
+		return false;
+	}
+
+	return array(
+	    'pkg_name'          => $pkg_name,
+	    'version'           => $pkg_info['version'],
+	    'installed_version' => $pkg_info['installed_version']
+	);
 }
 
 ?>

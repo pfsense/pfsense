@@ -555,7 +555,7 @@ display_top_tabs($tab_array);
 <?php if ($ifname != 'wan'):?>
 				<button type="submit" name="del[<?=$ifname?>]" class="btn btn-danger btn-sm" title="<?=gettext("Delete interface")?>">
 					<i class="fa fa-trash icon-embed-btn"></i>
-					<?=gettext("Delete I/F")?>
+					<?=gettext("Delete")?>
 				</button>
 <?php endif;?>
 			</td>
@@ -579,7 +579,7 @@ display_top_tabs($tab_array);
 			<td>
 				<button type="submit" name="add" title="<?=gettext("Add selected interface")?>" value="add interface" class="btn btn-success btn-sm" >
 					<i class="fa fa-plus icon-embed-btn"></i>
-					<?=gettext("Add I/F")?>
+					<?=gettext("Add")?>
 				</button>
 			</td>
 		</tr>

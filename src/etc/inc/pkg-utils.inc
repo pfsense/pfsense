@@ -1,10 +1,7 @@
 <?php
-/****h* pfSense/pkg-utils
-	NAME
-		pkg-utils.inc - Package subsystem
-	DESCRIPTION
-		This file contains various functions used by the pfSense package system.
-*/
+/*
+ * pkg-utils.inc
+ */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2005-2006 Colin Smith (ethethlay@gmail.com)
@@ -89,11 +86,6 @@ if (!function_exists("pkg_debug")) {
 		}
 		@fwrite($fd_log, $msg);
 	}
-}
-
-global $g;
-if (!isset($g['platform'])) {
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
 }
 
 /* Remove pkg_prefix from package name if it's present */
@@ -310,15 +302,20 @@ function is_pkg_installed($pkg_name) {
 }
 
 /* Install package, $pkg_name should not contain prefix */
-function pkg_install($pkg_name) {
+function pkg_install($pkg_name, $force = false) {
 	global $g;
 	$result = false;
 
 	pkg_remove_prefix($pkg_name);
 
+	$pkg_force = "";
+	if ($force) {
+		$pkg_force = "-f ";
+	}
+
 	pkg_debug("Installing package {$pkg_name}\n");
-	if (!is_pkg_installed($pkg_name)) {
-		$result = pkg_call("install -y " . $g['pkg_prefix'] . $pkg_name);
+	if ($force || !is_pkg_installed($pkg_name)) {
+		$result = pkg_call("install -y " . $pkg_force . $g['pkg_prefix'] . $pkg_name);
 		/* Cleanup cacke to free disk space */
 		pkg_call("clean -y");
 	}
@@ -1020,11 +1017,71 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	conf_mount_ro();
 }
 
-function pkg_reinstall_all() {
-	global $g, $config;
+/*
+ * Used during upgrade process or retore backup process, verify all
+ * packages installed in config.xml and install pkg accordingly
+ */
+function package_reinstall_all() {
+	global $g, $config, $static_output, $pkg_interface;
 
-	// XXX: implement
-	return;
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
+		return true;
+	}
+
+	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
+
+	/* During boot after upgrade, wait for internet connection */
+	if ($upgrade) {
+		$static_output .= gettext("Waiting for internet connection to update pkg metadata and fini package reinstallation");
+		update_output_window($static_output);
+		while (true) {
+			if (pkg_update(true)) {
+				break;
+			}
+			$static_output .= '.';
+			update_output_window($static_output);
+			sleep(1);
+		}
+		$static_output .= "\n";
+		update_output_window($static_output);
+	} else {
+		if (!pkg_update()) {
+			return false;
+		}
+	}
+
+	$pkg_info = get_pkg_info();
+
+	foreach ($config['installedpackages']['package'] as $package) {
+		$found = false;
+		$internal_name = get_package_internal_name($package);
+		foreach ($pkg_info as $pkg) {
+			pkg_remove_prefix($pkg['name']);
+			if ($pkg['name'] == $internal_name) {
+				$found = true;
+				break;
+			}
+		}
+
+		if (!$found) {
+			if (!function_exists("file_notice")) {
+				require_once("notices.inc");
+			}
+
+			file_notice(gettext("Package reinstall"),
+			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."), $package['name'], $g['product_name']));
+			uninstall_package($package['name']);
+		}
+	}
+
+	/* Obsoleted packages were removed, lets reinstall all remaining */
+	foreach ($config['installedpackages']['package'] as $package) {
+		$internal_name = get_package_internal_name($package);
+		pkg_install($internal_name, true);
+	}
+
+	return true;
 }
 
 function stop_packages() {

@@ -715,53 +715,49 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][8]['descr'] =    gettext("Maximum outgoing TCP datagram size");
 		$config['sysctl']['item'][8]['value'] =   "default";
 
-		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['descr'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
+		$config['sysctl']['item'][9]['tunable'] = "net.inet.tcp.delayed_ack";
+		$config['sysctl']['item'][9]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
 		$config['sysctl']['item'][9]['value'] =   "default";
 
-		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
+		$config['sysctl']['item'][10]['tunable'] = "net.inet.udp.maxdgram";
+		$config['sysctl']['item'][10]['descr'] =    gettext("Maximum outgoing UDP datagram size");
 		$config['sysctl']['item'][10]['value'] =   "default";
 
-		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['descr'] =    gettext("Maximum outgoing UDP datagram size");
+		$config['sysctl']['item'][11]['tunable'] = "net.link.bridge.pfil_onlyip";
+		$config['sysctl']['item'][11]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
 		$config['sysctl']['item'][11]['value'] =   "default";
 
-		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
+		$config['sysctl']['item'][12]['tunable'] = "net.link.tap.user_open";
+		$config['sysctl']['item'][12]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][12]['value'] =   "default";
 
-		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
+		$config['sysctl']['item'][13]['tunable'] = "kern.randompid";
+		$config['sysctl']['item'][13]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
-		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
+		$config['sysctl']['item'][14]['tunable'] = "net.inet.tcp.inflight.enable";
+		$config['sysctl']['item'][14]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][14]['value'] =   "default";
+
+		$config['sysctl']['item'][15]['tunable'] = "net.inet.icmp.icmplim";
+		$config['sysctl']['item'][15]['descr'] =    gettext("Set ICMP Limits");
 		$config['sysctl']['item'][15]['value'] =   "default";
 
-		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.tso";
+		$config['sysctl']['item'][16]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][16]['value'] =   "default";
 
-		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['descr'] =    gettext("Set ICMP Limits");
+		$config['sysctl']['item'][17]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][17]['descr'] =    "Set the ephemeral port range starting port";
 		$config['sysctl']['item'][17]['value'] =   "default";
 
-		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
+		$config['sysctl']['item'][18]['tunable'] = "hw.syscons.kbd_reboot";
+		$config['sysctl']['item'][18]['descr'] =    "Enables ctrl+alt+delete";
 		$config['sysctl']['item'][18]['value'] =   "default";
 
-		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][19]['tunable'] = "kern.ipc.maxsockbuf";
+		$config['sysctl']['item'][19]['descr'] =    "Maximum socket buffer size";
 		$config['sysctl']['item'][19]['value'] =   "default";
-
-		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot";
-		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
-		$config['sysctl']['item'][20]['value'] =   "default";
-
-		$config['sysctl']['item'][21]['tunable'] = "kern.ipc.maxsockbuf";
-		$config['sysctl']['item'][21]['descr'] =    "Maximum socket buffer size";
-		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
 }
@@ -4052,5 +4048,43 @@ function upgrade_125_to_126() {
 	}
 }
 
+// prior to v2.3 <widgets><sequence> contains a list of widgets with display types:
+//		none, close, hide, & show
+// v2.3 & later uses:
+//		close & open
+// widgets not in use are simply not in the list
+function upgrade_126_to_127() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$new_widgets = array();
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		switch ($display) {
+			case 'hide':
+				$display = 'close';
+				break;
+			case 'show':
+				$display = 'open';
+				break;
+			default:
+				continue 2;
+		}
+
+		/* Remove '-container' from widget name */
+		$file = preg_replace('/-container$/', '', $file);
+
+		$new_widgets[] = "{$file}:{$col}:{$display}";
+	}
+
+	$config['widgets']['sequence'] = implode(',', $new_widgets);
+
+}
 
 ?>

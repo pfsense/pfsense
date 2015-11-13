@@ -74,6 +74,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
+$pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
@@ -158,6 +159,12 @@ if ($_POST) {
 		}
 		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
 			$restart_webgui = true;
+		}
+
+		if ($_POST['webguicss']) {
+			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($config['system']['primaryconsole']);
 		}
 
 		if ($_POST['webgui-redirect'] == "yes") {
@@ -469,6 +476,22 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When this is unchecked, the browser tab shows the host name followed '.
 	'by the current page. Check this box to display the current page followed by the '.
 	'host name.');
+
+$csslist = array();
+$css = glob("bootstrap/css/*.css");
+foreach ($css as $file) {
+	$file = basename($file);
+	if(substr($file, 0, 9) !== 'bootstrap') {
+		$csslist[$file] = $file;
+	}
+}
+
+$section->addInput(new Form_Select(
+	'webguicss',
+	'Web configurator style sheet',
+	$pconfig['webguicss'],
+	$csslist
+))->setHelp("Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css");
 
 $form->add($section);
 $section = new Form_Section('Secure Shell');

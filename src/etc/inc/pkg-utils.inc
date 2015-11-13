@@ -451,6 +451,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			}
 
 			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+		} else if (is_package_installed($pkg_info['shortname'])) {
+			$pkg_info['broken'] = true;
 		}
 
 		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);

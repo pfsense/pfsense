@@ -139,7 +139,13 @@ foreach ($installed_packages as $pkg):
 				<td><?=implode(' ', $pkg['categories'])?></td>
 				<td>
 					<i title="<?=$status?>" class="fa fa-<?=$statusicon?>"></i>
-					<?=$pkg['installed_version']?>
+<?php if (!$g['disablepackagehistory']):?>
+					<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($pkg['changeloglink'])?>">
+<?php endif;?>
+						<?=htmlspecialchars($pkg['installed_version'])?>
+<?php if (!$g['disablepackagehistory']):?>
+					</a>
+<?php endif;?>
 				</td>
 				<td>
 					<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>

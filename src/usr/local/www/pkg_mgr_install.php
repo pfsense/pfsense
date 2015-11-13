@@ -545,7 +545,6 @@ function getLogsStatus() {
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
 		var json = new Object;
 
-	alert(respone);
 		json = jQuery.parseJSON(response);
 
 		if (json.log != "not ready") {

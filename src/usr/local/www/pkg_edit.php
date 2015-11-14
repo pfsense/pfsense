@@ -938,32 +938,28 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
-					'Show log entries in reverse order (newest entries on top)',
+					fixup_string($pkga['description']),
 					($value == "on"),
 					'on'
-				))->setHelp(fixup_string($pkga['description']))
-				  ->setOnclick($onclick)
+				))->setOnclick($onclick)
 				  ->setOnchange($onchange);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))
-					  ->setOnclick($onclick)
+					))->setOnclick($onclick)
 					  ->setOnchange($onchange);
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))
-					  ->setOnclick($onclick)
+					))->setOnclick($onclick)
 					  ->setOnchange($onchange);
 				}
 			}
@@ -1193,27 +1189,27 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
-					'Show log entries in reverse order (newest entries on top)',
+					fixup_string($pkga['description']),
 					($value == "on"),
 					'on'
-				))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+				))->displayAsRadio();
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+					))->displayAsRadio();
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+					))->displayAsRadio();
 				}
 			}
 

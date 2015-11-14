@@ -67,7 +67,12 @@
 require("guiconfig.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
-$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
+if (isset($config['system']['webgui']['authmode'])) {
+	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
+}
+else {
+	$pconfig['authmode'] = "Local Database";
+}
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin

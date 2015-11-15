@@ -96,7 +96,14 @@ if ($_POST) {
 			$input_errors[] = gettext("Authentication failed.");
 		}
 	}
+} else {
+	if (isset($config['system']['webgui']['authmode'])) {
+		$pconfig['authmode'] = $config['system']['webgui']['authmode'];
+	} else {
+		$pconfig['authmode'] = "Local Database";
+	}
 }
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
 $shortcut_section = "authentication";
 include("head.inc");
@@ -118,12 +125,6 @@ $section = new Form_Section('Authentication Test');
 foreach (auth_get_authserver_list() as $auth_server)
 	$serverlist[$auth_server['name']] = $auth_server['name'];
 
-if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
-}
-else {
-	$pconfig['authmode'] = "Local Database";
-}
 $section->addInput(new Form_Select(
 	'authmode',
 	'Authentication Server',

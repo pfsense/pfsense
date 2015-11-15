@@ -143,16 +143,16 @@ function parse_cisco_acl($attribs) {
 			/* Destination */
 			if (trim($rule[$index]) == "host") {
 				$index++;
-				$tmprule .= "to {$rule[$index]} ";
+				$tmprule .= " to {$rule[$index]} ";
 				$index++;
 				if ($isblock == true) {
 					$isblock = false;
 				}
 			} else if (trim($rule[$index]) == "any") {
 				$index++;
-				$tmprule .= "to any";
+				$tmprule .= " to any";
 			} else {
-				$tmprule .= "to {$rule[$index]}";
+				$tmprule .= " to {$rule[$index]}";
 				$index++;
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";

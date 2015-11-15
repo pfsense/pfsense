@@ -96,6 +96,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['down'] = $a_gateways[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
@@ -136,7 +137,7 @@ if ($_POST) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
-			} else {
+			} elseif (!isset($_POST["nonlocalgateway"])) {
 				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
 				$vips = link_interface_to_vips($_POST['interface']);
 				if (is_array($vips))
@@ -164,7 +165,7 @@ if ($_POST) {
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
 				if(empty($parent_ip) || empty($parent_sn)) {
 					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
-				} else {
+				} elseif (!isset($_POST["nonlocalgateway"])) {
 					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
 					$vips = link_interface_to_vips($_POST['interface']);
 					if (is_array($vips))
@@ -445,6 +446,8 @@ if ($_POST) {
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
+		if ($_POST['nonlocalgateway'] == "yes")
+			$gateway['nonlocalgateway'] = true;
 		if ($_POST['force_down'] == "yes")
 			$gateway['force_down'] = true;
 		if (is_ipaddr($_POST['monitor']))
@@ -717,6 +720,14 @@ function enable_change() {
 					<input name="monitor_disable" type="checkbox" id="monitor_disable" value="yes" <?php if ($pconfig['monitor_disable'] == true) echo "checked=\"checked\""; ?> onclick="monitor_change()" />
 					<strong><?=gettext("Disable Gateway Monitoring"); ?></strong><br />
 					<?=gettext("This will consider this gateway as always being up"); ?>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Use nonlocal gateway"); ?></td>
+				<td width="78%" class="vtable">
+					<input name="nonlocalgateway" type="checkbox" id="nonlocalgateway" value="yes" <?php if ($pconfig['nonlocalgateway'] == true) echo "checked=\"checked\""; ?> onclick="monitor_change()" />
+					<strong><?=gettext("Use nonlocal gateway through interface specific route."); ?></strong><br />
+					<?=gettext("This will disable the check if the gateway is reachable using the interface subnet. This is usually means a configuration error, but is required for some scenarios."); ?>
 				</td>
 			</tr>
 			<tr>

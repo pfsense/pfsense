@@ -126,7 +126,18 @@ if ($_POST) {
 		}
 	}
 
-	$members = isset($_POST['members']) ? join(' ', $_POST['members']) : "";
+	if (isset($_POST['members'])) {
+		foreach ($_POST['members'] as $member ) {
+			if ($isfirst > 0) 
+				$members .= " ";
+
+			$members .= $member[0];
+			$isfirst++;
+		}
+	}
+	else {
+		$members = "";
+	}
 
 	if (!$input_errors) {
 		$ifgroupentry = array();

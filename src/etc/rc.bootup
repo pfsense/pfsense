@@ -393,16 +393,14 @@ if (file_exists("/sbin/shutdown.old")) {
 }
 
 /* Resync / Reinstall packages if need be */
-if (file_exists('/conf/needs_package_sync')) {
-	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		require_once("pkg-utils.inc");
-		if ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd") {
-			mark_subsystem_dirty('packagelock');
-			pkg_reinstall_all();
-			clear_subsystem_dirty('packagelock');
-		}
+if (file_exists('/conf/needs_package_sync') &&
+    ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
+	require_once("pkg-utils.inc");
+	mark_subsystem_dirty('packagelock');
+	if (package_reinstall_all()) {
+		@unlink('/conf/needs_package_sync');
 	}
-	@unlink('/conf/needs_package_sync');
+	clear_subsystem_dirty('packagelock');
 }
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally

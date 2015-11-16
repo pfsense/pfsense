@@ -246,7 +246,9 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
 		$privhtml .=		'</tr>';
+		
 	}
 
 	$privhtml .=		'</tbody>';
@@ -278,7 +280,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 {
 ?>
 	<div class="table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Group name")?></th>
@@ -407,7 +409,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not members')->setAttribute('style', 'height:400px;');
+	))->setHelp('Not members');
 
 	$group->add(new Form_Select(
 		'members',
@@ -415,7 +417,7 @@ if ($pconfig['gid'] != 1998) // all users group
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Members')->setAttribute('style', 'height:400px;');
+	))->setHelp('Members');
 
 	$section->add($group);
 

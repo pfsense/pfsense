@@ -26,6 +26,7 @@
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
+	<script src="sortable/sortable.min.js"></script>
 
 	<script>
 		// Un-hide the "Top of page" icons if the page is larger than the window

@@ -1,10 +1,7 @@
 <?php
-/****h* pfSense/pkg-utils
-	NAME
-		pkg-utils.inc - Package subsystem
-	DESCRIPTION
-		This file contains various functions used by the pfSense package system.
-*/
+/*
+ * pkg-utils.inc
+ */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Copyright (c)  2005-2006 Colin Smith (ethethlay@gmail.com)
@@ -57,8 +54,6 @@
  *
  */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/cd /usr/bin/tar	/usr/sbin/fifolog_create	/bin/chmod
-	pfSense_BUILDER_BINARIES:	/usr/sbin/pkg_add	/usr/sbin/pkg_info	/usr/sbin/pkg_delete	/bin/rm
 	pfSense_MODULE: pkg
 */
 
@@ -89,11 +84,6 @@ if (!function_exists("pkg_debug")) {
 		}
 		@fwrite($fd_log, $msg);
 	}
-}
-
-global $g;
-if (!isset($g['platform'])) {
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
 }
 
 /* Remove pkg_prefix from package name if it's present */
@@ -304,21 +294,29 @@ function pkg_version_compare($v1, $v2) {
 function is_pkg_installed($pkg_name) {
 	global $g;
 
-	pkg_remove_prefix($pkg_name);
+	if (empty($pkg_name)) {
+		return false;
+	}
 
-	return pkg_call("info -e " . $g['pkg_prefix'] . $pkg_name, true);
+	return pkg_call("info -e " . $pkg_name, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */
-function pkg_install($pkg_name) {
+function pkg_install($pkg_name, $force = false) {
 	global $g;
 	$result = false;
 
-	pkg_remove_prefix($pkg_name);
+	$shortname = $pkg_name;
+	pkg_remove_prefix($shortname);
 
-	pkg_debug("Installing package {$pkg_name}\n");
-	if (!is_pkg_installed($pkg_name)) {
-		$result = pkg_call("install -y " . $g['pkg_prefix'] . $pkg_name);
+	$pkg_force = "";
+	if ($force) {
+		$pkg_force = "-f ";
+	}
+
+	pkg_debug("Installing package {$shortname}\n");
+	if ($force || !is_pkg_installed($pkg_name)) {
+		$result = pkg_call("install -y " . $pkg_force . $pkg_name);
 		/* Cleanup cacke to free disk space */
 		pkg_call("clean -y");
 	}
@@ -330,11 +328,12 @@ function pkg_install($pkg_name) {
 function pkg_delete($pkg_name) {
 	global $g;
 
-	pkg_remove_prefix($pkg_name);
+	$shortname = $pkg_name;
+	pkg_remove_prefix($shortname);
 
-	pkg_debug("Removing package {$pkg_name}\n");
+	pkg_debug("Removing package {$shortname}\n");
 	if (is_pkg_installed($pkg_name)) {
-		pkg_call("delete -y " . $g['pkg_prefix'] . $pkg_name);
+		pkg_call("delete -y " . $pkg_name);
 		/* Cleanup unecessary dependencies */
 		pkg_call("autoremove -y");
 	}
@@ -406,7 +405,6 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		return array();
 	}
 
-
 	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
 
 	if ($rc != 0) {
@@ -430,6 +428,14 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			continue;
 		}
 
+		$pkg_info['shortname'] = $pkg_info['name'];
+		pkg_remove_prefix($pkg_info['shortname']);
+
+		/* XXX: Add it to globals.inc? */
+		$pkg_info['changeloglink'] =
+		    "https://github.com/pfsense/FreeBSD-ports/commits/devel/" .
+		    $pkg_info['categories'][0] . '/' . $pkg_info['name'];
+
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
 
@@ -445,6 +451,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 			}
 
 			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+		} else if (is_package_installed($pkg_info['shortname'])) {
+			$pkg_info['broken'] = true;
 		}
 
 		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);
@@ -513,11 +521,12 @@ function uninstall_package($package_name) {
 		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
 		stop_service($internal_name);
 	}
+	$pkg_name = $g['pkg_prefix'] . $internal_name;
 
-	if (is_pkg_installed($internal_name)) {
+	if (is_pkg_installed($pkg_name)) {
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
-		pkg_delete($internal_name);
+		pkg_delete($pkg_name);
 	} else {
 		delete_package_xml($package_name);
 	}
@@ -651,16 +660,6 @@ function eval_once($toeval) {
 		$evaled[] = $evalmd5;
 	}
 	return;
-}
-
-function install_package($package_name) {
-	global $g, $config, $static_output, $pkg_interface;
-
-	if ($pkg_interface == "console") {
-		echo "\n";
-	}
-
-	return pkg_install($package_name);
 }
 
 function install_package_xml($package_name) {
@@ -851,23 +850,6 @@ function install_package_xml($package_name) {
 	return true;
 }
 
-function delete_package($package_name) {
-	global $config, $g, $static_output;
-
-	if (!is_package_installed($package_name)) {
-		return;
-	}
-
-	$static_output .= sprintf(gettext("Starting package deletion for %s..."), $package_name);
-	update_output_window($static_output);
-
-	pkg_delete($package_name);
-	$static_output .= "done.\n";
-	update_output_window($static_output);
-
-	return;
-}
-
 function delete_package_xml($package_name, $when = "post-deinstall") {
 	global $g, $config, $static_output, $pkg_interface;
 
@@ -1020,11 +1002,71 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	conf_mount_ro();
 }
 
-function pkg_reinstall_all() {
-	global $g, $config;
+/*
+ * Used during upgrade process or retore backup process, verify all
+ * packages installed in config.xml and install pkg accordingly
+ */
+function package_reinstall_all() {
+	global $g, $config, $static_output, $pkg_interface;
 
-	// XXX: implement
-	return;
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
+		return true;
+	}
+
+	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
+
+	/* During boot after upgrade, wait for internet connection */
+	if ($upgrade) {
+		$static_output .= gettext("Waiting for internet connection to update pkg metadata and fini package reinstallation");
+		update_output_window($static_output);
+		while (true) {
+			if (pkg_update(true)) {
+				break;
+			}
+			$static_output .= '.';
+			update_output_window($static_output);
+			sleep(1);
+		}
+		$static_output .= "\n";
+		update_output_window($static_output);
+	} else {
+		if (!pkg_update()) {
+			return false;
+		}
+	}
+
+	$pkg_info = get_pkg_info();
+
+	foreach ($config['installedpackages']['package'] as $package) {
+		$found = false;
+		$internal_name = get_package_internal_name($package);
+		foreach ($pkg_info as $pkg) {
+			pkg_remove_prefix($pkg['name']);
+			if ($pkg['name'] == $internal_name) {
+				$found = true;
+				break;
+			}
+		}
+
+		if (!$found) {
+			if (!function_exists("file_notice")) {
+				require_once("notices.inc");
+			}
+
+			file_notice(gettext("Package reinstall"),
+			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."), $package['name'], $g['product_name']));
+			uninstall_package($package['name']);
+		}
+	}
+
+	/* Obsoleted packages were removed, lets reinstall all remaining */
+	foreach ($config['installedpackages']['package'] as $package) {
+		$internal_name = get_package_internal_name($package);
+		pkg_install($g['pkg_prefix'] . $internal_name, true);
+	}
+
+	return true;
 }
 
 function stop_packages() {
@@ -1075,6 +1117,77 @@ function stop_packages() {
 			pclose($shell);
 		}
 	}
+}
+
+/* Identify which meta package is installed */
+function get_meta_pkg_name() {
+	global $g;
+
+	/* XXX: Use pkg annotation */
+	if (is_pkg_installed($g['product_name'])) {
+		return $g['product_name'];
+	} else if (is_pkg_installed($g['product_name'] . '-vmware')) {
+		return $g['product_name'] . '-vmware';
+	}
+	return false;
+}
+
+/* Identify which base package is installed */
+function get_base_pkg_name() {
+	global $g;
+
+	/* XXX: Use pkg annotation */
+	if (is_pkg_installed($g['product_name'] . '-base-' . $g['platform'])) {
+		return $g['product_name'];
+		return $g['product_name'] . '-base-' . $g['platform'];
+	} else if (is_pkg_installed($g['product_name'] . '-base')) {
+		return $g['product_name'] . '-base';
+	}
+	return false;
+}
+
+/* Verify if system needs upgrade (meta package or base) */
+function get_system_pkg_version() {
+	global $g;
+
+	$base_pkg = get_base_pkg_name();
+	$meta_pkg = get_meta_pkg_name();
+
+	if (!$base_pkg || !$meta_pkg) {
+		return false;
+	}
+
+	$info = get_pkg_info($base_pkg);
+	$pkg_name = $base_pkg;
+
+	$pkg_info = array();
+	foreach ($info as $item) {
+		if ($item['name'] == $base_pkg) {
+			$pkg_info = $item;
+		}
+	}
+
+	if (empty($pkg_info) ||
+	    $pkg_info['version'] == $pkg_info['installed_version']) {
+		$info = get_pkg_info($meta_pkg);
+		$pkg_name = $meta_pkg;
+
+		foreach ($info as $item) {
+			if ($item['name'] == $base_pkg) {
+				$pkg_info = $item;
+			}
+		}
+	}
+
+	if (empty($pkg_info)) {
+		return false;
+	}
+
+	return array(
+	    'pkg_name'          => $pkg_name,
+	    'version'           => $pkg_info['version'],
+	    'installed_version' => $pkg_info['installed_version']
+	);
 }
 
 ?>

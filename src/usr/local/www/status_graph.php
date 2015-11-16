@@ -70,6 +70,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 
 if ($_POST['width']) {
 	$width = $_POST['width'];
@@ -85,9 +86,8 @@ if ($_POST['height']) {
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled())
 	$ifdescrs['enc0'] = "IPsec";
-}
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -240,7 +240,7 @@ events.push(function(){
 		$(this).submit();
 	});
 
-	setInterval('updateBandwidth()', 1000);
+	setInterval('updateBandwidth()', 3000);
 
 	updateBandwidth();
 });
@@ -248,9 +248,8 @@ events.push(function(){
 <?php
 
 /* link the ipsec interface magically */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+if (ipsec_enabled())
 	$ifdescrs['enc0'] = "IPsec";
-}
 
 ?>
 <div class="panel panel-default">

@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 <div class="panel panel-default">
 	<div class="panel-heading">IPSec status</div>
 	<div class="panel-body table responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Description")?></th>
@@ -252,7 +252,7 @@ if (is_array($status)) {
 ?>
 					</td>
 					<td>
-						<?=htmlspecialchars($ikesa['reauth-time']) . gettext(" seconds");?>
+						<?=htmlspecialchars($ikesa['reauth-time']) . gettext(" seconds (") . convert_seconds_to_hms($ikesa['reauth-time']) . ")";?>
 					</td>
 					<td>
 						<?=htmlspecialchars($ikesa['encr-alg'])?>
@@ -272,7 +272,7 @@ if (is_array($status)) {
 		}
 ?>
 						<?=ucfirst(htmlspecialchars($ikesa['state']))?>
-						<br/><?=htmlspecialchars($ikesa['established']) . gettext(" seconds ago")?>
+						<br/><?=htmlspecialchars($ikesa['established']) . gettext(" seconds (" . convert_seconds_to_hms($ikesa['established']) . ") ago")?>
 						</span>
 					</td>
 					<td >
@@ -299,7 +299,7 @@ if (is_array($status)) {
 				<tr>
 					<td colspan = 10>
 <?php
-		if (is_array($ikesa['child-sas'])) {
+		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 ?>
 						<div id="btnchildsa-<?=$ikeid?>">
 							<a type="button" onclick="show_childsa('childsa-<?=$ikeid?>','btnchildsa-<?=$ikeid?>');" class="btn btn-sm btn-default" />
@@ -359,9 +359,9 @@ if (is_array($status)) {
 									</td>
 									<td>
 <?php
-				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds"));
-				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds"));
-				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds"));
+				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['rekey-time']) . ")");
+				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['life-time']) . ")" );
+				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['install-time']) . ")" );
 
 ?>
 									</td>
@@ -390,21 +390,20 @@ if (is_array($status)) {
 									</td>
 									<td>
 <?php
-				print(gettext("Bytes-In: ") . htmlspecialchars($childsa['bytes-in']) . '<br/>');
-				print(gettext("Packets-In: ") . htmlspecialchars($childsa['packets-in']) . '<br/>');
-				print(gettext("Bytes-Out: ") . htmlspecialchars($childsa['bytes-out']) . '<br/>');
-				print(gettext("Packets-Out: ") . htmlspecialchars($childsa['packets-out']) . '<br/>');
+				print(gettext("Bytes-In: ") . htmlspecialchars(number_format($childsa['bytes-in'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-in'])) . ')<br/>');
+				print(gettext("Packets-In: ") . htmlspecialchars(number_format($childsa['packets-in'])) . '<br/>');
+				print(gettext("Bytes-Out: ") . htmlspecialchars(number_format($childsa['bytes-out'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-out'])) . ')<br/>');
+				print(gettext("Packets-Out: ") . htmlspecialchars(number_format($childsa['packets-out'])) . '<br/>');
 ?>
 									</td>
 									<td>
-										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['reqid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
+										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
 											<?=gettext("Disconnect")?>
 										</a>
 									</td>
 								</tr>
 <?php
 			}
-		}
 ?>
 
 							</tbody>
@@ -412,9 +411,11 @@ if (is_array($status)) {
 					</td>
 				</tr>
 <?php
-	}
+		}
 
 		unset($con_id);
+	}
+
 }
 
 $rgmap = array();

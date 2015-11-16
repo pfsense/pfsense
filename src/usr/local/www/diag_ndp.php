@@ -135,8 +135,8 @@ include("head.inc");
 ?>
 
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
+	<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
+		<thead>
 			<tr>
 				<th><?= gettext("IPv6 address"); ?></th>
 				<th><?= gettext("MAC address"); ?></th>

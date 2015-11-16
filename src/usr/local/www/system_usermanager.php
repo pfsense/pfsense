@@ -135,7 +135,7 @@ else if ($act == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
-if (isset($_POST['dellall_x'])) {
+if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
 
@@ -144,7 +144,7 @@ if (isset($_POST['dellall_x'])) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
 				conf_mount_rw();
 				local_user_del($a_user[$userid]);
-				conf_mount_ro();
+ 			    conf_mount_ro();
 				unset($a_user[$userid]);
 			}
 		}
@@ -166,6 +166,16 @@ if ($_POST['act'] == "delcert") {
 	write_config();
 	$_POST['act'] = "edit";
 	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+}
+if ($_POST['act'] == "delprivid") {
+
+		if ($a_user[$id] && !empty($_POST['privid'])) {
+			unset($a_user[$id]['priv'][$_POST['privid']]);
+			local_user_set($a_user[$id]);
+			write_config();
+			$_POST['act'] = "edit";
+			$savemsg = gettext("Privilege removed.") . "<br />";
+		}
 }
 
 if ($_POST['save']) {
@@ -270,14 +280,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		// This used to be a separate act=delpriv
-		if ($a_user[$id] && !empty($_POST['privid'])) {
-			foreach ($_POST['privid'] as $i)
-				unset($a_user[$id]['priv'][$i]);
 
-			local_user_set($a_user[$id]);
-			write_config();
-		}
 
 		conf_mount_rw();
 		$userent = array();
@@ -390,6 +393,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td><a class="fa fa-trash no-confirm" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
 		$privhtml .=		'</tr>';
 	}
 
@@ -468,9 +472,9 @@ display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $input_errors)) {
 ?>
-
+<form method="post">
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -480,8 +484,6 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				<th><?=gettext("Groups")?></th>
 			</tr>
 		</thead>
-		<tbody>
-		</tbody>
 		<tbody>
 <?php
 foreach($a_user as $i => $userent):
@@ -515,10 +517,15 @@ foreach($a_user as $i => $userent):
 	</table>
 </div>
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">
+	<a href="?act=new" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
+
+	<button type="submit" class="btn btn-sm btn-danger" name="dellall" value="dellall" title="<?=gettext('Delete selected users')?>">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Delete")?>
+	</button>
 </nav>
 
 <div id="infoblock">
@@ -527,7 +534,7 @@ foreach($a_user as $i => $userent):
 	"An icon that appears grey indicates that it is a system defined object. " .
 	"Some system object properties can be modified but they cannot be deleted.") .
 	'<br /><br />' .
-	gettext("Accounts created here are also used for other parts of the system " .
+	gettext("Accounts added here are also used for other parts of the system " .
 	"such as OpenVPN, IPsec, and Captive Portal."), info)?>
 </div>
 
@@ -669,7 +676,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$systemGroups,
 		true
-	))->setHelp('Not member of')->setAttribute('style', 'height:400px;');
+	))->setHelp('Not member of');
 
 	$group->add(new Form_Select(
 		'groups',
@@ -677,7 +684,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
 		$usersGroups,
 		true
-	))->setHelp('Member of')->setAttribute('style', 'height:400px;');
+	))->setHelp('Member of');
 
 	$section->add($group);
 
@@ -893,6 +900,15 @@ events.push(function(){
 			$('form').submit();
 		}
 	});
+	$('[id^=delprivid]').click(function(event) {
+		if(confirm(event.target.title)) {
+			$('#privid').val(event.target.id.match(/\d+$/)[0]);
+			$('#userid').val('<?=$id;?>');
+			$('#act').val('delprivid');
+			$('form').submit();
+		}
+	});
+
 
 	// ---------- On initial page load ------------------------------------------------------------
 

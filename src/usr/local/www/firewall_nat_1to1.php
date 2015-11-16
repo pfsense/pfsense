@@ -245,7 +245,7 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone" title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash" title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
 						</td>

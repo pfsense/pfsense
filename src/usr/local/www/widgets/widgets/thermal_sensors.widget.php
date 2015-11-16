@@ -1,6 +1,6 @@
 <?php
 /*
-	$Id: thermal_sensors.widget.php
+	thermal_sensors.widget.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -97,11 +97,11 @@ function saveThresholdSettings(&$configArray, &$postArray, $warningValueKey, $cr
 	$warningValue = 0;
 	$criticalValue = 0;
 
-	if (isset($postArray[$warningValueKey])) {
+	if (isset($postArray[$warningValueKey]) && is_numeric($postArray[$warningValueKey])) {
 		$warningValue = (int) $postArray[$warningValueKey];
 	}
 
-	if (isset($postArray[$criticalValueKey])) {
+	if (isset($postArray[$criticalValueKey]) && is_numeric($postArray[$criticalValueKey])) {
 		$criticalValue = (int) $postArray[$criticalValueKey];
 	}
 
@@ -187,6 +187,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	<div id="thermalSensorsContainer" class="listr">
 		(Updating...)<br /><br />
 	</div>
+</div>
 </div>
 <input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
 
@@ -277,8 +278,8 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 			</td>
 		</tr>
 	</table>
-	</form>
-</div>
+</form>
+
 
 <!-- needed to display the widget settings menu -->
 <script type="text/javascript">

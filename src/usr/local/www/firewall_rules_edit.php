@@ -67,6 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
@@ -1139,7 +1140,7 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 // add ipsec interfaces
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']) && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0"))
 	$interfaces["enc0"] = "IPsec";
 
 // add openvpn/tun interfaces
@@ -1539,7 +1540,7 @@ $section->addInput(new Form_Select(
 	$vlanprio
 ))->setHelp('Choose 802.1p priority to apply');
 
-$schedules = array('none'); //leave none to leave rule enabled all the time
+$schedules = array();
 foreach ((array)$config['schedules']['schedule'] as $schedule)
 {
 	if ($schedule['name'] != "")
@@ -1550,7 +1551,7 @@ $section->addInput(new Form_Select(
 	'sched',
 	'Schedule',
 	$pconfig['sched'],
-	$schedules
+	['' => 'none'] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
 
 $gateways = array("" => 'default');

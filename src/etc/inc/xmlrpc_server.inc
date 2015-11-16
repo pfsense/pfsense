@@ -246,7 +246,7 @@ function XML_RPC_Server_debugmsg($m)
  *     ),
  *     1,
  *     0
- * ); 
+ * );
  * </code>
  *
  * @category   Web Services
@@ -562,8 +562,8 @@ class XML_RPC_Server
         $XML_RPC_xh[$parser]['isf']    = 0;
         $XML_RPC_xh[$parser]['params'] = array();
         $XML_RPC_xh[$parser]['method'] = '';
-        $XML_RPC_xh[$parser]['stack'] = array();	
-        $XML_RPC_xh[$parser]['valuestack'] = array();	
+        $XML_RPC_xh[$parser]['stack'] = array();
+        $XML_RPC_xh[$parser]['valuestack'] = array();
 
         $plist = '';
 

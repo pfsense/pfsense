@@ -74,54 +74,53 @@ if (!is_array($config['unbound'])) {
 
 $a_unboundcfg =& $config['unbound'];
 
-if (!is_array($config['unbound']['hosts'])) {
-	$config['unbound']['hosts'] = array();
+if (!is_array($a_unboundcfg['hosts'])) {
+	$a_unboundcfg['hosts'] = array();
 }
 
-$a_hosts =& $config['unbound']['hosts'];
+$a_hosts =& $a_unboundcfg['hosts'];
 
-if (!is_array($config['unbound']['domainoverrides'])) {
-	$config['unbound']['domainoverrides'] = array();
+if (!is_array($a_unboundcfg['domainoverrides'])) {
+	$a_unboundcfg['domainoverrides'] = array();
 }
 
-$a_domainOverrides = &$config['unbound']['domainoverrides'];
+$a_domainOverrides = &$a_unboundcfg['domainoverrides'];
 
-if (isset($config['unbound']['enable'])) {
+if (isset($a_unboundcfg['enable'])) {
 	$pconfig['enable'] = true;
 }
-if (isset($config['unbound']['dnssec'])) {
+if (isset($a_unboundcfg['dnssec'])) {
 	$pconfig['dnssec'] = true;
 }
-if (isset($config['unbound']['forwarding'])) {
+if (isset($a_unboundcfg['forwarding'])) {
 	$pconfig['forwarding'] = true;
 }
-if (isset($config['unbound']['regdhcp'])) {
+if (isset($a_unboundcfg['regdhcp'])) {
 	$pconfig['regdhcp'] = true;
 }
-if (isset($config['unbound']['regdhcpstatic'])) {
+if (isset($a_unboundcfg['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
 }
-if (isset($config['unbound']['txtsupport'])) {
+if (isset($a_unboundcfg['txtsupport'])) {
 	$pconfig['txtsupport'] = true;
 }
 
-$pconfig['port'] = $config['unbound']['port'];
-$pconfig['custom_options'] = base64_decode($config['unbound']['custom_options']);
+$pconfig['port'] = $a_unboundcfg['port'];
+$pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
 
-if (empty($config['unbound']['active_interface'])) {
+if (empty($a_unboundcfg['active_interface'])) {
 	$pconfig['active_interface'] = array();
 } else {
-	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
+	$pconfig['active_interface'] = explode(",", $a_unboundcfg['active_interface']);
 }
 
-if (empty($config['unbound']['outgoing_interface'])) {
+if (empty($a_unboundcfg['outgoing_interface'])) {
 	$pconfig['outgoing_interface'] = array();
 } else {
-	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
+	$pconfig['outgoing_interface'] = explode(",", $a_unboundcfg['outgoing_interface']);
 }
 
 if ($_POST) {
-
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
@@ -136,76 +135,63 @@ if ($_POST) {
 		$pconfig = $_POST;
 		unset($input_errors);
 
-		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			if ($_POST['port'] == $config['dnsmasq']['port']) {
+		if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
+			if ($pconfig['port'] == $config['dnsmasq']['port']) {
 				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
 			}
 		}
 
-		if (empty($_POST['active_interface'])) {
+		if (empty($pconfig['active_interface'])) {
 			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
-		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $_POST['active_interface']) && !in_array("all", $_POST['active_interface']))) {
+		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
 			$input_errors[] = "This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.";
 		}
 
-		if (empty($_POST['outgoing_interface'])) {
+		if (empty($pconfig['outgoing_interface'])) {
 			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
 		}
 
-		if ($_POST['port']) {
-			if (is_port($_POST['port'])) {
-				$a_unboundcfg['port'] = $_POST['port'];
-			} else {
-				$input_errors[] = gettext("You must specify a valid port number.");
-			}
-		} else if (isset($config['unbound']['port'])) {
-			unset($config['unbound']['port']);
+		if ($pconfig['port'] && !is_port($pconfig['port'])) {
+			$input_errors[] = gettext("You must specify a valid port number.");
 		}
 
-		if (isset($_POST['enable'])) {
-			$a_unboundcfg['enable'] = true;
-		} else {
-			unset($a_unboundcfg['enable']);
-		}
-		if (isset($_POST['dnssec'])) {
-			$a_unboundcfg['dnssec'] = true;
-		} else {
-			unset($a_unboundcfg['dnssec']);
-		}
-		if (isset($_POST['forwarding'])) {
-			$a_unboundcfg['forwarding'] = true;
-		} else {
-			unset($a_unboundcfg['forwarding']);
-		}
-		if (isset($_POST['regdhcp'])) {
-			$a_unboundcfg['regdhcp'] = true;
-		} else {
-			unset($a_unboundcfg['regdhcp']);
-		}
-		if (isset($_POST['regdhcpstatic'])) {
-			$a_unboundcfg['regdhcpstatic'] = true;
-		} else {
-			unset($a_unboundcfg['regdhcpstatic']);
-		}
-		if (isset($_POST['txtsupport'])) {
-			$a_unboundcfg['txtsupport'] = true;
-		} else {
-			unset($a_unboundcfg['txtsupport']);
-		}
-		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface'])) {
-			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
+		if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
+			$display_active_interface = $pconfig['active_interface'];
+			$pconfig['active_interface'] = implode(",", $pconfig['active_interface']);
 		}
 
-		if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface'])) {
-			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
+		$display_custom_options = $pconfig['custom_options'];
+		$pconfig['custom_options'] = base64_encode(str_replace("\r\n", "\n", $pconfig['custom_options']));
+
+		if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
+			$display_outgoing_interface = $pconfig['outgoing_interface'];
+			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
 		}
 
-		$a_unboundcfg['custom_options'] = base64_encode(str_replace("\r\n", "\n", $_POST['custom_options']));
+		$test_output = array();
+		if (test_unbound_config($pconfig, $test_output)) {
+			$input_errors[] = gettext("The generated config file cannot be parsed by unbound. Please correct the following errors:");
+			$input_errors = array_merge($input_errors, $test_output);
+		}
 
 		if (!$input_errors) {
+			$a_unboundcfg['enable'] = isset($pconfig['enable']);
+			$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
+			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
+			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
+			$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
+			$a_unboundcfg['txtsupport'] = isset($pconfig['txtsupport']);
+			$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
+			$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
+			$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
+
 			write_config("DNS Resolver configured.");
 			mark_subsystem_dirty('unbound');
 		}
+
+		$pconfig['active_interface'] = $display_active_interface;
+		$pconfig['outgoing_interface'] = $display_outgoing_interface;
+		$pconfig['custom_options'] = $display_custom_options;
 	}
 }
 
@@ -348,20 +334,20 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'txtsupport',
 	'TXT Comment Support',
-	'Register DHCP static mappings in the DNS Resolver',
+	'Create TXT records',
 	$pconfig['txtsupport']
 ))->setHelp('Any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.');
 
 $btnadvdns = new Form_Button(
 	'btnadvdns',
-	'Advanced'
+	'Custom options'
 );
 
 $btnadvdns->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Advanced',
-	$btnadvdns . '&nbsp;' . 'Show advanced optionss'
+	'Custom options',
+	$btnadvdns . '&nbsp;' . 'Show custom options'
 ));
 
 $section->addInput(new Form_TextArea (
@@ -373,6 +359,7 @@ $section->addInput(new Form_TextArea (
 $form->add($section);
 print($form);
 ?>
+
 <script>
 //<![CDATA[
 events.push(function(){
@@ -393,16 +380,16 @@ events.push(function(){
 		disableInput('btnadvdns', hide);
 	}
 
-	// Make the 'aditional options' button a plain button, not a submit button
+	// Make the 'additional options' button a plain button, not a submit button
 	$("#btnadvdns").prop('type','button');
 
-	// Un-hide aditional  controls
+	// Un-hide additional  controls
 	$("#btnadvdns").click(function() {
 		hideInput('custom_options', false);
 
 	});
 
-	// When 'enable' is clicked, diable/enable the following three checkboxes
+	// When 'enable' is clicked, disable/enable the following three checkboxes
 	$('#enable').click(function() {
 		disableDHCP();
 	});
@@ -421,7 +408,7 @@ events.push(function(){
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
@@ -497,7 +484,7 @@ endforeach;
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
@@ -547,9 +534,9 @@ endforeach;
 	<?=print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
 		" service (if enabled) will automatically serve the LAN IP".
 		" address as a DNS server to DHCP clients so they will use".
-		" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
+		" the DNS Resolver. If Forwarding is enabled, the DNS Resolver will use the DNS servers".
 		" entered in %sSystem: General setup%s".
-		" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
 		" is checked."),'<a href="system.php">','</a>'), info)?>
 </div>

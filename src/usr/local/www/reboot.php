@@ -75,13 +75,6 @@ include("head.inc");
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-?>
-	<meta http-equiv="refresh" content="70;url=/">
-	<div class="alert alert-success" role="alert">
-		<?=gettext("The system is rebooting now. This may take one minute or so.")?>
-	</div>
-<?php
-
 	if(DEBUG) {
 	   print("Not actually rebooting (DEBUG is set true)");
 	}
@@ -90,6 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		system_reboot();
 		print('</pre>');
 	}
+
+?>
+<div id="clock" style="text-align: center;"></div>
+<div id="countdown" style="text-align: center;"></div>
+
+<script>
+//<![CDATA[
+events.push(function(){
+		startCountdown(60);
+});
+//]]>
+</script>
+<?php
 } else {
 
 ?>
@@ -110,5 +116,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 
 }
+?>
+<script>
+//<![CDATA[
 
+	function startCountdown(time) {
+		$('#clock').html('<img src="/321.gif" />');
+			setInterval(function(){
+				$('#countdown').html('<h4>Rebooting<br />Page will reload in ' +time+ ' seconds.</h4>');
+
+				time-- != 0 || (window.location="/index.php");
+			},1000);
+	}
+
+//]]>
+</script>
+<?php
 include("foot.inc");

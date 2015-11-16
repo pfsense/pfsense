@@ -1,6 +1,5 @@
 <?php
 /*
-	$Id$
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP

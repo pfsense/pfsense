@@ -700,8 +700,8 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
 				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
-			echo "<td>{$entry_date_time}</td>\n";
-			echo "<td>{$entry_text}</td>\n";
+			echo "<td style=\"white-space:nowrap;\">{$entry_date_time}</td>\n";
+			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
 		} else {
 				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
 		}

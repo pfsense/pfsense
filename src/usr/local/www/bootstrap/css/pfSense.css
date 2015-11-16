@@ -339,6 +339,14 @@ form .btn + .btn {
 	color: white;
 }
 
+/* Used when you need an icon to act as a submit button **/
+.button-icon
+{
+	color: #337AB7;
+	background: none;
+	border: 0px;
+}
+
 .btn
 {
 	padding-right: 4px;

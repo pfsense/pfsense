@@ -193,9 +193,6 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			continue;
 		}
 
-		$shortname = $index['name'];
-		pkg_remove_prefix($shortname);
-
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
 		}
@@ -206,7 +203,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php if ($index['www']):?>
 						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
 <?php endif; ?>
-							<?=htmlspecialchars($shortname)?>
+							<?=htmlspecialchars($index['shortname'])?>
 						</a>
 					</td>
 

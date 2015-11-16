@@ -2,12 +2,12 @@
 /*
 	system_information.widget.php
 */
-/* ====================================================================
+/*
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2007 Scott Dale
+ *	Copyright (c)  2007 Scott Dale
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -53,8 +53,6 @@
  *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	====================================================================
- *
  */
 
 require_once("functions.inc");
@@ -63,54 +61,46 @@ require_once('notices.inc');
 include_once("includes/functions.inc.php");
 
 if ($_REQUEST['getupdatestatus']) {
-	if (isset($config['system']['firmware']['disablecheck'])) {
+	require_once("pkg-utils.inc");
+
+	$system_version = get_system_pkg_version();
+
+	if ($system_version === false) {
+		print(gettext("<i>Unable to check for updates</i>"));
 		exit;
 	}
-	if (isset($config['system']['firmware']['alturl']['enable'])) {
-		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-	} else {
-		$updater_url = $g['update_url'];
+
+	if (!is_array($system_version) ||
+	    !isset($system_version['version']) ||
+	    !isset($system_version['installed_version'])) {
+		print(gettext("<i>Error in version information</i>"));
+		exit;
 	}
 
-	$nanosize = "";
-	if ($g['platform'] == "nanobsd") {
-		if (!isset($g['enableserial_force'])) {
-			$nanosize = "-nanobsd-vga-";
-		} else {
-			$nanosize = "-nanobsd-";
-		}
-		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
-	}
+	$version_compare = pkg_version_compare(
+	    $system_version['installed_version'], $system_version['version']);
 
-	@unlink("/tmp/{$g['product_name']}_version");
-	if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
-		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
-	}
-
-	if(empty($remote_version))
-		echo "<i>Unable to check for updates</i>";
-	else {
-		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-
-		if(!$remote_version) {
-			echo "<i>Unable to check for updates</i>";
-		}
-		else {
-			$needs_system_upgrade = false;
-			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
-			if ($version_compare == -1) {
+	switch ($version_compare) {
+	case '<':
 ?>
-<div class="alert alert-warning" role="alert">
-	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
-</div>
+		<div>
+			<?=gettext("Version ")?>
+			<span style="color: green"><?=$system_version['version']?></span> <?=gettext("is available.")?>
+			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
+		</div>
 <?php
-			} elseif ($version_compare == 1) {
-				echo "You are on a later version than<br />the official release.";
-			} else {
-				echo "You are on the latest version.";
-			}
-		}
+		break;
+	case '=':
+		print(gettext("You are on the latest version."));
+		break;
+	case '>':
+		print(gettext("You are on a later version than<br />the official release."));
+		break;
+	default:
+		print(gettext( "<i>Error comparing installed version<br />with latest available</i>"));
+		break;
 	}
+
 	exit;
 }
 
@@ -306,13 +296,6 @@ $filesystems = get_mounted_filesystems();
 					<td><?=$fs['total_size']?></td>
 					<td>
 						<span><?=$fs['percent_used']?>%</span>
-<!--
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
-								<span><?=$fs['percent_used']?>%</span>
-							</div>
-						</div>
--->
 					</td>
 				</tr>
 <?PHP endforeach; ?>
@@ -354,7 +337,7 @@ function updateMeters() {
         setTimer();
 }
 
-events.push(function(){ 
+events.push(function(){
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
 
@@ -371,7 +354,7 @@ function setProgress(barName, percent) {
 }
 
 function setTimer() {
-         timeout = window.setTimeout('updateMeters()', update_interval); 
+         timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -383,20 +366,20 @@ function stats(x) {
 			return false;
 	}))
 
-        updateUptime(values[2]);
-        updateDateTime(values[5]);
-        updateCPU(values[0]);
-        updateMemory(values[1]);
-        updateState(values[3]);
-        updateTemp(values[4]);
-        updateInterfaceStats(values[6]);
-        updateInterfaces(values[7]);
-        updateGatewayStats(values[8]);
-        updateCpuFreq(values[9]);
-        updateLoadAverage(values[10]);
-        updateMbuf(values[11]);
-        updateMbufMeter(values[12]);
-        updateStateMeter(values[13]);
+	updateUptime(values[2]);
+	updateDateTime(values[5]);
+	updateCPU(values[0]);
+	updateMemory(values[1]);
+	updateState(values[3]);
+	updateTemp(values[4]);
+	updateInterfaceStats(values[6]);
+	updateInterfaces(values[7]);
+	updateGatewayStats(values[8]);
+	updateCpuFreq(values[9]);
+	updateLoadAverage(values[10]);
+	updateMbuf(values[11]);
+	updateMbufMeter(values[12]);
+	updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {
@@ -493,7 +476,7 @@ function updateInterfaceStats(x){
 		for (var y=0; y<statistics_split.length-1; y++){
 			if(jQuery('#stat' + counter)) {
 				jQuery('#stat' + counter).html(statistics_split[y]);
-				counter++;	
+				counter++;
 			}
 		}
 	}

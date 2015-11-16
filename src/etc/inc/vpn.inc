@@ -1,5 +1,4 @@
 <?php
-
 /*
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
@@ -43,22 +42,33 @@
 require_once("ipsec.inc");
 require_once("filter.inc");
 
-function vpn_ipsec_configure_loglevels($forconfig = false) {
-	global $config, $ipsec_loglevels;
+function vpn_update_daemon_loglevel($category, $level) {
+	global $ipsec_log_cats, $ipsec_log_sevs;
+
+	if (in_array($category, array_keys($ipsec_log_cats), true) && in_array(intval($level), array_keys($ipsec_log_sevs), true)) {
+
+		/* if you're setting to -1, need to add "--" to args */
+		$argterm = "";
+		if ($level == "-1") {
+			$argterm = "--";
+		}
+
+		mwexec("/usr/local/sbin/ipsec stroke loglevel {$category} {$argterm} {$level}");
+	}
+}
+
+function vpn_logging_cfgtxt() {
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$cfgtext = array();
-	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig) {
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
-		} else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
-		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5) {
-			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
-				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (is_numeric($config['ipsec']['logging'][$cat]) &&
+		    in_array(intval($config['ipsec']['logging'][$cat]), array_keys($ipsec_log_sevs), true)) {
+			$cfgtext[] = "${cat} = {$config['ipsec']['logging'][$cat]}";
 		}
 	}
-	if ($forconfig) {
-		return $cfgtext;
-	}
+
+	return $cfgtext;
 }
 
 /* include all configuration functions */
@@ -200,6 +210,44 @@ function vpn_ipsec_configure($restart = false) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 	}
 
+	if (!file_exists("/usr/local/etc/ipsec.d") ||
+	    !is_link("/usr/local/etc/ipsec.d")) {
+		conf_mount_rw();
+		if (file_exists("/usr/local/etc/ipsec.d")) {
+			rmdir_recursive("/usr/local/etc/ipsec.d");
+		}
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
+		    "/usr/local/etc/ipsec.d");
+		conf_mount_ro();
+	}
+	if (!file_exists("{$g['varetc_path']}/etc/strongswan.d") ||
+	    !is_link("{$g['varetc_path']}/etc/strongswan.d")) {
+		conf_mount_rw();
+		if (is_link("{$g['varetc_path']}/etc/strongswan.d")) {
+			@unlink("{$g['varetc_path']}/etc/strongswan.d");
+		} else {
+			rmdir_recursive("{$g['varetc_path']}/etc/strongswan.d");
+		}
+		@symlink("/usr/local/etc/strongswan.d",
+		    "{$g['varetc_path']}/ipsec/strongswan.d");
+		conf_mount_ro();
+	}
+	if (file_exists("/usr/local/etc/strongswan.conf") &&
+	    !is_link("/usr/local/etc/strongswan.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/strongswan.conf");
+		@symlink("{$g['varetc_path']}/ipsec/strongswan.conf",
+		    "/usr/local/etc/strongswan.conf");
+		conf_mount_ro();
+	}
+	if (file_exists("/usr/local/etc/ipsec.conf") &&
+	    !is_link("/usr/local/etc/ipsec.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/ipsec.conf");
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.conf",
+		    "/usr/local/etc/ipsec.conf");
+		conf_mount_ro();
+	}
 
 	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
@@ -399,7 +447,7 @@ function vpn_ipsec_configure($restart = false) {
 	unset($stronconf);
 
 	$strongswanlog = "";
-	$ipsecloglevels = vpn_ipsec_configure_loglevels(true);
+	$ipsecloglevels = vpn_logging_cfgtxt();
 	if (is_array($ipsecloglevels)) {
 		foreach ($ipsecloglevels as $loglevel) {
 			$strongswanlog .= "\t\t" . $loglevel . "\n";
@@ -409,7 +457,8 @@ function vpn_ipsec_configure($restart = false) {
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.
 starter {
-load_warning = no
+	load_warning = no
+	config_file = {$g['varetc_path']}/ipsec/ipsec.conf
 }
 
 charon {
@@ -432,15 +481,18 @@ syslog {
 		ike_name = yes
 {$strongswanlog}
 	}
-	# disable logging under auth so logs aren't duplicated 
+	# disable logging under auth so logs aren't duplicated
 	auth {
 		default = -1
 	}
 }
 
-EOD;
+	plugins {
+		stroke {
+			secrets_file = {$g['varetc_path']}/ipsec/ipsec.secrets
+		}
 
-	$strongswan .= "\tplugins {\n";
+EOD;
 
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
 	$radius_server_txt = "";

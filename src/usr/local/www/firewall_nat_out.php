@@ -513,15 +513,19 @@ print($form);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
-			<i class="fa fa-plus icon-embed-btn"></i>
+		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>">
+		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" title="<?=gettext('Delete selected maps')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled" name="order-store">
+		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled" name="order-store" title="<?=gettext('Save map order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>

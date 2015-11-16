@@ -1,5 +1,5 @@
 /*
-	$Id: thermal_sensors.js
+	thermal_sensors.js
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.

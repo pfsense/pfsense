@@ -1,5 +1,4 @@
 <?php
-
 /*
 	openvpn.widget.php
 */
@@ -61,9 +60,6 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
-if($_GET)
-	print_r($_GET);
-
 if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];
@@ -150,7 +146,7 @@ $clients = openvpn_get_active_clients();
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Name/Time</th>
@@ -198,7 +194,7 @@ $clients = openvpn_get_active_clients();
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics");?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Remote/Virtual IP</th>
@@ -248,7 +244,7 @@ $clients = openvpn_get_active_clients();
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics");?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Name/Time</th>

@@ -70,7 +70,6 @@ require("shaper.inc");
 require_once("rrd.inc");
 
 unset($input_errors);
-
 /* if the rrd graphs are not enabled redirect to settings page */
 if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
@@ -165,6 +164,15 @@ if ($_POST['option']) {
 			foreach ($databases as $database) {
 				if (preg_match("/[-]vpnusers\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the VPN graphs */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
+		case "dhcpd":
+			foreach ($databases as $database) {
+				if (preg_match("/[-]dhcpd\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the dhcpd graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
 					continue 2;
@@ -270,6 +278,10 @@ foreach ($databases as $database) {
 	if (stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
 		$ntpd = true;
 	}
+	if (stristr($database, "-dhcpd") && is_array($config['dhcpd'])) {
+		$dhcpd = true;
+	}
+	
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
@@ -412,13 +424,14 @@ function get_dates($curperiod, $graph) {
 }
 
 function make_tabs() {
-	global $curcat;
+	global $curcat, $queues,$wireless,$cellular,$vpnusers, $captiveportal,$dhcpd;
 
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
 	$tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_graph.php?cat=traffic");
 	$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
 	$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
+	
 
 	if($queues) {
 		$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
@@ -444,6 +457,11 @@ function make_tabs() {
 	if(isset($config['ntpd']['statsgraph'])) {
 		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 	}
+	
+	if($dhcpd) {
+		$tab_array[] = array(gettext("Dhcp Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
+	}
+	
 
 	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
 	$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");

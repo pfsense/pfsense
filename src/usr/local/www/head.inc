@@ -67,13 +67,23 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 } else {
 	$tabtitle = $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle;
 }
+
+$cssfile = "/bootstrap/css/pfSense.css";
+
+if (isset($config['system']['webgui']['webguicss'])) {
+	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
 	<script>var events = events || [];</script>
 </head>
@@ -178,7 +188,7 @@ function output_menu($arrayitem, $target = null) {
 $system_menu = array();
 $system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
-$system_menu[] = array(gettext("Firmware"), "/system_firmware.php");
+$system_menu[] = array(gettext("Upgrade"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {

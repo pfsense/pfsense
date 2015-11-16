@@ -2,14 +2,15 @@
 /*
 	installed_packages.widget.php
 */
-/* ====================================================================
+/*
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  Scott Dale
- *  Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
- *	and Jonathan Watt <jwatt@jwatt.org>
+ *	Copyright (c)  Scott Dale
+ *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>
+ *	Copyright (c)  Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  Jonathan Watt <jwatt@jwatt.org>
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,8 +56,6 @@
  *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	====================================================================
- *
  */
 
 $nocsrf = true;
@@ -67,55 +66,67 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if(is_array($config['installedpackages']['package'])) {
-	$instpkgs = array();
-	foreach ($config['installedpackages']['package'] as $instpkg)
-		$instpkgs[ $instpkg['name'] ] = $instpkg;
-	ksort($instpkgs);
+$package_list = get_pkg_info();
+$installed_packages = array_filter($package_list, function($v) {
+	return (isset($v['installed']) || isset($v['broken']));
+});
 
-	$currentvers = get_pkg_info(array_keys($instpkgs), array('version', 'xmlver'));
-}
-
-?>
-
-<?php if (empty($config['installedpackages']['package'])): ?>
-	<div class="alert alert-warning" role="alert">
-		<strong>No packages installed.</strong>
-		You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
-	</div>
+if (empty($installed_packages)): ?>
+<div class="alert alert-warning" role="alert">
+	<strong>No packages installed.</strong>
+	You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
+</div>
 <?php else: ?>
-	<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th>Package Name</th>
-			<th>Category</th>
-			<th>Package Version</th>
-		</tr>
-	</thead>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Category</th>
+				<th>Version</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
 	<tbody>
 <?php
 
 
-foreach ($instpkgs as $pkgname => $pkg):
-	if (empty($pkgname))
+foreach ($installed_packages as $pkg):
+	if (!$pkg['name']) {
 		continue;
+	}
 
-	$latest_package = $currentvers[$pkg['name']]['version'];
-	if ($latest_package) {
-		// we're running a newer version of the package
-		if(strcmp($pkg['version'], $latest_package) > 0) {
-			$status = 'Newer then available ('. $latest_package .')';
+	$txtcolor = "black";
+	$upgradeavail = false;
+	$vergetstr = "";
+	$missing = false;
+
+	if (isset($pkg['broken'])) {
+		$txtcolor = "red";
+		$missing = true;
+		$status = 'Package is configured, but not installed!';
+	} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+		$version_compare = pkg_version_compare(
+		    $pkg['installed_version'], $pkg['version']);
+		if ($version_compare == '>') {
+			// we're running a newer version of the package
+			$status = 'Newer than available ('. $pkg['version'] .')';
 			$statusicon = 'exclamation';
-		}
-		// we're running an older version of the package
-		if(strcmp($pkg['version'], $latest_package) < 0) {
-			$status = 'Upgrade available to '.$latest_package;
-			$statusicon = 'plus';
-		}
-		// we're running the current version
-		if(!strcmp($pkg['version'], $latest_package)) {
-			$status = 'Up-to-date';
-			$statusicon = 'ok';
+		} else if ($version_compare == '<') {
+			// we're running an older version of the package
+			$status = 'Upgrade available to '.$pkg['version'];
+			$statusicon = 'plus-circle';
+			$txtcolor = "blue";
+			$upgradeavail = true;
+			$vergetstr = '&amp;from=' . $pkg['installed_version'] .
+			    '&amp;to=' . $pkg['version'];
+		} else if ($version_compare == '=') {
+			// we're running the current version
+			$status = 'ok';
+			$statusicon = 'check';
+		} else {
+			$status = 'Error comparing version';
+			$statusicon = 'exclamation';
 		}
 	} else {
 		// unknown available package version
@@ -123,15 +134,38 @@ foreach ($instpkgs as $pkgname => $pkg):
 		$statusicon = 'question';
 	}
 ?>
-		<tr>
-			<td><?=$pkg['name']?></td>
-			<td><?=$pkg['category']?></td>
-			<td>
-				<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
-				<?=$pkg['version']?>
-			</td>
-		</tr>
-<?php endforeach; ?>
-	</tbody>
-	</table>
+			<tr>
+				<td><font color="<?=$txtcolor?>"><?=$pkg['shortname']?></font></td>
+				<td><?=implode(' ', $pkg['categories'])?></td>
+				<td>
+					<i title="<?=$status?>" class="fa fa-<?=$statusicon?>"></i>
+<?php if (!$g['disablepackagehistory']):?>
+					<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($pkg['changeloglink'])?>">
+<?php endif;?>
+						<?=htmlspecialchars($pkg['installed_version'])?>
+<?php if (!$g['disablepackagehistory']):?>
+					</a>
+<?php endif;?>
+				</td>
+				<td>
+					<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>
+<?php if($upgradeavail) { ?>
+					<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php } else { ?>
+					<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
+<?php } ?>
+
+<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+					<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
 <?php endif; ?>
+				</td>
+			</tr>
+<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+<?php endif; ?>
+
+<div style="text-align: center;">
+	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>
+</div>

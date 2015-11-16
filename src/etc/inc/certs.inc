@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	certs.inc
 	Copyright (C) 2008 Shrew Soft Inc

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
+# Copyright (c) 2015 Electric Sheep Fencing, LLC. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -57,9 +57,10 @@ usage() {
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
 	echo "	-p socket   - Write pkg progress to socket"
-	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
+	echo "	-R          - Do not reboot (this can be dangerous)"
+	echo "	-y          - Assume yes as the answer to any possible interaction" >&2
 	echo "" >&2
-	echo "Following parameters are mutually exclusive:" >&2
+	echo "The following parameters are mutually exclusive:" >&2
 	echo "	-i PKG_NAME - Install package PKG_NAME" >&2
 	echo "	-r PKG_NAME - Remove package PKG_NAME" >&2
 	echo "	-u          - Update repository information" >&2
@@ -319,7 +320,7 @@ pkg_upgrade() {
 				fi
 			fi
 			switch_active_nanobsd_partition
-			/etc/rc.reboot &
+			do_reboot
 			_exit 0
 		fi
 
@@ -351,8 +352,7 @@ pkg_upgrade() {
 		next_stage=2
 
 		if [ -n "${need_reboot}" -a "${platform}" != "nanobsd" ]; then
-			_echo "Rebooting..."
-			/etc/rc.reboot &
+			do_reboot
 			_exit 0
 		fi
 	fi
@@ -381,8 +381,7 @@ pkg_upgrade() {
 
 		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
 			switch_active_nanobsd_partition
-			_echo "Rebooting..."
-			/etc/rc.reboot &
+			do_reboot
 			_exit 0
 		fi
 
@@ -605,6 +604,15 @@ pkg_reinstall_all() {
 	done
 }
 
+do_reboot() {
+	_echo "Upgrade is complete.  Rebooting in 10 seconds."
+	echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
+	/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
+	if [ -z "${dont_reboot}" ]; then
+		(sleep 10 && /etc/rc.reboot) &
+	fi
+}
+
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile="/cf/conf/upgrade_log.txt"
@@ -630,6 +638,7 @@ fi
 export pkg_chroot=""
 export chroot_dir=""
 
+unset dont_reboot
 unset booting
 unset boot_stage
 unset force
@@ -640,7 +649,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:cdfi:hp:l:r:uy opt; do
+while getopts 46b:cdfi:hp:l:r:Ruy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -702,6 +711,9 @@ while getopts 46b:cdfi:hp:l:r:uy opt; do
 			fi
 			action="delete"
 			action_pkg="${OPTARG}"
+			;;
+		R)
+			dont_reboot=1
 			;;
 		u)
 			if [ -n "${action}" ]; then

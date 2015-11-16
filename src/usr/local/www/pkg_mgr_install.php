@@ -394,7 +394,13 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+<?php if($firmwareupdate) {
+?>
+			<h2 class="panel-title" id="status"><?=gettext("Updating system firmware")?></h2>
+<?php } else {
+?>
+ 			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+ <?php } ?>
 		</div>
 
 		<div class="panel-body">
@@ -594,7 +600,9 @@ function startCountdown(time) {
 	$('#clock').html('<img src="/321.gif" />');
 
 	setInterval(function(){
-		$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
+		if(time > 0) {
+			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
+		}
 
 		time-- != 0 || (window.location="/index.php");
 	},1000);

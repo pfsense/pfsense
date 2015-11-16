@@ -422,7 +422,7 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
-	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -R -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
+	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
 
 	switch ($_POST['mode']) {
 		case 'delete':

@@ -1060,6 +1060,7 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
+	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
@@ -1118,6 +1119,8 @@ create_final_staging_area() {
 customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
+
+	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
 
 	if [ "${1}" = "nanobsd" -o \
 	     "${1}" = "nanobsd-vga" ]; then

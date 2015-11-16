@@ -413,9 +413,11 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 
 ob_flush();
 
-if ($_POST && ($_POST['completed'] != "true") ) {
+if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
+}
 
+if ($_POST && ($_POST['completed'] != "true") ) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
@@ -452,8 +454,6 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
 if ($_POST['completed'] == "true") {
-	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
-
 	if($pkgid == "pfSense-base") {
 ?>
 <script>

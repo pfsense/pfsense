@@ -336,8 +336,7 @@ if ($input_errors)
 		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
 ?>
 			<br />
-			<input type="hidden" name="id" value="pfSense-base" />
-			<!-- <input type="hidden" name="id" value="pfSense-base" /> -->
+			<input type="hidden" name="id" value="firmware" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
 			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
 <?php
@@ -445,7 +444,11 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 
 		case 'installed':
 		default:
-			mwexec_bg("{$upgrade_script} -i {$pkgid}");
+			if ($pkgid == 'firmware') {
+				mwexec_bg("{$upgrade_script}");
+			} else {
+				mwexec_bg("{$upgrade_script} -i {$pkgid}");
+			}
 			$start_polling = true;
 			break;
 	}
@@ -453,8 +456,8 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
-if ($_POST['completed'] == "true") {
-	if($pkgid == "pfSense-base") {
+if ($_POST && $_POST['completed'] == "true"):
+	if($pkgid == 'firmware'):
 ?>
 <script>
 //<![CDATA[
@@ -464,8 +467,8 @@ events.push(function(){
 //]]>
 </script>
 <?php
-	}
-}
+	endif;
+endif;
 
 ?>
 

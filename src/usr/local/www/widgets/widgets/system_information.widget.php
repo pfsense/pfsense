@@ -66,14 +66,14 @@ if ($_REQUEST['getupdatestatus']) {
 	$system_version = get_system_pkg_version();
 
 	if ($system_version === false) {
-		echo "<i>Unable to check for updates</i>";
+		print(gettext("<i>Unable to check for updates</i>"));
 		exit;
 	}
 
 	if (!is_array($system_version) ||
 	    !isset($system_version['version']) ||
 	    !isset($system_version['installed_version'])) {
-		echo "<i>Wrong version information</i>";
+		print(gettext("<i>Error in version information</i>"));
 		exit;
 	}
 
@@ -84,21 +84,21 @@ if ($_REQUEST['getupdatestatus']) {
 	case '<':
 ?>
 		<div class="alert alert-warning" role="alert">
-			Version <?=$system_version['version']?> is available.
+			Version <?=$system_version['version']?> <?=gettext("is available. ")?>
 			<a href="/pkg_mgr_install.php?id=firmware" class="alert-link">
-				Click Here to view.
+				<?=gettext("Click Here to update.")?>
 			</a>
 		</div>
 <?php
 		break;
 	case '=':
-		echo "You are on the latest version.";
+		print(gettext("You are on the latest version."));
 		break;
 	case '>':
-		echo "You are on a later version than<br />the official release.";
+		print(gettext("You are on a later version than<br />the official release."));
 		break;
 	default:
-		echo "<i>Error comparing installed version with latest available</i>";
+		print(gettext( "<i>Error comparing installed version<br />with latest available</i>"));
 		break;
 	}
 

@@ -76,7 +76,8 @@ require_once("pkg-utils.inc");
 $sendto = "output";
 $start_polling = false;
 $firmwareupdate = false;
-
+$reloadtimer = 90;  // Number of seconds after which we reload the page following a firmware update.
+					// Allows time for the device to reboot
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
@@ -300,7 +301,7 @@ if ($input_errors)
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=$g['product_name']?> <?=gettext(" system firmware upgrade")?>
+				<?=$g['product_name']?> <?=gettext(" system firmware update")?>
 <?php
 			} else {
 ?>
@@ -387,6 +388,9 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
 	<input type="hidden" name="completed" value="true" />
 
+	<div id="clock" style="text-align: center;"></div>
+	<div id="countdown" style="text-align: center;"></div>
+
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
 	</div>
@@ -403,8 +407,6 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 
 	<div id="final" class="alert" role="alert" style=":display: none;"></div>
 
-	<div id="clock" style="text-align: center;"></div>
-	<div id="countdown" style="text-align: center;"></div>
 <?php endif?>
 </form>
 
@@ -462,7 +464,7 @@ if ($_POST && $_POST['completed'] == "true"):
 <script>
 //<![CDATA[
 events.push(function(){
-		startCountdown(60);
+	startCountdown("<?=$reloadtimer?>");
 });
 //]]>
 </script>
@@ -595,7 +597,7 @@ function startCountdown(time) {
 	$('#clock').html('<img src="/321.gif" />');
 
 	setInterval(function(){
-		$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' +time+ ' seconds.</h4>');
+		$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
 
 		time-- != 0 || (window.location="/index.php");
 	},1000);

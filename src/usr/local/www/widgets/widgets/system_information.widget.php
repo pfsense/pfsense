@@ -374,20 +374,20 @@ function stats(x) {
 			return false;
 	}))
 
-        updateUptime(values[2]);
-        updateDateTime(values[5]);
-        updateCPU(values[0]);
-        updateMemory(values[1]);
-        updateState(values[3]);
-        updateTemp(values[4]);
-        updateInterfaceStats(values[6]);
-        updateInterfaces(values[7]);
-        updateGatewayStats(values[8]);
-        updateCpuFreq(values[9]);
-        updateLoadAverage(values[10]);
-        updateMbuf(values[11]);
-        updateMbufMeter(values[12]);
-        updateStateMeter(values[13]);
+	updateUptime(values[2]);
+	updateDateTime(values[5]);
+	updateCPU(values[0]);
+	updateMemory(values[1]);
+	updateState(values[3]);
+	updateTemp(values[4]);
+	updateInterfaceStats(values[6]);
+	updateInterfaces(values[7]);
+	updateGatewayStats(values[8]);
+	updateCpuFreq(values[9]);
+	updateLoadAverage(values[10]);
+	updateMbuf(values[11]);
+	updateMbufMeter(values[12]);
+	updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {

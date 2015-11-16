@@ -432,7 +432,6 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['debug_mode'] = $wancfg['wireless']['wpa']['debug_mode'];
 		$pconfig['macaddr_acl'] = $wancfg['wireless']['wpa']['macaddr_acl'];
 		$pconfig['mac_acl_enable'] = isset($wancfg['wireless']['wpa']['mac_acl_enable']);
-		$pconfig['auth_algs'] = $wancfg['wireless']['wpa']['auth_algs'];
 		$pconfig['wpa_mode'] = $wancfg['wireless']['wpa']['wpa_mode'];
 		$pconfig['wpa_key_mgmt'] = $wancfg['wireless']['wpa']['wpa_key_mgmt'];
 		$pconfig['wpa_pairwise'] = $wancfg['wireless']['wpa']['wpa_pairwise'];
@@ -1444,7 +1443,6 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa'] = array();
 	}
 	$wancfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
-	$wancfg['wireless']['wpa']['auth_algs'] = $_POST['auth_algs'];
 	$wancfg['wireless']['wpa']['wpa_mode'] = $_POST['wpa_mode'];
 	$wancfg['wireless']['wpa']['wpa_key_mgmt'] = $_POST['wpa_key_mgmt'];
 	$wancfg['wireless']['wpa']['wpa_pairwise'] = $_POST['wpa_pairwise'];
@@ -2976,14 +2974,6 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_key_mgmt'],
 		['WPA-PSK' => 'Pre-Shared Key', 'WPA-EAP' => 'Extensible Authentication Protocol', 'WPA-PSK WPA-EAP' => 'Both']
 	));
-
-	$section->addInput(new Form_Input(
-		'auth_algs',
-		null,
-		'hidden',
-		'1'
-	));
-
 
 	$section->addInput(new Form_Select(
 		'wpa_pairwise',

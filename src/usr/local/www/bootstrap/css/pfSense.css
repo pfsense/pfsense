@@ -21,7 +21,7 @@ body {
 }
 
 .navbar-brand {
-	padding-top: 0;
+	padding-top: 3px;
 }
 
 body.no-menu #jumbotron {

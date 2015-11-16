@@ -1173,7 +1173,7 @@ function get_system_pkg_version() {
 		$pkg_name = $meta_pkg;
 
 		foreach ($info as $item) {
-			if ($item['name'] == $base_pkg) {
+			if ($item['name'] == $meta_pkg) {
 				$pkg_info = $item;
 			}
 		}

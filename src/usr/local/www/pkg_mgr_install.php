@@ -416,8 +416,6 @@ ob_flush();
 if ($_POST && ($_POST['completed'] != "true") ) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
-	/* All other cases make changes, so mount rw fs */
-	conf_mount_rw();
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
@@ -449,14 +447,6 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 			$start_polling = true;
 			break;
 	}
-
-	// close log
-	if ($fd_log) {
-		fclose($fd_log);
-	}
-
-	/* Restore to read only fs */
-	conf_mount_ro();
 }
 
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items

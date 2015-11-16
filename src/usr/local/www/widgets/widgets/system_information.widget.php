@@ -304,13 +304,6 @@ $filesystems = get_mounted_filesystems();
 					<td><?=$fs['total_size']?></td>
 					<td>
 						<span><?=$fs['percent_used']?>%</span>
-<!--
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
-								<span><?=$fs['percent_used']?>%</span>
-							</div>
-						</div>
--->
 					</td>
 				</tr>
 <?PHP endforeach; ?>

@@ -96,12 +96,14 @@ if ($act == "edit") {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
 		$pconfig['value'] = $a_tunable[$id]['value'];
 		$pconfig['descr'] = $a_tunable[$id]['descr'];
+
 	} else if (isset($tunables[$id])) {
 		$pconfig['tunable'] = $tunables[$id]['tunable'];
 		$pconfig['value'] = $tunables[$id]['value'];
 		$pconfig['descr'] = $tunables[$id]['descr'];
 	}
 }
+
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
@@ -109,6 +111,7 @@ if ($act == "del") {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
+
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
 			write_config();
@@ -140,20 +143,26 @@ if ($_POST) {
 
 		$tunableent = array();
 
-		$tunableent['tunable'] = $_POST['tunable'];
-		$tunableent['value'] = $_POST['value'];
-		$tunableent['descr'] = $_POST['descr'];
-
-		if (isset($id) && isset($a_tunable[$id])) {
-			$a_tunable[$id] = $tunableent;
+		if(!$_POST['tunable'] || !$_POST['value']) {
+			$input_errors[] = gettext("Both a name and a value must be specified.");
+		} else if (!ctype_alnum($_POST['value'])) {
+			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
 		} else {
-			$a_tunable[] = $tunableent;
-		}
+			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
+			$tunableent['value'] = htmlspecialchars($_POST['value']);
+			$tunableent['descr'] = htmlspecialchars($_POST['descr']);
 
-		mark_subsystem_dirty('sysctl');
-		write_config();
-		pfSenseHeader("system_advanced_sysctl.php");
-		exit;
+			if (isset($id) && isset($a_tunable[$id])) {
+				$a_tunable[$id] = $tunableent;
+			} else {
+				$a_tunable[] = $tunableent;
+			}
+
+			mark_subsystem_dirty('sysctl');
+			write_config();
+			pfSenseHeader("system_advanced_sysctl.php");
+			exit;
+		}
 	}
 }
 

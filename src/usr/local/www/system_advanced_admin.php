@@ -151,12 +151,15 @@ if ($_POST) {
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
 			$restart_webgui = true;
 		}
@@ -167,13 +170,21 @@ if ($_POST) {
 			unset($config['system']['webgui']['webguicss']);
 		}
 
+		// Restart the webgui only if this actually changed
 		if ($_POST['webgui-redirect'] == "yes") {
+			if ($config['system']['webgui']['disablehttpredirect'] != true) {
+				$restart_webgui = true;
+			}
+
 			$config['system']['webgui']['disablehttpredirect'] = true;
-			$restart_webgui = true;
 		} else {
+			if ($config['system']['webgui']['disablehttpredirect'] == true) {
+				$restart_webgui = true;
+			}
+
 			unset($config['system']['webgui']['disablehttpredirect']);
-			$restart_webgui = true;
 		}
+
 		if ($_POST['webgui-login-messages'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {

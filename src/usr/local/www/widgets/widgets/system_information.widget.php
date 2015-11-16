@@ -61,54 +61,47 @@ require_once('notices.inc');
 include_once("includes/functions.inc.php");
 
 if ($_REQUEST['getupdatestatus']) {
-	if (isset($config['system']['firmware']['disablecheck'])) {
+	require_once("pkg-utils.inc");
+
+	$system_version = get_system_pkg_version();
+
+	if ($system_version === false) {
+		echo "<i>Unable to check for updates</i>";
 		exit;
 	}
-	if (isset($config['system']['firmware']['alturl']['enable'])) {
-		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-	} else {
-		$updater_url = $g['update_url'];
+
+	if (!is_array($system_version) ||
+	    !isset($system_version['version']) ||
+	    !isset($system_version['installed_version'])) {
+		echo "<i>Wrong version information</i>";
+		exit;
 	}
 
-	$nanosize = "";
-	if ($g['platform'] == "nanobsd") {
-		if (!isset($g['enableserial_force'])) {
-			$nanosize = "-nanobsd-vga-";
-		} else {
-			$nanosize = "-nanobsd-";
-		}
-		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
-	}
+	$version_compare = pkg_version_compare(
+	    $system_version['installed_version'], $system_version['version']);
 
-	@unlink("/tmp/{$g['product_name']}_version");
-	if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
-		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
-	}
-
-	if(empty($remote_version))
-		echo "<i>Unable to check for updates</i>";
-	else {
-		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-
-		if(!$remote_version) {
-			echo "<i>Unable to check for updates</i>";
-		}
-		else {
-			$needs_system_upgrade = false;
-			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
-			if ($version_compare == -1) {
+	switch ($version_compare) {
+	case '<':
 ?>
-<div class="alert alert-warning" role="alert">
-	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
-</div>
+		<div class="alert alert-warning" role="alert">
+			Version <?=$system_version['version']?> is available.
+			<a href="/pkg_mgr_install.php?id=firmware" class="alert-link">
+				Click Here to view.
+			</a>
+		</div>
 <?php
-			} elseif ($version_compare == 1) {
-				echo "You are on a later version than<br />the official release.";
-			} else {
-				echo "You are on the latest version.";
-			}
-		}
+		break;
+	case '=':
+		echo "You are on the latest version.";
+		break;
+	case '>':
+		echo "You are on a later version than<br />the official release.";
+		break;
+	default:
+		echo "<i>Error comparing installed version with latest available</i>";
+		break;
 	}
+
 	exit;
 }
 

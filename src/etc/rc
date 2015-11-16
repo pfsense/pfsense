@@ -217,6 +217,19 @@ fi
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
 
+# Workaround for ipsec symlinks, otherwise it's going to break
+# strongswan pkg upgrade
+
+if [ -L /usr/local/etc/ipsec.d ]; then
+	rm -f /usr/local/etc/ipsec.d
+fi
+if [ -L /usr/local/etc/ipsec.conf ]; then
+	rm -f /usr/local/etc/ipsec.conf
+fi
+if [ -L /usr/local/etc/strongswan.conf ]; then
+	rm -f /usr/local/etc/strongswan.conf
+fi
+
 echo -n "Creating symlinks..."
 # Repair symlinks if they are broken
 if [ -f /etc/newsyslog.conf ]; then

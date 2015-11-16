@@ -83,11 +83,10 @@ if ($_REQUEST['getupdatestatus']) {
 	switch ($version_compare) {
 	case '<':
 ?>
-		<div class="alert alert-warning" role="alert">
-			Version <?=$system_version['version']?> <?=gettext("is available. ")?>
-			<a href="/pkg_mgr_install.php?id=firmware" class="alert-link">
-				<?=gettext("Click Here to update.")?>
-			</a>
+		<div>
+			<?=gettext("Version ")?>
+			<span style="color: green"><?=$system_version['version']?></span> <?=gettext("is available.")?>
+			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
 		</div>
 <?php
 		break;

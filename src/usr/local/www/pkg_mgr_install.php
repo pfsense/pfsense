@@ -336,10 +336,8 @@ if ($input_errors)
 <?php
 		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
 ?>
-			<br />
 			<input type="hidden" name="id" value="firmware" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
-			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
 <?php
 		} else {
 ?>
@@ -356,7 +354,6 @@ if ($input_errors)
 ?>
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
-			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
 <?php
 	}
 	?>

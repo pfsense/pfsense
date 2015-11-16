@@ -226,6 +226,9 @@ fi
 if [ -L /usr/local/etc/ipsec.conf ]; then
 	rm -f /usr/local/etc/ipsec.conf
 fi
+if [ -L /usr/local/etc/strongswan.d ]; then
+	rm -f /usr/local/etc/strongswan.d
+fi
 if [ -L /usr/local/etc/strongswan.conf ]; then
 	rm -f /usr/local/etc/strongswan.conf
 fi

@@ -149,7 +149,7 @@ require_once('classes/Form.class.php');
 
 $form = new Form(false);
 
-$section = new Form_Section('NanoBSD Option');
+$section = new Form_Section('NanoBSD Options');
 
 $section->addInput(new Form_StaticText(
 	'Image Size',

@@ -1721,10 +1721,10 @@ $section->addInput(new Form_Select(
 ));
 
 $macaddress = new Form_Input(
-	'mac',
+	'spoofmac',
 	'MAC Address',
 	'text',
-	$pconfig['mac'],
+	$pconfig['spoofmac'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 

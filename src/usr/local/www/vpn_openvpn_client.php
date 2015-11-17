@@ -607,10 +607,10 @@ if($act=="new" || $act=="edit") :
 	))->setHelp('Leave empty when no user name is needed');
 
 	$section->addInput(new Form_Input(
-		'auth_passwd',
+		'auth_pass',
 		'Password',
 		'password',
-		$pconfig['auth_passwd']
+		$pconfig['auth_pass']
 	))->setHelp('Leave empty when no password is needed');
 
 	$form->add($section);

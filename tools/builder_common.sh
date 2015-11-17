@@ -1060,6 +1060,24 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		"release"
+
+	core_pkg_create repo "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH}
+
+	core_pkg_create repo-devel "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	rm -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+
 	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
@@ -1137,6 +1155,12 @@ customize_stagearea_for_image() {
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base-nanobsd
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base
+	fi
+
+	if [ -n "${IS_RELEASE}" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} repo
+	else
+		pkg_chroot_add ${FINAL_CHROOT_DIR} repo-devel
 	fi
 
 	if [ "${1}" = "iso" -o \
@@ -1384,6 +1408,18 @@ setup_pkg_repo() {
 	local _arch="${2}"
 	local _target_arch="${3}"
 	local _branch="${4}"
+	local _release="${5}"
+
+	if [ -n "${_release}" ]; then
+		local _template="${PKG_REPO_TEMPLATE}"
+	else
+		local _template="${PKG_REPO_DEVEL_TEMPLATE}"
+	fi
+
+	if [ -z "${_template}" -o ! -f "${_template}" ]; then
+		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
+		print_error_pfS
+	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
@@ -1392,7 +1428,7 @@ setup_pkg_repo() {
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
 		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
-		${FREEBSD_SRC_DIR}/release/pkg_repos/${PRODUCT_NAME}.conf.template \
+		${_template} \
 		> ${_target}
 }
 
@@ -1404,15 +1440,15 @@ builder_setup() {
 		return
 	fi
 
-	if [ ! -f /usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ]; then
-		[ -d /usr/local/etc/pkg/repos ] \
-			|| mkdir -p /usr/local/etc/pkg/repos
+	if [ ! -f ${PKG_REPO_PATH} ]; then
+		[ -d $(dirname ${PKG_REPO_PATH}) ] \
+			|| mkdir -p $(dirname ${PKG_REPO_PATH})
 
 		update_freebsd_sources
 
 		local _arch=$(uname -m)
 		setup_pkg_repo \
-			/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf \
+			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
 			${PKG_REPO_CONF_BRANCH}
@@ -1524,10 +1560,11 @@ pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
 	setup_pkg_repo \
-		${_root}/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf \
+		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH}
+		${PKG_REPO_CONF_BRANCH} \
+		${IS_RELEASE}
 
 	pkg_chroot ${_root} bootstrap -f
 }

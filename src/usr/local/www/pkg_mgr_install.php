@@ -385,7 +385,6 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
 	<input type="hidden" name="completed" value="true" />
 
-	<div id="clock" style="text-align: center;"></div>
 	<div id="countdown" style="text-align: center;"></div>
 
 	<div class="progress" style="display: none;">
@@ -597,8 +596,6 @@ function scrollToBottom() {
 }
 
 function startCountdown(time) {
-	$('#clock').html('<img src="/321.gif" />');
-
 	setInterval(function(){
 		if(time > 0) {
 			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');

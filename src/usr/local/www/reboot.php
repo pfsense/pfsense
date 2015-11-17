@@ -85,22 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 ?>
-<div id="clock" style="text-align: center;"></div>
+
 <div id="countdown" style="text-align: center;"></div>
 
 <script>
 //<![CDATA[
 events.push(function(){
-
-	$('#clock').pietimer({
-	    seconds: 90,
-	    color: '#404040',
-	    height: 75,
-	    width: 75
-	},
-	function(){
-	  window.location="/index.php";
-	});
 
 	function startCountdown(time) {
 			setInterval(function(){
@@ -110,7 +100,6 @@ events.push(function(){
 	}
 
 	// startCountdown(60);
-	$('#clock').pietimer('start');
 	startCountdown(90);
 });
 //]]>

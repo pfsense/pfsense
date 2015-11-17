@@ -117,7 +117,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 }
 
 ?>
-<table id="iftbl" class="table table-striped table-hover">
+<table id="iftbl" class="table table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
 
@@ -136,6 +136,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 			$('#iftbl').html(response);
+			stripe_table();
 			// and do it again
 			setTimeout(get_if_stats, 5000);
 		});

@@ -1523,7 +1523,11 @@ pkg_chroot_add() {
 pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
-	setup_pkg_repo ${_root}/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ${TARGET} ${TARGET_ARCH} ${PKG_REPO_CONF_BRANCH}
+	setup_pkg_repo \
+		${_root}/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH}
 
 	pkg_chroot ${_root} bootstrap -f
 }

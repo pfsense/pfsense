@@ -76,12 +76,12 @@ include("head.inc");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if(DEBUG) {
-	   print("Not actually rebooting (DEBUG is set true)");
+	   print_info_box("Not actually rebooting (DEBUG is set true)", success);
 	}
 	else {
-		print('<pre>');
+		print('<div><pre>');
 		system_reboot();
-		print('</pre>');
+		print('</pre></div>');
 	}
 
 ?>
@@ -91,7 +91,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script>
 //<![CDATA[
 events.push(function(){
-		startCountdown(60);
+
+	$('#clock').pietimer({
+	    seconds: 90,
+	    color: '#404040',
+	    height: 75,
+	    width: 75
+	},
+	function(){
+	  window.location="/index.php";
+	});
+
+	function startCountdown(time) {
+			setInterval(function(){
+				$('#countdown').html('<h4>Rebooting<br />Page will reload in ' +time+ ' seconds.</h4>');
+				time-- != 0 || (window.location="/index.php");
+			},1000);
+	}
+
+	// startCountdown(60);
+	$('#clock').pietimer('start');
+	startCountdown(90);
 });
 //]]>
 </script>
@@ -116,20 +136,7 @@ events.push(function(){
 <?php
 
 }
-?>
-<script>
-//<![CDATA[
 
-	function startCountdown(time) {
-		$('#clock').html('<img src="/321.gif" />');
-			setInterval(function(){
-				$('#countdown').html('<h4>Rebooting<br />Page will reload in ' +time+ ' seconds.</h4>');
-
-				time-- != 0 || (window.location="/index.php");
-			},1000);
-	}
-
-//]]>
-</script>
-<?php
 include("foot.inc");
+
+

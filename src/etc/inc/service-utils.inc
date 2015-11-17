@@ -138,6 +138,8 @@ function stop_service($name) {
 				}
 				if (!empty($service['stopcmd'])) {
 					eval($service['stopcmd']);
+				} elseif (!empty($service['executable'])) {
+					mwexec("/usr/bin/killall " . escapeshellarg($service['executable']));
 				}
 
 				break;

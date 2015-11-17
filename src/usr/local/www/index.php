@@ -79,9 +79,9 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
-if (isset($_GET['closenotice'])) {
-	close_notice($_GET['closenotice']);
-	echo get_menu_messages();
+if (isset($_POST['closenotice'])) {
+	close_notice($_POST['closenotice']);
+	sleep(1);
 	exit;
 }
 

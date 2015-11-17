@@ -564,7 +564,11 @@ if (are_notices_pending()):?>
 //<![CDATA[
 	events.push(function(){
 	    $('#clearallnotices').click(function() {
-	        <?php close_notice("all"); ?>
+			ajaxRequest = $.ajax({
+				url: "/index.php",
+				type: "post",
+				data: { closenotice: "all"}
+			});
 	        window.location = window.location.href;
 		});
 	});

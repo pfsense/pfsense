@@ -151,7 +151,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'pfsyncinterface',
-	'Synchorize Interface',
+	'Synchronize Interface',
 	$pconfig['pfsyncinterface'],
 	$iflist
 ))->setHelp('If Synchronize States is enabled this interface will be used for communication.<br />' .

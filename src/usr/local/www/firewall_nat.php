@@ -238,7 +238,7 @@ foreach ($a_nat as $natent):
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
+							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($natent['associated-rule-id'])?> . <?=gettext('is managed by this rule')?>"></i>
 <?php
 	endif;
 ?>

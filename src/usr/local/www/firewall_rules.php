@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_rules.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -39,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -70,6 +69,7 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("ipsec.inc");
 require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
@@ -99,6 +99,7 @@ filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
 $if = $_GET['if'];
+
 if ($_POST['if']) {
 	$if = $_POST['if'];
 }
@@ -135,11 +136,8 @@ if (is_array($config['pppoes']['pppoe'])) {
 }
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
-	if (have_ruleint_access("enc0")) {
-		$iflist["enc0"] = "IPsec";
-	}
-}
+if (ipsec_enabled() && have_ruleint_access("enc0"))
+	$iflist["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
@@ -167,10 +165,10 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"), "<a href='status_filter_reload.php'>", "</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
+									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
-
 
 if ($_GET['act'] == "del") {
 	if ($a_filter[$_GET['id']]) {
@@ -266,7 +264,7 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Rules (Drag to change order)")?></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-striped table-hover table-condensed">
+			<table name="ruletable" class="table table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -304,7 +302,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Anti-Lockout Rule");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+							<a href="system_advanced_admin.php" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -322,7 +320,7 @@ display_top_tabs($tab_array);
 						<td></td>
 						<td><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit rule");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -340,7 +338,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-pencil" title="<?=gettext("edit");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -352,13 +350,13 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if ($filterent['interface'] != $if && !isset($filterent['floating']))
-		continue;
-
-	if (isset($filterent['floating']) && "FloatingRules" != $if)
-		continue;
+	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
+		$display = 'style="display: none;"';
+	} else {
+		$display = "";
+	}
 ?>
-					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -615,7 +613,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
-							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title=<?=gettext('Edit')?>"></a>
+							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>
@@ -652,74 +650,66 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <?php endif;?>
 
 	<nav class="action-buttons">
-		<input type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled" />
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
-		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success">
-			<?=gettext("add new");?>
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
+			<?=gettext("Add");?>
 		</a>
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext("Add");?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" title="<?=gettext('Delete selected rules')?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled="disabled" title="<?=gettext('Save rule order')?>">
+			<i class="fa fa-save icon-embed-btn"></i>
+			<?=gettext("Save")?>
+		</button>
 	</nav>
 </form>
-<!-- Legend -->
-<div>
-	<dl class="dl-horizontal responsive">
-		<dt><?=gettext('Legend')?></dt>				<dd></dd>
-		<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("pass");?></dd>
-		<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("match");?></dd>
-		<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("block");?></dd>
-		<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("reject");?></dd>
-		<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("log");?></dd>
-		<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("advanced filter");?></dd>
-	</dl>
-</div>
+
+<div id="infoblock">
+	<div class="alert alert-info clearfix" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><div class="pull-left">
+		<dl class="dl-horizontal responsive">
+		<!-- Legend -->
+			<dt><?=gettext('Legend')?></dt>				<dd></dd>
+			<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("Pass");?></dd>
+			<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
+			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("Block");?></dd>
+			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
+			<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
+		</dl>
 
 <?php
-if ("FloatingRules" != $if)
-	print_info_box(gettext("Rules are evaluated on a first-match basis (i.e. " .
-		"the action of the first rule to match a packet will be executed). ") . '<br />' .
-		gettext("This means that if you use block rules, you'll have to pay attention " .
-		"to the rule order. Everything that isn't explicitly passed is blocked " .
-		"by default. "));
-else
-	print_info_box(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
-		"the action of the first rule to match a packet will be executed) only " .
-		"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
-		"other rules match. Pay close attention to the rule order and options " .
-		"chosen. If no rule here matches, the per-interface or default rules are used. "));
-
+	if ("FloatingRules" != $if)
+		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
+			"the action of the first rule to match a packet will be executed). ") . '<br />' .
+			gettext("This means that if you use block rules, you'll have to pay attention " .
+			"to the rule order. Everything that isn't explicitly passed is blocked " .
+			"by default. "));
+	else
+		print(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
+			"the action of the first rule to match a packet will be executed) only " .
+			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
+			"other rules match. Pay close attention to the rule order and options " .
+			"chosen. If no rule here matches, the per-interface or default rules are used. "));
 ?>
-
-<script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
+	</div>
+</div>
 
 <script>
 events.push(function() {
+
+	stripe_table();
+
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			stripe_table();
 		}
 	});
 
@@ -727,14 +717,7 @@ events.push(function() {
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
 	});
-
-	// Replace direct delete with quicker front-end action
-/*FIXME: event ordering
-	$('.btn-danger').on('click', function(e){
-		$(this).parents('tr').remove();
-
-		$('#order-store').removeAttr('disabled');
-	});
-*/});
+});
 </script>
+
 <?php include("foot.inc");?>

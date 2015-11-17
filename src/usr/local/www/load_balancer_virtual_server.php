@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_virtual_server.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -148,7 +146,7 @@ display_top_tabs($tab_array);
 
 <form action="load_balancer_virtual_server.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual ervers')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual Servers')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
@@ -178,9 +176,9 @@ if(!empty($a_vs)) {
 						<td><?=$a_v['sitedown']?></td>
 						<td><?=htmlspecialchars($a_v['descr'])?></td>
 						<td>
-							<a type="button" class="btn btn-info btn-xs" href="load_balancer_virtual_server_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-							<a type="button" class="btn btn-warning btn-xs" href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"><?=gettext('Copy')?></a>
-							<a type="button" class="btn btn-danger btn-xs" href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"><?=gettext('Del')?></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit virtual server')?>"	href="load_balancer_virtual_server_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy virtual server')?>"	href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php
@@ -198,12 +196,14 @@ if(!empty($a_vs)) {
 			</table>
 		</div>
 	</div>
-
-	<nav class="action-buttons">
-		<a href="load_balancer_virtual_server_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
-	</nav>
-
 </form>
+
+<nav class="action-buttons">
+	<a href="load_balancer_virtual_server_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 
 <?php
 

@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	diag_backup.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -37,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -178,8 +179,6 @@ function add_base_packages_menu_items() {
 						$modified_config = true;
 					}
 				}
-				$static_output .= "done.\n";
-				update_output_window($static_output);
 			}
 		}
 	}
@@ -606,7 +605,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
 include("head.inc");
 
 if ($input_errors)
@@ -778,7 +777,7 @@ print($form);
 events.push(function(){
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
-	
+
 	function hideSections(hide) {
 		hidePasswords();
 	}

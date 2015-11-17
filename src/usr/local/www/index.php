@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	index.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -78,9 +79,9 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
-if (isset($_GET['closenotice'])) {
-	close_notice($_GET['closenotice']);
-	echo get_menu_messages();
+if (isset($_POST['closenotice'])) {
+	close_notice($_POST['closenotice']);
+	sleep(1);
 	exit;
 }
 
@@ -212,13 +213,14 @@ if ($fd) {
 			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
 			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
 			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
-			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^aesni.: (.*?),/", $dmesgl, $matches)) {
+			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}
 	}
 	fclose($fd);
+	if (!isset($hwcrypto) && get_single_sysctl("dev.aesni.0.%desc"))
+		$hwcrypto = get_single_sysctl("dev.aesni.0.%desc");
 }
 
 ##build widget saved list information

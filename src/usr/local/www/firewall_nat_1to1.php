@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_1to1.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -245,9 +245,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="btn btn-xs btn-info"		  title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"><?=gettext("Edit")?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
 						</td>
 
 					</tr>
@@ -261,56 +261,42 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>"	 />
-		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled">
+			<i class="fa fa-save icon-embed-btn"></i>
+			<?=gettext("Save")?>
+		</button>
 	</nav>
 </form>
 
-<div>
-<?php
-
-print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
+<div id="infoblock">
+<?=print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
 			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
-					   'using the WAN IP address will no longer function.'));
-?>
+					   'using the WAN IP address will no longer function.'), info)?>
+
 </div>
 
 <script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
 events.push(function() {
-	// Make rules draggable/sortable
+
+	stripe_table();
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			stripe_table();
 		}
 	});
 

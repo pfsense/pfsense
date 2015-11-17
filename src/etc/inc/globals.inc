@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	globals.inc
 	part of pfSense (https://www.pfsense.org)
@@ -73,7 +72,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "12.4",
+	"latest_config" => "12.7",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -133,7 +132,6 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.syncookies" => "1",
 	"net.inet.tcp.recvspace" => "65228",
 	"net.inet.tcp.sendspace" => "65228",
-	"net.inet.ip.fastforwarding" => "0",
 	"net.inet.tcp.delayed_ack" => "0",
 	"net.inet.udp.maxdgram" => "57344",
 	"net.link.bridge.pfil_onlyip" => "0",

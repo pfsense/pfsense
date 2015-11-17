@@ -4,7 +4,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -609,8 +611,7 @@ function clear_all_log_files() {
 	return;
 }
 
-// This version of dump_clog() does not output <td></td> or any other table elements. It can be renamed
-// and the dump_clog() removed once all of the diag_log*.php files have been converted to Bootstrap
+// This version of dump_clog() does not output <td></td> or any other table elements.
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
@@ -686,9 +687,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 			}
 		}
 	}
+
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
-		echo "<tr valign=\"top\">\n";
+		echo "<tr>\n";
 		if ($withorig) {
 			if (isset($config['system']['usefifolog'])) {
 				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
@@ -698,10 +700,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
 				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
-			echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
-			echo "<td class=\"listr\">{$entry_text}</td>\n";
+			echo "<td style=\"white-space:nowrap;\">{$entry_date_time}</td>\n";
+			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
 		} else {
-				echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
 		}
 		echo "</tr>\n";
 	}
@@ -1072,9 +1074,10 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
-	if ($tabcharcount > $tab_array_char_limit): ?>
+	if ($tabcharcount > $tab_array_char_limit) {
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
+
 		foreach ($tab_array as $ta) {
 			if ($ta[1] == "true")
 				$selected = " selected=\"selected\"";
@@ -1084,19 +1087,27 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 			// echo "<option onclick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
 			echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
 		}
+
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";
 		echo "\n//<![CDATA[\n";
 		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
 		echo "//]]>\n";
 		echo "</script>";
-<? else: ?>
-	<ul class="nav nav-<?= $type ?>">
-		<?php foreach ($tab_array as $ta): ?>
-			<li role="presentation"<?=($ta[1] ? ' class="active"' : '')?>><a href="<?=$ta[2]?>"><?=$ta[0]?></a></li>
-		<?php endforeach; ?>
-	</ul>
-<?php endif;
+	} else {
+		echo '<ul class="nav nav-' . $type . '">';
+
+		foreach ($tab_array as $ta) {
+			echo '<li role="presentation"';
+			if ($ta[1]) {
+				echo ' class="active"';
+			}
+
+			echo '><a href="' . $ta[2] . '">' . $ta[0] . '</a></li>';
+		}
+
+		echo '</ul>';
+	}
 }
 
 function add_package_tabs($tabgroup, &$tab_array) {
@@ -1221,8 +1232,13 @@ var_dump($content);die;
 <?php
 }
 
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
+/* set timezone */
+if (isset($config['system']['timezone']) &&
+    !empty($config['system']['timezone'])) {
+	$timezone = $config['system']['timezone'];
+} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+	$timezone = $g['default_timezone'];
+} else {
 	$timezone = "Etc/UTC";
 }
 

@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	system_gateway_groups_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,

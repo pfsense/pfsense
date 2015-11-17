@@ -4,9 +4,7 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc.
- *	Copyright (c)  2010 Ermal Luçi
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -401,13 +399,13 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 {
 	?>
 	<div class="table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Server Name")?></th>
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("Host Name")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -418,8 +416,8 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 					<td><?=htmlspecialchars($server['host'])?></td>
 					<td>
 					<?php if ($i < (count($a_server) - 1)): ?>
-						<a href="system_authservers.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-						<a href="system_authservers.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
 					<?php endif?>
 					</td>
 				</tr>
@@ -429,7 +427,10 @@ if (!($act == "new" || $act == "edit" || $input_errors))
 	</div>
 
 	<nav class="action-buttons">
-		<a href="?act=new" class="btn btn-success">add new</a>
+		<a href="?act=new" class="btn btn-success btn-sm">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Add")?>
+		</a>
 	</nav>
 <?php
 	include("foot.inc");
@@ -824,7 +825,7 @@ events.push(function(){
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 <?php if ($act != 'edit') : ?>
 	ldap_tmplchange();
 <?php endif; ?>
@@ -852,7 +853,7 @@ events.push(function(){
 	}
 ?>
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
 	$('#ldap_tmpltype').on('change', function() {
 		ldap_tmplchange();
 	});

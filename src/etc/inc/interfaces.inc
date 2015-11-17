@@ -2697,7 +2697,6 @@ ctrl_interface_group=wheel
 #macaddr_acl={$wlcfg['wpa']['macaddr_acl']}
 ssid={$wlcfg['ssid']}
 debug={$wlcfg['wpa']['debug_mode']}
-auth_algs={$wlcfg['wpa']['auth_algs']}
 wpa={$wlcfg['wpa']['wpa_mode']}
 wpa_key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
 wpa_pairwise={$wlcfg['wpa']['wpa_pairwise']}
@@ -4567,6 +4566,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 		case "openvpn":
 			$wanif = "openvpn";
 			break;
+		case "IPsec":
 		case "ipsec":
 		case "enc0":
 			$wanif = "enc0";

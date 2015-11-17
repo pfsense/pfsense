@@ -36,6 +36,7 @@ $blockaliasname = 'EasyRuleBlockHosts';
 $protocols_with_ports = array('tcp', 'udp');
 require_once("functions.inc");
 require_once("util.inc");
+require_once("ipsec.inc");
 require_once("config.inc");
 
 function easyrule_find_rule_interface($int) {
@@ -52,9 +53,8 @@ function easyrule_find_rule_interface($int) {
 	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (ipsec_enabled())
 		$iflist["enc0"] = "IPSEC";
-	}
 
 	if (isset($iflist[$int])) {
 		return $int;

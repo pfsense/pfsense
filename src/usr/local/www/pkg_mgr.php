@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Marcello Coutinho
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -195,9 +193,6 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			continue;
 		}
 
-		$shortname = $index['name'];
-		pkg_remove_prefix($shortname);
-
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
 		}
@@ -208,7 +203,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php if ($index['www']):?>
 						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
 <?php endif; ?>
-							<?=htmlspecialchars($shortname)?>
+							<?=htmlspecialchars($index['shortname'])?>
 						</a>
 					</td>
 
@@ -259,7 +254,7 @@ events.push(function(){
 	// Make these controls plain buttons
 	$("#btnsearch").prop('type' ,'button');
 	$("#btnclear").prop('type' ,'button');
-	
+
 	// Search for a term in the package name and/or description
 	$("#btnsearch").click(function() {
 		var searchstr = $('#searchstr').val().toLowerCase();
@@ -294,7 +289,7 @@ events.push(function(){
 			$(this).show();
 		});
 	});
-	
+
 	// Hitting the enter key will do the same as clicking the search button
 	$("#searchstr").on("keyup", function (event) {
 	    if (event.keyCode==13) {

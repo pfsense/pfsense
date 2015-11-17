@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <pfsensewizard>
 <copyright>
-/* $Id$ */
-/*
-	setup_wizard.xml
-        part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2004, 2005 Scott Ullrich
-        All rights reserved.
-
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
-
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
-
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
-
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 </copyright>
 <totalsteps>10</totalsteps>
 <step>
@@ -182,7 +203,7 @@
 		<![CDATA[
 		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
 			if (!is_domain($ts)) {
-				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.";
+				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.");
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
@@ -214,6 +235,25 @@
 		}
 		document.forms[0].selectedtype.selectedIndex = selectedItem;
 		enableitems(selectedItem);
+
+		events.push(function(){
+			$('#showpppoepassword').click(function(event) {
+				if(this.checked) {
+					$('#pppoepassword').attr('type', 'text');
+				} else {
+					$('#pppoepassword').attr('type', 'password');
+				}
+			});
+
+			$('#showpptppassword').click(function(event) {
+				if(this.checked) {
+					$('#pptppassword').attr('type', 'text');
+				} else {
+					$('#pptppassword').attr('type', 'password');
+				}
+			});
+		});
+
 	</javascriptafterformdisplay>
 	<fields>
 		<field>
@@ -234,12 +274,12 @@
 				<option>
 					<name>PPPoE</name>
 					<value>pppoe</value>
-					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>
+					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout,showpppoepassword</enablefields>
 				</option>
 				<option>
 					<name>PPTP</name>
 					<value>pptp</value>
-					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
+					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout,showpptppassword
 					</enablefields>
 				</option>
 			</options>
@@ -320,8 +360,13 @@
 		</field>
 		<field>
 			<name>PPPoE Password</name>
-			<type>input</type>
+			<type>password</type>
 			<bindstofield>wizardtemp->wan->password</bindstofield>
+		</field>
+		<field>
+			<name>Show PPPoE password</name>
+			<type>checkbox</type>
+			<typehint>Reveal password characters</typehint>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
@@ -353,8 +398,13 @@
 		</field>
 		<field>
 			<name>PPTP Password</name>
-			<type>input</type>
+			<type>password</type>
 			<bindstofield>wizardtemp->wan->pptppassword</bindstofield>
+		</field>
+		<field>
+			<name>Show PPTP password</name>
+			<type>checkbox</type>
+			<typehint>Reveal password characters</typehint>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>
@@ -384,12 +434,12 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>			
+			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
-			<type>input</type>			
+			<type>input</type>
 			<bindstofield>wizardtemp->wan->pptpidletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
@@ -462,7 +512,7 @@
 			if ($_POST['subnetmask'] < 31 &&
 			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
 			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
-			    include("head.inc"); 
+			    include("head.inc");
 				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
@@ -533,13 +583,13 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if($_POST['selectedtype'] == "Static") { 
-			
+			if($_POST['selectedtype'] == "Static") {
+
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
-				if(!$config['interfaces']['lan']) 
+				if(!$config['interfaces']['lan'])
 					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -651,9 +701,10 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+	<![CDATA[
 	if($_POST['adminpassword'] != "") {
 		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-			$admin_user =&amp; getUserEntryByUID(0);
+			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
 			write_config();
@@ -662,6 +713,7 @@
 			die;
 		}
 	}
+	]]>
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -680,7 +732,7 @@
 	<id>9</id>
 	<title>Reload in progress</title>
 	<description>
-		A reload is now in progress.  Please wait. &lt;p&gt; 
+		A reload is now in progress.  Please wait. &lt;p&gt;
 		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
@@ -732,7 +784,7 @@
 		if($g['product_name'] <> 'pfSense') {
 			header("Location: " . fixup_string("\$myurl"));
 			exit;
-		}	
+		}
 	]]>
 	</stepbeforeformdisplay>
 	<description>

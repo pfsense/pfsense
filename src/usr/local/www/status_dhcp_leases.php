@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	status_dhcp_leases.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -334,7 +335,7 @@ if (count($pools) > 0) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("Failover Group")?></a></th>
@@ -365,7 +366,7 @@ if (count($pools) > 0) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><!-- icon --></th>
@@ -439,27 +440,17 @@ foreach ($leases as $data):
 					<td><?=$data['act']?></td>
 					<td>
 <? if ($data['type'] == "dynamic"): ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>">
-							<?=gettext("add static mapping")?>
-						</a>
+						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <? else: ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>">
-							<?=gettext("edit static mapping")?>
-						</a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <? endif; ?>
-						<a class="btn btn-xs btn-success" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>">
-							add WOL mapping
-						</a>
+						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <? if ($data['online'] != "online"):?>
-						<a class="btn btn-xs btn-warning" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>">
-							send WOL packet
-						</a>
+						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <? endif; ?>
 
 <? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
-						<a class="btn btn-xs btn-danger" href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>">
-							delete lease
-						</a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <? endif?>
 					</td>
 <? endforeach; ?>
@@ -472,7 +463,7 @@ foreach ($leases as $data):
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases in use')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Interface")?></th>

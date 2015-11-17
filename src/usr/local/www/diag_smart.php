@@ -3,12 +3,11 @@
 	diag_smart.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2010 - Jim Pingle
- *	Copyright (c) 2006, Eric Friesen
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2006 Eric Friesen
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -287,13 +286,15 @@ switch ($action) {
 
 	// Default page, prints the forms to view info, test, etc...
 	default: {
-// Information	
+// Information
 		$devs = get_smart_drive_list();
 
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview = new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('Information');
 
@@ -355,14 +356,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
 // Tests
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btntest = new Form_Button(
 			'submit',
 			'Test'
-		));
+		);
 
 		$section = new Form_Section('Perform self-tests');
 
@@ -417,14 +425,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btntest
+		));
+
 		$form->add($section);
 		print($form);
 
 // Logs
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview =  new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('View logs');
 
@@ -462,6 +477,11 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
@@ -473,7 +493,7 @@ switch ($action) {
 
 		$btnabort->removeClass('btn-primary')->addClass('btn-danger');
 
-		$form = new Form($btnabort);
+		$form = new Form(false);
 
 		$section = new Form_Section('Abort');
 
@@ -489,6 +509,11 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
+		));
+
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnabort
 		));
 
 		$form->add($section);

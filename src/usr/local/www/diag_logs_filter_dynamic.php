@@ -1,14 +1,15 @@
 <?php
-/* $Id$ */
 /*
 	diag_logs_filter_dynamic.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -127,18 +128,200 @@ include("head.inc");
 		}
 
 		var line =
+			'<td>' + row[0] + '</td>' +
 			'<td>' + row[1] + '</td>' +
 			'<td>' + row[2] + '</td>' +
 			'<td>' + srcIP + srcPort + '</td>' +
 			'<td>' + dstIP + dstPort + '</td>' +
-			'<td>' + row[7] + '</td>' +
-			'<td>' + row[0] + '</td>';
+			'<td>' + row[7] + '</td>';
 
 		return line;
 	}
+
+if (typeof getURL == 'undefined') {
+	getURL = function(url, callback) {
+		if (!url)
+			throw 'No URL for getURL';
+		try {
+			if (typeof callback.operationComplete == 'function')
+				callback = callback.operationComplete;
+		} catch (e) {}
+			if (typeof callback != 'function')
+				throw 'No callback function for getURL';
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+		    http_request = new XMLHttpRequest();
+		}
+		else if (typeof ActiveXObject != 'undefined') {
+			try {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				try {
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
+			}
+		}
+		if (!http_request)
+			throw 'Both getURL and XMLHttpRequest are undefined';
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
+				  content : http_request.responseText,
+				  contentType : http_request.getResponseHeader("Content-Type") } );
+			}
+		};
+		http_request.open('GET', url, true);
+		http_request.send(null);
+	};
+}
+
+function outputrule(req) {
+	alert(req.content);
+}
+
+function fetch_new_rules() {
+	if(isPaused)
+		return;
+	if(isBusy)
+		return;
+	isBusy = true;
+	getURL('diag_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
+}
+
+function fetch_new_rules_callback(callback_data) {
+	if(isPaused)
+		return;
+
+	var data_split;
+	var new_data_to_add = Array();
+	var data = callback_data.content;
+
+	data_split = data.split("\n");
+
+	for(var x=0; x<data_split.length-1; x++) {
+		/* loop through rows */
+		row_split = data_split[x].split("||");
+		lastsawtime = row_split[9];
+
+		var tmp = format_log_line(row_split);
+
+		if ( !(tmp) )
+			continue;
+
+		new_data_to_add[new_data_to_add.length] = tmp;
+	}
+
+	update_table_rows(new_data_to_add);
+	isBusy = false;
+}
+
+function in_arrayi(needle, haystack) {
+	var i = haystack.length;
+	while (i--) {
+		if (haystack[i].toLowerCase() === needle.toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function update_table_rows(data) {
+	if(isPaused)
+		return;
+
+	var isIE = navigator.appName.indexOf('Microsoft') != -1;
+	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
+	var isOpera = navigator.userAgent.indexOf('Opera') != -1;
+	var showanim = 1;
+
+	if (isIE) {
+		showanim = 0;
+	}
+
+	var startat = data.length - nentries;
+
+	if (startat < 0) {
+		startat = 0;
+	}
+
+	data = data.slice(startat, data.length);
+
+	var rows = jQuery('#filter-log-entries>tr');
+
+	// Number of rows to move by
+	var move = rows.length + data.length - nentries;
+
+	if (move < 0)
+		move = 0;
+
+	if (isReverse == false) {
+		for (var i = move; i < rows.length; i++) {
+			jQuery(rows[i - move]).html(jQuery(rows[i]).html());
+		}
+
+		var tbody = jQuery('#filter-log-entries');
+
+		for (var i = 0; i < data.length; i++) {
+			var rowIndex = rows.length - move + i;
+			if (rowIndex < rows.length) {
+				jQuery(rows[rowIndex]).html(data[i]);
+			} else {
+				jQuery(tbody).append('<tr>' + data[i] + '</tr>');
+			}
+		}
+	} else {
+		for (var i = rows.length - 1; i >= move; i--) {
+			jQuery(rows[i]).html(jQuery(rows[i - move]).html());
+		}
+
+		var tbody = jQuery('#filter-log-entries');
+
+		for (var i = 0; i < data.length; i++) {
+			var rowIndex = move - 1 - i;
+			if (rowIndex >= 0) {
+				jQuery(rows[rowIndex]).html(data[i]);
+			} else {
+				jQuery(tbody).prepend('<tr>' + data[i] + '</tr>');
+			}
+		}
+	}
+
+	// Much easier to go through each of the rows once they've all be added.
+	rows = jQuery('#filter-log-entries>tr');
+	for (var i = 0; i < rows.length; i++) {
+		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
+	}
+
+	$('.fa').tooltip();
+}
+
+function toggle_pause() {
+	if(isPaused) {
+		isPaused = false;
+		fetch_new_rules();
+	} else {
+		isPaused = true;
+	}
+}
+/* start local AJAX engine */
+if (typeof updateDelay != 'undefined') {
+	timer = setInterval('fetch_new_rules()', updateDelay);
+}
+
+function toggleListDescriptions(){
+	var ss = document.styleSheets;
+	for (var i=0; i<ss.length; i++) {
+		var rules = ss[i].cssRules || ss[i].rules;
+		for (var j=0; j<rules.length; j++) {
+			if (rules[j].selectorText === ".listMRDescriptionL" || rules[j].selectorText === ".listMRDescriptionR") {
+				rules[j].style.display = rules[j].style.display === "none" ? "table-cell" : "none";
+			}
+		}
+	}
+}
+
 //]]>
 </script>
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
 
 <?php
 $tab_array = array();
@@ -173,12 +356,12 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
+						<th><?=gettext("Act")?></th>
 						<th><?=gettext("Time")?></th>
 						<th><?=gettext("IF")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Destination")?></th>
 						<th><?=gettext("Proto")?></th>
-						<th></th> <!-- For the "Block" buttons-->
 					</tr>
 				</thead>
 				<tbody id="filter-log-entries">
@@ -208,6 +391,16 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						$dstPort = "";
 ?>
 					<tr>
+						<td>
+<?php
+		if ($filterent['act'] == "block") {
+			$icon_act = "fa-times icon-danger";
+		} else {
+			$icon_act = "fa-check icon-success";
+		}
+?>
+							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>
 						<td><?=$srcIP . $srcPort?></td>
@@ -219,11 +412,6 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						}
 ?>
 						<td><?=htmlspecialchars($filterent['proto'])?></td>
-						<td>
-							<a href="#" class="btn btn-danger btn-xs" alt="<?=$filterent['act'];?>" title="<?=$filterent['act'];?> onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
-								<?=gettext('Block')?>
-							</a>
-						</td>
 					</tr>
 <?php
 				} // e-o-foreach()
@@ -239,5 +427,15 @@ if ($tcpcnt > 0)
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function(){
+	$(document).ready(function(){
+	    $('.fa').tooltip();
+	});
+});
+//]]>
+</script>
 
 <?php include("foot.inc");

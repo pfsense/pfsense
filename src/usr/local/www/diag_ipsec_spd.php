@@ -1,14 +1,15 @@
 <?php
-/* $Id$ */
 /*
 	diag_ipsec_spd.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004-2009 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -67,7 +68,6 @@
 ##|*MATCH=diag_ipsec_spd.php*
 ##|-PRIV
 
-define(DEBUG, true);
 define(RIGHTARROW, '&#x25ba;');
 define(LEFTARROW,  '&#x25c0;');
 
@@ -78,12 +78,7 @@ $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-if (DEBUG) { // Dummy data for testing. REMOVE for production
-	$spd = array ( 0 => array ( 'srcid' => '172.27.0.0/16', 'dstid' => '172.21.2.0/24', 'dir' => 'in' , 'proto' => 'esp', 'dst' => '184.57.8.247', 'src' => '208.123.73.7', 'reqid' => 'nique:1' ),
-				   1 => array ( 'srcid' => '172.21.2.0/24', 'dstid' => '172.27.0.0/16', 'dir' => 'out', 'proto' => 'esp', 'dst' => '208.123.73.7', 'src' => '184.57.8.247', 'reqid' => 'nique:1' ) );
-}
-else
-	$spd = ipsec_dump_spd();
+$spd = ipsec_dump_spd();
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
@@ -96,7 +91,7 @@ display_top_tabs($tab_array);
 if (count($spd)) {
 ?>
 	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?= gettext("Source"); ?></th>

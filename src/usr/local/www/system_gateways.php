@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	system_gateways.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -246,7 +244,7 @@ if ($input_errors)
 	print_input_errors($input_errors);
 if ($savemsg)
 	print_info_box($savemsg, 'success');
-	
+
 if (is_subsystem_dirty('staticroutes'))
 	print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 
@@ -266,7 +264,7 @@ display_top_tabs($tab_array);
 		<th><?=gettext("Gateway")?></th>
 		<th><?=gettext("Monitor IP")?></th>
 		<th><?=gettext("Description")?></th>
-		<th></th>
+		<th><?=gettext("Actions")?></th>
 	</tr>
 </thead>
 <tbody>
@@ -306,19 +304,20 @@ foreach ($a_gateways as $i => $gateway):
 			<?=htmlspecialchars($gateway['descr'])?>
 		</td>
 		<td>
-			<a class="btn btn-xs btn-primary" href="system_gateways_edit.php?id=<?=$i?>">
-				edit
-			</a>
-			<a class="btn btn-xs btn-default" href="system_gateways_edit.php?dup=<?=$i?>">
-				copy
-			</a>
+			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
+			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+
 <? if (is_numeric($gateway['attribute'])): ?>
-			<a class="btn btn-xs btn-danger" href="system_gateways.php?act=del&amp;id=<?=$i?>">
-				delete
-			</a>
-			<a class="btn btn-xs btn-default" href="?act=toggle&amp;id=<?=$i?>">
-				toggle
-			</a>
+	<?php if (isset($gateway['disabled'])) {
+	?>
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+	<?php } else {
+	?>
+			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+	<?php }
+	?>
+			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+
 <? endif?>
 		</td>
 	</tr>
@@ -328,7 +327,8 @@ foreach ($a_gateways as $i => $gateway):
 
 <nav class="action-buttons">
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
-		<?=gettext("Add new gateway");?>
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add");?>
 	</a>
 </nav>
 <?php

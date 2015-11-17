@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -68,6 +68,7 @@
 
 require("guiconfig.inc");
 require_once("itemid.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
@@ -669,9 +670,8 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0"))
+	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
@@ -694,6 +694,13 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
 
 $group = new Form_Group('Source');
+
+$group->add(new Form_Checkbox(
+	'srcnot',
+	'Source not',
+	'Invert match.',
+	$pconfig['srcnot']
+))->setWidth(2);
 
 $group->add(new Form_Select(
 	'srctype',
@@ -756,6 +763,13 @@ $section->add($group);
 
 $group = new Form_Group('Destination');
 
+$group->add(new Form_Checkbox(
+	'dstnot',
+	'Destination not',
+	'Invert match.',
+	$pconfig['dstnot']
+))->setWidth(2);
+
 $group->add(new Form_Select(
 	'dsttype',
 	null,
@@ -809,14 +823,6 @@ $group->setHelp('Specify the port or port range for the destination of the packe
 
 $section->add($group);
 
-$section->addInput(new Form_Checkbox(
-	'dstnot',
-	null,
-	'Not (Invert the sense of the match)',
-	$pconfig['dstnot'],
-	'yes'
-));
-
 $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
@@ -859,7 +865,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'nosync',
 	'No XMLRPC Sync',
-	null,
+	'Do not automatically sync to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This prevents the rule on Master from automatically syncing to other CARP members. ' .
 			'This does NOT prevent the rule from being overwritten on Slave.');
@@ -1226,7 +1232,7 @@ events.push(function(){
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
-	$('#localip, #ser, #dst').autocomplete({
+	$('#localip, #src, #dst').autocomplete({
 		source: addressarray
 	});
 

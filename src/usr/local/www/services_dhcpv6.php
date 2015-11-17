@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	services_dhcpv6.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -457,7 +458,7 @@ if($_GET['act'] == "addopt") {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 server"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
 $shortcut_section = "dhcp6";
 
 include("head.inc");
@@ -524,10 +525,12 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+display_top_tabs($tab_array);
+
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
-display_top_tabs($tab_array);
+display_top_tabs($tab_array, false, 'nav nav-tabs' );
 
 require_once('classes/Form.class.php');
 
@@ -566,7 +569,7 @@ if(is_ipaddrv6($ifcfgip)) {
 if($is_olsr_enabled) {
 	$section->addInput(new Form_Select(
 	'netmask',
-	'Subnetmask',
+	'Subnet Mask',
 	$pconfig['netmask'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
 	));
@@ -643,8 +646,9 @@ for($i=1;$i<=4; $i++) {
 		'dns' . $i,
 		null,
 		'text',
-		$pconfig['dns' . $i]
-	))->setHelp('DNS ' . $i);
+		$pconfig['dns' . $i],
+		['placeholder' => 'DNS ' . $i]
+	));
 }
 
 $group->setHelp('Leave blank to use the system default DNS servers,this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
@@ -759,7 +763,7 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Input(
 	'ntp2',
-	'NTP Server 1',
+	'NTP Server 2',
 	'text',
 	$pconfig['ntp2'],
 	['placeholder' => 'NTP 2']
@@ -797,7 +801,7 @@ $btnnetboot->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Network booting',
-	$btnnetboot . '&nbsp;' . 'Show Netwok booting'
+	$btnnetboot . '&nbsp;' . 'Show Network booting'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -823,7 +827,7 @@ $btnadnl->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
-	$btnadnl . '&nbsp;' . 'Aditional BOOTP/DHCP Options'
+	$btnadnl . '&nbsp;' . 'Additional BOOTP/DHCP Options'
 ));
 
 $form->add($section);
@@ -925,8 +929,8 @@ if(is_array($a_maps)):
 						<?=htmlspecialchars($mapent['descr'])?>
 					</td>
 					<td>
-						<a href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>" class="btn btn-info btn-xs"/>Edit</a>
-						<a href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"/>Delete</a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -941,7 +945,10 @@ endif;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dhcpv6_edit.php?if=<?=$if?>" class="btn btn-sm btn-success"/>Add</a>
+	<a href="services_dhcpv6_edit.php?if=<?=$if?>" class="btn btn-sm btn-success"/>
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
 <script>
@@ -956,7 +963,7 @@ events.push(function(){
 		hideInput('ddnsdomainkey', hide);
 	}
 
-	// Make the ‘Copy My MAC’ button a plain button, not a submit button
+	// Make the 'Copy My MAC' button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
 
 	// On click, copy the hidden 'mymac' text to the 'mac' input
@@ -964,7 +971,7 @@ events.push(function(){
 		$('#mac').val('<?=$mymac?>');
 	});
 
-	// Make the ‘tftp’ button a plain button, not a submit button
+	// Make the 'tftp' button a plain button, not a submit button
 	$("#btntftp").prop('type','button');
 
 	// Show tftp controls
@@ -972,7 +979,7 @@ events.push(function(){
 		hideInput('tftp', false);
 	});
 
-	// Make the ‘ntp’ button a plain button, not a submit button
+	// Make the 'ntp' button a plain button, not a submit button
 	$("#btnntp").prop('type','button');
 
 	// Show ntp controls
@@ -980,7 +987,7 @@ events.push(function(){
 		hideClass('ntpclass', false);
 	});
 
-	// Make the ‘ddns’ button a plain button, not a submit button
+	// Make the 'ddns' button a plain button, not a submit button
 	$("#btndyndns").prop('type','button');
 
 	// Show ddns controls
@@ -988,7 +995,7 @@ events.push(function(){
 		hideDDNS(false);
 	});
 
-	// Make the ‘ldap’ button a plain button, not a submit button
+	// Make the 'ldap' button a plain button, not a submit button
 	$("#btnldap").prop('type','button');
 
 	// Show ldap controls
@@ -996,7 +1003,7 @@ events.push(function(){
 		hideInput('ldap', false);
 	});
 
-	// Make the ‘netboot’ button a plain button, not a submit button
+	// Make the 'netboot' button a plain button, not a submit button
 	$("#btnnetboot").prop('type','button');
 
 	// Show netboot controls
@@ -1005,10 +1012,10 @@ events.push(function(){
 		hideCheckBox('shownetboot', false);
 	});
 
-	// Make the ‘aditional options’ button a plain button, not a submit button
+	// Make the 'additional options' button a plain button, not a submit button
 	$("#btnadnl").prop('type','button');
 
-	// Show aditional  controls
+	// Show additional  controls
 	$("#btnadnl").click(function() {
 		hideClass('adnlopt', false);
 		hideInput('btnaddopt', false);

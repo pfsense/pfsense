@@ -5,7 +5,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2009 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -285,6 +284,8 @@ $colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 /* Captive Portal Total Users	Total Users */
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
+
+$colordhcpd = array('990000', '0000FF', '000000');
 
 switch ($curstyle) {
 	case "absolute":
@@ -1233,6 +1234,38 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"wander:AVERAGE:%7.2lf %s	   \" ";
 	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s	   \" ";
 	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S	\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
+} elseif ((strstr($curdatabase, "-dhcpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for dhcpd stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --step $step ";
+	$graphcmd .= "--vertical-label \"Dhcp Leases\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-leases=$rrddbpath$curdatabase:leases:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"$curif-staticleases=$rrddbpath$curdatabase:staticleases:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"$curif-dhcprange=$rrddbpath$curdatabase:dhcprange:AVERAGE:step=$step\" ";
+	$graphcmd .= "AREA:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
+	$graphcmd .= "LINE2:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
+	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:Dhcp Range\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t\tmaximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Active Leases\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Static Leases\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Dhcp Range\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } else {

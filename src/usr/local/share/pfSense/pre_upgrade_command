@@ -15,6 +15,7 @@ echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 # Cleanup PBIs
 if which pbi_info >/dev/null 2>&1; then
 	for pbi in $(pbi_info); do
+		echo ">>> Removing PBI ${pbi} and all symlinks"
 		pbi_prefix=$(pbi_info ${pbi} | awk '$1 == "Prefix:" { print $2  }')
 		if [ ! -d "${pbi_prefix}" ]; then
 			continue

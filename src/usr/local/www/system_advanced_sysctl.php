@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_sysctl.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -95,12 +96,14 @@ if ($act == "edit") {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
 		$pconfig['value'] = $a_tunable[$id]['value'];
 		$pconfig['descr'] = $a_tunable[$id]['descr'];
+
 	} else if (isset($tunables[$id])) {
 		$pconfig['tunable'] = $tunables[$id]['tunable'];
 		$pconfig['value'] = $tunables[$id]['value'];
 		$pconfig['descr'] = $tunables[$id]['descr'];
 	}
 }
+
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
@@ -108,6 +111,7 @@ if ($act == "del") {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
+
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
 			write_config();
@@ -139,20 +143,26 @@ if ($_POST) {
 
 		$tunableent = array();
 
-		$tunableent['tunable'] = $_POST['tunable'];
-		$tunableent['value'] = $_POST['value'];
-		$tunableent['descr'] = $_POST['descr'];
-
-		if (isset($id) && isset($a_tunable[$id])) {
-			$a_tunable[$id] = $tunableent;
+		if(!$_POST['tunable'] || !$_POST['value']) {
+			$input_errors[] = gettext("Both a name and a value must be specified.");
+		} else if (!ctype_alnum($_POST['value'])) {
+			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
 		} else {
-			$a_tunable[] = $tunableent;
-		}
+			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
+			$tunableent['value'] = htmlspecialchars($_POST['value']);
+			$tunableent['descr'] = htmlspecialchars($_POST['descr']);
 
-		mark_subsystem_dirty('sysctl');
-		write_config();
-		pfSenseHeader("system_advanced_sysctl.php");
-		exit;
+			if (isset($id) && isset($a_tunable[$id])) {
+				$a_tunable[$id] = $tunableent;
+			} else {
+				$a_tunable[] = $tunableent;
+			}
+
+			mark_subsystem_dirty('sysctl');
+			write_config();
+			pfSenseHeader("system_advanced_sysctl.php");
+			exit;
+		}
 	}
 }
 
@@ -161,7 +171,7 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-	
+
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
@@ -205,9 +215,9 @@ if ($act != "edit" ): ?>
 						echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; ?>
 					</td>
 					<td>
-					<a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"><?=gettext('Edit'); ?></a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"><?=gettext('Delete/Reset'); ?></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"></a>
 						<?php endif; ?>
 					</td>
 				</tr>

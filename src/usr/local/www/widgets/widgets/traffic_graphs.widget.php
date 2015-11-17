@@ -1,20 +1,15 @@
 <?php
 /*
 	traffic_graphs.widget.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	Copyright 2007 Scott Dale
-	Part of pfSense widgets (https://www.pfsense.org)
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-	and Jonathan Watt <jwatt@jwatt.org>.
+*/
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2007 Scott Dale
  *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
  *	and Jonathan Watt <jwatt@jwatt.org>.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -68,6 +63,7 @@ $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;
@@ -85,12 +81,11 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled())
 	$ifdescrs['enc0'] = "IPsec";
-}
 
 if ($_POST) {
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numeric($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
 

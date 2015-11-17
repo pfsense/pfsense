@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>
- *	originally part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -39,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -239,7 +238,7 @@ foreach ($a_nat as $natent):
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
+							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($natent['associated-rule-id'])?> . <?=gettext('is managed by this rule')?>"></i>
 <?php
 	endif;
 ?>
@@ -352,9 +351,9 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
-							<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
 						</td>
 					</tr>
 <?php
@@ -367,45 +366,37 @@ endforeach;
 		</div>
 	</div>
 
-	<div class="pull-right">
-		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
-		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="<?=gettext("Save changes")?>" disabled="disabled" />
-	</div>
+	<nav class="action-buttons">
+		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected rules')?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled="disabled" title="<?=gettext('Save rule order')?>">
+			<i class="fa fa-save icon-embed-btn"></i>
+			<?=gettext("Save")?>
+		</button>
+	</nav>
 </form>
 
 <script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
 events.push(function() {
-	// Make rules draggable/sortable
+
+	stripe_table();
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			stripe_table();
 		}
 	});
 

@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	rc.conf_mount_rw
 	part of pfSense (https://www.pfsense.org)

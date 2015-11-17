@@ -3,12 +3,11 @@
 	services_dhcp_relay.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  22003-2004 Justin Ellison <justin@techadvise.com>
- *  Copyright (c)  22010 	Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2003-2004 Justin Ellison <justin@techadvise.com>
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -107,7 +106,7 @@ if (is_array($config['dhcpd'])) {
 
 if ($_POST) {
 	unset($input_errors);
-	
+
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -118,16 +117,16 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		$svrlist = '';
-		
+
 		if ($_POST['server']) {
 			foreach($_POST['server'] as $checksrv => $srv) {
 				if (!is_ipaddr($srv[0]))
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
-					
+
 				if(!empty($srv[0])) { // Filter out any empties
 					if(!empty($svrlist))
 						$svrlist .= ',';
-											
+
 					$svrlist .= $srv[0];
 				}
 			}
@@ -136,7 +135,7 @@ if ($_POST) {
 
 	// Now $svrlist is a comma separated list of servers ready to save to the config system
 	$pconfig['server'] = $svrlist;
-	
+
 	if (!$input_errors) {
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
@@ -211,7 +210,7 @@ function createDestinationServerInputGroup($value = null)
 	))->setWidth(4)->setHelp(
 		'This is the IP address of the server to which DHCP requests are relayed.'
 	)->setIsRepeated();
-	
+
 	$group->enableDuplication(null, true); // Buttons are in-line with the input
 	return $group;
 }

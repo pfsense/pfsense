@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -583,7 +582,7 @@ if (!($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)))
 			<th><?=gettext("Issuer")?></th>
 			<th><?=gettext("Distinguished Name")?></th>
 			<th><?=gettext("In Use")?></th>
-			<th></th>
+			<th class="col-sm-2"><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -656,24 +655,14 @@ foreach($a_cert as $i => $cert):
 				<?php endif?>
 			</td>
 			<td>
-				<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-					<?=gettext("export")?>
-				</a>
-				<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-					<?=gettext("export key")?>
-				</a>
-				<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-					<?=gettext("export p12")?>
-				</a>
+				<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export")?>"></a>
+				<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export key")?>"></a>
+				<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
 				<?php if (!cert_in_use($cert['refid'])): ?>
-					<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">
-						<?=gettext("delete")?>
-					</a>
+					<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
 				<?php endif?>
 				<?php if ($cert['csr']): ?>
-					<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-						<?=gettext("update csr")?>
-					</a>
+					<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-refresh" title="<?=gettext("Update csr")?>"></a>
 				<?php endif?>
 			</td>
 		</tr>
@@ -683,7 +672,10 @@ foreach($a_cert as $i => $cert):
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">add new</a>
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 <?
 	include("foot.inc");
@@ -1087,7 +1079,7 @@ events.push(function(){
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-	
+
 	$('#caref').on('change', function() {
 		internalca_change();
 	});
@@ -1095,6 +1087,9 @@ events.push(function(){
 	// ---------- On initial page load ------------------------------------------------------------
 
 	internalca_change();
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 
 <?php endif; ?>
 

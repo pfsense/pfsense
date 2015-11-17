@@ -138,6 +138,46 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
+// Toggle table row chackboxes and background colors on the pages that use sortable tables:
+//	/usr/local/www/firewall_nat.php
+//	/usr/local/www/firewall_nat_1to1.php
+//	/usr/local/www/firewall_nat_out.php
+//	/usr/local/www/firewall_rules.php
+//	/usr/local/www/vpn_ipsec.php
+// Striping of the tables is handled here, NOT with the Bootstrap table-striped class because it would
+// get confused when rows are sorted or deleted.
+
+function stripe_table() {
+	$("tr:odd").addClass('active');
+	$("tr:even").removeClass('active');
+}
+
+function fr_toggle(id, prefix) {
+	if (!prefix)
+		prefix = 'fr';
+
+	var checkbox = document.getElementById(prefix + 'c' + id);
+	checkbox.checked = !checkbox.checked;
+	fr_bgcolor(id, prefix);
+}
+
+// Change background color based on state of checkbox
+// On resetting background, reapply table striping
+function fr_bgcolor(id, prefix) {
+	if (!prefix)
+		prefix = 'fr';
+
+	var row = $('#' + prefix + id);
+
+	if ($('#' + prefix + 'c' + id).prop('checked') ) {
+		row.css("background-color", "#DDF4FF");
+		row.removeClass('active');
+	} else {
+		row.css("background-color", "#FFFFFF");
+		stripe_table();
+	}
+}
+
 // The following functions are used by Form_Groups assigned a class of "repeatable" and provide the ability
 // to add/delete rows of sequentially numbered elements, their labels and their help text
 // See firewall_aliases_edit.php for an example
@@ -240,6 +280,15 @@ function renumber() {
 function delete_row(row) {
 	$('#' + row).parent('div').parent('div').remove();
 	renumber();
+	checkLastRow();
+}
+
+function checkLastRow() {
+	if($('.repeatable').length <= 1) {
+		$('#deleterow0').hide();
+	} else {
+		$('[id^=deleterow]').show();
+	}
 }
 
 function add_row() {
@@ -289,6 +338,8 @@ function add_row() {
 
 	setMasks();
 
+	checkLastRow();
+
 	$('[id^=address]').autocomplete({
 		source: addressarray
 	});
@@ -312,4 +363,22 @@ $('[id^=delete]').click(function(event) {
 	}
 	else
 		alert('You may not delete the last row!');
+});
+
+// "More information" handlers
+
+// If there is an infoblock, automatically add an info icon that toggles its display
+if($('#infoblock').length != 0) {
+	$('#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
+
+	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
+	$('.close :last').remove();
+}
+
+// Hide information on page load
+$('#infoblock').hide();
+
+// Show the help on clicking the info icon
+$('#showinfo').click(function() {
+	$('#infoblock').toggle();
 });

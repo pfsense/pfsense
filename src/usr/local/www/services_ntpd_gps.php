@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	services_ntpd_gps.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Dagorlad
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -258,9 +256,9 @@ $section->addInput(new Form_Select(
 	'GPS',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
-))->setHelp('This option allows you to select a predefined configuration.' .
+))->setHelp('This option allows you to select a predefined configuration. ' .
 			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if your GPS is not listed.' . '<br /><br />' .
-			'The perdefined configurations assume your GPS has already been set to NMEA mode.');
+			'The predefined configurations assume your GPS has already been set to NMEA mode.');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
@@ -276,7 +274,7 @@ if (!empty($serialports)) {
 		'gpsport',
 		'Serial port',
 		$pconfig['port'],
-			$splist
+		$splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(
@@ -329,7 +327,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'gpsselect',
 	null,
-	'NTP should not use this clock, it will be displayed for reference only(default: disabled).',
+	'NTP should not use this clock, it will be displayed for reference only (default: disabled).',
 	$pconfig['noselect']
 ));
 

@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_1to1_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -69,6 +69,7 @@
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
+require_once("ipsec.inc");
 require("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
@@ -407,9 +408,8 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0"))
+	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
 if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])

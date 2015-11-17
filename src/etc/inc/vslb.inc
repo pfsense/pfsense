@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	vslb.inc
 	Copyright (C) 2005-2008 Bill Marquette

@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -716,53 +715,49 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][8]['descr'] =    gettext("Maximum outgoing TCP datagram size");
 		$config['sysctl']['item'][8]['value'] =   "default";
 
-		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['descr'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
+		$config['sysctl']['item'][9]['tunable'] = "net.inet.tcp.delayed_ack";
+		$config['sysctl']['item'][9]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
 		$config['sysctl']['item'][9]['value'] =   "default";
 
-		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
+		$config['sysctl']['item'][10]['tunable'] = "net.inet.udp.maxdgram";
+		$config['sysctl']['item'][10]['descr'] =    gettext("Maximum outgoing UDP datagram size");
 		$config['sysctl']['item'][10]['value'] =   "default";
 
-		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['descr'] =    gettext("Maximum outgoing UDP datagram size");
+		$config['sysctl']['item'][11]['tunable'] = "net.link.bridge.pfil_onlyip";
+		$config['sysctl']['item'][11]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
 		$config['sysctl']['item'][11]['value'] =   "default";
 
-		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
+		$config['sysctl']['item'][12]['tunable'] = "net.link.tap.user_open";
+		$config['sysctl']['item'][12]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][12]['value'] =   "default";
 
-		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
+		$config['sysctl']['item'][13]['tunable'] = "kern.randompid";
+		$config['sysctl']['item'][13]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
-		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
+		$config['sysctl']['item'][14]['tunable'] = "net.inet.tcp.inflight.enable";
+		$config['sysctl']['item'][14]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][14]['value'] =   "default";
+
+		$config['sysctl']['item'][15]['tunable'] = "net.inet.icmp.icmplim";
+		$config['sysctl']['item'][15]['descr'] =    gettext("Set ICMP Limits");
 		$config['sysctl']['item'][15]['value'] =   "default";
 
-		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.tso";
+		$config['sysctl']['item'][16]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][16]['value'] =   "default";
 
-		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['descr'] =    gettext("Set ICMP Limits");
+		$config['sysctl']['item'][17]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][17]['descr'] =    "Set the ephemeral port range starting port";
 		$config['sysctl']['item'][17]['value'] =   "default";
 
-		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
+		$config['sysctl']['item'][18]['tunable'] = "hw.syscons.kbd_reboot";
+		$config['sysctl']['item'][18]['descr'] =    "Enables ctrl+alt+delete";
 		$config['sysctl']['item'][18]['value'] =   "default";
 
-		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][19]['tunable'] = "kern.ipc.maxsockbuf";
+		$config['sysctl']['item'][19]['descr'] =    "Maximum socket buffer size";
 		$config['sysctl']['item'][19]['value'] =   "default";
-
-		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot";
-		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
-		$config['sysctl']['item'][20]['value'] =   "default";
-
-		$config['sysctl']['item'][21]['tunable'] = "kern.ipc.maxsockbuf";
-		$config['sysctl']['item'][21]['descr'] =    "Maximum socket buffer size";
-		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
 }
@@ -3846,6 +3841,23 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
+	global $config, $ipsec_log_cats;
+
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	// add 1 to configured log levels as part of redmine #5340
+	foreach ($ipsec_log_cats as $lkey => $ldescr) {
+		if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+			$config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
+		}
+	}
+
+}
+
+
+function upgrade_120_to_121() {
 	global $config;
 
 	if (!isset($config['installedpackages']['miniupnpd']['config'][0])) {
@@ -3864,7 +3876,7 @@ function upgrade_119_to_120() {
 	}
 }
 
-function upgrade_120_to_121() {
+function upgrade_121_to_122() {
 	global $config;
 	foreach ($config['system']['user'] as &$user) {
 		if (isset($user['nt-hash'])) {
@@ -3873,7 +3885,7 @@ function upgrade_120_to_121() {
 	}
 }
 
-function upgrade_121_to_122() {
+function upgrade_122_to_123() {
 	global $config;
 
 	// PPTP server was removed
@@ -3971,7 +3983,7 @@ function upgrade_121_to_122() {
 	}
 }
 
-function upgrade_122_to_123() {
+function upgrade_123_to_124() {
 	if (isset($config['system']['altpkgrepo'])) {
 		unset($config['system']['altpkgrepo']);
 	}
@@ -3981,7 +3993,7 @@ function upgrade_122_to_123() {
 	}
 }
 
-function upgrade_123_to_124() {
+function upgrade_124_to_125() {
 	global $config;
 
 	/* Find interfaces with WEP configured. */
@@ -3996,13 +4008,85 @@ function upgrade_123_to_124() {
 				require_once("notices.inc");
 			}
 			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
-			unset($config['interfaces'][$ifname]['wireless']['wep']); 
+			unset($config['interfaces'][$ifname]['wireless']['wep']);
 			if (isset($intf['enable'])) {
 				unset($config['interfaces'][$ifname]['enable']);
 			}
 		}
 	}
 }
-	
+
+function upgrade_125_to_126() {
+	require_once("ipsec.inc");
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
+
+	$def_loglevel = 1;
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	if (!isset($config['ipsec']['logging']) || !is_array($config['ipsec']['logging'])) {
+		$config['ipsec']['logging'] = array();
+	}
+
+	/* subtract 2 from ipsec log levels. the value stored in the config.xml
+	 * will now match the strongswan level exactly.
+	 */
+	foreach(array_keys($ipsec_log_cats) as $cat) {
+		if (!isset($config['ipsec']["ipsec_{$cat}"])) {
+			$new_level = $def_loglevel;
+		} else {
+			$new_level = intval($config['ipsec']["ipsec_{$cat}"]) - 2;
+		}
+
+		if (in_array($new_level, array_keys($ipsec_log_sevs))) {
+			$config['ipsec']['logging'][$cat] = $new_level;
+		} else {
+			$config['ipsec']['logging'][$cat] = $def_loglevel;
+		}
+		unset($config['ipsec']["ipsec_{$cat}"]);
+	}
+}
+
+// prior to v2.3 <widgets><sequence> contains a list of widgets with display types:
+//		none, close, hide, & show
+// v2.3 & later uses:
+//		close & open
+// widgets not in use are simply not in the list
+function upgrade_126_to_127() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$new_widgets = array();
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		switch ($display) {
+			case 'hide':
+				$display = 'close';
+				break;
+			case 'show':
+				$display = 'open';
+				break;
+			case 'open':
+				break;
+			default:
+				continue 2;
+		}
+
+		/* Remove '-container' from widget name */
+		$file = preg_replace('/-container$/', '', $file);
+
+		$new_widgets[] = "{$file}:{$col}:{$display}";
+	}
+
+	$config['widgets']['sequence'] = implode(',', $new_widgets);
+
+}
 
 ?>

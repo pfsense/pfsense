@@ -1,33 +1,60 @@
 <?php
 /*
 	services_captiveportal.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_MODULE: captiveportal
 */
@@ -69,7 +96,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
@@ -274,16 +301,16 @@ if ($_POST) {
 				}
 
 				if ($_POST['timeout'] > $deftime) {
-					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+					$input_errors[] = gettext("Hard timeout must be less than or equal to the Default lease time set on DHCP Server");
 				}
 			}
 		}
 	}
-	
+
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
-	
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -291,47 +318,47 @@ if ($_POST) {
 			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
 		}
 	}
-	
+
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
-	
+
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
-	
+
 	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
 	}
-	
+
 	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
-	
+
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
-	
+
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
-	
+
 	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
 	}
-	
+
 	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
-	
+
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	
+
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
-	
+
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
@@ -531,9 +558,9 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Captive Portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
@@ -567,7 +594,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maxprocperip'],
 	['min' => '0', 'max' => '100']
 ))->setHelp('Limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
-			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.'); 
+			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.');
 
 $section->addInput(new Form_Input(
 	'idletimeout',
@@ -758,7 +785,7 @@ $group->add(new Form_Checkbox(
 	null,
 	'MSCHAPv2',
 	$pconfig['radius_protocol'] == 'MSCHAPv2',
-	'SCHAPv2'
+	'MSCHAPv2'
 ))->displayasRadio();
 
 $section->add($group);
@@ -808,10 +835,10 @@ $group->add(new Form_Input(
 ))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey3',
+	'radiuskey2',
 	null,
 	'text',
-	$pconfig['radiuskey3']
+	$pconfig['radiuskey2']
 ))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
@@ -824,23 +851,23 @@ $section->addClass('Secondary');
 $group = new Form_Group('Primary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip4',
+	'radiusip3',
 	null,
-	$pconfig['radiusip4']
+	$pconfig['radiusip3']
 ));
 
 $group->add(new Form_Input(
-	'radiusport4',
+	'radiusport3',
 	null,
 	'number',
-	$pconfig['radiusport4']
+	$pconfig['radiusport3']
 ));
 
 $group->add(new Form_Input(
-	'radiuskey4',
+	'radiuskey3',
 	null,
 	'text',
-	$pconfig['radiuskey4']
+	$pconfig['radiuskey3']
 ));
 
 $section->add($group);
@@ -848,23 +875,23 @@ $section->add($group);
 $group = new Form_Group('Secondary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip',
+	'radiusip4',
 	null,
-	$pconfig['radiusip']
+	$pconfig['radiusip4']
 ))->setHelp('IP address of the RADIUS server to authenticate against.');
 
 $group->add(new Form_Input(
-	'radiusport',
+	'radiusport4',
 	null,
 	'number',
-	$pconfig['radiusport']
+	$pconfig['radiusport4']
 ))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey',
+	'radiuskey4',
 	null,
 	'text',
-	$pconfig['radiuskey']
+	$pconfig['radiuskey4']
 ))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
@@ -899,7 +926,7 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'Stop/stop Accounting',
+	'Stop/start Accounting',
 	$pconfig['reauthenticateacct'] == 'stopstart'
 ))->displayasRadio();
 
@@ -1015,7 +1042,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'SSL Certigicate',
+	'SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert Manager</a>');

@@ -1,8 +1,9 @@
 <?php
-/* $Id$ */
+/*
+	filter_log.inc
+*/
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -445,13 +446,18 @@ function handle_ajax($nentries, $tail = 50) {
 		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
 		foreach ($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
-			$img = '<i class="icon-large '  . find_action_image($log_row['act']) . '" alt={$log_row[\'act\']} title={$log_row[\'act\']} ></i>"';
 			if ($row_time > $lastsawtime) {
 				if ($log_row['proto'] == "TCP") {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">" . gettext("Block") . " </a>";
+				if ($log_row['act'] == "block") {
+					$icon_act = "fa-times icon-danger";
+				} else {
+					$icon_act = "fa-check icon-success";
+				}
+
+				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'diag_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

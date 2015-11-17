@@ -4,10 +4,11 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
- *	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>.
- *	Copyright (c)  2014 Ermal Luçi
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
@@ -416,15 +417,17 @@ if ($_POST) {
 	}
 
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
-	
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
-		$auth_server_name  = $config['ipsec']['client']['user_source'];
-		$auth_server       = auth_get_authserver($auth_server_name);
-		if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
-			$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+		if (!empty($config['ipsec']['client']['user_source'])) {
+			$auth_server_list  = explode(',', $config['ipsec']['client']['user_source']);
+			foreach ($auth_server_list as $auth_server_name) {
+				$auth_server       = auth_get_authserver($auth_server_name);
+				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+					$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+				}
+			}
 		}
 	}
-
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
@@ -1082,8 +1085,8 @@ events.push(function(){
 	ealgosel_change(<?=$keyset?>);
 	dpdchkbox_change();
 
-	// ---------- On initial page load ------------------------------------------------------------ 
-	
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hideInput('ikeid', true);
 });
 //]]>

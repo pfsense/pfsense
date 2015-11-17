@@ -3,11 +3,13 @@
 	diag_arp.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -302,6 +304,7 @@ include("head.inc");
 for ($i = 0; $i < ob_get_level(); $i++) {
 	ob_end_flush();
 }
+
 ob_implicit_flush(1);
 
 // Resolve hostnames and replace Z_ with "".  The intention
@@ -336,7 +339,7 @@ $data = msort($data, "dnsresolve");
 $mac_man = load_mac_manufacturer_table();
 ?>
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="sortable-theme-bootstrap table table-striped table-hover" data-sortable>
 		<thead>
 			<tr>
 				<th><?= gettext("Interface")?></th>
@@ -370,13 +373,13 @@ $mac_man = load_mac_manufacturer_table();
 <script>
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
-events.push(function(){   
+events.push(function(){
 	$('#loading').empty();
 });
-//]]>  
+//]]>
 </script>
 
-<?php 
+<?php
 print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP"), 'info');
 
 include("foot.inc")?>

@@ -1,37 +1,60 @@
 <?php
-/* $Id$ */
 /*
 	services_igmpproxy_edit.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2009 Ermal Luçi
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_MODULE: igmpproxy
 */
@@ -69,27 +92,6 @@ if (isset($id) && $a_igmpproxy[$id]) {
 	$pconfig['descr'] = html_entity_decode($a_igmpproxy[$id]['descr']);
 }
 
-// Add a row to the network table
-if($_GET['act'] && $_GET['act'] == 'addrow')
-	$pconfig['address'] .= '/32';
-
-// Remove a row from the network table
-if($_GET['act'] && $_GET['act'] == 'delrow') {
-	$row = $_GET['row'];
-
-	$addresses = explode(" ", $pconfig['address']);
-
-	$pconfig['address'] = "";
-
-	$idx = 0;
-	foreach($addresses as $address) {
-		if($idx != $row)
-			$pconfig['address'] .= ($idx > 0 ? ' ':null) . $address;
-
-		$idx++;
-	}
-}
-
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -99,6 +101,7 @@ if ($_POST) {
 			if (isset($id) && $id == $pid) {
 				continue;
 			}
+
 			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface']) {
 				$input_errors[] = gettext("Only one 'upstream' interface can be configured.");
 			}
@@ -111,16 +114,19 @@ if ($_POST) {
 	$igmpentry['type'] = $_POST['type'];
 	$address = "";
 	$isfirst = 0;
+
 	/* item is a normal igmpentry type */
-	for ($x = 0; $x < 4999; $x++) {
-		if ($_POST["address{$x}"] <> "") {
-			if ($isfirst > 0) {
-				$address .= " ";
-			}
-			$address .= $_POST["address{$x}"];
-			$address .= "/" . $_POST["address_subnet{$x}"];
-			$isfirst++;
+	$x = 0;
+	while($_POST["address{$x}"]) {
+
+		if ($isfirst > 0) {
+			$address .= " ";
 		}
+
+		$address .= $_POST["address{$x}"];
+		$address .= "/" . $_POST["address_subnet{$x}"];
+		$isfirst++;
+		$x++;
 	}
 
 	if (!$input_errors) {
@@ -153,7 +159,7 @@ if ($input_errors)
 
 require_once('classes/Form.class.php');
 
-// These two inputs appear inthe original file. Don't know what they are for
+// These two inputs appear in the original file. Don't know what they are for
 // but they are here just in case.
 
 $h1 = new Form_Input(
@@ -224,65 +230,51 @@ if (isset($id) && $a_igmpproxy[$id]){
 $counter = 0;
 $address = $pconfig['address'];
 
-if ($address != "") {
-	$item = explode(" ", $address);
-	$rows = count($item) -1;
-	foreach($item as $ww) {
-		$address = $item[$counter];
-		$address_subnet = "";
-		$item2 = explode("/", $address);
-		foreach($item2 as $current) {
-			if($item2[1] != "") {
-				$address = $item2[0];
-				$address_subnet = $item2[1];
-			}
+//if ($address == "") {
+//	$address = "/";
+//}
+
+$item = explode(" ", $address);
+$rows = count($item) -1;
+
+foreach($item as $ww) {
+	$address = $item[$counter];
+	$address_subnet = "";
+	$item2 = explode("/", $address);
+
+	foreach($item2 as $current) {
+		if($item2[1] != "") {
+			$address = $item2[0];
+			$address_subnet = $item2[1];
 		}
-		$item4 = $item3[$counter];
-		$tracker = $counter;
+	}
 
-		$group = new Form_group($tracker == 0? 'Network':null);
+	$item4 = $item3[$counter];
+	$tracker = $counter;
 
-		$group->add(new Form_Input(
-			'address' . $tracker,
-			null,
-			'text',
-			$address,
-			['placeholder' => 'Address']
-		))->sethelp($tracker == $rows ? 'Network':null);
+	$group = new Form_group($tracker == 0? 'Networks':null);
+	$group->addClass("repeatable");
 
-		$group->add(new Form_Select(
-			'ifname',
-			'Interface',
-			$address_subnet,
-			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->sethelp($tracker == $rows ? 'CIDR':null);;
+	$group->add(new Form_IpAddress(
+		'address' . $tracker,
+		null,
+		$address,
+		['placeholder' => 'Address']
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
 
-		$btndel = new Form_Button (
-			'removerow',
-			'Remove',
-			'services_igmpproxy_edit.php?act=delrow&row=' . $tracker
-			);
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
 
-		$btndel->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-		$group->add($btndel);
+	$counter++;
+	$section->add($group);
+} // end foreach
 
-			$counter++;
-			$section->add($group);
-	} // end foreach
-} // end if
-
-$btnadd = new Form_Button (
-		'addrow',
-		'Add Network',
-		'services_igmpproxy_edit.php?act=addrow'
-		);
-
-$btnadd->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$section->addInput(new Form_StaticText(
-	null,
-	$btnadd . ' (Save after each Add or Delete)'
-));
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add network'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 

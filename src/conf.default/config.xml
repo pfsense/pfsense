@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>12.3</version>
+	<version>12.7</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -252,7 +252,7 @@
 		</monitor_type>
 	</load_balancer>
 	<widgets>
-		<sequence>system_information-container:col1:show,captive_portal_status-container:col1:close,carp_status-container:col1:close,cpu_graphs-container:col1:close,gateways-container:col1:close,gmirror_status-container:col1:close,installed_packages-container:col1:close,interface_statistics-container:col1:close,interfaces-container:col2:show,ipsec-container:col2:close,load_balancer_status-container:col2:close,log-container:col2:close,picture-container:col2:close,rss-container:col2:close,services_status-container:col2:close,traffic_graphs-container:col2:close</sequence>
+		<sequence>system_information:col1:show,interfaces:col2:show</sequence>
 	</widgets>
 	<openvpn/>
 	<dnshaper/>

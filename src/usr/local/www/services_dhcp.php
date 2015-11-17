@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	services_dhcp.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -69,6 +69,8 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once('rrd.inc');
+require_once("shaper.inc");
 
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -201,6 +203,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['rootpath'] = $dhcpdconf['rootpath'];
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
+	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -564,6 +567,11 @@ if (isset($_POST['submit'])) {
 		$dhcpdconf['filename32'] = $_POST['filename32'];
 		$dhcpdconf['filename64'] = $_POST['filename64'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
+		unset($dhcpdconf['statsgraph']);
+		if ($_POST['statsgraph']) {
+			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
+			enable_rrd_graphing();
+		}
 
 		// Handle the custom options rowhelper
 		if (isset($dhcpdconf['numberoptions']['item'])) {
@@ -692,7 +700,7 @@ function build_pooltable() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DHCP server"));
+$pgtitle = array(gettext("Services"), gettext("DHCP Server"));
 $shortcut_section = "dhcp";
 
 include("head.inc");
@@ -955,6 +963,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['dhcpleaseinlocaltime']
 	))->setHelp('By default DHCP leases are displayed in UTC time.	By checking this box DHCP lease time will be displayed in local time and set to the time zone selected.' .
 				' This will be used for all DHCP interfaces lease time');
+	$section->addInput(new Form_Checkbox(
+		'statsgraph',
+		'RRD graphs',
+		'Enable RRD graphs',
+		$pconfig['statsgraph']
+	))->setHelp('By default RRD graphs are disabled.');
 }
 
 // DDNS
@@ -1047,15 +1061,15 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_IpAddress(
 	'ntp1',
-	'Allow',
+	null,
 	$pconfig['ntp1']
-));
+))->setAttribute('placeholder', 'NTP Server 1');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
-	'Deny',
+	null,
 	$pconfig['ntp2']
-));
+))->setAttribute('placeholder', 'NTP Server 2');
 
 // Advanced TFTP
 $btnadv = new Form_Button(
@@ -1072,7 +1086,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_IpAddress(
 	'tftp',
-	'Allow',
+	null,
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server')->setPattern('[.a-zA-Z0-9_]+');
 
@@ -1310,8 +1324,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 							<?=htmlspecialchars($mapent['descr'])?>
 						</td>
 						<td>
-							<a class="btn btn-xs btn-info" href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"><?=gettext('Edit')?></a>
-							<a class="btn btn-xs btn-danger" href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php
@@ -1324,12 +1338,14 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 ?>
 		<table>
 	</div>
-
-	<nav class="action-buttons">
-		<br />
-		<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-sm btn-success"><?=gettext("Add")?></a>
-	</nav>
 </div>
+
+<nav class="action-buttons">
+	<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-sm btn-success">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 }
 ?>
@@ -1528,6 +1544,9 @@ events.push(function(){
 	show_advldap();
 	show_advboot();
 	show_advopts();
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

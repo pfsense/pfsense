@@ -1,34 +1,58 @@
 <?php
-/* $Id$ */
 /*
 	services_unbound_acls.php
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2011 Warren Baker <warren@decoy.co.za>
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2011 Warren Baker <warren@decoy.co.za>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 require("guiconfig.inc");
 require("unbound.inc");
@@ -173,7 +197,7 @@ $actionHelp =
 
 
 $closehead = false;
-$pgtitle = "Services: DNS Resolver: Access Lists";
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 $shortcut_section = "resolver";
 include("head.inc");
 
@@ -187,7 +211,7 @@ if (is_subsystem_dirty('unbound'))
 	print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
 $tab_array = array();
-$tab_array[] = array(gettext("General Settings"), false, "/services_unbound.php");
+$tab_array[] = array(gettext("General settings"), false, "/services_unbound.php");
 $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
@@ -216,7 +240,7 @@ if($act=="new" || $act=="edit") {
 
 	$section->addInput(new Form_Input(
 		'aclname',
-		'Access LIst name',
+		'Access List name',
 		'text',
 		$pconfig['aclname']
 	))->setHelp('Provide an Access List name.');
@@ -284,13 +308,13 @@ else // NOT 'edit' or 'add'
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Access Lists to control access to the DNS Resolver')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th><?=gettext("Access List Name"); ?></th>
-						<th><?=gettext("Action"); ?></th>
-						<th><?=gettext("Description"); ?></th>
-						<th>&nbsp;</th>
+						<th><?=gettext("Access List Name")?></th>
+						<th><?=gettext("Action")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -309,8 +333,8 @@ else // NOT 'edit' or 'add'
 							<?=htmlspecialchars($acl['description'])?>
 						</td>
 						<td>
-							<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-info" >Edit</a>
-							<a href="services_unbound_acls.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">Delete</a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit ACL')?>" href="services_unbound_acls.php?act=edit&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete ACL')?>" href="services_unbound_acls.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php
@@ -320,11 +344,24 @@ else // NOT 'edit' or 'add'
 				</tbody>
 			</table>
 		</div>
-		<nav class="action-buttons">
-			<a href="services_unbound_acls.php?act=new" class="btn btn-sm btn-success">Add</a>
-		</nav>
 	</div>
 </div>
+
+<nav class="action-buttons">
+	<a href="services_unbound_acls.php?act=new" class="btn btn-sm btn-success">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+});
+//]]>
+</script>
 <?php
 }
 

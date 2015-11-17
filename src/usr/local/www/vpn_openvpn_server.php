@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -1281,7 +1280,7 @@ else:
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Servers')?></h2></div>
 		<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Protocol / Port")?></th>
@@ -1308,8 +1307,8 @@ else:
 						<?=htmlspecialchars($server['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-						<a href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete server')?>" href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -1322,8 +1321,9 @@ else:
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success">
-		<?=gettext("Add server")?>
+	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success btn-sm">
+	<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
 	</a>
 </nav>
 

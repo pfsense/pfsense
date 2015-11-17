@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Dagorlad
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -554,6 +553,9 @@ events.push(function(){
 	hideCheckbox('notrap', true);
 	hideInput('leaptext', true);
 	hideInput('leapfile', true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

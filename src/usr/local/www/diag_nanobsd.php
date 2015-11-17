@@ -3,11 +3,10 @@
 	diag_nanobsd.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2009 Scott Ullrich <sullrich@gmail.com>
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -74,7 +73,7 @@ ini_set('max_input_time', '9999');
 require_once("guiconfig.inc");
 require_once("config.inc");
 
-// Setting DEBUG to true causes the dangerous stuff on this page to be simulated rather than exectued.
+// Setting DEBUG to true causes the dangerous stuff on this page to be simulated rather than executed.
 // MUST be set to false for production of course
 define(DEBUG, false);
 
@@ -136,7 +135,7 @@ if ($_POST['setrw']) {
 		conf_mount_ro();
 	}
 	else {
-		$savemsg = 'Saved r/w permanantly';
+		$savemsg = 'Saved r/w permanently';
 		$class = 'alert-success';
 	}
 }
@@ -168,7 +167,9 @@ $section->addInput(new Form_StaticText(
 if (is_writable("/")) {
 	$refcount = refcount_read(1000);
 	/* refcount_read returns -1 when shared memory section does not exist */
-	if ($refcount == 1 || $refcount == -1) {
+	/* refcount can be zero here when the user has set nanobsd_force_rw */
+	/* refcount 1 is normal, so only display the count for abnormal values */
+	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
 		$refdisplay = " (Reference count " . $refcount . ")";

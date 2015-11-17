@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	interfaces_vlan.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -129,10 +129,6 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
-		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
-		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'),$g['product_name']));
 ?>
 <form action="interfaces_vlan.php" method="post">
 	<input id="act" type="hidden" name="act" value="" />
@@ -140,44 +136,57 @@ print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 
 	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
-			<tr>
-				<th><?=gettext('Interface');?></th>
-				<th><?=gettext('VLAN tag');?></th>
-				<th><?=gettext('Description');?></th>
-			</tr>
+			<thead>
+				<tr>
+					<th><?=gettext('Interface');?></th>
+					<th><?=gettext('VLAN tag');?></th>
+					<th><?=gettext('Description');?></th>
+				</tr>
+			</thead>
 <?php
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
 ?>
-			<tr>
-				<td><?=htmlspecialchars($vlan['if']);?></td>
-				<td><?=htmlspecialchars($vlan['tag']);?></td>
-				<td><?=htmlspecialchars($vlan['descr']);?></td>
-				<td>
-					<a class="btn btn-primary btn-xs" role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-<!--					<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-					<a class="btn btn-danger btn-xs" role="button" id="del-<?=$i?>"><?=gettext('Delete')?></a></td>
-				</td>
-			</tr>
-		<?php
+				<tr>
+					<td><?=htmlspecialchars($vlan['if']);?></td>
+					<td><?=htmlspecialchars($vlan['tag']);?></td>
+					<td><?=htmlspecialchars($vlan['descr']);?></td>
+					<td>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+<!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
+						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+					</td>
+				</tr>
+<?php
 			$i++;
 	}
 ?>
 		</table>
 		<nav class="action-buttons">
-			<a class="btn btn-success" role="button" href="interfaces_vlan_edit.php"><?=gettext('Add VLAN'); ?></a>
+			<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
+				<i class="fa fa-plus icon-embed-btn"></i>
+				<?=gettext('Add'); ?>
+			</a>
 		</nav>
 	</div>
 </form>
 
+<div id="infoblock">
+	<?=print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
+		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
+		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
+		'%s handbook for information on supported cards.'),$g['product_name']), info)?>
+</div>
 <script>
 //<![CDATA[
 events.push(function(){
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
-		$('#act').val('del');
-		$('#id').val(this.id.replace("del-", ""));
-		$(this).parents('form').submit();
+		if(confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')) {
+			$('#act').val('del');
+			$('#id').val(this.id.replace("del-", ""));
+			$(this).parents('form').submit();
+		}
 	});
 });
 //]]>

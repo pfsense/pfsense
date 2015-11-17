@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_firewall.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -430,14 +431,14 @@ $section->addInput(new Form_Checkbox(
 	'Clear invalid DF bits instead of dropping the packets',
 	isset($config['system']['scrubnodf'])
 ))->setHelp('This allows for communications with hosts that generate fragmented '.
-	'packets with the don"t fragment (DF) bit set. Linux NFS is known to do this. '.
-	'This will cause the filter to not drop such packets but instead clear the don"t '.
+	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
+	'This will cause the filter to not drop such packets but instead clear the don\'t '.
 	'fragment bit.');
 
 $section->addInput(new Form_Checkbox(
 	'scrubrnid',
 	'IP Random id generation',
-	'Insert a stronger id into IP header of packets passing through the filter.',
+	'Insert a stronger ID into IP header of packets passing through the filter.',
 	isset($config['system']['scrubrnid'])
 ))->setHelp('Replaces the IP identification field of packets with random values to '.
 	'compensate for operating systems that use predictable values. This option only '.
@@ -774,7 +775,7 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	setOptText($('#optimization').val())
 });
 //]]>

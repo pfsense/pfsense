@@ -1,34 +1,61 @@
 <?php
-/* $Id$ */
 /*
 	services_dnsmasq.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
 	pfSense_MODULE: dnsforwarder
 */
@@ -183,7 +210,7 @@ function build_if_list() {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DNS forwarder"));
+$pgtitle = array(gettext("Services"), gettext("DNS Forwarder"));
 $shortcut_section = "forwarder";
 include("head.inc");
 
@@ -322,13 +349,13 @@ print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" is checked. If you don't use that option (or if you use".
 	" a static IP address on WAN), you must manually specify at".
 	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'));
+	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), info);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Host Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
@@ -356,8 +383,8 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 
@@ -379,7 +406,7 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -393,18 +420,21 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <?php
 print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				gettext("Use these for changing DNS results or for adding custom DNS records."));
+				gettext("Use these for changing DNS results or for adding custom DNS records."), info);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Domain Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
@@ -429,8 +459,8 @@ foreach ($a_domainOverrides as $i => $doment):
 						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -442,11 +472,14 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."));
+						" authoritative DNS server to be queried for that domain."), info);
 
 include("foot.inc");

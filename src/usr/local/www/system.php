@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	system.php
-	part of m0n0wall (http://m0n0.ch/wall)
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -90,6 +89,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
+$pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
@@ -97,8 +97,13 @@ if (!isset($pconfig['timeupdateinterval'])) {
 	$pconfig['timeupdateinterval'] = 300;
 }
 if (!$pconfig['timezone']) {
-	$pconfig['timezone'] = "Etc/UTC";
+	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+		$pconfig['timezone'] = $g['default_timezone'];
+	} else {
+		$pconfig['timezone'] = "Etc/UTC";
+	}
 }
+
 if (!$pconfig['timeservers']) {
 	$pconfig['timeservers'] = "pool.ntp.org";
 }
@@ -136,6 +141,12 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Hostname"), gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($_POST['webguicss']) {
+		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+	} else {
+		unset($config['system']['webgui']['webguicss']);
+	}
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -444,6 +455,26 @@ $section->addInput(new Form_Select(
 	$pconfig['language'],
 	get_locale_list()
 ))->setHelp('Choose a language for the webConfigurator');
+
+$form->add($section);
+
+$csslist = array();
+$css = glob("bootstrap/css/*.css");
+foreach ($css as $file) {
+	$file = basename($file);
+	if(substr($file, 0, 9) !== 'bootstrap') {
+		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
+	}
+}
+
+$section = new Form_Section('Web configurator theme');
+
+$section->addInput(new Form_Select(
+	'webguicss',
+	'Theme',
+	$pconfig['webguicss'],
+	$csslist
+))->setHelp("Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css");
 
 $form->add($section);
 

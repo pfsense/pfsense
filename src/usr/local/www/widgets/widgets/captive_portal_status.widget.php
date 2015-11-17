@@ -4,8 +4,10 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *  Copyright (c)  2007 Sam Wenham
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -125,7 +127,7 @@ if ($_GET['order']) {
 	usort($cpdb_all, "clientcmp");
 }
 ?>
-<table class="table">
+<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
 	<thead>
 	<tr>
 		<th><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></td>

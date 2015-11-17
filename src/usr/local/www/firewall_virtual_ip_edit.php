@@ -1,14 +1,13 @@
 <?php
-/* $Id$ */
 /*
-
 	firewall_virtual_ip_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
  *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -479,10 +478,12 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print($form);
-
-print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
-			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'));
 ?>
+
+<div id="infoblock">
+	<?=print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
+			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), info)?>
+</div>
 
 <script>
 //<![CDATA[
@@ -554,7 +555,7 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	check_mode();
 });
 //]]>

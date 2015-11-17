@@ -3,12 +3,14 @@
 	diag_traceroute.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +18,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +39,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -76,6 +78,9 @@ include("head.inc");
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
+$do_traceroute = false;
+$host = '';
+$ttl = DEFAULT_TTL;
 $pconfig['ttl'] = DEFAULT_TTL;
 $pconfig['ipproto'] = 'IPv4';
 $pconfig['sourceip'] = 'Any';
@@ -86,7 +91,7 @@ function create_sourceaddresslist() {
 	$sourceips = get_possible_traffic_source_addresses(true);
 
 	foreach ($sourceips as $sipvalue => $sipname)
-		$list[$sipname[value]] = $sipname[name];
+		$list[$sipvalue] = $sipname;
 
 	return($list);
 }
@@ -112,24 +117,22 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 	}
 
-	if (!$input_errors)
+	if (!$input_errors) {
 		$host = $_REQUEST['host'];
+	}
 
 	$sourceip = $_REQUEST['sourceip'];
-	$do_traceroute = true;
 	$ttl = $_REQUEST['ttl'];
 	$resolve = $_REQUEST['resolve'];
 	$useicmp = $_REQUEST['useicmp'];
 
+	if ($_POST) {
+		$do_traceroute = true;
+	}
+
 } else {
 	$resolve = false;
 	$useicmp = false;
-}
-
-if (!isset($do_traceroute)) {
-	$do_traceroute = false;
-	$host = '';
-	$ttl = DEFAULT_TTL;
 }
 
 if ($input_errors)
@@ -152,14 +155,14 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$pconfig['protocol'],
+	$pconfig['ipproto'],
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('Select the protocol to use');
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
-	$pconfig['source'],
+	$pconfig['sourceip'],
 	create_sourceaddresslist()
 ))->setHelp('Select source address for the trace');
 

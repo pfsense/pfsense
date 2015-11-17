@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_out_edit.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Scott Ullrich
- *  Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *  Redistribution and use in source and binary forms, with or without modification,
  *  are permitted provided that the following conditions are met:
@@ -39,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -68,6 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
@@ -476,9 +476,8 @@ if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 	$interfaces['pppoe'] = "PPPoE Server";
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0"))
+	$interfaces["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
@@ -666,14 +665,14 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext("by") . $a_out[$id]['created']['username']
+			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext(" by ") . $a_out[$id]['created']['username']
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext("by") . $a_out[$id]['updated']['username']
+			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext(" by ") . $a_out[$id]['updated']['username']
 		));
 	}
 

@@ -57,6 +57,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("shortcuts.inc");
 require_once("service-utils.inc");
+require_once('notices.inc');
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -87,7 +88,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 	<title><?=$tabtitle?></title>
 	<script>var events = events || [];</script>
 </head>
-<body id="<?=basename($_SERVER['SCRIPT_NAME'], '.php')?>">
+
 <?php
 
 /* Determine automated help URL. Should output the page name and parameters
@@ -553,20 +554,21 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<a type="button" class="btn btn-primary" href="javascript:clear_notices();">Mark all as read</a>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark all as read")?></button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	// Do some Ajax to make index.php clear the notices
-	function clear_notices() {
-		xmlhttp=new XMLHttpRequest();
-		xmlhttp.open("GET","index.php?closenotice=all",true);
-		xmlhttp.send();
-		location.reload(); // reload the page to clear the notices indicator and dismiss the modal dialog all in one
-	}
+//<![CDATA[
+	events.push(function(){
+	    $('#clearallnotices').click(function() {
+	        <?php close_notice("all"); ?>
+	        window.location = window.location.href;
+		});
+	});
+//]]>
 </script>
 
 <?php endif;

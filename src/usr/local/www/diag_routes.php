@@ -112,7 +112,7 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	1
 ));
-$section = new Form_Section('Traceroute');
+$section = new Form_Section('Routing Table Display Options');
 
 $section->addInput(new Form_Checkbox(
 	'resolve',

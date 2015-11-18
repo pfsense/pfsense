@@ -354,14 +354,14 @@ create_Full_update_tarball() {
 	rm ${FINAL_CHROOT_DIR}/boot/loader.conf.local 2>/dev/null
 
 	# Old systems will run (pre|post)_upgrade_command from /tmp
-	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command ]; then
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command ]; then
 		cp -p \
-			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command \
 			${FINAL_CHROOT_DIR}/tmp
 	fi
-	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command ]; then
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command ]; then
 		cp -p \
-			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command \
 			${FINAL_CHROOT_DIR}/tmp
 	fi
 
@@ -1047,11 +1047,11 @@ clone_to_staging_area() {
 		${BUILDER_TOOLS}/templates/core_pkg/base/exclude_files \
 		> ${_exclude_files}
 
-	mkdir -p ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME} >/dev/null 2>&1
+	mkdir -p ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR} >/dev/null 2>&1
 
 	# Include a sample pkg stable conf to base
 	setup_pkg_repo \
-		${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo.conf
+		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
 		${PKG_REPO_CONF_BRANCH} \
@@ -1059,7 +1059,7 @@ clone_to_staging_area() {
 
 	# Include a sample pkg devel conf to base
 	setup_pkg_repo \
-		${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo-devel.conf
+		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
 		${PKG_REPO_CONF_BRANCH}
@@ -1069,20 +1069,20 @@ clone_to_staging_area() {
 		-k uid,gid,mode,size,flags,sha256digest \
 		-p ${STAGE_CHROOT_DIR} \
 		-X ${_exclude_files} \
-		> ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/base.mtree
+		> ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/base.mtree
 	tar \
 		-C ${STAGE_CHROOT_DIR} \
-		-cJf ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/base.txz \
+		-cJf ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/base.txz \
 		-X ${_exclude_files} \
 		.
 
 	# Create repo and repo-devel packages
-	cp -f ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo.conf \
+	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
 		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
 
 	core_pkg_create repo "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
-	cp -f ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo-devel.conf \
+	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
 		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
 
 	core_pkg_create repo-devel "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}

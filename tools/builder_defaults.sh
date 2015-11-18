@@ -310,6 +310,8 @@ export PKG_REPO_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}.
 export PKG_REPO_DEVEL_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-devel.conf.template"}
 export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}
 
+export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"}
+
 # Package overlay. This gives people a chance to build product
 # installable image that already contains certain extra packages.
 #

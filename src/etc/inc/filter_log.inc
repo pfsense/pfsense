@@ -82,7 +82,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	}
 
 	$filterlog = array();
@@ -356,7 +356,7 @@ function buffer_rules_load() {
 	$buffer_rules_rdr = array();
 	$buffer_rules_normal = array();
 
-	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/grep '^@'", $buffer);
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);

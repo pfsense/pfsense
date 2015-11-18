@@ -1,6 +1,6 @@
 <?php
 /*
-	system_firmware_settings.php
+	system_update_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -62,10 +62,11 @@
 ##|*IDENT=page-system-firmware-settings
 ##|*NAME=System: Firmware: Settings page
 ##|*DESCR=Allow access to the 'System: Firmware: Settings' page.
-##|*MATCH=system_firmware_settings.php*
+##|*MATCH=system_update_settings.php*
 ##|-PRIV
 
 require("guiconfig.inc");
+require("pkg-utils.inc");
 
 if ($_POST) {
 	unset($input_errors);
@@ -76,19 +77,13 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if ($_POST['alturlenable'] == "yes") {
-			$config['system']['firmware']['alturl']['enable'] = true;
-			$config['system']['firmware']['alturl']['firmwareurl'] = $_POST['firmwareurl'];
-		} else {
-			unset($config['system']['firmware']['alturl']['enable']);
-			unset($config['system']['firmware']['alturl']['firmwareurl']);
-			unset($config['system']['firmware']['alturl']);
-			unset($config['system']['firmware']);
-		}
-		if ($_POST['allowinvalidsig'] == "yes") {
-			$config['system']['firmware']['allowinvalidsig'] = true;
-		} else {
-			unset($config['system']['firmware']['allowinvalidsig']);
+		// Set the firmware branch, but only if we are not using it already
+		if ($_POST['fwbranch']) {
+			if(($_POST['fwbranch'] == "development") && is_pkg_installed($g['product_name'] . "-repo")) {
+				pkg_switch_repo(true);
+			} else if(($_POST['fwbranch'] == "stable") && is_pkg_installed($g['product_name'] . "-repo-devel")) {
+				pkg_switch_repo(false);
+			}
 		}
 
 		if ($_POST['disablecheck'] == "yes") {
@@ -129,7 +124,8 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
+$tab_array[] = array(gettext("Updater Settings"), true, "system_update_settings.php");
+$tab_array[] = array(gettext("Upgrade"), false, "pkg_mgr_install.php?id=firmware");
 display_top_tabs($tab_array);
 
 require_once('classes/Form.class.php');
@@ -138,61 +134,25 @@ $form = new Form();
 
 $section = new Form_Section('Firmware Branch');
 
-if(is_array($preset_urls_split)) {
-	$urllist = array();
-
-	foreach($preset_urls_split as $pus) {
-		$pus_text = explode("\t", $pus);
-		if (empty($pus_text[0]))
-			continue;
-		if (stristr($pus_text[0], php_uname("m")) !== false) {
-			$yourarch = " (Current architecture)";
-			$choice = $pus_text[1];
-		} else {
-			$yourarch = "";
-		}
-
-		$urllist[$pus_text[1]] = $pus_text[0] . $yourarch;
-	}
-
-	$section->addInput(new Form_Select(
-	   'preseturls',
-	   'Default Auto Update URLs',
-	   $choice,
-	   $urllist
-	   ))->setHelp('Entries denoted by "Current architecture" match the architecture of your current installation, ' .
-	   'such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes.', [php_uname("m")]);
-
-	$form->add($section);
-}
-
-$section = new Form_Section('Firmware Auto Update URL');
-
-$section->addInput(new Form_Checkbox(
-	'alturlenable',
-	'Unofficial',
-	'Allow the use of an "unofficial" server for firmware upgrades',
-	isset($curcfg['alturl']['enable'])
-	));
-
-$section->addInput(new Form_Input(
-	'firmwareurl',
-	'Base URL',
-	'text'
-	))->setHelp('This is where %s will check for newer firmware versions when the <a href="system_firmware_check.php">' .
-				'System: Firmware: Auto Update</a> page is viewed', [$g['product_name']]);
+$section->addInput(new Form_Select(
+	fwbranch,
+	'Branch',
+	(is_pkg_installed($g['product_name'] . "-repo")) ? "stable":"development",
+	["stable" => "Stable", "development" => "Development"]
+))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
+			'Use of the development version is at your own risk!');
 
 $form->add($section);
 
 $section = new Form_Section('Updates');
-
+/*
 $section->addInput(new Form_Checkbox(
 	'allowinvalidsig',
 	'Unsigned images',
 	'Allow auto-update firmware images with a missing or invalid digital signature to be used',
 	isset($curcfg['allowinvalidsig'])
 	));
-
+*/
 $section->addInput(new Form_Checkbox(
 	'disablecheck',
 	'Dashboard check',

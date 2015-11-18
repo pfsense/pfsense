@@ -1146,11 +1146,11 @@ $priv_list['page-system-crlmanager']['descr'] = gettext("Allow access to the 'Sy
 $priv_list['page-system-crlmanager']['match'] = array();
 $priv_list['page-system-crlmanager']['match'][] = "system_crlmanager.php*";
 
-$priv_list['page-system-firmware-settings'] = array();
-$priv_list['page-system-firmware-settings']['name'] = gettext("WebCfg - System: Firmware: Settings page");
-$priv_list['page-system-firmware-settings']['descr'] = gettext("Allow access to the 'System: Firmware: Settings' page.");
-$priv_list['page-system-firmware-settings']['match'] = array();
-$priv_list['page-system-firmware-settings']['match'][] = "system_firmware_settings.php*";
+$priv_list['page-system-update-settings'] = array();
+$priv_list['page-system-update-settings']['name'] = gettext("WebCfg - System: Update: Settings page");
+$priv_list['page-system-update-settings']['descr'] = gettext("Allow access to the 'System: Update: Settings' page.");
+$priv_list['page-system-update-settings']['match'] = array();
+$priv_list['page-system-update-settings']['match'][] = "system_update_settings.php*";
 
 $priv_list['page-system-gatewaygroups'] = array();
 $priv_list['page-system-gatewaygroups']['name'] = gettext("WebCfg - System: Gateway Groups page");

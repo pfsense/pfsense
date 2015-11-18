@@ -838,6 +838,7 @@
 /usr/local/www/system_firmware.php
 /usr/local/www/system_firmware_auto.php
 /usr/local/www/system_firmware_check.php
+/usr/local/www/system_firmware_settings.php
 /usr/local/www/system_firmware_restorefullbackup.php
 /usr/local/www/system_usermanager_addcert.php
 /usr/local/www/themes

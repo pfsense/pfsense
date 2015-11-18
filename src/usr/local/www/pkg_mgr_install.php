@@ -244,6 +244,11 @@ if ($_POST) {
 	}
 }
 
+if($_GET && $_GET['id'] == "firmware") {
+	$firmwareupdate = true;
+	$firmwareversion = get_system_pkg_version();
+}
+
 $pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
@@ -251,12 +256,12 @@ $tab_array = array();
 $tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
 $tab_array[] = array(gettext("Package Installer"), true, "");
-display_top_tabs($tab_array);
 
-if($_GET && $_GET['id'] == "firmware") {
-	$firmwareupdate = true;
-	$firmwareversion = get_system_pkg_version();
+if($firmwareupdate) {
+	$tab_array[] = array(gettext("Updater Settings"), false, "system_update_settings.php");
 }
+
+display_top_tabs($tab_array);
 
 if ($input_errors)
 	print_input_errors($input_errors);

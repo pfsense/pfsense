@@ -111,7 +111,7 @@ $mandfldhtmlspc = "";	/* same as above, but with spacing */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
 		if (!$d_isfwfile) {
-			header("Location: system_firmware.php");
+			header("Location: system_update.php");
 			exit;
 		} else {
 			return;

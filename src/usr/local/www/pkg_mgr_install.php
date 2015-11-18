@@ -255,8 +255,11 @@ include("head.inc");
 $tab_array = array();
 $tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
-$tab_array[] = array(gettext("Package Installer"), true, "");
-
+if($firmwareupdate) {
+	$tab_array[] = array(gettext("System update"), true, "");
+} else {
+	$tab_array[] = array(gettext("Package Installer"), true, "");
+}
 if($firmwareupdate) {
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 }
@@ -350,7 +353,7 @@ if ($input_errors)
 			<label class="col-sm-2 control-label">
 			</label>
 			<div class="col-sm-10">
-				<?=($firmwareversion) ? gettext("System firmware is up to date") : ""?>
+				<?=($firmwareversion) ? gettext("System is up to date") : ""?>
 			</div>
 		</div>
 <?php
@@ -367,7 +370,7 @@ if ($input_errors)
 <?php endif;
 
 if($firmwareupdate && !$firmwareversion) {
-	print_info_box(gettext("Unable to retrieve system firmware versions"), danger);
+	print_info_box(gettext("Unable to retrieve system versions"), danger);
 }
 
 if ($_POST['mode'] == 'delete') {
@@ -400,7 +403,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 		<div class="panel-heading">
 <?php if($firmwareupdate) {
 ?>
-			<h2 class="panel-title" id="status"><?=gettext("Updating system firmware")?></h2>
+			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
 <?php } else {
 ?>
  			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
@@ -497,9 +500,13 @@ function setProgress(barName, percent, transition) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if("<?=$_POST['mode']?>" != "reinstallall")
-		$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
-	else
+	if("<?=$_POST['mode']?>" != "reinstallall") {
+		if("<?=$pkgid?>" == "firmware") {
+			$('#final').html("<b>" + "System update" + " " + "<?=gettext(' successfully completed')?>");
+		} else {
+			$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+		}
+	} else
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
 
 	$('#final').show();

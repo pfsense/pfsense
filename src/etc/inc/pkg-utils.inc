@@ -1137,4 +1137,30 @@ function get_system_pkg_version() {
 	);
 }
 
+/* Switch between stable and devel repos */
+function pkg_switch_repo($devel = false) {
+	global $g;
+
+	$repo_stable = $g['product_name'] . '-repo';
+	$repo_devel = $g['product_name'] . '-repo-devel';
+
+	if ($devel) {
+		$repo_target = $repo_devel;
+	} else {
+		$repo_target = $repo_stable;
+	}
+
+	if (is_pkg_installed($repo_target)) {
+		/* It's already installed */
+		return true;
+	}
+
+	/*
+	 * Since both install files in the same place, just
+	 * call pkg_install for target and current one will
+	 * be replaced
+	 */
+	return pkg_install($repo_target, true);
+}
+
 ?>

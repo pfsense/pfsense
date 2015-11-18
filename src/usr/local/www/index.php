@@ -288,7 +288,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div class="panel panel-default" id="widget-available">
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
-		<span class="icons">
+		<span class="widget-heading-icon">
 			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
 				<i class="icon-white icon-plus-sign"></i>
 			</a>
@@ -364,7 +364,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
-				<span class="icons">
+				<span class="icons widget-heading-icon">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
 						<i class="icon-white icon-wrench"></i>
 					</a>

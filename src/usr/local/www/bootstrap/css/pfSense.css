@@ -356,3 +356,10 @@ form .btn + .btn {
 	padding-right: 4px;
 	padding-left: 4px;
 }
+
+/* icons in the dashboard panel headings should pull-right **/
+.widget-heading-icon
+{
+	display: block;
+	float:	right;	
+}

@@ -335,7 +335,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
-						<td>*</td>
+						<td></td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>

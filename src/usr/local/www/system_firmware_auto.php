@@ -92,8 +92,6 @@ $tab_array = array();
 $tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
 $tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
 $tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-if($g['hidedownloadbackup'] == false)
-	$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
 
 display_top_tabs($tab_array);
 ?>

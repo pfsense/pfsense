@@ -60,12 +60,6 @@ $priv_list['page-diagnostics-ndptable']['descr'] = gettext("Allow access to the 
 $priv_list['page-diagnostics-ndptable']['match'] = array();
 $priv_list['page-diagnostics-ndptable']['match'][] = "diag_ndp.php*";
 
-$priv_list['page-diagnostics-restore-full-backup'] = array();
-$priv_list['page-diagnostics-restore-full-backup']['name'] = gettext("Webcfg - Diagnostics: Restore full backup");
-$priv_list['page-diagnostics-restore-full-backup']['descr'] = gettext("Allow access to the 'Diagnostics: Restore Full Backup' page.");
-$priv_list['page-diagnostics-restore-full-backup']['match'] = array();
-$priv_list['page-diagnostics-restore-full-backup']['match'][] = "system_firmware_restorefullbackup.php";
-
 $priv_list['page-diagnostics-showstates'] = array();
 $priv_list['page-diagnostics-showstates']['name'] = gettext("WebCfg - Diagnostics: Show States page");
 $priv_list['page-diagnostics-showstates']['descr'] = gettext("Allow access to the 'Diagnostics: Show States' page.");

@@ -261,7 +261,6 @@ $helppages = array(
 	'status_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'services_ntpd_gps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'services_ntpd_pps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
-	'system_firmware_restorefullbackup.php' => 'https://doc.pfsense.org/index.php/Full_Backup',
 	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_pool.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Load_Balancing_Pool',

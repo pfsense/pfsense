@@ -1,4 +1,5 @@
 @import url("/bootstrap/css/bootstrap.min.css");
+@import url("/bootstrap/glyphicons/glyphicons-halflings.css");
 
 h1 a:link{
 	color: #000000;

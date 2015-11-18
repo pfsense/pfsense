@@ -499,7 +499,7 @@ foreach($a_user as $i => $userent):
 	else
 		$usrimg = 'user';
 ?>
-					<i class="icon icon-<?=$usrimg?>"></i>
+					<i class="fa fa-<?=$usrimg?>"></i>
 					<?=htmlspecialchars($userent['name'])?>
 				</td>
 				<td><?=htmlspecialchars($userent['descr'])?></td>

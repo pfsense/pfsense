@@ -417,11 +417,11 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr")) {
-		return "icon-ok-circle";
+		return "fa-check-circle-o";
 	} else if (strstr(strtolower($action), "r")) {
-		return "icon-remove-circle";
+		return "fa-times-circle-o";
 	} else {
-		return "icon-ban-circle";
+		return "fa-ban";
 	}
 }
 

@@ -290,7 +290,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
 		<span class="widget-heading-icon">
 			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
-				<i class="icon-white icon-plus-sign"></i>
+				<i class="fa fa-plus-cirle"></i>
 			</a>
 		</span>
 	</div>
@@ -301,7 +301,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 foreach ($widgets as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):
 ?>
-		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
 			</div>
@@ -364,16 +364,16 @@ foreach ($widgets as $widgetname => $widgetconfig)
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
-				<span class="icons widget-heading-icon">
+				<span class="widget-heading-icon">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="icon-white icon-wrench"></i>
+						<i class="fa fa-wrench"></i>
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon-white icon-plus-sign"></i>
+						<i class="fa fa-plus-circle"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="icon-white icon-remove-sign"></i>
+						<i class="fa fa-times-circle"></i>
 					</a>
 				</span>
 			</div>
@@ -419,12 +419,12 @@ events.push(function() {
 		var body = $(el).parents('.panel').children('.panel-body')
 		var isOpen = body.hasClass('in');
 
-		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
-		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
 
 		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('icon-minus-sign', true);
-			$(el).children('i').toggleClass('icon-plus-sign', false);
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
 
 			if($(el).closest('a').attr('name') != 'widgets-available') {
 				updateWidgets();
@@ -432,8 +432,8 @@ events.push(function() {
 		});
 
 		body.on('hidden.bs.collapse', function(){
-			$(el).children('i').toggleClass('icon-minus-sign', false);
-			$(el).children('i').toggleClass('icon-plus-sign', true);
+			$(el).children('i').toggleClass('fa-minus-circle', false);
+			$(el).children('i').toggleClass('fa-plus-circle', true);
 
 			if($(el).closest('a').attr('name') != 'widgets-available') {
 				updateWidgets();

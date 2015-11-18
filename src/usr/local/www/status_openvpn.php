@@ -200,7 +200,7 @@ include("head.inc"); ?>
 							   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
-							<i class="icon icon-remove"></i>
+							<i class="fa fa-times"></i>
 							</a>
 						</td>
 					</tr>

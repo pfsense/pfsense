@@ -98,7 +98,7 @@ if (count($devs) > 0)  {
 		}
 ?>
 		<tr>
-			<td><i class="icon icon-<?=$icon?>-sign"></i></td>
+			<td><i class="fa fa-<?=$icon?>-circle"></i></td>
 			<td><?=$dev?></td>
 			<td><?=$dev_ident?></td>
 			<td><?=ucfirst($dev_state)?></td>

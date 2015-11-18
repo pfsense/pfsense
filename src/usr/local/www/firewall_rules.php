@@ -291,7 +291,7 @@ display_top_tabs($tab_array);
 ?>
 					<tr id="antilockout">
 						<td></td>
-						<td title="<?=gettext("traffic is passed")?>"><i class="icon icon-ok"></i></td>
+						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check"></i></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -309,7 +309,7 @@ display_top_tabs($tab_array);
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
 					<tr id="frrfc1918">
 						<td></td>
-						<td title="<?=gettext("traffic is blocked")?>"><i class="icon icon-remove"></i></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times"></i></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -327,7 +327,7 @@ display_top_tabs($tab_array);
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
 					<tr id="frrfc1918">
 					<td></td>
-						<td title="<?=gettext("traffic is blocked")?>"><i class="icon icon-remove"></i></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times"></i></td>
 						<td>*</td>
 						<td><?=gettext("Reserved/not assigned by IANA");?></td>
 						<td>*</td>
@@ -363,7 +363,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 
 	<?php
 		if ($filterent['type'] == "block") {
-			$iconfn = "remove";
+			$iconfn = "times";
 			$title_text = gettext("traffic is blocked");
 		} else if ($filterent['type'] == "reject") {
 			$iconfn = "fire";
@@ -372,20 +372,20 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			$iconfn = "filter";
 			$title_text = gettext("traffic is matched");
 		} else {
-			$iconfn = "ok";
+			$iconfn = "check";
 			$title_text = gettext("traffic is passed");
 		}
 	?>
 						<td title="<?=$title_text?>">
 
-							<i class="icon icon-<?=$iconfn?>"></i>
+							<i class="fa fa-<?=$iconfn?>"></i>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset)
 			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
 
 		if (isset($filterent['log']))
-			print '<i class="icon icon-tasks" title="'. gettext("traffic is logged") .'"></i>';
+			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'"></i>';
 	?>
 						</td>
 	<?php
@@ -679,11 +679,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		<dl class="dl-horizontal responsive">
 		<!-- Legend -->
 			<dt><?=gettext('Legend')?></dt>				<dd></dd>
-			<dt><i class="icon icon-ok"></i></dt>		<dd><?=gettext("Pass");?></dd>
-			<dt><i class="icon icon-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
-			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("Block");?></dd>
-			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
-			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
+			<dt><i class="fa fa-check"></i></dt>		<dd><?=gettext("Pass");?></dd>
+			<dt><i class="fa fa-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
+			<dt><i class="fa fa-times"></i></dt>	<dd><?=gettext("Block");?></dd>
+			<dt><i class="fa fa-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="fa fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 		</dl>
 

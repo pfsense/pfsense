@@ -189,7 +189,7 @@ function output_menu($arrayitem, $target = null) {
 $system_menu = array();
 $system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
-$system_menu[] = array(gettext("Upgrade"), "/pkg_mgr_install.php?id=firmware");
+$system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {

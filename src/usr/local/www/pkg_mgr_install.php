@@ -258,7 +258,7 @@ $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.ph
 $tab_array[] = array(gettext("Package Installer"), true, "");
 
 if($firmwareupdate) {
-	$tab_array[] = array(gettext("Updater Settings"), false, "system_update_settings.php");
+	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 }
 
 display_top_tabs($tab_array);
@@ -306,7 +306,7 @@ if ($input_errors)
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=$g['product_name']?> <?=gettext(" system firmware update")?>
+				<?=$g['product_name']?> <?=gettext(" system update")?>
 <?php
 			} else {
 ?>
@@ -323,7 +323,7 @@ if ($input_errors)
 ?>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Installed firmware")?>
+				<?=gettext("Current base system")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['installed_version']?>
@@ -332,7 +332,7 @@ if ($input_errors)
 
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Newest firmware")?>
+				<?=gettext("Latest base system")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['version']?>

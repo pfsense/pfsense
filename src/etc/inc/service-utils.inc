@@ -465,7 +465,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-play" : "icon icon-large icon-play";
+		$output .= ($smallicon) ? "fa fa-play" : "fa fa-lg fa-play";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -474,7 +474,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-remove" : "icon icon-large icon-remove";
+		$output .= ($smallicon) ? "fa fa-times" : "fa fa-lg fa-times";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -512,7 +512,7 @@ function get_service_control_GET_links($service, $addname = false) {
 			default:
 				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+		$output .= "<i class=\"fa fa-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
@@ -523,13 +523,13 @@ function get_service_control_GET_links($service, $addname = false) {
 			default:
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+		$output .= "<i class=\"fa fa-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
 			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="icon icon-play-circle"></i></a> ';
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
 		}
 	}
 
@@ -564,7 +564,7 @@ function get_service_control_links($service, $addname = false) {
 				$output .= '<a href="#" id="restartservice-' . $service['name'] . '" >';
 		}
 
-		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+		$output .= "<i class=\"fa fa-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
 
 		switch ($service['name']) {
 			case "openvpn":
@@ -577,14 +577,14 @@ function get_service_control_links($service, $addname = false) {
 				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
 		}
 
-		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+		$output .= "<i class=\"fa fa-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
 
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
 			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="icon icon-play-circle"></i></a> ';
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
 		}
 	}
 

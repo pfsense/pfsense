@@ -409,7 +409,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
 		list(,$rulename,) = explode("\"", $ruleString);
-		$rulename = str_replace("USER_RULE: ", '<i class="icon-large icon-user"></i> ', $rulename);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $rulename);
 	}
 	return "{$rulename} ({$lookup_key})";
 }

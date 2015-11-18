@@ -377,7 +377,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset)
-			print '<i class="icon icon-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
+			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
 
 		if (isset($filterent['log']))
 			print '<i class="icon icon-tasks" title="'. gettext("traffic is logged") .'"></i>';
@@ -508,18 +508,18 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		if (!isset($filterent['disabled'])) {
 			if ($schedstatus) {
 				if ($iconfn == "block" || $iconfn == "reject") {
-					$image = "icon_block";
+					$image = "times-circle";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
 				} else {
-					$image = "icon_pass";
+					$image = "play-circle";
 					$alttext = gettext("Traffic matching this rule is currently being allowed");
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
 				if ($iconfn == "block" || $iconfn == "reject")
-					$image = "icon_block_d";
+					$image = "times-circle";
 				else
-					$image = "icon_block";
+					$image = "times-circle";
 				$alttext = gettext("This rule is not currently active because its period has expired");
 				$printicon = true;
 			}
@@ -604,7 +604,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if ($printicon) { ?>
-								<i class="icon-large <?=$image;?>" title="<?=$alttext;?>" alt="icon" />
+								<i class="fa fa-<?=$image;?>" title="<?=$alttext;?>" alt="icon" />
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>
@@ -679,7 +679,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<dt><i class="icon icon-remove"></i></dt>	<dd><?=gettext("Block");?></dd>
 			<dt><i class="icon icon-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="icon icon-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
-			<dt><i class="icon icon-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
+			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 		</dl>
 
 <?php

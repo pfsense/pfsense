@@ -367,7 +367,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<i class="icon-large icon-exclamation-sign"></i>
+								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>

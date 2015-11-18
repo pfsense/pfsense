@@ -137,9 +137,9 @@ function dump_clog_vpn($logfile, $tail) {
 		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
 		if ($llent[0] == "login") {
-			echo "<td><i class=\"icon-large icon-arrow-left\" alt=\"in\"></i></td>\n";
+			echo "<td><i class=\"fa fa-arrow-left\" alt=\"in\"></i></td>\n";
 		} else {
-			echo "<td><i class=\"icon-large icon-arrow-right\" alt=\"out\"></i></td>\n";
+			echo "<td><i class=\"fa fa-arrow-right\" alt=\"out\"></i></td>\n";
 		}
 
 		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";

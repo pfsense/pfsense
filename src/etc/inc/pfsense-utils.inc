@@ -1339,7 +1339,7 @@ function get_interface_info($ifdescr) {
 			}
 
 			$usbmodemoutput = array();
-			exec("usbconfig", $usbmodemoutput);
+			exec("/usr/sbin/usbconfig", $usbmodemoutput);
 			$mondev = "{$g['tmp_path']}/3gstats.{$ifdescr}";
 			if (file_exists($mondev)) {
 				$cellstats = file($mondev);
@@ -1491,7 +1491,7 @@ function add_hostname_to_watch($hostname) {
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
+		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if ($rethost == 0) {
 			foreach ($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1568,7 +1568,7 @@ function compare_hostname_to_dnscache($hostname) {
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
+		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if ($rethost == 0) {
 			foreach ($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -2275,7 +2275,7 @@ function nanobsd_switch_boot_slice() {
 	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
 	set_single_sysctl("kern.geom.debugflags", "16");
-	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/sbin/gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	// We can't update these if they are mounted now.
 	if ($BOOTFLASH != $slice) {
@@ -2327,7 +2327,7 @@ EOF;
 			$status = false;
 		}
 	} else {
-		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
+		$status = exec("/usr/bin/sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
 	}
 	exec("/sbin/umount {$tmppath}");
 	rmdir($tmppath);
@@ -3036,7 +3036,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 		return;
 	}
 
-	exec("ifconfig", $out, $ret);
+	exec("/sbin/ifconfig", $out, $ret);
 	foreach ($out as $line) {
 		if (preg_match("/^({$ifpattern}[0-9]+):/i", $line, $match)) {
 			$if_arr[] = $match[1];

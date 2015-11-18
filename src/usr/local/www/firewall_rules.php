@@ -361,19 +361,24 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 
-						<td title="<?=gettext("traffic is ").$filterent['type']."ed"?>">
-
 	<?php
-		if ($filterent['type'] == "block")
+		if ($filterent['type'] == "block") {
 			$iconfn = "remove";
-		else if ($filterent['type'] == "reject")
+			$title_text = gettext("traffic is blocked");
+		} else if ($filterent['type'] == "reject") {
 			$iconfn = "fire";
-		else if ($filterent['type'] == "match")
+			$title_text = gettext("traffic is rejected");
+		} else if ($filterent['type'] == "match") {
 			$iconfn = "filter";
-		else
+			$title_text = gettext("traffic is matched");
+		} else {
 			$iconfn = "ok";
+			$title_text = gettext("traffic is passed");
+		}
 	?>
-					<i class="icon icon-<?=$iconfn?>"></i>
+						<td title="<?=$title_text?>">
+
+							<i class="icon icon-<?=$iconfn?>"></i>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset)
@@ -382,7 +387,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		if (isset($filterent['log']))
 			print '<i class="icon icon-tasks" title="'. gettext("traffic is logged") .'"></i>';
 	?>
-				</td>
+						</td>
 	<?php
 		$alias = rule_columns_with_alias(
 			$filterent['source']['address'],

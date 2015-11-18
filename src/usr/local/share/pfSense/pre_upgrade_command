@@ -85,5 +85,8 @@ if grep -q 'mtree *-PU' /etc/rc.firmware; then
 	fi
 fi
 
+# Make sure /boot files are not protected with schg
+chflags -R noschg /boot >/dev/null 2>&1
+
 rm /boot/kernel/*
 

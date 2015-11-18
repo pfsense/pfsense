@@ -82,7 +82,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	}
 
 	$filterlog = array();

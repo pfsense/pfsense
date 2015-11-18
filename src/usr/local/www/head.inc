@@ -581,3 +581,6 @@ if (are_notices_pending()):?>
 </script>
 
 <?php endif;
+
+// Get the flash Messages
+get_flash_message();

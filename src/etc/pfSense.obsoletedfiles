@@ -55,6 +55,7 @@
 /etc/phpshellsessions/restartftphelper
 /etc/ping_hosts.sh
 /etc/portsnap.conf
+/etc/rc.create_full_backup
 /etc/rc.d/amd
 /etc/rc.d/auto_linklocal
 /etc/rc.d/bluetooth
@@ -88,7 +89,9 @@
 /etc/rc.d/uzip
 /etc/rc.dyndns.storecache
 /etc/rc.firewall6
-/etc/rc.initial_firmware_update
+/etc/rc.firmware
+/etc/rc.firmware_auto
+/etc/rc.initial.firmware_update
 /etc/rc.linkup.sh
 /etc/rc.parse-isc-dhcpd
 /etc/rc.sendmail
@@ -832,6 +835,7 @@
 /usr/local/www/status_slbd_vs.php
 /usr/local/www/system_advanced.php
 /usr/local/www/system_advanced_create_certs.php
+/usr/local/www/system_firmware_restorefullbackup.php
 /usr/local/www/system_usermanager_addcert.php
 /usr/local/www/themes
 /usr/local/www/ticker.js

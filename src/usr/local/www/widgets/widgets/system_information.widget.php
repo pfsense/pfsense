@@ -104,8 +104,6 @@ if ($_REQUEST['getupdatestatus']) {
 	exit;
 }
 
-$curcfg = $config['system']['firmware'];
-
 $filesystems = get_mounted_filesystems();
 ?>
 

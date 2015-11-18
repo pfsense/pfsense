@@ -1048,6 +1048,22 @@ clone_to_staging_area() {
 		> ${_exclude_files}
 
 	mkdir -p ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME} >/dev/null 2>&1
+
+	# Include a sample pkg stable conf to base
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo.conf
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		"release"
+
+	# Include a sample pkg devel conf to base
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo-devel.conf
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+
 	mtree \
 		-c \
 		-k uid,gid,mode,size,flags,sha256digest \
@@ -1060,22 +1076,17 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	setup_pkg_repo \
-		${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
-		${TARGET} \
-		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH} \
-		"release"
+	# Create repo and repo-devel packages
+	cp -f ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo.conf \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
 
 	core_pkg_create repo "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
-	setup_pkg_repo \
-		${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
-		${TARGET} \
-		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH}
+	cp -f ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo-devel.conf \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
 
 	core_pkg_create repo-devel "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
 	rm -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
 
 	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}

@@ -363,3 +363,11 @@ form .btn + .btn {
 	display: block;
 	float:	right;	
 }
+
+.widget-heading-icon .fa {
+    color: #fff;
+}
+
+.widget-heading-icon .fa:hover {
+    color: #e0e0e0;
+}

@@ -1838,10 +1838,9 @@ function update_output_window($text) {
  */
 function update_status($status) {
 	global $pkg_interface;
+
 	if ($pkg_interface == "console") {
 		echo "\r{$status}";
-	} else {
-		echo '<script>document.getElementById("status").innerText="'. htmlspecialchars($status).'";</script>';
 	}
 
 	/* ensure that contents are written out */

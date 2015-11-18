@@ -129,8 +129,6 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-$tab_array[] = array(gettext("Auto Update"), false, "system_firmware_check.php");
 $tab_array[] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
 display_top_tabs($tab_array);
 

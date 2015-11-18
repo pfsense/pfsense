@@ -835,6 +835,9 @@
 /usr/local/www/status_slbd_vs.php
 /usr/local/www/system_advanced.php
 /usr/local/www/system_advanced_create_certs.php
+/usr/local/www/system_firmware.php
+/usr/local/www/system_firmware_auto.php
+/usr/local/www/system_firmware_check.php
 /usr/local/www/system_firmware_restorefullbackup.php
 /usr/local/www/system_usermanager_addcert.php
 /usr/local/www/themes

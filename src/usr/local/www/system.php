@@ -89,6 +89,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
+$pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
@@ -140,6 +141,12 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Hostname"), gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($_POST['webguicss']) {
+		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+	} else {
+		unset($config['system']['webgui']['webguicss']);
+	}
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -448,6 +455,26 @@ $section->addInput(new Form_Select(
 	$pconfig['language'],
 	get_locale_list()
 ))->setHelp('Choose a language for the webConfigurator');
+
+$form->add($section);
+
+$csslist = array();
+$css = glob("bootstrap/css/*.css");
+foreach ($css as $file) {
+	$file = basename($file);
+	if(substr($file, 0, 9) !== 'bootstrap') {
+		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
+	}
+}
+
+$section = new Form_Section('Web configurator theme');
+
+$section->addInput(new Form_Select(
+	'webguicss',
+	'Theme',
+	$pconfig['webguicss'],
+	$csslist
+))->setHelp("Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css");
 
 $form->add($section);
 

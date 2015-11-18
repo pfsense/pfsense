@@ -76,22 +76,31 @@ include("head.inc");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if(DEBUG) {
-	   print("Not actually rebooting (DEBUG is set true)");
+	   print_info_box("Not actually rebooting (DEBUG is set true)", success);
 	}
 	else {
-		print('<pre>');
+		print('<div><pre>');
 		system_reboot();
-		print('</pre>');
+		print('</pre></div>');
 	}
 
 ?>
-<div id="clock" style="text-align: center;"></div>
+
 <div id="countdown" style="text-align: center;"></div>
 
 <script>
 //<![CDATA[
 events.push(function(){
-		startCountdown(60);
+
+	function startCountdown(time) {
+			setInterval(function(){
+				$('#countdown').html('<h4>Rebooting<br />Page will reload in ' +time+ ' seconds.</h4>');
+				time-- != 0 || (window.location="/index.php");
+			},1000);
+	}
+
+	// startCountdown(60);
+	startCountdown(90);
 });
 //]]>
 </script>
@@ -116,20 +125,7 @@ events.push(function(){
 <?php
 
 }
-?>
-<script>
-//<![CDATA[
 
-	function startCountdown(time) {
-		$('#clock').html('<img src="/321.gif" />');
-			setInterval(function(){
-				$('#countdown').html('<h4>Rebooting<br />Page will reload in ' +time+ ' seconds.</h4>');
-
-				time-- != 0 || (window.location="/index.php");
-			},1000);
-	}
-
-//]]>
-</script>
-<?php
 include("foot.inc");
+
+

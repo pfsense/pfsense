@@ -360,6 +360,24 @@ pkg_upgrade() {
 	if [ "${next_stage}" = "2" ]; then
 		pkg_lock "${pkg_prefix}*"
 
+		# XXX: Workaround to upgrade strongswan
+		# If those symlinks are present, pkg exit because it expects them
+		# to be a directory
+		if [ $(pkg ${pkg_chroot} upgrade -nq strongswan | wc -l) -gt 1 ]; then
+			if [ -L ${chroot_dir}/usr/local/etc/ipsec.d ]; then
+				rm -f ${chroot_dir}/usr/local/etc/ipsec.d
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/ipsec.conf ]; then
+				rm -f ${chroot_dir}/usr/local/etc/ipsec.conf
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/strongswan.d ]; then
+				rm -f ${chroot_dir}/usr/local/etc/strongswan.d
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/strongswan.conf ]; then
+				rm -f ${chroot_dir}/usr/local/etc/strongswan.conf
+			fi
+		fi
+
 		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
 			_echo "Upgrading necessary packages..."
 			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then

@@ -459,7 +459,7 @@ function make_tabs() {
 	}
 	
 	if($dhcpd) {
-		$tab_array[] = array(gettext("Dhcp Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
+		$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
 	}
 	
 

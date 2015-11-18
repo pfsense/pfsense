@@ -1,13 +1,13 @@
-name: "%%PRODUCT_NAME%%-base"
+name: "%%PRODUCT_NAME%%-repo-devel"
 version: "%%VERSION%%"
-origin: "security/%%PRODUCT_NAME%%-base"
+origin: "security/%%PRODUCT_NAME%%-repo-devel"
 comment: <<EOD
-%%PRODUCT_NAME%% core files
+%%PRODUCT_NAME%% pkg repository configuration (devel)
 EOD
 maintainer: development@pfsense.org
 prefix: /usr/local
 deps: {
-"%%PRODUCT_NAME%%-rc": {origin: "security/%%PRODUCT_NAME%%-rc", version: "%%VERSION%%"}
+
 }
 categories [ security,  ]
 licenselogic: single

@@ -70,22 +70,22 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 
 	if ($ifinfo['ppplink']) {
-		$icon = 'icon-headphones';
+		$icon = 'headphones';
 	} else if (is_interface_wireless($ifdescr)) {
-		$icon = 'icon-signal';
+		$icon = 'signal';
 	} else {
-		$icon = 'icon-cog';
+		$icon = 'cog';
 	}
 
 	$known_status = true;
 
 	// Choose an icon by interface status
 	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
-		$icon = 'icon-arrow-up';
+		$icon = 'arrow-up';
 	} elseif ($ifinfo['status'] == "no carrier") {
-		$icon = 'icon-remove';
+		$icon = 'times-circle';
 	} elseif ($ifinfo['status'] == "down") {
-		$icon = 'icon-arrow-up';
+		$icon = 'arrow-up';
 	} else {
 		$known_status = false;
 	}
@@ -93,14 +93,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
-			<i class="icon icon-<?=$icon?>"></i>
+			<i class="fa fa-<?=$icon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
 			</a>
 		</td>
 		<td>
 			<?php if ($known_status):?>
-				<i class="icon <?=$icon?>" alt="<?=htmlspecialchars($ifinfo['status'])?>"></i>
+				<i class="fa fa-<?=$icon?>" alt="<?=htmlspecialchars($ifinfo['status'])?>"></i>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['status'])?>
 			<?php endif; ?>

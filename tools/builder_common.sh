@@ -1062,7 +1062,7 @@ clone_to_staging_area() {
 		${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/${PRODUCT_NAME}-repo-devel.conf
 		${TARGET} \
 		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH} \
+		${PKG_REPO_CONF_BRANCH}
 
 	mtree \
 		-c \

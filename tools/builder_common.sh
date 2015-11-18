@@ -1076,7 +1076,7 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	mkdir -p ${STAGE_CHROOT_DIR}${PKG_REPO_PATH} >/dev/null 2>&1
+	mkdir -p $(dirname ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}) >/dev/null 2>&1
 
 	# Create repo and repo-devel packages
 	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \

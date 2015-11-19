@@ -917,42 +917,43 @@ function enable_rrd_graphing() {
 		/* End NTP statistics */
 		
 		/* Start dhcpd statistics */
-		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {	
-				if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
-					$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
-					$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
-					$rrdcreate .= "DS:staticleases:GAUGE:$dhcpdvalid:0:100000 ";
-					$rrdcreate .= "DS:dhcprange:GAUGE:$dhcpdvalid:0:100000 ";
-					$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
-					$rrdcreate .= "RRA:MIN:0.5:5:720 ";
-					$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
-					$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
-					$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
-					$rrdcreate .= "RRA:MAX:0.5:5:720 ";
-					$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
-					$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
-					create_new_rrd($rrdcreate);
-					unset($rrdcreate);
-				}
+		if (is_array($config['dhcpd'])) {
+			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {	
+					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
+						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
+						$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "DS:staticleases:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "DS:dhcprange:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+						$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+						$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+						$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+						$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+						$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+						$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+						$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
+						create_new_rrd($rrdcreate);
+						unset($rrdcreate);
+					}
 
-				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
-					mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
-				}
+					/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+					if (platform_booting()) {
+						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
+					}
 
-				$rrdupdatesh .= "\n";
-				$rrdupdatesh .= "# polling leases for dhcp \n";
-				$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
-				$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
-				
+					$rrdupdatesh .= "\n";
+					$rrdupdatesh .= "# polling leases for dhcp \n";
+					$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
+					$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
+					
+				}
 			}
 		}
-
 		/* END dhcpd statistics */
 
 		$rrdupdatesh .= "sleep 60\n";

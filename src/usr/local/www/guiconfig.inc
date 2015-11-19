@@ -111,7 +111,7 @@ $mandfldhtmlspc = "";	/* same as above, but with spacing */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
 		if (!$d_isfwfile) {
-			header("Location: system_firmware.php");
+			header("Location: system_update.php");
 			exit;
 		} else {
 			return;
@@ -367,7 +367,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<i class="icon-large icon-exclamation-sign"></i>
+								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>

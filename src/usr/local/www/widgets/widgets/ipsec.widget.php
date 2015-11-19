@@ -192,9 +192,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 			<td><?php echo htmlspecialchars($ipsec['descr']);?></td>
 			<td>
 				<?php if ($ipsec['status'] == "true"): ?>
-					<i class="icon icon-chevron-up"></i>
+					<i class="fa fa-chevron-up"></i>
 				<?php else: ?>
-					<i class="icon icon-chevron-down"></i>
+					<i class="fa fa-chevron-down"></i>
 				<?php endif; ?>
 			</td>
 		</tr>

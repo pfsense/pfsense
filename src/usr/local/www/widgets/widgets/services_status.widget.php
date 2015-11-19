@@ -100,7 +100,7 @@ if (count($services) > 0) {
 		$service_desc = explode(".",$service['description']);
 ?>
 		<tr>
-			<td><i class="icon icon-<?=get_service_status($service)? 'ok' : 'remove'?>-sign"></i></td>
+			<td><i class="fa fa-<?=get_service_status($service)? 'check' : 'times'?>-circle"></i></td>
 			<td><?=$service['name']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_GET_links($service)?></td>

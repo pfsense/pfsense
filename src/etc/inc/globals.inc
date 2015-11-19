@@ -65,7 +65,6 @@ $g = array(
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
-	"hidedownloadbackup" => false,
 	"hidebackupbeforeupgrade" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
@@ -111,7 +110,6 @@ if (file_exists("/etc/platform")) {
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if ($g['platform'] == "nanobsd") {
 		$g['firmware_update_text']="pfSense-*.img.gz";
-		$g['hidedownloadbackup'] = true;
 		$g['hidebackupbeforeupgrade'] = true;
 
 	} else {

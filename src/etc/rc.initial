@@ -28,6 +28,18 @@ if [ -f /etc/rc.local ]; then
 	fi
 fi
 
+# Parse command line parameters
+while [ $# -gt 0 ]; do
+	case $1 in
+		-c )	shift
+			/bin/sh -c $1
+			exit
+			;;
+		* )
+	esac
+	shift
+done
+
 CONFIG="/cf/conf/config.xml"
 WORD="https"
 
@@ -71,7 +83,7 @@ echo " 0) Logout (SSH only)                  9) pfTop"
 echo " 1) Assign Interfaces                 10) Filter Logs"
 echo " 2) Set interface(s) IP address       11) Restart webConfigurator"
 echo " 3) Reset webConfigurator password    12) ${product} Developer Shell"
-echo " 4) Reset to factory defaults         13) Upgrade from console"
+echo " 4) Reset to factory defaults         13) Update from console"
 echo " 5) Reboot system                     ${sshd_option}"
 echo " 6) Halt system                       15) Restore recent configuration"
 echo " 7) Ping host                         16) Restart PHP-FPM"

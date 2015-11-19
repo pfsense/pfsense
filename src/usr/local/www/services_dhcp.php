@@ -1308,7 +1308,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					<tr>
 						<td align="center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?php if (isset($mapent['arp_table_static_entry'])): ?>
-								<i class="icon icon-ok"></i>
+								<i class="fa fa-check"></i>
 							<?php endif; ?>
 						</td>
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">

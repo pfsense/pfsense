@@ -189,7 +189,7 @@ function output_menu($arrayitem, $target = null) {
 $system_menu = array();
 $system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
-$system_menu[] = array(gettext("Upgrade"), "/pkg_mgr_install.php?id=firmware");
+$system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
@@ -469,7 +469,7 @@ echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
 			<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
-				<i class="icon-large icon-question-sign"></i>
+				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -564,12 +564,19 @@ if (are_notices_pending()):?>
 //<![CDATA[
 	events.push(function(){
 	    $('#clearallnotices').click(function() {
+			alert("Clear button clicked");
 			ajaxRequest = $.ajax({
 				url: "/index.php",
 				type: "post",
-				data: { closenotice: "all"}
+				data: { closenotice: "all"},
+				success: function(){
+					alert('Success');
+					window.location = window.location.href;
+				},
+				failure: function () {
+					alert("Blew it!");
+				}
 			});
-	        window.location = window.location.href;
 		});
 	});
 //]]>

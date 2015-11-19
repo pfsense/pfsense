@@ -2619,7 +2619,7 @@ function upnp_action ($action) {
 		case "stop":
 			killbypid("{$g['varrun_path']}/miniupnpd.pid");
 			while ((int)exec("/bin/pgrep -a miniupnpd | wc -l") > 0) {
-				mwexec('killall miniupnpd 2>/dev/null', true);
+				mwexec('/usr/bin/killall miniupnpd 2>/dev/null', true);
 			}
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
 			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');

@@ -104,8 +104,6 @@ if ($_REQUEST['getupdatestatus']) {
 	exit;
 }
 
-$curcfg = $config['system']['firmware'];
-
 $filesystems = get_mounted_filesystems();
 ?>
 
@@ -334,7 +332,9 @@ function updateMeters() {
 				stats(data);
 		}
 	});
-        setTimer();
+
+	setTimer();
+
 }
 
 events.push(function(){
@@ -354,7 +354,7 @@ function setProgress(barName, percent) {
 }
 
 function setTimer() {
-         timeout = window.setTimeout('updateMeters()', update_interval);
+	timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {

@@ -150,7 +150,7 @@ tr.disabled th {
 }
 
 .table>tbody>tr>td {
-	padding: 4px;
+	padding: 4px 4px 4px 10px;
 }
 
 .help-block {
@@ -297,6 +297,10 @@ form .btn + .btn {
 	height: 14px;
 }
 
+#wizard .progress {
+	margin-bottom: 10px;
+}
+
 .panel-body.collapse.in {
 	overflow-x: auto;
 }
@@ -351,4 +355,19 @@ form .btn + .btn {
 {
 	padding-right: 4px;
 	padding-left: 4px;
+}
+
+/* icons in the dashboard panel headings should pull-right **/
+.widget-heading-icon
+{
+	display: block;
+	float:	right;	
+}
+
+.widget-heading-icon .fa {
+    color: #fff;
+}
+
+.widget-heading-icon .fa:hover {
+    color: #e0e0e0;
 }

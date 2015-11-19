@@ -234,22 +234,22 @@ if ($carpcount == 0) {
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
 
 		if($carp_enabled == false) {
-			$icon = 'remove-sign';
+			$icon = 'times-circle';
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'ok-sign';
+				$icon = 'check-circle';
 			} else if ($status == "BACKUP") {
-				$icon = 'ok-circle';
+				$icon = 'check-circle-o';
 			} else if ($status == "INIT") {
-				$icon = 'question-sign';
+				$icon = 'question-circle';
 			}
 		}
 ?>
 					<tr>
 						<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
 						<td><?=$ipaddress?></td>
-						<td><i class="icon icon-<?=$icon?>"></i>&nbsp;<?=$status?></td>
+						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>
 				</tbody>

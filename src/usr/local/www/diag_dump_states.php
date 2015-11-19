@@ -209,7 +209,7 @@ print $form;
 			<td><?= $state ?></td>
 
 			<td>
-				<a class="btn icon icon-remove" data-entry="<?=$srcip?>|<?=$dstip?>"
+				<a class="btn fa fa-times" data-entry="<?=$srcip?>|<?=$dstip?>"
 					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
 			</td>
 		</tr>

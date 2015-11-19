@@ -13,6 +13,7 @@ echo "===> Removing schg flag from base files"
 
 # Cleanup schg flags
 chflags -R noschg \
+	/boot \
 	/bin \
 	/sbin \
 	/usr/bin \

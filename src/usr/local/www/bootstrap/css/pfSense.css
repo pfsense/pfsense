@@ -371,3 +371,12 @@ form .btn + .btn {
 .widget-heading-icon .fa:hover {
     color: #e0e0e0;
 }
+
+/* All pfSense textareas benefit from using a fixed width font **/
+textarea
+{
+	font-family:	consolas,monaco,roboto mono,liberation mono,courier;
+	font-size: 12px;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+}

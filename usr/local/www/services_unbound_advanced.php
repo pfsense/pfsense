@@ -100,7 +100,7 @@ if ($_POST) {
 		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
 		}
-		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
+		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
 		}
 		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {

@@ -85,6 +85,11 @@ if (isset($_POST['closenotice'])) {
 	exit;
 }
 
+if (isset($_GET['closenotice'])) {
+	close_notice($_GET['closenotice']);
+	sleep(1);
+}
+
 if ($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
 	$x = 0;
@@ -370,7 +375,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="fa fa-plus-circle"></i>
+						<i class="icon-white icon-plsu"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
 						<i class="fa fa-times-circle"></i>

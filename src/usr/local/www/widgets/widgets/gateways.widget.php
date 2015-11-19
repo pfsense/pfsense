@@ -91,19 +91,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	foreach ($a_gateways as $gname => $gateway) {
 		print("<tr>\n");
 		print(	"<td>\n");
-
-		$if_gw = '';
-		if (is_ipaddr($gateway['gateway']))
-			$if_gw = $gateway['gateway'];
-		else {
-			if($gateway['ipprotocol'] == "inet")
-				$if_gw = get_interface_gateway($gateway['friendlyiface']);
-			if($gateway['ipprotocol'] == "inet6")
-				$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
-		}
-
 		print(htmlspecialchars($gateway['name']) . "<br />");
-
 		print('<div id="gateway' . $counter . '" style="display:inline"><b>');
 
 		$monitor_address = "";

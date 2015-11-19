@@ -88,6 +88,7 @@ if ($filtersubmit) {
 
 $filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
 if ($filterlogentries_submit) {
+	$filterformshow = true;
 	$filterfieldsarray = array();
 
 	$actpass = getGETPOSTsettingvalue('actpass', null);
@@ -162,7 +163,7 @@ include("head.inc");
 		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" style="sortableMultirow:<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
 			<tr>
 				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
-				<div id="filterlogentries_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>">
+				<div id="filterlogentries_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?(isset($filterformshow)?"":"display:none"):"display:none"?>">
 					<form id="filterlogentries" name="filterlogentries" action="diag_logs_filter.php" method="post">
 						<?php 
 							$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
@@ -228,6 +229,9 @@ include("head.inc");
 					</tr>
 					</table>
 					</form>
+					<div style="float: right; vertical-align:middle">
+						<br />
+					</div>
 				</div>
 				<div id="filterform_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>">
 					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
@@ -292,7 +296,6 @@ include("head.inc");
 					</form>
 				</div>
 				<div style="float: right; vertical-align:middle">
-					<br />
 					<?php if (!isset($config['syslog']['rawfilter']) && (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2")):?>
 					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
@@ -315,6 +318,12 @@ include("head.inc");
 				else
 					echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
 			    printf(gettext("Max(%s)"),$nentries);?>
+				<div style="display:inline-block; float:right">
+					<?php
+					printf(gettext("Filter Form:"));
+					?>
+					<input style="vertical-align:middle;" type="checkbox" onclick="javascript:toggle_Filter_Form(filterlogentries_show.style);" <?=(isset($filterformshow))?"checked=\"checked\"":"" ?> />
+				</div>
 			  </td>
 			</tr>
 			<tr class="sortableHeaderRowIdentifier">

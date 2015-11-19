@@ -38,8 +38,11 @@ class Form_Section extends Form_Element
 	protected $_title;
 	protected $_groups = array();
 
-	public function __construct($title)
+	public function __construct($title, $id = "")
 	{
+		if (!empty($id)) {
+			$this->_attributes['id'] = $id;
+		}
 		$this->_title = $title;
 	}
 

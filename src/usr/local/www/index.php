@@ -375,7 +375,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon-white icon-plsu"></i>
+						<i class="fa fa-plus-circle"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
 						<i class="fa fa-times-circle"></i>

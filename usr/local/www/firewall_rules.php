@@ -391,7 +391,7 @@ include("head.inc");
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
-			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Block bogon networks");?></td>
 			<td valign="middle" class="list nowrap">
 				<table border="0" cellspacing="0" cellpadding="1" summary="move rules before">

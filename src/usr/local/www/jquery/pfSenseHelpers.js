@@ -383,7 +383,6 @@ $('#showinfo').click(function() {
 	$('#infoblock').toggle();
 });
 
-// Microsoft don't like empty <tbody>s, so we stuff in a dummy row
 $('tbody').each(function(){
 	$(this).html($.trim($(this).html()))
 });

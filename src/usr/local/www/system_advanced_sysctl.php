@@ -243,17 +243,17 @@ if ($act != "edit" ): ?>
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
-		'descr',
-		'Description',
-		'text',
-		$pconfig['descr']
-	))->setWidth(4);
-
-	$section->addInput(new Form_Input(
 		'value',
 		'Value',
 		'text',
 		$pconfig['value']
+	))->setWidth(4);
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'Description',
+		'text',
+		$pconfig['descr']
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {

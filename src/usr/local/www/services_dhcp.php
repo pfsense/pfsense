@@ -965,10 +965,10 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 				' This will be used for all DHCP interfaces lease time');
 	$section->addInput(new Form_Checkbox(
 		'statsgraph',
-		'RRD graphs',
-		'Enable RRD graphs',
+		'Statistics graphs',
+		'Enable RRD statistics graphs',
 		$pconfig['statsgraph']
-	))->setHelp('By default RRD graphs are disabled.');
+	))->setHelp('Enable this to add DHCP leases statistics to the RRD graphs. Disabled by default.');
 }
 
 // DDNS

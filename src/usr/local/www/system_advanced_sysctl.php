@@ -150,7 +150,7 @@ if ($_POST) {
 		} else {
 			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
 			$tunableent['value'] = htmlspecialchars($_POST['value']);
-			$tunableent['descr'] = htmlspecialchars($_POST['descr']);
+			$tunableent['descr'] = strip_tags($_POST['descr']);
 
 			if (isset($id) && isset($a_tunable[$id])) {
 				$a_tunable[$id] = $tunableent;

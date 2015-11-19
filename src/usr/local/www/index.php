@@ -280,7 +280,7 @@ foreach ($phpincludefiles as $includename) {
 }
 
 ## Set Page Title and Include Header
-$pgtitle = array(gettext("Status: Dashboard"));
+$pgtitle = array('', gettext("Status: Dashboard"));
 include("head.inc");
 
 if ($savemsg) {

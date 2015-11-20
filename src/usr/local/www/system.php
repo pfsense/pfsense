@@ -467,6 +467,10 @@ foreach ($css as $file) {
 	}
 }
 
+if (($pconfig['webguicss'] == "") || (!isset($csslist[$pconfig['webguicss']]))) {
+	$pconfig['webguicss'] = "pfSense.css";
+}
+
 $section = new Form_Section('Web configurator theme');
 
 $section->addInput(new Form_Select(

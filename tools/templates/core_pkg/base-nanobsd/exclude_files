@@ -13,6 +13,7 @@
 ./etc/dh-parameters.4096
 ./etc/fstab
 ./etc/group
+./etc/hosts
 ./etc/master.passwd
 ./etc/master.passwd.db
 ./etc/passwd
@@ -20,6 +21,7 @@
 ./etc/pwd.db
 ./etc/rc.conf
 ./etc/spwd.db
+./etc/syslog.conf
 ./media
 ./mnt
 ./proc

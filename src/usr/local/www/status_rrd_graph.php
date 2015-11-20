@@ -455,7 +455,7 @@ function make_tabs() {
 	}
 
 	if($ntpd) {
-		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+		$tab_array[] = array("NTPD", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 	}
 
 	if($dhcpd) {

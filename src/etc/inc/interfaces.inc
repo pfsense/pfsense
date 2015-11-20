@@ -807,6 +807,7 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 	$realif = get_real_interface($gre['if']);
 	$realifip = get_interface_ip($gre['if']);
+	$realifip6 = get_interface_ipv6($gre['if']);
 
 	/* make sure the parent interface is up */
 	interfaces_bring_up($realif);
@@ -820,7 +821,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	}
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
-	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
+	if (is_ipaddrv6($gre['remote-addr'])) {
+		mwexec("/sbin/ifconfig {$greif} inet6 tunnel {$realifip6} " . escapeshellarg($gre['remote-addr']));
+	}else{
+		mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
+	}
 	if ((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		//mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
@@ -936,7 +941,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	}
 
 	/* Do not change the order here for more see gif(4) NOTES section. */
-	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+	if (is_ipaddrv6($gif['remote-addr'])) {
+		mwexec("/sbin/ifconfig {$gifif} inet6 tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+	} else {
+		mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));	
+	}
 	if ((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));

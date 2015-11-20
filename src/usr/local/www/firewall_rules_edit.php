@@ -1923,10 +1923,10 @@ events.push(function(){
 	}
 
 	function setOptText(target, val) {
-		var dispstr = '<font color="green">';
+		var dispstr = '<span class="text-success">';
 
 		if (val == 'keep state')
-			dispstr += 'Keep: works with all IP protocols</font>';
+			dispstr += 'Keep: works with all IP protocols';
 		else if (val == 'sloppy state')
 			dispstr += 'Sloppy: works with all IP protocols';
 		else if (val == 'synproxy state')
@@ -1934,7 +1934,7 @@ events.push(function(){
 		else if (val == 'none')
 			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';
 
-		dispstr += '</font>';
+		dispstr += '</span>';
 		setHelpText(target, dispstr);
 	}
 

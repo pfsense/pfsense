@@ -128,9 +128,9 @@ if ($_POST) {
 
 		foreach ($test_results as $result) {
 			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$output .= '<font color="green">' . htmlspecialchars($result) . '</font>' . '<br />';
+				$output .= '<span class="text-success">' . htmlspecialchars($result) . '</span>' . '<br />';
 			} else {
-				$output .= '<font color="red">' . htmlspecialchars($result) . '</font>' . '<br />';
+				$output .= '<span class="text-danger">' . htmlspecialchars($result) . '</span>' . '<br />';
 			}
 		}
 

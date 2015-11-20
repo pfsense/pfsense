@@ -85,7 +85,7 @@ if ($_REQUEST['getupdatestatus']) {
 ?>
 		<div>
 			<?=gettext("Version ")?>
-			<span style="color: green"><?=$system_version['version']?></span> <?=gettext("is available.")?>
+			<span class="text-success"><?=$system_version['version']?></span> <?=gettext("is available.")?>
 			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
 		</div>
 <?php

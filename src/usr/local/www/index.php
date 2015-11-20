@@ -412,7 +412,7 @@ function updateWidgets(newWidget)
 	});
 
 	if (typeof newWidget !== 'undefined')
-		sequence += newWidget + ':' + 'col2:close';
+		sequence += newWidget + ':' + 'col2:open';
 
 	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
@@ -471,14 +471,8 @@ events.push(function() {
 
 	// On clicking a widget to install . .
 	$('[name^=btnadd-]').click(function(event) {
-		// Extract the widget name from the button name that got us here
-		var widgetToAdd = this.name.replace('btnadd-', '');
-
-		// Set its display type to 'close'
-		<?php $widgets[widgetToAdd]['display'] = 'close'; ?>
-
-		// Add it to the list of displayed widgets
-		updateWidgets(widgetToAdd);
+		// Add the widget name to the list of displayed widgets
+		updateWidgets(this.name.replace('btnadd-', ''));
 
 		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();

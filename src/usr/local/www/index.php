@@ -138,7 +138,7 @@ if ($_POST && $_POST['sequence']) {
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$config['widgets'][$widgetname . '-config'] = $_POST[$name . '-config'];
+			$config['widgets'][$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
@@ -254,8 +254,8 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($config['widgets'][$name . '-config']) {
-			$pconfig[$name . '-config'] = $config['widgets'][$name . '-config'];
+		if ($config['widgets'][$widgetname . '-config']) {
+			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
 		}
 	}
 }

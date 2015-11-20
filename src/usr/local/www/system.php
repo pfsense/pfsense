@@ -467,7 +467,7 @@ foreach ($css as $file) {
 	}
 }
 
-if (($pconfig['webguicss'] == "") || (!isset($csslist[$pconfig['webguicss']]))) {
+if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }
 

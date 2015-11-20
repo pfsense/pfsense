@@ -1583,7 +1583,7 @@ EOD;
 	fclose($igmpfl);
 	unset($igmpconf);
 
-	mwexec("/usr/local/sbin/igmpproxy -c {$g['tmp_path']}/igmpproxy.conf");
+	mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['tmp_path']}/igmpproxy.conf");
 	log_error(gettext("Started IGMP proxy service."));
 
 	return 0;

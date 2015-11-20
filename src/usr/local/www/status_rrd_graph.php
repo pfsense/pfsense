@@ -462,10 +462,6 @@ function make_tabs() {
 		$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
 	}
 
-	if($ntpd) {
-		$tab_array[] = array(gettext("NTP"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
-	}
-
 	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
 	$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");
 

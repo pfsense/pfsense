@@ -383,12 +383,6 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			</td>
 		</tr>
 	</table>
-	<script type="text/javascript">
-	//<![CDATA[
-		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
-	//]]>
-	</script>
 EOFnp;
 
 }
@@ -872,13 +866,6 @@ function display_widget_tabs(& $tab_array) {
 		echo "&nbsp;&nbsp;&nbsp;</b>";
 		echo "</div>";
 	}
-
-	echo "<script type=\"text/javascript\">";
-	echo "\n//<![CDATA[\n";
-	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
-	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "//]]>\n";
-	echo "</script>";
 	echo "</div>";
 }
 

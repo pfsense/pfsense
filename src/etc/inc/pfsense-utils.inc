@@ -618,50 +618,6 @@ function merge_config_section($section_name, $new_contents) {
 }
 
 /*
- * http_post($server, $port, $url, $vars): does an http post to a web server
- *                                         posting the vars array.
- * written by nf@bigpond.net.au
- */
-function http_post($server, $port, $url, $vars) {
-	$user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
-	$urlencoded = "";
-	while (list($key, $value) = each($vars)) {
-		$urlencoded .= urlencode($key) . "=" . urlencode($value) . "&";
-	}
-	$urlencoded = substr($urlencoded, 0, -1);
-	$content_length = strlen($urlencoded);
-	$headers = "POST $url HTTP/1.1
-Accept: */*
-Accept-Language: en-au
-Content-Type: application/x-www-form-urlencoded
-User-Agent: $user_agent
-Host: $server
-Connection: Keep-Alive
-Cache-Control: no-cache
-Content-Length: $content_length
-
-";
-
-	$errno = "";
-	$errstr = "";
-	$fp = fsockopen($server, $port, $errno, $errstr);
-	if (!$fp) {
-		return false;
-	}
-
-	fputs($fp, $headers);
-	fputs($fp, $urlencoded);
-
-	$ret = "";
-	while (!feof($fp)) {
-		$ret .= fgets($fp, 1024);
-	}
-	fclose($fp);
-
-	return $ret;
-}
-
-/*
  *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
  */
 if (!function_exists('php_check_syntax')) {

@@ -65,7 +65,6 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require_once("PEAR.inc");
 require_once("radius.inc");
 
 if ($_POST) {

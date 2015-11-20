@@ -79,6 +79,7 @@ $pconfig['backend'] = &$config['system']['webgui']['backend'];
 $pgtitle = array(gettext("System"), gettext("User manager settings"));
 
 $save_and_test = false;
+
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -90,6 +91,10 @@ if ($_POST) {
 		}
 	}
 
+	if(($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
+		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
+	}
+
 	if (!$input_errors) {
 		if ($_POST['authmode'] != "Local Database") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
@@ -97,11 +102,10 @@ if ($_POST) {
 				if ($authsrv['type'] == "ldap") {
 					$save_and_test = true;
 				} else {
-					$savemsg = gettext("The test was not performed because it is supported only for ldap based backends.");
+					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for ldap based backends.");
 				}
 			}
 		}
-
 
 		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
@@ -124,8 +128,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, success);
 
 if($save_and_test) {
 	echo "<script>\n";
@@ -154,7 +159,8 @@ $section->addInput(new Form_Input(
 	'session_timeout',
 	'Session timeout',
 	'number',
-	$pconfig['session_timeout']
+	$pconfig['session_timeout'],
+	[min => 0]
 ))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
 	'hours (240 minutes).Enter 0 to never expire sessions. NOTE: This is a security '.
 	'risk!');

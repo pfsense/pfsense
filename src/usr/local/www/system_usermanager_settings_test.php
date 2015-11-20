@@ -95,16 +95,16 @@ if (!$authcfg) {
 
 	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 	if (ldap_test_connection($authcfg)) {
-		echo "<td><center><font color=green>OK</center></td></tr>";
+		echo "<td><span class="text-center text-success">OK</span></td></tr>";
 
 		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 		if (ldap_test_bind($authcfg)) {
-			echo "<td><center><font color=green>OK</center></td></tr>";
+			echo "<td><span class="text-center text-success">OK</span></td></tr>";
 
 			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
 			if (count($ous)>1) {
-				echo "<td><center><font color=green>OK</center></td></tr>";
+				echo "<td><span class="text-center text-success">OK</span></td></tr>";
 				echo "</table>";
 				if (is_array($ous)) {
 					echo "<br/>";

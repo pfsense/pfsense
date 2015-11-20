@@ -71,6 +71,99 @@ $installed_packages = array_filter($package_list, function($v) {
 	return (isset($v['installed']) || isset($v['broken']));
 });
 
+if($_REQUEST && $_REQUEST['ajax']) {
+	print("<thead>\n");
+	print(	"<tr>\n");
+	print(		"<th>" . gettext("Name")     . "</th>\n");
+	print(		"<th>" . gettext("Category") . "</th>\n");
+	print(		"<th>" . gettext("Version")  . "</th>\n");
+	print(		"<th>" . gettext("Actions")  . "</th>\n");
+	print(	"</tr>\n");
+	print("</thead>\n");
+	print("<tbody>\n");
+
+	foreach ($installed_packages as $pkg) {
+		if (!$pkg['name']) {
+			continue;
+		}
+
+		$txtcolor = "black";
+		$upgradeavail = false;
+		$vergetstr = "";
+		$missing = false;
+
+		if (isset($pkg['broken'])) {
+			$txtcolor = "red";
+			$missing = true;
+			$status = 'Package is configured, but not installed!';
+		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+			$version_compare = pkg_version_compare(
+			    $pkg['installed_version'], $pkg['version']);
+			if ($version_compare == '>') {
+				// we're running a newer version of the package
+				$status = 'Newer than available ('. $pkg['version'] .')';
+				$statusicon = 'exclamation';
+			} else if ($version_compare == '<') {
+				// we're running an older version of the package
+				$status = 'Upgrade available to '.$pkg['version'];
+				$statusicon = 'plus-circle';
+				$txtcolor = "blue";
+				$upgradeavail = true;
+				$vergetstr = '&amp;from=' . $pkg['installed_version'] .
+				    '&amp;to=' . $pkg['version'];
+			} else if ($version_compare == '=') {
+				// we're running the current version
+				$status = 'ok';
+				$statusicon = 'check';
+			} else {
+				$status = 'Error comparing version';
+				$statusicon = 'exclamation';
+			}
+		} else {
+			// unknown available package version
+			$status = 'Unknown';
+			$statusicon = 'question';
+		}
+
+		print("<tr>\n");
+		print(		'<td><font color="' . $txtcolor . '">' . $pkg['shortname'] . "</font></td>\n");
+		print(		"<td>" . implode(' ', $pkg['categories']) . "</td>\n");
+		print(		"<td>\n");
+		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i>');
+
+		if (!$g['disablepackagehistory']) {
+			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');
+		}
+
+		print(			htmlspecialchars($pkg['installed_version']));
+
+		if (!$g['disablepackagehistory']) {
+			print("</a>\n");
+		}
+
+		print(	"</td>\n");
+		print(	"<td>\n");
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-times"></i></a>'."\n");
+
+		if($upgradeavail) {
+			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
+		} else {
+			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-retweet"></i></a>'."\n");
+		}
+
+		if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
+			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa fa-info"></i></a>'."\n");
+		}
+
+		print(	"</td>\n");
+		print("</tr>\n");
+	}
+
+	print("</tbody>\n");
+
+	exit;
+}
+
 if (empty($installed_packages)): ?>
 <div class="alert alert-warning" role="alert">
 	<strong>No packages installed.</strong>
@@ -78,90 +171,8 @@ if (empty($installed_packages)): ?>
 </div>
 <?php else: ?>
 <div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Category</th>
-				<th>Version</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-	<tbody>
-<?php
-
-
-foreach ($installed_packages as $pkg):
-	if (!$pkg['name']) {
-		continue;
-	}
-
-	$txtcolor = "black";
-	$upgradeavail = false;
-	$vergetstr = "";
-	$missing = false;
-
-	if (isset($pkg['broken'])) {
-		$txtcolor = "red";
-		$missing = true;
-		$status = 'Package is configured, but not installed!';
-	} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
-		$version_compare = pkg_version_compare(
-		    $pkg['installed_version'], $pkg['version']);
-		if ($version_compare == '>') {
-			// we're running a newer version of the package
-			$status = 'Newer than available ('. $pkg['version'] .')';
-			$statusicon = 'exclamation';
-		} else if ($version_compare == '<') {
-			// we're running an older version of the package
-			$status = 'Upgrade available to '.$pkg['version'];
-			$statusicon = 'plus-circle';
-			$txtcolor = "blue";
-			$upgradeavail = true;
-			$vergetstr = '&amp;from=' . $pkg['installed_version'] .
-			    '&amp;to=' . $pkg['version'];
-		} else if ($version_compare == '=') {
-			// we're running the current version
-			$status = 'ok';
-			$statusicon = 'check';
-		} else {
-			$status = 'Error comparing version';
-			$statusicon = 'exclamation';
-		}
-	} else {
-		// unknown available package version
-		$status = 'Unknown';
-		$statusicon = 'question';
-	}
-?>
-			<tr>
-				<td><font color="<?=$txtcolor?>"><?=$pkg['shortname']?></font></td>
-				<td><?=implode(' ', $pkg['categories'])?></td>
-				<td>
-					<i title="<?=$status?>" class="fa fa-<?=$statusicon?>"></i>
-<?php if (!$g['disablepackagehistory']):?>
-					<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($pkg['changeloglink'])?>">
-<?php endif;?>
-						<?=htmlspecialchars($pkg['installed_version'])?>
-<?php if (!$g['disablepackagehistory']):?>
-					</a>
-<?php endif;?>
-				</td>
-				<td>
-					<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>
-<?php if($upgradeavail) { ?>
-					<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
-<?php } else { ?>
-					<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
-<?php } ?>
-
-<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
-					<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
-<?php endif; ?>
-				</td>
-			</tr>
-<?php endforeach; ?>
-		</tbody>
+	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
+		<tr><td><?=gettext("Retrieving package data")?></td></tr>
 	</table>
 </div>
 <?php endif; ?>
@@ -169,3 +180,30 @@ foreach ($installed_packages as $pkg):
 <div style="text-align: center;">
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>
 </div>
+
+<script>
+//<![CDATA[
+
+	function get_pkg_stats() {
+		var ajaxRequest;
+
+		ajaxRequest = $.ajax({
+				url: "/widgets/widgets/installed_packages.widget.php",
+				type: "post",
+				data: { ajax: "ajax"}
+			});
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#pkgtbl').html(response);
+
+			// and do it again
+			setTimeout(get_gw_stats, 5000);
+		});
+	}
+
+	events.push(function(){
+		get_pkg_stats();
+	});
+//]]>
+</script>

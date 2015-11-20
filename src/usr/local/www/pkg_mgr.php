@@ -141,7 +141,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 
 <div class="panel panel-default" id="search-panel">
 	<div class="panel-heading"><?=gettext('Search')?>
-		<span class="icons pull-right">
+		<span class="widget-heading-icon pull-right">
 			<a data-toggle="collapse" href="#search-panel .panel-body" name="search-panel">
 				<i class="fa fa-plus-circle"></i>
 			</a>

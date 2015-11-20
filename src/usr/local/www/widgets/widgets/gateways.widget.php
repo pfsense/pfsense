@@ -141,31 +141,31 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		if ($gateways_status[$gname]) {
 			if (stristr($gateways_status[$gname]['status'], "force_down")) {
 				$online = "Offline (forced)";
-				$bgcolor = "#F08080";  // lightcoral
+				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "down")) {
 				$online = "Offline";
-				$bgcolor = "#F08080";  // lightcoral
+				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
 				$online = "Packetloss";
-				$bgcolor = "#F0E68C";  // khaki
+				$bgcolor = "warning";  // khaki
 			} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
 				$online = "Latency";
-				$bgcolor = "#F0E68C";  // khaki
+				$bgcolor = "warning";  // khaki
 			} elseif ($gateways_status[$gname]['status'] == "none") {
 				$online = "Online";
-				$bgcolor = "#90EE90";  // lightgreen
+				$bgcolor = "success";  // lightgreen
 			} elseif ($gateways_status[$gname]['status'] == "") {
 				$online = "Pending";
-				$bgcolor = "#D3D3D3";  // lightgray
+				$bgcolor = "info";  // lightgray
 			}
 		} else {
 			$online = gettext("Unknown");
-			$bgcolor = "#ADD8E6";  // lightblue
+			$bgcolor = "info";  // lightblue
 		}
 
 		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n");
 		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n");
-		print('<td style="background-color: ' . $bgcolor . '">' . $online . "</td>\n");
+		print('<td class="bg-' . $bgcolor . '">' . $online . "</td>\n");
 		print("</tr>\n");
 		}
 
@@ -187,7 +187,7 @@ if ($_POST) {
 }
 ?>
 
-<table id="gwtbl" class="table table-hover">
+<table id="gwtbl" class="table table-striped table-hover">
 		<tr><td><?=gettext("Retrieving gateway data")?></td></tr>
 </table>
 
@@ -209,7 +209,6 @@ if ($_POST) {
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 			$('#gwtbl').html(response);
-			stripe_table();
 			// and do it again
 			setTimeout(get_gw_stats, 5000);
 		});

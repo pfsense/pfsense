@@ -190,10 +190,10 @@ if ($_POST) {
 }
 
 $actionHelp =
-					'<strong><font color="green">Deny:</font></strong> Stops queries from hosts within the netblock defined below.' . '<br />' .
-					'<strong><font color="green">Refuse:</font></strong> Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.' . '<br />' .
-					'<strong><font color="green">Allow:</font></strong> Allow queries from hosts within the netblock defined below.' . '<br />' .
-					'<strong><font color="green">Allow Snoop:</font></strong> Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.';
+					'<span class="text-success"><strong>Deny:</strong></span> Stops queries from hosts within the netblock defined below.' . '<br />' .
+					'<span class="text-success"><strong>Refuse:</strong></span> Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.' . '<br />' .
+					'<span class="text-success"><strong>Allow:</strong></span> Allow queries from hosts within the netblock defined below.' . '<br />' .
+					'<span class="text-success"><strong>Allow Snoop:</strong></span> Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.';
 
 
 $closehead = false;

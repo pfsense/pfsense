@@ -100,9 +100,8 @@ function pkg_update($force = false) {
 	global $g;
 
 	$now = strftime('%s');
+	$last_update_file="{$g['varrun_path']}/{$g['product_name']}-upgrade-last-update";
 	if (!$force) {
-		$last_update_file="{$g['varrun_path']}/{$g['product_name']}-upgrade-last-update";
-
 		if (file_exists($last_update_file)) {
 			$last_update = rtrim(file_get_contents($last_update_file), "\n");
 			if (!is_numericint($last_update)) {

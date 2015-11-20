@@ -281,7 +281,7 @@ foreach ($databases as $database) {
 	if (stristr($database, "-dhcpd") && is_array($config['dhcpd'])) {
 		$dhcpd = true;
 	}
-	
+
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
@@ -424,14 +424,14 @@ function get_dates($curperiod, $graph) {
 }
 
 function make_tabs() {
-	global $curcat, $queues,$wireless,$cellular,$vpnusers, $captiveportal,$dhcpd;
+	global $curcat, $queues,$wireless,$cellular,$vpnusers, $captiveportal,$dhcpd, $ntpd;
 
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
 	$tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_graph.php?cat=traffic");
 	$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
 	$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
-	
+
 
 	if($queues) {
 		$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
@@ -454,14 +454,13 @@ function make_tabs() {
 		$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
 	}
 
-	if(isset($config['ntpd']['statsgraph'])) {
-		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+	if($ntpd) {
+		$tab_array[] = array("NTPD", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 	}
-	
+
 	if($dhcpd) {
 		$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
 	}
-	
 
 	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
 	$tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");

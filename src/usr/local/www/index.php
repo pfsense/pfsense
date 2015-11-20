@@ -138,7 +138,7 @@ if ($_POST && $_POST['sequence']) {
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$config['widgets'][$widgetname . '-config'] = $_POST[$name . '-config'];
+			$config['widgets'][$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
@@ -254,10 +254,17 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($config['widgets'][$name . '-config']) {
-			$pconfig[$name . '-config'] = $config['widgets'][$name . '-config'];
+		if ($config['widgets'][$widgetname . '-config']) {
+			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
 		}
 	}
+}
+
+## Replace any known acronyms in widget names with suitable mixed-case forms
+$input_acronyms = array("carp", "dns", "dyn dns", "gmirror", "ipsec", "ntp", "openvpn", "rss", "smart");
+$output_acronyms = array("CARP", "DNS", "Dynamic DNS", "gmirror", "IPsec", "NTP", "OpenVPN", "RSS", "SMART");
+foreach ($widgets as $widgetname => $widgetconfig) {
+	$widgets[$widgetname]['name'] = str_ireplace($input_acronyms, $output_acronyms, $widgetconfig['name']);
 }
 
 ##build list of php include files
@@ -405,7 +412,7 @@ function updateWidgets(newWidget)
 	});
 
 	if (typeof newWidget !== 'undefined')
-		sequence += newWidget + ':' + 'col2:close';
+		sequence += newWidget + ':' + 'col2:open';
 
 	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
@@ -464,14 +471,8 @@ events.push(function() {
 
 	// On clicking a widget to install . .
 	$('[name^=btnadd-]').click(function(event) {
-		// Extract the widget name from the button name that got us here
-		var widgetToAdd = this.name.replace('btnadd-', '');
-
-		// Set its display type to 'close'
-		<?php $widgets[widgetToAdd]['display'] = 'close'; ?>
-
-		// Add it to the list of displayed widgets
-		updateWidgets(widgetToAdd);
+		// Add the widget name to the list of displayed widgets
+		updateWidgets(this.name.replace('btnadd-', ''));
 
 		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();

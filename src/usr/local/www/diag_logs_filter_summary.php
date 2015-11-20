@@ -265,6 +265,7 @@ foreach ($filterlog as $fe) {
 	}
 }
 
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary"));
 include("head.inc");
 
 $tab_array = array();
@@ -287,8 +288,9 @@ $tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.
 $tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 
-$infomsg = sprintf('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).', $gotlines, $lines);
-print_info_box($infomsg);
+print("<br />");
+$infomsg = sprintf('This is a summary of the last %1$s lines of the firewall log (Max %2$s).', $gotlines, $lines);
+print_info_box($infomsg, info);
 ?>
 
 <script src="d3pie/d3pie.min.js"></script>

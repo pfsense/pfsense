@@ -175,7 +175,7 @@ export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 if [ "${TARGET}" = "i386" ]; then
 	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
 else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc"}
+	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm"}
 fi
 
 # Area that the final image will appear in

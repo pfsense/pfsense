@@ -143,16 +143,16 @@ if($_REQUEST && $_REQUEST['ajax']) {
 
 		print(	"</td>\n");
 		print(	"<td>\n");
-		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '" class="fa fa-minus-circle"></a>');
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-times"></i></a>'."\n");
 
 		if($upgradeavail) {
-			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa fa-refresh"></a>');
+			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
 		} else {
-			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '" class="fa fa-retweet"></a>');
+			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-retweet"></i></a>'."\n");
 		}
 
 		if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
-			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '" class="fa fa-info"></a>');
+			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa fa-info"></i></a>'."\n");
 		}
 
 		print(	"</td>\n");
@@ -196,7 +196,7 @@ if (empty($installed_packages)): ?>
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 			$('#pkgtbl').html(response);
-			stripe_table();
+
 			// and do it again
 			setTimeout(get_gw_stats, 5000);
 		});

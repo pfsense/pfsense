@@ -34,7 +34,6 @@
 		</user>
 		<nextuid>2000</nextuid>
 		<nextgid>2000</nextgid>
-		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>https</protocol>

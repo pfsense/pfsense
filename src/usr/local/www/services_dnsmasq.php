@@ -102,68 +102,74 @@ $a_hosts = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if ($_POST) {
-	$pconfig = $_POST;
-	unset($input_errors);
+	if($_POST['apply']) {
+		// ToDo: Need to do smething here to apply the changes
+		$savemsg = gettext("The changes have been applied. Please reboot the system to allow them to take effect.");
+		clear_subsystem_dirty('hosts');
+	} else {
+		$pconfig = $_POST;
+		unset($input_errors);
 
-	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+		$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
+		$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+		$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+		$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+		$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
+		$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
+		$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
+		$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+		$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
 
-	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-		if ($_POST['port'] == $config['unbound']['port']) {
-			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
+			if ($_POST['port'] == $config['unbound']['port']) {
+				$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+			}
 		}
-	}
 
-	if ($_POST['port']) {
-		if (is_port($_POST['port'])) {
-			$config['dnsmasq']['port'] = $_POST['port'];
-		} else {
-			$input_errors[] = gettext("You must specify a valid port number");
+		if ($_POST['port']) {
+			if (is_port($_POST['port'])) {
+				$config['dnsmasq']['port'] = $_POST['port'];
+			} else {
+				$input_errors[] = gettext("You must specify a valid port number");
+			}
+		} else if (isset($config['dnsmasq']['port'])) {
+			unset($config['dnsmasq']['port']);
 		}
-	} else if (isset($config['dnsmasq']['port'])) {
-		unset($config['dnsmasq']['port']);
-	}
 
-	if (is_array($_POST['interface'])) {
-		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	} elseif (isset($config['dnsmasq']['interface'])) {
-		unset($config['dnsmasq']['interface']);
-	}
-
-	if ($config['dnsmasq']['custom_options']) {
-		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-			$args .= escapeshellarg("--{$c}") . " ";
+		if (is_array($_POST['interface'])) {
+			$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
+		} elseif (isset($config['dnsmasq']['interface'])) {
+			unset($config['dnsmasq']['interface']);
 		}
-		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-		if ($rc != 0) {
-			$input_errors[] = gettext("Invalid custom options");
+
+		if ($config['dnsmasq']['custom_options']) {
+			$args = '';
+			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+				$args .= escapeshellarg("--{$c}") . " ";
+			}
+			exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
+			if ($rc != 0) {
+				$input_errors[] = gettext("Invalid custom options");
+			}
 		}
-	}
 
-	if (!$input_errors) {
-		write_config();
+		if (!$input_errors) {
+			write_config();
 
-		$retval = 0;
-		$retval = services_dnsmasq_configure();
-		$savemsg = get_std_save_message($retval);
+			$retval = 0;
+			$retval = services_dnsmasq_configure();
+			$savemsg = get_std_save_message($retval);
 
-		// Reload filter (we might need to sync to CARP hosts)
-		filter_configure();
-		/* Update resolv.conf in case the interface bindings exclude localhost. */
-		system_resolvconf_generate();
-		/* Start or restart dhcpleases when it's necessary */
-		system_dhcpleases_configure();
+			// Reload filter (we might need to sync to CARP hosts)
+			filter_configure();
+			/* Update resolv.conf in case the interface bindings exclude localhost. */
+			system_resolvconf_generate();
+			/* Start or restart dhcpleases when it's necessary */
+			system_dhcpleases_configure();
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('hosts');
+			if ($retval == 0) {
+				clear_subsystem_dirty('hosts');
+			}
 		}
 	}
 }

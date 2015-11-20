@@ -300,29 +300,27 @@ pkg_upgrade() {
 		fi
 
 		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
+			if [ "${platform}" = "nanobsd" ]; then
+				_echo "**** WARNING ****"
+				_echo "Duplicate slice required!!"
+				_echo ""
+				_echo "Before start upgrade process, current mounted nanobsd partition"
+				_echo "needs to be cloned to secondary partition, where update will happen"
+				_echo ""
+				if [ -z "${yes}" ]; then
+					_echo -n "Proceed with upgrade? (y/N) "
+					read answer
+					if [ "${answer}" != "y" ]; then
+						_echo "Aborting..."
+						_exit 0
+					fi
+				fi
+			fi
 			setup_nanobsd_env
 			need_reboot=1
 		fi
 
 		pkg_unlock ${kernel_pkg}
-
-		if [ "${platform}" = "nanobsd" ] && \
-		   [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -le 1 ]; then
-			_echo "**** WARNING ****"
-			_echo "Reboot will be required!!"
-			_echo "Secondary partition is up to date"
-			if [ -z "${yes}" ]; then
-				_echo -n "Proceed with upgrade? (y/N) "
-				read answer
-				if [ "${answer}" != "y" ]; then
-					_echo "Aborting..."
-					_exit 0
-				fi
-			fi
-			switch_active_nanobsd_partition
-			do_reboot
-			_exit 0
-		fi
 
 		if [ -z "${yes}" ]; then
 			# Show user which packages are going to be upgraded
@@ -476,17 +474,30 @@ setup_nanobsd_env() {
 		_exit 1
 	fi
 
-	_exec "mount ${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
+	# Remove /dev
+	_update_partition=$(echo ${_update_partition} | sed 's,^/dev/,,')
+	local _update_slice=$(glabel status -s | awk "\$1 == \"${_update_partition}\" { print \$3 }")
 
-	pkg_chroot="-c ${chroot_dir}"
-
-	pkg_update force
-
-	if [ "$(compare_pkg_version pkg)" = "<" ]; then
-		_exec "pkg ${pkg_chroot} upgrade pkg" "Upgrading pkg" mute
-		pkg_update force
+	if [ -z "${_update_slice}" -o ! -e "/dev/${_update_slice}" ]; then
+		_echo "Secondary slice (${_update_slice}), use_update_sliced for upgrade not found"
+		_exit 1
 	fi
 
+	_update_slice="/dev/${_update_slice}"
+
+	# Clone slice using same logic from nanobsd_clone_slice()
+	sysctl kern.geom.debugflags=16 >/dev/null 2>&1
+	_exec "dd if=/dev/zero of=${_update_slice} bs=1m count=1" "Cleaning secondary partition" mute
+	_exec "dd if=${_cur_partition} of=${_update_slice} bs=64k" "Duplicating current slice" mute
+	_exec "tunefs -L ${_update_partition##*/} ${_update_slice}" "Restoring slice label" mute
+	sysctl kern.geom.debugflags=0 >/dev/null 2>&1
+
+	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
+
+	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \
+		${chroot_dir}/etc/fstab
+
+	pkg_chroot="-c ${chroot_dir}"
 }
 
 switch_active_nanobsd_partition() {

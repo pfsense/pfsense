@@ -6,9 +6,17 @@ h1 a:link{
 	text-decoration: none !important;
 }
 
+h1.page-header {
+	display: none;
+}
+
 
 h1 a:visited { color: #000000; }
 h1 a:hover, h1 a:active { color: #000000; text-decoration: none !important; }
+
+.breadcrumb {
+	font-size: 22px;
+}
 
 html {
 	position: relative;
@@ -179,7 +187,7 @@ tr.disabled th {
 
 .header .context-links {
 	position: absolute;
-	right: 0;
+	right: 15px;
 	top: 15px;
 }
 
@@ -370,4 +378,13 @@ form .btn + .btn {
 
 .widget-heading-icon .fa:hover {
     color: #e0e0e0;
+}
+
+/* All pfSense textareas benefit from using a fixed width font **/
+textarea
+{
+	font-family:	consolas,monaco,roboto mono,liberation mono,courier;
+	font-size: 12px;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
 }

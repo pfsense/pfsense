@@ -91,7 +91,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if ($_POST['authmode'] != "local") {
+		if ($_POST['authmode'] != "Local Database") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
 			if ($_POST['savetest']) {
 				if ($authsrv['type'] == "ldap") {

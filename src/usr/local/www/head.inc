@@ -564,17 +564,15 @@ if (are_notices_pending()):?>
 //<![CDATA[
 	events.push(function(){
 	    $('#clearallnotices').click(function() {
-			alert("Clear button clicked");
 			ajaxRequest = $.ajax({
 				url: "/index.php",
 				type: "post",
 				data: { closenotice: "all"},
 				success: function(){
-					alert('Success');
 					window.location = window.location.href;
 				},
 				failure: function () {
-					alert("Blew it!");
+					alert("Error clearing notices!");
 				}
 			});
 		});
@@ -583,3 +581,6 @@ if (are_notices_pending()):?>
 </script>
 
 <?php endif;
+
+// Get the flash Messages
+get_flash_message();

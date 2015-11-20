@@ -341,6 +341,7 @@ create_Full_update_tarball() {
 
 	rm -rf ${FINAL_CHROOT_DIR}/cf
 	rm -rf ${FINAL_CHROOT_DIR}/conf
+	rm -f ${FINAL_CHROOT_DIR}/etc/dh-parameters.*
 	rm -f ${FINAL_CHROOT_DIR}/etc/rc.conf
 	rm -f ${FINAL_CHROOT_DIR}/etc/pwd.db 2>/dev/null
 	rm -f ${FINAL_CHROOT_DIR}/etc/group 2>/dev/null

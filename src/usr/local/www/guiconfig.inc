@@ -1232,6 +1232,21 @@ var_dump($content);die;
 <?php
 }
 
+function set_flash_message($class, $msg) {
+	@session_start();
+	$_SESSION['flash_messages'][$class][] = $msg;
+}
+
+function get_flash_message() {
+	@session_start();
+	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
+		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
+			print_info_box_np(implode("<br />", $flash_message), null, null, false, $class);
+		}
+		unset($_SESSION['flash_messages']);
+	}
+}
+
 /* set timezone */
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {

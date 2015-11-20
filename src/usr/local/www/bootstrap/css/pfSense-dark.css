@@ -10,10 +10,6 @@ a:hover {
 	text-decoration: none;
 }
 
-h1.page-header {
-	display: none;
-}
-
 h1 a:link{
 	color: #fff;
 }

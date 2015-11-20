@@ -79,7 +79,7 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if($_POST['order-store']) {
+if(array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new = array();
 

@@ -150,7 +150,7 @@ if ($_POST) {
 		} else {
 			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
 			$tunableent['value'] = htmlspecialchars($_POST['value']);
-			$tunableent['descr'] = htmlspecialchars($_POST['descr']);
+			$tunableent['descr'] = strip_tags($_POST['descr']);
 
 			if (isset($id) && isset($a_tunable[$id])) {
 				$a_tunable[$id] = $tunableent;
@@ -243,17 +243,17 @@ if ($act != "edit" ): ?>
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
-		'descr',
-		'Description',
-		'text',
-		$pconfig['descr']
-	))->setWidth(4);
-
-	$section->addInput(new Form_Input(
 		'value',
 		'Value',
 		'text',
 		$pconfig['value']
+	))->setWidth(4);
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'Description',
+		'text',
+		$pconfig['descr']
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {

@@ -68,6 +68,12 @@ $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);
 
+if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+} else {
+	$display_type = "gw_ip";
+}
+
 // Compose the table contents and pass it back to the ajax caller
 if($_REQUEST && $_REQUEST['ajax']) {
 	global $a_gateways, $gateways_status;
@@ -85,19 +91,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	foreach ($a_gateways as $gname => $gateway) {
 		print("<tr>\n");
 		print(	"<td>\n");
-
-		$if_gw = '';
-		if (is_ipaddr($gateway['gateway']))
-			$if_gw = $gateway['gateway'];
-		else {
-			if($gateway['ipprotocol'] == "inet")
-				$if_gw = get_interface_gateway($gateway['friendlyiface']);
-			if($gateway['ipprotocol'] == "inet6")
-				$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
-		}
-
 		print(htmlspecialchars($gateway['name']) . "<br />");
-
 		print('<div id="gateway' . $counter . '" style="display:inline"><b>');
 
 		$monitor_address = "";
@@ -190,12 +184,6 @@ if ($_POST) {
 	write_config("Updated gateways widget settings via dashboard.");
 	header("Location: /");
 	exit(0);
-}
-
-if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
-} else {
-	$display_type = "gw_ip";
 }
 ?>
 

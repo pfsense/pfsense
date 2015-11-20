@@ -213,7 +213,8 @@ print $form;
 					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
 			</td>
 		</tr>
-<?php $row++; } ?>
+<?php $row++; } 
+?>
 	</tbody>
 </table>
 <?php

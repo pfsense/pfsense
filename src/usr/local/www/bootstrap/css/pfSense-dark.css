@@ -240,6 +240,31 @@ caption {
 	color: #009688;
 }
 
+.bg-primary {
+	color: #000;
+	background-color: #009688;
+}
+
+.bg-info {
+	color: #000;
+	background-color: #B0BEC5;
+}
+
+.bg-danger {
+	color: #000;
+	background-color: #EF9A9A;
+}
+
+.bg-warning {
+	color: #000;
+	background-color: #FFF9C4;
+}
+
+.bg-success {
+	color: #000;
+	background-color: #80CBC4;
+}
+
 a.fa {
 	font-size: 20px;
 }

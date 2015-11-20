@@ -925,7 +925,6 @@ class XML_RPC_Client extends XML_RPC_Base {
             'verify_peer' => false,
             'verify_peer_name' => false
         );
-        var_dump($ctx_options);
 
         $ctx = stream_context_create($ctx_options);
 

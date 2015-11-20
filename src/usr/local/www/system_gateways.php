@@ -235,7 +235,7 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Gateways"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
 $shortcut_section = "gateways";
 
 include("head.inc");

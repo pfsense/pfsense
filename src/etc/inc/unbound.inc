@@ -180,7 +180,12 @@ EOF;
 		} else {
 			foreach ($active_interfaces as $ubif) {
 				if (is_ipaddr($ubif)) {
-					//$bindints .= "interface: $ubif\n";  -- until redmine #4062 is fixed, then uncomment this.
+					if (is_linklocal($ubif)) {
+						// until redmine #4062 is fixed, then remove this
+						continue;
+					} else {
+						$bindints .= "interface: $ubif\n";
+					}
 				} else {
 					$intip = get_interface_ip($ubif);
 					if (is_ipaddrv4($intip)) {

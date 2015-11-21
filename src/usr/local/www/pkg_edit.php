@@ -151,7 +151,7 @@ if ($_POST) {
 	$reqfields = array();
 	$reqfieldsn = array();
 	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && isset($field['required'])) {
+		if (isset($field['required'])) {
 			if ($field['fieldname']) {
 				$reqfields[] = $field['fieldname'];
 			}

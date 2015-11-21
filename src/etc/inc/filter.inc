@@ -277,8 +277,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status(gettext("Generating Layer7 rules"));
-	generate_layer7_files();
 	if (platform_booting() == true) {
 		echo ".";
 	}
@@ -463,9 +461,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (!is_bogonsv6_used()) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
-
-	update_filter_reload_status(gettext("Starting up layer7 daemon"));
-	layer7_start_l7daemon();
 
 	if (!platform_booting()) {
 		if (!empty($filterdns)) {
@@ -1066,7 +1061,6 @@ function filter_generate_optcfg_array() {
 		echo "filter_generate_optcfg_array() being called $mt\n";
 	}
 
-	read_layer7_config();
 	/* if list */
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
@@ -2567,7 +2561,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $layer7_rules_list, $dummynet_name_list;
+	global $dummynet_name_list;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2728,15 +2722,6 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	//Layer7 support
-	$l7_present = false;
-	$l7_structures = array();
-	if (isset($rule['l7container']) && $rule['l7container'] != "none") {
-		$l7_present = true;
-		$l7rule =& $layer7_rules_list[$rule['l7container']];
-		$l7_structures = $l7rule->get_unique_structures();
-		$aline['divert'] = "divert-to " . $l7rule->GetRPort() . " ";
-	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet")) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	}
@@ -2875,7 +2860,7 @@ function filter_generate_user_rule($rule) {
 			$rule['nopfsync'] = true;
 		}
 
-		if ($noadvoptions == false || $l7_present) {
+		if ($noadvoptions == false) {
 			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
@@ -2886,8 +2871,7 @@ function filter_generate_user_rule($rule) {
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync'])) or
-			    ($l7_present)) {
+			    (isset($rule['nopfsync'])) ) {
 				$aline['flags'] .= "( ";
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";

@@ -507,9 +507,6 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue {$item['defaultqueue']} ";
 	}
-	if ($item['l7container']) {
-		$item_set .= "layer7 {$item['l7container']} ";
-	}
 	if ($item['tag']) {
 		$item_set .= "tag {$item['tag']} ";
 	}

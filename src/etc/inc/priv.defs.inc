@@ -404,12 +404,6 @@ $priv_list['page-firewall-trafficshaper']['descr'] = gettext("Allow access to th
 $priv_list['page-firewall-trafficshaper']['match'] = array();
 $priv_list['page-firewall-trafficshaper']['match'][] = "firewall_shaper.php*";
 
-$priv_list['page-firewall-trafficshaper-layer7'] = array();
-$priv_list['page-firewall-trafficshaper-layer7']['name'] = gettext("WebCfg - Firewall: Traffic Shaper: Layer7 page");
-$priv_list['page-firewall-trafficshaper-layer7']['descr'] = gettext("Allow access to the 'Firewall: Traffic Shaper: Layer7' page.");
-$priv_list['page-firewall-trafficshaper-layer7']['match'] = array();
-$priv_list['page-firewall-trafficshaper-layer7']['match'][] = "firewall_shaper_layer7.php*";
-
 $priv_list['page-firewall-trafficshaper-queues'] = array();
 $priv_list['page-firewall-trafficshaper-queues']['name'] = gettext("WebCfg - Firewall: Traffic Shaper: Queues page");
 $priv_list['page-firewall-trafficshaper-queues']['descr'] = gettext("Allow access to the 'Firewall: Traffic Shaper: Queues' page.");

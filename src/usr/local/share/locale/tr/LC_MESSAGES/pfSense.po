@@ -845,10 +845,6 @@ msgstr "Fiitre kuralları oluşturuluyor"
 msgid "Generating ALTQ queues"
 msgstr "ALTQ kuyrukları oluşturuluyor"
 
-#: etc/inc/filter.inc:261
-msgid "Generating Layer7 rules"
-msgstr "Layer7 kuralları oluşturuluyor"
-
 #: etc/inc/filter.inc:265
 msgid "Loading filter rules"
 msgstr "Filtreleme kuralları yükleniyor"
@@ -902,10 +898,6 @@ msgstr "PF sıkışmış/meşgul oldu ve tekrar başlatılıyor."
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
 msgstr "Kurallar yüklenirken hata(lar) vardı: %1$s - %2$s"
-
-#: etc/inc/filter.inc:388
-msgid "Starting up layer7 daemon"
-msgstr "layer7 servisi başlatılıyor"
 
 #: etc/inc/filter.inc:447
 msgid "Processing down interface states"
@@ -2618,15 +2610,6 @@ msgstr "WebCfg - Güvenlik Duvarı: Trafik Şekillendirici sayfası"
 #: etc/inc/priv.defs.inc:409
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
 msgstr "'Güvenlik Duvarı: Trafik Şekillendirici' sayfasını erişime açar."
-
-#: etc/inc/priv.defs.inc:414
-msgid "WebCfg - Firewall: Traffic Shaper: Layer7 page"
-msgstr "WebCfg - Güvenlik Duvarı: Trafik Şekillendirici: Layer7 sayfası"
-
-#: etc/inc/priv.defs.inc:415
-msgid "Allow access to the 'Firewall: Traffic Shaper: Layer7' page."
-msgstr ""
-"'Güvenlik Duvarı: Trafik Şekillendirici: Layer7' sayfasını erişime açar."
 
 #: etc/inc/priv.defs.inc:420
 msgid "WebCfg - Firewall: Traffic Shaper: Queues page"
@@ -5041,10 +5024,6 @@ msgstr ""
 msgid "slots"
 msgstr "yuvalar"
 
-#: etc/inc/shaper.inc:3885
-msgid "Enable/Disable layer7 Container"
-msgstr "Layer7 Barındırıcı Etkinleştir/Kapat"
-
 #: etc/inc/shaper.inc:4150
 #, php-format
 msgid "Sending HUP signal to %s"
@@ -6035,7 +6014,6 @@ msgstr "Tanımlı herhangi bir CARP arabirimi tespit edilememiştir."
 
 #: usr/local/www/carp_status.php:199 usr/local/www/diag_packet_capture.php:262
 #: usr/local/www/diag_packet_capture.php:348
-#: usr/local/www/firewall_shaper_layer7.php:66
 #: usr/local/www/interfaces_wireless.php:137 usr/local/www/pkg_edit.php:936
 #: usr/local/www/services_ntpd_pps.php:138 usr/local/www/status_graph.php:338
 #: usr/local/www/status_graph_cpu.php:54 usr/local/www/status_queues.php:187
@@ -6050,7 +6028,6 @@ msgid "You can configure high availability sync settings"
 msgstr "Yüksek erişilebilirlik senkronize ayarlarını yapılandırabilirsiniz"
 
 #: usr/local/www/carp_status.php:201
-#: usr/local/www/firewall_shaper_layer7.php:67
 #: usr/local/www/firewall_virtual_ip.php:308 usr/local/www/interfaces.php:3490
 #: usr/local/www/interfaces.php:3499 usr/local/www/status_queues.php:189
 msgid "here"
@@ -6115,7 +6092,7 @@ msgstr "- Hata raporunu temizle ve anasayfaya geri dön"
 #: usr/local/www/diag_dump_states_sources.php:66
 #: usr/local/www/diag_gmirror.php:46 usr/local/www/diag_nanobsd.php:50
 #: usr/local/www/diag_ndp.php:107 usr/local/www/diag_packet_capture.php:88
-#: usr/local/www/diag_patterns.php:63 usr/local/www/diag_ping.php:47
+#: usr/local/www/diag_ping.php:47
 #: usr/local/www/diag_resetstate.php:65 usr/local/www/diag_routes.php:71
 #: usr/local/www/diag_smart.php:18 usr/local/www/diag_sockets.php:45
 #: usr/local/www/diag_states_summary.php:187 usr/local/www/diag_tables.php:45
@@ -6520,7 +6497,6 @@ msgstr "SNMP Sunucu"
 
 #: usr/local/www/diag_backup.php:201 usr/local/www/fbegin.inc:132
 #: usr/local/www/firewall_shaper.php:55
-#: usr/local/www/firewall_shaper_layer7.php:60
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:74
 msgid "Traffic Shaper"
@@ -6912,7 +6888,6 @@ msgstr ""
 #: usr/local/www/firewall_rules_edit.php:1738
 #: usr/local/www/firewall_schedule_edit.php:1168
 #: usr/local/www/firewall_shaper.php:351
-#: usr/local/www/firewall_shaper_layer7.php:566
 #: usr/local/www/firewall_shaper_vinterface.php:319
 #: usr/local/www/firewall_virtual_ip_edit.php:509
 #: usr/local/www/interfaces.php:3379 usr/local/www/interfaces_assign.php:553
@@ -7827,7 +7802,6 @@ msgstr "Hedef"
 #: usr/local/www/firewall_nat_out_edit.php:146
 #: usr/local/www/firewall_nat_out_edit.php:513
 #: usr/local/www/firewall_rules_edit.php:988
-#: usr/local/www/firewall_shaper_layer7.php:467
 #: usr/local/www/interfaces_bridge_edit.php:310
 #: usr/local/www/load_balancer_relay_action_edit.php:121
 #: usr/local/www/load_balancer_relay_action_edit.php:425
@@ -7947,7 +7921,6 @@ msgstr "Genel"
 #: usr/local/www/firewall_schedule.php:51
 #: usr/local/www/firewall_schedule_edit.php:62
 #: usr/local/www/firewall_shaper.php:55
-#: usr/local/www/firewall_shaper_layer7.php:60
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:74
 #: usr/local/www/firewall_virtual_ip.php:203
@@ -9167,35 +9140,6 @@ msgstr "Paket Yakalama durdu."
 msgid "Packets Captured:"
 msgstr "Yakalanan Paket Sayısı:"
 
-#: usr/local/www/diag_patterns.php:43 usr/local/www/diag_patterns.php:85
-msgid "Upload Pattern file"
-msgstr "Desen dosyası yükle"
-
-#: usr/local/www/diag_patterns.php:49
-#, php-format
-msgid "Added custom l7 pattern %s"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:51
-msgid "Uploaded file to"
-msgstr "Yüklenen dosyanın konumu"
-
-#: usr/local/www/diag_patterns.php:54
-msgid "Warning: You must upload a file with .pat extension."
-msgstr "Uyarı: Yüklenecek dosya .pat uzantısında olmalıdır."
-
-#: usr/local/www/diag_patterns.php:63
-msgid "Add layer7 pattern"
-msgstr "Layer7 deseni ekle"
-
-#: usr/local/www/diag_patterns.php:74
-msgid "Upload layer7 pattern file"
-msgstr "Layer7 desen dosyası yükle"
-
-#: usr/local/www/diag_patterns.php:77
-msgid "File to upload:"
-msgstr "Yüklenecek dosya:"
-
 #: usr/local/www/diag_pf_info.php:101
 msgid "Gathering PF information, please wait..."
 msgstr "PF bilgisi toplanıyor, lütfen bekleyiniz..."
@@ -9631,7 +9575,6 @@ msgid "entries in this table."
 msgstr "girdileri sil."
 
 #: usr/local/www/diag_tables.php:169
-#: usr/local/www/firewall_shaper_layer7.php:572
 #: usr/local/www/services_dhcpv6.php:809
 #: usr/local/www/system_firmware_restorefullbackup.php:164
 msgid "Delete"
@@ -10272,7 +10215,6 @@ msgstr "Grup listesi değiştirildi."
 #: usr/local/www/firewall_nat_npt.php:90
 #: usr/local/www/firewall_nat_out.php:226
 #: usr/local/www/firewall_shaper.php:406
-#: usr/local/www/firewall_shaper_layer7.php:402
 #: usr/local/www/firewall_shaper_queues.php:189
 #: usr/local/www/firewall_shaper_vinterface.php:386
 #: usr/local/www/firewall_shaper_wizards.php:97
@@ -10694,7 +10636,6 @@ msgid "remove this entry"
 msgstr "bu girdiyi sil"
 
 #: usr/local/www/firewall_aliases_edit.php:843
-#: usr/local/www/firewall_shaper_layer7.php:556
 #: usr/local/www/interfaces_groups_edit.php:322
 #: usr/local/www/interfaces_qinq_edit.php:390
 #: usr/local/www/services_dhcp.php:1197 usr/local/www/services_dhcpv6.php:817
@@ -10717,7 +10658,6 @@ msgstr "başka giriş ekle"
 #: usr/local/www/firewall_rules_edit.php:1262
 #: usr/local/www/firewall_rules_edit.php:1739
 #: usr/local/www/firewall_schedule_edit.php:1169
-#: usr/local/www/firewall_shaper_layer7.php:569
 #: usr/local/www/firewall_virtual_ip_edit.php:510
 #: usr/local/www/interfaces.php:1856 usr/local/www/interfaces.php:1962
 #: usr/local/www/interfaces.php:3380
@@ -12436,14 +12376,6 @@ msgstr ""
 msgid "ID must be an integer"
 msgstr "Kimlik değeri tamsayı olmalıdır"
 
-#: usr/local/www/firewall_rules_edit.php:526
-msgid "You can only select a layer7 container for TCP and/or UDP protocols"
-msgstr "Sadece TCP ve UDP protokolleri için layer7 barındırıcı seçilebilir"
-
-#: usr/local/www/firewall_rules_edit.php:528
-msgid "You can only select a layer7 container for Pass type rules."
-msgstr "Sadece İzin türü kurallar için layer7 barındırıcı seçilebilir."
-
 #: usr/local/www/firewall_rules_edit.php:533
 msgid ""
 "You can only specify the maximum number of established connections per host "
@@ -12987,24 +12919,6 @@ msgstr "Alındılama kuyruğu/Kuyruk"
 msgid "Choose the Acknowledge Queue only if you have selected Queue."
 msgstr "Sadece Kuyruk seçtiyseniz Alındılama Kuyruğu'nu seçin."
 
-#: usr/local/www/firewall_rules_edit.php:1673
-#: usr/local/www/firewall_shaper.php:415
-#: usr/local/www/firewall_shaper_layer7.php:60
-#: usr/local/www/firewall_shaper_layer7.php:411
-#: usr/local/www/firewall_shaper_queues.php:198
-#: usr/local/www/firewall_shaper_vinterface.php:395
-#: usr/local/www/firewall_shaper_wizards.php:106
-msgid "Layer7"
-msgstr "Layer7"
-
-#: usr/local/www/firewall_rules_edit.php:1696
-msgid ""
-"Choose a Layer7 container to apply application protocol inspection rules. "
-"These are valid for TCP and UDP protocols only."
-msgstr ""
-"Uygulama protokolü inceleme kurallarını uygulamak için Layer7 barındırıcı "
-"seçiniz. Bu seçenekler sadece TCP ve UDP protokolleri için geçerlidir."
-
 #: usr/local/www/firewall_schedule.php:78
 #, php-format
 msgid "Cannot delete Schedule.  Currently in use by %s"
@@ -13222,7 +13136,6 @@ msgid "The traffic shaper configuration has been changed."
 msgstr "Trafik şekillendirici yapılandırması değiştirildi."
 
 #: usr/local/www/firewall_shaper.php:412
-#: usr/local/www/firewall_shaper_layer7.php:408
 #: usr/local/www/firewall_shaper_queues.php:195
 #: usr/local/www/firewall_shaper_vinterface.php:392
 #: usr/local/www/firewall_shaper_wizards.php:103
@@ -13230,7 +13143,6 @@ msgid "By Interface"
 msgstr "Arabirime Göre"
 
 #: usr/local/www/firewall_shaper.php:413
-#: usr/local/www/firewall_shaper_layer7.php:409
 #: usr/local/www/firewall_shaper_queues.php:196
 #: usr/local/www/firewall_shaper_vinterface.php:393
 #: usr/local/www/firewall_shaper_wizards.php:104
@@ -13238,7 +13150,6 @@ msgid "By Queue"
 msgstr "Kuyruğa Göre"
 
 #: usr/local/www/firewall_shaper.php:414
-#: usr/local/www/firewall_shaper_layer7.php:410
 #: usr/local/www/firewall_shaper_queues.php:197
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:394
@@ -13247,7 +13158,6 @@ msgid "Limiter"
 msgstr "Limitleyici"
 
 #: usr/local/www/firewall_shaper.php:416
-#: usr/local/www/firewall_shaper_layer7.php:412
 #: usr/local/www/firewall_shaper_queues.php:199
 #: usr/local/www/firewall_shaper_vinterface.php:396
 #: usr/local/www/firewall_shaper_wizards.php:74
@@ -13262,42 +13172,9 @@ msgstr "Sihirbazlar"
 msgid "Remove Shaper"
 msgstr "Şekillendiriciyi Kaldır"
 
-#: usr/local/www/firewall_shaper_layer7.php:67
-msgid "You can add new layer7 protocol patterns by simply uploading the file"
-msgstr "Dosyayı yükleyerek yeni layer7 protokol örüntüleri ekleyebilirsiniz"
-
-#: usr/local/www/firewall_shaper_layer7.php:112
-msgid "Layer7 Rules Container not found!"
-msgstr "Layer7 Kural Barındırıcısı bulunamadı!"
-
-#: usr/local/www/firewall_shaper_layer7.php:162
-msgid "Found the following repeated protocol definitions"
-msgstr "Şu tekrarlanan protokol tanımları tespit edildi"
-
-#: usr/local/www/firewall_shaper_layer7.php:402
 #: usr/local/www/firewall_shaper_queues.php:189
 msgid "The traffic shaper configuration has been changed"
 msgstr "Trafik şekillendirme yapılandırması değiştirildi"
-
-#: usr/local/www/firewall_shaper_layer7.php:433
-msgid "Create new l7 rules group"
-msgstr "Yeni  Layer7 kural grubu oluştur"
-
-#: usr/local/www/firewall_shaper_layer7.php:446
-msgid "Rule(s)"
-msgstr "Kural(lar)"
-
-#: usr/local/www/firewall_shaper_layer7.php:458
-msgid "Add one or more rules"
-msgstr "Bir yada daha fazla kural ekle"
-
-#: usr/local/www/firewall_shaper_layer7.php:474
-msgid "Structure"
-msgstr "Yapı"
-
-#: usr/local/www/firewall_shaper_layer7.php:481
-msgid "Behaviour"
-msgstr "Davranış"
 
 #: usr/local/www/firewall_shaper_queues.php:173
 msgid "Firewall: Shaper: By Queues View"

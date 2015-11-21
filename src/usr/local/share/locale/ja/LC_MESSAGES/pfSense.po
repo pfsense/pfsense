@@ -340,11 +340,6 @@ msgstr "ALTQキューを生成する"
 msgid "Generating Limiter rules"
 msgstr "リミッタールールを生成する"
 
-#: etc/inc/filter.inc:234 etc/inc/filter.inc:232 etc/inc/filter.inc:231
-#: etc/inc/filter.inc:206 etc/inc/filter.inc:206
-msgid "Generating Layer7 rules"
-msgstr "生成レイヤ7ルール"
-
 #: etc/inc/filter.inc:238 etc/inc/filter.inc:236 etc/inc/filter.inc:235
 #: etc/inc/filter.inc:210 etc/inc/filter.inc:210
 msgid "Loading filter rules"
@@ -487,11 +482,6 @@ msgstr "ルールのロード中にエラー（S）がありました：%1$s - %
 #: etc/inc/filter.inc:324 etc/inc/filter.inc:324
 msgid "PF was wedged/busy and has been reset."
 msgstr "PFは忙しい/押し込まれ、リセットされました。"
-
-#: etc/inc/filter.inc:355 etc/inc/filter.inc:357 etc/inc/filter.inc:360
-#: etc/inc/filter.inc:329 etc/inc/filter.inc:333 etc/inc/filter.inc:333
-msgid "Starting up layer7 daemon"
-msgstr "レイヤ7デーモンを起動"
 
 #: etc/inc/filter.inc:403 etc/inc/filter.inc:405 etc/inc/filter.inc:408
 #: etc/inc/filter.inc:380 etc/inc/filter.inc:384 etc/inc/filter.inc:384
@@ -3090,12 +3080,6 @@ msgstr ""ヒント：同じ親の下にキューの場合、これはキュー�
 msgid "slots"
 msgstr "スロット"
 
-#: etc/inc/shaper.inc:3494 etc/inc/shaper.inc:3506 etc/inc/shaper.inc:3661
-#: etc/inc/shaper.inc:3662 etc/inc/shaper.inc:3669 etc/inc/shaper.inc:3737
-#: etc/inc/shaper.inc:3842
-msgid "Enable/Disable layer7 Container"
-msgstr "レイヤ7コンテナを有効または無効にします"
-
 #: etc/inc/shaper.inc:3744 etc/inc/shaper.inc:3756 etc/inc/shaper.inc:3911
 #: etc/inc/shaper.inc:3912 etc/inc/shaper.inc:3919 etc/inc/shaper.inc:3987
 #: etc/inc/shaper.inc:4092
@@ -4853,18 +4837,6 @@ msgstr "WebCfg - ファイアウォール：トラフィックシェイパーペ
 #: etc/inc/priv.defs.inc:361
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
 msgstr "ページ： 「トラフィック·シェイパーファイアウォール」へのアクセスを許可します。"
-
-#: etc/inc/priv.defs.inc:346 etc/inc/priv.defs.inc:364
-#: etc/inc/priv.defs.inc:370 etc/inc/priv.defs.inc:366
-#: etc/inc/priv.defs.inc:366
-msgid "WebCfg - Firewall: Traffic Shaper: Layer7 page"
-msgstr "WebCfg - ファイアウォール：トラフィックシェイパー：レイヤ7ページ"
-
-#: etc/inc/priv.defs.inc:347 etc/inc/priv.defs.inc:365
-#: etc/inc/priv.defs.inc:371 etc/inc/priv.defs.inc:367
-#: etc/inc/priv.defs.inc:367
-msgid "Allow access to the 'Firewall: Traffic Shaper: Layer7' page."
-msgstr "ページ'： Traffic Shaperはレイヤ7ファイアウォール」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:352 etc/inc/priv.defs.inc:370
 #: etc/inc/priv.defs.inc:376 etc/inc/priv.defs.inc:372
@@ -7334,7 +7306,6 @@ msgid "The virtual server configuration has been changed"
 msgstr "仮想サーバーの構成が変更されました"
 
 #: usr/local/www/load_balancer_virtual_server.php:108
-#: usr/local/www/firewall_shaper_layer7.php:401
 #: usr/local/www/firewall_shaper_vinterface.php:366
 #: usr/local/www/firewall_shaper_wizards.php:96
 #: usr/local/www/firewall_aliases.php:160
@@ -7388,7 +7359,7 @@ msgstr "仮想サーバーの構成が変更されました"
 #: usr/local/www/firewall_virtual_ip.php:204
 #: usr/local/www/firewall_nat.php:183 usr/local/www/firewall_nat_out.php:311
 #: usr/local/www/services_dnsmasq.php:175 usr/local/www/interfaces.php:1364
-#: usr/local/www/firewall_shaper_layer7.php:401 usr/local/www/vpn_pppoe.php:98
+#: usr/local/www/vpn_pppoe.php:98
 #: usr/local/www/firewall_shaper.php:405
 #: usr/local/www/firewall_shaper_vinterface.php:386
 #: usr/local/www/vpn_ipsec.php:139 usr/local/www/firewall_virtual_ip.php:204
@@ -7459,7 +7430,6 @@ msgid "Monitors"
 msgstr "モニター"
 
 #: usr/local/www/load_balancer_virtual_server.php:129
-#: usr/local/www/firewall_shaper_layer7.php:466
 #: usr/local/www/interfaces_bridge_edit.php:291
 #: usr/local/www/firewall_nat_edit.php:182
 #: usr/local/www/firewall_nat_edit.php:185
@@ -7521,7 +7491,6 @@ msgstr "モニター"
 #: usr/local/www/firewall_rules_edit.php:857
 #: usr/local/www/firewall_nat_edit.php:532
 #: usr/local/www/interfaces_bridge_edit.php:304
-#: usr/local/www/firewall_shaper_layer7.php:466
 #: usr/local/www/vpn_openvpn_client.php:452
 #: usr/local/www/vpn_openvpn_client.php:938
 #: usr/local/www/firewall_rules_edit.php:857
@@ -7670,7 +7639,7 @@ msgstr "プールのフォールバック"
 #: usr/local/www/diag_confbak.php:98 usr/local/www/halt.php:59
 #: usr/local/www/diag_smart.php:14 usr/local/www/diag_states_summary.php:185
 #: usr/local/www/system_firmware_auto.php:60
-#: usr/local/www/diag_patterns.php:58 usr/local/www/diag_dns.php:34
+#: usr/local/www/diag_dns.php:34
 #: usr/local/www/reboot.php:51 usr/local/www/edit.php:39
 #: usr/local/www/diag_ping.php:43 usr/local/www/diag_resetstate.php:64
 #: usr/local/www/diag_routes.php:45 usr/local/www/diag_traceroute.php:45
@@ -7700,7 +7669,7 @@ msgstr "プールのフォールバック"
 #: usr/local/www/diag_packet_capture.php:43 usr/local/www/diag_routes.php:45
 #: usr/local/www/diag_traceroute.php:46 usr/local/www/diag_smart.php:14
 #: usr/local/www/exec.php:93 usr/local/www/halt.php:54
-#: usr/local/www/diag_patterns.php:58 usr/local/www/diag_backup.php:581
+#: usr/local/www/diag_backup.php:581
 #: usr/local/www/diag_ping.php:44 usr/local/www/diag_resetstate.php:64
 #: usr/local/www/system_firmware_restorefullbackup.php:104
 #: usr/local/www/diag_dns.php:34 usr/local/www/edit.php:41
@@ -7753,14 +7722,11 @@ msgid " the latest bogon data."
 msgstr "最新のbogonデータ。"
 
 #: usr/local/www/diag_tables.php:162
-#: usr/local/www/firewall_shaper_layer7.php:576
 #: usr/local/www/services_dhcpv6.php:758
 #: usr/local/www/system_firmware_restorefullbackup.php:163
 #: usr/local/www/diag_tables.php:161 usr/local/www/services_dhcpv6.php:853
 #: usr/local/www/services_dhcpv6.php:784 usr/local/www/diag_tables.php:165
 #: usr/local/www/services_dhcpv6.php:801
-#: usr/local/www/firewall_shaper_layer7.php:571
-#: usr/local/www/firewall_shaper_layer7.php:571
 #: usr/local/www/diag_tables.php:165 usr/local/www/services_dhcpv6.php:801
 #: usr/local/www/system_firmware_restorefullbackup.php:163
 msgid "Delete"
@@ -7880,7 +7846,6 @@ msgstr "パッケージ·エディター"
 
 #: usr/local/www/pkg_edit.php:405
 #: usr/local/www/firewall_aliases_import.php:154
-#: usr/local/www/firewall_shaper_layer7.php:569
 #: usr/local/www/firewall_shaper_vinterface.php:307
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:130
 #: usr/local/www/firewall_virtual_ip_edit.php:546
@@ -8116,7 +8081,6 @@ msgstr "パッケージ·エディター"
 #: usr/local/www/vpn_ipsec_phase2.php:791 usr/local/www/services_snmp.php:430
 #: usr/local/www/interfaces_qinq_edit.php:398
 #: usr/local/www/interfaces.php:2664
-#: usr/local/www/firewall_shaper_layer7.php:565
 #: usr/local/www/services_router_advertisements.php:395
 #: usr/local/www/system_gateways_edit.php:634
 #: usr/local/www/services_dyndns_edit.php:378
@@ -8152,7 +8116,7 @@ msgstr "パッケージ·エディター"
 #: usr/local/www/interfaces_groups_edit.php:320 usr/local/www/pkg_edit.php:422
 #: usr/local/www/interfaces_bridge_edit.php:598
 #: usr/local/www/services_dnsmasq.php:312 usr/local/www/interfaces.php:2699
-#: usr/local/www/firewall_shaper_layer7.php:565 usr/local/www/vpn_l2tp.php:449
+#: usr/local/www/vpn_l2tp.php:449
 #: usr/local/www/services_router_advertisements.php:395
 #: usr/local/www/system_gateways_edit.php:665
 #: usr/local/www/system_camanager.php:366
@@ -8259,7 +8223,6 @@ msgstr "保存"
 msgid "Advanced features"
 msgstr "高度な機能"
 
-#: usr/local/www/pkg_edit.php:817 usr/local/www/firewall_shaper_layer7.php:65
 #: usr/local/www/diag_packet_capture.php:203 usr/local/www/vpn_ipsec.php:422
 #: usr/local/www/interfaces_wireless.php:133 usr/local/www/vpn_pptp.php:477
 #: usr/local/www/status_graph.php:291 usr/local/www/carp_status.php:194
@@ -8280,7 +8243,7 @@ msgstr "高度な機能"
 #: usr/local/www/status_graph.php:330
 #: usr/local/www/diag_packet_capture.php:208
 #: usr/local/www/diag_packet_capture.php:288 usr/local/www/pkg_edit.php:921
-#: usr/local/www/firewall_shaper_layer7.php:65 usr/local/www/vpn_ipsec.php:438
+#: usr/local/www/vpn_ipsec.php:438
 #: usr/local/www/status_graph_cpu.php:53 usr/local/www/status_graph.php:330
 #: usr/local/www/diag_packet_capture.php:208
 #: usr/local/www/diag_packet_capture.php:288
@@ -8293,7 +8256,6 @@ msgstr "ノート"
 
 #: usr/local/www/pkg_edit.php:823 usr/local/www/pkg_edit.php:835
 #: usr/local/www/firewall_aliases_import.php:155
-#: usr/local/www/firewall_shaper_layer7.php:573
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:130
 #: usr/local/www/firewall_virtual_ip_edit.php:546
 #: usr/local/www/services_wol_edit.php:157
@@ -8417,7 +8379,6 @@ msgstr "ノート"
 #: usr/local/www/interfaces_qinq_edit.php:399
 #: usr/local/www/interfaces.php:1547 usr/local/www/interfaces.php:1652
 #: usr/local/www/interfaces.php:2665
-#: usr/local/www/firewall_shaper_layer7.php:568
 #: usr/local/www/system_gateways_edit.php:634
 #: usr/local/www/services_dyndns_edit.php:379
 #: usr/local/www/firewall_rules_edit.php:1128
@@ -8444,7 +8405,6 @@ msgstr "ノート"
 #: usr/local/www/interfaces_bridge_edit.php:598
 #: usr/local/www/interfaces.php:1586 usr/local/www/interfaces.php:1691
 #: usr/local/www/interfaces.php:2700
-#: usr/local/www/firewall_shaper_layer7.php:568
 #: usr/local/www/system_gateways_edit.php:665
 #: usr/local/www/interfaces_wireless_edit.php:197
 #: usr/local/www/load_balancer_relay_protocol_edit.php:278
@@ -9130,7 +9090,6 @@ msgid "System Logs, Firewall Tab"
 msgstr "システムログ、ファイアウォールタブ"
 
 #: usr/local/www/firewall_aliases_import.php:48
-#: usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_virtual_ip_edit.php:281
@@ -9212,7 +9171,6 @@ msgstr "システムログ、ファイアウォールタブ"
 #: usr/local/www/firewall_nat_out_edit.php:329
 #: usr/local/www/firewall_virtual_ip.php:189
 #: usr/local/www/firewall_nat_edit.php:452 usr/local/www/firewall_nat.php:166
-#: usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper.php:54 usr/local/www/diag_logs_auth.php:67
 #: usr/local/www/diag_logs_settings.php:223
 #: usr/local/www/firewall_shaper_vinterface.php:54
@@ -9397,13 +9355,11 @@ msgstr "「キャリッジリターンで区切られたインポートする別
 msgid "The list may contain only IP addresses."
 msgstr "リストは、 IPアドレスを含んでもよい。"
 
-#: usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_shaper.php:54 usr/local/www/diag_backup.php:121
 #: usr/local/www/fbegin.inc:114 usr/local/www/fbegin.inc:131
 #: usr/local/www/diag_backup.php:199 usr/local/www/fbegin.inc:140
-#: usr/local/www/fbegin.inc:132 usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:73
@@ -9411,40 +9367,6 @@ msgstr "リストは、 IPアドレスを含んでもよい。"
 msgid "Traffic Shaper"
 msgstr "トラフィックシェー"
 
-#: usr/local/www/firewall_shaper_layer7.php:59
-#: usr/local/www/firewall_shaper_layer7.php:410
-#: usr/local/www/firewall_shaper_vinterface.php:375
-#: usr/local/www/firewall_shaper_wizards.php:105
-#: usr/local/www/firewall_rules_edit.php:1443
-#: usr/local/www/firewall_shaper.php:412
-#: usr/local/www/firewall_shaper_queues.php:196
-#: usr/local/www/firewall_rules_edit.php:1514
-#: usr/local/www/firewall_shaper_vinterface.php:385
-#: usr/local/www/firewall_shaper.php:413
-#: usr/local/www/firewall_shaper_vinterface.php:392
-#: usr/local/www/firewall_rules_edit.php:1529
-#: usr/local/www/firewall_shaper.php:414
-#: usr/local/www/firewall_shaper_vinterface.php:395
-#: usr/local/www/firewall_rules_edit.php:1537
-#: usr/local/www/firewall_shaper_queues.php:197
-#: usr/local/www/firewall_shaper_wizards.php:106
-#: usr/local/www/firewall_rules_edit.php:1548
-#: usr/local/www/firewall_shaper_layer7.php:59
-#: usr/local/www/firewall_shaper_layer7.php:410
-#: usr/local/www/firewall_shaper.php:414
-#: usr/local/www/firewall_shaper_vinterface.php:395
-#: usr/local/www/firewall_rules_edit.php:1548
-#: usr/local/www/firewall_shaper_queues.php:197
-#: usr/local/www/firewall_shaper_wizards.php:106
-msgid "Layer7"
-msgstr "レイヤ7"
-
-#: usr/local/www/firewall_shaper_layer7.php:66
-#: usr/local/www/firewall_shaper_layer7.php:66
-msgid "You can add new layer7 protocol patterns by simply uploading the file"
-msgstr "あなたは、単にファイルをアップロードすることにより、新たなレイヤ7プロトコルのパターンを追加することができます"
-
-#: usr/local/www/firewall_shaper_layer7.php:66
 #: usr/local/www/firewall_virtual_ip.php:243 usr/local/www/interfaces.php:2550
 #: usr/local/www/interfaces.php:2559 usr/local/www/carp_status.php:196
 #: usr/local/www/status_queues.php:174 usr/local/www/status_queues.php:182
@@ -9457,32 +9379,18 @@ msgstr "あなたは、単にファイルをアップロードすることによ
 #: usr/local/www/interfaces.php:2783 usr/local/www/interfaces.php:2820
 #: usr/local/www/interfaces.php:2829 usr/local/www/firewall_virtual_ip.php:292
 #: usr/local/www/interfaces.php:2806 usr/local/www/interfaces.php:2815
-#: usr/local/www/firewall_shaper_layer7.php:66
 #: usr/local/www/firewall_virtual_ip.php:292
 #: usr/local/www/status_queues.php:165 usr/local/www/interfaces.php:2806
 #: usr/local/www/interfaces.php:2815 usr/local/www/carp_status.php:189
 msgid "here"
 msgstr "ここに"
 
-#: usr/local/www/firewall_shaper_layer7.php:111
-#: usr/local/www/firewall_shaper_layer7.php:111
-msgid "Layer7 Rules Container not found!"
-msgstr "レイヤ7ルールコンテナが見つかりません ！"
-
-#: usr/local/www/firewall_shaper_layer7.php:161
-#: usr/local/www/firewall_shaper_layer7.php:161
-msgid "Found the following repeated protocol definitions"
-msgstr "次の反復プロトコル定義を見つけた"
-
-#: usr/local/www/firewall_shaper_layer7.php:401
 #: usr/local/www/firewall_shaper_queues.php:187
 #: usr/local/www/firewall_shaper_queues.php:188
-#: usr/local/www/firewall_shaper_layer7.php:401
 #: usr/local/www/firewall_shaper_queues.php:188
 msgid "The traffic shaper configuration has been changed"
 msgstr "トラフィックシェーパの構成が変更されました"
 
-#: usr/local/www/firewall_shaper_layer7.php:407
 #: usr/local/www/firewall_shaper_vinterface.php:372
 #: usr/local/www/firewall_shaper_wizards.php:102
 #: usr/local/www/firewall_shaper.php:409
@@ -9494,7 +9402,6 @@ msgstr "トラフィックシェーパの構成が変更されました"
 #: usr/local/www/firewall_shaper_vinterface.php:392
 #: usr/local/www/firewall_shaper_queues.php:194
 #: usr/local/www/firewall_shaper_wizards.php:103
-#: usr/local/www/firewall_shaper_layer7.php:407
 #: usr/local/www/firewall_shaper.php:411
 #: usr/local/www/firewall_shaper_vinterface.php:392
 #: usr/local/www/firewall_shaper_queues.php:194
@@ -9502,7 +9409,6 @@ msgstr "トラフィックシェーパの構成が変更されました"
 msgid "By Interface"
 msgstr "インタフェースで"
 
-#: usr/local/www/firewall_shaper_layer7.php:408
 #: usr/local/www/firewall_shaper_vinterface.php:373
 #: usr/local/www/firewall_shaper_wizards.php:103
 #: usr/local/www/firewall_shaper.php:410
@@ -9514,7 +9420,6 @@ msgstr "インタフェースで"
 #: usr/local/www/firewall_shaper_vinterface.php:393
 #: usr/local/www/firewall_shaper_queues.php:195
 #: usr/local/www/firewall_shaper_wizards.php:104
-#: usr/local/www/firewall_shaper_layer7.php:408
 #: usr/local/www/firewall_shaper.php:412
 #: usr/local/www/firewall_shaper_vinterface.php:393
 #: usr/local/www/firewall_shaper_queues.php:195
@@ -9522,7 +9427,6 @@ msgstr "インタフェースで"
 msgid "By Queue"
 msgstr "キューによって"
 
-#: usr/local/www/firewall_shaper_layer7.php:409
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:374
 #: usr/local/www/firewall_shaper_wizards.php:104
@@ -9535,7 +9439,6 @@ msgstr "キューによって"
 #: usr/local/www/firewall_shaper_vinterface.php:394
 #: usr/local/www/firewall_shaper_queues.php:196
 #: usr/local/www/firewall_shaper_wizards.php:105
-#: usr/local/www/firewall_shaper_layer7.php:409
 #: usr/local/www/firewall_shaper.php:413
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:394
@@ -9544,7 +9447,6 @@ msgstr "キューによって"
 msgid "Limiter"
 msgstr "リミッタ"
 
-#: usr/local/www/firewall_shaper_layer7.php:411
 #: usr/local/www/firewall_shaper_vinterface.php:376
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_shaper_wizards.php:106
@@ -9566,7 +9468,6 @@ msgstr "リミッタ"
 #: usr/local/www/firewall_shaper_vinterface.php:396
 #: usr/local/www/firewall_shaper_queues.php:198
 #: usr/local/www/firewall_shaper_wizards.php:107
-#: usr/local/www/firewall_shaper_layer7.php:411
 #: usr/local/www/firewall_shaper.php:415
 #: usr/local/www/firewall_shaper_vinterface.php:396
 #: usr/local/www/vpn_openvpn_client.php:399
@@ -9578,32 +9479,6 @@ msgstr "リミッタ"
 msgid "Wizards"
 msgstr "ウィザーズ"
 
-#: usr/local/www/firewall_shaper_layer7.php:432
-#: usr/local/www/firewall_shaper_layer7.php:432
-msgid "Create new l7 rules group"
-msgstr "新しいL7ルール·グループを作成する"
-
-#: usr/local/www/firewall_shaper_layer7.php:445
-#: usr/local/www/firewall_shaper_layer7.php:445
-msgid "Rule(s)"
-msgstr "規則（単数または複数）"
-
-#: usr/local/www/firewall_shaper_layer7.php:457
-#: usr/local/www/firewall_shaper_layer7.php:457
-msgid "Add one or more rules"
-msgstr "1つ以上のルールを追加"
-
-#: usr/local/www/firewall_shaper_layer7.php:473
-#: usr/local/www/firewall_shaper_layer7.php:473
-msgid "Structure"
-msgstr "構造"
-
-#: usr/local/www/firewall_shaper_layer7.php:480
-#: usr/local/www/firewall_shaper_layer7.php:480
-msgid "Behaviour"
-msgstr "行動"
-
-#: usr/local/www/firewall_shaper_layer7.php:558
 #: usr/local/www/interfaces_groups_edit.php:315
 #: usr/local/www/firewall_aliases_edit.php:680
 #: usr/local/www/interfaces_qinq_edit.php:387
@@ -9628,13 +9503,11 @@ msgstr "行動"
 #: usr/local/www/system_certmanager.php:818
 #: usr/local/www/services_dhcpv6.php:811
 #: usr/local/www/interfaces_qinq_edit.php:391
-#: usr/local/www/firewall_shaper_layer7.php:555
 #: usr/local/www/services_router_advertisements.php:353
 #: usr/local/www/services_dhcp.php:1123
 #: usr/local/www/system_certmanager.php:820
 #: usr/local/www/firewall_aliases_edit.php:717
 #: usr/local/www/interfaces_groups_edit.php:313
-#: usr/local/www/firewall_shaper_layer7.php:555
 #: usr/local/www/services_router_advertisements.php:353
 #: usr/local/www/vpn_pppoe_edit.php:577 usr/local/www/services_dhcp.php:1123
 #: usr/local/www/system_certmanager.php:820
@@ -19462,24 +19335,6 @@ msgstr "「あなたは、 1キューとINとOUTのための1つの仮想イン�
 msgid "ID must be an integer"
 msgstr "IDは整数でなければなりません"
 
-#: usr/local/www/firewall_rules_edit.php:428
-#: usr/local/www/firewall_rules_edit.php:460
-#: usr/local/www/firewall_rules_edit.php:461
-#: usr/local/www/firewall_rules_edit.php:464
-#: usr/local/www/firewall_rules_edit.php:470
-#: usr/local/www/firewall_rules_edit.php:470
-msgid "You can only select a layer7 container for TCP and/or UDP protocols"
-msgstr "あなただけのTCPおよび/またはUDPプロトコルのためのレイヤ7コンテナを選択することができます"
-
-#: usr/local/www/firewall_rules_edit.php:430
-#: usr/local/www/firewall_rules_edit.php:462
-#: usr/local/www/firewall_rules_edit.php:463
-#: usr/local/www/firewall_rules_edit.php:466
-#: usr/local/www/firewall_rules_edit.php:472
-#: usr/local/www/firewall_rules_edit.php:472
-msgid "You can only select a layer7 container for Pass type rules."
-msgstr "あなただけの通過型ルールのレイヤ7のコンテナを選択することができます。"
-
 #: usr/local/www/firewall_rules_edit.php:443
 #: usr/local/www/firewall_rules_edit.php:475
 #: usr/local/www/firewall_rules_edit.php:476
@@ -20240,17 +20095,6 @@ msgstr "Ackqueue /キュー"
 #: usr/local/www/firewall_rules_edit.php:1543
 msgid "Choose the Acknowledge Queue only if you have selected Queue."
 msgstr "キューを選択した場合にのみ肯定応答キューを選択してください。"
-
-#: usr/local/www/firewall_rules_edit.php:1466
-#: usr/local/www/firewall_rules_edit.php:1537
-#: usr/local/www/firewall_rules_edit.php:1552
-#: usr/local/www/firewall_rules_edit.php:1560
-#: usr/local/www/firewall_rules_edit.php:1571
-#: usr/local/www/firewall_rules_edit.php:1571
-msgid ""
-"Choose a Layer7 container to apply application protocol inspection rules. "
-"These are valid for TCP and UDP protocols only."
-msgstr "「アプリケーションプロトコルインスペクションルールを適用するレイヤ7のコンテナを選択します。 「これらはTCPおよびUDPのみのプロトコルに有効です。"
 
 #: usr/local/www/firewall_schedule.php:50
 #: usr/local/www/firewall_schedule_edit.php:61 usr/local/www/fbegin.inc:113
@@ -26036,7 +25880,6 @@ msgstr "MB /秒"
 msgid "GB/s"
 msgstr "GB /秒"
 
-#: usr/local/www/diag_patterns.php:43
 #: usr/local/www/services_captiveportal_filemanager.php:195
 #: usr/local/www/exec.php:290 usr/local/www/exec.php:300
 #: usr/local/www/exec.php:292 usr/local/www/exec.php:302
@@ -26045,31 +25888,6 @@ msgstr "GB /秒"
 #: usr/local/www/services_captiveportal_filemanager.php:192
 msgid "Upload"
 msgstr "アップロード"
-
-#: usr/local/www/diag_patterns.php:46 usr/local/www/diag_patterns.php:46
-msgid "Uploaded file to"
-msgstr "アップロードされたファイルへの"
-
-#: usr/local/www/diag_patterns.php:49 usr/local/www/diag_patterns.php:49
-msgid "Warning: You must upload a file with .pat extension."
-msgstr "警告：あなたはパットの拡張子を持つファイルをアップロードする必要があります。"
-
-#: usr/local/www/diag_patterns.php:58 usr/local/www/diag_patterns.php:58
-msgid "Add layer7 pattern"
-msgstr "レイヤ7パターンを追加"
-
-#: usr/local/www/diag_patterns.php:69 usr/local/www/diag_patterns.php:69
-msgid "Upload layer7 pattern file"
-msgstr "レイヤ7のパターンファイルをアップロード"
-
-#: usr/local/www/diag_patterns.php:72 usr/local/www/diag_patterns.php:72
-msgid "File to upload:"
-msgstr "アップロードするファイル："
-
-#: usr/local/www/diag_patterns.php:80 usr/local/www/diag_patterns.php:43
-#: usr/local/www/diag_patterns.php:43 usr/local/www/diag_patterns.php:80
-msgid "Upload Pattern file"
-msgstr "パターンファイルをアップロード"
 
 #: usr/local/www/vpn_ipsec_keys.php:64 usr/local/www/vpn_ipsec_keys.php:64
 msgid "Deleted IPsec Pre-Shared Key"

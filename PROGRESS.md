@@ -78,7 +78,6 @@ popd
 |diag_nanobsd.php                             | &#x2705;                |                        |                                                            |
 |diag_ndp.php                                 | &#x2705;                |                        |                                                            |
 |diag_packet_capture.php                      | &#x2705;                |                        |                                                            |
-|diag_patterns.php                            | &#x2705;                |                        |                                                            |
 |diag_pf_info.php                             | &#x2705;                |                        |                                                            |
 |diag_ping.php                                | &#x2705;                |                        |                                                            |
 |diag_pkglogs.php                             | &#x2705;                |                        |                                                            |
@@ -110,7 +109,6 @@ popd
 |firewall_rules.php                           | &#x2705;                |                        |                                                            |
 |firewall_schedule_edit.php                   |                         |                        |                                                            |
 |firewall_schedule.php                        | &#x2705;                |                        |                                                            |
-|firewall_shaper_layer7.php                   |                         |                        |                                                            |
 |firewall_shaper.php                          |                         |                        |                                                            |
 |firewall_shaper_queues.php                   |                         |                        |                                                            |
 |firewall_shaper_vinterface.php               |                         |                        |                                                            |

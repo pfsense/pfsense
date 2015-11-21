@@ -813,10 +813,6 @@ msgstr ""
 msgid "Generating ALTQ queues"
 msgstr ""
 
-#: etc/inc/filter.inc:261
-msgid "Generating Layer7 rules"
-msgstr ""
-
 #: etc/inc/filter.inc:265
 msgid "Loading filter rules"
 msgstr ""
@@ -869,10 +865,6 @@ msgstr ""
 #: etc/inc/filter.inc:377 etc/inc/filter.inc:378
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
-
-#: etc/inc/filter.inc:388
-msgid "Starting up layer7 daemon"
 msgstr ""
 
 #: etc/inc/filter.inc:447
@@ -2543,14 +2535,6 @@ msgstr ""
 
 #: etc/inc/priv.defs.inc:409
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr ""
-
-#: etc/inc/priv.defs.inc:414
-msgid "WebCfg - Firewall: Traffic Shaper: Layer7 page"
-msgstr ""
-
-#: etc/inc/priv.defs.inc:415
-msgid "Allow access to the 'Firewall: Traffic Shaper: Layer7' page."
 msgstr ""
 
 #: etc/inc/priv.defs.inc:420
@@ -4868,10 +4852,6 @@ msgstr ""
 msgid "slots"
 msgstr ""
 
-#: etc/inc/shaper.inc:3885
-msgid "Enable/Disable layer7 Container"
-msgstr ""
-
 #: etc/inc/shaper.inc:4150
 #, php-format
 msgid "Sending HUP signal to %s"
@@ -5812,7 +5792,6 @@ msgstr ""
 
 #: usr/local/www/carp_status.php:199 usr/local/www/diag_packet_capture.php:262
 #: usr/local/www/diag_packet_capture.php:348
-#: usr/local/www/firewall_shaper_layer7.php:66
 #: usr/local/www/interfaces_wireless.php:137 usr/local/www/pkg_edit.php:936
 #: usr/local/www/services_ntpd_pps.php:138 usr/local/www/status_graph.php:338
 #: usr/local/www/status_graph_cpu.php:54 usr/local/www/status_queues.php:187
@@ -5827,7 +5806,6 @@ msgid "You can configure high availability sync settings"
 msgstr ""
 
 #: usr/local/www/carp_status.php:201
-#: usr/local/www/firewall_shaper_layer7.php:67
 #: usr/local/www/firewall_virtual_ip.php:308 usr/local/www/interfaces.php:3490
 #: usr/local/www/interfaces.php:3499 usr/local/www/status_queues.php:189
 msgid "here"
@@ -5888,7 +5866,7 @@ msgstr ""
 #: usr/local/www/diag_dump_states_sources.php:66
 #: usr/local/www/diag_gmirror.php:46 usr/local/www/diag_nanobsd.php:50
 #: usr/local/www/diag_ndp.php:107 usr/local/www/diag_packet_capture.php:88
-#: usr/local/www/diag_patterns.php:63 usr/local/www/diag_ping.php:47
+#: usr/local/www/diag_ping.php:47
 #: usr/local/www/diag_resetstate.php:65 usr/local/www/diag_routes.php:71
 #: usr/local/www/diag_smart.php:18 usr/local/www/diag_sockets.php:45
 #: usr/local/www/diag_states_summary.php:187 usr/local/www/diag_tables.php:45
@@ -6291,7 +6269,6 @@ msgstr ""
 
 #: usr/local/www/diag_backup.php:201 usr/local/www/fbegin.inc:132
 #: usr/local/www/firewall_shaper.php:55
-#: usr/local/www/firewall_shaper_layer7.php:60
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:74
 msgid "Traffic Shaper"
@@ -6663,7 +6640,6 @@ msgstr ""
 #: usr/local/www/firewall_rules_edit.php:1738
 #: usr/local/www/firewall_schedule_edit.php:1168
 #: usr/local/www/firewall_shaper.php:351
-#: usr/local/www/firewall_shaper_layer7.php:566
 #: usr/local/www/firewall_shaper_vinterface.php:319
 #: usr/local/www/firewall_virtual_ip_edit.php:509
 #: usr/local/www/interfaces.php:3379 usr/local/www/interfaces_assign.php:553
@@ -7567,7 +7543,6 @@ msgstr ""
 #: usr/local/www/firewall_nat_out_edit.php:146
 #: usr/local/www/firewall_nat_out_edit.php:513
 #: usr/local/www/firewall_rules_edit.php:988
-#: usr/local/www/firewall_shaper_layer7.php:467
 #: usr/local/www/interfaces_bridge_edit.php:310
 #: usr/local/www/load_balancer_relay_action_edit.php:121
 #: usr/local/www/load_balancer_relay_action_edit.php:425
@@ -7685,7 +7660,6 @@ msgstr ""
 #: usr/local/www/firewall_schedule.php:51
 #: usr/local/www/firewall_schedule_edit.php:62
 #: usr/local/www/firewall_shaper.php:55
-#: usr/local/www/firewall_shaper_layer7.php:60
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:74
 #: usr/local/www/firewall_virtual_ip.php:203
@@ -8861,35 +8835,6 @@ msgstr ""
 msgid "Packets Captured:"
 msgstr ""
 
-#: usr/local/www/diag_patterns.php:43 usr/local/www/diag_patterns.php:85
-msgid "Upload Pattern file"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:49
-#, php-format
-msgid "Added custom l7 pattern %s"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:51
-msgid "Uploaded file to"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:54
-msgid "Warning: You must upload a file with .pat extension."
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:63
-msgid "Add layer7 pattern"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:74
-msgid "Upload layer7 pattern file"
-msgstr ""
-
-#: usr/local/www/diag_patterns.php:77
-msgid "File to upload:"
-msgstr ""
-
 #: usr/local/www/diag_pf_info.php:101
 msgid "Gathering PF information, please wait..."
 msgstr ""
@@ -9310,7 +9255,6 @@ msgid "entries in this table."
 msgstr ""
 
 #: usr/local/www/diag_tables.php:169
-#: usr/local/www/firewall_shaper_layer7.php:572
 #: usr/local/www/services_dhcpv6.php:809
 #: usr/local/www/system_firmware_restorefullbackup.php:164
 msgid "Delete"
@@ -9933,7 +9877,6 @@ msgstr ""
 #: usr/local/www/firewall_nat_npt.php:90
 #: usr/local/www/firewall_nat_out.php:226
 #: usr/local/www/firewall_shaper.php:406
-#: usr/local/www/firewall_shaper_layer7.php:402
 #: usr/local/www/firewall_shaper_queues.php:189
 #: usr/local/www/firewall_shaper_vinterface.php:386
 #: usr/local/www/firewall_shaper_wizards.php:97
@@ -10333,7 +10276,6 @@ msgid "remove this entry"
 msgstr ""
 
 #: usr/local/www/firewall_aliases_edit.php:843
-#: usr/local/www/firewall_shaper_layer7.php:556
 #: usr/local/www/interfaces_groups_edit.php:322
 #: usr/local/www/interfaces_qinq_edit.php:390
 #: usr/local/www/services_dhcp.php:1197 usr/local/www/services_dhcpv6.php:817
@@ -10356,7 +10298,6 @@ msgstr ""
 #: usr/local/www/firewall_rules_edit.php:1262
 #: usr/local/www/firewall_rules_edit.php:1739
 #: usr/local/www/firewall_schedule_edit.php:1169
-#: usr/local/www/firewall_shaper_layer7.php:569
 #: usr/local/www/firewall_virtual_ip_edit.php:510
 #: usr/local/www/interfaces.php:1856 usr/local/www/interfaces.php:1962
 #: usr/local/www/interfaces.php:3380
@@ -11992,14 +11933,6 @@ msgstr ""
 msgid "ID must be an integer"
 msgstr ""
 
-#: usr/local/www/firewall_rules_edit.php:526
-msgid "You can only select a layer7 container for TCP and/or UDP protocols"
-msgstr ""
-
-#: usr/local/www/firewall_rules_edit.php:528
-msgid "You can only select a layer7 container for Pass type rules."
-msgstr ""
-
 #: usr/local/www/firewall_rules_edit.php:533
 msgid ""
 "You can only specify the maximum number of established connections per host "
@@ -12502,22 +12435,6 @@ msgstr ""
 msgid "Choose the Acknowledge Queue only if you have selected Queue."
 msgstr ""
 
-#: usr/local/www/firewall_rules_edit.php:1673
-#: usr/local/www/firewall_shaper.php:415
-#: usr/local/www/firewall_shaper_layer7.php:60
-#: usr/local/www/firewall_shaper_layer7.php:411
-#: usr/local/www/firewall_shaper_queues.php:198
-#: usr/local/www/firewall_shaper_vinterface.php:395
-#: usr/local/www/firewall_shaper_wizards.php:106
-msgid "Layer7"
-msgstr ""
-
-#: usr/local/www/firewall_rules_edit.php:1696
-msgid ""
-"Choose a Layer7 container to apply application protocol inspection rules. "
-"These are valid for TCP and UDP protocols only."
-msgstr ""
-
 #: usr/local/www/firewall_schedule.php:78
 #, php-format
 msgid "Cannot delete Schedule.  Currently in use by %s"
@@ -12725,7 +12642,6 @@ msgid "The traffic shaper configuration has been changed."
 msgstr ""
 
 #: usr/local/www/firewall_shaper.php:412
-#: usr/local/www/firewall_shaper_layer7.php:408
 #: usr/local/www/firewall_shaper_queues.php:195
 #: usr/local/www/firewall_shaper_vinterface.php:392
 #: usr/local/www/firewall_shaper_wizards.php:103
@@ -12733,7 +12649,6 @@ msgid "By Interface"
 msgstr ""
 
 #: usr/local/www/firewall_shaper.php:413
-#: usr/local/www/firewall_shaper_layer7.php:409
 #: usr/local/www/firewall_shaper_queues.php:196
 #: usr/local/www/firewall_shaper_vinterface.php:393
 #: usr/local/www/firewall_shaper_wizards.php:104
@@ -12741,7 +12656,6 @@ msgid "By Queue"
 msgstr ""
 
 #: usr/local/www/firewall_shaper.php:414
-#: usr/local/www/firewall_shaper_layer7.php:410
 #: usr/local/www/firewall_shaper_queues.php:197
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:394
@@ -12750,7 +12664,6 @@ msgid "Limiter"
 msgstr ""
 
 #: usr/local/www/firewall_shaper.php:416
-#: usr/local/www/firewall_shaper_layer7.php:412
 #: usr/local/www/firewall_shaper_queues.php:199
 #: usr/local/www/firewall_shaper_vinterface.php:396
 #: usr/local/www/firewall_shaper_wizards.php:74
@@ -12765,41 +12678,8 @@ msgstr ""
 msgid "Remove Shaper"
 msgstr ""
 
-#: usr/local/www/firewall_shaper_layer7.php:67
-msgid "You can add new layer7 protocol patterns by simply uploading the file"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:112
-msgid "Layer7 Rules Container not found!"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:162
-msgid "Found the following repeated protocol definitions"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:402
 #: usr/local/www/firewall_shaper_queues.php:189
 msgid "The traffic shaper configuration has been changed"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:433
-msgid "Create new l7 rules group"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:446
-msgid "Rule(s)"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:458
-msgid "Add one or more rules"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:474
-msgid "Structure"
-msgstr ""
-
-#: usr/local/www/firewall_shaper_layer7.php:481
-msgid "Behaviour"
 msgstr ""
 
 #: usr/local/www/firewall_shaper_queues.php:173

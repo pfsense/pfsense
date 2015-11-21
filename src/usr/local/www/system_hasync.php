@@ -89,7 +89,6 @@ $checkbox_names = array(
 	'synchronizevirtualip',
 	'synchronizetrafficshaper',
 	'synchronizetrafficshaperlimiter',
-	'synchronizetrafficshaperlayer7',
 	'synchronizednsforwarder',
 	'synchronizecaptiveportal');
 
@@ -324,14 +323,6 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize traffic shaper (limiter)',
 	'Traffic Shaper Limiters configuration ',
 	($pconfig['synchronizetrafficshaperlimiter'] === 'on'),
-	'on'
-));
-
-$group->add(new Form_MultiCheckbox(
-	'synchronizetrafficshaperlayer7',
-	'Synchronize traffic shaper (layer 7)',
-	'Traffic Shaper Layer 7 configuration ',
-	($pconfig['synchronizetrafficshaperlayer7'] === 'on'),
 	'on'
 ));
 

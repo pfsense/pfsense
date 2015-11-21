@@ -66,8 +66,6 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
-require_once('classes/Form.class.php');
-
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
 
 if (empty($config['dhcrelay']['interface'])) {

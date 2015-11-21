@@ -530,8 +530,6 @@ function parse_package_templates() {
 }
 
 // Start of page display
-require_once('classes/Form.class.php');
-
 if ($input_errors)
 	print_input_errors($input_errors);
 

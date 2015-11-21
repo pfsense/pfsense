@@ -184,8 +184,6 @@ $tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
 $tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
 display_top_tabs($tab_array);
 
-require('classes/Form.class.php');
-
 $form = new Form(new Form_Button(
 	'Submit',
 	gettext("Save")

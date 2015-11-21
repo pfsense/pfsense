@@ -288,8 +288,6 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false); // No button yet. We add those later depending on the required action
 
 $section = new Form_Section('Packet Capture Options');

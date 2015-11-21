@@ -543,7 +543,6 @@ foreach($a_user as $i => $userent):
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "new" || $act == "edit" || $input_errors):

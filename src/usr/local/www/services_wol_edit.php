@@ -77,8 +77,6 @@ function wol_sort() {
 }
 
 require("guiconfig.inc");
-require_once('classes/Form.class.php');
-
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }

@@ -148,8 +148,6 @@ $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Dom
 $shortcut_section = "resolver";
 include("head.inc");
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Domain Override');

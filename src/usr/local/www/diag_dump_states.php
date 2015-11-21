@@ -132,8 +132,6 @@ display_top_tabs($tab_array);
 // Start of tab content
 $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
 
 $section = new Form_Section('State filter');

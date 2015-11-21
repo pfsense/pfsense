@@ -179,8 +179,6 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 if ($_GET['act'] == 'add') {
 
 	$form = new Form(new Form_Button(

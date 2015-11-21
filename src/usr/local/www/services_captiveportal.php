@@ -566,8 +566,6 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Captive Portal Configuration');

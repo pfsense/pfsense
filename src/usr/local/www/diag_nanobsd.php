@@ -145,8 +145,6 @@ print_info_box("The options on this page are intended for use by advanced users 
 if ($savemsg)
 	print_info_box($savemsg, $class);
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
 
 $section = new Form_Section('NanoBSD Options');

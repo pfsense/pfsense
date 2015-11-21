@@ -156,8 +156,6 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("RFC 2136 client"), gettext("Edit"));
 include("head.inc");
 
-require_once('classes/Form.class.php');
-
 if ($input_errors)
 	print_input_errors($input_errors);
 

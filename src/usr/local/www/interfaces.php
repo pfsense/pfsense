@@ -1681,9 +1681,6 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 
-require_once('classes/Form.class.php');
-require_once('classes/Modal.class.php');
-
 $form = new Form(new Form_Button(
 	'Submit',
 	gettext("Save")

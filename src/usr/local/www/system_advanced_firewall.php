@@ -421,7 +421,6 @@ display_top_tabs($tab_array);
 
 ?><div id="container"><?php
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Firewall Advanced');
 

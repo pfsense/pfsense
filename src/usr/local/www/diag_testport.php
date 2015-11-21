@@ -245,8 +245,6 @@ else {
 			print('<div class="alert alert-danger" role="alert">'.gettext('Connection failed.').'</div>');
 }
 
-require_once('classes/Form.class.php');
-
 $form = new Form('Test');
 
 $section = new Form_Section('Test Port');

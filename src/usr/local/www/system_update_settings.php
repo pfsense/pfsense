@@ -128,8 +128,6 @@ $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.p
 $tab_array[] = array(gettext("System update"), false, "pkg_mgr_install.php?id=firmware");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Firmware Branch');

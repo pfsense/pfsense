@@ -521,8 +521,6 @@ $tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('General Information');

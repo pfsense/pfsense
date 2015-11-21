@@ -176,24 +176,24 @@ foreach ($a_dyndns as $dyndns):
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip)
-			print('<font color="red">');
+			print('<span class="text-danger">');
 		else
-			print('<font color="green">');
+			print('<span class="text-success">');
 
 		print(htmlspecialchars($cached_ip));
-		print('</font>');
+		print('</span>');
 	} else if (file_exists($filename_v6)) {
 		$ipv6addr = get_interface_ipv6($dyndns['interface']);
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 		$cached_ipv6 = $cached_ipv6_s[0];
 
 		if ($ipv6addr != $cached_ipv6)
-			print('<font color="red">');
+			print('<span class="text-danger">');
 		else
-			print('<font color="green">');
+			print('<span class="text-success">');
 
 		print(htmlspecialchars($cached_ipv6));
-		print('</font>');
+		print('</span>');
 	} else {
 		print('N/A');
 	}
@@ -234,7 +234,7 @@ foreach ($a_dyndns as $dyndns):
 </nav>
 
 <div>
-	<?=gettext('IP addresses appearing in <span style="color: green;">green</span> are up to date with Dynamic DNS provider. ')?>
+	<?=gettext('IP addresses appearing in <span class="text-success">green</span> are up to date with Dynamic DNS provider. ')?>
 	<?=gettext('You can force an update for an IP address on the edit page for that service.')?>
 </div>
 

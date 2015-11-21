@@ -235,7 +235,7 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Gateways"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
 $shortcut_section = "gateways";
 
 include("head.inc");
@@ -271,19 +271,19 @@ display_top_tabs($tab_array);
 <?php
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive']))
-		$icon = 'icon-remove-circle';
+		$icon = 'fa-times-circle-o';
 	elseif (isset($gateway['disabled']))
-		$icon = 'icon-ban-circle';
+		$icon = 'fa-ban';
 	else
-		$icon = 'icon-ok-circle';
+		$icon = 'fa-check-circle-o';
 
 	if (isset($gateway['inactive']))
 		$title = gettext("This gateway is inactive because interface is missing");
 	else
 		$title = '';
 ?>
-	<tr<?=($icon != 'icon-ok-circle')? ' class="disabled"' : ''?>>
-		<td title="<?=$title?>"><i class="icon <?=$icon?>"></i></td>
+	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+		<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 		<td>
 			<?=$gateway['name']?>
 <?php

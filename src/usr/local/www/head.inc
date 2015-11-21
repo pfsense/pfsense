@@ -57,6 +57,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("shortcuts.inc");
 require_once("service-utils.inc");
+require_once('notices.inc');
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -87,7 +88,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 	<title><?=$tabtitle?></title>
 	<script>var events = events || [];</script>
 </head>
-<body id="<?=basename($_SERVER['SCRIPT_NAME'], '.php')?>">
+
 <?php
 
 /* Determine automated help URL. Should output the page name and parameters
@@ -188,7 +189,7 @@ function output_menu($arrayitem, $target = null) {
 $system_menu = array();
 $system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
-$system_menu[] = array(gettext("Firmware"), "/system_firmware.php");
+$system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
@@ -468,7 +469,7 @@ echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
 			<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
-				<i class="icon-large icon-question-sign"></i>
+				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -553,20 +554,33 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<a type="button" class="btn btn-primary" href="javascript:clear_notices();">Mark all as read</a>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark all as read")?></button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	// Do some Ajax to make index.php clear the notices
-	function clear_notices() {
-		xmlhttp=new XMLHttpRequest();
-		xmlhttp.open("GET","index.php?closenotice=all",true);
-		xmlhttp.send();
-		location.reload(); // reload the page to clear the notices indicator and dismiss the modal dialog all in one
-	}
+//<![CDATA[
+	events.push(function(){
+	    $('#clearallnotices').click(function() {
+			ajaxRequest = $.ajax({
+				url: "/index.php",
+				type: "post",
+				data: { closenotice: "all"},
+				success: function(){
+					window.location = window.location.href;
+				},
+				failure: function () {
+					alert("Error clearing notices!");
+				}
+			});
+		});
+	});
+//]]>
 </script>
 
 <?php endif;
+
+// Get the flash Messages
+get_flash_message();

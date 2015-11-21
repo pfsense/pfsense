@@ -124,7 +124,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	}
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3'], $pconfig['radns4']) = $config['dhcpdv6'][$if]['radnsserver'];
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -179,7 +179,7 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4']))) {
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	}
 	if ($_POST['radomainsearchlist']) {
@@ -211,9 +211,6 @@ if ($_POST) {
 		}
 		if ($_POST['radns3']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
-		}
-		if ($_POST['radns4']) {
-			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns4'];
 		}
 
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
@@ -373,12 +370,12 @@ $form->add($section);
 
 $section = new Form_Section('DNS Configuration');
 
-for($idx=1; $idx<=4; $idx++) {
+for($idx=1; $idx<=3; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(
@@ -416,7 +413,7 @@ events.push(function(){
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 
-	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
+	$('#radns1, #radns2, #radns3').autocomplete({
 		source: addressarray
 	});
 

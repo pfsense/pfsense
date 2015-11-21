@@ -232,7 +232,7 @@ function vpn_ipsec_configure($restart = false) {
 		    "{$g['varetc_path']}/ipsec/strongswan.d");
 		conf_mount_ro();
 	}
-	if (file_exists("/usr/local/etc/strongswan.conf") &&
+	if (!file_exists("/usr/local/etc/strongswan.conf") ||
 	    !is_link("/usr/local/etc/strongswan.conf")) {
 		conf_mount_rw();
 		@unlink("/usr/local/etc/strongswan.conf");
@@ -240,7 +240,7 @@ function vpn_ipsec_configure($restart = false) {
 		    "/usr/local/etc/strongswan.conf");
 		conf_mount_ro();
 	}
-	if (file_exists("/usr/local/etc/ipsec.conf") &&
+	if (!file_exists("/usr/local/etc/ipsec.conf") ||
 	    !is_link("/usr/local/etc/ipsec.conf")) {
 		conf_mount_rw();
 		@unlink("/usr/local/etc/ipsec.conf");

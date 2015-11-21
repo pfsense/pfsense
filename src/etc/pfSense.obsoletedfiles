@@ -14,10 +14,12 @@
 /etc/hosts.lpd
 /etc/inc/array_intersect_key.inc
 /etc/inc/cmd_chain.inc
+/etc/inc/dot.hushlogin
 /etc/inc/lb.inc
 /etc/inc/m0n0
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/etc/inc/uuid.php
 /etc/inc/zeromq.inc
 /etc/isdn
 /etc/locate.rc
@@ -55,6 +57,7 @@
 /etc/phpshellsessions/restartftphelper
 /etc/ping_hosts.sh
 /etc/portsnap.conf
+/etc/rc.create_full_backup
 /etc/rc.d/amd
 /etc/rc.d/auto_linklocal
 /etc/rc.d/bluetooth
@@ -88,7 +91,9 @@
 /etc/rc.d/uzip
 /etc/rc.dyndns.storecache
 /etc/rc.firewall6
-/etc/rc.initial_firmware_update
+/etc/rc.firmware
+/etc/rc.firmware_auto
+/etc/rc.initial.firmware_update
 /etc/rc.linkup.sh
 /etc/rc.parse-isc-dhcpd
 /etc/rc.sendmail
@@ -632,6 +637,7 @@
 /usr/local/sbin/ftpsesame
 /usr/local/sbin/grub-install1
 /usr/local/sbin/ipfw_context
+/usr/local/sbin/ipfw-classifyd
 /usr/local/sbin/kbdcheck
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd
@@ -737,6 +743,7 @@
 /usr/local/share/misc
 /usr/local/share/nls
 /usr/local/share/pbi-keys
+/usr/local/share/protocols
 /usr/local/share/sgml
 /usr/local/share/skel
 /usr/local/share/strongswan/templates/config/plugins/smp.conf
@@ -764,6 +771,7 @@
 /usr/local/www/diag_logs_routing.php
 /usr/local/www/diag_logs_slbd.php
 /usr/local/www/diag_logs_wireless.php
+/usr/local/www/diag_patterns.php
 /usr/local/www/diag_showbogons.php
 /usr/local/www/dom-drag.js
 /usr/local/www/draglist.js
@@ -776,6 +784,7 @@
 /usr/local/www/firewall_nat_server_edit.php
 /usr/local/www/firewall_rules_schedule_logic.php
 /usr/local/www/firewall_shaper_edit.php
+/usr/local/www/firewall_shaper_layer7.php
 /usr/local/www/firewall_shaper_queues_edit.php
 /usr/local/www/fred-bg.png
 /usr/local/www/fred.png
@@ -832,6 +841,11 @@
 /usr/local/www/status_slbd_vs.php
 /usr/local/www/system_advanced.php
 /usr/local/www/system_advanced_create_certs.php
+/usr/local/www/system_firmware.php
+/usr/local/www/system_firmware_auto.php
+/usr/local/www/system_firmware_check.php
+/usr/local/www/system_firmware_settings.php
+/usr/local/www/system_firmware_restorefullbackup.php
 /usr/local/www/system_usermanager_addcert.php
 /usr/local/www/themes
 /usr/local/www/ticker.js

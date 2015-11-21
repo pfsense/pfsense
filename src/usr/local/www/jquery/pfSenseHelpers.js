@@ -382,3 +382,9 @@ $('#infoblock').hide();
 $('#showinfo').click(function() {
 	$('#infoblock').toggle();
 });
+
+$('tbody').each(function(){
+	$(this).html($.trim($(this).html()))
+});
+
+$('tbody:empty').html("<tr><td></td></tr>");

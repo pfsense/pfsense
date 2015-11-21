@@ -566,7 +566,7 @@ if ($savemsg)
 	if ($pkg['adddeleteeditpagefields']['description']) {
 ?>
 								<td>
-									<i class="icon-large icon-info-sign"><?=$pkg['adddeleteeditpagefields']['description']?></i>
+									<i class="fa fa-info-circle"><?=$pkg['adddeleteeditpagefields']['description']?></i>
 								</td>
 <?php
 	}

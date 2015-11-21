@@ -79,10 +79,15 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
+if (isset($_POST['closenotice'])) {
+	close_notice($_POST['closenotice']);
+	sleep(1);
+	exit;
+}
+
 if (isset($_GET['closenotice'])) {
 	close_notice($_GET['closenotice']);
-	echo get_menu_messages();
-	exit;
+	sleep(1);
 }
 
 if ($g['disablecrashreporter'] != true) {
@@ -133,7 +138,7 @@ if ($_POST && $_POST['sequence']) {
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$config['widgets'][$widgetname . '-config'] = $_POST[$name . '-config'];
+			$config['widgets'][$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
@@ -249,10 +254,17 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($config['widgets'][$name . '-config']) {
-			$pconfig[$name . '-config'] = $config['widgets'][$name . '-config'];
+		if ($config['widgets'][$widgetname . '-config']) {
+			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
 		}
 	}
+}
+
+## Replace any known acronyms in widget names with suitable mixed-case forms
+$input_acronyms = array("carp", "dns", "dyn dns", "gmirror", "ipsec", "ntp", "openvpn", "rss", "smart");
+$output_acronyms = array("CARP", "DNS", "Dynamic DNS", "gmirror", "IPsec", "NTP", "OpenVPN", "RSS", "SMART");
+foreach ($widgets as $widgetname => $widgetconfig) {
+	$widgets[$widgetname]['name'] = str_ireplace($input_acronyms, $output_acronyms, $widgetconfig['name']);
 }
 
 ##build list of php include files
@@ -275,7 +287,7 @@ foreach ($phpincludefiles as $includename) {
 }
 
 ## Set Page Title and Include Header
-$pgtitle = array(gettext("Status: Dashboard"));
+$pgtitle = array(gettext("Status"), gettext("Dashboard"));
 include("head.inc");
 
 if ($savemsg) {
@@ -288,9 +300,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div class="panel panel-default" id="widget-available">
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
-		<span class="icons">
+		<span class="widget-heading-icon">
 			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
-				<i class="icon-white icon-plus-sign"></i>
+				<i class="fa fa-plus-cirle"></i>
 			</a>
 		</span>
 	</div>
@@ -301,7 +313,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 foreach ($widgets as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):
 ?>
-		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
 			</div>
@@ -364,16 +376,16 @@ foreach ($widgets as $widgetname => $widgetconfig)
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
-				<span class="icons">
+				<span class="widget-heading-icon">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="icon-white icon-wrench"></i>
+						<i class="fa fa-wrench"></i>
 					</a>
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon-white icon-plus-sign"></i>
+						<i class="fa fa-plus-circle"></i>
 					</a>
 					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="icon-white icon-remove-sign"></i>
+						<i class="fa fa-times-circle"></i>
 					</a>
 				</span>
 			</div>
@@ -400,7 +412,7 @@ function updateWidgets(newWidget)
 	});
 
 	if (typeof newWidget !== 'undefined')
-		sequence += newWidget + ':' + 'col2:close';
+		sequence += newWidget + ':' + 'col2:open';
 
 	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
@@ -419,12 +431,12 @@ events.push(function() {
 		var body = $(el).parents('.panel').children('.panel-body')
 		var isOpen = body.hasClass('in');
 
-		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
-		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
 
 		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('icon-minus-sign', true);
-			$(el).children('i').toggleClass('icon-plus-sign', false);
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
 
 			if($(el).closest('a').attr('name') != 'widgets-available') {
 				updateWidgets();
@@ -432,8 +444,8 @@ events.push(function() {
 		});
 
 		body.on('hidden.bs.collapse', function(){
-			$(el).children('i').toggleClass('icon-minus-sign', false);
-			$(el).children('i').toggleClass('icon-plus-sign', true);
+			$(el).children('i').toggleClass('fa-minus-circle', false);
+			$(el).children('i').toggleClass('fa-plus-circle', true);
 
 			if($(el).closest('a').attr('name') != 'widgets-available') {
 				updateWidgets();
@@ -459,14 +471,8 @@ events.push(function() {
 
 	// On clicking a widget to install . .
 	$('[name^=btnadd-]').click(function(event) {
-		// Extract the widget name from the button name that got us here
-		var widgetToAdd = this.name.replace('btnadd-', '');
-
-		// Set its display type to 'close'
-		<?php $widgets[widgetToAdd]['display'] = 'close'; ?>
-
-		// Add it to the list of displayed widgets
-		updateWidgets(widgetToAdd);
+		// Add the widget name to the list of displayed widgets
+		updateWidgets(this.name.replace('btnadd-', ''));
 
 		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();

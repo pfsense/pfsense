@@ -147,13 +147,13 @@ else
 		}
 
 		if ($filterent['act'] == "block")
-			$iconfn = "remove";
+			$iconfn = "times";
 		else if ($filterent['act'] == "reject")
 			$iconfn = "fire";
 		else if ($filterent['act'] == "match")
 			$iconfn = "filter";
 		else
-			$iconfn = "ok";
+			$iconfn = "check";
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 
@@ -166,7 +166,7 @@ else
 			role="button" data-toggle="popover" data-trigger="hover"
 				data-title="Rule that triggered this action"
 				data-content="<?=htmlspecialchars($rule)?>"> <i
-					class="icon icon-<?=$iconfn?>"></i>
+					class="fa fa-<?=$iconfn?>"></i>
 			</a></td>
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>

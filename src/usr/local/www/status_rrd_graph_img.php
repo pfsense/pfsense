@@ -1240,7 +1240,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	/* define graphcmd for dhcpd stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
-	$graphcmd .= "--vertical-label \"Dhcp Leases\" ";
+	$graphcmd .= "--vertical-label \"DHCP Leases\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
@@ -1249,7 +1249,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "DEF:\"$curif-dhcprange=$rrddbpath$curdatabase:dhcprange:AVERAGE:step=$step\" ";
 	$graphcmd .= "AREA:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
 	$graphcmd .= "LINE2:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
-	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:Dhcp Range\" ";
+	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:DHCP Range\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t\tmaximum\\n\" ";
 	$graphcmd .= "COMMENT:\"Active Leases\t\" ";
@@ -1262,7 +1262,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Dhcp Range\t\t\" ";
+	$graphcmd .= "COMMENT:\"DHCP Range\t\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf	  \" ";
 	$graphcmd .= "GPRINT:\"$curif-dhcprange:MAX:%8.0lf \" ";

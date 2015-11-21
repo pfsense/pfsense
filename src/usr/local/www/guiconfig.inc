@@ -111,7 +111,7 @@ $mandfldhtmlspc = "";	/* same as above, but with spacing */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
 		if (!$d_isfwfile) {
-			header("Location: system_firmware.php");
+			header("Location: system_update.php");
 			exit;
 		} else {
 			return;
@@ -367,7 +367,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<i class="icon-large icon-exclamation-sign"></i>
+								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>
@@ -383,12 +383,6 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			</td>
 		</tr>
 	</table>
-	<script type="text/javascript">
-	//<![CDATA[
-		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
-	//]]>
-	</script>
 EOFnp;
 
 }
@@ -512,9 +506,6 @@ function firewall_check_for_advanced_options(&$item) {
 	}
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue {$item['defaultqueue']} ";
-	}
-	if ($item['l7container']) {
-		$item_set .= "layer7 {$item['l7container']} ";
 	}
 	if ($item['tag']) {
 		$item_set .= "tag {$item['tag']} ";
@@ -701,7 +692,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			}
 			echo "<td style=\"white-space:nowrap;\">{$entry_date_time}</td>\n";
-			echo "<td>{$entry_text}</td>\n";
+			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
 		} else {
 				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
 		}
@@ -872,13 +863,6 @@ function display_widget_tabs(& $tab_array) {
 		echo "&nbsp;&nbsp;&nbsp;</b>";
 		echo "</div>";
 	}
-
-	echo "<script type=\"text/javascript\">";
-	echo "\n//<![CDATA[\n";
-	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
-	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "//]]>\n";
-	echo "</script>";
 	echo "</div>";
 }
 
@@ -1230,6 +1214,21 @@ var_dump($content);die;
 	</div>
 </div>
 <?php
+}
+
+function set_flash_message($class, $msg) {
+	@session_start();
+	$_SESSION['flash_messages'][$class][] = $msg;
+}
+
+function get_flash_message() {
+	@session_start();
+	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
+		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
+			print_info_box_np(implode("<br />", $flash_message), null, null, false, $class);
+		}
+		unset($_SESSION['flash_messages']);
+	}
 }
 
 /* set timezone */

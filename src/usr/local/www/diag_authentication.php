@@ -65,7 +65,6 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require_once("PEAR.inc");
 require_once("radius.inc");
 
 if ($_POST) {
@@ -96,7 +95,14 @@ if ($_POST) {
 			$input_errors[] = gettext("Authentication failed.");
 		}
 	}
+} else {
+	if (isset($config['system']['webgui']['authmode'])) {
+		$pconfig['authmode'] = $config['system']['webgui']['authmode'];
+	} else {
+		$pconfig['authmode'] = "Local Database";
+	}
 }
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
 $shortcut_section = "authentication";
 include("head.inc");

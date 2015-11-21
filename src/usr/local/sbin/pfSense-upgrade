@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
+# Copyright (c) 2015 Electric Sheep Fencing, LLC. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -57,9 +57,10 @@ usage() {
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
 	echo "	-p socket   - Write pkg progress to socket"
-	echo "	-y          - Consider yes as the answer for any possible interaction" >&2
+	echo "	-R          - Do not reboot (this can be dangerous)"
+	echo "	-y          - Assume yes as the answer to any possible interaction" >&2
 	echo "" >&2
-	echo "Following parameters are mutually exclusive:" >&2
+	echo "The following parameters are mutually exclusive:" >&2
 	echo "	-i PKG_NAME - Install package PKG_NAME" >&2
 	echo "	-r PKG_NAME - Remove package PKG_NAME" >&2
 	echo "	-u          - Update repository information" >&2
@@ -299,29 +300,27 @@ pkg_upgrade() {
 		fi
 
 		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
+			if [ "${platform}" = "nanobsd" ]; then
+				_echo "**** WARNING ****"
+				_echo "Duplicate slice required!!"
+				_echo ""
+				_echo "Before start upgrade process, current mounted nanobsd partition"
+				_echo "needs to be cloned to secondary partition, where update will happen"
+				_echo ""
+				if [ -z "${yes}" ]; then
+					_echo -n "Proceed with upgrade? (y/N) "
+					read answer
+					if [ "${answer}" != "y" ]; then
+						_echo "Aborting..."
+						_exit 0
+					fi
+				fi
+			fi
 			setup_nanobsd_env
 			need_reboot=1
 		fi
 
 		pkg_unlock ${kernel_pkg}
-
-		if [ "${platform}" = "nanobsd" ] && \
-		   [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -le 1 ]; then
-			_echo "**** WARNING ****"
-			_echo "Reboot will be required!!"
-			_echo "Secondary partition is up to date"
-			if [ -z "${yes}" ]; then
-				_echo -n "Proceed with upgrade? (y/N) "
-				read answer
-				if [ "${answer}" != "y" ]; then
-					_echo "Aborting..."
-					_exit 0
-				fi
-			fi
-			switch_active_nanobsd_partition
-			/etc/rc.reboot &
-			_exit 0
-		fi
 
 		if [ -z "${yes}" ]; then
 			# Show user which packages are going to be upgraded
@@ -351,14 +350,31 @@ pkg_upgrade() {
 		next_stage=2
 
 		if [ -n "${need_reboot}" -a "${platform}" != "nanobsd" ]; then
-			_echo "Rebooting..."
-			/etc/rc.reboot &
+			do_reboot
 			_exit 0
 		fi
 	fi
 
 	if [ "${next_stage}" = "2" ]; then
 		pkg_lock "${pkg_prefix}*"
+
+		# XXX: Workaround to upgrade strongswan
+		# If those symlinks are present, pkg exit because it expects them
+		# to be a directory
+		if [ $(pkg ${pkg_chroot} upgrade -nq strongswan | wc -l) -gt 1 ]; then
+			if [ -L ${chroot_dir}/usr/local/etc/ipsec.d ]; then
+				rm -f ${chroot_dir}/usr/local/etc/ipsec.d
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/ipsec.conf ]; then
+				rm -f ${chroot_dir}/usr/local/etc/ipsec.conf
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/strongswan.d ]; then
+				rm -f ${chroot_dir}/usr/local/etc/strongswan.d
+			fi
+			if [ -L ${chroot_dir}/usr/local/etc/strongswan.conf ]; then
+				rm -f ${chroot_dir}/usr/local/etc/strongswan.conf
+			fi
+		fi
 
 		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
 			_echo "Upgrading necessary packages..."
@@ -381,8 +397,7 @@ pkg_upgrade() {
 
 		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
 			switch_active_nanobsd_partition
-			_echo "Rebooting..."
-			/etc/rc.reboot &
+			do_reboot
 			_exit 0
 		fi
 
@@ -459,17 +474,30 @@ setup_nanobsd_env() {
 		_exit 1
 	fi
 
-	_exec "mount ${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
+	# Remove /dev
+	_update_partition=$(echo ${_update_partition} | sed 's,^/dev/,,')
+	local _update_slice=$(glabel status -s | awk "\$1 == \"${_update_partition}\" { print \$3 }")
 
-	pkg_chroot="-c ${chroot_dir}"
-
-	pkg_update force
-
-	if [ "$(compare_pkg_version pkg)" = "<" ]; then
-		_exec "pkg ${pkg_chroot} upgrade pkg" "Upgrading pkg" mute
-		pkg_update force
+	if [ -z "${_update_slice}" -o ! -e "/dev/${_update_slice}" ]; then
+		_echo "Secondary slice (${_update_slice}), use_update_sliced for upgrade not found"
+		_exit 1
 	fi
 
+	_update_slice="/dev/${_update_slice}"
+
+	# Clone slice using same logic from nanobsd_clone_slice()
+	sysctl kern.geom.debugflags=16 >/dev/null 2>&1
+	_exec "dd if=/dev/zero of=${_update_slice} bs=1m count=1" "Cleaning secondary partition" mute
+	_exec "dd if=${_cur_partition} of=${_update_slice} bs=64k" "Duplicating current slice" mute
+	_exec "tunefs -L ${_update_partition##*/} ${_update_slice}" "Restoring slice label" mute
+	sysctl kern.geom.debugflags=0 >/dev/null 2>&1
+
+	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
+
+	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \
+		${chroot_dir}/etc/fstab
+
+	pkg_chroot="-c ${chroot_dir}"
 }
 
 switch_active_nanobsd_partition() {
@@ -605,6 +633,15 @@ pkg_reinstall_all() {
 	done
 }
 
+do_reboot() {
+	_echo "Upgrade is complete.  Rebooting in 10 seconds."
+	echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
+	/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
+	if [ -z "${dont_reboot}" ]; then
+		(sleep 10 && /etc/rc.reboot) &
+	fi
+}
+
 pid_file="/var/run/$(basename $0).pid"
 last_update_file="/var/run/$(basename $0)-last-update"
 logfile="/cf/conf/upgrade_log.txt"
@@ -630,6 +667,7 @@ fi
 export pkg_chroot=""
 export chroot_dir=""
 
+unset dont_reboot
 unset booting
 unset boot_stage
 unset force
@@ -640,7 +678,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:cdfi:hp:l:r:uy opt; do
+while getopts 46b:cdfi:hp:l:r:Ruy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -702,6 +740,9 @@ while getopts 46b:cdfi:hp:l:r:uy opt; do
 			fi
 			action="delete"
 			action_pkg="${OPTARG}"
+			;;
+		R)
+			dont_reboot=1
 			;;
 		u)
 			if [ -n "${action}" ]; then

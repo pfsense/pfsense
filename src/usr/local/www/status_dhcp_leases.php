@@ -389,11 +389,11 @@ foreach ($leases as $data):
 		continue;
 
 	if ($data['act'] == 'active')
-		$icon = 'icon-ok-circle';
+		$icon = 'fa-check-circle-o';
 	elseif ($data['act'] == 'expired')
-		$icon = 'icon-ban-circle';
+		$icon = 'fa-ban';
 	else
-		$icon = 'icon-remove-circle';
+		$icon = 'fa-times-circle-o';
 
 	$lip = ip2ulong($data['ip']);
 
@@ -419,7 +419,7 @@ foreach ($leases as $data):
 	$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 ?>
 				<tr>
-					<td><i class="icon <?=$icon?>"></i></td>
+					<td><i class="fa <?=$icon?>"></i></td>
 					<td><?=$data['ip']?></td>
 					<td>
 						<?=$mac?>

@@ -162,7 +162,7 @@ if (count($services) > 0) {
 		}
 ?>
 						<td>
-							<?=$running ? '<font color="green">Running</font>':'<font color="red">Stopped</font>'?>
+							<?=$running ? '<span class="text-success">Running</span>':'<span class="text-danger">Stopped</span>'?>
 						</td>
 						<td>
 							<?=get_service_control_links($service)?>

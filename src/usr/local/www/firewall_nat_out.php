@@ -348,12 +348,12 @@ print($form);
 <?php
 				if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("This rule is being ignored")?>"></i>
+							<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
 <?php
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
@@ -380,7 +380,7 @@ print($form);
 <?php
 						if (isset($alias['src'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -403,7 +403,7 @@ print($form);
 <?php
 							if (isset($alias['srcport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -429,7 +429,7 @@ print($form);
 <?php
 							if (isset($alias['dst'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -453,7 +453,7 @@ print($form);
 <?php
 							if (isset($alias['dstport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -567,7 +567,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<i class="icon-ok" title="<?=gettext("automatic outbound nat")?>"></i>
+							<i class="fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>

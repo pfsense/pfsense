@@ -141,9 +141,9 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 
 <div class="panel panel-default" id="search-panel">
 	<div class="panel-heading"><?=gettext('Search')?>
-		<span class="icons pull-right">
+		<span class="widget-heading-icon pull-right">
 			<a data-toggle="collapse" href="#search-panel .panel-body" name="search-panel">
-				<i class="icon-white icon-plus-sign"></i>
+				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
@@ -193,9 +193,6 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			continue;
 		}
 
-		$shortname = $index['name'];
-		pkg_remove_prefix($shortname);
-
 		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 			continue;
 		}
@@ -206,7 +203,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php if ($index['www']):?>
 						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
 <?php endif; ?>
-							<?=htmlspecialchars($shortname)?>
+							<?=htmlspecialchars($index['shortname'])?>
 						</a>
 					</td>
 
@@ -245,12 +242,12 @@ events.push(function(){
 		var body = $(el).parents('.panel').children('.panel-body')
 		var isOpen = body.hasClass('in');
 
-		$(el).children('i').toggleClass('icon-plus-sign', !isOpen);
-		$(el).children('i').toggleClass('icon-minus-sign', isOpen);
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
 
 		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('icon-minus-sign', true);
-			$(el).children('i').toggleClass('icon-plus-sign', false);
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
 		});
 	});
 

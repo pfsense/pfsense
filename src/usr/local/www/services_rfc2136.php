@@ -159,12 +159,12 @@ foreach ($a_rfc2136 as $rfc2136):
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip)
-			print('<font color="red">');
+			print('<span class="text-danger">');
 		else
-			print('<font color="green">');
+			print('<span class="text-success">');
 
 		print(htmlspecialchars($cached_ip));
-		print('</font>');
+		print('</span>');
 	} else {
 		print('IPv4: N/A');
 	}
@@ -178,12 +178,12 @@ foreach ($a_rfc2136 as $rfc2136):
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip)
-			print('<font color="red">');
+			print('<span class="text-danger">');
 		else
-			print('<font color="green">');
+			print('<span class="text-success">');
 
 		print(htmlspecialchars($cached_ip));
-		print('</font>');
+		print('</span>');
 	} else {
 		print('IPv6: N/A');
 	}

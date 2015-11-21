@@ -75,7 +75,9 @@ require_once("pkg-utils.inc");
 
 $sendto = "output";
 $start_polling = false;
-
+$firmwareupdate = false;
+$reloadtimer = 90;  // Number of seconds after which we reload the page following a firmware update.
+					// Allows time for the device to reboot
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
@@ -242,14 +244,30 @@ if ($_POST) {
 	}
 }
 
+if($_GET && $_GET['id'] == "firmware") {
+	$firmwareupdate = true;
+	$firmwareversion = get_system_pkg_version();
+}
+
 $pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
 include("head.inc");
 
 $tab_array = array();
 $tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
-$tab_array[] = array(gettext("Package Installer"), true, "");
+if($firmwareupdate) {
+	$tab_array[] = array(gettext("System update"), true, "");
+} else {
+	$tab_array[] = array(gettext("Package Installer"), true, "");
+}
+if($firmwareupdate) {
+	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
+}
+
 display_top_tabs($tab_array);
+
+if ($input_errors)
+	print_input_errors($input_errors);
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
@@ -280,33 +298,80 @@ display_top_tabs($tab_array);
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<div class="content">
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<p><?=gettext("All packages will be reinstalled.");?></p>
+				<?=gettext("All packages will be reinstalled.");?>
 <?php
 			} else if ($_GET['from'] && $_GET['from']) {
 ?>
-				<p>Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.</p>
+				Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.
+<?php
+			} else if ($firmwareupdate) {
+?>
+				<?=$g['product_name']?> <?=gettext(" system update")?>
 <?php
 			} else {
 ?>
-				<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
+				Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.
 <?php
 			}
 ?>
-			</div>
 		</div>
 		<div class="panel-body">
 		<br />
-			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+<?php
+	if ($firmwareupdate) {
+?>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Current base system")?>
+			</label>
+			<div class="col-sm-10">
+				<?=$firmwareversion['installed_version']?>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Latest base system")?>
+			</label>
+			<div class="col-sm-10">
+				<?=$firmwareversion['version']?>
+			</div>
+		</div>
+<?php
+		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
+?>
+			<input type="hidden" name="id" value="firmware" />
 			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
-			<input type="submit" class="btn btn-default" name="pkgcancel" id="pkgcancel" value="Cancel"/>
+<?php
+		} else {
+?>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+			</label>
+			<div class="col-sm-10">
+				<?=($firmwareversion) ? gettext("System is up to date") : ""?>
+			</div>
+		</div>
+<?php
+		}
+	} else {
+?>
+			<input type="hidden" name="id" value="<?=$pkgname;?>" />
+			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+<?php
+	}
+	?>
 		</div>
 	</div>
 <?php endif;
+
+if($firmwareupdate && !$firmwareversion) {
+	print_info_box(gettext("Unable to retrieve system versions"), danger);
+}
 
 if ($_POST['mode'] == 'delete') {
 	$modetxt = gettext("removal");
@@ -328,13 +393,21 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
 	<input type="hidden" name="completed" value="true" />
 
+	<div id="countdown" style="text-align: center;"></div>
+
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>
 	</div>
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+<?php if($firmwareupdate) {
+?>
+			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
+<?php } else {
+?>
+ 			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+ <?php } ?>
 		</div>
 
 		<div class="panel-body">
@@ -343,22 +416,24 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	</div>
 
 	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+
 <?php endif?>
 </form>
+
 <?php
 
 ob_flush();
 
-if ($_POST && ($_POST['completed'] != "true") ) {
+if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
+}
 
-	/* All other cases make changes, so mount rw fs */
-	conf_mount_rw();
+if ($_POST && ($_POST['completed'] != "true") ) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
-	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
+	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
 
 	switch ($_POST['mode']) {
 		case 'delete':
@@ -381,25 +456,31 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 
 		case 'installed':
 		default:
-			mwexec_bg("{$upgrade_script} -i {$pkgid}");
+			if ($pkgid == 'firmware') {
+				mwexec_bg("{$upgrade_script}");
+			} else {
+				mwexec_bg("{$upgrade_script} -i {$pkgid}");
+			}
 			$start_polling = true;
 			break;
 	}
-
-	// close log
-	if ($fd_log) {
-		fclose($fd_log);
-	}
-
-	/* Restore to read only fs */
-	conf_mount_ro();
 }
 
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
-if ($_POST['completed'] == "true") {
-	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
-}
+if ($_POST && $_POST['completed'] == "true"):
+	if($pkgid == 'firmware'):
+?>
+<script>
+//<![CDATA[
+events.push(function(){
+	startCountdown("<?=$reloadtimer?>");
+});
+//]]>
+</script>
+<?php
+	endif;
+endif;
 
 ?>
 
@@ -419,9 +500,13 @@ function setProgress(barName, percent, transition) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if("<?=$_POST['mode']?>" != "reinstallall")
-		$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
-	else
+	if("<?=$_POST['mode']?>" != "reinstallall") {
+		if("<?=$pkgid?>" == "firmware") {
+			$('#final').html("<b>" + "System update" + " " + "<?=gettext(' successfully completed')?>");
+		} else {
+			$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
+		}
+	} else
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
 
 	$('#final').show();
@@ -522,6 +607,16 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
+function startCountdown(time) {
+	setInterval(function(){
+		if(time > 0) {
+			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
+		}
+
+		time-- != 0 || (window.location="/index.php");
+	},1000);
+}
+
 events.push(function(){
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
@@ -535,6 +630,7 @@ events.push(function(){
 		show_success();
 		setTimeout(scrollToBottom, 200);
 	}
+
 });
 //]]>
 </script>

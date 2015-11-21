@@ -82,7 +82,7 @@ $carp_enabled = get_carp_status();
 ?>
 <tr>
 	<td>
-		<i class="icon icon-inbox"></i>
+		<i class="fa fa-inbox"></i>
 		<a href="/system_hasync.php">
 			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?>
 		</a>
@@ -91,14 +91,14 @@ $carp_enabled = get_carp_status();
 <?php
 			if ($carp_enabled == false) {
 				$status = "DISABLED";
-				echo '<i class="icon-large icon-ban-circle"></i>';
+				echo '<i class="fa fa-ban"></i>';
 			} else {
 				if($status == "MASTER") {
-					echo '<i class="icon-large icon-arrow-right"></i>';
+					echo '<i class="fa fa-arrow-right"></i>';
 				} else if($status == "BACKUP") {
-					echo '<i class="icon-large icon-arrow-right"></i>';
+					echo '<i class="fa fa-arrow-right"></i>';
 				} else if($status == "INIT") {
-					echo '<i class="icon-large icon-list-alt"></i>';
+					echo '<i class="fa fa-list-alt"></i>';
 				}
 			}
 			if ($ipaddress){ ?> &nbsp;

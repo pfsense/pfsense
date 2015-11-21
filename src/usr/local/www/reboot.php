@@ -70,26 +70,41 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
+$guitimeout = 120;	// Seconds to wait before reloading the page after reboot
+
 $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-?>
-	<meta http-equiv="refresh" content="70;url=/">
-	<div class="alert alert-success" role="alert">
-		<?=gettext("The system is rebooting now. This may take one minute or so.")?>
-	</div>
-<?php
-
 	if(DEBUG) {
-	   print("Not actually rebooting (DEBUG is set true)");
+	   print_info_box("Not actually rebooting (DEBUG is set true)", success);
 	}
 	else {
-		print('<pre>');
+		print('<div><pre>');
 		system_reboot();
-		print('</pre>');
+		print('</pre></div>');
 	}
+
+?>
+
+<div id="countdown" style="text-align: center;"></div>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	function startCountdown(time) {
+		setInterval(function(){
+			$('#countdown').html('<h4>Rebooting<br />Page will automatically reload in ' + time + ' seconds.</h4>');
+			time-- != 0 || (window.location="/index.php");
+		},1000);
+	}
+
+	startCountdown("<?=$guitimeout?>");
+});
+//]]>
+</script>
+<?php
 } else {
 
 ?>
@@ -112,3 +127,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 include("foot.inc");
+
+

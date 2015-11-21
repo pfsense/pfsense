@@ -8,8 +8,12 @@
 ./conf.default/config.xml
 ./etc/bogons
 ./etc/bogonsv6
+./etc/dh-parameters.1024
+./etc/dh-parameters.2048
+./etc/dh-parameters.4096
 ./etc/fstab
 ./etc/group
+./etc/hosts
 ./etc/master.passwd
 ./etc/master.passwd.db
 ./etc/passwd
@@ -17,6 +21,7 @@
 ./etc/pwd.db
 ./etc/rc.conf
 ./etc/spwd.db
+./etc/syslog.conf
 ./media
 ./mnt
 ./proc
@@ -24,3 +29,4 @@
 ./tmp
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree
 ./usr/local/share/%%PRODUCT_NAME%%/base.txz
+./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf

@@ -89,7 +89,6 @@ $checkbox_names = array(
 	'synchronizevirtualip',
 	'synchronizetrafficshaper',
 	'synchronizetrafficshaperlimiter',
-	'synchronizetrafficshaperlayer7',
 	'synchronizednsforwarder',
 	'synchronizecaptiveportal');
 
@@ -151,7 +150,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'pfsyncinterface',
-	'Synchorize Interface',
+	'Synchronize Interface',
 	$pconfig['pfsyncinterface'],
 	$iflist
 ))->setHelp('If Synchronize States is enabled this interface will be used for communication.<br />' .
@@ -324,14 +323,6 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize traffic shaper (limiter)',
 	'Traffic Shaper Limiters configuration ',
 	($pconfig['synchronizetrafficshaperlimiter'] === 'on'),
-	'on'
-));
-
-$group->add(new Form_MultiCheckbox(
-	'synchronizetrafficshaperlayer7',
-	'Synchronize traffic shaper (layer 7)',
-	'Traffic Shaper Layer 7 configuration ',
-	($pconfig['synchronizetrafficshaperlayer7'] === 'on'),
 	'on'
 ));
 

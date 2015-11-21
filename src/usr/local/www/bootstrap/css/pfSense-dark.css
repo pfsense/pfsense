@@ -1,0 +1,292 @@
+@import url("/bootstrap/css/bootstrap.min.css");
+@import url("/bootstrap/css/pfSense.css");
+
+a {
+	color: #009688;
+}
+
+a:hover {
+	color: #00796B;
+	text-decoration: none;
+}
+
+h1 a:link{
+	color: #fff;
+}
+
+
+h1 a:visited { color: #fff; }
+h1 a:hover, h1 a:active { color: #fff; text-decoration: none !important; }
+
+body {
+	background-color: #212121;
+	color: #e0e0e0;
+}
+
+/** Content structure */
+
+.contains-table table {
+	border: 1px solid #ddd;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+	border-color: #303030;
+}
+
+.table-hover>tbody>tr:hover {
+    background-color: #303030;
+}
+
+table.sortable-theme-bootstrap {
+	color: #e0e0e0 !important;
+	background-color: #212121 !important;
+}
+
+.navbar {
+	background-color: #000;
+}
+
+.dropdown-menu {
+	background-color: #000;
+	opacity: .93;
+	border-radius: 10px;
+}
+
+.dropdown-menu>li>a {
+	color: #e0e0e0;
+}
+
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+	background-color: #303030;
+	color: #e0e0e0;
+}
+
+.page-header {
+	border: 0;
+}
+
+.breadcrumb {
+	background-color: #303030;
+	box-shadow: 1px 1px 3px #151515;
+	font-size: 22px;
+}
+
+.nav>li>a {
+    padding: 14px 20px 10px 20px;
+    border-bottom: 5px solid #212121;
+    border-radius: 0;
+    color: #009688;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    background-color: #212121;
+    box-shadow: 2px 2px 8px #080808;
+    border-bottom: 5px solid #009688;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav li.open>a, .nav li.open>a:focus, .nav-pills>li.active>a:hover {
+    background-color: #212121;
+    box-shadow: 2px 2px 8px #151515;
+    border-bottom: 5px solid #009688;
+    color: #009688;
+}
+
+.navbar-nav >li>a {
+	border-bottom: 5px solid #000000;
+}
+
+.nav-tabs>li>a {
+	border-bottom: 5px solid #212121;
+	margin-bottom: 1px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
+	border-left: 1px solid #212121;
+	border-right: 1px solid #212121;
+	border-top: 1px solid #212121;
+	border-bottom: 5px solid #009688;
+	background-color: #212121;
+	margin-bottom: 0;
+	color: #009688;
+	box-shadow: none;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #009688;
+    margin-bottom: 15px;
+}
+
+.btn-primary {
+    color: #212121;
+    background-color: #607D8B;
+    border-color: #37474F;
+}
+
+.btn-success {
+    background-color: #009688;
+    border-color: #009688;
+}
+
+.btn-success.active, .btn-success.focus, .btn-success:active, .btn-success:focus, .btn-success:hover, .open>.dropdown-toggle.btn-success {
+    background-color: #00796B;
+    border-color: #00796B;
+}
+
+.btn-danger {
+    background-color: #D32F2F;
+    border-color: #D32F2F;
+}
+
+.btn-primary:hover {
+    color: #212121;
+    background-color: #455A64;
+    border-color: #37474F;
+}
+
+caption {
+    color: #E0E0E0;
+    background-color: #303030;
+}
+
+.form-control {
+    background-color: #e0e0e0;
+}
+
+.form-group {
+    border-bottom: 1px solid #212121;
+}
+
+.panel-default>.panel-heading {
+	color: #fff;
+	background-color: #303030;
+	border-color: #212121;
+}
+
+.panel {
+	background-color: #424242;
+	border-color: #424242;
+}
+
+.alert-warning {
+	color: #6D4C41;
+    background-color: #FFF9C4;
+    border-color: #FFEB3B;
+}
+
+.help-block {
+	color: #eeeeee;
+}
+
+.checkbox label, .radio label {
+	color: #eeeeee;
+}
+
+.table-striped>thead {
+    background-color: #000;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #303030;
+}
+
+.table .table {
+    background-color: #424242;
+}
+
+/** Page footer */
+.footer {
+	background-color: #000;
+}
+
+.footer a {
+	color: #fff;
+}
+
+/** Homepage / dashboard */
+.widget .panel-heading {
+    background-color: #757575;
+}
+
+#widgetSequence {
+	border-top: 1px solid #ddd;
+}
+
+.progress {
+	background-color: #e0e0e0;
+}
+
+.progress-bar {
+	background-color: #009688;
+}
+
+/** create icon colors */
+.icon-black
+{
+	color: #000000;
+}
+
+.icon-danger
+{
+	color: #F44336;
+}
+
+.icon-success
+{
+	color: #5CB85C;
+}
+
+.icon-primary
+{
+	color: #009688;
+}
+
+.bg-primary {
+	color: #000;
+	background-color: #009688;
+}
+
+.bg-info {
+	color: #000;
+	background-color: #B0BEC5;
+}
+
+.bg-danger {
+	color: #000;
+	background-color: #EF9A9A;
+}
+
+.bg-warning {
+	color: #000;
+	background-color: #FFF9C4;
+}
+
+.bg-success {
+	color: #000;
+	background-color: #80CBC4;
+}
+
+a.fa {
+	font-size: 20px;
+}
+
+.icon-embed-btn
+{
+	color: white;
+}
+
+/* Used when you need an icon to act as a submit button **/
+.button-icon
+{
+	color: #337AB7;
+}
+
+button.close {
+	padding: 0 4px 1px 4px;
+    border: 1px solid #6D4C41;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px #6D4C41;
+}
+
+@media (max-width: 991px) {
+
+}

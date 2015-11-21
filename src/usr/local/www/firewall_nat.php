@@ -79,7 +79,7 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if($_POST['order-store']) {
+if(array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new = array();
 
@@ -234,11 +234,11 @@ foreach ($a_nat as $natent):
 <?php
 	if ($natent['associated-rule-id'] == "pass"):
 ?>
-							<i class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
+							<i class="fa fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
+							<i class="fa fa-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($natent['associated-rule-id'])?> . <?=gettext('is managed by this rule')?>"></i>
 <?php
 	endif;
 ?>
@@ -272,7 +272,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['src'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -289,7 +289,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -307,7 +307,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -324,7 +324,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -414,8 +414,8 @@ if (count($a_nat) > 0) {
 <div>
 	<dl class="dl-horizontal responsive">
 		<dt><?=gettext('Legend')?></dt>					<dd></dd>
-		<dt><i class="icon icon-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
-		<dt><i class="icon icon-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
+		<dt><i class="fa fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
+		<dt><i class="fa fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
 	</dl>
 </div>
 

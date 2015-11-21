@@ -349,7 +349,9 @@ $mac_man = load_mac_manufacturer_table();
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach ($data as $entry): ?>
+		
+<?php
+		foreach ($data as $entry): ?>
 			<tr>
 				<td><?=$hwif[$entry['interface']]?></td>
 				<td><?=$entry['ip']?></td>

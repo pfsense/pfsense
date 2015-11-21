@@ -175,7 +175,7 @@ export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 if [ "${TARGET}" = "i386" ]; then
 	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
 else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc"}
+	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm"}
 fi
 
 # Area that the final image will appear in
@@ -304,6 +304,13 @@ esac
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
+
+export PKG_REPO_BASE=${PKG_REPO_BASE:-"${FREEBSD_SRC_DIR}/release/pkg_repos"}
+export PKG_REPO_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}.conf.template"}
+export PKG_REPO_DEVEL_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-devel.conf.template"}
+export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}
+
+export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"}
 
 # Package overlay. This gives people a chance to build product
 # installable image that already contains certain extra packages.

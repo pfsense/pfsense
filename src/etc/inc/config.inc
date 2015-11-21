@@ -191,9 +191,6 @@ if (platform_booting(true)) {
 				}
 			}
 
-			/* write device name to a file for rc.firmware */
-			file_put_contents("{$g['varetc_path']}/cfdevice", $cfgdevice . "\n");
-
 			/* write out an fstab */
 
 			$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro,noatime 1 1\n";

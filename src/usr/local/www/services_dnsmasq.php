@@ -478,6 +478,18 @@ endforeach;
 	</a>
 </nav>
 
+<script>
+//<![CDATA[
+events.push(function(){
+	// On clicking the "Apply" button, submit the main form, not the little form the button lives in
+	$('[name=apply]').prop('type', 'button');
+
+    $('[name=apply]').click(function() {
+        $('form:last').submit();
+    });
+});
+//]]>
+</script>
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
 						" authoritative DNS server to be queried for that domain."), info);

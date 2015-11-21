@@ -1753,6 +1753,10 @@ function system_ntp_configure($start_ntpd=true) {
 			$ntpcfg .= ' refid ';
 			$ntpcfg .= $config['ntpd']['gps']['refid'];
 		}
+		if (!empty($config['ntpd']['gps']['stratum'])) {
+			$ntpcfg .= ' stratum ';
+			$ntpcfg .= $config['ntpd']['gps']['stratum'];
+		}
 		$ntpcfg .= "\n";
 	} elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport']) &&
 	    file_exists('/dev/'.$config['ntpd']['gpsport']) &&

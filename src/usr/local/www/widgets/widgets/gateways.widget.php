@@ -64,6 +64,116 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
+$a_gateways = return_gateways_array();
+$gateways_status = array();
+$gateways_status = return_gateways_status(true);
+
+if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+} else {
+	$display_type = "gw_ip";
+}
+
+// Compose the table contents and pass it back to the ajax caller
+if($_REQUEST && $_REQUEST['ajax']) {
+	global $a_gateways, $gateways_status;
+
+	print("<thead>\n");
+	print(	"<tr>\n");
+	print(		"<th>" . gettext("Name") . "</th>\n");
+	print(		"<th>RTT</td>\n");
+	print(		"<th>" . gettext("Loss") . "</td>\n");
+	print(		"<th>" . gettext("Status") . "</td>\n");
+	print(	"</tr>\n");
+	print("</thead>\n");
+	print("<tbody>\n");
+
+	foreach ($a_gateways as $gname => $gateway) {
+		print("<tr>\n");
+		print(	"<td>\n");
+		print(htmlspecialchars($gateway['name']) . "<br />");
+		print('<div id="gateway' . $counter . '" style="display:inline"><b>');
+
+		$monitor_address = "";
+		$monitor_address_disp = "";
+		if ($display_type == "monitor_ip" || $display_type == "both_ip") {
+			$monitor_address = $gateway['monitor'];
+			if ($monitor_address != "" && $display_type == "both_ip") {
+				$monitor_address_disp = " (" . $monitor_address . ")";
+			} else {
+				$monitor_address_disp = $monitor_address;
+			}
+		}
+
+		$if_gw = '';
+		// If the user asked to display Gateway IP or both IPs, or asked for just monitor IP but the monitor IP is blank
+		// then find the gateway IP (which is also the monitor IP if the monitor IP was not explicitly set).
+		if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
+			if (is_ipaddr($gateway['gateway'])) {
+				$if_gw = htmlspecialchars($gateway['gateway']);
+			} else {
+				if ($gateway['ipprotocol'] == "inet") {
+					$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
+				}
+				if ($gateway['ipprotocol'] == "inet6") {
+					$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+				}
+			}
+			if ($if_gw == "") {
+				$if_gw = "~";
+			}
+		}
+
+		if ($monitor_address == $if_gw) {
+			$monitor_address_disp = "";
+		}
+
+		print($if_gw . $monitor_address_disp);
+		unset ($if_gw);
+		unset ($monitor_address);
+		unset ($monitor_address_disp);
+		$counter++;
+
+		print(		"</b>");
+		print(		"</div>\n");
+		print(	"</td>\n");
+
+		if ($gateways_status[$gname]) {
+			if (stristr($gateways_status[$gname]['status'], "force_down")) {
+				$online = "Offline (forced)";
+				$bgcolor = "danger";  // lightcoral
+			} elseif (stristr($gateways_status[$gname]['status'], "down")) {
+				$online = "Offline";
+				$bgcolor = "danger";  // lightcoral
+			} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
+				$online = "Packetloss";
+				$bgcolor = "warning";  // khaki
+			} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
+				$online = "Latency";
+				$bgcolor = "warning";  // khaki
+			} elseif ($gateways_status[$gname]['status'] == "none") {
+				$online = "Online";
+				$bgcolor = "success";  // lightgreen
+			} elseif ($gateways_status[$gname]['status'] == "") {
+				$online = "Pending";
+				$bgcolor = "info";  // lightgray
+			}
+		} else {
+			$online = gettext("Unknown");
+			$bgcolor = "info";  // lightblue
+		}
+
+		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n");
+		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n");
+		print('<td class="bg-' . $bgcolor . '">' . $online . "</td>\n");
+		print("</tr>\n");
+		}
+
+	print("</tbody>\n");
+
+	exit;
+}
+
 if ($_POST) {
 	if (!is_array($config["widgets"]["gateways_widget"])) {
 		$config["widgets"]["gateways_widget"] = array();
@@ -75,123 +185,40 @@ if ($_POST) {
 	header("Location: /");
 	exit(0);
 }
-
-if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
-} else {
-	$display_type = "gw_ip";
-}
-
-$a_gateways = return_gateways_array();
-$gateways_status = array();
-$gateways_status = return_gateways_status(true);
-
 ?>
 
-<table class="table table-striped table-hover">
-<thead>
-<tr>
-	<th>Name</td>
-	<th>RTT</td>
-	<th>Loss</td>
-	<th>Status</td>
-</tr>
-</thead>
-<tbody>
-<?php foreach ($a_gateways as $gname => $gateway): ?>
-	<tr>
-		<td>
-<?php
-	$if_gw = '';
-	if (is_ipaddr($gateway['gateway']))
-		$if_gw = $gateway['gateway'];
-	else {
-		if($gateway['ipprotocol'] == "inet")
-			$if_gw = get_interface_gateway($gateway['friendlyiface']);
-		if($gateway['ipprotocol'] == "inet6")
-			$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
-	}
-?>
-			<?=htmlspecialchars($gateway['name'])?><br />
-
-			<div id="gateway<?php echo $counter; ?>" style="display:inline"><b>
-					<?php
-						$monitor_address = "";
-						$monitor_address_disp = "";
-						if ($display_type == "monitor_ip" || $display_type == "both_ip") {
-							$monitor_address = $gateway['monitor'];
-							if ($monitor_address != "" && $display_type == "both_ip") {
-								$monitor_address_disp = " (" . $monitor_address . ")";
-							} else {
-								$monitor_address_disp = $monitor_address;
-							}
-						}
-						$if_gw = '';
-						// If the user asked to display Gateway IP or both IPs, or asked for just monitor IP but the monitor IP is blank
-						// then find the gateway IP (which is also the monitor IP if the monitor IP was not explicitly set).
-						if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
-							if (is_ipaddr($gateway['gateway'])) {
-								$if_gw = htmlspecialchars($gateway['gateway']);
-							} else {
-								if ($gateway['ipprotocol'] == "inet") {
-									$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
-								}
-								if ($gateway['ipprotocol'] == "inet6") {
-									$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
-								}
-							}
-							if ($if_gw == "") {
-								$if_gw = "~";
-							}
-						}
-						if ($monitor_address == $if_gw) {
-							$monitor_address_disp = "";
-						}
-						echo $if_gw . $monitor_address_disp;
-						unset ($if_gw);
-						unset ($monitor_address);
-						unset ($monitor_address_disp);
-						$counter++;
-					?>
-				</b>
-			</div>
-		</td>
-<?php
-	if ($gateways_status[$gname]) {
-		if (stristr($gateways_status[$gname]['status'], "force_down")) {
-			$online = "Offline (forced)";
-			$bgcolor = "#F08080";  // lightcoral
-		} elseif (stristr($gateways_status[$gname]['status'], "down")) {
-			$online = "Offline";
-			$bgcolor = "#F08080";  // lightcoral
-		} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
-			$online = "Packetloss";
-			$bgcolor = "#F0E68C";  // khaki
-		} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
-			$online = "Latency";
-			$bgcolor = "#F0E68C";  // khaki
-		} elseif ($gateways_status[$gname]['status'] == "none") {
-			$online = "Online";
-			$bgcolor = "#90EE90";  // lightgreen
-		} elseif ($gateways_status[$gname]['status'] == "") {
-			$online = "Pending";
-			$bgcolor = "#D3D3D3";  // lightgray
-		}
-	} else {
-		$online = gettext("Unknown");
-		$bgcolor = "#ADD8E6";  // lightblue
-	}
-?>
-		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending"))?></td>
-		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending"))?></td>
-		<td style="background-color: <?=$bgcolor?>"><?=$online?></td>
-	</tr>
-<?php endforeach; ?>
-</tbody>
+<table id="gwtbl" class="table table-striped table-hover">
+		<tr><td><?=gettext("Retrieving gateway data")?></td></tr>
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
+
+<script>
+//<![CDATA[
+
+	function get_gw_stats() {
+		var ajaxRequest;
+
+		ajaxRequest = $.ajax({
+				url: "/widgets/widgets/gateways.widget.php",
+				type: "post",
+				data: { ajax: "ajax"}
+			});
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#gwtbl').html(response);
+			// and do it again
+			setTimeout(get_gw_stats, 5000);
+		});
+	}
+
+	events.push(function(){
+		get_gw_stats();
+	});
+//]]>
+</script>
 
 <div class="panel-footer collapse">
 <input type="hidden" id="gateways-config" name="gateways-config" value="" />

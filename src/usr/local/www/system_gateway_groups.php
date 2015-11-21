@@ -124,7 +124,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Gateway Groups"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"));
 $shortcut_section = "gateway-groups";
 
 include("head.inc");

@@ -341,6 +341,7 @@ create_Full_update_tarball() {
 
 	rm -rf ${FINAL_CHROOT_DIR}/cf
 	rm -rf ${FINAL_CHROOT_DIR}/conf
+	rm -f ${FINAL_CHROOT_DIR}/etc/dh-parameters.*
 	rm -f ${FINAL_CHROOT_DIR}/etc/rc.conf
 	rm -f ${FINAL_CHROOT_DIR}/etc/pwd.db 2>/dev/null
 	rm -f ${FINAL_CHROOT_DIR}/etc/group 2>/dev/null
@@ -354,14 +355,14 @@ create_Full_update_tarball() {
 	rm ${FINAL_CHROOT_DIR}/boot/loader.conf.local 2>/dev/null
 
 	# Old systems will run (pre|post)_upgrade_command from /tmp
-	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command ]; then
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command ]; then
 		cp -p \
-			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/pre_upgrade_command \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command \
 			${FINAL_CHROOT_DIR}/tmp
 	fi
-	if [ -f ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command ]; then
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command ]; then
 		cp -p \
-			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/post_upgrade_command \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command \
 			${FINAL_CHROOT_DIR}/tmp
 	fi
 
@@ -1047,19 +1048,51 @@ clone_to_staging_area() {
 		${BUILDER_TOOLS}/templates/core_pkg/base/exclude_files \
 		> ${_exclude_files}
 
-	mkdir -p ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME} >/dev/null 2>&1
+	mkdir -p ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR} >/dev/null 2>&1
+
+	# Include a sample pkg stable conf to base
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		"release"
+
+	# Include a sample pkg devel conf to base
+	setup_pkg_repo \
+		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH}
+
 	mtree \
 		-c \
 		-k uid,gid,mode,size,flags,sha256digest \
 		-p ${STAGE_CHROOT_DIR} \
 		-X ${_exclude_files} \
-		> ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/base.mtree
+		> ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/base.mtree
 	tar \
 		-C ${STAGE_CHROOT_DIR} \
-		-cJf ${STAGE_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/base.txz \
+		-cJf ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/base.txz \
 		-X ${_exclude_files} \
 		.
 
+	mkdir -p $(dirname ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}) >/dev/null 2>&1
+
+	# Create repo and repo-devel packages
+	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+
+	core_pkg_create repo "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
+		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+
+	core_pkg_create repo-devel "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	rm -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+
+	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
@@ -1119,6 +1152,8 @@ customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
 
+	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
+
 	if [ "${1}" = "nanobsd" -o \
 	     "${1}" = "nanobsd-vga" ]; then
 
@@ -1134,6 +1169,12 @@ customize_stagearea_for_image() {
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base-nanobsd
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base
+	fi
+
+	if [ -n "${IS_RELEASE}" ]; then
+		pkg_chroot_add ${FINAL_CHROOT_DIR} repo
+	else
+		pkg_chroot_add ${FINAL_CHROOT_DIR} repo-devel
 	fi
 
 	if [ "${1}" = "iso" -o \
@@ -1381,6 +1422,18 @@ setup_pkg_repo() {
 	local _arch="${2}"
 	local _target_arch="${3}"
 	local _branch="${4}"
+	local _release="${5}"
+
+	if [ -n "${_release}" ]; then
+		local _template="${PKG_REPO_TEMPLATE}"
+	else
+		local _template="${PKG_REPO_DEVEL_TEMPLATE}"
+	fi
+
+	if [ -z "${_template}" -o ! -f "${_template}" ]; then
+		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
+		print_error_pfS
+	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
@@ -1389,7 +1442,7 @@ setup_pkg_repo() {
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
 		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
-		${FREEBSD_SRC_DIR}/release/pkg_repos/${PRODUCT_NAME}.conf.template \
+		${_template} \
 		> ${_target}
 }
 
@@ -1401,14 +1454,18 @@ builder_setup() {
 		return
 	fi
 
-	if [ ! -f /usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ]; then
-		[ -d /usr/local/etc/pkg/repos ] \
-			|| mkdir -p /usr/local/etc/pkg/repos
+	if [ ! -f ${PKG_REPO_PATH} ]; then
+		[ -d $(dirname ${PKG_REPO_PATH}) ] \
+			|| mkdir -p $(dirname ${PKG_REPO_PATH})
 
 		update_freebsd_sources
 
 		local _arch=$(uname -m)
-		setup_pkg_repo /usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ${_arch} ${_arch} ${PKG_REPO_CONF_BRANCH}
+		setup_pkg_repo \
+			${PKG_REPO_PATH} \
+			${_arch} \
+			${_arch} \
+			${PKG_REPO_CONF_BRANCH}
 	fi
 
 	pkg install ${PRODUCT_NAME}-builder
@@ -1516,7 +1573,12 @@ pkg_chroot_add() {
 pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
-	setup_pkg_repo ${_root}/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf ${TARGET} ${TARGET_ARCH} ${PKG_REPO_CONF_BRANCH}
+	setup_pkg_repo \
+		${_root}${PKG_REPO_PATH} \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		${IS_RELEASE}
 
 	pkg_chroot ${_root} bootstrap -f
 }

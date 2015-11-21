@@ -540,4 +540,5 @@ endforeach;
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
 		" is checked."),'<a href="system.php">','</a>'), info)?>
 </div>
+
 <?php include("foot.inc");

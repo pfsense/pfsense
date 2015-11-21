@@ -168,7 +168,7 @@ $clients = openvpn_get_active_clients();
 						<?=$conn['remote_host'];?>
 					</td>
 					<td>
-						<i class="icon icon-remove-sign" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style='cursor:pointer;'
+						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style='cursor:pointer;'
 							name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
 							title='Kill client connection from <?php echo $conn['remote_host']; ?>'>
 						</i>
@@ -215,10 +215,10 @@ $clients = openvpn_get_active_clients();
 					<?php
 					if ($sk_server['status'] == "up") {
 						/* tunnel is up */
-						echo '<i class="icon icon-arrow-up"></i>';
+						echo '<i class="fa fa-arrow-up"></i>';
 					} else {
 						/* tunnel is down */
-						echo '<i class="icon icon-arrow-down"></i>';
+						echo '<i class="fa fa-arrow-down"></i>';
 					}
 ?>
 					</td>
@@ -265,10 +265,10 @@ $clients = openvpn_get_active_clients();
 				<?php
 				if ($client['status'] == "up") {
 					/* tunnel is up */
-					echo '<i class="icon icon-arrow-up"></i>';
+					echo '<i class="fa fa-arrow-up"></i>';
 				} else {
 					/* tunnel is down */
-					echo '<i class="icon icon-arrow-down"></i>';
+					echo '<i class="fa fa-arrow-down"></i>';
 				}
 
 ?>

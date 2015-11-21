@@ -1583,8 +1583,7 @@ EOD;
 	fclose($igmpfl);
 	unset($igmpconf);
 
-	/* NOTE: -d4 means everything LOG_WARNING and smaller */
-	mwexec("/usr/local/sbin/igmpproxy -d4 -c {$g['tmp_path']}/igmpproxy.conf");
+	mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['tmp_path']}/igmpproxy.conf");
 	log_error(gettext("Started IGMP proxy service."));
 
 	return 0;
@@ -2277,10 +2276,6 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$config['snmpd']['bindip'] = 'lan';
-			unset($config['snmpd']['bindlan']);
-		}
 		$bind_to_ip = "0.0.0.0";
 		if (isset($config['snmpd']['bindip'])) {
 			if (is_ipaddr($config['snmpd']['bindip'])) {
@@ -2377,13 +2372,9 @@ EOD;
 		fclose($fd);
 		unset($snmpdconf);
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$bindlan = "";
-		}
-
 		/* run bsnmpd */
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
-			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
+			" -p {$g['varrun_path']}/snmpd.pid");
 
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";
@@ -2619,7 +2610,7 @@ function upnp_action ($action) {
 		case "stop":
 			killbypid("{$g['varrun_path']}/miniupnpd.pid");
 			while ((int)exec("/bin/pgrep -a miniupnpd | wc -l") > 0) {
-				mwexec('killall miniupnpd 2>/dev/null', true);
+				mwexec('/usr/bin/killall miniupnpd 2>/dev/null', true);
 			}
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
 			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');

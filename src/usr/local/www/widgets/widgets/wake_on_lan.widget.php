@@ -88,13 +88,13 @@ if (count($wolcomputers) > 0) {
 
 		echo "<td>\n";
 		if ($status == 'expires') {
-			echo '<i class="icon-large icon-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
+			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
 		} else if ($status == 'permanent') {
 			echo '<td align="center">' . "\n";
-			echo '<i class="icon-large icon-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
+			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
 		} else {
 			echo '<td" align="center">' . "\n";
-			echo '<i class="icon-large icon-ban-circle" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
+			echo '<i class="fa fa-ban" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
 		}
 
 		echo "</td>\n<td>";

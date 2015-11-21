@@ -4073,6 +4073,8 @@ function upgrade_126_to_127() {
 			case 'show':
 				$display = 'open';
 				break;
+			case 'open':
+				break;
 			default:
 				continue 2;
 		}
@@ -4084,6 +4086,19 @@ function upgrade_126_to_127() {
 	}
 
 	$config['widgets']['sequence'] = implode(',', $new_widgets);
+
+}
+
+function upgrade_127_to_128() {
+	global $config;
+
+	// If bindip is not already specified then migrate the old SNMP bindlan flag to a bindip setting
+	if (isset($config['snmpd']['bindlan'])) {
+		if (!isset($config['snmpd']['bindip'])) {
+			$config['snmpd']['bindip'] = 'lan';
+		}
+		unset($config['snmpd']['bindlan']);
+	}
 
 }
 

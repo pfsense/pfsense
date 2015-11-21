@@ -269,7 +269,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload a file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
 		<div class="panel-body">
 			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 			<br />

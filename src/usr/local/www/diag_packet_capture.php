@@ -292,7 +292,7 @@ require_once('classes/Form.class.php');
 
 $form = new Form(false); // No button yet. We add those later depending on the required action
 
-$section = new Form_Section('General Logging Options');
+$section = new Form_Section('Packet Capture Options');
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -376,7 +376,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'dnsquery',
 	'Reverse DNS Lookup',
-	null,
+	'Do reverse DNS lookup',
 	$_POST['dnsquery']
 ))->setHelp('This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
 			'This option can cause delays for large packet captures.');

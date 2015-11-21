@@ -245,7 +245,7 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Static Routes"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"));
 $shortcut_section = "routing";
 
 include("head.inc");
@@ -279,12 +279,12 @@ display_top_tabs($tab_array);
 <?php
 foreach ($a_routes as $i => $route):
 	if (isset($route['disabled']))
-		$icon = 'icon-ban-circle';
+		$icon = 'fa-ban';
 	else
-		$icon = 'icon-ok-circle';
+		$icon = 'fa-check-circle-o';
 ?>
-	<tr<?=($icon != 'icon-ok-circle')? ' class="disabled"' : ''?>>
-		<td><i class="icon <?=$icon?>"></i></td>
+	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+		<td><i class="fa <?=$icon?>"></i></td>
 		<td>
 			<?=strtolower($route['network'])?>
 		</td>

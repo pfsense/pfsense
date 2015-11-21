@@ -1621,7 +1621,7 @@ function interface_ppps_configure($interface) {
 				interfaces_bring_up($port);
 				pfSense_ngctl_attach(".", $port);
 				/* Enable setautosrc to automatically change mac address if parent interface's changes */
-				mwexec("ngctl msg {$port}: setautosrc 1");
+				mwexec("/usr/sbin/ngctl msg {$port}: setautosrc 1");
 				break;
 			case "pptp":
 			case "l2tp":
@@ -2005,8 +2005,8 @@ EOD;
 	/* we only support the 3gstats.php for huawei modems for now. Will add more later. */
 	/* We should be able to launch the right version for each modem */
 	/* We can also guess the mondev from the manufacturer */
-	exec("usbconfig | egrep -ie '(huawei)'", $usbmodemoutput);
-	mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
+	exec("/usr/sbin/usbconfig | /usr/bin/egrep -ie '(huawei)'", $usbmodemoutput);
+	mwexec("/bin/ps auxww | /usr/bin/grep \"{$interface}\" | /usr/bin/grep \"[3]gstats\" | /usr/bin/awk '{print $2}' | /usr/bin/xargs kill");
 	foreach ($ports as $port) {
 		if (preg_match("/huawei/i", implode("\n", $usbmodemoutput))) {
 			$mondev = substr(basename($port), 0, -1);
@@ -2697,7 +2697,6 @@ ctrl_interface_group=wheel
 #macaddr_acl={$wlcfg['wpa']['macaddr_acl']}
 ssid={$wlcfg['ssid']}
 debug={$wlcfg['wpa']['debug_mode']}
-auth_algs={$wlcfg['wpa']['auth_algs']}
 wpa={$wlcfg['wpa']['wpa_mode']}
 wpa_key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
 wpa_pairwise={$wlcfg['wpa']['wpa_pairwise']}
@@ -4761,7 +4760,7 @@ function find_virtual_ip_alias($ip, $bits = null) {
  *   find_number_of_created_carp_interfaces: return the number of carp interfaces
  */
 function find_number_of_created_carp_interfaces() {
-	return `/sbin/ifconfig | grep "carp:" | wc -l`;
+	return `/sbin/ifconfig | /usr/bin/grep "carp:" | /usr/bin/wc -l`;
 }
 
 /*

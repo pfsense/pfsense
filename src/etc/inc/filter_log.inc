@@ -82,7 +82,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	}
 
 	$filterlog = array();
@@ -356,7 +356,7 @@ function buffer_rules_load() {
 	$buffer_rules_rdr = array();
 	$buffer_rules_normal = array();
 
-	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/grep '^@'", $buffer);
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);
@@ -409,7 +409,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
 		list(,$rulename,) = explode("\"", $ruleString);
-		$rulename = str_replace("USER_RULE: ", '<i class="icon-large icon-user"></i> ', $rulename);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $rulename);
 	}
 	return "{$rulename} ({$lookup_key})";
 }
@@ -417,11 +417,11 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr")) {
-		return "icon-ok-circle";
+		return "fa-check-circle-o";
 	} else if (strstr(strtolower($action), "r")) {
-		return "icon-remove-circle";
+		return "fa-times-circle-o";
 	} else {
-		return "icon-ban-circle";
+		return "fa-ban";
 	}
 }
 

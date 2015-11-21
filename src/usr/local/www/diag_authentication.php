@@ -115,8 +115,6 @@ if ($input_errors)
 if ($savemsg)
 	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
 
-require_once('classes/Form.class.php');
-
 $form = new Form('Test');
 
 $section = new Form_Section('Authentication Test');

@@ -682,7 +682,6 @@ foreach($a_cert as $i => $cert):
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors))

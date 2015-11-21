@@ -425,8 +425,6 @@ function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
 
-require('classes/Form.class.php');
-
 if ($title == "Reload in progress") {
 	$ip = fixup_string("\$myurl");
 } else {

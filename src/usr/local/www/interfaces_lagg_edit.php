@@ -241,8 +241,6 @@ function build_member_list() {
 $pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('LAGG Configuration');

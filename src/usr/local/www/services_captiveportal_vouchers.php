@@ -500,8 +500,6 @@ if ($pconfig['enable']) : ?>
 <?php
 endif;
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Create, generate and activate Rolls with Vouchers');

@@ -123,8 +123,6 @@ if (isset($config['system']['lb_use_sticky']))
 $tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $resetbtn = new Form_Button(
 	'Submit',
 	'Reset'

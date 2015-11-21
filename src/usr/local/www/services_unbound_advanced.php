@@ -244,8 +244,6 @@ $tab_array[] = array(gettext("Advanced settings"), true, "services_unbound_advan
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Advanced Resolver Options');

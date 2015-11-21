@@ -131,8 +131,6 @@ foreach ($ifaces as $ifname => $iface) {
 
 include("head.inc");
 
-require_once('classes/Form.class.php');
-
 $form = new Form;
 
 $section = new Form_Section('State Synchronization Settings (pfsync)');

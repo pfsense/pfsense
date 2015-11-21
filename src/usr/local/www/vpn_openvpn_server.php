@@ -718,8 +718,6 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 if($act=="new" || $act=="edit") :

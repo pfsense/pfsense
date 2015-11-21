@@ -1,7 +1,5 @@
 <?php
 
-require_once('classes/Form.class.php');
-
 class Modal extends Form_Section
 {
 	protected $_attributes = array(

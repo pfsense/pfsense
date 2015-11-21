@@ -125,8 +125,6 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
 
 $section = new Form_Section('Log file filter');

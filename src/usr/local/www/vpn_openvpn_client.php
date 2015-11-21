@@ -490,8 +490,6 @@ add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
 if($act=="new" || $act=="edit") :
-	require_once('classes/Form.class.php');
-
 	$form = new Form();
 
 	$section = new Form_Section('General Information');

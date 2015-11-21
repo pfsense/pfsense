@@ -150,7 +150,6 @@ display_top_tabs($tab_array);
 if(!$pconfig['backend'])
 	$pconfig['backend'] = "pfsense";
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 $section = new Form_Section('Settings');

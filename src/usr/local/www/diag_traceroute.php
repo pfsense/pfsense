@@ -138,8 +138,6 @@ if ($_POST || $_REQUEST['host']) {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require_once('classes/Form.class.php');
-
 $form = new Form('Traceroute');
 
 $section = new Form_Section('Traceroute');

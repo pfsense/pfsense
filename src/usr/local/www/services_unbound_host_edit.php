@@ -235,8 +235,6 @@ $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit Host 
 $shortcut_section = "resolver";
 include("head.inc");
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Host override options');

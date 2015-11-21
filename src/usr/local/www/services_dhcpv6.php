@@ -532,8 +532,6 @@ $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
 display_top_tabs($tab_array, false, 'nav nav-tabs' );
 
-require_once('classes/Form.class.php');
-
 $form = new Form(new Form_Button(
 	'Submit',
 	'Save'

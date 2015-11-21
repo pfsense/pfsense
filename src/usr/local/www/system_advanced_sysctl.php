@@ -231,7 +231,6 @@ if ($act != "edit" ): ?>
 </div>
 
 <?php else:
-	require_once('classes/Form.class.php');
 	$form = new Form;
 	$section = new Form_Section('Edit Tunable');
 

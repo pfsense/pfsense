@@ -84,12 +84,8 @@ require_once("authgui.inc");
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");
 
-/* Pull in all the gui related display classes) */
-foreach (scandir("/usr/local/www/classes/") as $file) {
-	if (substr($file, -4) == ".inc") {
-		require_once("classes/{$file}");
-	}
-}
+/* Include the autoloader for all the GUI display classes */
+require_once("classes/autoload.inc.php");
 
 /* Set the default interface language */
 if ($config['system']['language'] <> "") {

@@ -371,8 +371,6 @@ $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (!isset($id)) {
 		$form = new Form();

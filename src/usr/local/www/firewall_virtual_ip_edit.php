@@ -347,8 +347,6 @@ function build_if_list() {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Edit Virtual IP');

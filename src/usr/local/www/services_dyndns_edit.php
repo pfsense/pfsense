@@ -256,8 +256,6 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg, 'success');
 
-require_once('classes/Form.class.php');
-
 $form = new Form;
 
 $section = new Form_Section('Dynamic DNS Client');

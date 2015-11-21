@@ -223,8 +223,6 @@ if ($savemsg)
 if (is_subsystem_dirty('hosts'))
 	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('General DNS Forwarder Options');

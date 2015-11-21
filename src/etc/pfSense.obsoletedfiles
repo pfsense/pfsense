@@ -637,6 +637,7 @@
 /usr/local/sbin/ftpsesame
 /usr/local/sbin/grub-install1
 /usr/local/sbin/ipfw_context
+/usr/local/sbin/ipfw-classifyd
 /usr/local/sbin/kbdcheck
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd

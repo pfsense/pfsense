@@ -110,7 +110,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		</td>
 
 		<td<?=($ifinfo['dhcplink'] ? ' title="via dhcp"':'')?>>
-			<?php if (empty($ifinfo['ipaddr'])): ?>
+			<?php if (empty($ifinfo['ipaddr']) && empty($ifinfo['ipaddrv6'])): ?>
 				n/a
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['ipaddr'])?><br />

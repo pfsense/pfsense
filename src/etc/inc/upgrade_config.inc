@@ -4056,6 +4056,20 @@ function upgrade_125_to_126() {
 function upgrade_126_to_127() {
 	global $config;
 
+	/* net.inet.ip.fastforwarding does not exist in 2.3. */
+	if (isset($config['sysctl']) && is_array($config['sysctl']) &&
+	    isset($config['sysctl']['item']) && is_array($config['sysctl']['item'])) {
+		$i = 0;
+		$tmp['item'] = array();
+		foreach ($config['sysctl']['item'] as $sysctl) {
+			if ($sysctl['tunable'] === "net.inet.ip.fastforwarding")
+				continue;
+			$tmp['item'][$i++] = $sysctl;
+		}
+		$config['sysctl'] = $tmp;
+		unset($tmp);
+	}
+
 	if (!isset($config['widgets']['sequence'])) {
 		return;
 	}

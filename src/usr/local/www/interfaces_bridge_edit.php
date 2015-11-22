@@ -211,7 +211,17 @@ if ($_POST) {
 			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers) {
 				$input_errors[] = gettext("Span interface cannot be part of the bridge. Remove the span interface from bridge members to continue.");
 			}
+			foreach($a_bridges as $a_bridge) {
+				if ($_POST['bridgeif'] === $a_bridge['bridgeif'])
+					continue;
+				$a_members = explode(',', $a_bridge['members']);
+				foreach ($a_members as $a_member) {
+					if ($ifmembers === $a_member)
+						$input_errors[] = $ifmembers . gettext(" is part of another bridge. Remove the interface from bridge members to continue.");
+				}
+			}
 		}
+		$pconfig['members'] = implode(',', $_POST['members']);
 	}
 
 	if (!$input_errors) {
@@ -371,7 +381,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Interfaces participating in the bridge');
 
 $section->addInput(new Form_Input(
-	'Descr',
+	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']

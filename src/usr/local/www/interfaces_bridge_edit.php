@@ -580,6 +580,22 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 	$i++;
 }
 
+$section->addInput(new Form_Input(
+	'bridgeif',
+	null,
+	'hidden',
+	$pconfig['bridgeif']
+));
+
+if (isset($id) && $a_bridges[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
+}
+
 $form->add($section);
 print($form);
 

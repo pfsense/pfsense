@@ -504,7 +504,7 @@ EOD;
 			$radius_server_txt .= <<<EOD
 				{$nice_user_source} {
 					address = {$auth_server['host']}
-					secret = {$auth_server['radius_secret']}
+					secret = "{$auth_server['radius_secret']}"
 					auth_port = {$auth_server['radius_auth_port']}
 					acct_port = {$auth_server['radius_acct_port']}
 				}

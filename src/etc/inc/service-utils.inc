@@ -346,7 +346,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['ipsec']['enable'])) {
+	if (ipsec_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");

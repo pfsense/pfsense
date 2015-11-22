@@ -2910,10 +2910,6 @@ function filter_generate_user_rule($rule) {
 					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 				}
 
-				if (!empty($aline['divert'])) {
-					$aline['flags'] .= "max-packets 8 ";
-				}
-
 				$aline['flags'] .= " ) ";
 			}
 		}
@@ -2984,7 +2980,7 @@ function filter_generate_user_rule($rule) {
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
-		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
+		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 	unset($aline);

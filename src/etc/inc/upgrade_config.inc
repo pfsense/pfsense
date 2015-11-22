@@ -4114,6 +4114,9 @@ function upgrade_127_to_128() {
 		unset($config['snmpd']['bindlan']);
 	}
 
+	/* IPSEC is always on in 2.3. */
+	if (isset($config['ipsec']['enable']))
+		unset($config['ipsec']['enable']);
 }
 
 ?>

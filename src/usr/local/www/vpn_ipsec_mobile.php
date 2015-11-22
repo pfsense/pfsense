@@ -431,7 +431,7 @@ include("head.inc");
 <?php
 if ($savemsg)
 	print_info_box($savemsg);
-if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
+if (is_subsystem_dirty('ipsec'))
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 foreach ($a_phase1 as $ph1ent)
 	if (isset($ph1ent['mobile']))

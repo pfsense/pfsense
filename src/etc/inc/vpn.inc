@@ -144,7 +144,7 @@ function vpn_ipsec_configure($restart = false) {
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
-	if (!isset($ipseccfg['enable'])) {
+	if (!ipsec_enabled()) {
 		/* try to stop charon */
 		mwexec("/usr/local/sbin/ipsec stop");
 		/* Stop dynamic monitoring */

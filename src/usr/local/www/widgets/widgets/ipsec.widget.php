@@ -65,6 +65,140 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
+// Compose the table contents and pass it back to the ajax caller
+if($_REQUEST && $_REQUEST['ajax']) {
+
+	if (isset($config['ipsec']['phase1'])) {
+		$spd = ipsec_dump_spd();
+		$sad = ipsec_dump_sad();
+		$mobile = ipsec_dump_mobile();
+		$ipsec_status = ipsec_list_sa();
+
+		$activecounter = 0;
+		$inactivecounter = 0;
+
+		$ipsec_detail_array = array();
+		$ikenum = array();
+		if (isset($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as $ph2ent) {
+				if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
+					continue;
+				}
+
+				if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
+					continue;
+				}
+
+				if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
+					continue;
+				}
+
+				if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
+					if (!isset($ikenum[$ph1ent['ikeid']])) {
+						$ikenum[$ph1ent['ikeid']] = 0;
+					} else {
+						$ikenum[$ph1ent['ikeid']]++;
+					}
+
+					$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
+				} else {
+					if (isset($ikenum[$ph1ent['ikeid']])) {
+						continue;
+					}
+
+					$ikeid = "con{$ph1ent['ikeid']}";
+					$ikenum[$ph1ent['ikeid']] = true;
+				}
+
+				$found = false;
+				foreach ($ipsec_status as $id => $ikesa) {
+					if (isset($ikesa['child-sas'])) {
+						foreach ($ikesa['child-sas'] as $childid => $childsa) {
+							if ($ikeid == $childid) {
+								$found = true;
+								break;
+							}
+						}
+					} else if ($ikeid == $id) {
+						$found = true;
+					}
+
+					if ($found === true) {
+						if ($ikesa['state'] == 'ESTABLISHED') {
+							/* tunnel is up */
+							$iconfn = "true";
+							$activecounter++;
+						} else {
+							/* tunnel is down */
+							$iconfn = "false";
+							$inactivecounter++;
+						}
+						break;
+					}
+				}
+
+				if ($found === false) {
+					/* tunnel is down */
+					$iconfn = "false";
+					$inactivecounter++;
+				}
+
+				$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
+						'dest' => $ph1ent['remote-gateway'],
+						'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
+						'descr' => $ph2ent['descr'],
+						'status' => $iconfn);
+			}
+		}
+		unset($ikenum);
+	}
+
+	// Only generate the data for the tab that is currently being viewed
+	switch ($_REQUEST['tab']) {
+		case "Overview" :
+			print("	<tr>\n");
+			print(		"<td>" . $activecounter . "</td>\n");
+			print(		"<td>" . $inactivecounter . "</td>\n");
+			print(		"<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>\n");
+			print(	"</tr>\n");
+		break;
+
+		case "tunnel" :
+			foreach ($ipsec_detail_array as $ipsec) {
+				print("	<tr>\n");
+				print(		"<td>" . htmlspecialchars($ipsec['src']) . "</td>\n");
+				print(		"<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>\n");
+				print(		"<td>" . htmlspecialchars($ipsec['descr']) . "</td>\n");
+
+				if ($ipsec['status'] == "true") {
+					print('<td><i class="fa fa-chevron-up"></i></td>' . "\n");
+				} else {
+					print('<td><i class="fa fa-chevron-down"></i></td>' . "\n");
+				}
+
+				print(	"</tr>\n");
+			}
+		break;
+
+		case "mobile" :
+			foreach ($mobile['pool'] as $pool) {
+				if (!is_array($pool['lease']))
+					continue;
+
+				foreach ($pool['lease'] as $muser) {
+					print("	<tr>\n");
+					print(		"<td>" . htmlspecialchars($muser['id']) . "</td>\n");
+					print(		"<td>" . htmlspecialchars($muser['host']) . "</td>\n");
+					print(		"<td>" . htmlspecialchars($muser['status']) . "</td>\n");
+					print("	</tr>\n");
+				}
+			}
+		break;
+	}
+
+	exit;
+}
+
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
 	$tab_array[] = array("Overview", true, "ipsec-Overview");
@@ -72,89 +206,6 @@ if (isset($config['ipsec']['phase1'])) {
 	$tab_array[] = array("Mobile", false, "ipsec-mobile");
 
 	display_widget_tabs($tab_array);
-
-	$spd = ipsec_dump_spd();
-	$sad = ipsec_dump_sad();
-	$mobile = ipsec_dump_mobile();
-	$ipsec_status = ipsec_list_sa();
-
-	$activecounter = 0;
-	$inactivecounter = 0;
-
-	$ipsec_detail_array = array();
-	$ikenum = array();
-	if (isset($config['ipsec']['phase2'])) {
-		foreach ($config['ipsec']['phase2'] as $ph2ent) {
-			if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
-				continue;
-			}
-
-			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
-				continue;
-			}
-
-			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-				continue;
-			}
-
-			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
-				if (!isset($ikenum[$ph1ent['ikeid']])) {
-					$ikenum[$ph1ent['ikeid']] = 0;
-				} else {
-					$ikenum[$ph1ent['ikeid']]++;
-				}
-
-				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
-			} else {
-				if (isset($ikenum[$ph1ent['ikeid']])) {
-					continue;
-				}
-
-				$ikeid = "con{$ph1ent['ikeid']}";
-				$ikenum[$ph1ent['ikeid']] = true;
-			}
-
-			$found = false;
-			foreach ($ipsec_status as $id => $ikesa) {
-				if (isset($ikesa['child-sas'])) {
-					foreach ($ikesa['child-sas'] as $childid => $childsa) {
-						if ($ikeid == $childid) {
-							$found = true;
-							break;
-						}
-					}
-				} else if ($ikeid == $id) {
-					$found = true;
-				}
-
-				if ($found === true) {
-					if ($ikesa['state'] == 'ESTABLISHED') {
-						/* tunnel is up */
-						$iconfn = "true";
-						$activecounter++;
-					} else {
-						/* tunnel is down */
-						$iconfn = "false";
-						$inactivecounter++;
-					}
-					break;
-				}
-			}
-
-			if ($found === false) {
-				/* tunnel is down */
-				$iconfn = "false";
-				$inactivecounter++;
-			}
-
-			$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
-					'dest' => $ph1ent['remote-gateway'],
-					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
-					'descr' => $ph2ent['descr'],
-					'status' => $iconfn);
-		}
-	}
-	unset($ikenum);
 }
 
 if (isset($config['ipsec']['phase2'])): ?>
@@ -168,11 +219,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tr>
 		</thead>
 		<tbody>
-		<tr>
-			<td><?=$activecounter; ?></td>
-			<td><?=$inactivecounter; ?></td>
-			<td><?=(is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0'); ?></td>
-		</tr>
+			<tr><td colspan="3"><?=gettext("Retrieving overview data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -185,20 +232,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<th>Status</th>
 	</thead>
 	<tbody>
-	<?php foreach ($ipsec_detail_array as $ipsec) : ?>
-		<tr>
-			<td><?php echo htmlspecialchars($ipsec['src']);?></td>
-			<td><?php echo $ipsec['remote-subnet'];?><br />(<?php echo htmlspecialchars($ipsec['dest']);?>)</td>
-			<td><?php echo htmlspecialchars($ipsec['descr']);?></td>
-			<td>
-				<?php if ($ipsec['status'] == "true"): ?>
-					<i class="fa fa-chevron-up"></i>
-				<?php else: ?>
-					<i class="fa fa-chevron-down"></i>
-				<?php endif; ?>
-			</td>
-		</tr>
-		<?php endforeach; ?>
+		<tr><td colspan="4"><?=gettext("Retrieving tunnel data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 	</tbody>
 	</table>
 </div>
@@ -212,20 +246,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 			<th>Status</th>
 		</thead>
 		<tbody>
-
-		<?php foreach ($mobile['pool'] as $pool):
-			if (!is_array($pool['lease']))
-				continue;
-
-			foreach ($pool['lease'] as $muser) : ?>
-				<tr>
-					<td><?php echo htmlspecialchars($muser['id']);?></td>
-					<td><?php echo htmlspecialchars($muser['host']);?></td>
-					<td><?php echo htmlspecialchars($muser['status']);?></td>
-				</tr>
-		<?php
-			endforeach;
-		endforeach; ?>
+			<tr><td colspan="3"><?=gettext("Retrieving mobile data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 		</table>
 	</div>
@@ -243,13 +264,18 @@ if (isset($config['ipsec']['phase2'])): ?>
 ?>
 <script>
 //<![CDATA[
+
+curtab = "Overview";
+
 function changeTabDIV(selectedDiv) {
 	var dashpos = selectedDiv.indexOf("-");
 	var tabclass = selectedDiv.substring(0, dashpos);
+	curtab = selectedDiv.substring(dashpos+1, 20);
 	d = document;
 
 	//get deactive tabs first
 	tabclass = tabclass + "-class-tabdeactive";
+
 	var tabs = document.getElementsByClassName(tabclass);
 	var incTabSelected = selectedDiv + "-deactive";
 
@@ -283,5 +309,31 @@ function changeTabDIV(selectedDiv) {
 		}
 	}
 }
+
+function get_ipsec_stats() {
+	var ajaxRequest;
+
+	ajaxRequest = $.ajax({
+			url: "/widgets/widgets/ipsec.widget.php",
+			type: "post",
+			data: { 
+					ajax: "ajax",
+					tab:  curtab
+				  }
+		});
+
+	// Deal with the results of the above ajax call
+	ajaxRequest.done(function (response, textStatus, jqXHR) {
+
+		$('tbody', '#ipsec-' + curtab).html(response);
+
+		// and do it again
+		setTimeout(get_ipsec_stats, 6000);
+	});
+}
+
+events.push(function(){
+	get_ipsec_stats();
+});
 //]]>
 </script>

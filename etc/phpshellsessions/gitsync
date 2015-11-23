@@ -366,7 +366,7 @@ if(isset($args["--diff"])) {
 				$pos = strrpos($tmp, ": ");
 				if ($pos) {
 					$tmp = substr($tmp, 0, $pos);
-					$res = shell_exec("ls '$CODIR/pfSenseGITREPO/pfSenseGITREPO/$tmp/' 2>/dev/null");
+					$res = is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO/$tmp/");
 				}
 			} while (!$res && $pos);
 

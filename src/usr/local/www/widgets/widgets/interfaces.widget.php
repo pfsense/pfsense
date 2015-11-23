@@ -70,11 +70,11 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 
 	if ($ifinfo['ppplink']) {
-		$icon = 'headphones';
+		$typeicon = 'headphones';
 	} else if (is_interface_wireless($ifdescr)) {
-		$icon = 'signal';
+		$typeicon = 'signal';
 	} else {
-		$icon = 'cog';
+		$typeicon = 'cog';
 	}
 
 	$known_status = true;
@@ -93,7 +93,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
-			<i class="fa fa-<?=$icon?>"></i>
+			<i class="fa fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
 			</a>

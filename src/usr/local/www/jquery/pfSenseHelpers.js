@@ -387,4 +387,18 @@ $('tbody').each(function(){
 	$(this).html($.trim($(this).html()))
 });
 
+// Put a dummy row into any empty table to keep IE happy
 $('tbody:empty').html("<tr><td></td></tr>");
+
+// Add body padding equivalent to the height of hte top menu
+function padMenu() {
+	if(! $('#topmenu').hasClass('navbar-static-top')) {
+		$('body').animate({ paddingTop: $('#topmenu').height()}, 0);
+	}
+}
+
+$( window ).resize(function() {
+  padMenu();
+});
+
+padMenu();

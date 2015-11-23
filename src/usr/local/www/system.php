@@ -482,8 +482,8 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Menu',
-	($pconfig['webguifixedmenu'] == "fixed"),
-	["" => "Scrolls with page", "fixed" => "Fixed (pinned to top of page)"]
+	$pconfig['webguifixedmenu'],
+	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
 ));
 
 $form->add($section);

@@ -382,7 +382,7 @@ if (isset($config['system']['webgui']['webguifixedmenu'])) {
 	$menuclass = "navbar navbar-fixed-top navbar-inverse";
 }
 ?>
-<nav class="<?=$menuclass?>">
+<nav id="topmenu" class="<?=$menuclass?>">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pf-navbar">

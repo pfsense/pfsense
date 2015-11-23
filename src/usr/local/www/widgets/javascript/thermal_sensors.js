@@ -114,11 +114,7 @@ function loadThermalSensorsContainer (thermalSensorsContent) {
 		//load generated graph (or raw data) into thermalSensorsContainer (thermalSensorsContainer DIV defined in "thermal_sensors.widget.php")
 		jQuery('#thermalSensorsContainer').html(thermalSensorsContent);
 	} else {
-		jQuery('#thermalSensorsContainer').html("No Thermal Sensors data available.<br /><br />");
-		jQuery('<div/>').html(
-				"<span>* You can configure a proper Thermal Sensor / Module under <br />" +
-				"&nbsp;&nbsp;&nbsp;<a href='system_advanced_misc.php'>System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>"
-				).appendTo('#thermalSensorsContainer');
+		jQuery('#thermalSensorsContainer').html("No Thermal Sensors data available.");
 	}
 }
 

@@ -795,7 +795,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$etitle =  fixup_string($field['name']);
 				}
 
-				$section->addInput(new Form_TextArea(
+				$section->addInput(new Form_Textarea(
 					$name,
 					$etitle,
 					$value

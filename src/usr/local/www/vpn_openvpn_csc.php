@@ -557,7 +557,7 @@ if($act=="new" || $act=="edit"):
 
 	$section->add($group);
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']

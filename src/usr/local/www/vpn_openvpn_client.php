@@ -631,7 +631,7 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'tls',
 		'Key',
 		$pconfig['tls']
@@ -676,7 +676,7 @@ if($act=="new" || $act=="edit") :
 		$pconfig['autokey_enable'] && empty($pconfig['shared_key'])
 	));
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'shared_key',
 		'Shared Key',
 		$pconfig['shared_key']
@@ -798,7 +798,7 @@ $section->addInput(new Form_Input(
 	$section = new Form_Section('Advanced Configuration');
 	$section->addClass('advanced');
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']

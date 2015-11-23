@@ -663,6 +663,15 @@ if [ "${platform}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
 	export PKG_CACHEDIR=/root/var/cache/pkg
 fi
 
+product_version=$(cat /etc/version)
+do_not_send_host_uuid=$(/usr/local/sbin/read_xml_tag.sh boolean system/do_not_send_host_uuid)
+if [ "${do_not_send_host_uuid}" != "true" ]; then
+	hostuuid=$(sysctl kern.hostuuid)
+	export HTTP_USER_AGENT="${product}/${product_version}:${hostuuid}"
+else
+	export HTTP_USER_AGENT="${product}/${product_version}"
+fi
+
 # Upgrade process on nanobsd will happen in chroot
 export pkg_chroot=""
 export chroot_dir=""

@@ -89,7 +89,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
-$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguiwebguifixedmenu'];
+$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -482,7 +482,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Menu',
-	$pconfig['webguifixedmenu'],
+	($pconfig['webguifixedmenu'] == "fixed"),
 	["" => "Scrolls with page", "fixed" => "Fixed (pinned to top of page)"]
 ));
 

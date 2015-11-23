@@ -45,7 +45,7 @@ if [ -e /root/force_fsck ]; then
 	/sbin/fsck -y -F -t ufs
 fi
 
-if [ ! "${PLATFORM}" = "cdrom" ]; then
+if [ "${PLATFORM}" != "cdrom" ]; then
 	/sbin/fsck -p -F
 	FSCK_ACTION_NEEDED=0
 	case $? in

@@ -389,8 +389,8 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 		$start_polling = true;
 	}
 ?>
-	<input type="hidden" name="id" value="<?=$_POST['id']?>" />
-	<input type="hidden" name="mode" value="<?=$_POST['mode']?>" />
+	<input type="hidden" name="id" value="<?=htmlspecialchars($_POST['id'])?>" />
+	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
 	<input type="hidden" name="completed" value="true" />
 
 	<div id="countdown" style="text-align: center;"></div>

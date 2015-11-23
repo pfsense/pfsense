@@ -422,6 +422,18 @@ pkg_upgrade() {
 		_exec "pkg ${pkg_chroot} autoremove" "Removing unnecessary packages" mute ignore_result
 		_exec "pkg ${pkg_chroot} clean" "Cleanup pkg cache" mute ignore_result
 	fi
+
+	gitsync=$(/usr/local/sbin/read_xml_tag.sh boolean system/gitsync/synconupgrade)
+	if [ "${gitsync}" = "true" ]; then
+		repository_url=$(/usr/local/sbin/read_xml_tag.sh string system/gitsync/repositoryurl)
+		branch=$(/usr/local/sbin/read_xml_tag.sh string system/gitsync/branch)
+
+		# Repository URL is not mandatory
+		if [ -n "${branch}" ]; then
+			/usr/local/sbin/pfSsh.php playback gitsync \
+				${repositoryurl} ${branch} --upgrading
+		fi
+	fi
 }
 
 check_upgrade() {

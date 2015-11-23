@@ -70,11 +70,11 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 
 	if ($ifinfo['ppplink']) {
-		$typeicon = 'headphones';
+		$typeicon = 'cloud';
 	} else if (is_interface_wireless($ifdescr)) {
 		$typeicon = 'signal';
 	} else {
-		$typeicon = 'cog';
+		$typeicon = 'inbox';
 	}
 
 	$known_status = true;

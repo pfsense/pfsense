@@ -4109,17 +4109,15 @@ function upgrade_128_to_129() {
 	global $config;
 
 	/* net.inet.ip.fastforwarding does not exist in 2.3. */
-	if (isset($config['sysctl']) && is_array($config['sysctl']) &&
-	    isset($config['sysctl']['item']) && is_array($config['sysctl']['item'])) {
-		$i = 0;
-		$tmp['item'] = array();
-		foreach ($config['sysctl']['item'] as $sysctl) {
-			if ($sysctl['tunable'] === "net.inet.ip.fastforwarding")
-				continue;
-			$tmp['item'][$i++] = $sysctl;
+	if (!isset($config['sysctl']['item']) ||
+	    !is_array($config['sysctl']['item'])) {
+		return;
+	}
+
+	foreach ($config['sysctl']['item'] as $idx => $sysctl) {
+		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
+			unset($config['sysctl']['item'][$idx]);
 		}
-		$config['sysctl'] = $tmp;
-		unset($tmp);
 	}
 }
 

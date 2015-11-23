@@ -151,7 +151,6 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<object data="graph.php?ifnum=<?=$ifname?>&amp;ifname=<?=rawurlencode($ifdescr)?>&amp;timeint=<?=$refreshinterval?>&amp;initdelay=<?=$graphcounter * 2?>">
 			<param name="id" value="graph" />
 			<param name="type" value="image/svg+xml" />
-			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 		</object>
 	</div>
 <?php endif; ?>

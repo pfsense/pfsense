@@ -38,6 +38,9 @@ $valid_args = array(
 	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
 	    "\tNot recommended if the system has files modified by any method other\n" .
 	    "\tthan gitsync.\n",
+	"--diff" => "\tPerform a copy of only the files that are different or missing.\n" .
+	    "\tRecommended for SSD if system has files modified by any method other\n" .
+	    "\tthan gitsync.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();
@@ -323,6 +326,52 @@ exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verif
 exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
 exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
 @chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 01777);
+
+if(isset($args["--diff"])) {
+	# Find different and missing files.
+	$different_missing_files = shell_exec("/usr/bin/diff -qr /src/ $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/ | /usr/bin/grep -E '^(Files .*? and $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/.*? differ)|(Only in $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/)'");
+
+	# Get the path of each different or missing file.
+	preg_match_all('@(?:^Files .*? and '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.*?) differ.*?$)@sim', $different_missing_files, $different_files_array, PREG_PATTERN_ORDER);
+	preg_match_all('@(?:^Only in '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.*?)$)@sim', $different_missing_files, $missing_files_array, PREG_PATTERN_ORDER);
+
+	# Deal with diff's output format of missing files (path: missing_file).
+	foreach ($missing_files_array[1] as $key => $file) {
+
+		# Most of the time there will be only the one ': ' injected by diff output.  So global replace with dir delimiter (/) is fine.
+		$tmp = str_replace(": ", "/", $file, $count);
+		if ($count == 1)
+			$file = ltrim($tmp, "/");
+
+		# For the very rare case a path component (dir or file) contains ': ' as well, then need to find and replace only the ': ' injected by diff output.
+		else {
+			$tmp = $file;
+			do {
+				$pos = strrpos($tmp, ": ");
+				if ($pos) {
+					$tmp = substr($tmp, 0, $pos);
+					$res = shell_exec("ls '$CODIR/pfSenseGITREPO/pfSenseGITREPO/src/$tmp/' 2>/dev/null");
+				}
+			} while (!$res && $pos);
+
+			if ($res)
+				$file = ltrim($tmp . "/" . substr($file, $pos+2), "/");
+		}
+
+		$missing_files_array[1][$key] = $file;
+	}
+
+	# Convert the list from array to space separated quoted strings.  Quoted for white space file name support.
+	$different_missing_files = '';
+	if (count($different_files_array[1]) > 0) 
+		$different_missing_files .= '"' . implode('" "', $different_files_array[1]) . '"';
+	if (count($missing_files_array[1]) > 0)
+		$different_missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
+
+	# Files to be copied.
+	$files_to_copy = $different_missing_files;
+	$files_to_copy = "-C ./src" . " " . trim($files_to_copy);
+}
 
 echo "===> Installing new files...\n";
 

@@ -457,6 +457,8 @@ foreach ($css as $file) {
 	}
 }
 
+asort($csslist);
+
 if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }

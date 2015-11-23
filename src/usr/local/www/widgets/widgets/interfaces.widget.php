@@ -68,13 +68,18 @@ $ifdescrs = get_configured_interface_with_descr();
 <?php
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
-
-	if ($ifinfo['ppplink']) {
-		$typeicon = 'cloud';
-	} else if (is_interface_wireless($ifdescr)) {
+	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
+		/* PPP link (non-cell) - looks like a modem */
+		$typeicon = 'hdd-o';
+	} else if ($ifinfo['ppplink']) {
+		/* PPP Link (usually cellular) */
 		$typeicon = 'signal';
+	} else if (is_interface_wireless($ifdescr)) {
+		/* Wi-Fi interface (hostap/client/etc) */
+		$typeicon = 'wifi';
 	} else {
-		$typeicon = 'inbox';
+		/* Wired/other interface. */
+		$typeicon = 'sitemap';
 	}
 
 	$known_status = true;

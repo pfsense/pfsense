@@ -102,16 +102,21 @@ $a_hosts = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if ($_POST) {
-	if($_POST['apply']) {
-         // Reload filter (we might need to sync to CARP hosts)
-        $retval = filter_configure();
-        /* Update resolv.conf in case the interface bindings exclude localhost. */
-        system_resolvconf_generate();
-        /* Start or restart dhcpleases when it's necessary */
-        system_dhcpleases_configure();
-        if ($retval == 0) {
-            clear_subsystem_dirty('hosts');
-        }	
+	if ($_POST['apply']) {
+		$retval = 0;
+		$retval = services_dnsmasq_configure();
+		$savemsg = get_std_save_message($retval);
+
+		// Reload filter (we might need to sync to CARP hosts)
+		filter_configure();
+		/* Update resolv.conf in case the interface bindings exclude localhost. */
+		system_resolvconf_generate();
+		/* Start or restart dhcpleases when it's necessary */
+		system_dhcpleases_configure();
+
+		if ($retval == 0) {
+			clear_subsystem_dirty('hosts');
+		}
 	} else {
 		$pconfig = $_POST;
 		unset($input_errors);
@@ -161,21 +166,7 @@ if ($_POST) {
 	
 		if (!$input_errors) {
 			write_config();
-	
-			$retval = 0;
-			$retval = services_dnsmasq_configure();
-			$savemsg = get_std_save_message($retval);
-	
-			// Reload filter (we might need to sync to CARP hosts)
-			filter_configure();
-			/* Update resolv.conf in case the interface bindings exclude localhost. */
-			system_resolvconf_generate();
-			/* Start or restart dhcpleases when it's necessary */
-			system_dhcpleases_configure();
-	
-			if ($retval == 0) {
-				clear_subsystem_dirty('hosts');
-			}
+			mark_subsystem_dirty('hosts');
 		}
 	}
 }

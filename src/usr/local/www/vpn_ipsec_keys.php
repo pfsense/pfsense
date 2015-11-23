@@ -102,7 +102,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = gettext("VPN: IPsec: Keys");
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Keys"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -112,6 +112,7 @@ include("head.inc");
 <?php
 if ($savemsg)
 	print_info_box($savemsg);
+
 if (is_subsystem_dirty('ipsec'))
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 

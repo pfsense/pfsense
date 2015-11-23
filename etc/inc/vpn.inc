@@ -459,7 +459,7 @@ EOD;
 			servers {
 				primary {
 					address = {$pconfig['host']}
-					secret = {$pconfig['radius_secret']}
+					secret = "{$pconfig['radius_secret']}"
 					auth_port = {$pconfig['radius_auth_port']}
 					acct_port = {$pconfig['radius_acct_port']}
 				}

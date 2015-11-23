@@ -92,7 +92,7 @@ $pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
-$pconfig['host_uuid'] = !isset($config['system']['host_uuid']);
+$pconfig['do_not_send_host_uuid'] = isset($config['system']['do_not_send_host_uuid']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -215,10 +215,10 @@ if ($_POST) {
 			unset($config['system']['pkg_nochecksig']);
 		}
 
-		if ($_POST['host_uuid'] == "yes") {
-			unset($config['system']['host_uuid']);
+		if ($_POST['do_not_send_host_uuid'] == "yes") {
+			$config['system']['do_not_send_host_uuid'] = true;
 		} else {
-			$config['system']['host_uuid'] = true;
+			unset($config['system']['do_not_send_host_uuid']);
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -598,6 +598,17 @@ if ($g['platform'] == "pfSense") {
 
 	$form->add($section);
 }
+
+$section = new Form_Section('Installation Feedback');
+
+$section->addInput(new Form_Checkbox(
+	'do_not_send_host_uuid',
+	'Host UUID',
+	'Do NOT send HOST UUID with user agent',
+	$pconfig['do_not_send_host_uuid']
+))->setHelp('Enable this option to not send HOST UUID to pfSense as part of User-Agent header.');
+
+$form->add($section);
 
 print $form;
 

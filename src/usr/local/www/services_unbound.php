@@ -429,7 +429,7 @@ foreach ($a_hosts as $hostent):
 						<?=strtolower($hostent['domain'])?>
 					</td>
 					<td>
-						<?=$hostent['ip']?>&nbsp;
+						<?=$hostent['ip']?>
 					</td>
 					<td>
 						<?=htmlspecialchars($hostent['descr'])?>

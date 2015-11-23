@@ -383,11 +383,11 @@ $('#showinfo').click(function() {
 	$('#infoblock').toggle();
 });
 
+// Put a dummy row into any empty table to keep IE happy
 $('tbody').each(function(){
 	$(this).html($.trim($(this).html()))
 });
 
-// Put a dummy row into any empty table to keep IE happy
 $('tbody:empty').html("<tr><td></td></tr>");
 
 // Add body padding equivalent to the height of the top menu

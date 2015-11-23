@@ -348,7 +348,7 @@ $section->addInput(new Form_StaticText(
 	$btnadvdns . '&nbsp;' . 'Show custom options'
 ));
 
-$section->addInput(new Form_TextArea (
+$section->addInput(new Form_Textarea (
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']

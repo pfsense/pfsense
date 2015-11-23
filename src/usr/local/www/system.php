@@ -89,7 +89,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
-
+$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguiwebguifixedmenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -144,6 +144,12 @@ if ($_POST) {
 		unset($config['system']['webgui']['webguicss']);
 	}
 
+	if ($_POST['webguifixedmenu']) {
+		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
+	} else {
+		unset($config['system']['webgui']['webguifixedmenu']);
+	}
+	
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
@@ -326,8 +332,9 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, success);
 ?>
 <div id="container">
 <?php
@@ -463,7 +470,7 @@ if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }
 
-$section = new Form_Section('Web configurator theme');
+$section = new Form_Section('Web configurator');
 
 $section->addInput(new Form_Select(
 	'webguicss',
@@ -471,6 +478,13 @@ $section->addInput(new Form_Select(
 	$pconfig['webguicss'],
 	$csslist
 ))->setHelp("Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css");
+
+$section->addInput(new Form_Select(
+	'webguifixedmenu',
+	'Menu',
+	$pconfig['webguifixedmenu'],
+	["" => "Scrolls with page", "fixed" => "Fixed (pinned to top of page)"]
+));
 
 $form->add($section);
 

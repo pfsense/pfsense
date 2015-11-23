@@ -194,7 +194,7 @@ $shortcuts['relayd-virtualservers']['service'] = "relayd";
 
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['main'] = "services_captiveportal_zones.php";
-$shortcuts['captiveportal']['log'] = "diag_logs.php?logfile=auth";
+$shortcuts['captiveportal']['log'] = "diag_logs.php?logfile=portalauth";
 $shortcuts['captiveportal']['status'] = "status_captiveportal.php";
 $shortcuts['captiveportal']['service'] = "captiveportal";
 
@@ -205,7 +205,7 @@ $shortcuts['captiveportal-vouchers']['service'] = "captiveportal";
 
 $shortcuts['dhcp'] = array();
 $shortcuts['dhcp']['main'] = "services_dhcp.php";
-$shortcuts['dhcp']['log'] = "diag_logs.php?logfile=dhcp";
+$shortcuts['dhcp']['log'] = "diag_logs.php?logfile=dhcpd";
 $shortcuts['dhcp']['status'] = "status_dhcp_leases.php";
 $shortcuts['dhcp']['service'] = "dhcpd";
 

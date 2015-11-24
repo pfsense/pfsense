@@ -120,7 +120,7 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 		/etc/rc.embedded
 	fi
 
-	if [ -n "${MOVE_PKG_DATA}" ]; then
+	if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 		/bin/mkdir -p /var/db /var/cache
 		ln -sf ../../root/var/db/pkg /var/db/pkg
 		ln -sf ../../root/var/cache/pkg /var/cache/pkg

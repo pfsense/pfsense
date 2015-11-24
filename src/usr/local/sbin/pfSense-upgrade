@@ -430,8 +430,9 @@ pkg_upgrade() {
 
 		# Repository URL is not mandatory
 		if [ -n "${branch}" ]; then
-			/usr/local/sbin/pfSsh.php playback gitsync \
-				${repositoryurl} ${branch} --upgrading
+			_exec "/usr/local/sbin/pfSsh.php playback gitsync \
+				${repositoryurl} ${branch} --upgrading" \
+				"Running gitsync" mute ignore_result
 		fi
 	fi
 }

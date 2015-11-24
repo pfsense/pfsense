@@ -3186,7 +3186,7 @@ events.push(function(){
 				break;
 			}
 			case "staticv4": {
-				$('.dhcpadvanced, .none, dhcp').hide();
+				$('.dhcpadvanced, .none, .dhcp').hide();
 				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}

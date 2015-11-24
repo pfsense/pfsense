@@ -375,14 +375,14 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
-
+/* 
 $menuclass = "navbar navbar-static-top navbar-inverse";
 
 if (isset($config['system']['webgui']['webguifixedmenu'])) {
 	$menuclass = "navbar navbar-fixed-top navbar-inverse";
-}
+}*/
 ?>
-<nav id="topmenu" class="<?=$menuclass?>">
+<nav id="topmenu" class="navbar navbar-fixed-top navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pf-navbar">

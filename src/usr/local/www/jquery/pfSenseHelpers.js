@@ -390,7 +390,7 @@ $('tbody').each(function(){
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
-//Trick top navbar drowdowns to work on hover
-$('.dropdown').hover(function(){ 
-  $('.dropdown-toggle', this).trigger('click'); 
+//Trick top navbar drowdowns to work on hover when navbar is horizontal
+$('.dropdown').hover(function(){
+	if($('body').width() > 1200) { $('.dropdown-toggle', this).trigger('click'); } 
 });

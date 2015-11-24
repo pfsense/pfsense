@@ -494,7 +494,7 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('General Information');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this server',
@@ -578,7 +578,7 @@ if($act=="new" || $act=="edit") :
 		$pconfig['proxy_passwd']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'resolve_retry',
 		'Server hostname resolution',
 		'Infinitely resolve server ',
@@ -615,7 +615,7 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('Cryptographic settings');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
 		'TLS authentication',
 		'Enable authentication of TLS packets.',
@@ -623,7 +623,7 @@ if($act=="new" || $act=="edit") :
 	));
 
 	if (!$pconfig['tls']) {
-		$section->addInput(new Form_checkbox(
+		$section->addInput(new Form_Checkbox(
 			'autotls_enable',
 			null,
 			'Automatically generate a shared TLS authentication key.',
@@ -669,7 +669,7 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'autokey_enable',
 		'Auto generate',
 		'Automatically generate a shared key',
@@ -765,28 +765,28 @@ $section->addInput(new Form_Input(
 		$openvpn_compression_modes
 		))->setHelp('Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'passtos',
 		'Type-of-Service',
 		'Set the TOS IP header value of tunnel packets to match the encapsulated packet value.',
 		$pconfig['passtos']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'no_tun_ipv6',
 		'Disable IPv6',
 		'Don\'t forward IPv6 traffic. ',
 		$pconfig['no_tun_ipv6']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'route_no_pull',
 		'Don\'t pull routes',
 		'Bars the server from adding routes to the client\'s routing table',
 		$pconfig['route_no_pull']
 	))->setHelp('This option still allows the server to set the TCP/IP properties of the client\'s TUN/TAP interface. ');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'route_no_exec',
 		'Don\'t add/remove routes',
 		'Don\'t add or remove routes automatically',

@@ -62,7 +62,7 @@
 ##|*NAME=Services: DNS Resolver page
 ##|*DESCR=Allow access to the 'Services: DNS Resolver' page.
 ##|*MATCH=services_unbound.php*
-##|-PRIVf
+##|-PRIV
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");

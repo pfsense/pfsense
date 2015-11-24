@@ -172,7 +172,7 @@ if (empty($installed_packages)): ?>
 <?php else: ?>
 <div class="table-responsive">
 	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
-		<tr><td><?=gettext("Retrieving package data")?></td></tr>
+		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"</i></td></tr>
 	</table>
 </div>
 <?php endif; ?>

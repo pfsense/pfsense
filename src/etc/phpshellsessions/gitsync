@@ -329,7 +329,7 @@ exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
 
 if(isset($args["--diff"])) {
 	# Find different and missing files.
-	$different_missing_files = shell_exec("/usr/bin/diff -qr /src/ $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/ | /usr/bin/grep -E '^(Files .*? and $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/.*? differ)|(Only in $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/)'");
+	$different_missing_files = shell_exec("/usr/bin/diff -qr / $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/ | /usr/bin/grep -E '^(Files .*? and $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/.*? differ)|(Only in $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/)'");
 
 	# Get the path of each different or missing file.
 	preg_match_all('@(?:^Files .*? and '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.*?) differ.*?$)@sim', $different_missing_files, $different_files_array, PREG_PATTERN_ORDER);

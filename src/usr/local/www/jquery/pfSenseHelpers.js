@@ -390,15 +390,7 @@ $('tbody').each(function(){
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
-// Add body padding equivalent to the height of the top menu
-function padMenu() {
-	if(! $('#topmenu').hasClass('navbar-static-top')) {
-		$('body').animate({ paddingTop: $('#topmenu').height()}, 0);
-	}
-}
-
-$( window ).resize(function() {
-  padMenu();
+//Trick top navbar drowdowns to work on hover
+$('.dropdown').hover(function(){ 
+  $('.dropdown-toggle', this).trigger('click'); 
 });
-
-padMenu();

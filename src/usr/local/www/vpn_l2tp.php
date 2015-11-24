@@ -60,7 +60,7 @@
 ##|*MATCH=vpn_l2tp.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("L2TP"));
+$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Configuration"));
 $shortcut_section = "l2tps";
 
 require("guiconfig.inc");

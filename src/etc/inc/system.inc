@@ -1502,7 +1502,8 @@ function system_get_timezone_list() {
 
 	$file_list = array_merge(
 		glob("/usr/share/zoneinfo/[A-Z]*"),
-		glob("/usr/share/zoneinfo/*/*")
+		glob("/usr/share/zoneinfo/*/*"),
+		glob("/usr/share/zoneinfo/*/*/*")
 	);
 
 	if (empty($file_list)) {

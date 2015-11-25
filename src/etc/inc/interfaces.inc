@@ -5267,12 +5267,11 @@ function get_interface_ip($interface = "wan") {
 		return null;
 	}
 
-	if (substr($realif, 0, 4) == '_vip') {
+	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_carp_interface_list($realif, 'inet', 'ip');
-	}
-
-	if (strstr($realif, "_vip")) {
-		return get_configured_carp_interface_list($realif);
+	} else if (substr($interface, 0, 5) == '_lloc') {
+		/* No link-local address for v4. */
+		return null;
 	}
 
 	$curip = find_interface_ip($realif);
@@ -5291,9 +5290,9 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 		return null;
 	}
 
-	if (substr($realif, 0, 4) == '_vip') {
+	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_carp_interface_list($realif, 'inet6', 'ip');
-	} else if (substr($realif, 0, 5) == '_lloc') {
+	} else if (substr($interface, 0, 5) == '_lloc') {
 		return get_interface_linklocal($interface);
 	}
 

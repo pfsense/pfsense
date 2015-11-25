@@ -69,13 +69,49 @@
 
 require("guiconfig.inc");
 
-// The logs to display are specified in a GET argument. Default to 'system' logs
-if (!$_GET['logfile'])
-	$logfile = 'system';
-else
-	$logfile = $_GET['logfile'];
+/*
+Build a list of allowed log files so we can reject others to prevent the page
+from acting on unauthorized files.
+*/
+$allowed_logs = array(
+	"system" => array("name" => "General",
+		    "shortcut" => ""),
+	"dhcpd" => array("name" => "DHCP",
+		    "shortcut" => "dhcp"),
+	"portalauth" => array("name" => "Captive Portal Authentication",
+		    "shortcut" => "captiveportal"),
+	"ipsec" => array("name" => "IPsec",
+		    "shortcut" => "ipsec"),
+	"ppp" => array("name" => "PPP",
+		    "shortcut" => ""),
+	"relayd" => array("name" => "Load Balancer",
+		    "shortcut" => "relayd"),
+	"openvpn" => array("name" => "OpenVPN",
+		    "shortcut" => "openvpn"),
+	"ntpd" => array("name" => "NTPd",
+		    "shortcut" => "ntp"),
+	"gateways" => array("name" => "Gateways",
+		    "shortcut" => "gateways"),
+	"routing" => array("name" => "Routing",
+		    "shortcut" => "routing"),
+	"resolver" => array("name" => "DNS Resolver",
+		    "shortcut" => "resolver"),
+	"wireless" => array("name" => "Wireless",
+		    "shortcut" => "wireless"),
+);
 
-$system_logfile = "{$g['varlog_path']}/{$logfile}.log";
+// The logs to display are specified in a GET argument. Default to 'system' logs
+if (!$_GET['logfile']) {
+	$logfile = 'system';
+} else {
+	$logfile = $_GET['logfile'];
+	if (!array_key_exists($logfile, $allowed_logs)) {
+		/* Do not let someone attempt to load an unauthorized log. */
+		$logfile = 'system';
+	}
+}
+
+$system_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries) {
@@ -98,7 +134,13 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("General"));
+/* Setup shortcuts if they exist */
+
+if (!empty($allowed_logs[$logfile]["shortcut"])) {
+	$shortcut_section = $allowed_logs[$logfile]["shortcut"];
+}
+
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 
 $tab_array = array();
@@ -124,8 +166,6 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/diag_logs.php?logfile=wireless");
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
-
-require_once('classes/Form.class.php');
 
 $form = new Form(false);
 

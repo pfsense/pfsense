@@ -202,7 +202,6 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Interface VLAN Edit');
 

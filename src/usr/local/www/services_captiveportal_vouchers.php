@@ -500,8 +500,6 @@ if ($pconfig['enable']) : ?>
 <?php
 endif;
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Create, generate and activate Rolls with Vouchers');
@@ -518,13 +516,13 @@ $form->add($section);
 $section = new Form_Section('Create, generate and activate Rolls with Vouchers');
 $section->addClass('rolledit');
 
-$section->addInput(new Form_TextArea(
+$section->addInput(new Form_Textarea(
 	'publickey',
 	'Voucher Public Key',
 	$pconfig['publickey']
 ))->setHelp('Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers.');
 
-$section->addInput(new Form_TextArea(
+$section->addInput(new Form_Textarea(
 	'privatekey',
 	'Voucher Private Key',
 	$pconfig['privatekey']

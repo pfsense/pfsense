@@ -277,8 +277,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status(gettext("Generating Layer7 rules"));
-	generate_layer7_files();
 	if (platform_booting() == true) {
 		echo ".";
 	}
@@ -463,9 +461,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (!is_bogonsv6_used()) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
-
-	update_filter_reload_status(gettext("Starting up layer7 daemon"));
-	layer7_start_l7daemon();
 
 	if (!platform_booting()) {
 		if (!empty($filterdns)) {
@@ -933,13 +928,13 @@ function filter_get_vpns_list() {
 	$vpns_arr = array();
 
 	/* ipsec */
-	if (isset($config['ipsec']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
-					if (!function_exists('ipsec_idinfo_to_cidr')) {
-						require_once("ipsec.inc");
-					}
 					if (!is_array($ph2ent['remoteid'])) {
 						continue;
 					}
@@ -1066,7 +1061,6 @@ function filter_generate_optcfg_array() {
 		echo "filter_generate_optcfg_array() being called $mt\n";
 	}
 
-	read_layer7_config();
 	/* if list */
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
@@ -1898,13 +1892,13 @@ function filter_nat_rules_generate() {
 	}
 
 	/* ipsec nat */
-	if (is_array($config['ipsec']) && isset($config['ipsec']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
-					if (!function_exists('ipsec_idinfo_to_cidr')) {
-						require_once("ipsec.inc");
-					}
 					ipsec_lookup_phase1($ph2ent, $ph1ent);
 					if (!is_array($ph1ent)) {
 						continue;
@@ -2567,7 +2561,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $layer7_rules_list, $dummynet_name_list;
+	global $dummynet_name_list;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2728,15 +2722,6 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	//Layer7 support
-	$l7_present = false;
-	$l7_structures = array();
-	if (isset($rule['l7container']) && $rule['l7container'] != "none") {
-		$l7_present = true;
-		$l7rule =& $layer7_rules_list[$rule['l7container']];
-		$l7_structures = $l7rule->get_unique_structures();
-		$aline['divert'] = "divert-to " . $l7rule->GetRPort() . " ";
-	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet")) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	}
@@ -2875,7 +2860,7 @@ function filter_generate_user_rule($rule) {
 			$rule['nopfsync'] = true;
 		}
 
-		if ($noadvoptions == false || $l7_present) {
+		if ($noadvoptions == false) {
 			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
@@ -2886,8 +2871,7 @@ function filter_generate_user_rule($rule) {
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync'])) or
-			    ($l7_present)) {
+			    (isset($rule['nopfsync'])) ) {
 				$aline['flags'] .= "( ";
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
@@ -2924,10 +2908,6 @@ function filter_generate_user_rule($rule) {
 				    ($rule['max-src-conn-rates'] <> "")) {
 					$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
-				}
-
-				if (!empty($aline['divert'])) {
-					$aline['flags'] .= "max-packets 8 ";
 				}
 
 				$aline['flags'] .= " ) ";
@@ -3000,7 +2980,7 @@ function filter_generate_user_rule($rule) {
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
-		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
+		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 	unset($aline);
@@ -3482,7 +3462,10 @@ EOD;
 	$saved_tracker += 300;
 	$tracker = $saved_tracker;
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		$ipfrules .= "pass out {$log['pass']} on \$IPsec all tracker {$increment_tracker($tracker)} tracker {$increment_tracker($tracker)} keep state label \"IPsec internal host to host\"\n";
 	}
 
@@ -3970,8 +3953,10 @@ function filter_generate_ipsec_rules($log = array()) {
 	$increment_tracker = 'filter_rule_tracker';
 
 	$ipfrules = "\n# VPN Rules\n";
-	if ((isset($config['ipsec']['enable'])) &&
-	    (is_array($config['ipsec']['phase1']))) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		/* step through all phase1 entries */
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;
@@ -3981,9 +3966,6 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 			/* determine local and remote peer addresses */
 			if (!isset($ph1ent['mobile'])) {
-				if (!function_exists('ipsec_get_phase1_dst')) {
-					require_once("ipsec.inc");
-				}
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if (!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";

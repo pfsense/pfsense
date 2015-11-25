@@ -198,6 +198,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$old_config = $config;
+	$old_ipsec_enabled = ipsec_enabled();
 
 	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
@@ -333,7 +334,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 	}
 
-	if (isset($old_config['ipsec']['enable']) !== isset($config['ipsec']['enable'])) {
+	if ($old_ipsec_enabled !== ipsec_enabled()) {
 		vpn_ipsec_configure();
 	}
 

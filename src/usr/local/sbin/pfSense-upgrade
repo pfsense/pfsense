@@ -422,6 +422,19 @@ pkg_upgrade() {
 		_exec "pkg ${pkg_chroot} autoremove" "Removing unnecessary packages" mute ignore_result
 		_exec "pkg ${pkg_chroot} clean" "Cleanup pkg cache" mute ignore_result
 	fi
+
+	gitsync=$(/usr/local/sbin/read_xml_tag.sh boolean system/gitsync/synconupgrade)
+	if [ "${gitsync}" = "true" ]; then
+		repository_url=$(/usr/local/sbin/read_xml_tag.sh string system/gitsync/repositoryurl)
+		branch=$(/usr/local/sbin/read_xml_tag.sh string system/gitsync/branch)
+
+		# Repository URL is not mandatory
+		if [ -n "${branch}" ]; then
+			_exec "/usr/local/sbin/pfSsh.php playback gitsync \
+				${repositoryurl} ${branch} --upgrading" \
+				"Running gitsync" mute ignore_result
+		fi
+	fi
 }
 
 check_upgrade() {
@@ -661,6 +674,15 @@ USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
 if [ "${platform}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
 	export PKG_DBDIR=/root/var/db/pkg
 	export PKG_CACHEDIR=/root/var/cache/pkg
+fi
+
+product_version=$(cat /etc/version)
+do_not_send_host_uuid=$(/usr/local/sbin/read_xml_tag.sh boolean system/do_not_send_host_uuid)
+if [ "${do_not_send_host_uuid}" != "true" ]; then
+	hostuuid=$(sysctl kern.hostuuid)
+	export HTTP_USER_AGENT="${product}/${product_version}:${hostuuid}"
+else
+	export HTTP_USER_AGENT="${product}/${product_version}"
 fi
 
 # Upgrade process on nanobsd will happen in chroot

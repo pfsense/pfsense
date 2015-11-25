@@ -383,8 +383,14 @@ $('#showinfo').click(function() {
 	$('#infoblock').toggle();
 });
 
+// Put a dummy row into any empty table to keep IE happy
 $('tbody').each(function(){
 	$(this).html($.trim($(this).html()))
 });
 
 $('tbody:empty').html("<tr><td></td></tr>");
+
+//Trick top navbar drowdowns to work on hover when navbar is horizontal
+$('.dropdown').hover(function(){
+	if($('body').width() > 1200) { $('.dropdown-toggle', this).trigger('click'); } 
+});

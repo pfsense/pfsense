@@ -211,7 +211,17 @@ if ($_POST) {
 			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers) {
 				$input_errors[] = gettext("Span interface cannot be part of the bridge. Remove the span interface from bridge members to continue.");
 			}
+			foreach($a_bridges as $a_bridge) {
+				if ($_POST['bridgeif'] === $a_bridge['bridgeif'])
+					continue;
+				$a_members = explode(',', $a_bridge['members']);
+				foreach ($a_members as $a_member) {
+					if ($ifmembers === $a_member)
+						$input_errors[] = $ifmembers . gettext(" is part of another bridge. Remove the interface from bridge members to continue.");
+				}
+			}
 		}
+		$pconfig['members'] = implode(',', $_POST['members']);
 	}
 
 	if (!$input_errors) {
@@ -354,8 +364,6 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Bridge Configuration');
@@ -371,7 +379,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Interfaces participating in the bridge');
 
 $section->addInput(new Form_Input(
-	'Descr',
+	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
@@ -578,6 +586,22 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 	))->setHelp('Set the Spanning Tree path cost of interface to value. The default is calculated from the link speed. '.
 		'To change a previously selected path cost back to automatic, set the cost to 0. The minimum is 1 and the maximum is 200000000.');
 	$i++;
+}
+
+$section->addInput(new Form_Input(
+	'bridgeif',
+	null,
+	'hidden',
+	$pconfig['bridgeif']
+));
+
+if (isset($id) && $a_bridges[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+	));
 }
 
 $form->add($section);

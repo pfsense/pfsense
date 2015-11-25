@@ -258,8 +258,6 @@ $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_adva
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('General DNS Resolver Options');
@@ -350,7 +348,7 @@ $section->addInput(new Form_StaticText(
 	$btnadvdns . '&nbsp;' . 'Show custom options'
 ));
 
-$section->addInput(new Form_TextArea (
+$section->addInput(new Form_Textarea (
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
@@ -431,7 +429,7 @@ foreach ($a_hosts as $hostent):
 						<?=strtolower($hostent['domain'])?>
 					</td>
 					<td>
-						<?=$hostent['ip']?>&nbsp;
+						<?=$hostent['ip']?>
 					</td>
 					<td>
 						<?=htmlspecialchars($hostent['descr'])?>

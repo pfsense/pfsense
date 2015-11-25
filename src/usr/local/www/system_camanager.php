@@ -460,7 +460,6 @@ foreach ($a_ca as $i => $ca):
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 //$form->setAction('system_camanager.php?act=edit');
 if (isset($id) && $a_ca[$id])

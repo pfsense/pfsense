@@ -126,7 +126,7 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			<br/><br/>
 			<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
-				<div id='updatestatus'><?php echo gettext("Obtaining update status"); ?> ...</div>
+				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
 			<?php endif; ?>
 			</td>
 		</tr>

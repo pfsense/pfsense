@@ -81,12 +81,9 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$pconfig['enable'] = isset($config['ipsec']['enable']);
-
 if ($_POST) {
 
 	if ($_POST['apply']) {
-		$retval = 0;
 		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
 		filter_configure();
@@ -96,14 +93,6 @@ if ($_POST) {
 				clear_subsystem_dirty('ipsec');
 			}
 		}
-	} else if ($_POST['submit'] == 'Save') {
-		$pconfig = $_POST;
-
-		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
-
-		write_config();
-
-		$retval = vpn_ipsec_configure();
 	} else if (isset($_POST['del'])) {
 		/* delete selected p1 entries */
 		if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
@@ -281,15 +270,12 @@ display_top_tabs($tab_array);
 		print_info_box($savemsg, 'success');
 	}
 
-	if ($pconfig['enable'] && is_subsystem_dirty('ipsec')) {
+	if (is_subsystem_dirty('ipsec')) {
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 	}
 ?>
 
 <form name="mainform" method="post">
-	<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"";?> />&nbsp;&nbsp;<?=gettext("Enable IPsec")?><br /><br />
-	<input name="submit" type="submit" class="btn btn-sm btn-primary" value="<?=gettext("Save"); ?>" /><br /><br />
-
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPSec tunnels')?></h2></div>
 		<div class="panel-body table-responsive">

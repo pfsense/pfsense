@@ -155,7 +155,9 @@ function restart_service($name) {
 		return;
 	}
 
-	stop_service($name);
+	if (is_service_running($name)) {
+		stop_service($name);
+	}
 	start_service($name);
 
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
@@ -346,7 +348,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['ipsec']['enable'])) {
+	if (ipsec_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");

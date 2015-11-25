@@ -325,11 +325,6 @@ msgstr "Gerando filas ALTQ"
 msgid "Generating Limiter rules"
 msgstr "Gerando regras Limiter"
 
-#: etc/inc/filter.inc:234 etc/inc/filter.inc:232 etc/inc/filter.inc:231
-#: etc/inc/filter.inc:206 etc/inc/filter.inc:221
-msgid "Generating Layer7 rules"
-msgstr "Gerando regras Layer7"
-
 #: etc/inc/filter.inc:238 etc/inc/filter.inc:236 etc/inc/filter.inc:235
 #: etc/inc/filter.inc:210 etc/inc/filter.inc:225
 msgid "Loading filter rules"
@@ -456,11 +451,6 @@ msgstr "Houve erro(s) carregando as regras: %1$s - %2$s"
 #: etc/inc/filter.inc:324 etc/inc/filter.inc:339
 msgid "PF was wedged/busy and has been reset."
 msgstr "PF estava travado/ocupado e foi reiniciado."
-
-#: etc/inc/filter.inc:355 etc/inc/filter.inc:357 etc/inc/filter.inc:360
-#: etc/inc/filter.inc:329 etc/inc/filter.inc:333 etc/inc/filter.inc:348
-msgid "Starting up layer7 daemon"
-msgstr "Iniciando daemon layer7"
 
 #: etc/inc/filter.inc:403 etc/inc/filter.inc:405 etc/inc/filter.inc:408
 #: etc/inc/filter.inc:380 etc/inc/filter.inc:384
@@ -2758,12 +2748,6 @@ msgstr "Dica: Para filas abaixo do mesmo pai, isso especifica o compartilhamento
 msgid "slots"
 msgstr "slots"
 
-#: etc/inc/shaper.inc:3494 etc/inc/shaper.inc:3506 etc/inc/shaper.inc:3661
-#: etc/inc/shaper.inc:3662 etc/inc/shaper.inc:3669 etc/inc/shaper.inc:3737
-#: etc/inc/shaper.inc:3842 etc/inc/shaper.inc:3868
-msgid "Enable/Disable layer7 Container"
-msgstr "Habilitar/Desabilitar Contêiner de layer7"
-
 #: etc/inc/shaper.inc:3744 etc/inc/shaper.inc:3756 etc/inc/shaper.inc:3911
 #: etc/inc/shaper.inc:3912 etc/inc/shaper.inc:3919 etc/inc/shaper.inc:3987
 #: etc/inc/shaper.inc:4092 etc/inc/shaper.inc:4118
@@ -4392,16 +4376,6 @@ msgstr "WebCfg - Página Firewall: Traffic Shaper"
 #: etc/inc/priv.defs.inc:365 etc/inc/priv.defs.inc:361
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
 msgstr "Permitir acesso à página 'Firewall: Traffic Shaper'."
-
-#: etc/inc/priv.defs.inc:346 etc/inc/priv.defs.inc:364
-#: etc/inc/priv.defs.inc:370 etc/inc/priv.defs.inc:366
-msgid "WebCfg - Firewall: Traffic Shaper: Layer7 page"
-msgstr "WebCfg - Página Firewall: Traffic Shaper: Layer7"
-
-#: etc/inc/priv.defs.inc:347 etc/inc/priv.defs.inc:365
-#: etc/inc/priv.defs.inc:371 etc/inc/priv.defs.inc:367
-msgid "Allow access to the 'Firewall: Traffic Shaper: Layer7' page."
-msgstr "Permitir acesso à página 'Firewall: Traffic Shaper: Layer7'."
 
 #: etc/inc/priv.defs.inc:352 etc/inc/priv.defs.inc:370
 #: etc/inc/priv.defs.inc:376 etc/inc/priv.defs.inc:372
@@ -6471,7 +6445,6 @@ msgid "The virtual server configuration has been changed"
 msgstr "A configuração do servidor virtual foi modificada"
 
 #: usr/local/www/load_balancer_virtual_server.php:108
-#: usr/local/www/firewall_shaper_layer7.php:401
 #: usr/local/www/firewall_shaper_vinterface.php:366
 #: usr/local/www/firewall_shaper_wizards.php:96
 #: usr/local/www/firewall_aliases.php:160
@@ -6562,7 +6535,6 @@ msgid "Monitors"
 msgstr "Monitores"
 
 #: usr/local/www/load_balancer_virtual_server.php:129
-#: usr/local/www/firewall_shaper_layer7.php:466
 #: usr/local/www/interfaces_bridge_edit.php:291
 #: usr/local/www/firewall_nat_edit.php:182
 #: usr/local/www/firewall_nat_edit.php:185
@@ -6731,7 +6703,7 @@ msgstr "Pool de Fall Back"
 #: usr/local/www/diag_confbak.php:98 usr/local/www/halt.php:59
 #: usr/local/www/diag_smart.php:14 usr/local/www/diag_states_summary.php:185
 #: usr/local/www/system_firmware_auto.php:60
-#: usr/local/www/diag_patterns.php:58 usr/local/www/diag_dns.php:34
+#: usr/local/www/diag_dns.php:34
 #: usr/local/www/reboot.php:51 usr/local/www/edit.php:39
 #: usr/local/www/diag_ping.php:43 usr/local/www/diag_resetstate.php:64
 #: usr/local/www/diag_routes.php:45 usr/local/www/diag_traceroute.php:45
@@ -6789,13 +6761,11 @@ msgid " the latest bogon data."
 msgstr " dados de bogon mais recente."
 
 #: usr/local/www/diag_tables.php:162
-#: usr/local/www/firewall_shaper_layer7.php:576
 #: usr/local/www/services_dhcpv6.php:758
 #: usr/local/www/system_firmware_restorefullbackup.php:163
 #: usr/local/www/diag_tables.php:161 usr/local/www/services_dhcpv6.php:853
 #: usr/local/www/services_dhcpv6.php:784 usr/local/www/diag_tables.php:165
 #: usr/local/www/services_dhcpv6.php:801
-#: usr/local/www/firewall_shaper_layer7.php:571
 msgid "Delete"
 msgstr "Excluir"
 
@@ -6886,7 +6856,6 @@ msgstr "Editor de Pacote"
 
 #: usr/local/www/pkg_edit.php:405
 #: usr/local/www/firewall_aliases_import.php:154
-#: usr/local/www/firewall_shaper_layer7.php:569
 #: usr/local/www/firewall_shaper_vinterface.php:307
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:130
 #: usr/local/www/firewall_virtual_ip_edit.php:546
@@ -7122,7 +7091,6 @@ msgstr "Editor de Pacote"
 #: usr/local/www/vpn_ipsec_phase2.php:791 usr/local/www/services_snmp.php:430
 #: usr/local/www/interfaces_qinq_edit.php:398
 #: usr/local/www/interfaces.php:2664
-#: usr/local/www/firewall_shaper_layer7.php:565
 #: usr/local/www/services_router_advertisements.php:395
 #: usr/local/www/system_gateways_edit.php:634
 #: usr/local/www/services_dyndns_edit.php:378
@@ -7189,7 +7157,6 @@ msgstr "Salvar"
 msgid "Advanced features"
 msgstr "Recursos avançados"
 
-#: usr/local/www/pkg_edit.php:817 usr/local/www/firewall_shaper_layer7.php:65
 #: usr/local/www/diag_packet_capture.php:203 usr/local/www/vpn_ipsec.php:422
 #: usr/local/www/interfaces_wireless.php:133 usr/local/www/vpn_pptp.php:477
 #: usr/local/www/status_graph.php:291 usr/local/www/carp_status.php:194
@@ -7216,7 +7183,6 @@ msgstr "Nota"
 
 #: usr/local/www/pkg_edit.php:823 usr/local/www/pkg_edit.php:835
 #: usr/local/www/firewall_aliases_import.php:155
-#: usr/local/www/firewall_shaper_layer7.php:573
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:130
 #: usr/local/www/firewall_virtual_ip_edit.php:546
 #: usr/local/www/services_wol_edit.php:157
@@ -7340,7 +7306,6 @@ msgstr "Nota"
 #: usr/local/www/interfaces_qinq_edit.php:399
 #: usr/local/www/interfaces.php:1547 usr/local/www/interfaces.php:1652
 #: usr/local/www/interfaces.php:2665
-#: usr/local/www/firewall_shaper_layer7.php:568
 #: usr/local/www/system_gateways_edit.php:634
 #: usr/local/www/services_dyndns_edit.php:379
 #: usr/local/www/firewall_rules_edit.php:1128
@@ -7909,7 +7874,6 @@ msgid "System Logs, Firewall Tab"
 msgstr "Logs de Sistema, Firewall Tab"
 
 #: usr/local/www/firewall_aliases_import.php:48
-#: usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_virtual_ip_edit.php:281
@@ -8111,7 +8075,6 @@ msgstr "Cole nos alias para importar separada por retorno de carro. Exemplos com
 msgid "The list may contain only IP addresses."
 msgstr "Esta lista pode conter apenas endereços IP."
 
-#: usr/local/www/firewall_shaper_layer7.php:59
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_shaper.php:54 usr/local/www/diag_backup.php:121
@@ -8121,33 +8084,6 @@ msgstr "Esta lista pode conter apenas endereços IP."
 msgid "Traffic Shaper"
 msgstr "Traffic Shaper"
 
-#: usr/local/www/firewall_shaper_layer7.php:59
-#: usr/local/www/firewall_shaper_layer7.php:410
-#: usr/local/www/firewall_shaper_vinterface.php:375
-#: usr/local/www/firewall_shaper_wizards.php:105
-#: usr/local/www/firewall_rules_edit.php:1443
-#: usr/local/www/firewall_shaper.php:412
-#: usr/local/www/firewall_shaper_queues.php:196
-#: usr/local/www/firewall_rules_edit.php:1514
-#: usr/local/www/firewall_shaper_vinterface.php:385
-#: usr/local/www/firewall_shaper.php:413
-#: usr/local/www/firewall_shaper_vinterface.php:392
-#: usr/local/www/firewall_rules_edit.php:1529
-#: usr/local/www/firewall_shaper.php:414
-#: usr/local/www/firewall_shaper_vinterface.php:395
-#: usr/local/www/firewall_rules_edit.php:1537
-#: usr/local/www/firewall_shaper_queues.php:197
-#: usr/local/www/firewall_shaper_wizards.php:106
-#: usr/local/www/firewall_rules_edit.php:1548
-#: usr/local/www/firewall_rules_edit.php:1596
-msgid "Layer7"
-msgstr "Layer7"
-
-#: usr/local/www/firewall_shaper_layer7.php:66
-msgid "You can add new layer7 protocol patterns by simply uploading the file"
-msgstr "Você pode adicionar um novo padrão de protocolo layer7 simplesmente carregando o arquivo"
-
-#: usr/local/www/firewall_shaper_layer7.php:66
 #: usr/local/www/firewall_virtual_ip.php:243 usr/local/www/interfaces.php:2550
 #: usr/local/www/interfaces.php:2559 usr/local/www/carp_status.php:196
 #: usr/local/www/status_queues.php:174 usr/local/www/status_queues.php:182
@@ -8166,21 +8102,11 @@ msgstr "Você pode adicionar um novo padrão de protocolo layer7 simplesmente ca
 msgid "here"
 msgstr "aqui"
 
-#: usr/local/www/firewall_shaper_layer7.php:111
-msgid "Layer7 Rules Container not found!"
-msgstr "Contâiner de Regras Layer7 não encontrado!"
-
-#: usr/local/www/firewall_shaper_layer7.php:161
-msgid "Found the following repeated protocol definitions"
-msgstr "Encontradas as seguintes definições de protocolo repetidas"
-
-#: usr/local/www/firewall_shaper_layer7.php:401
 #: usr/local/www/firewall_shaper_queues.php:187
 #: usr/local/www/firewall_shaper_queues.php:188
 msgid "The traffic shaper configuration has been changed"
 msgstr "A configuração do traffic shaper foi modificada"
 
-#: usr/local/www/firewall_shaper_layer7.php:407
 #: usr/local/www/firewall_shaper_vinterface.php:372
 #: usr/local/www/firewall_shaper_wizards.php:102
 #: usr/local/www/firewall_shaper.php:409
@@ -8195,7 +8121,6 @@ msgstr "A configuração do traffic shaper foi modificada"
 msgid "By Interface"
 msgstr "Por Interface"
 
-#: usr/local/www/firewall_shaper_layer7.php:408
 #: usr/local/www/firewall_shaper_vinterface.php:373
 #: usr/local/www/firewall_shaper_wizards.php:103
 #: usr/local/www/firewall_shaper.php:410
@@ -8210,7 +8135,6 @@ msgstr "Por Interface"
 msgid "By Queue"
 msgstr "Por Fila"
 
-#: usr/local/www/firewall_shaper_layer7.php:409
 #: usr/local/www/firewall_shaper_vinterface.php:54
 #: usr/local/www/firewall_shaper_vinterface.php:374
 #: usr/local/www/firewall_shaper_wizards.php:104
@@ -8226,7 +8150,6 @@ msgstr "Por Fila"
 msgid "Limiter"
 msgstr "Limitador"
 
-#: usr/local/www/firewall_shaper_layer7.php:411
 #: usr/local/www/firewall_shaper_vinterface.php:376
 #: usr/local/www/firewall_shaper_wizards.php:73
 #: usr/local/www/firewall_shaper_wizards.php:106
@@ -8251,27 +8174,6 @@ msgstr "Limitador"
 msgid "Wizards"
 msgstr "Wizards"
 
-#: usr/local/www/firewall_shaper_layer7.php:432
-msgid "Create new l7 rules group"
-msgstr "Criar um novo grupo de regras l7"
-
-#: usr/local/www/firewall_shaper_layer7.php:445
-msgid "Rule(s)"
-msgstr "Regra(s)"
-
-#: usr/local/www/firewall_shaper_layer7.php:457
-msgid "Add one or more rules"
-msgstr "Adicionar uma ou mais regras"
-
-#: usr/local/www/firewall_shaper_layer7.php:473
-msgid "Structure"
-msgstr "Estrutura"
-
-#: usr/local/www/firewall_shaper_layer7.php:480
-msgid "Behaviour"
-msgstr "Comportamento"
-
-#: usr/local/www/firewall_shaper_layer7.php:558
 #: usr/local/www/interfaces_groups_edit.php:315
 #: usr/local/www/firewall_aliases_edit.php:680
 #: usr/local/www/interfaces_qinq_edit.php:387
@@ -8296,7 +8198,6 @@ msgstr "Comportamento"
 #: usr/local/www/system_certmanager.php:818
 #: usr/local/www/services_dhcpv6.php:811
 #: usr/local/www/interfaces_qinq_edit.php:391
-#: usr/local/www/firewall_shaper_layer7.php:555
 #: usr/local/www/services_router_advertisements.php:353
 #: usr/local/www/services_dhcp.php:1123
 #: usr/local/www/system_certmanager.php:820
@@ -16377,22 +16278,6 @@ msgstr "Você não pode selecionar uma fila e uma interface virtual para Entrada
 msgid "ID must be an integer"
 msgstr "ID deve ser um inteiro"
 
-#: usr/local/www/firewall_rules_edit.php:428
-#: usr/local/www/firewall_rules_edit.php:460
-#: usr/local/www/firewall_rules_edit.php:461
-#: usr/local/www/firewall_rules_edit.php:464
-#: usr/local/www/firewall_rules_edit.php:470
-msgid "You can only select a layer7 container for TCP and/or UDP protocols"
-msgstr "Você somente pode selecionar um conteiner layer7 para TCP e/ou protocolos UDP"
-
-#: usr/local/www/firewall_rules_edit.php:430
-#: usr/local/www/firewall_rules_edit.php:462
-#: usr/local/www/firewall_rules_edit.php:463
-#: usr/local/www/firewall_rules_edit.php:466
-#: usr/local/www/firewall_rules_edit.php:472
-msgid "You can only select a layer7 container for Pass type rules."
-msgstr "Você somente pode selecionar um conteiner layer7 para regras de tipo Liberação."
-
 #: usr/local/www/firewall_rules_edit.php:443
 #: usr/local/www/firewall_rules_edit.php:475
 #: usr/local/www/firewall_rules_edit.php:476
@@ -17094,15 +16979,6 @@ msgstr "Reconhecimento/Fila"
 #: usr/local/www/firewall_rules_edit.php:1591
 msgid "Choose the Acknowledge Queue only if you have selected Queue."
 msgstr "Escolha a Fila de Acordo somente se você selecionou Fila."
-
-#: usr/local/www/firewall_rules_edit.php:1466
-#: usr/local/www/firewall_rules_edit.php:1537
-#: usr/local/www/firewall_rules_edit.php:1552
-#: usr/local/www/firewall_rules_edit.php:1560
-#: usr/local/www/firewall_rules_edit.php:1571
-#: usr/local/www/firewall_rules_edit.php:1619
-msgid "Choose a Layer7 container to apply application protocol inspection rules. These are valid for TCP and UDP protocols only."
-msgstr "Escolha o contâiner Layer7 para aplicar regras de inspeção de protocolo de aplicação. Essas são válidas somente para protocolos TCP e UDP."
 
 #: usr/local/www/firewall_schedule.php:50
 #: usr/local/www/firewall_schedule_edit.php:61 usr/local/www/fbegin.inc:113
@@ -22183,37 +22059,12 @@ msgstr "MB/s"
 msgid "GB/s"
 msgstr "BG/s"
 
-#: usr/local/www/diag_patterns.php:43
 #: usr/local/www/services_captiveportal_filemanager.php:195
 #: usr/local/www/exec.php:290 usr/local/www/exec.php:300
 #: usr/local/www/exec.php:292 usr/local/www/exec.php:302
 #: usr/local/www/services_captiveportal_filemanager.php:192
 msgid "Upload"
 msgstr "Carregar"
-
-#: usr/local/www/diag_patterns.php:46
-msgid "Uploaded file to"
-msgstr "Arquivo carregado em"
-
-#: usr/local/www/diag_patterns.php:49
-msgid "Warning: You must upload a file with .pat extension."
-msgstr "Atenção: Você deve fazer o carregamento de um arquivo com extensão .pat."
-
-#: usr/local/www/diag_patterns.php:58
-msgid "Add layer7 pattern"
-msgstr "Adicionar amostra de camada 7"
-
-#: usr/local/www/diag_patterns.php:69
-msgid "Upload layer7 pattern file"
-msgstr "Upload de arquivo padrão Layer7"
-
-#: usr/local/www/diag_patterns.php:72
-msgid "File to upload:"
-msgstr "Arquivo para carregar:"
-
-#: usr/local/www/diag_patterns.php:80 usr/local/www/diag_patterns.php:43
-msgid "Upload Pattern file"
-msgstr "Enviar arquivo de padrões"
 
 #: usr/local/www/vpn_ipsec_keys.php:64
 msgid "Deleted IPsec Pre-Shared Key"

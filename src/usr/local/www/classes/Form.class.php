@@ -27,11 +27,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once('/usr/local/www/classes/Form/Element.class.php');
-require_once('/usr/local/www/classes/Form/Input.class.php');
-foreach (glob('/usr/local/www/classes/Form/*.class.php') as $file)
-	require_once($file);
-
 class Form extends Form_Element
 {
 	const LABEL_WIDTH = 2;

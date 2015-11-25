@@ -750,8 +750,6 @@ if ($tabscounter == 0) {
 
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 // This form uses a non-standard submit button name
 $form = new Form(new Form_Button(
 	'submit',

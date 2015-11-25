@@ -144,7 +144,7 @@ function vpn_ipsec_configure($restart = false) {
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
-	if (!isset($ipseccfg['enable'])) {
+	if (!ipsec_enabled()) {
 		/* try to stop charon */
 		mwexec("/usr/local/sbin/ipsec stop");
 		/* Stop dynamic monitoring */
@@ -504,7 +504,7 @@ EOD;
 			$radius_server_txt .= <<<EOD
 				{$nice_user_source} {
 					address = {$auth_server['host']}
-					secret = {$auth_server['radius_secret']}
+					secret = "{$auth_server['radius_secret']}"
 					auth_port = {$auth_server['radius_auth_port']}
 					acct_port = {$auth_server['radius_acct_port']}
 				}

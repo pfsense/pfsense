@@ -78,9 +78,6 @@ if (isset($_POST['zone'])) {
 }
 
 
-$pgtitle = array(gettext("Status: Captive portal"));
-$shortcut_section = "captiveportal";
-
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
@@ -104,10 +101,6 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }
-
-include("head.inc");
-
-flush();
 
 function clientcmp($a, $b) {
 	global $order;
@@ -133,6 +126,11 @@ if (!empty($cpzone)) {
 	}
 }
 
+$pgtitle = array(gettext("Status"), gettext("Captive portal"));
+$shortcut_section = "captiveportal";
+
+include("head.inc");
+
 if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])):
 	$tab_array = array();
 	$tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
@@ -145,8 +143,6 @@ endif;
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
-
-require_once('classes/Form.class.php');
 
 if (count($a_cp) >	1) {
 	$form = new Form(false);
@@ -169,17 +165,14 @@ if (count($a_cp) >	1) {
 
 	print($form);
 }
-?>
+
+if (!empty($cpzone)): ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</h2></div>
 	<div class="panel-body table-responsive">
 
 		<table class="table table-striped table-hover table-condensed">
-
-<?php
-if (!empty($cpzone)): ?>
-
 			<tr>
 				<th>
 					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("IP address")?></a>
@@ -253,10 +246,26 @@ if (!empty($cpzone)): ?>
 			</tr>
 <?php
 	endforeach;
+?>
+		</table>
+	</div>
+</div>
+<?php
+else:
+	// If no zones have been defined . .
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
+	<div class="panel-body"><br />
+<?php
+	print_info_box(gettext("No captive portal zones have been configured. You may add new zones here: ") . '<a href="services_captiveportal_zones.php">' . 'Services->Captive portal' . '</a>');
+?>
+	</div>
+</div>
+<?php
 endif;
 ?>
 
-</table>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
 	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order'])?>" />

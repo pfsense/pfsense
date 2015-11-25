@@ -59,6 +59,8 @@
 
 require_once("globals.inc");
 require_once("service-utils.inc");
+/* Do NOT remove until packages had time to get updated */
+require_once("xmlrpc.inc");
 
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
@@ -134,7 +136,7 @@ function pkg_call($params, $mute = false) {
 	}
 
 	$user_agent = $g['product_name'] . '/' . $g['product_version'];
-	if (!isset($config['system']['host_uuid'])) {
+	if (!isset($config['system']['do_not_send_host_uuid'])) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
@@ -232,7 +234,7 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	}
 
 	$user_agent = $g['product_name'] . '/' . $g['product_version'];
-	if (!isset($config['system']['host_uuid'])) {
+	if (!isset($config['system']['do_not_send_host_uuid'])) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 

@@ -718,8 +718,6 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 if($act=="new" || $act=="edit") :
@@ -727,7 +725,7 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('General Information');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this server',
@@ -801,7 +799,7 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('Cryptographic settings');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
 		'TLS authentication',
 		'Enable authentication of TLS packets.',
@@ -809,7 +807,7 @@ if($act=="new" || $act=="edit") :
 	));
 
 	if (!$pconfig['tls']) {
-		$section->addInput(new Form_checkbox(
+		$section->addInput(new Form_Checkbox(
 			'autotls_enable',
 			null,
 			'Automatically generate a shared TLS authentication key.',
@@ -817,7 +815,7 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'tls',
 		'Key',
 		$pconfig['tls']
@@ -871,7 +869,7 @@ if($act=="new" || $act=="edit") :
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
 
 	if (!$pconfig['shared_key']) {
-		$section->addInput(new Form_checkbox(
+		$section->addInput(new Form_Checkbox(
 			'autokey_enable',
 			'Shared key',
 			'Automatically generate a shared key',
@@ -879,7 +877,7 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'shared_key',
 		'Shared Key',
 		$pconfig['shared_key']
@@ -914,7 +912,7 @@ if($act=="new" || $act=="edit") :
 		))->setHelp('When a certificate-based client logs in, do not accept certificates below this depth. ' .
 					'Useful for denying certificates made with intermediate CAs generated from the same CA as the server.');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'strictusercn',
 		'Strict User-CN Matching',
 		null,
@@ -945,7 +943,7 @@ if($act=="new" || $act=="edit") :
 				'The first network address will be assigned to the server virtual interface. The remaining ' .
 				'network addresses can optionally be assigned to connecting clients. (see Address Pool)');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
 		'Bridge DHCP',
 		'Allow clients on the bridge to obtain DHCP.',
@@ -1037,28 +1035,28 @@ if($act=="new" || $act=="edit") :
 					'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
 					'packets is not being compressed efficiently"');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'passtos',
 		'Type-of-Service',
 		'Set the TOS IP header value of tunnel packets to match the encapsulated packet value.',
 		$pconfig['passtos']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'client2client',
 		'Inter-client communication',
 		'Allow communication between clients connected to this server',
 		$pconfig['client2client']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'duplicate_cn',
 		'Duplicate Connection',
 		'Allow multiple concurrent connections from clients using the same Common Name.',
 		$pconfig['duplicate_cn']
 	))->setHelp('(This is not generally recommended, but may be needed for some scenarios.)');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'no_tun_ipv6',
 		'Disable IPv6',
 		'Don\'t forward IPv6 traffic. ',
@@ -1069,21 +1067,21 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('Client Settings');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'dynamic_ip',
 		'Dynamic IP',
 		'Allow connected clients to retain their connections if their IP address changes',
 		$pconfig['dynamic_ip']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'pool_enable',
 		'Address Pool',
 		'Provide a virtual adapter IP address to clients (see Tunnel Network)',
 		$pconfig['pool_enable']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'topology_subnet',
 		'Topology',
 		'Allocate only one IP per client (topology subnet), rather than an isolated subnet per client (topology net30).',
@@ -1092,7 +1090,7 @@ if($act=="new" || $act=="edit") :
 				'Some clients may require this even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones.');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',
 		'DNS Default Domain',
 		'Provide a default domain name to clients',
@@ -1106,7 +1104,7 @@ if($act=="new" || $act=="edit") :
 		$pconfig['dns_domain']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'dns_server_enable',
 		'DNS Server enable',
 		'Provide a DNS server list to clients',
@@ -1141,14 +1139,14 @@ if($act=="new" || $act=="edit") :
 		$pconfig['dns_server4']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'push_register_dns',
 		'Force DNS cache update',
 		'Run "net stop dnscache", "net start dnscache", "ipconfig /flushdns" and "ipconfig /registerdns" on connection initiation.',
 		$pconfig['push_register_dns']
 	))->setHelp('This is known to kick Windows into recognizing pushed DNS servers.');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'ntp_server_enable',
 		'NTP Server enable',
 		'Provide an NTP server list to clients',
@@ -1173,7 +1171,7 @@ if($act=="new" || $act=="edit") :
 
 	$section = new Form_Section('NetBIOS Options');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
 		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
@@ -1197,7 +1195,7 @@ if($act=="new" || $act=="edit") :
 				'scope ID isolates NetBIOS traffic on a single network to only those nodes with the same ' .
 				'NetBIOS scope ID');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'wins_server_enable',
 		'WINS server enable',
 		'Provide a WINS server list to clients',
@@ -1218,7 +1216,7 @@ if($act=="new" || $act=="edit") :
 		$pconfig['wins_server2']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'client_mgmt_port_enable',
 		'Enable custom port ',
 		'Use a different management port for clients.',
@@ -1238,7 +1236,7 @@ if($act=="new" || $act=="edit") :
 	$section = new Form_Section('Advanced Configuration');
 	$section->addClass('advanced');
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']

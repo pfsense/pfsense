@@ -66,12 +66,20 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-$package_list = get_pkg_info();
-$installed_packages = array_filter($package_list, function($v) {
-	return (isset($v['installed']) || isset($v['broken']));
-});
-
 if($_REQUEST && $_REQUEST['ajax']) {
+	$package_list = get_pkg_info();
+	$installed_packages = array_filter($package_list, function($v) {
+		return (isset($v['installed']) || isset($v['broken']));
+	});
+
+	if (empty($installed_packages)) {
+		print("<div class=\"alert alert-warning\" role=\"alert\">\n");
+		print("	<strong>No packages installed.</strong>\n");
+		print("	You can install packages <a href=\"pkg_mgr.php\" class=\"alert-link\">here</a>.\n");
+		print("</div>\n");
+		exit;
+	}
+
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name")     . "</th>\n");
@@ -163,19 +171,13 @@ if($_REQUEST && $_REQUEST['ajax']) {
 
 	exit;
 }
+?>
 
-if (empty($installed_packages)): ?>
-<div class="alert alert-warning" role="alert">
-	<strong>No packages installed.</strong>
-	You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.
-</div>
-<?php else: ?>
 <div class="table-responsive">
 	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
-		<tr><td><?=gettext("Retrieving package data")?></td></tr>
+		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"</i></td></tr>
 	</table>
 </div>
-<?php endif; ?>
 
 <div style="text-align: center;">
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>

@@ -68,13 +68,18 @@ $ifdescrs = get_configured_interface_with_descr();
 <?php
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
-
-	if ($ifinfo['ppplink']) {
-		$icon = 'headphones';
+	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
+		/* PPP link (non-cell) - looks like a modem */
+		$typeicon = 'hdd-o';
+	} else if ($ifinfo['ppplink']) {
+		/* PPP Link (usually cellular) */
+		$typeicon = 'signal';
 	} else if (is_interface_wireless($ifdescr)) {
-		$icon = 'signal';
+		/* Wi-Fi interface (hostap/client/etc) */
+		$typeicon = 'wifi';
 	} else {
-		$icon = 'cog';
+		/* Wired/other interface. */
+		$typeicon = 'sitemap';
 	}
 
 	$known_status = true;
@@ -93,7 +98,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
-			<i class="fa fa-<?=$icon?>"></i>
+			<i class="fa fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
 			</a>
@@ -110,7 +115,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		</td>
 
 		<td<?=($ifinfo['dhcplink'] ? ' title="via dhcp"':'')?>>
-			<?php if (empty($ifinfo['ipaddr'])): ?>
+			<?php if (empty($ifinfo['ipaddr']) && empty($ifinfo['ipaddrv6'])): ?>
 				n/a
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['ipaddr'])?><br />

@@ -66,8 +66,6 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require_once('classes/Form.class.php');
-
 function filterDestinationServers(array $destinationServers)
 {
 	return array_unique(

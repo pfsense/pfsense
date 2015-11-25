@@ -283,8 +283,6 @@ $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form;
 
 $section = new Form_Section('NTP server configuration');

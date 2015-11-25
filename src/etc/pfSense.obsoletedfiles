@@ -637,6 +637,7 @@
 /usr/local/sbin/ftpsesame
 /usr/local/sbin/grub-install1
 /usr/local/sbin/ipfw_context
+/usr/local/sbin/ipfw-classifyd
 /usr/local/sbin/kbdcheck
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd
@@ -742,6 +743,7 @@
 /usr/local/share/misc
 /usr/local/share/nls
 /usr/local/share/pbi-keys
+/usr/local/share/protocols
 /usr/local/share/sgml
 /usr/local/share/skel
 /usr/local/share/strongswan/templates/config/plugins/smp.conf
@@ -769,6 +771,7 @@
 /usr/local/www/diag_logs_routing.php
 /usr/local/www/diag_logs_slbd.php
 /usr/local/www/diag_logs_wireless.php
+/usr/local/www/diag_patterns.php
 /usr/local/www/diag_showbogons.php
 /usr/local/www/dom-drag.js
 /usr/local/www/draglist.js
@@ -781,6 +784,7 @@
 /usr/local/www/firewall_nat_server_edit.php
 /usr/local/www/firewall_rules_schedule_logic.php
 /usr/local/www/firewall_shaper_edit.php
+/usr/local/www/firewall_shaper_layer7.php
 /usr/local/www/firewall_shaper_queues_edit.php
 /usr/local/www/fred-bg.png
 /usr/local/www/fred.png
@@ -833,6 +837,7 @@
 /usr/local/www/services_proxyarp_edit.php
 /usr/local/www/services_usermanager.php
 /usr/local/www/shortcuts/pkg_upnp.inc
+/usr/local/www/sortable/sortable.min.js
 /usr/local/www/status_slbd_pool.php
 /usr/local/www/status_slbd_vs.php
 /usr/local/www/system_advanced.php

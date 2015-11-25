@@ -102,55 +102,7 @@ $a_hosts = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if ($_POST) {
-	$pconfig = $_POST;
-	unset($input_errors);
-
-	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
-
-	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-		if ($_POST['port'] == $config['unbound']['port']) {
-			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
-		}
-	}
-
-	if ($_POST['port']) {
-		if (is_port($_POST['port'])) {
-			$config['dnsmasq']['port'] = $_POST['port'];
-		} else {
-			$input_errors[] = gettext("You must specify a valid port number");
-		}
-	} else if (isset($config['dnsmasq']['port'])) {
-		unset($config['dnsmasq']['port']);
-	}
-
-	if (is_array($_POST['interface'])) {
-		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	} elseif (isset($config['dnsmasq']['interface'])) {
-		unset($config['dnsmasq']['interface']);
-	}
-
-	if ($config['dnsmasq']['custom_options']) {
-		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-			$args .= escapeshellarg("--{$c}") . " ";
-		}
-		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-		if ($rc != 0) {
-			$input_errors[] = gettext("Invalid custom options");
-		}
-	}
-
-	if (!$input_errors) {
-		write_config();
-
+	if ($_POST['apply']) {
 		$retval = 0;
 		$retval = services_dnsmasq_configure();
 		$savemsg = get_std_save_message($retval);
@@ -164,6 +116,57 @@ if ($_POST) {
 
 		if ($retval == 0) {
 			clear_subsystem_dirty('hosts');
+		}
+	} else {
+		$pconfig = $_POST;
+		unset($input_errors);
+	
+		$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
+		$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+		$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+		$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+		$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
+		$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
+		$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
+		$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+		$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+	
+		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
+			if ($_POST['port'] == $config['unbound']['port']) {
+				$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+			}
+		}
+	
+		if ($_POST['port']) {
+			if (is_port($_POST['port'])) {
+				$config['dnsmasq']['port'] = $_POST['port'];
+			} else {
+				$input_errors[] = gettext("You must specify a valid port number");
+			}
+		} else if (isset($config['dnsmasq']['port'])) {
+			unset($config['dnsmasq']['port']);
+		}
+	
+		if (is_array($_POST['interface'])) {
+			$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
+		} elseif (isset($config['dnsmasq']['interface'])) {
+			unset($config['dnsmasq']['interface']);
+		}
+	
+		if ($config['dnsmasq']['custom_options']) {
+			$args = '';
+			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+				$args .= escapeshellarg("--{$c}") . " ";
+			}
+			exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
+			if ($rc != 0) {
+				$input_errors[] = gettext("Invalid custom options");
+			}
+		}
+	
+		if (!$input_errors) {
+			write_config();
+			mark_subsystem_dirty('hosts');
 		}
 	}
 }
@@ -222,8 +225,6 @@ if ($savemsg)
 
 if (is_subsystem_dirty('hosts'))
 	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-
-require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -329,7 +330,7 @@ $section->addInput(new Form_Checkbox(
 					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
 					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
 
-$section->addInput(new Form_TextArea(
+$section->addInput(new Form_Textarea(
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
@@ -482,12 +483,12 @@ endforeach;
 //<![CDATA[
 events.push(function(){
 	// On clicking the "Apply" button, submit the main form, not the little form the button lives in
-	$('[name=apply]').prop('type', 'button');
+//	$('[name=apply]').prop('type', 'button');
 
-    $('[name=apply]').click(function() {
-        $('form:last').submit();
-    });
-});
+//    $('[name=apply]').click(function() {
+//        $('form:last').submit();
+//    });
+// });
 //]]>
 </script>
 <?php

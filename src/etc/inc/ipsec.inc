@@ -213,13 +213,19 @@ function ipsec_enabled() {
 	if (!isset($config['ipsec']) || !is_array($config['ipsec']))
 		return false;
 
+	/* Check if we have at least one phase 1 entry. */
 	if (!isset($config['ipsec']['phase1']) ||
 	    !is_array($config['ipsec']['phase1']) ||
 	    empty($config['ipsec']['phase1'])) {
 		return false;
 	}
+	/* Check if at least one phase 1 entry is enabled. */
+	foreach ($config['ipsec']['phase1'] as $phase1) {
+		if (!isset($phase1['disabled']))
+			return true;
+	}
 
-	return true;
+	return false;
 }
 
 /*
@@ -475,11 +481,9 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
  * Wrapper to call pfSense_ipsec_list_sa() when IPsec is enabled
  */
 function ipsec_list_sa() {
-	global $config;
 
-	if (isset($config['ipsec']['enable'])) {
+	if (ipsec_enabled())
 		return pfSense_ipsec_list_sa();
-	}
 
 	return array();
 }

@@ -4099,7 +4099,26 @@ function upgrade_127_to_128() {
 		}
 		unset($config['snmpd']['bindlan']);
 	}
+}
 
+function upgrade_128_to_129() {
+	global $config;
+
+	/* net.inet.ip.fastforwarding does not exist in 2.3. */
+	if (!isset($config['sysctl']['item']) ||
+	    !is_array($config['sysctl']['item'])) {
+		return;
+	}
+
+	foreach ($config['sysctl']['item'] as $idx => $sysctl) {
+		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
+			unset($config['sysctl']['item'][$idx]);
+		}
+	}
+
+	/* IPSEC is always on in 2.3. */
+	if (isset($config['ipsec']['enable']))
+		unset($config['ipsec']['enable']);
 }
 
 ?>

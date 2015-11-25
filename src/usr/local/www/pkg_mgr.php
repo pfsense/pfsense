@@ -80,11 +80,11 @@ if(is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-include("head.inc");
-
 $pkg_info = get_pkg_info();
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
+
+include("head.inc");
 
 $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");

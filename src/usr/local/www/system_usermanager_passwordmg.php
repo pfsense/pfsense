@@ -130,8 +130,6 @@ if ($islocal == false) {
 	exit;
 }
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Update Password');

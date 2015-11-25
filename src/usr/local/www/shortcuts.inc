@@ -124,7 +124,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			break;
 	}
 	if (!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}")) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><i class=\"fa fa-plus-circle\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related settings") . "\"><i class=\"fa fa-sliders\"></i></a>";
 	}
 }
 
@@ -152,7 +152,7 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if (!empty($link)) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><i class=\"fa fa-cog\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa fa-cog\"></i></a>";
 	}
 }
 
@@ -160,7 +160,7 @@ function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	if (!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
-		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><i class=\"fa fa-list-alt\"></i></a>";
+		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa fa-list-alt\"></i></a>";
 	}
 }
 
@@ -194,7 +194,7 @@ $shortcuts['relayd-virtualservers']['service'] = "relayd";
 
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['main'] = "services_captiveportal_zones.php";
-$shortcuts['captiveportal']['log'] = "diag_logs.php?logfile=auth";
+$shortcuts['captiveportal']['log'] = "diag_logs.php?logfile=portalauth";
 $shortcuts['captiveportal']['status'] = "status_captiveportal.php";
 $shortcuts['captiveportal']['service'] = "captiveportal";
 
@@ -205,7 +205,7 @@ $shortcuts['captiveportal-vouchers']['service'] = "captiveportal";
 
 $shortcuts['dhcp'] = array();
 $shortcuts['dhcp']['main'] = "services_dhcp.php";
-$shortcuts['dhcp']['log'] = "diag_logs.php?logfile=dhcp";
+$shortcuts['dhcp']['log'] = "diag_logs.php?logfile=dhcpd";
 $shortcuts['dhcp']['status'] = "status_dhcp_leases.php";
 $shortcuts['dhcp']['service'] = "dhcpd";
 

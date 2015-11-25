@@ -425,8 +425,6 @@ function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
 
-require('classes/Form.class.php');
-
 if ($title == "Reload in progress") {
 	$ip = fixup_string("\$myurl");
 } else {
@@ -797,7 +795,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$etitle =  fixup_string($field['name']);
 				}
 
-				$section->addInput(new Form_TextArea(
+				$section->addInput(new Form_Textarea(
 					$name,
 					$etitle,
 					$value

@@ -151,7 +151,7 @@ if ($_POST) {
 	$reqfields = array();
 	$reqfieldsn = array();
 	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && isset($field['required'])) {
+		if (isset($field['required'])) {
 			if ($field['fieldname']) {
 				$reqfields[] = $field['fieldname'];
 			}
@@ -348,7 +348,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 			))->setHelp($description);
 			break;
 		case "textarea":
-			$group->add(new Form_TextArea(
+			$group->add(new Form_Textarea(
 				$fieldname . $trc,
 				null,
 				$value
@@ -530,8 +530,6 @@ function parse_package_templates() {
 }
 
 // Start of page display
-require_once('classes/Form.class.php');
-
 if ($input_errors)
 	print_input_errors($input_errors);
 
@@ -989,20 +987,20 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');
 
 			if ($grouping) {
-				$group->add(new Form_TextArea(
+				$group->add(new Form_Textarea(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					$value
 				))->setHelp(fixup_string($pkga['description']));
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_TextArea(
+					$advanced->addInput(new Form_Textarea(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
 						$value
 					))->setHelp(fixup_string($pkga['description']));
 				} else {
-					$section->addInput(new Form_TextArea(
+					$section->addInput(new Form_Textarea(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
 						$value

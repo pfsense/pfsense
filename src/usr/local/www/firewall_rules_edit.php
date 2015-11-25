@@ -278,7 +278,6 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['ackqueue'] = (($a_filter[$id]['ackqueue'] == "none") ? '' : $a_filter[$id]['ackqueue']);
 	$pconfig['dnpipe'] = (($a_filter[$id]['dnpipe'] == "none") ? '' : $a_filter[$id]['dnpipe']);
 	$pconfig['pdnpipe'] = (($a_filter[$id]['pdnpipe'] == "none") ? '' : $a_filter[$id]['pdnpipe']);
-	$pconfig['l7container'] = (($a_filter[$id]['l7container'] == "none") ? '' : $a_filter[$id]['l7container']);
 
 	//schedule support
 	$pconfig['sched'] = (($a_filter[$id]['sched'] == "none") ? '' : $a_filter[$id]['sched']);
@@ -310,8 +309,6 @@ read_altq_config(); /* XXX: */
 $qlist =& get_unique_queue_list();
 read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
-read_layer7_config();
-$l7clist =& get_l7_unique_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
@@ -615,14 +612,6 @@ if ($_POST) {
 	if (!empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid'])) {
 		$input_errors[] = gettext('ID must be an integer');
 	}
-	if ($_POST['l7container'] && $_POST['l7container'] != "") {
-		if (!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp")) {
-			$input_errors[] = gettext("You can only select a layer7 container for TCP and/or UDP protocols");
-		}
-		if ($_POST['type'] <> "pass") {
-			$input_errors[] = gettext("You can only select a layer7 container for Pass type rules.");
-		}
-	}
 
 	if (!in_array($_POST['proto'], array("tcp", "tcp/udp"))) {
 		if (!empty($_POST['max-src-conn'])) {
@@ -657,7 +646,7 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['statetype'] == "none") && (empty($_POST['l7container']))) {
+	if ($_POST['statetype'] == "none") {
 		if (!empty($_POST['max'])) {
 			$input_errors[] = gettext("You cannot specify the maximum state entries (advanced option) if statetype is none and no L7 container is selected.");
 		}
@@ -880,10 +869,6 @@ if ($_POST) {
 			}
 		}
 
-		if ($_POST['l7container'] != "") {
-			$filterent['l7container'] = $_POST['l7container'];
-		}
-
 		if ($_POST['sched'] != "") {
 			$filterent['sched'] = $_POST['sched'];
 		}
@@ -1001,7 +986,6 @@ include("head.inc");
 if ($input_errors)
 	print_input_errors($input_errors);
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Edit Firewall rule');
 
@@ -1637,14 +1621,6 @@ $group->add(new Form_Select(
 $section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.
 	'selected Queue.'
 );
-
-$section->addInput(new Form_Select(
-	'l7container',
-	'Layer7',
-	$pconfig['l7container'],
-	array_keys($l7clist)
-))->setHelp('Choose a Layer7 container to apply application protocol inspection '.
-	'rules. These are valid for TCP and UDP protocols only.');
 
 $has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']));
 $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));

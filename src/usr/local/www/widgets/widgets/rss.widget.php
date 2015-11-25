@@ -91,15 +91,15 @@ if (!$rss_feed_s) {
 	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 
-if (!$max_items) {
+if (!$max_items || !is_numeric($max_items)) {
 	$max_items = 10;
 }
 
-if (!$rsswidgetheight) {
+if (!$rsswidgetheight || !is_numeric($rsswidgetheight)) {
 	$rsswidgetheight = 300;
 }
 
-if (!$rsswidgettextlength) {
+if (!$rsswidgettextlength || !is_numeric($rsswidgettextlength)) {
 	$rsswidgettextlength = 140; // oh twitter, how do we love thee?
 }
 

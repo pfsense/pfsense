@@ -143,7 +143,7 @@ if ($_POST) {
 
 		$tunableent = array();
 
-		if(!$_POST['tunable'] || !$_POST['value']) {
+		if(!$_POST['tunable'] || !isset($_POST['value'])) {
 			$input_errors[] = gettext("Both a name and a value must be specified.");
 		} else if (!ctype_alnum($_POST['value'])) {
 			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
@@ -231,7 +231,6 @@ if ($act != "edit" ): ?>
 </div>
 
 <?php else:
-	require_once('classes/Form.class.php');
 	$form = new Form;
 	$section = new Form_Section('Edit Tunable');
 

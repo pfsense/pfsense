@@ -535,8 +535,6 @@ display_top_tabs(make_tabs());
 if ($input_errors && count($input_errors))
 	print_input_errors($input_errors);
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
 
 $section = new Form_Section('Graph settings');

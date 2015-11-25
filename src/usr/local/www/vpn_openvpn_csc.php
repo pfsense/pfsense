@@ -321,8 +321,6 @@ add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
 if($act=="new" || $act=="edit"):
-	require_once('classes/Form.class.php');
-
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
@@ -559,7 +557,7 @@ if($act=="new" || $act=="edit"):
 
 	$section->add($group);
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']

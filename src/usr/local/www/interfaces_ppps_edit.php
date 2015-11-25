@@ -605,8 +605,6 @@ $linkparamstr = gettext('Bandwidth is set only for MLLP conncetions and when lin
 						'MRU will be auto-negotiated by default' . '<br />' .
 						'Set only for MLLP conncetions. MRRU will be auto-negotiated by default.');
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('PPPs Configuration');

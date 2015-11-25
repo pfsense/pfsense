@@ -64,7 +64,6 @@
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
-require_once('classes/Form.class.php');
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -397,7 +396,6 @@ $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
 $tab_array[] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php");
-$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 ?>

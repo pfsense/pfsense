@@ -55,7 +55,7 @@ $priv_list['page-diagnostics-factorydefaults']['match'] = array();
 $priv_list['page-diagnostics-factorydefaults']['match'][] = "diag_defaults.php*";
 
 $priv_list['page-diagnostics-ndptable'] = array();
-$priv_list['page-diagnostics-ndptable']['name'] = gettext("Webcfg - Diagnostics: NDP Table page");
+$priv_list['page-diagnostics-ndptable']['name'] = gettext("WebCfg - Diagnostics: NDP Table page");
 $priv_list['page-diagnostics-ndptable']['descr'] = gettext("Allow access to the 'Diagnostics: NDP Table' page.");
 $priv_list['page-diagnostics-ndptable']['match'] = array();
 $priv_list['page-diagnostics-ndptable']['match'][] = "diag_ndp.php*";
@@ -73,7 +73,7 @@ $priv_list['page-diagnostics-sockets']['match'] = array();
 $priv_list['page-diagnostics-sockets']['match'][] = "diag_sockets.php*";
 
 $priv_list['page-diagnostics-testport'] = array();
-$priv_list['page-diagnostics-testport']['name'] = gettext("Webcfg - Diagnostics: Test Port");
+$priv_list['page-diagnostics-testport']['name'] = gettext("WebCfg - Diagnostics: Test Port");
 $priv_list['page-diagnostics-testport']['descr'] = gettext("Allow access to the 'Diagnostics: Test Port' page.");
 $priv_list['page-diagnostics-testport']['match'] = array();
 $priv_list['page-diagnostics-testport']['match'][] = "diag_testport.php*";
@@ -103,7 +103,7 @@ $priv_list['page-status-ipsec-spd']['match'] = array();
 $priv_list['page-status-ipsec-spd']['match'][] = "diag_ipsec_spd.php*";
 
 $priv_list['page-status-ntp'] = array();
-$priv_list['page-status-ntp']['name'] = gettext("Webcfg - Status: NTP page");
+$priv_list['page-status-ntp']['name'] = gettext("WebCfg - Status: NTP page");
 $priv_list['page-status-ntp']['descr'] = gettext("Allow access to the 'Status: NTP' page.");
 $priv_list['page-status-ntp']['match'] = array();
 $priv_list['page-status-ntp']['match'][] = "status_ntpd.php*";
@@ -255,13 +255,13 @@ $priv_list['page-firewall-alias-import']['match'] = array();
 $priv_list['page-firewall-alias-import']['match'][] = "firewall_aliases_import.php*";
 
 $priv_list['page-firewall-nat-npt'] = array();
-$priv_list['page-firewall-nat-npt']['name'] = gettext("Webcfg - Firewall: NAT: NPT page");
+$priv_list['page-firewall-nat-npt']['name'] = gettext("WebCfg - Firewall: NAT: NPT page");
 $priv_list['page-firewall-nat-npt']['descr'] = gettext("Allow access to the 'Firewall: NAT: NPT' page.");
 $priv_list['page-firewall-nat-npt']['match'] = array();
 $priv_list['page-firewall-nat-npt']['match'][] = "firewall_nat_npt.php*";
 
 $priv_list['page-firewall-nat-npt-edit'] = array();
-$priv_list['page-firewall-nat-npt-edit']['name'] = gettext("Webcfg - Firewall: NAT: NPt: Edit page");
+$priv_list['page-firewall-nat-npt-edit']['name'] = gettext("WebCfg - Firewall: NAT: NPt: Edit page");
 $priv_list['page-firewall-nat-npt-edit']['descr'] = gettext("Allow access to the 'Firewall: NAT: NPt: Edit' page.");
 $priv_list['page-firewall-nat-npt-edit']['match'] = array();
 $priv_list['page-firewall-nat-npt-edit']['match'][] = "firewall_nat_npt_edit.php*";
@@ -561,7 +561,7 @@ $priv_list['page-loadbalancer-pool-edit']['match'] = array();
 $priv_list['page-loadbalancer-pool-edit']['match'][] = "load_balancer_pool_edit.php*";
 
 $priv_list['page-services-loadbalancer-setting'] = array();
-$priv_list['page-services-loadbalancer-setting']['name'] = gettext("Webcfg - Services: Load Balancer: setting page");
+$priv_list['page-services-loadbalancer-setting']['name'] = gettext("WebCfg - Services: Load Balancer: setting page");
 $priv_list['page-services-loadbalancer-setting']['descr'] = gettext("Allow access to the 'Settings: Load Balancer: Settings' page.");
 $priv_list['page-services-loadbalancer-setting']['match'] = array();
 $priv_list['page-services-loadbalancer-setting']['match'][] = "load_balancer_setting.php*";
@@ -573,19 +573,19 @@ $priv_list['page-services-loadbalancer-virtualservers']['match'] = array();
 $priv_list['page-services-loadbalancer-virtualservers']['match'][] = "load_balancer_virtual_server.php*";
 
 $priv_list['page-services-ntpd'] = array();
-$priv_list['page-services-ntpd']['name'] = gettext("Webcfg - Services: NTP");
+$priv_list['page-services-ntpd']['name'] = gettext("WebCfg - Services: NTP");
 $priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Services: NTP' page.");
 $priv_list['page-services-ntpd']['match'] = array();
 $priv_list['page-services-ntpd']['match'][] = "services_ntpd.php*";
 
 $priv_list['page-services-ntp-gps'] = array();
-$priv_list['page-services-ntp-gps']['name'] = gettext("Webcfg - Status: NTP GPS page");
+$priv_list['page-services-ntp-gps']['name'] = gettext("WebCfg - Status: NTP GPS page");
 $priv_list['page-services-ntp-gps']['descr'] = gettext("Allow access to the 'Status: NTP Serial GPS' page.");
 $priv_list['page-services-ntp-gps']['match'] = array();
 $priv_list['page-services-ntp-gps']['match'][] = "status_ntpd_gps.php*";
 
 $priv_list['page-services-ntp-pps'] = array();
-$priv_list['page-services-ntp-pps']['name'] = gettext("Webcfg - Status: NTP PPS page");
+$priv_list['page-services-ntp-pps']['name'] = gettext("WebCfg - Status: NTP PPS page");
 $priv_list['page-services-ntp-pps']['descr'] = gettext("Allow access to the 'Status: NTP PPS' page.");
 $priv_list['page-services-ntp-pps']['match'] = array();
 $priv_list['page-services-ntp-pps']['match'][] = "status_ntpd_pps.php*";
@@ -687,7 +687,7 @@ $priv_list['page-services-captiveportal-editallowedhostnames']['match'] = array(
 $priv_list['page-services-captiveportal-editallowedhostnames']['match'][] = "services_captiveportal_hostname_edit.php*";
 
 $priv_list['page-services-captiveportal-editzones'] = array();
-$priv_list['page-services-captiveportal-editzones']['name'] = gettext("Webcfg - Services: Captive portal: Edit Zones page");
+$priv_list['page-services-captiveportal-editzones']['name'] = gettext("WebCfg - Services: Captive portal: Edit Zones page");
 $priv_list['page-services-captiveportal-editzones']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit Zones' page.");
 $priv_list['page-services-captiveportal-editzones']['match'] = array();
 $priv_list['page-services-captiveportal-editzones']['match'][] = "services_captiveportal_zones_edit.php*";
@@ -699,8 +699,8 @@ $priv_list['page-services-captiveportal-vouchers']['match'] = array();
 $priv_list['page-services-captiveportal-vouchers']['match'][] = "services_captiveportal_vouchers.php*";
 
 $priv_list['page-services-captiveportal-voucher-edit'] = array();
-$priv_list['page-services-captiveportal-voucher-edit']['name'] = "WebCfg - Services: Captive portal Voucher Rolls page";
-$priv_list['page-services-captiveportal-voucher-edit']['descr'] = "Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.";
+$priv_list['page-services-captiveportal-voucher-edit']['name'] = gettext("WebCfg - Services: Captive portal Voucher Rolls page");
+$priv_list['page-services-captiveportal-voucher-edit']['descr'] = gettext("Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.");
 $priv_list['page-services-captiveportal-voucher-edit']['match'] = array();
 $priv_list['page-services-captiveportal-voucher-edit']['match'][] = "services_captiveportal_vouchers_edit.php*";
 
@@ -729,19 +729,19 @@ $priv_list['page-services-dhcprelay']['match'] = array();
 $priv_list['page-services-dhcprelay']['match'][] = "services_dhcp_relay.php*";
 
 $priv_list['page-services-dhcpv6server'] = array();
-$priv_list['page-services-dhcpv6server']['name'] = gettext("Webcfg - Services: DHCPv6 server page");
+$priv_list['page-services-dhcpv6server']['name'] = gettext("WebCfg - Services: DHCPv6 server page");
 $priv_list['page-services-dhcpv6server']['descr'] = gettext("Allow access to the 'Services: DHCPv6 server' page.");
 $priv_list['page-services-dhcpv6server']['match'] = array();
 $priv_list['page-services-dhcpv6server']['match'][] = "services_dhcpv6.php*";
 
 $priv_list['page-services-dhcpserverv6-editstaticmapping'] = array();
-$priv_list['page-services-dhcpserverv6-editstaticmapping']['name'] = gettext("Webcfg - Services: DHCPv6 Server : Edit static mapping page");
+$priv_list['page-services-dhcpserverv6-editstaticmapping']['name'] = gettext("WebCfg - Services: DHCPv6 Server : Edit static mapping page");
 $priv_list['page-services-dhcpserverv6-editstaticmapping']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page.");
 $priv_list['page-services-dhcpserverv6-editstaticmapping']['match'] = array();
 $priv_list['page-services-dhcpserverv6-editstaticmapping']['match'][] = "services_dhcpv6_edit.php*";
 
 $priv_list['page-services-dhcpv6relay'] = array();
-$priv_list['page-services-dhcpv6relay']['name'] = gettext("Webcfg - Services: DHCPv6 Relay page");
+$priv_list['page-services-dhcpv6relay']['name'] = gettext("WebCfg - Services: DHCPv6 Relay page");
 $priv_list['page-services-dhcpv6relay']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Relay' page.");
 $priv_list['page-services-dhcpv6relay']['match'] = array();
 $priv_list['page-services-dhcpv6relay']['match'][] = "services_dhcpv6_relay.php*";
@@ -831,7 +831,7 @@ $priv_list['page-services-rfc2136clients']['match'] = array();
 $priv_list['page-services-rfc2136clients']['match'][] = "services_rfc2136.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
-$priv_list['page-services-router-advertisements']['name'] = gettext("Webcfg - Services: Router Advertisements page");
+$priv_list['page-services-router-advertisements']['name'] = gettext("WebCfg - Services: Router Advertisements page");
 $priv_list['page-services-router-advertisements']['descr'] = gettext("Allow access to the 'Services: Router Advertisements' page.");
 $priv_list['page-services-router-advertisements']['match'] = array();
 $priv_list['page-services-router-advertisements']['match'][] = "services_router_advertisements.php*";
@@ -873,7 +873,7 @@ $priv_list['page-status-captiveportal']['match'] = array();
 $priv_list['page-status-captiveportal']['match'][] = "status_captiveportal.php*";
 
 $priv_list['page-status-captiveportal-expire'] = array();
-$priv_list['page-status-captiveportal-expire']['name'] = gettext("Webcfg - Status: Captive portal Expire Vouchers page");
+$priv_list['page-status-captiveportal-expire']['name'] = gettext("WebCfg - Status: Captive portal Expire Vouchers page");
 $priv_list['page-status-captiveportal-expire']['descr'] = gettext("Allow access to the 'Status: Captive portal Expire Vouchers' page.");
 $priv_list['page-status-captiveportal-expire']['match'] = array();
 $priv_list['page-status-captiveportal-expire']['match'][] = "status_captiveportal_expire.php*";
@@ -903,7 +903,7 @@ $priv_list['page-status-dhcpleases']['match'] = array();
 $priv_list['page-status-dhcpleases']['match'][] = "status_dhcp_leases.php*";
 
 $priv_list['page-status-dhcpv6leases'] = array();
-$priv_list['page-status-dhcpv6leases']['name'] = gettext("Webcfg - Status: DHCPv6 leases page");
+$priv_list['page-status-dhcpv6leases']['name'] = gettext("WebCfg - Status: DHCPv6 leases page");
 $priv_list['page-status-dhcpv6leases']['descr'] = gettext("Allow access to the 'Status: DHCPv6 leases' page.");
 $priv_list['page-status-dhcpv6leases']['match'] = array();
 $priv_list['page-status-dhcpv6leases']['match'][] = "status_dhcpv6_leases.php*";
@@ -1111,7 +1111,7 @@ $priv_list['page-system-groupmanager-addprivs']['match'] = array();
 $priv_list['page-system-groupmanager-addprivs']['match'][] = "system_groupmanager_addprivs.php*";
 
 $priv_list['page-system-hasync'] = array();
-$priv_list['page-system-hasync']['name'] = gettext("Webcfg - System: High Availability Sync");
+$priv_list['page-system-hasync']['name'] = gettext("WebCfg - System: High Availability Sync");
 $priv_list['page-system-hasync']['descr'] = gettext("Allow access to the 'System: High Availability Sync' page.");
 $priv_list['page-system-hasync']['match'] = array();
 $priv_list['page-system-hasync']['match'][] = "system_hasync.php*";

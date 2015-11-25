@@ -264,7 +264,7 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Rules (Drag to change order)")?></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table name="ruletable" class="table table-hover table-condensed">
+			<table name="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -707,14 +707,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <script>
 events.push(function() {
 
-	stripe_table();
-
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			stripe_table();
 		}
 	});
 

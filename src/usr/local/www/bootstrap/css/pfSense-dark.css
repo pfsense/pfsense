@@ -33,8 +33,8 @@ body {
 	border-color: #303030;
 }
 
-.table-hover>tbody>tr:hover {
-    background-color: #303030;
+.table-hover>tbody>tr:hover, .table-striped>tbody>tr:nth-of-type(odd):hover {
+    background-color: #757575;
 }
 
 table.sortable-theme-bootstrap {
@@ -191,6 +191,16 @@ caption {
 
 .table .table {
     background-color: #424242;
+}
+
+.table>tbody>tr.active>td, .table>tbody>tr.active>th, .table>tbody>tr>td.active, .table>tbody>tr>th.active, .table>tfoot>tr.active>td, .table>tfoot>tr.active>th, .table>tfoot>tr>td.active, .table>tfoot>tr>th.active, .table>thead>tr.active>td, .table>thead>tr.active>th, .table>thead>tr>td.active, .table>thead>tr>th.active {
+    background-color: #80CBC4;
+    color: #212121;
+}
+
+.table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
+    background-color: #80CBC4;
+    color: #212121;
 }
 
 /** Page footer */

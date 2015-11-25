@@ -389,14 +389,11 @@ endforeach;
 <script>
 events.push(function() {
 
-	stripe_table();
-
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			stripe_table();
 		}
 	});
 

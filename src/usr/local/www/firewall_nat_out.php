@@ -301,7 +301,7 @@ print($form);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext('Mappings')?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-condensed">
+			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox	  --></th>
@@ -346,12 +346,12 @@ print($form);
 <?php
 				if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
+							<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
 <?php
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
@@ -543,7 +543,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Automatic rules:")?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-condensed">
+			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- status	  --></th>
@@ -565,7 +565,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<i class="fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
+							<i class="fa fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
@@ -662,14 +662,12 @@ endif;
 
 <script>
 events.push(function() {
-	stripe_table();
 
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			stripe_table();
 		}
 	});
 

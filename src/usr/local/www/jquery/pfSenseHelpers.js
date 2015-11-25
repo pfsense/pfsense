@@ -147,11 +147,6 @@ function hideLabel(text, hide) {
 // Striping of the tables is handled here, NOT with the Bootstrap table-striped class because it would
 // get confused when rows are sorted or deleted.
 
-function stripe_table() {
-	$("tr:odd").addClass('active');
-	$("tr:even").removeClass('active');
-}
-
 function fr_toggle(id, prefix) {
 	if (!prefix)
 		prefix = 'fr';
@@ -161,8 +156,7 @@ function fr_toggle(id, prefix) {
 	fr_bgcolor(id, prefix);
 }
 
-// Change background color based on state of checkbox
-// On resetting background, reapply table striping
+// Change background color of selected row based on state of checkbox
 function fr_bgcolor(id, prefix) {
 	if (!prefix)
 		prefix = 'fr';
@@ -170,11 +164,9 @@ function fr_bgcolor(id, prefix) {
 	var row = $('#' + prefix + id);
 
 	if ($('#' + prefix + 'c' + id).prop('checked') ) {
-		row.css("background-color", "#DDF4FF");
-		row.removeClass('active');
+		row.addClass('active');
 	} else {
-		row.css("background-color", "#FFFFFF");
-		stripe_table();
+		row.removeClass('active');
 	}
 }
 

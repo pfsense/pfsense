@@ -84,7 +84,7 @@ export _sleeping=0
 
 snapshot_update_status() {
 	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} ${POUDRIERE_SNAPSHOTS} \
-		--snapshot-update-status "$@"
+		--snapshot-update-status "$*"
 }
 
 git_last_commit() {

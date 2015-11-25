@@ -59,8 +59,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings
-##|*NAME=System: User Manager: settings
-##|*DESCR=Allow access to the 'System: User Manager: settings' page.
+##|*NAME=System: User Manager: Settings
+##|*DESCR=Allow access to the 'System: User Manager: Settings' page.
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 

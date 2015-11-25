@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpserver
-##|*NAME=Services: DHCP server
-##|*DESCR=Allow access to the 'Services: DHCP server' page.
+##|*NAME=Services: DHCP Server
+##|*DESCR=Allow access to the 'Services: DHCP Server' page.
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 

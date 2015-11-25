@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-tables
-##|*NAME=Diagnostics: PF Table IP addresses
+##|*NAME=Diagnostics: pf Table IP addresses
 ##|*DESCR=Allow access to the 'Diagnostics: Tables' page.
 ##|*MATCH=diag_tables.php*
 ##|-PRIV

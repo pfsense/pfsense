@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-edit
-##|*NAME=Diagnostics: Edit FIle
+##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
 ##|*MATCH=edit.php*
 ##|*MATCH=browser.php*

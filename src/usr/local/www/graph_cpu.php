@@ -66,6 +66,7 @@
 ##|*NAME=Diagnostics: CPU Utilization
 ##|*DESCR=Allow access to the 'Diagnostics: CPU Utilization' page.
 ##|*MATCH=graph_cpu.php*
+##|*MATCH=stats.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

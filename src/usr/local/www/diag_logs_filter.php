@@ -63,8 +63,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall
-##|*NAME=Diagnostics: Logs: Firewall
-##|*DESCR=Allow access to the 'Diagnostics: Logs: Firewall' page.
+##|*NAME=Status: Logs: Firewall
+##|*DESCR=Allow access to the 'Status: Logs: Firewall' page.
 ##|*MATCH=diag_logs_filter.php*
 ##|-PRIV
 

@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt
-##|*NAME=Firewall: NAT: NPT
-##|*DESCR=Allow access to the 'Firewall: NAT: NPT' page.
+##|*NAME=Firewall: NAT: NPt
+##|*DESCR=Allow access to the 'Firewall: NAT: NPt' page.
 ##|*MATCH=firewall_nat_npt.php*
 ##|-PRIV
 

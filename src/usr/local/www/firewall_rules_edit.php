@@ -1351,7 +1351,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If you want to do a lot of logging, consider using a remote '.
-	'syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: '.
+	'syslog server (see the <a href="diag_logs_settings.php">Status: System logs: '.
 	'Settings</a> page).');
 
 $section->addInput(new Form_Input(

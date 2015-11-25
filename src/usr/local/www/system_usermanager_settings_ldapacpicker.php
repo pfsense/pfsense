@@ -60,7 +60,7 @@
 ##|*IDENT=page-system-usermanager-settings-ldappicker
 ##|*NAME=System: User Manager: Settings: LDAP Picker
 ##|*DESCR=Allow access to the 'System: User Manager: Settings: LDAP Picker' page.
-##|*MATCH=system_usermanager_settings_ldappicker.php*
+##|*MATCH=system_usermanager_settings_ldapacpicker.php*
 ##|-PRIV
 
 require("guiconfig.inc");

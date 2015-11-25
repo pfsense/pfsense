@@ -60,8 +60,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-restart-httpd
-##|*NAME=Diagnostics: Restart HTTPD : System
-##|*DESCR=Allow access to the 'Diagnostics: Restart HTTPD: System' page.
+##|*NAME=Diagnostics: Restart Web Server Daemon
+##|*DESCR=Allow access to the 'Diagnostics: Restart Web Server Daemon' page.
 ##|*MATCH=restart_httpd.php*
 ##|-PRIV
 

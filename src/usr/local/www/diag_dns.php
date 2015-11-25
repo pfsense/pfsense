@@ -56,6 +56,13 @@
 	pfSense_MODULE: dns
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-dns
+##|*NAME=Diagnostics: DNS Lookup page
+##|*DESCR=Allow access to the 'Diagnostics: DNS Lookup' page.
+##|*MATCH=diag_dns.php*
+##|-PRIV
+
 $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require("guiconfig.inc");
 

@@ -54,6 +54,12 @@ $priv_list['page-diagnostics-factorydefaults']['descr'] = gettext("Allow access 
 $priv_list['page-diagnostics-factorydefaults']['match'] = array();
 $priv_list['page-diagnostics-factorydefaults']['match'][] = "diag_defaults.php*";
 
+$priv_list['page-diagnostics-dns'] = array();
+$priv_list['page-diagnostics-dns']['name'] = gettext("WebCfg - Diagnostics: DNS Lookup page");
+$priv_list['page-diagnostics-dns']['descr'] = gettext("Allow access to the 'Diagnostics: DNS Lookup' page.");
+$priv_list['page-diagnostics-dns']['match'] = array();
+$priv_list['page-diagnostics-dns']['match'][] = "diag_dns.php*";
+
 $priv_list['page-diagnostics-showstates'] = array();
 $priv_list['page-diagnostics-showstates']['name'] = gettext("WebCfg - Diagnostics: Show States page");
 $priv_list['page-diagnostics-showstates']['descr'] = gettext("Allow access to the 'Diagnostics: Show States' page.");
@@ -120,6 +126,12 @@ $priv_list['page-diagnostics-logs-firewall-dynamic']['descr'] = gettext("Allow a
 $priv_list['page-diagnostics-logs-firewall-dynamic']['match'] = array();
 $priv_list['page-diagnostics-logs-firewall-dynamic']['match'][] = "diag_logs_filter_dynamic.php*";
 
+$priv_list['page-diagnostics-logs-firewall-summary'] = array();
+$priv_list['page-diagnostics-logs-firewall-summary']['name'] = gettext("WebCfg - Status: System Logs: Firewall Log Summary");
+$priv_list['page-diagnostics-logs-firewall-summary']['descr'] = gettext("Allow access to the 'Status: System Logs: Firewall Log Summary' page");
+$priv_list['page-diagnostics-logs-firewall-summary']['match'] = array();
+$priv_list['page-diagnostics-logs-firewall-summary']['match'][] = "diag_logs_filter_summary.php*";
+
 $priv_list['page-diagnostics-logs-settings'] = array();
 $priv_list['page-diagnostics-logs-settings']['name'] = gettext("WebCfg - Diagnostics: Logs: Settings page");
 $priv_list['page-diagnostics-logs-settings']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: Settings' page.");
@@ -179,6 +191,12 @@ $priv_list['page-diagnostics-routingtables']['name'] = gettext("WebCfg - Diagnos
 $priv_list['page-diagnostics-routingtables']['descr'] = gettext("Allow access to the 'Diagnostics: Routing tables' page.");
 $priv_list['page-diagnostics-routingtables']['match'] = array();
 $priv_list['page-diagnostics-routingtables']['match'][] = "diag_routes.php*";
+
+$priv_list['page-diagnostics-smart'] = array();
+$priv_list['page-diagnostics-smart']['name'] = gettext("WebCfg - Diagnostics: S.M.A.R.T. Monitor Tools page");
+$priv_list['page-diagnostics-smart']['descr'] = gettext("Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.");
+$priv_list['page-diagnostics-smart']['match'] = array();
+$priv_list['page-diagnostics-smart']['match'][] = "diag_smart.php*";
 
 $priv_list['page-diagnostics-sockets'] = array();
 $priv_list['page-diagnostics-sockets']['name'] = gettext("WebCfg - Diagnostics: Sockets page");
@@ -789,10 +807,16 @@ $priv_list['page-services-ntpd-pps']['match'] = array();
 $priv_list['page-services-ntpd-pps']['match'][] = "services_ntpd_pps.php*";
 
 $priv_list['page-services-rfc2136clients'] = array();
-$priv_list['page-services-rfc2136clients']['name'] = gettext("WebCfg - Services: RFC 2136 clients page");
-$priv_list['page-services-rfc2136clients']['descr'] = gettext("Allow access to the 'Services: RFC 2136 clients' page.");
+$priv_list['page-services-rfc2136clients']['name'] = gettext("WebCfg - Services: RFC 2136 Clients page");
+$priv_list['page-services-rfc2136clients']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Clients' page.");
 $priv_list['page-services-rfc2136clients']['match'] = array();
 $priv_list['page-services-rfc2136clients']['match'][] = "services_rfc2136.php*";
+
+$priv_list['page-services-rfc2136edit'] = array();
+$priv_list['page-services-rfc2136edit']['name'] = gettext("WebCfg - Services: RFC 2136 Client: Edit page");
+$priv_list['page-services-rfc2136edit']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Client: Edit' page.");
+$priv_list['page-services-rfc2136edit']['match'] = array();
+$priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
 $priv_list['page-services-router-advertisements']['name'] = gettext("WebCfg - Services: Router Advertisements page");
@@ -1151,6 +1175,12 @@ $priv_list['page-system-usermanager-settings']['name'] = gettext("WebCfg - Syste
 $priv_list['page-system-usermanager-settings']['descr'] = gettext("Allow access to the 'System: User Manager: settings' page.");
 $priv_list['page-system-usermanager-settings']['match'] = array();
 $priv_list['page-system-usermanager-settings']['match'][] = "system_usermanager_settings.php*";
+
+$priv_list['page-system-usermanager-settings-ldappicker'] = array();
+$priv_list['page-system-usermanager-settings-ldappicker']['name'] = gettext("WebCfg - System: User Manager: Settings: LDAP Picker page");
+$priv_list['page-system-usermanager-settings-ldappicker']['descr'] = gettext("Allow access to the 'System: User Manager: Settings: LDAP Picker' page.");
+$priv_list['page-system-usermanager-settings-ldappicker']['match'] = array();
+$priv_list['page-system-usermanager-settings-ldappicker']['match'][] = "system_usermanager_settings_ldappicker.php*";
 
 $priv_list['page-system-usermanager-settings-testldap'] = array();
 $priv_list['page-system-usermanager-settings-testldap']['name'] = gettext("WebCfg - System: User Manager: Settings: Test LDAP page");

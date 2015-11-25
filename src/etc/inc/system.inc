@@ -586,6 +586,24 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
+	$gateways_arr = return_gateways_array(false, true);
+	foreach($gateways_arr as $gateway) {
+		// setup static interface routes for nonlocal gateways
+		if (isset($gateway["nonlocalgateway"])) {
+			$srgatewayip = $gateway['gateway'];
+			$srinterfacegw = $gateway['interface'];
+			if (is_ipaddr($srgatewayip) && !empty($srinterfacegw)) {
+				$inet = (!is_ipaddrv4($srgatewayip) ? "-inet6" : "-inet");
+				$cmd = "/sbin/route change {$inet} " . escapeshellarg($srgatewayip) . " ";
+				mwexec($cmd . "-iface " . escapeshellarg($srinterfacegw));
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - $cmd -iface $srinterfacegw ");
+				}
+			}
+		}
+	}
+
 	if ($dont_add_route == false) {
 		if (!empty($interface) && $interface != $interfacegw) {
 			;

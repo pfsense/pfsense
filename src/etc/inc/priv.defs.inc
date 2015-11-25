@@ -796,13 +796,13 @@ $priv_list['page-services-ntpd']['match'][] = "services_ntpd.php*";
 
 $priv_list['page-services-ntpd-gps'] = array();
 $priv_list['page-services-ntpd-gps']['name'] = gettext("WebCfg - Services: NTP Serial GPS page");
-$priv_list['page-services-ntpd-gps']['descr'] = gettext("Allow access to the 'Services: NTP Serial GPS' page..");
+$priv_list['page-services-ntpd-gps']['descr'] = gettext("Allow access to the 'Services: NTP Serial GPS' page.");
 $priv_list['page-services-ntpd-gps']['match'] = array();
 $priv_list['page-services-ntpd-gps']['match'][] = "services_ntpd_gps.php*";
 
 $priv_list['page-services-ntpd-pps'] = array();
 $priv_list['page-services-ntpd-pps']['name'] = gettext("WebCfg - Services: NTP PPS page");
-$priv_list['page-services-ntpd-pps']['descr'] = gettext("Allow access to the 'Services: NTP PPS' page..");
+$priv_list['page-services-ntpd-pps']['descr'] = gettext("Allow access to the 'Services: NTP PPS' page.");
 $priv_list['page-services-ntpd-pps']['match'] = array();
 $priv_list['page-services-ntpd-pps']['match'][] = "services_ntpd_pps.php*";
 

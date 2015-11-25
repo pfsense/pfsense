@@ -118,7 +118,7 @@ snapshots_sleep_between_runs() {
 	[ -z "${LAST_COMMIT}" ] \
 		&& export LAST_COMMIT=${CURRENT_COMMIT}
 
-	snapshot_update_status ">>> Sleeping for at least $minsleepvalue, " \
+	snapshot_update_status ">>> Sleeping for at least $minsleepvalue," \
 		"at most $maxsleepvalue in between snapshot builder runs."
 	snapshot_update_status ">>> Last known commit: ${LAST_COMMIT}"
 	snapshot_update_status ">>> Freezing build process at $(date)"
@@ -131,7 +131,7 @@ snapshots_sleep_between_runs() {
 	done
 
 	if [ ${COUNTER} -lt ${maxsleepvalue} ]; then
-		snapshot_update_status ">>> Thawing build process and " \
+		snapshot_update_status ">>> Thawing build process and" \
 			"resuming checks for pending commits at $(date)."
 		echo ">>> Press ctrl+T to start a new build"
 	fi
@@ -145,7 +145,7 @@ snapshots_sleep_between_runs() {
 		fi
 		git_last_commit
 		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
-			snapshot_update_status ">>> New commit: " \
+			snapshot_update_status ">>> New commit:" \
 				"$CURRENT_COMMIT " \
 				".. No longer sleepy."
 			COUNTER=$(($maxsleepvalue + 60))
@@ -155,7 +155,7 @@ snapshots_sleep_between_runs() {
 	_sleeping=0
 
 	if [ $COUNTER -ge $maxsleepvalue ]; then
-		snapshot_update_status ">>> Sleep timer expired. " \
+		snapshot_update_status ">>> Sleep timer expired." \
 			"Restarting build."
 		COUNTER=0
 	fi

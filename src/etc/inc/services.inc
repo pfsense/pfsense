@@ -2334,17 +2334,10 @@ EOD;
 			}
 
 			if (isset($config['snmpd']['modules']['hostres'])) {
-				/* XXX: hostres module crashes APU - ticket #4403 */
-				$specplatform = system_identify_specific_platform();
-				if ($specplatform['name'] == 'APU') {
-					log_error("'Host Resources' SNMP module was ignored because it can potentially crash system on APU boards");
-				} else {
-					$snmpdconf .= <<<EOD
+				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 
 EOD;
-				}
-				unset($specplatform);
 			}
 
 			if (isset($config['snmpd']['modules']['bridge'])) {

@@ -366,7 +366,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			$iconfn = "times";
 			$title_text = gettext("traffic is blocked");
 		} else if ($filterent['type'] == "reject") {
-			$iconfn = "fire";
+			$iconfn = "hand-stop-o";
 			$title_text = gettext("traffic is rejected");
 		} else if ($filterent['type'] == "match") {
 			$iconfn = "filter";
@@ -682,7 +682,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<dt><i class="fa fa-check"></i></dt>		<dd><?=gettext("Pass");?></dd>
 			<dt><i class="fa fa-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
 			<dt><i class="fa fa-times"></i></dt>	<dd><?=gettext("Block");?></dd>
-			<dt><i class="fa fa-fire"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="fa fa-hand-stop-o"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="fa fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 		</dl>

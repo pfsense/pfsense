@@ -149,7 +149,7 @@ else
 		if ($filterent['act'] == "block")
 			$iconfn = "times";
 		else if ($filterent['act'] == "reject")
-			$iconfn = "fire";
+			$iconfn = "hand-stop-o";
 		else if ($filterent['act'] == "match")
 			$iconfn = "filter";
 		else

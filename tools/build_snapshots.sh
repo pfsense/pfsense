@@ -92,7 +92,13 @@ git_last_commit() {
 	[ -z "${NO_RESET}" ] \
 		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
 	git -C "${BUILDER_ROOT}" pull -q
-	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
+		local _remote_repo=$(${BUILDER_ROOT}/build.sh -V POUDRIERE_PORTS_GIT_URL)
+		local _remote_branch=$(${BUILDER_ROOT}/build.sh -V POUDRIERE_PORTS_GIT_BRANCH)
+		export CURRENT_COMMIT=$(git ls-remote ${_remote_repo} ${_remote_branch} | cut -f1)
+	else
+		export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+	fi
 }
 
 restart_build() {

@@ -88,7 +88,6 @@ snapshot_update_status() {
 }
 
 git_last_commit() {
-	snapshot_update_status ">>> Updating ${PRODUCT_NAME} repository."
 	[ -z "${NO_RESET}" ] \
 		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
 	git -C "${BUILDER_ROOT}" pull -q

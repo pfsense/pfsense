@@ -69,7 +69,7 @@ while getopts lpru opt; do
 done
 
 if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
-	export minsleepvalue=${minsleepvalue:-"1800"}
+	export minsleepvalue=${minsleepvalue:-"360"}
 else
 	export minsleepvalue=${minsleepvalue:-"28800"}
 fi

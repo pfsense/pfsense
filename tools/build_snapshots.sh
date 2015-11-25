@@ -93,7 +93,6 @@ git_last_commit() {
 		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
 	git -C "${BUILDER_ROOT}" pull -q
 	export CURRENT_COMMIT=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
-	export CURRENT_AUTHOR=$(git -C ${BUILDER_ROOT} log -1 --format='%an')
 }
 
 restart_build() {
@@ -142,7 +141,7 @@ snapshots_sleep_between_runs() {
 		git_last_commit
 		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
 			snapshot_update_status ">>> New commit: " \
-				"$CURRENT_AUTHOR - $CURRENT_COMMIT " \
+				"$CURRENT_COMMIT " \
 				".. No longer sleepy."
 			COUNTER=$(($maxsleepvalue + 60))
 			export LAST_COMMIT="${CURRENT_COMMIT}"

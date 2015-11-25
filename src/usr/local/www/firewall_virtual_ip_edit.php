@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddress-edit
-##|*NAME=Firewall: Virtual IP Address: Edit page
+##|*NAME=Firewall: Virtual IP Address: Edit
 ##|*DESCR=Allow access to the 'Firewall: Virtual IP Address: Edit' page.
 ##|*MATCH=firewall_virtual_ip_edit.php*
 ##|-PRIV

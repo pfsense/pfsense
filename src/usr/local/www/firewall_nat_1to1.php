@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1
-##|*NAME=Firewall: NAT: 1:1 page
+##|*NAME=Firewall: NAT: 1:1
 ##|*DESCR=Allow access to the 'Firewall: NAT: 1:1' page.
 ##|*MATCH=firewall_nat_1to1.php*
 ##|-PRIV

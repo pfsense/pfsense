@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-qinq-edit
-##|*NAME=Interfaces: QinQ: Edit page
+##|*NAME=Interfaces: QinQ: Edit
 ##|*DESCR=Allow access to 'Interfaces: QinQ: Edit' page
 ##|*MATCH=interfaces_qinq_edit.php*
 ##|-PRIV

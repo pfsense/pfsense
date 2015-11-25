@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder-editdomainoverride
-##|*NAME=Services: DNS Forwarder: Edit Domain Override page
+##|*NAME=Services: DNS Forwarder: Edit Domain Override
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page.
 ##|*MATCH=services_dnsmasq_domainoverride_edit.php*
 ##|-PRIV

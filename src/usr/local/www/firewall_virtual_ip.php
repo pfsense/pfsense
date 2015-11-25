@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddresses
-##|*NAME=Firewall: Virtual IP Addresses page
+##|*NAME=Firewall: Virtual IP Addresses
 ##|*DESCR=Allow access to the 'Firewall: Virtual IP Addresses' page.
 ##|*MATCH=firewall_virtual_ip.php*
 ##|-PRIV

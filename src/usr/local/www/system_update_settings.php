@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-update-settings
-##|*NAME=System: Update: Settings page
+##|*NAME=System: Update: Settings
 ##|*DESCR=Allow access to the 'System: Update: Settings' page.
 ##|*MATCH=system_update_settings.php*
 ##|-PRIV

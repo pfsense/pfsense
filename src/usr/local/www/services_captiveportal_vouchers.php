@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-vouchers
-##|*NAME=Services: Captive portal Vouchers page
+##|*NAME=Services: Captive portal Vouchers
 ##|*DESCR=Allow access to the 'Services: Captive portal Vouchers' page.
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV

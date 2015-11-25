@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclient
-##|*NAME=Services: Dynamic DNS client page
+##|*NAME=Services: Dynamic DNS client
 ##|*DESCR=Allow access to the 'Services: Dynamic DNS client' page.
 ##|*MATCH=services_dyndns_edit.php*
 ##|-PRIV

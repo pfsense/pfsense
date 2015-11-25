@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsresolver-advanced
-##|*NAME=Services: DNS Resolver: Advanced page
+##|*NAME=Services: DNS Resolver: Advanced
 ##|*DESCR=Allow access to the 'Services: DNS Resolver: Advanced' page.
 ##|*MATCH=services_unbound_advanced.php*
 ##|-PRIV

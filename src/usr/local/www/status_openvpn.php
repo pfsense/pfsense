@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn
-##|*NAME=Status: OpenVPN page
+##|*NAME=Status: OpenVPN
 ##|*DESCR=Allow access to the 'Status: OpenVPN' page.
 ##|*MATCH=status_openvpn.php*
 ##|-PRIV

@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-igmpproxy-edit
-##|*NAME=Services: IGMP Proxy: Edit page
+##|*NAME=Services: IGMP Proxy: Edit
 ##|*DESCR=Allow access to the 'Services: IGMP Proxy: Edit' page.
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV

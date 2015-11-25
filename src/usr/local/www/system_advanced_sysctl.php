@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-sysctl
-##|*NAME=System: Advanced: Tunables page
+##|*NAME=System: Advanced: Tunables
 ##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
 ##|*MATCH=system_advanced_sysctl.php*
 ##|-PRIV

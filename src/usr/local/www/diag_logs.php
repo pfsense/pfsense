@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-system
-##|*NAME=Status: Logs: System page
+##|*NAME=Status: Logs: System
 ##|*DESCR=Allow access to the 'Status: System Logs: General' page.
 ##|*MATCH=diag_logs.php
 ##|-PRIV

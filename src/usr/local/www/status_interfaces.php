@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-interfaces
-##|*NAME=Status: Interfaces page
+##|*NAME=Status: Interfaces
 ##|*DESCR=Allow access to the 'Status: Interfaces' page.
 ##|*MATCH=status_interfaces.php*
 ##|-PRIV

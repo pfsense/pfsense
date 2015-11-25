@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficgraph
-##|*NAME=Status: Traffic Graph page
+##|*NAME=Status: Traffic Graph
 ##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
 ##|*MATCH=status_graph.php*
 ##|*MATCH=bandwidth_by_ip.php*

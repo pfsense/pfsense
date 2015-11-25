@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
-##|*NAME=pfSense wizard subsystem page
+##|*NAME=pfSense wizard subsystem
 ##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
 ##|*MATCH=wizard.php*
 ##|-PRIV

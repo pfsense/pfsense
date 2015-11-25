@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpserver-editstaticmapping
-##|*NAME=Services: DHCP Server : Edit static mapping page
+##|*NAME=Services: DHCP Server : Edit static mapping
 ##|*DESCR=Allow access to the 'Services: DHCP Server : Edit static mapping' page.
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV

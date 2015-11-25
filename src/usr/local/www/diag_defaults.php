@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-factorydefaults
-##|*NAME=Diagnostics: Factory defaults page
+##|*NAME=Diagnostics: Factory defaults
 ##|*DESCR=Allow access to the 'Diagnostics: Factory defaults' page.
 ##|*MATCH=diag_defaults.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedhostnames
-##|*NAME=Services: Captive portal: Allowed Hostnames page
+##|*NAME=Services: Captive portal: Allowed Hostnames
 ##|*DESCR=Allow access to the 'Services: Captive portal: Allowed Hostnames' page.
 ##|*MATCH=services_captiveportal_hostname.php*
 ##|-PRIV

@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-settings
-##|*NAME=VPN: IPsec: Settings page
+##|*NAME=VPN: IPsec: Settings
 ##|*DESCR=Allow access to the 'VPN: IPsec: Settings' page.
 ##|*MATCH=vpn_ipsec_settings.php*
 ##|-PRIV

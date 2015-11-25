@@ -56,7 +56,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-server
-##|*NAME=OpenVPN: Server page
+##|*NAME=OpenVPN: Server
 ##|*DESCR=Allow access to the 'OpenVPN: Server' page.
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV

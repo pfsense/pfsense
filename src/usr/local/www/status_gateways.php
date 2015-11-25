@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-gateways
-##|*NAME=Status: Gateways page
+##|*NAME=Status: Gateways
 ##|*DESCR=Allow access to the 'Status: Gateways' page.
 ##|*MATCH=status_gateways.php*
 ##|-PRIV

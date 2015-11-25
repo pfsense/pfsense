@@ -65,7 +65,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-command
-##|*NAME=Diagnostics: Command page
+##|*NAME=Diagnostics: Command
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
 ##|*MATCH=exec.php*
 ##|-PRIV

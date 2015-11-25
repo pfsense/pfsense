@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager
-##|*NAME=System: Group manager page
+##|*NAME=System: Group manager
 ##|*DESCR=Allow access to the 'System: Group manager' page.
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV

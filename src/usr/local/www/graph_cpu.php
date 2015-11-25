@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-cpuutilization
-##|*NAME=Diagnostics: CPU Utilization page
+##|*NAME=Diagnostics: CPU Utilization
 ##|*DESCR=Allow access to the 'Diagnostics: CPU Utilization' page.
 ##|*MATCH=graph_cpu.php*
 ##|-PRIV

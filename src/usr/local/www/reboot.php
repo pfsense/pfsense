@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-rebootsystem
-##|*NAME=Diagnostics: Reboot System page
+##|*NAME=Diagnostics: Reboot System
 ##|*DESCR=Allow access to the 'Diagnostics: Reboot System' page.
 ##|*MATCH=reboot.php*
 ##|-PRIV

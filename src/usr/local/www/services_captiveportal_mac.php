@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-macaddresses
-##|*NAME=Services: Captive portal: Mac Addresses page
+##|*NAME=Services: Captive portal: Mac Addresses
 ##|*DESCR=Allow access to the 'Services: Captive portal: Mac Addresses' page.
 ##|*MATCH=services_captiveportal_mac.php*
 ##|-PRIV

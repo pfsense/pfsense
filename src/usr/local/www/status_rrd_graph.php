@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraphs
-##|*NAME=Status: RRD Graphs page
+##|*NAME=Status: RRD Graphs
 ##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
 ##|*MATCH=status_rrd_graph.php*
 ##|*MATCH=status_rrd_graph_img.php*

@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
-##|*NAME=Interfaces: Assign network ports page
+##|*NAME=Interfaces: Assign network ports
 ##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV

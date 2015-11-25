@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager
-##|*NAME=System: User Manager page
+##|*NAME=System: User Manager
 ##|*DESCR=Allow access to the 'System: User Manager' page.
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV

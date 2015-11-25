@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder
-##|*NAME=Services: DNS Forwarder page
+##|*NAME=Services: DNS Forwarder
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder' page.
 ##|*MATCH=services_dnsmasq.php*
 ##|-PRIV

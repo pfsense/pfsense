@@ -70,7 +70,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-hidden-detailedstatus
-##|*NAME=Hidden: Detailed Status page
+##|*NAME=Hidden: Detailed Status
 ##|*DESCR=Allow access to the 'Hidden: Detailed Status' page.
 ##|*MATCH=status.php*
 ##|-PRIV

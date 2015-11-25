@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-passwordmg
-##|*NAME=System: User Password Manager page
+##|*NAME=System: User Password Manager
 ##|*DESCR=Allow access to the 'System: User Password Manager' page.
 ##|*MATCH=system_usermanager_passwordmg.php*
 ##|-PRIV

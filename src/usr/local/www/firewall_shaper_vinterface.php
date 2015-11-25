@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-limiter
-##|*NAME=Firewall: Traffic Shaper: Limiter page
+##|*NAME=Firewall: Traffic Shaper: Limiter
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Limiter' page.
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV

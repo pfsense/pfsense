@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan
-##|*NAME=Interfaces: VLAN page
+##|*NAME=Interfaces: VLAN
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
 ##|*MATCH=interfaces_vlan.php*
 ##|-PRIV

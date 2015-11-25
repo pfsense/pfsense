@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus
-##|*NAME=Status: UPnP Status page
+##|*NAME=Status: UPnP Status
 ##|*DESCR=Allow access to the 'Status: UPnP Status' page.
 ##|*MATCH=status_upnp.php*
 ##|-PRIV

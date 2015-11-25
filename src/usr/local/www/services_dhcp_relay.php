@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcprelay
-##|*NAME=Services: DHCP Relay page
+##|*NAME=Services: DHCP Relay
 ##|*DESCR=Allow access to the 'Services: DHCP Relay' page.
 ##|*MATCH=services_dhcp_relay.php*
 ##|-PRIV

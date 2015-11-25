@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-sad
-##|*NAME=Status: IPsec: SAD page
+##|*NAME=Status: IPsec: SAD
 ##|*DESCR=Allow access to the 'Status: IPsec: SAD' page.
 ##|*MATCH=diag_ipsec_sad.php*
 ##|-PRIV

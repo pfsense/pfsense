@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgateway
-##|*NAME=System: Gateways: Edit Gateway page
+##|*NAME=System: Gateways: Edit Gateway
 ##|*DESCR=Allow access to the 'System: Gateways: Edit Gateway' page.
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV

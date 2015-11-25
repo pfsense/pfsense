@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-resetstate
-##|*NAME=Diagnostics: Reset state page
+##|*NAME=Diagnostics: Reset state
 ##|*DESCR=Allow access to the 'Diagnostics: Reset state' page.
 ##|*MATCH=diag_resetstate.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-editphase2
-##|*NAME=VPN: IPsec: Edit Phase 2 page
+##|*NAME=VPN: IPsec: Edit Phase 2
 ##|*DESCR=Allow access to the 'VPN: IPsec: Edit Phase 2' page.
 ##|*MATCH=vpn_ipsec_phase2.php*
 ##|-PRIV

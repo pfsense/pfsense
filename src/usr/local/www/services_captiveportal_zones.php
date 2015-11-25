@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captive portal Zones page
+##|*NAME=Services: Captive portal Zones
 ##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-virtualserver-edit
-##|*NAME=Load Balancer: Virtual Server: Edit page
+##|*NAME=Load Balancer: Virtual Server: Edit
 ##|*DESCR=Allow access to the 'Load Balancer: Virtual Server: Edit' page.
 ##|*MATCH=load_balancer_virtual_server_edit.php*
 ##|-PRIV

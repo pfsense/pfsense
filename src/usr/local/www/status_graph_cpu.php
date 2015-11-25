@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-cpuload
-##|*NAME=Status: CPU load page
+##|*NAME=Status: CPU load
 ##|*DESCR=Allow access to the 'Status: CPU load' page.
 ##|*MATCH=status_graph_cpu.php*
 ##|-PRIV

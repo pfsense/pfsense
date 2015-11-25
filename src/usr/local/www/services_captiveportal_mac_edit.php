@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editmacaddresses
-##|*NAME=Services: Captive portal: Edit MAC Addresses page
+##|*NAME=Services: Captive portal: Edit MAC Addresses
 ##|*DESCR=Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.
 ##|*MATCH=services_captiveportal_mac_edit.php*
 ##|-PRIV

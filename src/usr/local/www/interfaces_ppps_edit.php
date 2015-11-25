@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit
-##|*NAME=Interfaces: PPPs: Edit page
+##|*NAME=Interfaces: PPPs: Edit
 ##|*DESCR=Allow access to the 'Interfaces: PPPs: Edit' page.
 ##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-mobile
-##|*NAME=VPN: IPsec: Mobile page
+##|*NAME=VPN: IPsec: Mobile
 ##|*DESCR=Allow access to the 'VPN: IPsec: Mobile' page.
 ##|*MATCH=vpn_ipsec_mobile.php*
 ##|-PRIV

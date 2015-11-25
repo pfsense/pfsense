@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif-edit
-##|*NAME=Interfaces: GIF: Edit page
+##|*NAME=Interfaces: GIF: Edit
 ##|*DESCR=Allow access to the 'Interfaces: GIF: Edit' page.
 ##|*MATCH=interfaces_gif_edit.php*
 ##|-PRIV

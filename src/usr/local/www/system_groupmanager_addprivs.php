@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager-addprivs
-##|*NAME=System: Group Manager: Add Privileges page
+##|*NAME=System: Group Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: Group Manager: Add Privileges' page.
 ##|*MATCH=system_groupmanager_addprivs.php*
 ##|-PRIV

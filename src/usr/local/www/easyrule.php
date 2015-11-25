@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-easyrule
-##|*NAME=Firewall: Easy Rule add/status page
+##|*NAME=Firewall: Easy Rule add/status
 ##|*DESCR=Allow access to the 'Firewall: Easy Rule' add/status page.
 ##|*MATCH=easyrule.php*
 ##|-PRIV

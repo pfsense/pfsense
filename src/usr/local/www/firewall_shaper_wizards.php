@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-wizard
-##|*NAME=Firewall: Traffic Shaper: Wizard page
+##|*NAME=Firewall: Traffic Shaper: Wizard
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Wizard' page.
 ##|*MATCH=firewall_shaper_wizards.php*
 ##|-PRIV

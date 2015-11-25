@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-license
-##|*NAME=System: License page
+##|*NAME=System: License
 ##|*DESCR=Allow access to the 'System: License' page.
 ##|*MATCH=license.php*
 ##|-PRIV

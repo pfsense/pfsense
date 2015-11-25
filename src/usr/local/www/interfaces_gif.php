@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif
-##|*NAME=Interfaces: GIF page
+##|*NAME=Interfaces: GIF
 ##|*DESCR=Allow access to the 'Interfaces: GIF' page.
 ##|*MATCH=interfaces_gif.php*
 ##|-PRIV

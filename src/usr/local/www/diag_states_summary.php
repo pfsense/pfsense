@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-statessummary
-##|*NAME=Diagnostics: States Summary page
+##|*NAME=Diagnostics: States Summary
 ##|*DESCR=Allow access to the 'Diagnostics: States Summary' page.
 ##|*MATCH=diag_states_summary.php*
 ##|-PRIV

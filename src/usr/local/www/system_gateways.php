@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways
-##|*NAME=System: Gateways page
+##|*NAME=System: Gateways
 ##|*DESCR=Allow access to the 'System: Gateways' page.
 ##|*MATCH=system_gateways.php*
 ##|-PRIV

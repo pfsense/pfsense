@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-dns
-##|*NAME=Diagnostics: DNS Lookup page
+##|*NAME=Diagnostics: DNS Lookup
 ##|*DESCR=Allow access to the 'Diagnostics: DNS Lookup' page.
 ##|*MATCH=diag_dns.php*
 ##|-PRIV

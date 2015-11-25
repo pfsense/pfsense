@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-misc
-##|*NAME=System: Advanced: Miscellaneous page
+##|*NAME=System: Advanced: Miscellaneous
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
 ##|*MATCH=system_advanced_misc.php*
 ##|-PRIV

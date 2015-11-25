@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-rules-edit
-##|*NAME=Firewall: Rules: Edit page
+##|*NAME=Firewall: Rules: Edit
 ##|*DESCR=Allow access to the 'Firewall: Rules: Edit' page.
 ##|*MATCH=firewall_rules_edit.php*
 ##|-PRIV

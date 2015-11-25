@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-aliases
-##|*NAME=Firewall: Aliases page
+##|*NAME=Firewall: Aliases
 ##|*DESCR=Allow access to the 'Firewall: Aliases' page.
 ##|*MATCH=firewall_aliases.php*
 ##|-PRIV

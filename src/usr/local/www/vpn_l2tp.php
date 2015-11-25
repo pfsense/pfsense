@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-vpnl2tp
-##|*NAME=VPN: VPN L2TP page
+##|*NAME=VPN: VPN L2TP
 ##|*DESCR=Allow access to the 'VPN: VPN L2TP' page.
 ##|*MATCH=vpn_l2tp.php*
 ##|-PRIV

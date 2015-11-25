@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-bridge-edit
-##|*NAME=Interfaces: Bridge edit page
+##|*NAME=Interfaces: Bridge edit
 ##|*DESCR=Allow access to the 'Interfaces: Bridge : Edit' page.
 ##|*MATCH=interfaces_bridge_edit.php*
 ##|-PRIV

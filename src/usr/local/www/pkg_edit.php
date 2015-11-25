@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-package-edit
-##|*NAME=Package: Edit page
+##|*NAME=Package: Edit
 ##|*DESCR=Allow access to the 'Package: Edit' page.
 ##|*MATCH=pkg_edit.php*
 ##|-PRIV

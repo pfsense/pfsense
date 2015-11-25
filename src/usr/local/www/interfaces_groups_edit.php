@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-groups-edit
-##|*NAME=Interfaces: Groups: Edit page
+##|*NAME=Interfaces: Groups: Edit
 ##|*DESCR=Allow access to the 'Interfaces: Groups: Edit' page.
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV

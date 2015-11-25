@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-showstates
-##|*NAME=Diagnostics: Show States page
+##|*NAME=Diagnostics: Show States
 ##|*DESCR=Allow access to the 'Diagnostics: Show States' page.
 ##|*MATCH=diag_dump_states.php*
 ##|-PRIV

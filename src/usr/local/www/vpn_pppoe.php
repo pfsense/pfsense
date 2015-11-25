@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-pppoeserver
-##|*NAME=Services: PPPoE Server page
+##|*NAME=Services: PPPoE Server
 ##|*DESCR=Allow access to the 'Services: PPPoE Server' page.
 ##|*MATCH=vpn_pppoe.php*
 ##|-PRIV

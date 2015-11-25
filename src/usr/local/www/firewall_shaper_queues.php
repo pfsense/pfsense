@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-queues
-##|*NAME=Firewall: Traffic Shaper: Queues page
+##|*NAME=Firewall: Traffic Shaper: Queues
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Queues' page.
 ##|*MATCH=firewall_shaper_queues.php*
 ##|-PRIV

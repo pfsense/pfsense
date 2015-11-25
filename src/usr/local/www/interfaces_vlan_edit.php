@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan-edit
-##|*NAME=Interfaces: VLAN: Edit page
+##|*NAME=Interfaces: VLAN: Edit
 ##|*DESCR=Allow access to the 'Interfaces: VLAN: Edit' page.
 ##|*MATCH=interfaces_vlan_edit.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-monitor
-##|*NAME=Services: Load Balancer: Monitors page
+##|*NAME=Services: Load Balancer: Monitors
 ##|*DESCR=Allow access to the 'Services: Load Balancer: Monitors' page.
 ##|*MATCH=load_balancer_monitor.php*
 ##|-PRIV

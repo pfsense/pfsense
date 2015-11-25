@@ -56,7 +56,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-client
-##|*NAME=OpenVPN: Client page
+##|*NAME=OpenVPN: Client
 ##|*DESCR=Allow access to the 'OpenVPN: Client' page.
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV

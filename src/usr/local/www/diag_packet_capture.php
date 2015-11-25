@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-packetcapture
-##|*NAME=Diagnostics: Packet Capture page
+##|*NAME=Diagnostics: Packet Capture
 ##|*DESCR=Allow access to the 'Diagnostics: Packet Capture' page.
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV

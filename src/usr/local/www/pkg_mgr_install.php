@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installpackage
-##|*NAME=System: Package Manager: Install Package page
+##|*NAME=System: Package Manager: Install Package
 ##|*DESCR=Allow access to the 'System: Package Manager: Install Package' page.
 ##|*MATCH=pkg_mgr_install.php*
 ##|-PRIV

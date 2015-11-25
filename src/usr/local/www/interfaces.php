@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces
-##|*NAME=Interfaces: WAN page
+##|*NAME=Interfaces: WAN
 ##|*DESCR=Allow access to the 'Interfaces' page.
 ##|*MATCH=interfaces.php*
 ##|-PRIV

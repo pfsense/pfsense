@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-bridge
-##|*NAME=Interfaces: Bridge page
+##|*NAME=Interfaces: Bridge
 ##|*DESCR=Allow access to the 'Interfaces: Bridge' page.
 ##|*MATCH=interfaces_bridge.php*
 ##|-PRIV

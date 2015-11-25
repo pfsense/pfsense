@@ -59,7 +59,7 @@
 */
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
-##|*NAME=Diagnostics: Routing tables page
+##|*NAME=Diagnostics: Routing tables
 ##|*DESCR=Allow access to the 'Diagnostics: Routing tables' page.
 ##|*MATCH=diag_routes.php*
 ##|-PRIV

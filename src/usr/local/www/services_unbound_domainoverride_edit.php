@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsresolver-editdomainoverride
-##|*NAME=Services: DNS Resolver: Edit Domain Override page
+##|*NAME=Services: DNS Resolver: Edit Domain Override
 ##|*DESCR=Allow access to the 'Services: DNS Resolver: Edit Domain Override' page.
 ##|*MATCH=services_unbound_domainoverride_edit.php*
 ##|-PRIV

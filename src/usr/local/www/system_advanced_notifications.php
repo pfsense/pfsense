@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-notifications
-##|*NAME=System: Advanced: Notifications page
+##|*NAME=System: Advanced: Notifications
 ##|*DESCR=Allow access to the 'System: Advanced: Notifications' page.
 ##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV

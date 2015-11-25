@@ -71,7 +71,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-packagelogs
-##|*NAME=Status: Package logs page
+##|*NAME=Status: Package logs
 ##|*DESCR=Allow access to the 'Status: Package logs' page.
 ##|*MATCH=diag_pkglogs.php*
 ##|-PRIV

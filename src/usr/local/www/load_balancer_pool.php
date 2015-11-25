@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-pool
-##|*NAME=Load Balancer: Pool page
+##|*NAME=Load Balancer: Pool
 ##|*DESCR=Allow access to the 'Load Balancer: Pool' page.
 ##|*MATCH=load_balancer_pool.php*
 ##|-PRIV

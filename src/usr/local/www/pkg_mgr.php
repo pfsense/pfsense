@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager
-##|*NAME=System: Package Manager page
+##|*NAME=System: Package Manager
 ##|*DESCR=Allow access to the 'System: Package Manager' page.
 ##|*MATCH=pkg_mgr.php*
 ##|-PRIV

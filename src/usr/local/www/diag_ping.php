@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ping
-##|*NAME=Diagnostics: Ping page
+##|*NAME=Diagnostics: Ping
 ##|*DESCR=Allow access to the 'Diagnostics: Ping' page.
 ##|*MATCH=diag_ping.php*
 ##|-PRIV

@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-rfc2136clients
-##|*NAME=Services: RFC 2136 Clients page
+##|*NAME=Services: RFC 2136 Clients
 ##|*DESCR=Allow access to the 'Services: RFC 2136 Clients' page.
 ##|*MATCH=services_rfc2136.php*
 ##|-PRIV

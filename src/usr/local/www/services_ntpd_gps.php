@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-gps
-##|*NAME=Services: NTP Serial GPS page
+##|*NAME=Services: NTP Serial GPS
 ##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page..
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV

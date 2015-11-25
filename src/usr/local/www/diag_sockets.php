@@ -58,7 +58,7 @@
 */
 ##|+PRIV
 ##|*IDENT=page-diagnostics-sockets
-##|*NAME=Diagnostics: Sockets page
+##|*NAME=Diagnostics: Sockets
 ##|*DESCR=Allow access to the 'Diagnostics: Sockets' page.
 ##|*MATCH=diag_sockets.php*
 ##|-PRIV

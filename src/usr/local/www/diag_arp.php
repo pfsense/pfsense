@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-arptable
-##|*NAME=Diagnostics: ARP Table page
+##|*NAME=Diagnostics: ARP Table
 ##|*DESCR=Allow access to the 'Diagnostics: ARP Table' page.
 ##|*MATCH=diag_arp.php*
 ##|-PRIV

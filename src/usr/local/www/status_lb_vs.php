@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-virtualserver
-##|*NAME=Status: Load Balancer: Virtual Server page
+##|*NAME=Status: Load Balancer: Virtual Server
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Virtual Server' page.
 ##|*MATCH=status_lb_vs.php*
 ##|-PRIV

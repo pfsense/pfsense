@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installed
-##|*NAME=System: Package Manager: Installed page
+##|*NAME=System: Package Manager: Installed
 ##|*DESCR=Allow access to the 'System: Package Manager: Installed' page.
 ##|*MATCH=pkg_mgr_installed.php*
 ##|-PRIV

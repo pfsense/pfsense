@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-staticroutes
-##|*NAME=System: Static Routes page
+##|*NAME=System: Static Routes
 ##|*DESCR=Allow access to the 'System: Static Routes' page.
 ##|*MATCH=system_routes.php*
 ##|-PRIV

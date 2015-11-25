@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-wireless
-##|*NAME=Interfaces: Wireless page
+##|*NAME=Interfaces: Wireless
 ##|*DESCR=Allow access to the 'Interfaces: Wireless' page.
 ##|*MATCH=interfaces_wireless.php*
 ##|-PRIV

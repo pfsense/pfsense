@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-settings
-##|*NAME=Diagnostics: Logs: Settings page
+##|*NAME=Diagnostics: Logs: Settings
 ##|*DESCR=Allow access to the 'Diagnostics: Logs: Settings' page.
 ##|*MATCH=diag_logs_settings.php*
 ##|-PRIV

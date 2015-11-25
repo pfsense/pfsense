@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-voucher-edit
-##|*NAME=Services: Captive portal Voucher Rolls page
+##|*NAME=Services: Captive portal Voucher Rolls
 ##|*DESCR=Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV

@@ -60,7 +60,7 @@
 */
 ##|+PRIV
 ##|*IDENT=page-firewall-schedules
-##|*NAME=Firewall: Schedules page
+##|*NAME=Firewall: Schedules
 ##|*DESCR=Allow access to the 'Firewall: Schedules' page.
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV

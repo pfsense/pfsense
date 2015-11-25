@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-interfacetraffic
-##|*NAME=Diagnostics: Interface Traffic page
+##|*NAME=Diagnostics: Interface Traffic
 ##|*DESCR=Allow access to the 'Diagnostics: Interface Traffic' page.
 ##|*MATCH=graph.php*
 ##|-PRIV

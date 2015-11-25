@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-authentication
-##|*NAME=Diagnostics: Authentication page
+##|*NAME=Diagnostics: Authentication
 ##|*DESCR=Allow access to the 'Diagnostics: Authentication' page.
 ##|*MATCH=diag_authentication.php*
 ##|-PRIV

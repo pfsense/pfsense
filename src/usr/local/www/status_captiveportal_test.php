@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal-test
-##|*NAME=Status: Captive Portal: Test Vouchers page
+##|*NAME=Status: Captive Portal: Test Vouchers
 ##|*DESCR=Allow access to the 'Status: Captive Portal: Test Vouchers' page.
 ##|*MATCH=status_captiveportal_test.php*
 ##|-PRIV

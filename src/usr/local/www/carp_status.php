@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-carp
-##|*NAME=Status: CARP page
+##|*NAME=Status: CARP
 ##|*DESCR=Allow access to the 'Status: CARP' page.
 ##|*MATCH=carp_status.php*
 ##|-PRIV

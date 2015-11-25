@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-wireless-edit
-##|*NAME=Interfaces: Wireless edit page
+##|*NAME=Interfaces: Wireless edit
 ##|*DESCR=Allow access to the 'Interfaces: Wireless : Edit' page.
 ##|*MATCH=interfaces_wireless_edit.php*
 ##|-PRIV

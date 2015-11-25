@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-network
-##|*NAME=System: Advanced: Networking page
+##|*NAME=System: Advanced: Networking
 ##|*DESCR=Allow access to the 'System: Advanced: Networking' page.
 ##|*MATCH=system_advanced_network.php*
 ##|-PRIV

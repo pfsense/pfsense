@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec
-##|*NAME=VPN: IPsec page
+##|*NAME=VPN: IPsec
 ##|*DESCR=Allow access to the 'VPN: IPsec' page.
 ##|*MATCH=vpn_ipsec.php*
 ##|-PRIV

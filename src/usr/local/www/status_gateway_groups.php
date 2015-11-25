@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-gatewaygroups
-##|*NAME=Status: Gateway Groups page
+##|*NAME=Status: Gateway Groups
 ##|*DESCR=Allow access to the 'Status: Gateway Groups' page.
 ##|*MATCH=status_gateway_groups.php*
 ##|-PRIV

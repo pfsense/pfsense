@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-schedules-edit
-##|*NAME=Firewall: Schedules: Edit page
+##|*NAME=Firewall: Schedules: Edit
 ##|*DESCR=Allow access to the 'Firewall: Schedules: Edit' page.
 ##|*MATCH=firewall_schedule_edit.php*
 ##|-PRIV

@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal
-##|*NAME=Services: Captive portal page
+##|*NAME=Services: Captive portal
 ##|*DESCR=Allow access to the 'Services: Captive portal' page.
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV

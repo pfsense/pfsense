@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-vpnl2tp-users-edit
-##|*NAME=VPN: VPN L2TP : Users : Edit page
+##|*NAME=VPN: VPN L2TP : Users : Edit
 ##|*DESCR=Allow access to the 'VPN: VPN L2TP : Users : Edit' page.
 ##|*MATCH=vpn_l2tp_users_edit.php*
 ##|-PRIV

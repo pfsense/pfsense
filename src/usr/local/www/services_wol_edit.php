@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan-edit
-##|*NAME=Services: Wake on LAN: Edit page
+##|*NAME=Services: Wake on LAN: Edit
 ##|*DESCR=Allow access to the 'Services: Wake on LAN: Edit' page.
 ##|*MATCH=services_wol_edit.php*
 ##|-PRIV

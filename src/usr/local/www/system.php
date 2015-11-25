@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup
-##|*NAME=System: General Setup page
+##|*NAME=System: General Setup
 ##|*DESCR=Allow access to the 'System: General Setup' page.
 ##|*MATCH=system.php*
 ##|-PRIV

@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraph-settings
-##|*NAME=Status: RRD Graphs settings page
+##|*NAME=Status: RRD Graphs settings
 ##|*DESCR=Allow access to the 'Status: RRD Graphs: settings' page.
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV

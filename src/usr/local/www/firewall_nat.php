@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward
-##|*NAME=Firewall: NAT: Port Forward page
+##|*NAME=Firewall: NAT: Port Forward
 ##|*DESCR=Allow access to the 'Firewall: NAT: Port Forward' page.
 ##|*MATCH=firewall_nat.php*
 ##|-PRIV

@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-pool
-##|*NAME=Status: Load Balancer: Pool page
+##|*NAME=Status: Load Balancer: Pool
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Pool' page.
 ##|*MATCH=status_lb_pool.php*
 ##|-PRIV

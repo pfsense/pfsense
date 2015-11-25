@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-services
-##|*NAME=Status: Services page
+##|*NAME=Status: Services
 ##|*DESCR=Allow access to the 'Status: Services' page.
 ##|*MATCH=status_services.php*
 ##|-PRIV

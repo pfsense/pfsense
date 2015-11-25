@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-filterreloadstatus
-##|*NAME=Status: Filter Reload Status page
+##|*NAME=Status: Filter Reload Status
 ##|*DESCR=Allow access to the 'Status: Filter Reload Status' page.
 ##|*MATCH=status_filter_reload.php*
 ##|-PRIV

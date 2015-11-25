@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-package-settings
-##|*NAME=Package: Settings page
+##|*NAME=Package: Settings
 ##|*DESCR=Allow access to the 'Package: Settings' page.
 ##|*MATCH=pkg.php*
 ##|-PRIV

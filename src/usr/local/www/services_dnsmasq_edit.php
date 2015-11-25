@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder-edithost
-##|*NAME=Services: DNS Forwarder: Edit host page
+##|*NAME=Services: DNS Forwarder: Edit host
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit host' page.
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV

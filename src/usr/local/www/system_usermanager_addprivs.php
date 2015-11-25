@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-addprivs
-##|*NAME=System: User Manager: Add Privileges page
+##|*NAME=System: User Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: User Manager: Add Privileges' page.
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV

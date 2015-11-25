@@ -108,23 +108,17 @@ $priv_list['page-status-ntp']['descr'] = gettext("Allow access to the 'Status: N
 $priv_list['page-status-ntp']['match'] = array();
 $priv_list['page-status-ntp']['match'][] = "status_ntpd.php*";
 
-$priv_list['page-ipsecxml'] = array();
-$priv_list['page-ipsecxml']['name'] = gettext("WebCfg - Diag IPsec XML page");
-$priv_list['page-ipsecxml']['descr'] = gettext("Allow access to the 'Diag IPsec XML' page.");
-$priv_list['page-ipsecxml']['match'] = array();
-$priv_list['page-ipsecxml']['match'][] = "diag_ipsec_xml.php";
-
 $priv_list['page-diagnostics-logs-firewall'] = array();
 $priv_list['page-diagnostics-logs-firewall']['name'] = gettext("WebCfg - Diagnostics: Logs: Firewall page");
 $priv_list['page-diagnostics-logs-firewall']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: Firewall' page.");
 $priv_list['page-diagnostics-logs-firewall']['match'] = array();
 $priv_list['page-diagnostics-logs-firewall']['match'][] = "diag_logs_filter.php*";
 
-$priv_list['page-hidden-nolongerincluded'] = array();
-$priv_list['page-hidden-nolongerincluded']['name'] = gettext("WebCfg - Hidden: No longer included page");
-$priv_list['page-hidden-nolongerincluded']['descr'] = gettext("Allow access to the 'Hidden: No longer included' page.");
-$priv_list['page-hidden-nolongerincluded']['match'] = array();
-$priv_list['page-hidden-nolongerincluded']['match'][] = "diag_logs_filter_dynamic.php*";
+$priv_list['page-diagnostics-logs-firewall-dynamic'] = array();
+$priv_list['page-diagnostics-logs-firewall-dynamic']['name'] = gettext("WebCfg - Diagnostics: Logs: Firewall (Dynamic View)");
+$priv_list['page-diagnostics-logs-firewall-dynamic']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: Firewall (Dynamic View)' page");
+$priv_list['page-diagnostics-logs-firewall-dynamic']['match'] = array();
+$priv_list['page-diagnostics-logs-firewall-dynamic']['match'][] = "diag_logs_filter_dynamic.php*";
 
 $priv_list['page-diagnostics-logs-settings'] = array();
 $priv_list['page-diagnostics-logs-settings']['name'] = gettext("WebCfg - Diagnostics: Logs: Settings page");

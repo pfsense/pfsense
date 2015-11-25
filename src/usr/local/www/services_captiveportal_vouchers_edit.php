@@ -130,6 +130,8 @@ if ($_POST) {
 
 	// Look for duplicate roll #
 	foreach ($a_roll as $re) {
+		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re)
+			continue;
 		if ($re['number'] == $_POST['number']) {
 			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;

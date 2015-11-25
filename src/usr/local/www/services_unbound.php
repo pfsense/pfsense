@@ -423,10 +423,10 @@ foreach ($a_hosts as $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($hostent['host'])?>
+						<?=$hostent['host']?>
 					</td>
 					<td>
-						<?=strtolower($hostent['domain'])?>
+						<?=$hostent['domain']?>
 					</td>
 					<td>
 						<?=$hostent['ip']?>
@@ -446,10 +446,10 @@ foreach ($a_hosts as $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($alias['host'])?>
+						<?=$alias['host']?>
 					</td>
 					<td>
-						<?=strtolower($alias['domain'])?>
+						<?=$alias['domain']?>
 					</td>
 					<td>
 						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
@@ -499,7 +499,7 @@ foreach ($a_domainOverrides as $doment):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($doment['domain'])?>&nbsp;
+						<?=$doment['domain']?>&nbsp;
 					</td>
 					<td>
 						<?=$doment['ip']?>&nbsp;

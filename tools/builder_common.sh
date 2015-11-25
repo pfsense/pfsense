@@ -2054,8 +2054,8 @@ snapshots_update_status() {
 	if [ -z "${SNAPSHOTS}" -a -z "${POUDRIERE_SNAPSHOTS}" ]; then
 		return
 	fi
-	echo $1
-	echo "`date` -|- $1" >> $SNAPSHOTSLOGFILE
+	echo "$@"
+	echo "`date` -|- $@" >> $SNAPSHOTSLOGFILE
 	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
 		LU=$(cat $SNAPSHOTSLASTUPDATE 2>/dev/null)
 		CT=$(date "+%H%M%S")

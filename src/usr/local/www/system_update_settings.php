@@ -59,9 +59,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-system-firmware-settings
-##|*NAME=System: Firmware: Settings page
-##|*DESCR=Allow access to the 'System: Firmware: Settings' page.
+##|*IDENT=page-system-update-settings
+##|*NAME=System: Update: Settings page
+##|*DESCR=Allow access to the 'System: Update: Settings' page.
 ##|*MATCH=system_update_settings.php*
 ##|-PRIV
 

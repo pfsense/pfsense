@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-router-advertisements
-##|*NAME=Services: Router advertisementspage
+##|*NAME=Services: Router Advertisements page
 ##|*DESCR=Allow access to the 'Services: Router Advertisements' page.
 ##|*MATCH=services_router_advertisements.php*
 ##|-PRIV

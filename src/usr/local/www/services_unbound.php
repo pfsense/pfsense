@@ -58,7 +58,7 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-unbound
+##|*IDENT=page-services-dnsresolver
 ##|*NAME=Services: DNS Resolver page
 ##|*DESCR=Allow access to the 'Services: DNS Resolver' page.
 ##|*MATCH=services_unbound.php*

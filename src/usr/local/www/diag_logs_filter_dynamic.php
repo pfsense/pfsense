@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall-dynamic
-##|*NAME=Diagnostics: Logs: Firewall (Dynamic View)
-##|*DESCR=Allow access to the 'Diagnostics: Logs: Firewall (Dynamic View)' page.
+##|*NAME=Status: System Logs: Firewall (Dynamic View)
+##|*DESCR=Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page
 ##|*MATCH=diag_logs_filter_dynamic.php*
 ##|-PRIV
 

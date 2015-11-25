@@ -54,6 +54,13 @@
  *
  */
 
+##|+PRIV
+##|*IDENT=page-services-dnsresolver-acls
+##|*NAME=Services: DNS Resolver: Access Lists page
+##|*DESCR=Allow access to the 'Services: DNS Resolver: Access Lists' page.
+##|*MATCH=services_unbound_acls.php*
+##|-PRIV
+
 require("guiconfig.inc");
 require("unbound.inc");
 

@@ -336,7 +336,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
 	} else {
 		if (file_exists("{$g['tmp_path']}/rules.debug")) {
-			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
+			$_gb = exec("/usr/bin/grep -v \"persist file\" {$g['tmp_path']}/rules.debug | /sbin/pfctl -vvPnf - 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 		} else {
 			$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 		}
@@ -365,7 +365,7 @@ function buffer_rules_load() {
 	}
 	unset($buffer, $_gb);
 	if (file_exists("{$g['tmp_path']}/rules.debug")) {
-		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
+		$_gb = exec("/usr/bin/grep -v \"persist file\" {$g['tmp_path']}/rules.debug | /sbin/pfctl -vvPnf - 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
 	} else {
 		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 	}

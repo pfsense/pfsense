@@ -103,7 +103,8 @@ snapshots_sleep_between_runs() {
 	[ -z "${LAST_COMMIT}" ] \
 		&& export LAST_COMMIT=${CURRENT_COMMIT}
 
-	snapshot_update_status ">>> Sleeping for at least $minsleepvalue, at most $maxsleepvalue in between snapshot builder runs."
+	snapshot_update_status ">>> Sleeping for at least $minsleepvalue, " \
+		"at most $maxsleepvalue in between snapshot builder runs."
 	snapshot_update_status ">>> Last known commit: ${LAST_COMMIT}"
 	snapshot_update_status ">>> Freezing build process at $(date)"
 	echo ">>> Press ctrl+T to start a new build"
@@ -115,27 +116,32 @@ snapshots_sleep_between_runs() {
 	done
 
 	if [ ${COUNTER} -lt ${maxsleepvalue} ]; then
-		snapshot_update_status ">>> Thawing build process and resuming checks for pending commits at $(date)."
+		snapshot_update_status ">>> Thawing build process and " \
+			"resuming checks for pending commits at $(date)."
 		echo ">>> Press ctrl+T to start a new build"
 	fi
 
 	while [ $COUNTER -lt $maxsleepvalue ]; do
 		sleep 1
-		# Update this repo each 60 seconds
-		if [ "$((${COUNTER} % 60))" = "0" ]; then
-			git_last_commit
-			if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
-				snapshot_update_status ">>> New commit: $CURRENT_AUTHOR - $CURRENT_COMMIT .. No longer sleepy."
-				COUNTER=$(($maxsleepvalue + 60))
-				export LAST_COMMIT="${CURRENT_COMMIT}"
-			fi
-		fi
 		COUNTER=$(($COUNTER + 1))
+		# Update this repo each 60 seconds
+		if [ "$((${COUNTER} % 60))" != "0" ]; then
+			continue
+		fi
+		git_last_commit
+		if [ "${LAST_COMMIT}" != "${CURRENT_COMMIT}" ]; then
+			snapshot_update_status ">>> New commit: " \
+				"$CURRENT_AUTHOR - $CURRENT_COMMIT " \
+				".. No longer sleepy."
+			COUNTER=$(($maxsleepvalue + 60))
+			export LAST_COMMIT="${CURRENT_COMMIT}"
+		fi
 	done
 	_sleeping=0
 
 	if [ $COUNTER -ge $maxsleepvalue ]; then
-		snapshot_update_status ">>> Sleep timer expired. Restarting build."
+		snapshot_update_status ">>> Sleep timer expired. " \
+			"Restarting build."
 		COUNTER=0
 	fi
 
@@ -152,7 +158,8 @@ while [ /bin/true ]; do
 		snapshot_update_status "${LINE}"
 	done
 
-	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' --snapshots 2>&1) | while read -r LINE; do
+	(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '1g 2g 4g' \
+	    --snapshots 2>&1) | while read -r LINE; do
 		snapshot_update_status "${LINE}"
 	done
 

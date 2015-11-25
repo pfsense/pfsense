@@ -65,7 +65,7 @@ if (count($argv) < 2) {
 	echo "\n";
 	echo "Examples:\n";
 	echo "#generate-privdefs /\n";
-	echo "#generate-privdefs /home/pfsense/RELENG_1/pfSense/\n";
+	echo "#generate-privdefs /home/pfsense/src/\n";
 	echo "\n";
 	exit -1;
 }
@@ -93,6 +93,7 @@ list_phpfiles($path, $found);
 echo "--Gathering privilege metadata--\n";
 
 $data;
+sort($found);
 foreach ($found as $fname)
 	read_file_metadata($path."/".$fname, $data, "PRIV");
 
@@ -115,8 +116,8 @@ $pdata .= "\n";
 $pdata .= "\$priv_list = array();\n";
 $pdata .= "\n";
 $pdata .= "\$priv_list['page-all'] = array();\n";
-$pdata .= "\$priv_list['page-all']['name'] = \"WebCfg - All pages\";\n";
-$pdata .= "\$priv_list['page-all']['descr'] = \"Allow access to all pages\";\n";
+$pdata .= "\$priv_list['page-all']['name'] = gettext(\"WebCfg - All pages\");\n";
+$pdata .= "\$priv_list['page-all']['descr'] = gettext(\"Allow access to all pages\");\n";
 $pdata .= "\$priv_list['page-all']['match'] = array();\n";
 $pdata .= "\$priv_list['page-all']['match'][] = \"*\";\n";
 $pdata .= "\n";
@@ -159,8 +160,8 @@ foreach ($data as $fname => $tags) {
 		}
 
 		$pdata .= "\$priv_list['{$ident}'] = array();\n";
-		$pdata .= "\$priv_list['{$ident}']['name'] = \"WebCfg - {$name}\";\n";
-		$pdata .= "\$priv_list['{$ident}']['descr'] = \"{$descr}\";\n";
+		$pdata .= "\$priv_list['{$ident}']['name'] = gettext(\"WebCfg - {$name}\");\n";
+		$pdata .= "\$priv_list['{$ident}']['descr'] = gettext(\"{$descr}\");\n";
 		$pdata .= "\$priv_list['{$ident}']['match'] = array();\n";
 
 		foreach ($match as $url)

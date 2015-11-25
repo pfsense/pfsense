@@ -62,10 +62,6 @@ $priv_list['user-l2tp-dialin'] = array();
 $priv_list['user-l2tp-dialin']['name'] = gettext("User - VPN - L2TP Dialin");
 $priv_list['user-l2tp-dialin']['descr'] = gettext("Indicates whether the user is allowed to dial in via L2TP");
 
-$priv_list['user-pptp-dialin'] = array();
-$priv_list['user-pptp-dialin']['name'] = gettext("User - VPN - PPTP Dialin");
-$priv_list['user-pptp-dialin']['descr'] = gettext("Indicates whether the user is allowed to dial in via PPTP");
-
 $priv_list['user-pppoe-dialin'] = array();
 $priv_list['user-pppoe-dialin']['name'] = gettext("User - VPN - PPPOE Dialin");
 $priv_list['user-pppoe-dialin']['descr'] = gettext("Indicates whether the user is allowed to dial in via PPPOE");

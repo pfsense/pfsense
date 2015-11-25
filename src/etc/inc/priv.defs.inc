@@ -157,13 +157,13 @@ $priv_list['page-diagnostics-patters']['match'] = array();
 $priv_list['page-diagnostics-patters']['match'][] = "patterns.php*";
 
 $priv_list['page-diagnostics-limiter-info'] = array();
-$priv_list['page-diagnostics-limiter-info']['name'] = gettext("Diagnostics: Limiter Info");
+$priv_list['page-diagnostics-limiter-info']['name'] = gettext("WebCfg - Diagnostics: Limiter Info");
 $priv_list['page-diagnostics-limiter-info']['descr'] = gettext("Allows access to the 'Diagnostics: Limiter Info' page");
 $priv_list['page-diagnostics-limiter-info']['match'] = array();
 $priv_list['page-diagnostics-limiter-info']['match'][] = "diag_limiter_info.php*";
 
 $priv_list['page-diagnostics-pf-info'] = array();
-$priv_list['page-diagnostics-pf-info']['name'] = gettext("Diagnostics: pfInfo");
+$priv_list['page-diagnostics-pf-info']['name'] = gettext("WebCfg - Diagnostics: pfInfo");
 $priv_list['page-diagnostics-pf-info']['descr'] = gettext("Allows access to the 'Diagnostics: pfInfo' page");
 $priv_list['page-diagnostics-pf-info']['match'] = array();
 $priv_list['page-diagnostics-pf-info']['match'][] = "diag_pf_info.php*";
@@ -175,7 +175,7 @@ $priv_list['page-diagnostics-system-activity']['match'] = array();
 $priv_list['page-diagnostics-system-activity']['match'][] = "diag_system_activity.php*";
 
 $priv_list['page-diagnostics-system-pftop'] = array();
-$priv_list['page-diagnostics-system-pftop']['name'] = gettext("Diagnostics: pfTop");
+$priv_list['page-diagnostics-system-pftop']['name'] = gettext("WebCfg - Diagnostics: pfTop");
 $priv_list['page-diagnostics-system-pftop']['descr'] = gettext("Allows access to the 'Diagnostics: pfTop' page");
 $priv_list['page-diagnostics-system-pftop']['match'] = array();
 $priv_list['page-diagnostics-system-pftop']['match'][] = "diag_system_pftop.php*";
@@ -465,7 +465,7 @@ $priv_list['page-interfaces-groups']['match'] = array();
 $priv_list['page-interfaces-groups']['match'][] = "interfaces_groups.php*";
 
 $priv_list['page-interfaces-groups-edit'] = array();
-$priv_list['page-interfaces-groups-edit']['name'] = gettext("Interfaces: Groups: Edit page");
+$priv_list['page-interfaces-groups-edit']['name'] = gettext("WebCfg - Interfaces: Groups: Edit page");
 $priv_list['page-interfaces-groups-edit']['descr'] = gettext("Allow access to the 'Interfaces: Groups: Edit' page.");
 $priv_list['page-interfaces-groups-edit']['match'] = array();
 $priv_list['page-interfaces-groups-edit']['match'][] = "interfaces_groups_edit.php*";
@@ -477,7 +477,7 @@ $priv_list['page-interfaces-lagg']['match'] = array();
 $priv_list['page-interfaces-lagg']['match'][] = "interfaces_lagg.php*";
 
 $priv_list['page-interfaces-lagg-edit'] = array();
-$priv_list['page-interfaces-lagg-edit']['name'] = gettext("Interfaces: LAGG: Edit page");
+$priv_list['page-interfaces-lagg-edit']['name'] = gettext("WebCfg - Interfaces: LAGG: Edit page");
 $priv_list['page-interfaces-lagg-edit']['descr'] = gettext("Allow access to the 'Interfaces: LAGG: Edit' page.");
 $priv_list['page-interfaces-lagg-edit']['match'] = array();
 $priv_list['page-interfaces-lagg-edit']['match'][] = "interfaces_lagg_edit.php*";
@@ -501,7 +501,7 @@ $priv_list['page-interfaces-qinq']['match'] = array();
 $priv_list['page-interfaces-qinq']['match'][] = "interfaces_qinq.php*";
 
 $priv_list['page-interfaces-qinq-edit'] = array();
-$priv_list['page-interfaces-qinq-edit']['name'] = gettext("Interfaces: QinQ: Edit page");
+$priv_list['page-interfaces-qinq-edit']['name'] = gettext("WebCfg - Interfaces: QinQ: Edit page");
 $priv_list['page-interfaces-qinq-edit']['descr'] = gettext("Allow access to 'Interfaces: QinQ: Edit' page");
 $priv_list['page-interfaces-qinq-edit']['match'] = array();
 $priv_list['page-interfaces-qinq-edit']['match'][] = "interfaces_qinq_edit.php*";
@@ -819,7 +819,7 @@ $priv_list['page-services-igmpproxy']['match'] = array();
 $priv_list['page-services-igmpproxy']['match'][] = "services_igmpproxy.php*";
 
 $priv_list['page-services-igmpproxy-edit'] = array();
-$priv_list['page-services-igmpproxy-edit']['name'] = gettext("Firewall: Igmpproxy: Edit page");
+$priv_list['page-services-igmpproxy-edit']['name'] = gettext("WebCfg - Services: Igmpproxy: Edit page");
 $priv_list['page-services-igmpproxy-edit']['descr'] = gettext("Allow access to the 'Services: Igmpproxy: Edit' page.");
 $priv_list['page-services-igmpproxy-edit']['match'] = array();
 $priv_list['page-services-igmpproxy-edit']['match'][] = "services_igmpproxy_edit.php*";

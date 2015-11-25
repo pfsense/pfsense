@@ -2048,18 +2048,23 @@ poudriere_bulk() {
 # and we scp the log file to the builder host if
 # needed for the real time logging functions.
 snapshots_update_status() {
-	if [ -z "${SNAPSHOTS}" -o -z "$1" ]; then
+	if [ -z "$1" ]; then
+		return
+	fi
+	if [ -z "${SNAPSHOTS}" -a -z "${POUDRIERE_SNAPSHOTS}" ]; then
 		return
 	fi
 	echo $1
 	echo "`date` -|- $1" >> $SNAPSHOTSLOGFILE
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
-		LU=`cat $SNAPSHOTSLASTUPDATE`
-		CT=`date "+%H%M%S"`
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
+		LU=$(cat $SNAPSHOTSLASTUPDATE 2>/dev/null)
+		CT=$(date "+%H%M%S")
 		# Only update every minute
 		if [ "$LU" != "$CT" ]; then
-			ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCLOGS}"
-			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log
+			ssh ${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP} \
+				"mkdir -p ${SNAPSHOTS_RSYNCLOGS}"
+			scp -q $SNAPSHOTSLOGFILE \
+				${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log
 			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
 		fi
 	fi
@@ -2068,8 +2073,9 @@ snapshots_update_status() {
 # Copy the current log file to $filename.old on
 # the snapshot www server (real time logs)
 snapshots_rotate_logfile() {
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
-		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log.old
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
+		scp -q $SNAPSHOTSLOGFILE \
+			${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log.old
 	fi
 
 	# Cleanup log file

@@ -72,9 +72,6 @@ require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"), gettext("Rules"));
-$shortcut_section = "firewall";
-
 function delete_nat_association($id) {
 	global $config;
 
@@ -242,6 +239,13 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 }
+$tab_array = array();
+$tab_array['FloatingRules'] = array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules");
+foreach ($iflist as $ifent => $ifname)
+	$tab_array[$ifent] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
+	
+$pgtitle = array(gettext("Firewall"), gettext("Rules"),$tab_array[$if][0]);
+$shortcut_section = "firewall";
 
 include("head.inc");
 $nrules = 0;
@@ -251,11 +255,6 @@ if ($savemsg)
 
 if (is_subsystem_dirty('filter'))
 	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
-
-$tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
-
-foreach ($iflist as $ifent => $ifname)
-	$tab_array[] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
 
 display_top_tabs($tab_array);
 

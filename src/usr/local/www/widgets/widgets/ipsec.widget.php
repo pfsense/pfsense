@@ -209,7 +209,7 @@ if (isset($config['ipsec']['phase1'])) {
 }
 
 if (isset($config['ipsec']['phase2'])): ?>
-<div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;"  class="table-responsive">
+<div id="ipsec-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -223,7 +223,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tbody>
 	</table>
 </div>
-<div class="table-responsive" id="ipsec-tunnel" style="display:none;background-color:#EEEEEE;">
+<div class="table-responsive" id="ipsec-tunnel" style="display:none;">
 	<table class="table table-striped table-hover">
 	<thead>
 		<th>Source</th>
@@ -238,7 +238,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 </div>
 
 	<?php if (is_array($mobile['pool'])): ?>
-<div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;" class="table-responsive">
+<div id="ipsec-mobile" style="display:none;" class="table-responsive">
 		<table class="table table-striped table-hover">
 		<thead>
 			<th>User</th>

@@ -64,7 +64,7 @@
  */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/sbin/pfctl	/sbin/ifconfig
 	pfSense_MODULE:	support
 */
 
@@ -198,7 +198,7 @@ global $g, $config;
 /* System stats/info */
 defCmdT("System uptime","/usr/bin/uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
-defCmdT("Interface Statistics","/usr/bin/netstat -ni");
+defCmdT("Interface Statistics","/usr/bin/netstat -nWi");
 defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Processes","/bin/ps xauww");
 defCmdT("Mounted Filesystems", "/sbin/mount");

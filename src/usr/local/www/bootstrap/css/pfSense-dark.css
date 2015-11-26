@@ -240,11 +240,6 @@ caption {
 	border-top: 1px solid #ddd;
 }
 
-/* ipsec widget placeholder */
-#ipsec-Overview, #ipsec-tunnel, #ipsec-mobile {
-    background-color:#EEEEEE;
-}
-
 a.list-group-item, .list-group-item {
     background-color: #424242;
     color: #e0e0e0;  

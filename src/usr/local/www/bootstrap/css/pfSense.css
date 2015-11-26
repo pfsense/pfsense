@@ -389,6 +389,11 @@ form .btn + .btn {
     color: #e0e0e0;
 }
 
+/* ipsec widget placeholder */
+#ipsec-Overview, #ipsec-tunnel, #ipsec-mobile {
+    background-color:#EEEEEE;
+}
+
 /* All pfSense textareas benefit from using a fixed width font **/
 textarea
 {

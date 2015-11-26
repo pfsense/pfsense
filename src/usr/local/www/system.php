@@ -290,10 +290,8 @@ if ($_POST) {
 				// Remove the route. Later calls will add the correct new route if needed.
 				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
 					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				} else {
-					if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
-						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
-					}
+				} else if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 				}
 			}
 		}

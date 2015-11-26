@@ -65,7 +65,6 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
 	pfSense_MODULE:	pkgs
 */
 

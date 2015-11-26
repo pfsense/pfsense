@@ -559,7 +559,13 @@ function unbound_add_domain_overrides($pvt_rev="") {
 function unbound_add_host_entries() {
 	global $config, $g;
 
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" transparent\n";
+	if (empty($config['unbound']['system_domain_local_zone_type'])) {
+		$system_domain_local_zone_type = "transparent";
+	} else {
+		$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+	}
+
+	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" $system_domain_local_zone_type\n";
 
 	$hosts = read_hosts();
 	$added_ptr = array();

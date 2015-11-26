@@ -240,6 +240,21 @@ caption {
 	border-top: 1px solid #ddd;
 }
 
+a.list-group-item, .list-group-item {
+    background-color: #424242;
+    color: #e0e0e0;  
+    border: 1px solid #212121;  
+}
+
+a.list-group-item:focus, a.list-group-item:hover, .list-group-item:focus, .list-group-item:hover {
+    background-color: #303030;
+    color: #e0e0e0; 
+}
+
+a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-heading {
+    color: #EEEEEE;
+}
+
 .progress {
 	background-color: #e0e0e0;
 }

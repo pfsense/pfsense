@@ -370,6 +370,10 @@ form .btn + .btn {
 	padding-left: 4px;
 }
 
+.list-group {
+    margin-bottom: 0;
+}
+
 /* icons in the dashboard panel headings should pull-right **/
 .widget-heading-icon
 {

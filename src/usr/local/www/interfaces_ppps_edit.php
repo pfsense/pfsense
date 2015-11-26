@@ -600,10 +600,10 @@ function build_link_list() {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-$linkparamstr = gettext('Bandwidth is set only for MLLP conncetions and when links have diferent bandwidths' . '<br />' .
+$linkparamstr = gettext('Bandwidth is set only for MLPPP connections and when links have different bandwidths' . '<br />' .
 						'MTU defaults to 1492' . '<br />' .
 						'MRU will be auto-negotiated by default' . '<br />' .
-						'Set only for MLLP conncetions. MRRU will be auto-negotiated by default.');
+						'Set only for MLPPP connections. MRRU will be auto-negotiated by default.');
 
 $form = new Form();
 
@@ -668,7 +668,7 @@ $section->addInput(new Form_Input(
 	$pconfig['passwordfld']
 ));
 
-// These elements arehidden by default, and un-hidden in Javascript
+// These elements are hidden by default, and un-hidden in Javascript
 if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	$j = 0;
 	foreach($linklist['list'] as $ifnm =>$nm) {
@@ -787,7 +787,7 @@ $section->addInput(new Form_Select(
 	)
 ))->addClass('pppoe')->setHelp('Select a reset timing type');
 
-$group = new Form_Group('Rest Date/Time');
+$group = new Form_Group('Reset Date/Time');
 $group->addClass('pppoe-reset-date');
 
 $group->add(new Form_Input(
@@ -816,7 +816,7 @@ $group->setHelp('Leaving the date field empty will cause the reset to be execute
 
 $section->add($group);
 
-$group = new Form_Group('Rest frequency');
+$group = new Form_Group('Reset frequency');
 $group->addClass('pppoe-reset-cron');
 
 $group->add(new Form_Checkbox(
@@ -1116,3 +1116,4 @@ events.push(function(){
 <?php
 
 include("foot.inc");
+

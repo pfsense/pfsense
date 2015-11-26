@@ -526,6 +526,16 @@ if ($_POST) {
 			$gateway['monitor'] = $_POST['monitor'];
 		}
 
+		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
+		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+			$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+			isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+			$realif = get_real_interface($a_gateway_item[$realid]['interface']);
+			$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
+			$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
+			mwexec($cmd);
+		}
+		
 		/* NOTE: If monitor ip is changed need to cleanup the old static route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
 			$_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {

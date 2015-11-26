@@ -585,122 +585,6 @@ $shortcut_section = "openvpn";
 
 include("head.inc");
 
-function build_mode_list() {
-	global $openvpn_server_modes;
-
-	$list = array();
-
-	foreach ($openvpn_server_modes as $name => $desc)
-		$list[$name] = $desc;
-
-	return($list);
-}
-
-function build_if_list() {
-	$list = array();
-
-	$interfaces = get_configured_interface_with_descr();
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	$grouplist = return_gateway_groups_array();
-
-	foreach ($grouplist as $name => $group) {
-		if($group['ipprotocol'] != inet)
-			continue;
-
-		if($group[0]['vip'] != "")
-			$vipif = $group[0]['vip'];
-		else
-			$vipif = $group[0]['int'];
-
-		$interfaces[$name] = "GW Group {$name}";
-	}
-
-	$interfaces['lo0'] = "Localhost";
-	$interfaces['any'] = "any";
-
-	foreach ($interfaces as $iface => $ifacename)
-	   $list[$iface] = $ifacename;
-
-	return($list);
-}
-
-function build_crl_list() {
-	global $a_crl;
-
-	$list = array('' => 'None');
-
-	foreach ($a_crl as $crl) {
-		$caname = "";
-		$ca = lookup_ca($crl['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		$list[$crl['refid']] = $crl['descr'] . $caname;
-	}
-
-	return($list);
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array();
-
-	foreach ($a_cert as $cert) {
-		$caname = "";
-		$inuse = "";
-		$revoked = "";
-		$ca = lookup_ca($cert['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		if ($pconfig['certref'] == $cert['refid'])
-			$selected = "selected=\"selected\"";
-
-		if (cert_in_use($cert['refid']))
-			$inuse = " *In Use";
-
-		if (is_cert_revoked($cert))
-		   $revoked = " *Revoked";
-
-		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
-	}
-
-	return($list);
-}
-
-function build_bridge_list() {
-	$list = array();
-
-	$serverbridge_interface['none'] = "none";
-	$serverbridge_interface = array_merge($serverbridge_interface, get_configured_interface_with_descr());
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$serverbridge_interface[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$serverbridge_interface[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	foreach ($serverbridge_interface as $iface => $ifacename)
-		$list[$iface] = htmlspecialchars($ifacename);
-
-	return($list);
-}
-
 if (!$savemsg)
 	$savemsg = "";
 
@@ -736,7 +620,7 @@ if($act=="new" || $act=="edit") :
 		'mode',
 		'Server mode',
 		$pconfig['mode'],
-		build_mode_list()
+		openvpn_build_mode_list()
 		));
 
 	$options = array();
@@ -778,7 +662,7 @@ if($act=="new" || $act=="edit") :
 		'interface',
 		'Interface',
 		$pconfig['interface'],
-		build_if_list()
+		openvpn_build_if_list()
 		));
 
 	$section->addInput(new Form_Input(
@@ -845,7 +729,7 @@ if($act=="new" || $act=="edit") :
 			'crlref',
 			'Peer Certificate Revocation list',
 			$pconfig['crlref'],
-			build_crl_list()
+			openvpn_build_crl_list()
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
@@ -858,7 +742,7 @@ if($act=="new" || $act=="edit") :
 		'certref',
 		'Server certificate',
 		$pconfig['certref'],
-		build_cert_list()
+		openvpn_build_cert_list()
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
 
 	$section->addInput(new Form_Select(
@@ -954,7 +838,7 @@ if($act=="new" || $act=="edit") :
 		'serverbridge_interface',
 		'Bridge Interface',
 		$pconfig['serverbridge_interface'],
-		build_bridge_list()
+		openvpn_build_bridge_list()
 		))->setHelp('The interface to which this tap instance will be bridged. This is not done automatically. You must assign this ' .
 						'interface and create the bridge separately. This setting controls which existing IP address and subnet ' .
 						'mask are used by OpenVPN for the bridge. Setting this to "none" will cause the Server Bridge DHCP settings below to be ignored.');

@@ -175,7 +175,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 
 <div class="table-responsive">
 	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
-		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"</i></td></tr>
+		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
 	</table>
 </div>
 
@@ -183,7 +183,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 
 	function get_pkg_stats() {

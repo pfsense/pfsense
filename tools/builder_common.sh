@@ -683,7 +683,6 @@ awk '
 
 		# Set NanoBSD image size
 		echo "${_NANO_MEDIASIZE}" > ${MNT}/etc/nanosize.txt
-		rm -f $MNT/cf/conf/* 2>/dev/null
 
 		echo "/dev/ufs/${_label}0 / ufs ro,sync,noatime 1 1" > ${MNT}/etc/fstab
 		if [ $NANO_CONFSIZE -gt 0 ] ; then

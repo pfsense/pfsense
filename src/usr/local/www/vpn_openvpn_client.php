@@ -406,72 +406,6 @@ if ($_POST) {
 
 include("head.inc");
 
-function build_if_list() {
-	$list = array();
-
-	$interfaces = get_configured_interface_with_descr();
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	$grouplist = return_gateway_groups_array();
-
-	foreach ($grouplist as $name => $group) {
-		if($group['ipprotocol'] != inet)
-			continue;
-
-		if($group[0]['vip'] != "")
-			$vipif = $group[0]['vip'];
-		else
-			$vipif = $group[0]['int'];
-
-		$interfaces[$name] = "GW Group {$name}";
-	}
-
-	$interfaces['lo0'] = "Localhost";
-	$interfaces['any'] = "any";
-
-	foreach ($interfaces as $iface => $ifacename)
-	   $list[$iface] = $ifacename;
-
-	return($list);
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array('' => 'None (Username and/or Password required)');
-
-	foreach ($a_cert as $cert) {
-		$caname = "";
-		$inuse = "";
-		$revoked = "";
-		$ca = lookup_ca($cert['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		if ($pconfig['certref'] == $cert['refid'])
-			$selected = "selected=\"selected\"";
-
-		if (cert_in_use($cert['refid']))
-			$inuse = " *In Use";
-
-		if (is_cert_revoked($cert))
-		   $revoked = " *Revoked";
-
-		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
-	}
-
-	return($list);
-}
-
 if (!$savemsg)
 	$savemsg = "";
 
@@ -526,7 +460,7 @@ if($act=="new" || $act=="edit") :
 		'interface',
 		'Interface',
 		$pconfig['interface'],
-		build_if_list()
+		openvpn_build_if_list()
 		));
 
 	$section->addInput(new Form_Input(
@@ -660,7 +594,7 @@ if($act=="new" || $act=="edit") :
 			'crlref',
 			'Peer Certificate Revocation list',
 			$pconfig['crlref'],
-			build_crl_list()
+			openvpn_build_crl_list()
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
@@ -686,7 +620,7 @@ if($act=="new" || $act=="edit") :
 		'certref',
 		'Client Certificate',
 		$pconfig['certref'],
-		build_cert_list()
+		openvpn_build_cert_list(true)
 		));
 
 	$section->addInput(new Form_Select(

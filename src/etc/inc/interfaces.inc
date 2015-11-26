@@ -4576,7 +4576,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 			break;
 		default:
 			if (substr($interface, 0, 4) == '_vip') {
-				$wanif = get_configured_carp_interface_list($interface, '', 'iface');
+				$wanif = get_configured_carp_interface_list($interface, $family, 'iface');
 				if (!empty($wanif)) {
 					$wanif = get_real_interface($wanif, $family);
 				}
@@ -5262,13 +5262,13 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 
 function get_interface_ip($interface = "wan") {
 
-	$realif = get_failover_interface($interface);
+	$realif = get_failover_interface($interface, 'inet');
 	if (!$realif) {
 		return null;
 	}
 
 	if (substr($interface, 0, 4) == '_vip') {
-		return get_configured_carp_interface_list($realif, 'inet', 'ip');
+		return get_configured_carp_interface_list($interface, 'inet', 'ip');
 	} else if (substr($interface, 0, 5) == '_lloc') {
 		/* No link-local address for v4. */
 		return null;
@@ -5291,7 +5291,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	}
 
 	if (substr($interface, 0, 4) == '_vip') {
-		return get_configured_carp_interface_list($realif, 'inet6', 'ip');
+		return get_configured_carp_interface_list($interface, 'inet6', 'ip');
 	} else if (substr($interface, 0, 5) == '_lloc') {
 		return get_interface_linklocal($interface);
 	}

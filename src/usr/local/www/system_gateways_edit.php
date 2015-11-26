@@ -972,10 +972,10 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Checkbox(
 	'nonlocalgateway',
-	'Use nonlocal gateway',
-	'Use nonlocal gateway through interface specific route.',
+	'Use non-local gateway',
+	'Use non-local gateway through interface specific route.',
 	$pconfig['nonlocalgateway']
-))->setHelp('This will disable the check if the gateway is reachable using the interface subnet. This is usually means a configuration error, but is required for some scenarios.');
+))->setHelp('This will allow use of a gateway outside of this interface\'s subnet. This is usually indicative of a configuration error, but is required for some scenarios.');
 
 $form->add($section);
 

@@ -269,10 +269,7 @@ $vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 
 // Status
 $status_menu = array();
-if (count($config['captiveportal']) > 0) {
-	$status_menu[] = array(gettext("Captive Portal"), "/status_captiveportal.php");
-}
-
+$status_menu[] = array(gettext("Captive Portal"), "/status_captiveportal.php");
 $status_menu[] = array(gettext("CARP (failover)"), "/carp_status.php");
 $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");

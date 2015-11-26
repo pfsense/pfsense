@@ -4347,7 +4347,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 	if (stripos($interface, "_vip")) {
 		foreach ($config['virtualip']['vip'] as $counter => $vip) {
 			if ($vip['mode'] == "carp") {
-				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
+				if ($interface == "_vip{$vip['uniqid']}") {
 					return $vip['interface'];
 				}
 			}
@@ -4420,7 +4420,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 				if (is_array($config['virtualip']['vip'])) {
 					foreach ($config['virtualip']['vip'] as $counter => $vip) {
 						if ($vip['mode'] == "carp") {
-							if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
+							if ($interface == "_vip{$vip['uniqid']}") {
 								return "{$vip['subnet']} - {$vip['descr']}";
 							}
 						}

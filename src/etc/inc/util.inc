@@ -1123,7 +1123,7 @@ function get_configured_vips_list() {
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carp") {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "{$vip['interface']}_vip{$vip['vhid']}");
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "_vip{$vip['uniqid']}");
 			} else {
 				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
 			}

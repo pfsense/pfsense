@@ -140,6 +140,7 @@ display_top_tabs($tab_array);
 				<tr>
 					<th><?=gettext('Interface');?></th>
 					<th><?=gettext('VLAN tag');?></th>
+					<th><?=gettext('Priority');?></th>
 					<th><?=gettext('Description');?></th>
 				</tr>
 			</thead>
@@ -150,6 +151,7 @@ display_top_tabs($tab_array);
 				<tr>
 					<td><?=htmlspecialchars($vlan['if']);?></td>
 					<td><?=htmlspecialchars($vlan['tag']);?></td>
+					<td><?=htmlspecialchars($vlan['pcp']);?></td>
 					<td><?=htmlspecialchars($vlan['descr']);?></td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>

@@ -405,21 +405,33 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
+	global $config;
 
-	$interface = get_real_interface($interface);
-	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
-	foreach ($carp_query as $int) {
-		if (stripos($int, "MASTER")) {
-			return "MASTER";
+	foreach ($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp")
+			continue;
+		$carpif = "_vip{$carp['uniqid']}";
+		if ($carpinterface !== $carpif)
+			continue;
+
+		$interface = get_real_interface($carp['interface']);
+		$vhid = $carp['vhid'];
+		$carp_query = '';
+		$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+		foreach ($carp_query as $int) {
+			if (stripos($int, "MASTER")) {
+				return "MASTER";
+			}
+			if (stripos($int, "BACKUP")) {
+				return "BACKUP";
+			}
+			if (stripos($int, "INIT")) {
+				return "INIT";
+			}
 		}
-		if (stripos($int, "BACKUP")) {
-			return "BACKUP";
-		}
-		if (stripos($int, "INIT")) {
-			return "INIT";
-		}
+		break;
 	}
+
 	return;
 }
 

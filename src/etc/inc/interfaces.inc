@@ -228,13 +228,14 @@ function interface_vlan_configure(&$vlan) {
 		return;
 	}
 	$if = $vlan['if'];
-	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
-	$tag = $vlan['tag'];
-
 	if (empty($if)) {
 		log_error(gettext("interface_vlan_configure called with if undefined."));
 		return;
 	}
+
+	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$tag = $vlan['tag'];
+	$pcp  = empty($vlan['pcp']) ? 0 : $vlan['pcp'];	/* Apply "Best Effort" if not set */
 
 	/* make sure the parent interface is up */
 	interfaces_bring_up($if);
@@ -242,14 +243,14 @@ function interface_vlan_configure(&$vlan) {
 	pfSense_interface_capabilities($if, IFCAP_VLAN_HWTAGGING|IFCAP_VLAN_MTU|IFCAP_VLAN_HWFILTER);
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		interface_bring_down($vlanif, true);
-	} else {
-		$tmpvlanif = pfSense_interface_create("vlan");
-		pfSense_interface_rename($tmpvlanif, $vlanif);
-		pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
+		pfSense_interface_destroy($vlanif);
 	}
 
-	pfSense_vlan_create($vlanif, $if, $tag);
+	$tmpvlanif = pfSense_interface_create("vlan");
+	pfSense_interface_rename($tmpvlanif, $vlanif);
+	pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
+
+	pfSense_vlan_create($vlanif, $if, $tag, $pcp);
 
 	interfaces_bring_up($vlanif);
 

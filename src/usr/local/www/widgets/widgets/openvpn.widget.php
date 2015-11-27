@@ -160,7 +160,7 @@ $clients = openvpn_get_active_clients();
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;
 			?>
-				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 					<td>
 						<?=$conn['common_name'];?>
 					</td>
@@ -168,13 +168,13 @@ $clients = openvpn_get_active_clients();
 						<?=$conn['remote_host'];?>
 					</td>
 					<td>
-						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style='cursor:pointer;'
-							name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
+						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style="cursor:pointer;"
+							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							title='Kill client connection from <?php echo $conn['remote_host']; ?>'>
 						</i>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 					<td>
 						<?=$conn['connect_time'];?>
 					</td>
@@ -212,7 +212,7 @@ $clients = openvpn_get_active_clients();
 						<?=$sk_server['remote_host'];?>
 					</td>
 					<td>
-					<?php
+<?php
 					if ($sk_server['status'] == "up") {
 						/* tunnel is up */
 						echo '<i class="fa fa-arrow-up"></i>';
@@ -223,7 +223,7 @@ $clients = openvpn_get_active_clients();
 ?>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>">
 					<td>
 						<?=$sk_server['connect_time'];?>
 					</td>
@@ -254,7 +254,7 @@ $clients = openvpn_get_active_clients();
 			</thead>
 			<tbody>
 	<?php foreach ($clients as $client): ?>
-				<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 					<td>
 						<?=$client['name'];?>
 					</td>
@@ -262,7 +262,7 @@ $clients = openvpn_get_active_clients();
 					<?=$client['remote_host'];?>
 					</td>
 					<td>
-				<?php
+<?php
 				if ($client['status'] == "up") {
 					/* tunnel is up */
 					echo '<i class="fa fa-arrow-up"></i>';
@@ -274,7 +274,7 @@ $clients = openvpn_get_active_clients();
 ?>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 					<td>
 						<?=$client['connect_time'];?>
 					</td>

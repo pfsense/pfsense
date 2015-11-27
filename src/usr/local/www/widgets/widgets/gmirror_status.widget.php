@@ -66,7 +66,8 @@ require_once("gmirror.inc");
 	<?=gmirror_html_status()?>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function gmirrorStatusUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -85,4 +86,5 @@ function gmirrorStatusUpdateFromServer(){
 events.push(function(){
 	setInterval('gmirrorStatusUpdateFromServer()', 60*1000);
 });
+//]]>
 </script>

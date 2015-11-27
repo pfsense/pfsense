@@ -138,8 +138,9 @@ if (!$nentries) {
 					}
 					asort($pool_hosts);
 					foreach ((array) $pool_hosts as $server) {
-						if(empty($server['ip']['addr']))
+						if (empty($server['ip']['addr'])) {
 							continue;
+						}
 
 						switch ($server['ip']['state']) {
 							case 'up':
@@ -158,7 +159,7 @@ if (!$nentries) {
 				<tr class="bg-<?=$bgcolor?>">
 					<td><?=$server['ip']['addr']?>:<?=$pool['port']?></td>
 					<td>
-						<?php if($server['ip']['avail']): ?>
+						<?php if ($server['ip']['avail']): ?>
 						({$server['ip']['avail']})
 						<?php endif; ?>
 					</td>

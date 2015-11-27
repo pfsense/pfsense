@@ -81,9 +81,9 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name") . "</th>\n");
-	print(		"<th>RTT</td>\n");
-	print(		"<th>" . gettext("Loss") . "</td>\n");
-	print(		"<th>" . gettext("Status") . "</td>\n");
+	print(		"<th>RTT</th>\n");
+	print(		"<th>" . gettext("Loss") . "</th>\n");
+	print(		"<th>" . gettext("Status") . "</th>\n");
 	print(	"</tr>\n");
 	print("</thead>\n");
 	print("<tbody>\n");
@@ -194,7 +194,7 @@ if ($_POST) {
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 
 	function get_gw_stats() {

@@ -67,7 +67,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
 // Compose the table contents and pass it back to the ajax caller
-if($_REQUEST && $_REQUEST['ajax']) {
+if ($_REQUEST && $_REQUEST['ajax']) {
 
 	$rows = array(
 		'inpkts' => 'Packets In',
@@ -100,8 +100,9 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		foreach ($ifdescrs as $ifdescr => $ifname) {
 			$ifinfo = get_interface_info($ifdescr);
 
-			if ($ifinfo['status'] == "down")
+			if ($ifinfo['status'] == "down") {
 				continue;
+			}
 
 			$ifinfo['inbytes'] = format_bytes($ifinfo['inbytes']);
 			$ifinfo['outbytes'] = format_bytes($ifinfo['outbytes']);
@@ -121,7 +122,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 
 	function get_if_stats() {

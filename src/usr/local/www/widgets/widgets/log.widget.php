@@ -113,15 +113,18 @@ if (isset($_POST['lastsawtime'])) {
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
 
 	foreach ($filterlog as $idx => $row) {
-		if (strtotime($log_row['time']) <= $_POST['lastsawtime'])
+		if (strtotime($log_row['time']) <= $_POST['lastsawtime']) {
 			unset($filterlog[$idx]);
+		}
 	}
-}
-else
+} else {
 	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
+}
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	var logWidgetLastRefresh = <?=time()?>;
+//]]>
 </script>
 
 
@@ -146,14 +149,15 @@ else
 			$dstIP = htmlspecialchars($filterent['dstip']);
 		}
 
-		if ($filterent['act'] == "block")
+		if ($filterent['act'] == "block") {
 			$iconfn = "times";
-		else if ($filterent['act'] == "reject")
+		} else if ($filterent['act'] == "reject") {
 			$iconfn = "hand-stop-o";
-		else if ($filterent['act'] == "match")
+		} else if ($filterent['act'] == "match") {
 			$iconfn = "filter";
-		else
+		} else {
 			$iconfn = "check";
+		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 
@@ -186,11 +190,13 @@ else
 <?php
 
 /* for AJAX response, we only need the panel-body */
-if (isset($_GET['lastsawtime']))
+if (isset($_GET['lastsawtime'])) {
 	exit;
+}
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function logWidgetUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -210,6 +216,7 @@ function logWidgetUpdateFromServer(){
 events.push(function(){
 	setInterval('logWidgetUpdateFromServer()', 60*1000);
 });
+//]]>
 </script>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -260,7 +267,8 @@ events.push(function(){
 		</div>
 	</form>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 if (typeof getURL == 'undefined') {
 	getURL = function(url, callback) {
 		if (!url)
@@ -301,5 +309,5 @@ if (typeof getURL == 'undefined') {
 function outputrule(req) {
 	alert(req.content);
 }
-
+//]]>
 </script>

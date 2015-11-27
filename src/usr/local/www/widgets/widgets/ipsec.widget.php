@@ -66,7 +66,7 @@ require_once("functions.inc");
 require_once("ipsec.inc");
 
 // Compose the table contents and pass it back to the ajax caller
-if($_REQUEST && $_REQUEST['ajax']) {
+if ($_REQUEST && $_REQUEST['ajax']) {
 
 	if (isset($config['ipsec']['phase1'])) {
 		$spd = ipsec_dump_spd();
@@ -213,9 +213,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
-			<th>Active Tunnels</td>
-			<th>Inactive Tunnels</td>
-			<th>Mobile Users</td>
+			<th>Active Tunnels</th>
+			<th>Inactive Tunnels</th>
+			<th>Mobile Users</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -262,7 +262,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 // so now it lives here. It wouldn't hurt to update this functions and the tab display, but it
 // looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 
 curtab = "Overview";

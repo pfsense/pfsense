@@ -121,7 +121,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_la = $gps_vars[4];
 				$gps_lo = $gps_vars[6];
-			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
+			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok	 = $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
@@ -137,7 +137,7 @@ if ($_REQUEST['updateme']) {
 				$gps_sat = $gps_vars[7];
 				$gps_la = $gps_vars[3];
 				$gps_lo = $gps_vars[5];
-			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
+			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok	 = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
@@ -157,9 +157,9 @@ if ($_REQUEST['updateme']) {
 	if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
 		//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
 		$gpsport = fopen("/dev/gps0", "r+");
-		while($gpsport){
+		while ($gpsport) {
 			$buffer = fgets($gpsport);
-			if(substr($buffer, 0, 6)=='$GPGSV'){
+			if (substr($buffer, 0, 6)=='$GPGSV') {
 				//echo $buffer."\n";
 				$gpgsv = explode(',',$buffer);
 				$gps_satview = $gpgsv[3];
@@ -173,7 +173,11 @@ if ($_REQUEST['updateme']) {
 	<tr>
 		<th>Server Time</th>
 		<td id="ClockTime"> <!-- ntpStatusClock -->
-			<script>var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');</script>
+			<script type="text/javascript">
+			//<![CDATA[
+			var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');
+			//]]>
+			</script>
 			<!-- display initial value before javascript takes over -->
 			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
 		</td>
@@ -218,7 +222,8 @@ if ($_REQUEST['updateme']) {
 	exit;
 }
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function ntpWidgetUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -241,7 +246,9 @@ function ntpWidgetUpdateDisplay(){
 
 	$('#ntpStatusClock').html(ntpServerTime.toString());
 }
+//]]>
 </script>
+
 <script type="text/javascript">
 //<![CDATA[
 /* set up variables used to init clock in BODY's onLoad handler;
@@ -255,7 +262,6 @@ function clockInit() {
 }
 //]]>
 </script>
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -492,7 +498,7 @@ clockUpdate();
 	</tbody>
 </table>
 -->
-<div id='ntpstatus'>
+<div id="ntpstatus">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
 	<tbody>
 		<tr>

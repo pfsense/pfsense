@@ -303,8 +303,8 @@ $filesystems = get_mounted_filesystems();
 	</tbody>
 </table>
 
-<script>
-
+<script type="text/javascript">
+//<![CDATA[
 function systemStatusGetUpdateStatus() {
 	$.ajax({
 		type: 'get',
@@ -530,5 +530,5 @@ function widgetActive(x) {
 events.push(function(){
 	setTimer();
 });
-
+//]]>
 </script>

@@ -56,6 +56,7 @@ usage() {
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
+	echo "	-n          - Dry run)" >&2
 	echo "	-p socket   - Write pkg progress to socket"
 	echo "	-R          - Do not reboot (this can be dangerous)"
 	echo "	-y          - Assume yes as the answer to any possible interaction" >&2
@@ -296,6 +297,11 @@ pkg_upgrade() {
 
 		if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
 			_echo "Your packages are up to date"
+			_exit 0
+		fi
+
+		if [ -n "${dry_run}" ]; then
+			pkg ${pkg_chroot} upgrade -nq 2>&1 | tee -a ${logfile}
 			_exit 0
 		fi
 
@@ -689,6 +695,7 @@ fi
 export pkg_chroot=""
 export chroot_dir=""
 
+unset dry_run
 unset dont_reboot
 unset booting
 unset boot_stage
@@ -700,7 +707,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:cdfi:hp:l:r:Ruy opt; do
+while getopts 46b:cdfi:hp:l:nr:Ruy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -747,6 +754,9 @@ while getopts 46b:cdfi:hp:l:r:Ruy opt; do
 				usage
 				_exit 1
 			fi
+			;;
+		n)
+			dry_run=1
 			;;
 		p)
 			progress_socket="${OPTARG}"

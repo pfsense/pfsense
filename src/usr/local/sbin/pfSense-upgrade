@@ -56,7 +56,7 @@ usage() {
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
-	echo "	-n          - Dry run)" >&2
+	echo "	-n          - Dry run" >&2
 	echo "	-p socket   - Write pkg progress to socket"
 	echo "	-R          - Do not reboot (this can be dangerous)"
 	echo "	-y          - Assume yes as the answer to any possible interaction" >&2

@@ -243,6 +243,21 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
+$tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
+
+foreach ($iflist as $ifent => $ifname)
+	$tab_array[] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
+
+foreach ($tab_array as $dtab) {
+	if($dtab[1]) {
+		$bctab = $dtab[0];
+		break;
+	}
+}
+
+$pgtitle = array(gettext("Firewall"), gettext("Rules"), $bctab);
+$shortcut_section = "firewall";
+
 include("head.inc");
 $nrules = 0;
 
@@ -252,10 +267,7 @@ if ($savemsg)
 if (is_subsystem_dirty('filter'))
 	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
 
-$tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
 
-foreach ($iflist as $ifent => $ifname)
-	$tab_array[] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
 
 display_top_tabs($tab_array);
 

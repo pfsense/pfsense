@@ -273,7 +273,8 @@ $section->addInput(new Form_Input(
 	'port',
 	'Listen Port',
 	'text',
-	$pconfig['port']
+	$pconfig['port'],
+	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
 $activeiflist = build_if_list($pconfig['active_interface']);

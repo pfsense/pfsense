@@ -273,7 +273,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'port',
 	'Listen Port',
-	'text',
+	'number',
 	$pconfig['port'],
 	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');

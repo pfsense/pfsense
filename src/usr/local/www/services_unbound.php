@@ -176,6 +176,7 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			$a_unboundcfg['enable'] = isset($pconfig['enable']);
+			$a_unboundcfg['port'] = $pconfig['port'];
 			$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
@@ -272,8 +273,9 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'port',
 	'Listen Port',
-	'text',
-	$pconfig['port']
+	'number',
+	$pconfig['port'],
+	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
 $activeiflist = build_if_list($pconfig['active_interface']);

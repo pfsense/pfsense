@@ -184,11 +184,9 @@ display_top_tabs($tab_array);
 events.push(function(){
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
-		if(confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')) {
-			$('#act').val('del');
-			$('#id').val(this.id.replace("del-", ""));
-			$(this).parents('form').submit();
-		}
+		$('#act').val('del');
+		$('#id').val(this.id.replace("del-", ""));
+		$(this).parents('form').submit();
 	});
 });
 //]]>

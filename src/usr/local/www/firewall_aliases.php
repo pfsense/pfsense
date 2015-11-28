@@ -184,7 +184,13 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 	}
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"));
+$tab_array = array();
+$tab_array['ip'] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
+$tab_array['port'] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
+$tab_array['url'] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
+$tab_array['all'] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
+
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"),$tab_array[$tab][0] );
 $shortcut_section = "aliases";
 
 include("head.inc");
@@ -195,11 +201,6 @@ if ($savemsg)
 if (is_subsystem_dirty('aliases'))
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 
-$tab_array = array();
-$tab_array[] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
-$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
-$tab_array[] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
-$tab_array[] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 display_top_tabs($tab_array);
 
 ?>

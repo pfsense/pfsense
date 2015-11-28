@@ -552,7 +552,11 @@ function build_link_list() {
 	$linklist = array('list'	 => array(),
 					  'selected' => array());
 
-	$selected_ports = explode(',',$pconfig['interfaces']);
+	$selected_ports = array();
+
+	if($pconfig['interfaces']) {
+		$selected_ports = explode(',',$pconfig['interfaces']);
+	}
 
 	if (!is_dir("/var/spool/lock"))
 		mwexec("/bin/mkdir -p /var/spool/lock");
@@ -665,7 +669,7 @@ $section->addInput(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
-	$pconfig['passwordfld']
+	$pconfig['password']
 ));
 
 // These elements are hidden by default, and un-hidden in Javascript

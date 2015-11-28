@@ -975,6 +975,47 @@ function build_flag_table() {
 	return($flagtable);
 }
 
+function build_if_list() {
+	global $config;
+
+	$iflist = array();
+
+	// add group interfaces
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			if (have_ruleint_access($ifgen['ifname'])) {
+				$iflists[$ifgen['ifname']] = $ifgen['ifname'];
+			}
+		}
+	}
+
+	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$iflist[$ifent] = $ifdesc;
+		}
+	}
+
+	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
+		$iflist['l2tp'] = 'L2TP VPN';
+	}
+
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+		$iflist['pppoe'] = "PPPoE Server";
+	}
+
+	// add ipsec interfaces
+	if (ipsec_enabled() && have_ruleint_access("enc0")) {
+		$iflist["enc0"] = "IPsec";
+	}
+
+	// add openvpn/tun interfaces
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+		$iflist["openvpn"] = "OpenVPN";
+	}
+
+	return($iflist);
+}
+
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
 $shortcut_section = "firewall";
 
@@ -1103,48 +1144,24 @@ if ($edit_disabled)
 	}
 }
 
-$interfaces = array();
-
-// add group interfaces
-if (is_array($config['ifgroups']['ifgroupentry']))
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen)
-		if (have_ruleint_access($ifgen['ifname']))
-			$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
-
-foreach (get_configured_interface_with_descr() as $ifent => $ifdesc)
-{
-	if (have_ruleint_access($ifent))
-		$interfaces[$ifent] = $ifdesc;
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$section->addInput($input = new Form_Select(
+		'interface',
+		'Interface',
+		explode(",", $pconfig['interface']),
+		build_if_list(),
+		true
+	))->setHelp('Choose the interface(s) for this rule.');
+} else {
+	$section->addInput($input = new Form_Select(
+		'interface',
+		'Interface',
+		$pconfig['interface'],
+		build_if_list()
+	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
-if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp"))
-	$interfaces['l2tp'] = 'L2TP VPN';
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-	$interfaces['pppoe'] = "PPPoE Server";
-
-// add ipsec interfaces
-if (ipsec_enabled() && have_ruleint_access("enc0"))
-	$interfaces["enc0"] = "IPsec";
-
-// add openvpn/tun interfaces
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-	$interfaces["openvpn"] = "OpenVPN";
-
-$section->addInput($input = new Form_Select(
-	'interface',
-	'Interface',
-	$pconfig['interface'],
-	$interfaces,
-	($if == "FloatingRules" || isset($pconfig['floating']))
-))->setHelp('Choose on which interface packets must come in to match this '.
-	'rule.');
-
-if ($if == "FloatingRules" || isset($pconfig['floating']))
-	$input->setHelp('Choose the interface(s) for this rule.');
-
-if ($if == "FloatingRules" || isset($pconfig['floating']))
-{
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput(new Form_Select(
 		'direction',
 		'Direction',

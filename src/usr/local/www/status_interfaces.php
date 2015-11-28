@@ -103,7 +103,7 @@ function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
 	if($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifvalue, $show, htmlspecialchars($def)	. ' ', $btnlbl);
+		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl);
 		print('</dd>');
 	}
 }

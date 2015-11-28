@@ -176,6 +176,7 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			$a_unboundcfg['enable'] = isset($pconfig['enable']);
+			$a_unboundcfg['port'] = $pconfig['port'];
 			$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);

@@ -198,7 +198,7 @@ print($form);
 
 <div class="panel panel-body alert-info" id="pdesc">Select a privilege from the list above for a description"</div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

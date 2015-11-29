@@ -98,7 +98,8 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('a[data-entry]').on('click', function(){
 		var el = $(this);
@@ -119,6 +120,7 @@ events.push(function(){
 		});
 	});
 });
+//]]>
 </script>
 
 <?php

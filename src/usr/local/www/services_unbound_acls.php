@@ -359,7 +359,7 @@ else // NOT 'edit' or 'add'
 	</a>
 </nav>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Suppress "Delete row" button if there are fewer than two rows

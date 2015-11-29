@@ -171,7 +171,8 @@ $form->add($section);
 print $form;
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function getpftopactivity() {
 		$.ajax(
 			'/diag_system_pftop.php',
@@ -190,6 +191,7 @@ print $form;
 		setInterval('getpftopactivity()', 2500);
 		getpftopactivity();
 	});
+//]]>
 </script>
 <?php
 ?>
@@ -200,7 +202,8 @@ print $form;
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('#viewtype').on('change', function(){
 		if (['queue', 'label', 'rules'].indexOf($(this).val()) > -1)
@@ -209,5 +212,6 @@ events.push(function(){
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
 	});
 });
+//]]>
 </script>
 <?php include("foot.inc");

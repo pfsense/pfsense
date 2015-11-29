@@ -949,7 +949,7 @@ endif;
 	</a>
 </nav>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

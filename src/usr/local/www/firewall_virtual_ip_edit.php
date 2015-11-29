@@ -483,7 +483,7 @@ print($form);
 			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), info)?>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

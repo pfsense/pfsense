@@ -1669,7 +1669,7 @@ $form->add($section);
 echo $form;
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

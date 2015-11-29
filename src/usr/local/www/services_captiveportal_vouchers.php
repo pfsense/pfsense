@@ -638,7 +638,8 @@ print($form);
 ?>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 
 	// Hides all elements of the specified class. This will usually be a section or group
@@ -680,6 +681,6 @@ events.push(function(){
 	});
 	generateButton.appendTo($('#publickey + .help-block')[0]);
 });
-
+//]]>
 </script>
 <?php include("foot.inc");

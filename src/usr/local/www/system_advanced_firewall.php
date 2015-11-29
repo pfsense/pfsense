@@ -743,7 +743,7 @@ $section->add($group);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Change help text based on the selector value

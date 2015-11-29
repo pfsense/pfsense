@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div id="countdown" style="text-align: center;"></div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	function startCountdown(time) {

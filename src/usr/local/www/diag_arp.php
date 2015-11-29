@@ -372,7 +372,7 @@ $mac_man = load_mac_manufacturer_table();
 	</table>
 </div>
 
-<script>
+<script type="text/javascript>
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
 events.push(function(){

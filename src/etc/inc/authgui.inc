@@ -228,7 +228,11 @@ if ($local_ip == false) {
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
 	<title><?=gettext("Login"); ?></title>
-	<script>var events = events || [];</script>
+	<script type="text/javascript>
+	//<![CDATA{
+	var events = events || [];
+	//]]>
+	</script>
 </head>
 <body id="login" class="no-menu">
 	<div id="jumbotron">
@@ -280,7 +284,8 @@ if ($local_ip == false) {
 			</div>
 		</div>
 
-		<script>
+		<script type="text/javascript">
+		//!<[CDATA[
 		events.push(function() {
 			document.cookie=
 				"cookie_test=1" +
@@ -294,6 +299,7 @@ if ($local_ip == false) {
 			// Delete it
 			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
 		});
+		//]]>
 		</script>
 <?php
 require('foot.inc');

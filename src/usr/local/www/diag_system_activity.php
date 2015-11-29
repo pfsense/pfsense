@@ -81,7 +81,8 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function getcpuactivity() {
 	$.ajax(
 		'/diag_system_activity.php',
@@ -102,6 +103,7 @@ events.push(function(){
 	setInterval('getcpuactivity()', 2500);
 	getcpuactivity();
 });
+//]]>
 </script>
 
 <div class="panel panel-default">

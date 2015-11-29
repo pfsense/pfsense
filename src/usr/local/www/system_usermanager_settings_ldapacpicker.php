@@ -106,6 +106,7 @@ if ($_GET) {
 		</STYLE>
 	</head>
 <script type="text/javascript">
+//<![CDATA[
 function post_choices() {
 
 	var ous = <?php echo count($ous); ?>;
@@ -122,6 +123,7 @@ function post_choices() {
 	window.close();
 -->
 }
+//]]>
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >

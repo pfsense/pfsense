@@ -716,7 +716,8 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
 
 	// Make rules sortable
@@ -732,6 +733,7 @@ events.push(function() {
 	   $('[id^=frc]').prop('checked', true);
 	});
 });
+//]]>
 </script>
 
 <?php include("foot.inc");?>

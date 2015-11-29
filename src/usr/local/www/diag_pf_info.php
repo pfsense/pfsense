@@ -111,7 +111,8 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function getpfinfo() {
 		if (!$('#refresh').is(':checked'))
 			return;
@@ -131,6 +132,7 @@ print $form;
 		setInterval('getpfinfo()', 2500);
 		getpfinfo();
 	});
+//]]>
 </script>
 
 <div class="panel panel-default">

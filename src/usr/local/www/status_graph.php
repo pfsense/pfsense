@@ -204,7 +204,8 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 
 function updateBandwidth(){
 	$.ajax(
@@ -242,6 +243,7 @@ events.push(function(){
 
 	updateBandwidth();
 });
+//]]>
 </script>
 <?php
 

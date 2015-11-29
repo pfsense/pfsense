@@ -305,7 +305,7 @@ print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
     // --------- Autocomplete -----------------------------------------------------------------------------------------

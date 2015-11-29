@@ -77,7 +77,7 @@ if (is_subsystem_dirty('packagelock')) {
 
 $closehead = false;
 
-$pgtitle = array(gettext("System"), gettext("Package Manager"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"),gettext("Installed Packages"));
 
 include("head.inc");
 

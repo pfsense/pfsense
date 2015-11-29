@@ -107,7 +107,7 @@ if ($_POST) {
 $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
-$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Settings"));
+$pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 $closehead = false;
 
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
@@ -125,7 +125,7 @@ if ($savemsg)
 
 $tab_array = array();
 $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
-$tab_array[] = array(gettext("System update"), false, "pkg_mgr_install.php?id=firmware");
+$tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=firmware");
 display_top_tabs($tab_array);
 
 $form = new Form();

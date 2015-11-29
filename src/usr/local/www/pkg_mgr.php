@@ -82,7 +82,7 @@ if(is_subsystem_dirty('packagelock')) {
 
 $pkg_info = get_pkg_info();
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Available Packages"));
 
 include("head.inc");
 

@@ -247,23 +247,23 @@ if ($_POST) {
 if($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
 	$firmwareversion = get_system_pkg_version();
+	$headline = gettext("System update") ;
 }
-
-$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
-include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
-$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
+
 if($firmwareupdate) {
-	$tab_array[] = array(gettext("System update"), true, "");
+	$pgtitle = array(gettext("System"),gettext("Update"), $headline);
+	$tab_array[] = array(gettext("System Update"), true, "");
+	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
+	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
+	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
 }
-if($firmwareupdate) {
-	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
-}
 
+include("head.inc");
 display_top_tabs($tab_array);
 
 if ($input_errors)

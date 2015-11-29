@@ -1274,7 +1274,7 @@
 					if ($successful_update == true) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
-						$status = "phpDynDNS: (Error) Result did not match.";
+						$status = "phpDynDNS: (Error) Result did not match. [$data]";
 					}
 					break;
 				case 'cloudflare':

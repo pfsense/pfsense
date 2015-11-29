@@ -3759,7 +3759,7 @@ EOD;
 					$form .= "<option value=\"{$bwsidx}\"";
 
 					if ($bw['bwscale'] == $bwsidx) {
-						$form .= " selected=\"selected\"";
+						$form .= " selected";
 					}
 
 					$form .= ">{$bwscale}</option>";
@@ -3773,7 +3773,7 @@ EOD;
 				foreach ($schedules as $schd) {
 					$selected = "";
 					if ($bw['bwsched'] == $schd) {
-						$selected = "selected=\"selected\"";
+						$selected = "selected";
 					}
 
 					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";

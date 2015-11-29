@@ -962,7 +962,7 @@ function print_rfc2616_select($tag, $current) {
 	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";
 	foreach ($rfc2616 as $code => $message) {
 		if ($code == $current) {
-			$sel = " selected=\"selected\"";
+			$sel = " selected";
 		} else {
 			$sel = "";
 		}
@@ -1060,7 +1060,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 
 		foreach ($tab_array as $ta) {
 			if ($ta[1] == "true")
-				$selected = " selected=\"selected\"";
+				$selected = " selected";
 			else
 				$selected = "";
 			// Onclick in option will not work in some browser

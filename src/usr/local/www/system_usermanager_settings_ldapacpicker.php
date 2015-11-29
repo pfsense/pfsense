@@ -140,7 +140,7 @@ function post_choices() {
 	if (is_array($ous)) {
 		foreach ($ous as $ou) {
 			if (in_array($ou, $authcfg['ldap_authcn'])) {
-				$CHECKED=" CHECKED";
+				$CHECKED=" checked";
 			} else {
 				$CHECKED="";
 			}

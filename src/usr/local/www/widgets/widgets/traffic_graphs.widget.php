@@ -165,7 +165,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<div class="col-sm-6 checkbox">
 <?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
 			<label>
-				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked=\"checked\"":""?> />
+				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
 				<?=$ifname?>
 			</label>
 <?php endforeach; ?>
@@ -175,11 +175,11 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<label for="scale_type_up" class="col-sm-3 control-label">Default Autoscale</label>
 		<div class="col-sm-6 checkbox">
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked="checked"')?> />
+				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked')?> />
 				up
 			</label>
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked="checked"' : '')?> />
+				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked' : '')?> />
 				follow
 			</label>
 		</div>

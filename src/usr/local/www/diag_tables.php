@@ -166,6 +166,7 @@ events.push(function(){
 		<thead>
 			<tr>
 				<th><?=gettext("IP Address")?></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>

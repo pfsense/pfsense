@@ -145,7 +145,7 @@ foreach ($a_ppps as $pppid => $ppp) {
 	}
 }
 
-$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled="disabled"' : '';
+$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled' : '';
 
 if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;

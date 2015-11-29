@@ -181,7 +181,7 @@ endforeach;
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
-	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled">
+	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled">
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>

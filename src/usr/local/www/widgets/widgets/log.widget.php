@@ -239,11 +239,11 @@ events.push(function(){
 			<div class="col-sm-6 checkbox">
 			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
 			<label><input name="actpass" type="checkbox" value="Pass"
-					<?=(in_array('pass', $include_acts) ? 'checked="checked"':'')?> />Pass</label>
+					<?=(in_array('pass', $include_acts) ? 'checked':'')?> />Pass</label>
 				<label><input name="actblock" type="checkbox" value="Block"
-					<?=(in_array('block', $include_acts) ? 'checked="checked"':'')?> />Block</label>
+					<?=(in_array('block', $include_acts) ? 'checked':'')?> />Block</label>
 				<label><input name="actreject" type="checkbox" value="Reject"
-					<?=(in_array('reject', $include_acts) ? 'checked="checked"':'')?> />Reject</label>
+					<?=(in_array('reject', $include_acts) ? 'checked':'')?> />Reject</label>
 			</div>
 		</div>
 
@@ -254,7 +254,7 @@ events.push(function(){
 				<select name="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
-						<?=($nentriesinterfaces==$iface?'selected="selected"':'')?>><?=htmlspecialchars($ifacename)?></option>
+						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>
 			</select>
 			</div>

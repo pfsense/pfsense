@@ -334,7 +334,7 @@ if ($savemsg)
 					echo "Filter field: <select name='pkg_filter_type'>";
 					foreach ($field['sortablefields']['item'] as $si) {
 						if ($si['name'] == $_REQUEST['pkg_filter_type']) {
-							$SELECTED = "selected=\"selected\"";
+							$SELECTED = "selected";
 						} else {
 							$SELECTED = "";
 						}
@@ -377,7 +377,7 @@ if ($savemsg)
 		echo "<td align='right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
 		for ($x = 0; $x < 250; $x++) {
 			if ($x == $display_maximum_rows) {
-				$SELECTED = "selected=\"selected\"";
+				$SELECTED = "selected";
 			} else {
 				$SELECTED = "";
 			}

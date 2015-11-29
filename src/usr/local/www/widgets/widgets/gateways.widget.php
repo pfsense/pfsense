@@ -227,23 +227,23 @@ if ($_POST) {
 	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
 		Display:
 			<?php
-				$display_type_gw_ip="checked=\"checked\"";
+				$display_type_gw_ip="checked";
 				$display_type_monitor_ip="";
 				$display_type_both_ip="";
 				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
 					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
 					if ($selected_radio == "gw_ip") {
-						$display_type_gw_ip = "checked=\"checked\"";
+						$display_type_gw_ip = "checked";
 						$display_type_monitor_ip="";
 						$display_type_both_ip="";
 					} else if ($selected_radio == "monitor_ip") {
 						$display_type_gw_ip = "";
-						$display_type_monitor_ip="checked=\"checked\"";
+						$display_type_monitor_ip="checked";
 						$display_type_both_ip="";
 					} else if ($selected_radio == "both_ip") {
 						$display_type_gw_ip = "";
 						$display_type_monitor_ip="";
-						$display_type_both_ip="checked=\"checked\"";
+						$display_type_both_ip="checked";
 					}
 				}
 			?>

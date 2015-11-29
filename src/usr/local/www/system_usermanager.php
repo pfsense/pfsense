@@ -490,7 +490,7 @@ foreach($a_user as $i => $userent):
 	?>
 			<tr>
 				<td>
-					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled="disabled"' : '')?>/>
+					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
 				</td>
 				<td>
 <?php
@@ -577,7 +577,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$ro = "";
 	if ($pconfig['utype'] == "system") {
-		$ro = "readonly=\"readonly\"";
+		$ro = "readonly";
 	}
 
 	$section = new Form_Section('User Properties');

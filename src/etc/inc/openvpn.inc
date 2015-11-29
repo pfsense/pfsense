@@ -201,7 +201,7 @@ function openvpn_build_cert_list($include_none = false) {
 			$caname = " (CA: {$ca['descr']})";
 
 		if ($pconfig['certref'] == $cert['refid'])
-			$selected = "selected=\"selected\"";
+			$selected = "selected";
 
 		if (cert_in_use($cert['refid']))
 			$inuse = " *In Use";

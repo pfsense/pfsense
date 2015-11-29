@@ -950,14 +950,14 @@ function build_flag_table() {
 		$tcpflags1 .= "<td> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
 
 		if (array_search($tcpflag, $setflags) !== false) {
-			$tcpflags1 .= "checked=\"checked\"";
+			$tcpflags1 .= "checked";
 		}
 
 		$tcpflags1 .= " /></td>\n";
 		$tcpflags2 .= "<td> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
 
 		if (array_search($tcpflag, $outofflags) !== false) {
-			$tcpflags2 .= "checked=\"checked\"";
+			$tcpflags2 .= "checked";
 		}
 
 		$tcpflags2 .= " /></td>\n";
@@ -969,7 +969,7 @@ function build_flag_table() {
 	$flagtable .=  "</table>";
 
 	$flagtable .= '<input type="checkbox" name="tcpflags_any" id="tcpflags_any" value="on"';
-	$flagtable .= $pconfig['tcpflags_any'] ? 'checked="checked"':'' . '/>';
+	$flagtable .= $pconfig['tcpflags_any'] ? 'checked':'' . '/>';
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);

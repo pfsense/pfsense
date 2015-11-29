@@ -161,7 +161,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			<?=gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?")?>
 			<i><?=gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.")?></i>
 		</p>
-		<textarea readonly="readonly" style="width: 100%; height: 350px;">
+		<textarea readonly style="width: 100%; height: 350px;">
 			<?=$crash_reports?>
 		</textarea>
 		<form action="crash_reporter.php" method="post">

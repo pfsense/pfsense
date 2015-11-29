@@ -104,6 +104,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 							continue;
 
 						$j = 0;
+						print("<tr>\n");
 						foreach (explode(' ', $line) as $entry) {
 							if ($entry == '' || $entry == "ADDRESS")
 								continue;

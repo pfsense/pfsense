@@ -30,7 +30,7 @@ class Form_Input extends Form_Element
 {
 	public $column;
 	protected $_tagName = 'input';
-	protected $_tagSelfClosing = true;
+	protected $_tagSelfClosing = false;
 	protected $_attributes = array(
 		'class' => array('form-control' => true),
 		'name' => null,

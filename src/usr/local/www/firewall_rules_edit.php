@@ -984,7 +984,7 @@ function build_if_list() {
 	if (is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			if (have_ruleint_access($ifgen['ifname'])) {
-				$iflists[$ifgen['ifname']] = $ifgen['ifname'];
+				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 			}
 		}
 	}
@@ -1098,7 +1098,7 @@ $section->addInput(new Form_Checkbox(
 if ($if == "FloatingRules" || isset($pconfig['floating']))
 {
 	$section->addInput(new Form_Checkbox(
-		'floating',
+		'quick',
 		'Quick',
 		'Apply the action immediately on match.',
 		$pconfig['quick']
@@ -1509,7 +1509,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
-	$pconfig['statetype'],
+	(isset($pconfig['statetype'])) ? "keep state":$pconfig['statetype'],
 	array(
 		'keep state' => 'Keep',
 		'sloppy state' => 'Sloppy',
@@ -1526,7 +1526,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
 
-$vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc");
+$vlanprio = array("" => "none", "be" => "BE", "bk" => "BK", "ee" => "EE", "ca" => "CA", "vi" => "VI", "vo" => "VO", "ic" => "IC", "nc" => "NC");
+
 $section->addInput(new Form_Select(
 	'vlanprio',
 	'VLAN Prio',

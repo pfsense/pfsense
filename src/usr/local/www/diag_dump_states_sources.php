@@ -100,7 +100,8 @@ display_top_tabs($tab_array);
 
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('a[data-entry]').on('click', function(){
 		var el = $(this);
@@ -121,6 +122,7 @@ events.push(function(){
 		});
 	});
 });
+//]]>
 </script>
 
 <?php

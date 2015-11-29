@@ -586,7 +586,7 @@ if($act=="new" || $act=="edit"):
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

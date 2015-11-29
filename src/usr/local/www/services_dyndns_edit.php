@@ -417,7 +417,7 @@ print($form);
 // Certain input elements are hidden/shown based on the service type in the following script
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

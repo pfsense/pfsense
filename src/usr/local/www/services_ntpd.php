@@ -498,13 +498,14 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	// If this variable is declared, any help text will not be deleted when rows are added
 	// IOW the help text will appear on every row
 	retainhelp = true;
 </script>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

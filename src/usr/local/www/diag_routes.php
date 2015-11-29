@@ -138,7 +138,8 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print $form;
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function update_routes(section) {
 	$.ajax(
 		'/diag_routes.php',
@@ -207,6 +208,7 @@ events.push(function(){
 		e.preventDefault();
 	});
 });
+//]]>
 </script>
 
 <div class="panel panel-default">

@@ -212,7 +212,7 @@ if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Update firmwareurl from preseturls or from the saved alternate if "Unofficial" is checked

@@ -86,7 +86,11 @@ if (isset($config['system']['webgui']['webguicss'])) {
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
-	<script>var events = events || [];</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var events = events || [];
+	//]]>
+	</script>
 </head>
 
 <?php
@@ -562,7 +566,7 @@ if (are_notices_pending()):?>
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
 	    $('#clearallnotices').click(function() {

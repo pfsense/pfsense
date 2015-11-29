@@ -129,7 +129,8 @@ $closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	// Create recall buffer array (of encoded strings).
 <?php
 
@@ -304,11 +305,13 @@ if (!isBlank($_POST['txtCommand'])):?>
 		puts("&nbsp;</pre>");
 		puts("</div>");
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	events.push(function(){
 		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
 		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
 	});
+//]]>
 </script>
 <?php
 }

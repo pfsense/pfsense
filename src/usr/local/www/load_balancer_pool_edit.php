@@ -481,7 +481,7 @@ $form->add($section);
 
 print($form);
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

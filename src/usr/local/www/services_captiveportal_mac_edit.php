@@ -296,7 +296,7 @@ $form->add($section);
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Make the ‘Copy My MAC’ button a plain button, not a submit button

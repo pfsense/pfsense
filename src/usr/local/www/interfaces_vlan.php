@@ -179,7 +179,7 @@ display_top_tabs($tab_array);
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
 		'%s handbook for information on supported cards.'),$g['product_name']), info)?>
 </div>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit

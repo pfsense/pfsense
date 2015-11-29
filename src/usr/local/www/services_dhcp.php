@@ -1348,7 +1348,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 }
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

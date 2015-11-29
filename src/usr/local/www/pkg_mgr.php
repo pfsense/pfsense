@@ -233,7 +233,7 @@ endif;?>
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

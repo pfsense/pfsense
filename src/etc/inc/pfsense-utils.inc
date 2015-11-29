@@ -1791,9 +1791,11 @@ function update_output_window($text) {
 	$log = preg_replace("/\n/", "\\n", $text);
 	if ($pkg_interface != "console") {
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	document.getElementById("output").textContent="<?=htmlspecialchars($log)?>";
 	document.getElementById("output").scrollTop = document.getElementById("output").scrollHeight;
+//]]>
 </script>
 <?php
 	}
@@ -1824,7 +1826,11 @@ function update_progress_bar($percent, $first_time) {
 		$percent = 1;
 	}
 	if ($pkg_interface <> "console") {
-		echo '<script>document.getElementById("progressbar").style.width="'. $percent.'%";</script>';
+		echo '<script type="text/javascript">';
+		echo "\n//<![CDATA[\n";
+		echo 'document.getElementById("progressbar").style.width="'. $percent.'%";'
+		echo "\n//]]>\n";
+		echo '</script>';
 	} else {
 		if (!($first_time)) {
 			echo "\x08\x08\x08\x08\x08";

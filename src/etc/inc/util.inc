@@ -2232,7 +2232,12 @@ function post_redirect($page, $params) {
 	foreach ($params as $key => $value) {
 		print "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\" />\n";
 	}
-	print "</form><script type=\"text/javascript\">document.formredir.submit();</script>\n";
+	print "</form>\n";
+	print "<script type=\"text/javascript\">\n";
+	print "//<![CDATA[\n";
+	print "document.formredir.submit();\n";
+	print "//]]>\n";
+	print "</script>\n";
 	print "</body></html>\n";
 }
 

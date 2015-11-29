@@ -620,7 +620,8 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 var systemGatewaysEditRecalculate = function(){
 	var interval = $('#interval')[0].value;
 
@@ -669,6 +670,7 @@ events.push(function(){
 
 	systemGatewaysEditRecalculate();
 });
+//]]>
 </script>
 <?php
 

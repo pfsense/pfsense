@@ -134,8 +134,10 @@ if ($savemsg)
 
 if($save_and_test) {
 	echo "<script>\n";
+	echo "//<![CDATA[\n";
 	echo "myRef = window.open('system_usermanager_settings_test.php?authserver=".$pconfig['authmode']."','mywin','left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
 	echo "if (myRef==null || typeof(myRef)=='undefined') alert('" . gettext("Popup blocker detected.  Action aborted.") ."');\n";
+	echo "//]]>\n";
 	echo "</script>\n";
 }
 

@@ -479,7 +479,7 @@ endforeach;
 	</a>
 </nav>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// On clicking the "Apply" button, submit the main form, not the little form the button lives in

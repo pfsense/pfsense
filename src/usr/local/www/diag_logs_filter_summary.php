@@ -144,7 +144,8 @@ function stat_block($summary, $stat, $num) {
 function pie_block($summary, $stat, $num, $chartnum) {
 	global $fields, $segcolors, $gotlines, $numcolors;
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 var pie = new d3pie("pieChart<?=$chartnum?>", {
 	"header": {
 		"title": {
@@ -248,6 +249,7 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 	},
 	"callbacks": {}
 });
+//]]>
 </script>
 <?php
 }

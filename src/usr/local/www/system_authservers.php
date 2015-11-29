@@ -748,7 +748,7 @@ if (isset($id) && $a_server[$id])
 $form->add($section);
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	function select_clicked() {

@@ -421,13 +421,14 @@ if (isset($config['system']['webgui']['webguifixedmenu'])) {
 				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
-						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>
-							<span class="badge"><?=count($notices)?></span>
+						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
+							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i> 
+							<span class="badge bg-danger"><?=count($notices)?></span>
 						</a>
 					</li>
-<?php
-				endif;
-?>
+				<?php
+					endif;
+				?>
 			</ul>
 		</div>
 	</div>

@@ -1590,23 +1590,23 @@ $group = new Form_Group('In / Out pipe');
 $group->add(new Form_Select(
 	'dnpipe',
 	'DNpipe',
-	$pconfig['dnpipe'],
-	array('' => 'none') + array_keys($dnqlist)
+	(isset($pconfig['dnpipe'])) ? $pconfig['dnpipe']:"",
+	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $group->add(new Form_Select(
 	'pdnpipe',
 	'PDNpipe',
-	$pconfig['pdnpipe'],
-	array('' => 'none') + array_keys($dnqlist)
+	(isset($pconfig['pdnpipe'])) ? $pconfig['pdnpipe']:"",
+	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'you have also selected In. The Out selection is applied to traffic leaving '.
-	'the interface where the rule is created, In is applied to traffic coming '.
+	'the interface where the rule is created, It is applied to traffic coming '.
 	'into the chosen interface.<br />If you are creating a floating rule, if the '.
 	'direction is In then the same rules apply, if the direction is out the '.
-	'selections are reverted Out is for incoming and In is for outgoing.'
+	'selections are reversed Out is for incoming and In is for outgoing.'
 );
 
 $group = new Form_Group('Ackqueue / Queue');

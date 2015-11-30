@@ -1828,7 +1828,7 @@ function update_progress_bar($percent, $first_time) {
 	if ($pkg_interface <> "console") {
 		echo '<script type="text/javascript">';
 		echo "\n//<![CDATA[\n";
-		echo 'document.getElementById("progressbar").style.width="'. $percent.'%";';
+		echo 'document.getElementById("progressbar").style.width="'. $percent.'%"';
 		echo "\n//]]>\n";
 		echo '</script>';
 	} else {

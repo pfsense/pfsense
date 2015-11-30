@@ -42,10 +42,6 @@ table.sortable-theme-bootstrap {
 	background-color: #212121 !important;
 }
 
-.navbar {
-	background-color: #000;
-}
-
 .dropdown-menu {
 	background-color: #000;
 	opacity: .93;
@@ -72,9 +68,7 @@ table.sortable-theme-bootstrap {
 }
 
 .nav>li>a {
-    padding: 14px 20px 10px 20px;
     border-bottom: 5px solid #212121;
-    border-radius: 0;
     color: #009688;
 }
 
@@ -97,7 +91,6 @@ table.sortable-theme-bootstrap {
 
 .nav-tabs>li>a {
 	border-bottom: 5px solid #212121;
-	margin-bottom: 1px;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
@@ -106,14 +99,11 @@ table.sortable-theme-bootstrap {
 	border-top: 1px solid #212121;
 	border-bottom: 5px solid #009688;
 	background-color: #212121;
-	margin-bottom: 0;
 	color: #009688;
-	box-shadow: none;
 }
 
 .nav-tabs {
     border-bottom: 1px solid #009688;
-    margin-bottom: 15px;
 }
 
 /* common button colors */
@@ -309,10 +299,6 @@ a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-he
 	background-color: #80CBC4;
 }
 
-a.fa {
-	font-size: 20px;
-}
-
 .icon-embed-btn
 {
 	color: white;
@@ -329,4 +315,8 @@ button.close {
     border: 1px solid #6D4C41;
     border-radius: 5px;
     box-shadow: 1px 1px 1px #6D4C41;
+}
+
+textarea {
+    color: #212121;
 }

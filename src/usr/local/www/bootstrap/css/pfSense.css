@@ -28,10 +28,6 @@ body {
 	margin-bottom: 80px;
 }
 
-.navbar-brand {
-	padding-top: 3px;
-}
-
 body.no-menu #jumbotron {
 	padding: 100px 0;
 	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
@@ -50,6 +46,14 @@ body#index .icons {
 	float: right;
 }
 
+a:hover {
+	text-decoration: none;
+}
+
+a.fa {
+	font-size: 18px;
+}
+
 .ui-sortable-handle {
 	cursor: move;
 }
@@ -63,18 +67,10 @@ tr.disabled th {
 	border: 1px solid #ddd;
 }
 
-.nav-pills {
-	margin-bottom: 20px;
-}
-
 /** Content structure */
 .table-responsive {
 	clear: both;
 	margin-bottom: 0px;
-}
-
-.navbar {
-	margin-bottom: 10px;
 }
 
 .page-header {
@@ -85,6 +81,66 @@ tr.disabled th {
 .breadcrumb {
 	margin-bottom: 10px;
 }
+
+/* navigation */
+.navbar {
+	margin-bottom: 10px;
+}
+
+.navbar-inverse {
+	background-color: #000000;
+}
+
+.navbar-brand {
+	padding-top: 3px;
+}
+
+.nav>li>a {
+    padding: 14px 19px 10px 19px;
+    border-bottom: 5px solid #ffffff;
+    border-radius: 0;
+    color: #B71C1C;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    background-color: #f5f5f5;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav li.open>a, .nav li.open>a:focus, .nav-pills>li.active>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    color: #B71C1C;
+    background-color: #ffffff;
+}
+
+.navbar-nav >li>a {
+	border-bottom: 5px solid #000000;
+}
+
+.nav-tabs>li>a {
+	border-bottom: 5px solid #ffffff;
+	margin-bottom: 1px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
+	border-left: 1px solid #ffffff;
+	border-right: 1px solid #ffffff;
+	border-top: 1px solid #ffffff;
+	border-bottom: 5px solid #B71C1C;
+	margin-bottom: 0;
+	color: #B71C1C;
+	box-shadow: none;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #B71C1C;
+    margin-bottom: 15px;
+}
+
+.nav-pills {
+	margin-bottom: 20px;
+}
+/* end navigation */
 
 .panel-heading {
 	padding: 5px 15px;
@@ -397,13 +453,19 @@ form .btn + .btn {
 /* All pfSense textareas benefit from using a fixed width font **/
 textarea
 {
-	font-family:	consolas,monaco,roboto mono,liberation mono,courier;
+	font-family: monospace;
 	font-size: 12px;
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
 }
 
 @media (max-width: 1200px) {
+	.nav>li>a {
+    	padding: 14px 9px 10px 9px;
+ 	}
+ }
+
+ @media (max-width: 992px) {
 	/* change top navbar from horizontal to vertical */
     .navbar-header {
         float: none;

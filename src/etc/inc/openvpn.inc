@@ -104,6 +104,9 @@ $openvpn_server_modes = array(
 	'server_user' => gettext("Remote Access ( User Auth )"),
 	'server_tls_user' => gettext("Remote Access ( SSL/TLS + User Auth )"));
 
+global $openvpn_tls_server_modes;
+$openvpn_tls_server_modes = array('p2p_tls', 'server_tls', 'server_user', 'server_tls_user');
+
 global $openvpn_client_modes;
 $openvpn_client_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
@@ -735,7 +738,7 @@ function openvpn_reconfigure($mode, $settings) {
 				//  See ticket #1417
 				if (!empty($ip) && !empty($mask) && ($cidr < 30)) {
 					$conf .= "server {$ip} {$mask}\n";
-					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc/server{$vpnid}\n";
 					if (is_ipaddr($ipv6)) {
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 					}
@@ -766,7 +769,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if (is_ipaddr($ipv6)) {
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 					}
-					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc/server{$vpnid}\n";
 				} else {
 					if ($settings['serverbridge_dhcp']) {
 						if ((!empty($settings['serverbridge_interface'])) && (strcmp($settings['serverbridge_interface'], "none"))) {
@@ -774,7 +777,7 @@ function openvpn_reconfigure($mode, $settings) {
 							$biface_sm=gen_subnet_mask(get_interface_subnet($settings['serverbridge_interface']));
 							if (is_ipaddrv4($biface_ip) && is_ipaddrv4($settings['serverbridge_dhcp_start']) && is_ipaddrv4($settings['serverbridge_dhcp_end'])) {
 								$conf .= "server-bridge {$biface_ip} {$biface_sm} {$settings['serverbridge_dhcp_start']} {$settings['serverbridge_dhcp_end']}\n";
-								$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+								$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc/server{$vpnid}\n";
 							} else {
 								$conf .= "mode server\n";
 							}
@@ -1141,23 +1144,27 @@ function openvpn_cleanup_csc($common_name) {
 	if (empty($common_name)) {
 		return;
 	}
-	$fpath = "{$g['varetc_path']}/openvpn-csc/" . basename($common_name);
-	if (is_file($fpath)) {
-		unlink_if_exists($fpath);
-	}
+	/* TODO: Make this check the server and not use a glob */
+	unlink_if_exists("{$g['varetc_path']}/openvpn-csc/*/" . basename($common_name));
 	return;
 }
 
 function openvpn_resync_csc(& $settings) {
-	global $g, $config;
+	global $g, $config, $openvpn_tls_server_modes;
 
-	$fpath = $g['varetc_path']."/openvpn-csc/".$settings['common_name'];
+	$csc_base_path = "{$g['varetc_path']}/openvpn-csc";
 
 	if (isset($settings['disable'])) {
-		unlink_if_exists($fpath);
+		openvpn_cleanup_csc($settings['common_name']);
 		return;
 	}
 	openvpn_create_dirs();
+
+	if (empty($settings['server_list'])) {
+		$csc_server_list = array();
+	} else {
+		$csc_server_list = explode(",", $settings['server_list']);
+	}
 
 	$conf = '';
 	if ($settings['block']) {
@@ -1166,19 +1173,6 @@ function openvpn_resync_csc(& $settings) {
 
 	if ($settings['push_reset']) {
 		$conf .= "push-reset\n";
-	}
-
-	if (!empty($settings['tunnel_network'])) {
-		list($ip, $mask) = explode('/', $settings['tunnel_network']);
-		$baselong = ip2long32($ip) & gen_subnet_mask_long($mask);
-		$serverip = long2ip32($baselong + 1);
-		$clientip = long2ip32($baselong + 2);
-		/* Because this is being pushed, the order from the client's point of view. */
-		if ($settings['dev_mode'] != 'tap') {
-			$conf .= "ifconfig-push {$clientip} {$serverip}\n";
-		} else {
-			$conf .= "ifconfig-push {$clientip} {$mask}\n";
-		}
 	}
 
 	if ($settings['local_network']) {
@@ -1204,17 +1198,61 @@ function openvpn_resync_csc(& $settings) {
 	}
 
 	openvpn_add_custom($settings, $conf);
+	/* Loop through servers, find which ones can use this CSC */
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+			if (isset($serversettings['disable'])) {
+				continue;
+			}
+			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+				if ($serversettings['vpnid'] && (empty($csc_server_list) || in_array($serversettings['vpnid'], $csc_server_list))) {
+					$csc_path = "{$csc_base_path}/server{$serversettings['vpnid']}/" . basename($settings['common_name']);
+					$csc_conf = $conf;
 
-	file_put_contents($fpath, $conf);
-	chown($fpath, 'nobody');
-	chgrp($fpath, 'nobody');
+					if (!empty($serversettings['tunnel_network'])) {
+						list($ip, $mask) = explode('/', $settings['tunnel_network']);
+						if (($serversettings['dev_mode'] == 'tap') || ($serversettings['topology'] == "subnet")) {
+							$csc_conf .= "ifconfig-push {$ip} " . gen_subnet_mask($mask) . "\n";
+						} else {
+							/* Because this is being pushed, the order from the client's point of view. */
+							$baselong = ip2long32($ip) & gen_subnet_mask_long($mask);
+							$serverip = long2ip32($baselong + 1);
+							$clientip = long2ip32($baselong + 2);
+							$csc_conf .= "ifconfig-push {$clientip} {$serverip}\n";
+						}
+					}
+					file_put_contents($csc_path, $csc_conf);
+					chown($csc_path, 'nobody');
+					chgrp($csc_path, 'nobody');
+				}
+			}
+		}
+	}
 }
 
 function openvpn_delete_csc(& $settings) {
-	global $g, $config;
+	global $g, $config, $openvpn_tls_server_modes;
+	$csc_base_path = "{$g['varetc_path']}/openvpn-csc";
+	if (empty($settings['server_list'])) {
+		$csc_server_list = array();
+	} else {
+		$csc_server_list = explode(",", $settings['server_list']);
+	}
 
-	$fpath = $g['varetc_path']."/openvpn-csc/".$settings['common_name'];
-	unlink_if_exists($fpath);
+	/* Loop through servers, find which ones used this CSC */
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+			if (isset($serversettings['disable'])) {
+				continue;
+			}
+			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+				if ($serversettings['vpnid'] && (empty($csc_server_list) || in_array($serversettings['vpnid'], $csc_server_list))) {
+					$csc_path = "{$csc_base_path}/server{$serversettings['vpnid']}/" . basename($settings['common_name']);
+					unlink_if_exists($csc_path);
+				}
+			}
+		}
+	}
 }
 
 // Resync the configuration and restart the VPN
@@ -1578,12 +1616,26 @@ function openvpn_refresh_crls() {
 }
 
 function openvpn_create_dirs() {
-	global $g;
+	global $g, $config, $openvpn_tls_server_modes;
 	if (!is_dir("{$g['varetc_path']}/openvpn")) {
 		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
 	}
 	if (!is_dir("{$g['varetc_path']}/openvpn-csc")) {
 		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
+	}
+
+	/* Check for enabled servers and create server-specific CSC dirs */
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
+			if (in_array($settings['mode'], $openvpn_tls_server_modes)) {
+				if ($settings['vpnid']) {
+					safe_mkdir("{$g['varetc_path']}/openvpn-csc/server{$settings['vpnid']}");
+				}
+			}
+		}
 	}
 }
 

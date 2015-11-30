@@ -124,8 +124,8 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
 $tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=firmware");
+$tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
 display_top_tabs($tab_array);
 
 $form = new Form();

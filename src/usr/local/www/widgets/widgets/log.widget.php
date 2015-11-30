@@ -175,7 +175,7 @@ if (isset($_POST['lastsawtime'])) {
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>
 			<td><a href="diag_dns.php?host=<?=$filterent['srcip']?>"
-				title="<?=gettext("Reverse Resolve with DNS")?>"><?=$srcIP?></a>:<?=htmlspecialchars($filterent['srcport'])?>
+				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$srcIP?></a>
 			</td>
 			<td><a href="diag_dns.php?host=<?=$filterent['dstip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>

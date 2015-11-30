@@ -65,6 +65,8 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
+global $openvpn_tls_server_modes;
+
 $pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
 $shortcut_section = "openvpn";
 
@@ -101,6 +103,7 @@ if ($_GET['act'] == "del") {
 if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
+		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 		$pconfig['disable'] = isset($a_csc[$id]['disable']);
 		$pconfig['common_name'] = $a_csc[$id]['common_name'];
@@ -240,6 +243,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$csc = array();
 
+		$csc['server_list'] = implode(",", $pconfig['server_list']);
 		$csc['custom_options'] = $pconfig['custom_options'];
 		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;
@@ -324,6 +328,24 @@ if($act=="new" || $act=="edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
+
+	$serveroptionlist = array();
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+				$serveroptionlist[$serversettings['vpnid']] = "OpenVPN Server {$serversettings['vpnid']}: {$serversettings['description']}";
+			}
+		}
+	}
+
+	$section->addInput(new Form_Select(
+		'server_list',
+		'Server List',
+		$pconfig['server_list'],
+		$serveroptionlist,
+		true
+		))->setHelp('Select the servers for which the override will apply. Selecting no servers will also apply the override to all servers.');
+
 
 	$section->addInput(new Form_Checkbox(
 		'disable',

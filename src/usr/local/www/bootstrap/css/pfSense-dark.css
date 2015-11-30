@@ -67,6 +67,14 @@ table.sortable-theme-bootstrap {
 	font-size: 22px;
 }
 
+.breadcrumb>li+li:before {
+    color: #9E9E9E;
+}
+
+ul.context-links li a {
+    color: #009688;
+}
+
 .nav>li>a {
     border-bottom: 5px solid #212121;
     color: #009688;

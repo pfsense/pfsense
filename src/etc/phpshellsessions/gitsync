@@ -365,13 +365,13 @@ if(isset($args["--diff"])) {
 
 	# Convert the list from array to space separated quoted strings.  Quoted for white space file name support.
 	$different_missing_files = '';
-	if (count($different_files_array[1]) > 0) 
-		$different_missing_files .= '"' . implode('" "', $different_files_array[1]) . '"';
+	if (count($different_files_array[1]) > 0)
+		$different_files .= '"' . implode('" "', $different_files_array[1]) . '"';
 	if (count($missing_files_array[1]) > 0)
-		$different_missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
+		$missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
 
 	# Files to be copied.
-	$files_to_copy = trim($different_missing_files);
+	$files_to_copy = trim($different_files . " " . $missing_files);
 	$tar_options = '-C ./src';
 }
 

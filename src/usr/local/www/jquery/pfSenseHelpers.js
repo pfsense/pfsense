@@ -381,8 +381,3 @@ $('tbody').each(function(){
 });
 
 $('tbody:empty').html("<tr><td></td></tr>");
-
-//Trick the top navbar dropdowns to work on hover when navbar is horizontal
-$('.dropdown').hover(function(){
-	if($('body').width() > 1200) { $('.dropdown-toggle', this).trigger('click'); } 
-});

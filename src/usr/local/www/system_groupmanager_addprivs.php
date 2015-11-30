@@ -200,7 +200,7 @@ if (isset($groupid))
 $section = new Form_Section('Add privileges for '. $a_group['name']);
 
 $priv_list = array_map(function($p){ return $p['name']; }, $priv_list);
-asort($priv_list);
+asort($priv_list, SORT_STRING|SORT_FLAG_CASE);
 
 $section->addInput(new Form_Select(
 	'sysprivs',
@@ -208,7 +208,7 @@ $section->addInput(new Form_Select(
 	$a_group['priv'],
 	build_priv_list(),
 	true
-))->addClass('multiselect')->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select')->setAttribute('style', 'height:400px;');
+))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.')->setAttribute('style', 'height:400px;');
 
 $form->add($section);
 

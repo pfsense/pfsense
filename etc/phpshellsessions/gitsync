@@ -380,13 +380,13 @@ if(isset($args["--diff"])) {
 	# Convert the list from array to space separated quoted strings.  Quoted for white space file name support.
 	$different_missing_files = '';
 	if (count($different_files_array[1]) > 0) 
-		$different_missing_files .= '"' . implode('" "', $different_files_array[1]) . '"';
+		$different_files .= '"' . implode('" "', $different_files_array[1]) . '"';
 	if (count($missing_files_array[1]) > 0)
-		$different_missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
+		$missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
 
 	# Remove files that are not to be included (copied).
 	$file_excludes = array('/".git"/');
-	$files_to_copy = preg_replace($file_excludes, "", $different_missing_files);
+	$files_to_copy = preg_replace($file_excludes, "", $differentfiles . " " . $missing_files);
 	$files_to_copy = trim($files_to_copy);
 }
 

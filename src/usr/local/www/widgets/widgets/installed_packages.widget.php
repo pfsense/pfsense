@@ -95,13 +95,13 @@ if($_REQUEST && $_REQUEST['ajax']) {
 			continue;
 		}
 
-		$txtcolor = "black";
+		$txtcolor = "";
 		$upgradeavail = false;
 		$vergetstr = "";
 		$missing = false;
 
 		if (isset($pkg['broken'])) {
-			$txtcolor = "red";
+			$txtcolor = "text-danger";
 			$missing = true;
 			$status = 'Package is configured, but not installed!';
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
@@ -115,7 +115,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 				// we're running an older version of the package
 				$status = 'Upgrade available to '.$pkg['version'];
 				$statusicon = 'plus-circle';
-				$txtcolor = "blue";
+				$txtcolor = "text-warning";
 				$upgradeavail = true;
 				$vergetstr = '&amp;from=' . $pkg['installed_version'] .
 				    '&amp;to=' . $pkg['version'];
@@ -134,10 +134,10 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		}
 
 		print("<tr>\n");
-		print(		'<td><font color="' . $txtcolor . '">' . $pkg['shortname'] . "</font></td>\n");
+		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
 		print(		"<td>" . implode(' ', $pkg['categories']) . "</td>\n");
 		print(		"<td>\n");
-		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i>');
+		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
 
 		if (!$g['disablepackagehistory']) {
 			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');
@@ -151,7 +151,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 
 		print(	"</td>\n");
 		print(	"<td>\n");
-		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-times"></i></a>'."\n");
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-trash"></i></a>'."\n");
 
 		if($upgradeavail) {
 			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
@@ -179,9 +179,9 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	</table>
 </div>
 
-<div style="text-align: center;">
-	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt;Packages</a>
-</div>
+<p class="text-center">
+	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt; Packages</a>
+</p>
 
 <script type="text/javascript">
 //<![CDATA[

@@ -37,17 +37,13 @@ a.fa, i.fa {
 	font-size: 18px;
 }
 
-h1 a:link{
+h1 a:link, h1 a:visited {
 	color: #000000;
 	text-decoration: none !important;
 }
 
 h1.page-header {
 	display: none;
-}
-
-h1 a:visited { 
-	color: #000000;
 }
 
 h1 a:hover, h1 a:active { 
@@ -221,7 +217,7 @@ ul.context-links li a {
 .form-group {
     margin: 0;
     padding: 7px 5px 5px 5px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #E0E0E0;
 }
 
 .form-group:last-child {
@@ -324,10 +320,15 @@ form .btn + .btn {
 	left: 0;
 	width: 100%;
 	height: 60px;
-	background-color: #f5f5f5;
+	background-color: #212121;
 	padding-top: 10px;
 	text-align: center;
 }
+
+footer a {
+    color: #ffffff;
+}
+
 
 /** Homepage / dashboard */
 .widget .panel-heading {
@@ -423,6 +424,18 @@ form .btn + .btn {
 	color: #337AB7;
 }
 
+.btn-success {
+	background-color: #43A047;
+}
+
+.btn-danger {
+	background-color: #B71C1C;
+}
+
+.btn-primary {
+	background-color: #1976D2;
+}
+
 .bg-primary {
 	color: #000;
 	background-color: #009688;
@@ -430,7 +443,7 @@ form .btn + .btn {
 
 .bg-info {
 	color: #000;
-	background-color: #B0BEC5;
+	background-color: #80DEEA;
 }
 
 .bg-danger {
@@ -445,7 +458,7 @@ form .btn + .btn {
 
 .bg-success {
 	color: #000;
-	background-color: #80CBC4;
+	background-color: #A5D6A7;
 }
 
 /** icons are often used with onclick actions, so we need the cursor to change to a pointer */

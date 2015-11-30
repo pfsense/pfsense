@@ -1,26 +1,26 @@
-@import url("/bootstrap/css/bootstrap.min.css");
 @import url("/bootstrap/css/pfSense.css");
-
-a {
-	color: #009688;
-}
-
-a:hover {
-	color: #00796B;
-	text-decoration: none;
-}
-
-h1 a:link{
-	color: #fff;
-}
-
-
-h1 a:visited { color: #fff; }
-h1 a:hover, h1 a:active { color: #fff; text-decoration: none !important; }
 
 body {
 	background-color: #212121;
 	color: #e0e0e0;
+}
+
+a {
+    color: #009688;
+}
+
+a:hover {
+    color: #00796B;
+    text-decoration: none;
+}
+
+h1 a:link, a:visited {
+    color: #fff;
+}
+
+h1 a:hover, h1 a:active { 
+    color: #fff; 
+    text-decoration: none !important; 
 }
 
 /** Content structure */

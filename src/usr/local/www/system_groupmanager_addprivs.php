@@ -156,12 +156,28 @@ if (isAjax()) {
 	print_info_box_np($savemsg);
 }
 
+function build_priv_list() {
+	global $priv_list, $a_group;
+
+	$list = array();
+
+	foreach($priv_list as $pname => $pdata) {
+		if (in_array($pname, $a_group['priv']))
+			continue;
+
+		$list[$pname] = $pdata;
+	}
+
+	return($list);
+}
+
 include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
+
 if ($savemsg)
-	print_info_box($savemsg);
+	print_info_box($savemsg, success);
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -190,12 +206,51 @@ $section->addInput(new Form_Select(
 	'sysprivs',
 	'Assigned privileges',
 	$a_group['priv'],
-	$priv_list,
+	build_priv_list(),
 	true
-))->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select')->setAttribute('style', 'height:400px;');
+))->addClass('multiselect')->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select')->setAttribute('style', 'height:400px;');
 
 $form->add($section);
 
 print $form;
 
+?>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function(){
+
+<?php
+
+	// Build a list of privilege descriptions
+	if (is_array($priv_list)) {
+		$id = 0;
+
+		$jdescs = "var descs = new Array();\n";
+		foreach ($priv_list as $pname => $pdata) {
+			if (in_array($pname, $a_group['priv'])) {
+				continue;
+			}
+
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata));
+			$jdescs .= "descs[{$id}] = '{$desc}';\n";
+			$id++;
+		}
+
+		echo $jdescs;
+	}
+?>
+	// Set the number of options to display
+	$('.multiselect').attr("size","20");
+
+	// When the 'sysprivs" selector is clicked, we display a description
+	$('.multiselect').click(function() {
+		$('#pdesc').html('<span style="color: green;">' + descs[$(this).children('option:selected').index()] + '</span>');
+	});
+});
+//]]>
+</script>
+
+<?php
 include('foot.inc');

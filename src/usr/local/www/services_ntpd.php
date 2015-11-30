@@ -79,6 +79,7 @@ if (empty($config['ntpd']['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 		write_config("Upgraded settings from openttpd");
+		print('<h2>What?</h2>');
 	} else {
 		$pconfig['interface'] = array();
 	}

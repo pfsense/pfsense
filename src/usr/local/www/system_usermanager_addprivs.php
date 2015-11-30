@@ -91,6 +91,10 @@ if (!is_array($a_user['priv'])) {
 	$a_user['priv'] = array();
 }
 
+// Make a local copy and sort it
+$spriv_list = $priv_list;
+uasort($spriv_list, admusercmp);
+
 if ($_POST) {
 	conf_mount_rw();
 
@@ -136,11 +140,11 @@ if ($_POST) {
 }
 
 function build_priv_list() {
-	global $priv_list, $a_user;
+	global $spriv_list, $a_user;
 
 	$list = array();
 
-	foreach($priv_list as $pname => $pdata) {
+	foreach($spriv_list as $pname => $pdata) {
 		if (in_array($pname, $a_user['priv']))
 			continue;
 
@@ -196,7 +200,7 @@ $form->add($section);
 print($form);
 ?>
 
-<div class="panel panel-body alert-info" id="pdesc">Select a privilege from the list above for a description"</div>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -205,11 +209,11 @@ events.push(function(){
 <?php
 
 	// Build a list of privilege descriptions
-	if (is_array($priv_list)) {
+	if (is_array($spriv_list)) {
 		$id = 0;
 
 		$jdescs = "var descs = new Array();\n";
-		foreach ($priv_list as $pname => $pdata) {
+		foreach ($spriv_list as $pname => $pdata) {
 			if (in_array($pname, $a_user['priv'])) {
 				continue;
 			}
@@ -226,7 +230,7 @@ events.push(function(){
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html(descs[$(this).children('option:selected').index()]);
+		$('#pdesc').html('<span style="color: green;">' + descs[$(this).children('option:selected').index()] + '</span>');
 	});
 });
 //]]>

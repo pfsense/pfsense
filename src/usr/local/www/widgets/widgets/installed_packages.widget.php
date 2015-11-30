@@ -200,7 +200,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 			$('#pkgtbl').html(response);
 
 			// and do it again
-			setTimeout(get_gw_stats, 5000);
+			setTimeout(get_pkg_stats, 5000);
 		});
 	}
 

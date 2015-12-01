@@ -1217,7 +1217,7 @@ function openvpn_resync_csc(& $settings) {
 					$csc_path = "{$csc_base_path}/server{$serversettings['vpnid']}/" . basename($settings['common_name']);
 					$csc_conf = $conf;
 
-					if (!empty($serversettings['tunnel_network'])) {
+					if (!empty($serversettings['tunnel_network']) && !empty($settings['tunnel_network'])) {
 						list($ip, $mask) = explode('/', $settings['tunnel_network']);
 						if (($serversettings['dev_mode'] == 'tap') || ($serversettings['topology'] == "subnet")) {
 							$csc_conf .= "ifconfig-push {$ip} " . gen_subnet_mask($mask) . "\n";

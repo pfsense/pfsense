@@ -607,13 +607,25 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
+function checkonline() {
+	$.ajax({ 
+        url  : "/index.php", /* or other resource */
+        type : "HEAD"
+    })
+    .done(function() {
+        window.location="/index.php";
+    });
+}
+
 function startCountdown(time) {
 	setInterval(function(){
 		if(time > 0) {
 			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
 		}
-
-		time-- != 0 || (window.location="/index.php");
+		if(time <= 0) {
+			time = 30 ; 
+			checkonline();
+		}
 	},1000);
 }
 

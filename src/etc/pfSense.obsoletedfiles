@@ -657,7 +657,7 @@
 /usr/local/sbin/pbi_update
 /usr/local/sbin/pbi_update_hashdir
 /usr/local/sbin/pfsense-upgrade.sh
-/usr/local/sbin/pfsense-upgrade-GUI.sh
+/usr/local/sbin/pfSense-upgrade-GUI.sh
 /usr/local/sbin/pftpx
 /usr/local/sbin/racoon
 /usr/local/sbin/racoon_watch.sh

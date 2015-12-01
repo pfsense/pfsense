@@ -234,6 +234,16 @@ caption {
     border-right-color: #212121;
 }
 
+.modal-content {
+    background-color: #424242;
+}
+
+.modal-header, .modal-footer {
+    background-color: #303030;
+    border-color: #212121;
+
+}
+
 /** Page footer */
 .footer {
     background-color: #000;
@@ -337,6 +347,12 @@ button.close {
     border: 1px solid #6D4C41;
     border-radius: 5px;
     box-shadow: 1px 1px 1px #6D4C41;
+}
+
+.modal-header button.close {
+    border: 1px solid #fff;
+    box-shadow: 1px 1px 1px #fff;
+    color: #fff;
 }
 
 textarea {

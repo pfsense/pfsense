@@ -14,7 +14,7 @@ a:hover {
     text-decoration: none;
 }
 
-h1 a:link, a:visited {
+h1 a:link, h1 a:visited {
     color: #fff;
 }
 
@@ -218,6 +218,19 @@ caption {
 .table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
     background-color: #80CBC4;
     color: #212121;
+}
+
+.popover-title {
+    background-color: #424242;
+    border-bottom: 1px solid #212121;
+}
+
+.popover {
+    background-color: #616161;
+}
+
+.popover.right>.arrow:after {
+    border-right-color: #212121;
 }
 
 /** Page footer */

@@ -526,7 +526,7 @@ if ($config['remote_managed_pages']['item']) {
 if (are_notices_pending()):?>
 
 <div id="notices" class="modal fade" role="dialog">
-	<div class="mopdal-dialog">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">

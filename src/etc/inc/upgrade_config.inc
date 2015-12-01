@@ -4121,4 +4121,20 @@ function upgrade_128_to_129() {
 		unset($config['ipsec']['enable']);
 }
 
+function upgrade_129_to_130() {
+	global $config;
+
+	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
+	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
+			if (isset($serversettings['topology_subnet'])) {
+				unset($serversettings['topology_subnet']);
+				$serversettings['topology'] = "subnet";
+			} else {
+				$serversettings['topology'] = "net30";
+			}
+		}
+	}
+}
+
 ?>

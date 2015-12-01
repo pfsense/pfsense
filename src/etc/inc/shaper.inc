@@ -4700,7 +4700,7 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
-$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
 $default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
 	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 

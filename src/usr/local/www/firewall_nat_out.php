@@ -500,11 +500,11 @@ print($form);
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
+					</tr>
 <?php
 				$i++;
 			endforeach;
 ?>
-					</tr>
 				</tbody>
 			</table>
 		</div>

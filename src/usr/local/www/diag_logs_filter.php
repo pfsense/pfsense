@@ -205,9 +205,9 @@ if ($filterfieldsarray['interface'] == "All")
 	$interface = "";
 
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
-	$form = new Form(new Form_Button(
-		'filterlogentries_submit',
-		'Filter'
+	$form = new Form(new Form_StaticText(
+		null,
+		null
 	));
 
 	$section = new Form_Section('Advanced Log Filter');
@@ -299,6 +299,11 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'text',
 		$filterfieldsarray['tcpflags']
 	))->setHelp('Protocol Flags');
+
+	$group->add(new Form_Button(
+		'filterlogentries_submit',
+		'Filter'
+	));
 }
 else { // Simple log filter form
 	$form = new Form(new Form_Button(

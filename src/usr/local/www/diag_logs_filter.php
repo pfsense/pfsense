@@ -514,21 +514,14 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
 //<![CDATA[
-	function outputrule(req) {
-		alert(req.content);
-	}
-//]]>
-</script>
-
-<?php include("foot.inc");
-?>
-<script type="text/javascript">
-//<![CDATA[
+function outputrule(req) {
+	alert(req.content);
+}
 
 function resolve_with_ajax(ip_to_resolve) {
 	var url = "/diag_logs_filter.php";
 
-	jQuery.ajax(
+	$.ajax(
 		url,
 		{
 			method: 'post',
@@ -542,7 +535,7 @@ function resolve_with_ajax(ip_to_resolve) {
 }
 
 function resolve_ip_callback(transport) {
-	var response = jQuery.parseJSON(transport.responseText);
+	var response = $.parseJSON(transport.responseText);
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
@@ -597,3 +590,6 @@ events.push(function(){
 });
 //]]>
 </script>
+
+<?php include("foot.inc");
+?>

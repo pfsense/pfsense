@@ -130,12 +130,12 @@ if ($_GET['order']) {
 <table class="table table-condensed sortable-theme-bootstrap" data-sortable>
 	<thead>
 	<tr>
-		<th><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></td>
-		<th><a href="?order=mac&amp;showact=<?=$showact;?>">MAC address</a></td>
-		<th><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></td>
+		<th><a href="?order=ip&amp;showact=<?=$showact;?>">IP address</a></th>
+		<th><a href="?order=mac&amp;showact=<?=$showact;?>">MAC address</a></th>
+		<th><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></th>
 <?php if ($showact == 1): ?>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></td>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></td>
+		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></th>
+		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></th>
 <?php endif; ?>
 	</tr>
 	</thead>

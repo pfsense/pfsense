@@ -76,8 +76,8 @@ require_once("pkg-utils.inc");
 $sendto = "output";
 $start_polling = false;
 $firmwareupdate = false;
-$reloadtimer = 90;  // Number of seconds after which we reload the page following a firmware update.
-					// Allows time for the device to reboot
+$guitimeout = 90;	// Seconds to wait before reloading the page after reboot
+$guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
@@ -406,7 +406,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
 <?php } else {
 ?>
- 			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
  <?php } ?>
 		</div>
 
@@ -474,7 +474,8 @@ if ($_POST && $_POST['completed'] == "true"):
 <script>
 //<![CDATA[
 events.push(function(){
-	startCountdown("<?=$reloadtimer?>");
+	time = "<?=$guitimeout?>";
+	startCountdown();
 });
 //]]>
 </script>
@@ -607,14 +608,30 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
-function startCountdown(time) {
+var timeoutmsg = '<h4>Rebooting<br />Page will automatically reload in ';
+var time = 0;
+
+function checkonline() {
+	$.ajax({
+		url	 : "/index.php", // or other resource
+		type : "HEAD"
+	})
+	.done(function() {
+		window.location="/index.php";
+	});
+}
+
+function startCountdown() {
 	setInterval(function(){
 		if(time > 0) {
-			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
+			$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
+			time--;
+		} else {
+			time = "<?=$guiretry?>";
+			timeoutmsg = '<h4>Not yet ready<br />Retrying in another ';
+			checkonline();
 		}
-
-		time-- != 0 || (window.location="/index.php");
-	},1000);
+	}, 1000);
 }
 
 events.push(function(){

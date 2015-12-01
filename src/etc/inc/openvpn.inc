@@ -1147,23 +1147,13 @@ function openvpn_delete($mode, & $settings) {
 	@array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));
 }
 
-function openvpn_cleanup_csc($common_name) {
-	global $g, $config;
-	if (empty($common_name)) {
-		return;
-	}
-	/* TODO: Make this check the server and not use a glob */
-	unlink_if_exists("{$g['varetc_path']}/openvpn-csc/*/" . basename($common_name));
-	return;
-}
-
 function openvpn_resync_csc(& $settings) {
 	global $g, $config, $openvpn_tls_server_modes;
 
 	$csc_base_path = "{$g['varetc_path']}/openvpn-csc";
 
 	if (isset($settings['disable'])) {
-		openvpn_cleanup_csc($settings['common_name']);
+		openvpn_delete_csc($settings);
 		return;
 	}
 	openvpn_create_dirs();

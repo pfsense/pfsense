@@ -291,14 +291,14 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_csc[$id]) {
-			$old_csc_cn = $a_csc[$id]['common_name'];
+			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
 		} else {
 			$a_csc[] = $csc;
 		}
 
-		if (!empty($old_csc_cn)) {
-			openvpn_cleanup_csc($old_csc_cn);
+		if (!empty($old_csc['common_name'])) {
+			openvpn_delete_csc($old_csc);
 		}
 		openvpn_resync_csc($csc);
 		write_config();

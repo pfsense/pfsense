@@ -183,6 +183,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php endif;?>
 
 					<th><?=gettext("Description")?></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>

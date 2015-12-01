@@ -951,19 +951,19 @@ $section->addInput(new Form_Select(
 	'csr_keylen',
 	'Key length',
 	$pconfig['csr_keylen'],
-	$cert_keylens
+	array_combine($cert_keylens, $cert_keylens)
 ));
 
 $section->addInput(new Form_Select(
 	'csr_digest_alg',
 	'Digest Algorithm',
 	$pconfig['csr_digest_alg'],
-	$openssl_digest_algs
+	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
 	'SHA1 when possible');
 
 $section->addInput(new Form_Select(
-	'dn_country',
+	'csr_dn_country',
 	'Country Code',
 	$pconfig['dn_country'],
 	$dn_cc

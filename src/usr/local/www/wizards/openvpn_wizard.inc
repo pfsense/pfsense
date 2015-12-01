@@ -243,7 +243,7 @@ function step8_submitphpaction() {
 		unset($config['ovpnserver']['step9']['uselist']);
 		$stepid++;
 	} else {
-		$config['ovpnserver']['step6']['uselist'] = "on";
+		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";
 	}
 }

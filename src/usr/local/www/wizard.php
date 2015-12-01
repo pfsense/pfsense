@@ -665,21 +665,21 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				}
 
 				foreach ($config['ca'] as $ca) {
-					$name = htmlspecialchars($ca['descr']);
+					$caname = htmlspecialchars($ca['descr']);
 
-					if ($value == $name)
+					if ($value == $caname)
 						$selected = $value;
 
 					$canecho = 0;
 					if ($field['certca_filter'] != "") {
-						if (stristr($name, $field['certca_filter']) == true) {
+						if (stristr($caname, $field['certca_filter']) == true) {
 							$canecho = 1;
 						}
 					} else {
 						$canecho = 1;
 					}
 					if ($canecho == 1) {
-						$options[$ca['refid']] = $name;
+						$options[$ca['refid']] = $caname;
 					}
 				}
 
@@ -713,16 +713,16 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 						continue;
 					}
 
-					$name = htmlspecialchars($ca['descr']);
+					$caname = htmlspecialchars($ca['descr']);
 
-					if ($value == $name) {
+					if ($value == $caname) {
 						array_push($selected, $value);
 					}
 
 
 					$canecho = 0;
 					if ($field['cert_filter'] != "") {
-						if (stristr($name, $field['cert_filter']) == true) {
+						if (stristr($caname, $field['cert_filter']) == true) {
 							$canecho = 1;
 						}
 					} else {
@@ -730,7 +730,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					}
 
 					if ($canecho == 1) {
-						$options[$ca['refid']] = $name;
+						$options[$ca['refid']] = $caname;
 					}
 				}
 

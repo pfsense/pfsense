@@ -373,7 +373,6 @@ foreach ($widgets as $widgetname => $widgetconfig)
 	<?php
 	$columnWidth = 12 / $numColumns;
 	$columnCounter = 0;
-	//TODO: account for user stepping # of columns down
 	?>
 <?php foreach ($widgetColumns as $column => $columnWidgets):?>
 	<div class="col-md-<?=$columnWidth?>" id="widgets-<?=$column?>">

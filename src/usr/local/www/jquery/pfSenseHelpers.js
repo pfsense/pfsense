@@ -381,3 +381,37 @@ $('tbody').each(function(){
 });
 
 $('tbody:empty').html("<tr><td></td></tr>");
+
+	// Hide configuration button for panels without configuration
+	$('.container .panel-heading a.config').each(function (idx, el){
+		var config = $(el).parents('.panel').children('.panel-footer');
+		if (config.length == 1)
+			$(el).removeClass('hidden');
+	});
+
+	// Initial state & toggle icons of collapsed panel
+	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
+
+		body.on('shown.bs.collapse', function(){
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
+
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
+		});
+
+		body.on('hidden.bs.collapse', function(){
+			$(el).children('i').toggleClass('fa-minus-circle', false);
+			$(el).children('i').toggleClass('fa-plus-circle', true);
+
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
+		});
+	});

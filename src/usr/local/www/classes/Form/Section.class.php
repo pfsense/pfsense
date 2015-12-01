@@ -37,13 +37,15 @@ class Form_Section extends Form_Element
 	);
 	protected $_title;
 	protected $_groups = array();
+	protected $_collapsable;
 
-	public function __construct($title, $id = "")
+	public function __construct($title, $id = "", $collapsable = false)
 	{
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
 		$this->_title = $title;
+		$this->_collapsable = $collapsable;
 	}
 
 	public function add(Form_Group $group)
@@ -70,13 +72,24 @@ class Form_Section extends Form_Element
 		$element = parent::__toString();
 		$title = htmlspecialchars(gettext($this->_title));
 		$body = implode('', $this->_groups);
+		$hdricon = "";
+		$bodyclass = '<div class="panel-body">';
+
+		if ($this->_collapsable) {
+			$hdricon = '<span class="widget-heading-icon">' .
+				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . ' .panel-body">' .
+					'<i class="fa fa-plus-circle"></i>' .
+				'</a>' .
+			'</span>';
+			$bodyclass = '<div class="panel-body collapse in">';
+		}
 
 		return <<<EOT
 	{$element}
 		<div class="panel-heading">
-			<h2 class="panel-title">{$title}</h2>
+			<h2 class="panel-title">{$title}{$hdricon}</h2>
 		</div>
-		<div class="panel-body">
+		{$bodyclass}
 			{$body}
 		</div>
 	</div>

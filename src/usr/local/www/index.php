@@ -302,7 +302,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
 		<span class="widget-heading-icon">
 			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
-				<i class="fa fa-plus-cirle"></i>
+				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
@@ -420,39 +420,6 @@ function updateWidgets(newWidget)
 }
 
 events.push(function() {
-	// Hide configuration button for panels without configuration
-	$('.container .panel-heading a.config').each(function (idx, el){
-		var config = $(el).parents('.panel').children('.panel-footer');
-		if (config.length == 1)
-			$(el).removeClass('hidden');
-	});
-
-	// Initial state & toggle icons of collapsed panel
-	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body')
-		var isOpen = body.hasClass('in');
-
-		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
-		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
-
-		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', true);
-			$(el).children('i').toggleClass('fa-plus-circle', false);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
-
-		body.on('hidden.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', false);
-			$(el).children('i').toggleClass('fa-plus-circle', true);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
-	});
 
 	// Make panels destroyable
 	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el){

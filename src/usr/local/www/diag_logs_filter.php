@@ -207,7 +207,7 @@ if ($filterfieldsarray['interface'] == "All")
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section('Advanced Log Filter');
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true);
 
 	$group = new Form_Group('');
 
@@ -299,7 +299,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 
 	$group->add(new Form_Button(
 		'filterlogentries_submit',
-		'Filter'
+		'Apply Filter'
 	));
 }
 else { // Simple log filter form
@@ -593,6 +593,7 @@ if (typeof getURL == 'undefined') {
 
 events.push(function(){
     $('.fa').tooltip();
+
 });
 //]]>
 </script>

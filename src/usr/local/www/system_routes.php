@@ -313,8 +313,8 @@ foreach ($a_routes as $i => $route):
 			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 
 		</td>
-<? endforeach?>
 	</tr>
+<? endforeach?>
 </table>
 
 <nav class="action-buttons">

@@ -413,6 +413,10 @@ if ($_POST) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 
+	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
+		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
+	}
+
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");

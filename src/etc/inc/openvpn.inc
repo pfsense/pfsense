@@ -119,6 +119,13 @@ $openvpn_compression_modes = array(
 	'adaptive' => gettext("Enabled with Adaptive Compression"),
 	'yes' => gettext("Enabled without Adaptive Compression"));
 
+global $openvpn_topologies;
+$openvpn_topologies = array(
+	'subnet' => gettext("Subnet -- One IP address per client in a common subnet"),
+	'net30' => gettext("net30 -- Isolated /30 network per client")
+//	'p2p => gettext("Peer to Peer -- One IP address per client peer-to-peer style. Does not work on Windows.")
+);
+
 function openvpn_build_mode_list() {
 	global $openvpn_server_modes;
 
@@ -1006,9 +1013,10 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "float\n";
 	}
 
-	if ($settings['topology_subnet']) {
-		$conf .= "topology subnet\n";
+	if (empty($settings['topology'])) {
+		$settings['topology'] = "subnet";
 	}
+	$conf .= "topology {$settings['topology']}\n";
 
 	// New client features
 	if ($mode == "client") {

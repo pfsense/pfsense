@@ -155,6 +155,15 @@ function delete_gateway_item($id) {
 		return;
 	}
 
+	/* NOTE: Cleanup static routes for the interface route if any */
+	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) && 
+		$gateway['gateway'] != $a_gateways[$id]['gateway'] &&
+		isset($a_gateways[$id]["nonlocalgateway"])) {
+		$realif = get_real_interface($a_gateways[$id]['interface']);
+		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
+		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif);
+		mwexec($cmd);
+	}
 	/* NOTE: Cleanup static routes for the monitor ip if any */
 	if (!empty($a_gateways[$id]['monitor']) &&
 		$a_gateways[$id]['monitor'] != "dynamic" &&

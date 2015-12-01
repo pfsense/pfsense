@@ -317,4 +317,14 @@ print_info_box(gettext("Make sure all sensitive information is removed! (Passwor
 listCmds();
 execCmds();
 
+print(gettext("Saving output to archive..."));
+
+if (is_dir($output_path)) {
+	mwexec("/usr/bin/tar czpf " . escapeshellarg($output_file) . " -C " . escapeshellarg(dirname($output_path)) . " " . escapeshellarg(basename($output_path)));
+	unlink_if_exists("{$output_path}/*");
+	@rmdir($output_path);
+}
+
+print(gettext("Done."));
+
 include("foot.inc");

@@ -449,7 +449,7 @@ print($tree);
 
 if (count($altq_list_queues) > 0) {
 ?>
-					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger"/>
+					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger">
 						<?=gettext('Remove Shaper')?>
 					</a>
 <?php

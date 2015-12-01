@@ -79,6 +79,11 @@ list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $
 
 $arr_gateways = return_gateways_array();
 
+// set default colmns to two if unset
+if(!isset($config['system']['webgui']['dashboardcolumns'])) {
+	$config['system']['webgui']['dashboardcolumns'] = 2;
+}
+
 $pconfig['dns1gw'] = $config['system']['dns1gw'];
 $pconfig['dns2gw'] = $config['system']['dns2gw'];
 $pconfig['dns3gw'] = $config['system']['dns3gw'];
@@ -90,6 +95,7 @@ $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
+$pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -149,6 +155,12 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguifixedmenu']);
 	}
+
+	if ($_POST['dashboardcolumns']) {
+		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+	} else {
+		unset($config['system']['webgui']['dashboardcolumns']);
+	}	
 	
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -468,7 +480,7 @@ if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }
 
-$section = new Form_Section('Web configurator');
+$section = new Form_Section('Web Configurator');
 
 $section->addInput(new Form_Select(
 	'webguicss',
@@ -479,9 +491,16 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
-	'Menu',
+	'Top Navigation',
 	$pconfig['webguifixedmenu'],
 	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
+))->setHelp("<span class=\"badge bg-danger\" title=\"This feature is in BETA\">BETA</span>");
+
+$section->addInput(new Form_Input(
+	'dashboardcolumns',
+	'Dashboard Columns',
+	'text',
+	$pconfig['dashboardcolumns']
 ))->setHelp("<span class=\"badge bg-danger\" title=\"This feature is in BETA\">BETA</span>");
 
 $form->add($section);

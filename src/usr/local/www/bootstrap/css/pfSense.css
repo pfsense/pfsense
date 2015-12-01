@@ -331,6 +331,10 @@ footer a {
 
 
 /** Homepage / dashboard */
+[id^="widgets-col"] {
+    min-height: 300px;
+}
+
 .widget .panel-heading {
     background-color: #757575;
 }

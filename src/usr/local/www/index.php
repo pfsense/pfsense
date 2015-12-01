@@ -370,8 +370,13 @@ foreach ($widgets as $widgetname => $widgetconfig)
 ?>
 
 <div class="row">
+	<?php
+	$columnWidth = 12 / $numColumns;
+	$columnCounter = 0;
+	//TODO: account for user stepping # of columns down
+	?>
 <?php foreach ($widgetColumns as $column => $columnWidgets):?>
-	<div class="col-md-6" id="widgets-<?=$column?>">
+	<div class="col-md-<?=$columnWidth?>" id="widgets-<?=$column?>">
 <?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
@@ -393,9 +398,16 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 			</div>
 		</div>
-<?php endforeach; ?>
+<?php endforeach; 
+	  $columnCounter++;
+?>
 	</div>
 <?php endforeach; ?>
+<?php
+	for($n = 1; $n <= ($numColumns - $columnCounter); $n++) {
+		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . ($n + $columnCounter) . '"></div>';
+	}
+?>
 </div>
 
 <script type="text/javascript">
@@ -404,7 +416,7 @@ function updateWidgets(newWidget)
 {
 	var sequence = '';
 
-	$('.container .col-md-6').each(function(idx, col){
+	$('.container .col-md-<?=$columnWidth?>').each(function(idx, col){
 		$('.panel', col).each(function(idx, widget){
 			var isOpen = $('.panel-body', widget).hasClass('in');
 
@@ -430,10 +442,10 @@ events.push(function() {
 	});
 
 	// Make panels sortable
-	$('.container .col-md-6').sortable({
+	$('.container .col-md-<?=$columnWidth?>').sortable({
 		handle: '.panel-heading',
 		cursor: 'grabbing',
-		connectWith: '.container .col-md-6',
+		connectWith: '.container .col-md-<?=$columnWidth?>',
 		update: updateWidgets
 	});
 

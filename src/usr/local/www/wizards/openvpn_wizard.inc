@@ -586,6 +586,7 @@ function step12_submitphpaction() {
 	}
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
 	$server['tunnel_network'] = $pconfig['step10']['tunnelnet'];
+	$server['topology'] = $pconfig['step10']['topology'];
 	if (isset($pconfig['step10']['rdrgw']))
 		$server['gwredir'] = $pconfig['step10']['rdrgw'];
 	if (isset($pconfig['step10']['localnet']))

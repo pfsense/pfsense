@@ -810,6 +810,24 @@
 			<bindstofield>ovpnserver->step10->addrpool</bindstofield>
 		</field>
 		<field>
+			<displayname>Topology</displayname>
+			<name>topology</name>
+			<type>select</type>
+			<value>subnet</value>
+			<bindstofield>ovpnserver->step10->topology</bindstofield>
+			<options>
+				<option>
+					<name>Subnet -- One IP address per client in a common subnet</name>
+					<value>subnet</value>
+				</option>
+				<option>
+					<name>net30 -- Isolated /30 network per client</name>
+					<value>net30</value>
+				</option>
+			</options>
+			<description>Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.&lt;br /&gt;Some clients may require this be set to &quot;subnet&quot; even for IPv6, such as OpenVPN Connect (iOS/Android).&lt;br /&gt;Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require &quot;net30&quot;.</description>
+		</field>
+		<field>
 			<displayname>DNS Default Domain</displayname>
 			<name>defaultdomain</name>
 			<type>input</type>

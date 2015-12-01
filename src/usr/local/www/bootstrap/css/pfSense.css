@@ -59,6 +59,7 @@ h1 a:hover, h1 a:active {
 	font-size: 22px;
 	background-color: #E0E0E0;
 	margin-bottom: 10px;
+	border-radius: 0; 
 }
 
 .breadcrumb>li+li:before {
@@ -157,8 +158,13 @@ ul.context-links li a {
 }
 /* end navigation */
 
+.alert {
+	border-radius: 0;
+}
+
 .panel {
 	margin-bottom: 10px;
+	border-radius: 0; 
 }
 
 .panel-default>.panel-heading {
@@ -169,6 +175,7 @@ ul.context-links li a {
 
 .panel-heading {
 	padding: 5px 15px;
+	border-radius: 0; 
 }
 
 .panel-title {

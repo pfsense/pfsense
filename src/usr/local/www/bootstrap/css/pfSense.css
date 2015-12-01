@@ -403,6 +403,10 @@ footer a {
 	margin-bottom: 10px;
 }
 
+.progress-bar {
+	background-color: #B71C1C;
+}
+
 .panel-body.collapse.in {
 	overflow-x: auto;
 }

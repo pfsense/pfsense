@@ -1603,10 +1603,10 @@ $group->add(new Form_Select(
 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'you have also selected In. The Out selection is applied to traffic leaving '.
-	'the interface where the rule is created, It is applied to traffic coming '.
+	'the interface where the rule is created, the In selection is applied to traffic coming '.
 	'into the chosen interface.<br />If you are creating a floating rule, if the '.
-	'direction is In then the same rules apply, if the direction is out the '.
-	'selections are reversed Out is for incoming and In is for outgoing.'
+	'direction is In then the same rules apply, if the direction is Out the '.
+	'selections are reversed, Out is for incoming and In is for outgoing.'
 );
 
 $group = new Form_Group('Ackqueue / Queue');

@@ -1026,10 +1026,12 @@ foreach($a_cert as $i => $cert):
 			<td><?=$caname?></td>
 			<td>
 				<?=$subj?>
+				<?php if (! $cert['csr']): ?>
 				<br />
 				<small>
 					<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 				</small>
+				<?php endif?>
 			</td>
 			<td>
 				<?php if (is_cert_revoked($cert)): ?>
@@ -1055,9 +1057,11 @@ foreach($a_cert as $i => $cert):
 				<?php endif?>
 			</td>
 			<td>
+				<?php if (! $cert['csr']): ?>
 				<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export")?>"></a>
 				<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export key")?>"></a>
 				<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
+				<?php endif?>
 				<?php if (!cert_in_use($cert['refid'])): ?>
 					<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
 				<?php endif?>

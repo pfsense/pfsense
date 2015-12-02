@@ -1247,6 +1247,7 @@ events.push(function(){
 				hideInput('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
+				hideInput('topology', false);
 				break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1256,6 +1257,7 @@ events.push(function(){
 				hideInput('strictusercn', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
+				hideInput('topology', false);
 				break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1270,6 +1272,7 @@ events.push(function(){
 				hideInput('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
+				hideInput('topology', true);
 				break;
 		}
 
@@ -1419,11 +1422,16 @@ events.push(function(){
 		mvalue = $('#mode').val();
 
 		switch(mvalue) {
-			case "p2p_tls":
 			case "p2p_shared_key":
+				sharedkey = true;
+				p2p = true;
+				break;
+			case "p2p_tls":
+				sharedkey = false;
 				p2p = true;
 				break;
 			default:
+				sharedkey = false;
 				p2p = false;
 				break;
 		}
@@ -1438,7 +1446,15 @@ events.push(function(){
 				hideInput('serverbridge_interface', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
-				hideInput('topology', false);
+				if (sharedkey) {
+					hideInput('local_network', true);
+					hideInput('local_networkv6', true);
+					hideInput('topology', true);
+				} else {
+					hideInput('local_network', false);
+					hideInput('local_networkv6', false);
+					hideInput('topology', false);
+				}
 				break;
 
 			case "tap":
@@ -1451,7 +1467,7 @@ events.push(function(){
 					hideInput('serverbridge_interface', false);
 					hideInput('serverbridge_dhcp_start', false);
 					hideInput('serverbridge_dhcp_end', false);
-					hideInput('topology', false);
+					hideInput('topology', true);
 
 					if( $('#serverbridge_dhcp').prop('checked')) {
 						disableInput('serverbridge_interface', false);

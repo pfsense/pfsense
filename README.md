@@ -6,9 +6,9 @@ The pfSense project is a free network firewall distribution, based on the FreeBS
 
 pfSense software includes a web interface for the configuration of all included components. There is no need for any UNIX knowledge, no need to use the command line for anything, and no need to ever manually edit any rule sets. Users familiar with commercial firewalls catch on to the web interface quickly, though there can be a learning curve for users not familiar with commercial-grade firewalls.
 
-pfSense started in 2004 as a fork of the [m0n0wall](http://m0n0.ch/wall/index.php m0n0wall project homepage) Project (which ended 2015/02/15), though has diverged significantly since.
+pfSense started in 2004 as a fork of the [m0n0wall](http://m0n0.ch/wall/index.php "m0n0wall project homepage") Project (which ended 2015/02/15), though has diverged significantly since.
 
-pfSense is Copyright 2004-2015 [Electric Sheep Fencing LLC](https://electricsheepfencing.com "Electric Sheep Fencing LLC homepage") and published under an open source license.
+pfSense is Copyright 2004-2015 [Electric Sheep Fencing LLC](http://electricsheepfencing.com "Electric Sheep Fencing LLC homepage") and published under an open source license.
 Read more at [https://pfsense.org/](https://pfsense.org/ "The pfSense homepage") and support the team by buying a Gold Membership Subscription, bundled hardware appliances or commercial support.
 
 ## Contribute

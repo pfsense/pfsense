@@ -297,6 +297,13 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'text',
 		$filterfieldsarray['tcpflags']
 	))->setHelp('Protocol Flags');
+
+	$btnsubmit = new Form_Button(
+		'filterlogentries_submit',
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
 }
 else { // Simple log filter form
 	$form = new Form(false);
@@ -330,14 +337,14 @@ else { // Simple log filter form
 		'text',
 		$filtertext
 	))->setHelp('Filter Expression');
-}
 
-$btnsubmit = new Form_Button(
-	'filtersubmit',
-	' ' . 'Apply Filter',
-	null,
-	'fa-filter'
-);
+	$btnsubmit = new Form_Button(
+		'filtersubmit',
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
+}
 
 $btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
 

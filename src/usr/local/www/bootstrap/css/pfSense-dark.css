@@ -5,6 +5,10 @@ body {
     color: #e0e0e0;
 }
 
+body.no-menu {
+    background-color: #616161;
+}
+
 a {
     color: #009688;
 }

@@ -174,6 +174,24 @@ if ($act == "exp") {
 	exit;
 }
 
+if ($act == "req") {
+
+	if (!$a_cert[$id]) {
+		pfSenseHeader("system_certmanager.php");
+		exit;
+	}
+
+	$exp_name = urlencode("{$a_cert[$id]['descr']}.req");
+	$exp_data = base64_decode($a_cert[$id]['csr']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 if ($act == "key") {
 
 	if (!$a_cert[$id]) {
@@ -1057,16 +1075,17 @@ foreach($a_cert as $i => $cert):
 				<?php endif?>
 			</td>
 			<td>
-				<?php if (! $cert['csr']): ?>
-				<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export")?>"></a>
-				<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export key")?>"></a>
-				<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
+				<?php if (!$cert['csr']): ?>
+					<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Certificate")?>"></a>
+					<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+					<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
+				<?php else: ?>
+					<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
+					<a href="system_certmanager.php?act=req&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
+					<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
 				<?php endif?>
 				<?php if (!cert_in_use($cert['refid'])): ?>
 					<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
-				<?php endif?>
-				<?php if ($cert['csr']): ?>
-					<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-refresh" title="<?=gettext("Update csr")?>"></a>
 				<?php endif?>
 			</td>
 		</tr>

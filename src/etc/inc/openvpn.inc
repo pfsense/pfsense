@@ -1013,10 +1013,12 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "float\n";
 	}
 
-	if (empty($settings['topology'])) {
-		$settings['topology'] = "subnet";
+	if (in_array($settings['mode'], $openvpn_tls_server_modes)) {
+		if (empty($settings['topology'])) {
+			$settings['topology'] = "subnet";
+		}
+		$conf .= "topology {$settings['topology']}\n";
 	}
-	$conf .= "topology {$settings['topology']}\n";
 
 	// New client features
 	if ($mode == "client") {

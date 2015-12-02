@@ -228,7 +228,7 @@ if ($local_ip == false) {
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
 	<title><?=gettext("Login"); ?></title>
-	<script type="text/javascript>
+	<script type="text/javascript">
 	//<![CDATA{
 	var events = events || [];
 	//]]>

@@ -60,6 +60,7 @@ h1 a:hover, h1 a:active {
     background-color: #E0E0E0;
     margin-bottom: 10px;
     border-radius: 0; 
+    box-shadow: 0px 1px 10px rgba(0,0,0,.4);
 }
 
 .breadcrumb>li+li:before {
@@ -113,7 +114,7 @@ ul.context-links li a {
 
 .nav>li>a {
     padding: 14px 19px 10px 19px;
-    border-bottom: 5px solid #ffffff;
+    border-bottom: 5px solid #F5F5F5;
     border-radius: 0;
     color: #B71C1C;
 }
@@ -126,7 +127,7 @@ ul.context-links li a {
 .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav li.open>a, .nav li.open>a:focus, .nav-pills>li.active>a:hover {
     border-bottom: 5px solid #B71C1C;
     color: #B71C1C;
-    background-color: #ffffff;
+    background-color: #F5F5F5;
 }
 
 .navbar-nav >li>a {
@@ -134,14 +135,15 @@ ul.context-links li a {
 }
 
 .nav-tabs>li>a {
-    border-bottom: 5px solid #ffffff;
+    border-bottom: 5px solid #F5F5F5;
     margin-bottom: 1px;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #ffffff;
-    border-top: 1px solid #ffffff;
+    border-left: 1px solid #F5F5F5;
+    border-right: 1px solid #F5F5F5;
+    border-top: 1px solid #F5F5F5;
+    background-color: #F5F5F5;
     border-bottom: 5px solid #B71C1C;
     margin-bottom: 0;
     color: #B71C1C;
@@ -156,10 +158,15 @@ ul.context-links li a {
 .nav-pills {
     margin-bottom: 20px;
 }
+
+.dropdown-menu>li>a {
+    padding: 5px 20px; 
+}
 /* end navigation */
 
 .alert {
     border-radius: 0;
+    box-shadow: 0px 1px 10px rgba(0,0,0,0.1);
 }
 
 .panel {

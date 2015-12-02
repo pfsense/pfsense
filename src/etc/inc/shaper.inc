@@ -751,6 +751,8 @@ class altq_root_queue {
 			'Save'
 		));
 
+		$sform->setAction("firewall_shaper.php");
+
 		$section = new Form_Section(null);
 
 		$section->addInput(new Form_Checkbox(
@@ -762,9 +764,7 @@ class altq_root_queue {
 		));
 
 		$section->addInput(new Form_StaticText(
-			'name',
 			'Name',
-			'text',
 			$this->GetQname()
 		));
 

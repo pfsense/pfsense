@@ -120,9 +120,9 @@ if ($interface) {
 	}
 }
 
+
 $dontshow = false;
 $newqueue = false;
-$output_form = "";
 $dfltmsg = false;
 
 if ($_GET) {
@@ -217,7 +217,6 @@ if ($_GET) {
 		case "show":
 			if ($queue) {
 				$sform = $queue->build_form();
-				//$output_form .= $queue->build_form();
 			}
 			else
 				$input_errors[] = gettext("Queue not found!");
@@ -225,7 +224,7 @@ if ($_GET) {
 		case "enable":
 			if ($queue) {
 					$queue->SetEnabled("on");
-					$output_form .= $queue->build_form();
+					$sform = $queue->build_form();
 					if (write_config()) {
 						mark_subsystem_dirty('shaper');
 					}
@@ -236,7 +235,7 @@ if ($_GET) {
 		case "disable":
 			if ($queue) {
 				$queue->SetEnabled("");
-				$output_form .= $queue->build_form();
+				$sform = $queue->build_form();
 				if (write_config()) {
 					mark_subsystem_dirty('shaper');
 				}
@@ -293,8 +292,7 @@ if ($_POST) {
 		}
 
 		read_altq_config();
-		$output_form .= $altq->build_form();
-
+		$sform = $altq->build_form();
 	} else if ($parentqueue) { /* Add a new queue */
 		$qtmp =& $altq->find_queue($interface, $parentqueue);
 		if ($qtmp) {
@@ -327,7 +325,7 @@ if ($_POST) {
 				}
 			}
 			read_altq_config();
-			$output_form .= $tmp->build_form();
+			$sform = $tmp->build_form();
 		} else {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
@@ -352,10 +350,10 @@ if ($_POST) {
 		clear_subsystem_dirty('shaper');
 
 		if ($queue) {
-			$output_form .= $queue->build_form();
+			$sform = $queue->build_form();
 			$dontshow = false;
 		} else {
-			$output_form .= $default_shaper_message;
+			$sform = $default_shaper_message;
 			$dontshow = true;
 		}
 	} else if ($queue) {
@@ -369,7 +367,7 @@ if ($_POST) {
 			$dontshow = false;
 		}
 		read_altq_config();
-		$output_form .= $queue->build_form();
+		$sform = $queue->build_form();
 	} else	{
 		$dfltmsg = true;
 		$dontshow = true;
@@ -459,9 +457,7 @@ if (count($altq_list_queues) > 0) {
 				<td>
 <?php
 
-if ($dfltmsg)
-	print_info_box($default_shaper_msg);
-else {
+if (!$dfltmsg)  {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
@@ -475,6 +471,7 @@ else {
 				'Add new Queue',
 				$url
 			))->removeClass('btn-default')->addClass('btn-success');
+
 		}
 
 		if ($queue)
@@ -487,6 +484,7 @@ else {
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url
 		))->removeClass('btn-default')->addClass('btn-danger');
+
 	}
 
 	// Print the form
@@ -500,4 +498,13 @@ else {
 </div>
 
 <?php
+if ($dfltmsg) {
+?>
+<div>
+	<div id="infoblock">
+		<?=print_info_box($default_shaper_msg, info)?>
+	</div>
+</div>
+<?php
+}
 include("foot.inc");

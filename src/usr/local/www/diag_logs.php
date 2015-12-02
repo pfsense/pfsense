@@ -242,6 +242,13 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'text',
 		$filterfieldsarray['message']
 	))->setHelp('Log Message');
+
+	$btnsubmit = new Form_Button(
+		'filterlogentries_submit',
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
 }
 else { // Simple log filter form
 	$form = new Form(false);
@@ -264,14 +271,14 @@ else { // Simple log filter form
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
 	))->setHelp('Quantity');
-}
 
-$btnsubmit = new Form_Button(
-	'filterlogentries_submit',
-	' ' . 'Apply Filter',
-	null,
-	'fa-filter'
-);
+	$btnsubmit = new Form_Button(
+		'filtersubmit',
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
+}
 
 $btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
 

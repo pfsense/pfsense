@@ -490,7 +490,6 @@ function build_link_list() {
 
 	if($pconfig['type'] == 'ppp') {
 		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
-
 		$serport_count = 0;
 
 		foreach ($serialports as $port) {
@@ -682,7 +681,7 @@ $section->addInput(new Form_Checkbox(
 	'uptime',
 	'Uptime logging',
 	'Enable persistent logging of connection uptime. ',
-	$pconfig['uptime']
+	isset($pconfig['uptime'])
 ))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %sStatus->Interfaces%s page.', '<a href="status_interfaces.php">', '</a>'));
 
 $group = new Form_Group('Service name');

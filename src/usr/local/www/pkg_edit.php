@@ -953,6 +953,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
+						$pkga['fielddescr'],
 						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
@@ -966,7 +967,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						($value == "on"),
 						'on'
 					))->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['comment']);
 				}
 			}
 

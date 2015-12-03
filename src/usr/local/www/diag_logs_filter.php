@@ -207,7 +207,7 @@ if ($filterfieldsarray['interface'] == "All")
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true, true);
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|SEC_OPEN);
 
 	$group = new Form_Group('');
 

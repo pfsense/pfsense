@@ -948,7 +948,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					($value == "on"),
 					'on'
 				))->setOnclick($onclick)
-				  ->setOnchange($onchange);
+				  ->setOnchange($onchange)
+				  ->setHelp($pkga['sethelp'];
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
@@ -958,7 +959,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						($value == "on"),
 						'on'
 					))->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['sethelp'];
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
@@ -968,7 +970,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						'on'
 					))->setOnclick($onclick)
 					  ->setOnchange($onchange)
-					  ->setHelp($pkga['comment']);
+					  ->setHelp($pkga['sethelp']);
 				}
 			}
 

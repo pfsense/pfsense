@@ -776,6 +776,7 @@
 /usr/local/www/firewall_shaper_edit.php
 /usr/local/www/firewall_shaper_layer7.php
 /usr/local/www/firewall_shaper_queues_edit.php
+/usr/local/www/fend.inc
 /usr/local/www/fred-bg.png
 /usr/local/www/fred.png
 /usr/local/www/green_dot.jpg

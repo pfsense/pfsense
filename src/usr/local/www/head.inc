@@ -391,7 +391,7 @@ if (isset($config['system']['webgui']['webguifixedmenu'])) {
 $numColumns = $config['system']['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
-	$columnsContainer = 'style="width: ' . 585*$numColumns . 'px"';
+	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
 }
 ?>
 <body id="<?=$numColumns?>">

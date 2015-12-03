@@ -915,6 +915,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutReason = "LOGOUT") {
 	global $g, $config;
 
+	$sessionid = SQLite3::escapeString($sessionid);
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* read database */

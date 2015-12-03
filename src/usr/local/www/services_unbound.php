@@ -101,9 +101,6 @@ if (isset($a_unboundcfg['regdhcp'])) {
 if (isset($a_unboundcfg['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
 }
-if (isset($a_unboundcfg['txtsupport'])) {
-	$pconfig['txtsupport'] = true;
-}
 
 $pconfig['port'] = $a_unboundcfg['port'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
@@ -196,7 +193,6 @@ if ($_POST) {
 			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
 			$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
-			$a_unboundcfg['txtsupport'] = isset($pconfig['txtsupport']);
 			$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
 			$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
 			$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
@@ -357,13 +353,6 @@ $section->addInput(new Form_Checkbox(
 					'resolved. You should also set the domain in %s'.
 					'System: General setup%s to the proper value.','<a href="system.php">','</a>'));
 
-$section->addInput(new Form_Checkbox(
-	'txtsupport',
-	'TXT Comment Support',
-	'Create TXT records',
-	$pconfig['txtsupport']
-))->setHelp('Any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.');
-
 $btnadvdns = new Form_Button(
 	'btnadvdns',
 	'Custom options'
@@ -403,7 +392,6 @@ events.push(function(){
 		disableInput('forwarding', hide);
 		disableInput('regdhcp', hide);
 		disableInput('regdhcpstatic', hide);
-		disableInput('txtsupport', hide);
 		disableInput('btnadvdns', hide);
 	}
 

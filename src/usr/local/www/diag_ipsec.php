@@ -128,7 +128,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading">IPSec status</div>
+	<div class="panel-heading">IPsec status</div>
 	<div class="panel-body table responsive">
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>

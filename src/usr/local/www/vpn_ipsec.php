@@ -277,7 +277,7 @@ display_top_tabs($tab_array);
 
 <form name="mainform" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPSec tunnels')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPsec tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>

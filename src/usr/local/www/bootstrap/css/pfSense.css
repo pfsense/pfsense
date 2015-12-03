@@ -190,6 +190,7 @@ ul.context-links li a {
 
 .panel-title {
     font-size: 20px;
+    text-transform: capitalize;
 }
 
 .panel-body {
@@ -202,6 +203,10 @@ ul.context-links li a {
 
 .content {
     padding: 10px;
+}
+
+.control-label, th {
+    text-transform: capitalize;
 }
 
 .form-horizontal {
@@ -455,6 +460,10 @@ footer a {
 
 .icon-warning {
     color: #FDD835;
+}
+
+.text-warning {
+    color: #F57F17;
 }
 
 .btn-success {

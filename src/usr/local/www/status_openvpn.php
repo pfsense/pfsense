@@ -397,7 +397,7 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 }
 ?>
 </form>
-<?php include("fend.inc"); ?>
+<?php include("foot.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 function show_routes(id, buttonid) {

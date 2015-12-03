@@ -166,4 +166,4 @@ display_top_tabs($tab_array);
 </div>
 <?php
 
-include("fend.inc");
+include("foot.inc");

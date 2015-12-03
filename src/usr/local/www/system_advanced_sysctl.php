@@ -270,4 +270,4 @@ if ($act != "edit" ): ?>
 
 endif;
 
-include("fend.inc");
+include("foot.inc");

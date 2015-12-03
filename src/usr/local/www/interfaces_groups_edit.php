@@ -287,5 +287,5 @@ print $form;
 
 unset($interface_list);
 unset($interface_list_disabled);
-include("fend.inc");
+include("foot.inc");
 ?>

@@ -185,4 +185,4 @@ $form->addGlobal(new Form_Button(
 $form->add($section);
 print $form;
 
-include("fend.inc");
+include("foot.inc");

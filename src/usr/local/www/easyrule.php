@@ -91,14 +91,17 @@ if (stristr($retval, "error") == true) {
 }
 
 include("head.inc"); ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
+include("fbegin.inc"); 
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php 
+if ($input_errors) 
+	print_input_errors($input_errors);
 
-<?php if ($message) { ?>
+if ($message) { ?>
 <br />
 <?=gettext("Message"); ?>: <?php echo $message; ?>
 <br />
@@ -111,4 +114,4 @@ include("head.inc"); ?>
 <br />
 <?php } ?>
 </td></tr></table>
-<?php include("fend.inc"); ?>
+<?php include("foot.inc"); ?>

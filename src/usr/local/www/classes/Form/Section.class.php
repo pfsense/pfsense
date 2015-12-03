@@ -37,15 +37,15 @@ class Form_Section extends Form_Element
 	);
 	protected $_title;
 	protected $_groups = array();
-	protected $_collapsable;
+	protected $_collapsible;
 
-	public function __construct($title, $id = "", $collapsable = false, $startcollapsed = false)
+	public function __construct($title, $id = "", $collapsible = false, $startcollapsed = false)
 	{
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
 		$this->_title = $title;
-		$this->_collapsable = $collapsable;
+		$this->_collapsible = $collapsible;
 		$this->_startcollapsed = $startcollapsed;
 	}
 
@@ -76,7 +76,7 @@ class Form_Section extends Form_Element
 		$hdricon = "";
 		$bodyclass = '<div class="panel-body">';
 
-		if ($this->_collapsable) {
+		if ($this->_collapsible) {
 			$hdricon = '<span class="widget-heading-icon">' .
 				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . ' .panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .

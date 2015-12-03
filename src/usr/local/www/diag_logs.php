@@ -199,7 +199,7 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true);
+	$section = new Form_Section(gettext('Advanced Log Filter'), 'adv-filter-panel', true);
 
 	$group = new Form_Group('');
 
@@ -208,21 +208,21 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['time']
-	))->setHelp('Time');
+	))->setHelp(gettext('Time'));
 
 	$group->add(new Form_Input(
 		'filterlogentries_process',
 		null,
 		'text',
 		$filterfieldsarray['process']
-	))->setHelp('Process');
+	))->setHelp(gettext('Process'));
 
 	$group->add(new Form_Input(
 		'filterlogentries_pid',
 		null,
 		'text',
 		$filterfieldsarray['pid']
-	))->setHelp('PID');
+	))->setHelp(gettext('PID'));
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -230,7 +230,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp('Quantity');
+	))->setHelp(gettext('Quantity'));
 
 	$section->add($group);
 
@@ -241,11 +241,11 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['message']
-	))->setHelp('Log Message');
+	))->setHelp(gettext('Log Message'));
 
 	$btnsubmit = new Form_Button(
 		'filterlogentries_submit',
-		' ' . 'Apply Filter',
+		' ' . gettext('Apply Filter'),
 		null,
 		'fa-filter'
 	);
@@ -253,7 +253,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 else { // Simple log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section('Log Filter', 'basic-filter-panel', true);
+	$section = new Form_Section(gettext('Log Filter'), 'basic-filter-panel', true);
 
 	$group = new Form_Group('');
 
@@ -262,7 +262,7 @@ else { // Simple log filter form
 		null,
 		'text',
 		$filtertext
-	))->setHelp('Filter Expression');
+	))->setHelp(gettext('Filter Expression'));
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -270,11 +270,11 @@ else { // Simple log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp('Quantity');
+	))->setHelp(gettext('Quantity'));
 
 	$btnsubmit = new Form_Button(
 		'filtersubmit',
-		' ' . 'Apply Filter',
+		' ' . gettext('Apply Filter'),
 		null,
 		'fa-filter'
 	);
@@ -287,7 +287,7 @@ $group->add(new Form_StaticText(
 	$btnsubmit
 ));
 
-$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . 'Regular expression reference</a> Precede with exclamation (!) to exclude match.');
+$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' gettext('Precede with exclamation (!) to exclude match.'));
 $section->add($group);
 $form->add($section);
 print $form;
@@ -348,7 +348,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 </div>
 <?php
 	if (count($filterlog) == 0)
-		print_info_box('No logs to display');
+		print_info_box(gettext('No logs to display'));
 }
 else
 {
@@ -381,20 +381,20 @@ else
 </div>
 <?php
 	if ($rows == 0)
-		print_info_box('No logs to display');
+		print_info_box(gettext('No logs to display'));
 }
 ?>
 
 <?php
 $form = new Form(false);
 
-$section = new Form_Section('Manage Log', 'log-manager-panel', true);
+$section = new Form_Section(gettext('Manage Log'), 'log-manager-panel', true);
 
 $group = new Form_Group('');
 
 $btnclear = new Form_Button(
 	'clear',
-	' ' . 'Clear log',
+	' ' . gettext('Clear log'),
 	null,
 	'fa-trash'
 );
@@ -402,7 +402,7 @@ $btnclear = new Form_Button(
 $btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
 
 if ($logfile == 'dhcpd')
-	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
+	print_info_box(gettext('Warning: Clearing the log file will restart the DHCP daemon.'));
 
 $group->add(new Form_StaticText(
 	'',

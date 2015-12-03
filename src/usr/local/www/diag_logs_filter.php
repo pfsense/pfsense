@@ -246,7 +246,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Input(
 		'filterlogentries_sourceport',
 		null,
-		'number',
+		'text',
 		$filterfieldsarray['srcport']
 	))->setHelp('Source Port');
 
@@ -287,7 +287,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Input(
 		'filterlogentries_destinationport',
 		null,
-		'number',
+		'text',
 		$filterfieldsarray['dstport']
 	))->setHelp('Destination Port');
 

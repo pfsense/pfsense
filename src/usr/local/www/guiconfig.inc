@@ -1138,9 +1138,8 @@ function alias_info_popup($alias_id) {
 			$alias_addresses = explode("\n", file_get_contents($urlfn));
 			$counter = count($alias_addresses);
 		}
-
-		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_ports_address) .'</li></ul>';
-
+		
+		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
 		if ($counter > 10002)
 			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
 	}

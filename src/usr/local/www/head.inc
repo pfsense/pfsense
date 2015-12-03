@@ -88,8 +88,8 @@ if(!isset($config['system']['webgui']['dashboardcolumns'])) {
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="sortable/sortable-theme-bootstrap.css">
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
 	<script type="text/javascript">
 	//<![CDATA[

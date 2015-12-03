@@ -39,13 +39,14 @@ class Form_Section extends Form_Element
 	protected $_groups = array();
 	protected $_collapsable;
 
-	public function __construct($title, $id = "", $collapsable = false)
+	public function __construct($title, $id = "", $collapsable = false, $startcollapsed = false)
 	{
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
 		$this->_title = $title;
 		$this->_collapsable = $collapsable;
+		$this->_startcollapsed = $startcollapsed;
 	}
 
 	public function add(Form_Group $group)
@@ -81,7 +82,12 @@ class Form_Section extends Form_Element
 					'<i class="fa fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
-			$bodyclass = '<div class="panel-body collapse in">';
+			$bodyclass = '<div class="panel-body collapse ';
+			if ($this->_startcollapsed) {
+				$bodyclass .= 'out">';
+			} else {
+				$bodyclass .= 'in">';
+			}
 		}
 
 		return <<<EOT

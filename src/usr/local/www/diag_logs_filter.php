@@ -207,7 +207,7 @@ if ($filterfieldsarray['interface'] == "All")
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true);
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true, true);
 
 	$group = new Form_Group('');
 
@@ -351,6 +351,11 @@ if (!isset($config['syslog']['rawfilter'])) {
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
 ?>
 
+<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+	<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+</form>
+
+<br />
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
@@ -480,10 +485,22 @@ if (!isset($config['syslog']['rawfilter'])) {
 else
 {
 ?>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+
+	printf(gettext("Last %s firewall log entries."), count($filterlog));
+	printf(gettext(" (Maximum %s)"), $nentries);
+?>
+		</h2>
+	</div>
+	<div class="panel-body">
+	   <div class="table-responsive">
+		<table class="table table-striped table-hover table-compact">
 			<tr>
-				<td colspan="2">
-					<?php printf(gettext("Last %s firewall log entries"),$nentries)?>
-				</td>
+				<th></th>
+				<th></th>
 			</tr>
 <?php
 	if ($filtertext)
@@ -497,12 +514,7 @@ else
 	</div>
 </div>
 
-<p>
-	<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-		<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
-	</form>
-</p>
-
+<div id="infoblock">
 <?php
 
 print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
@@ -510,7 +522,7 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 	'<i class="fa fa-minus-square-o icon-primary"></i> = Add to block list., <i class="fa fa-plus-square-o icon-primary"></i> = Pass traffic, <i class="fa fa-info icon-primary"></i> = Resolve');
 
 ?>
-
+</div>
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
 //<![CDATA[
@@ -586,7 +598,6 @@ if (typeof getURL == 'undefined') {
 
 events.push(function(){
     $('.fa').tooltip();
-
 });
 //]]>
 </script>

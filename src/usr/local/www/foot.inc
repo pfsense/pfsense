@@ -26,7 +26,7 @@
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
-	<script src="sortable/sortable.js"></script>
+	<script src="/sortable/sortable.js"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[

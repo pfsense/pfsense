@@ -4114,6 +4114,9 @@ function upgrade_128_to_129() {
 		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
 			unset($config['sysctl']['item'][$idx]);
 		}
+		if ($sysctl['tunable'] == "net.inet.ipsec.debug") {
+			$config['sysctl']['item'][$idx]['value'] = "0";
+		}
 	}
 
 	/* IPSEC is always on in 2.3. */

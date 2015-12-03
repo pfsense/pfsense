@@ -220,7 +220,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Input(
 		'filterlogentries_pid',
 		null,
-		'number',
+		'text',
 		$filterfieldsarray['pid']
 	))->setHelp('PID');
 

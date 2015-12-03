@@ -79,33 +79,33 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
-	    if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/gateways.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/resolver.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/wireless.log")		{ $logfile_type = "system"; }
+	     if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/gateways.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/resolver.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/wireless.log")	{ $logfile_type = "system"; }
 
-	elseif ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
-	elseif ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
+	else if ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
 
-	elseif ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
-	elseif ($logfile == "{$g['varlog_path']}/pptps.log")		{ $logfile_type = "tbd"; }
-	elseif ($logfile == "{$g['varlog_path']}/poes.log")			{ $logfile_type = "tbd"; }
-	elseif ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/pptps.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
 
-	elseif ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
-	elseif ($logfile == "{$g['varlog_path']}/ntpd.log")			{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ntpd.log")		{ $logfile_type = "system"; }
 
 	else 														{ $logfile_type = "unknown"; }
 
-	    if ($logfile_type == 'firewall')	{
+	     if ($logfile_type == 'firewall')	{
 		$pattern = "filterlog:";
 	}
-	elseif ($logfile_type == 'system')		{
+	else if ($logfile_type == 'system')		{
 
 		$month_pattern = "[a-zA-Z]{3}";
 		$day_pattern = "[0-9]{1,2}";
@@ -119,10 +119,10 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 		$pattern = "^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
-	elseif ($logfile_type == 'tbd')			{
+	else if ($logfile_type == 'tbd')		{
 		$pattern = "^\(.*\)$";
 	}
-	elseif ($logfile_type == 'unknown')			{
+	else if ($logfile_type == 'unknown')	{
 		$pattern = "^\(.*\)$";
 	}
 	else									{
@@ -144,10 +144,10 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 			break;
 		}
 
-		    if ($logfile_type == 'firewall')	{ $flent = parse_firewall_log_line($logent); }
-		elseif ($logfile_type == 'system')		{ $flent = parse_system_log_line($logent); }
-		elseif ($logfile_type == 'tbd')			{ $flent = array(); }
-		elseif ($logfile_type == 'unknown')		{ $flent = parse_unknown_log_line($logent); }
+		     if ($logfile_type == 'firewall')	{ $flent = parse_firewall_log_line($logent); }
+		else if ($logfile_type == 'system')		{ $flent = parse_system_log_line($logent); }
+		else if ($logfile_type == 'tbd')		{ $flent = array(); }
+		else if ($logfile_type == 'unknown')	{ $flent = parse_unknown_log_line($logent); }
 		else 									{ $flent = array(); }
 
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {

@@ -305,6 +305,10 @@ a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-he
     color: #5CB85C;
 }
 
+.icon-warning {
+    color: #FDD835;
+}
+
 .icon-primary
 {
     color: #009688;

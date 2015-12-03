@@ -451,6 +451,10 @@ footer a {
     color: #337AB7;
 }
 
+.icon-warning {
+    color: #FDD835;
+}
+
 .btn-success {
     background-color: #43A047;
 }

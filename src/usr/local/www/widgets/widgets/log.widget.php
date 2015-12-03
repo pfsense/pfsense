@@ -150,13 +150,13 @@ if (isset($_POST['lastsawtime'])) {
 		}
 
 		if ($filterent['act'] == "block") {
-			$iconfn = "times";
+			$iconfn = "times icon-danger";
 		} else if ($filterent['act'] == "reject") {
-			$iconfn = "hand-stop-o";
+			$iconfn = "hand-stop-o icon-warning";
 		} else if ($filterent['act'] == "match") {
 			$iconfn = "filter";
 		} else {
-			$iconfn = "check";
+			$iconfn = "check icon-success";
 		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);

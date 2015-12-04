@@ -433,6 +433,18 @@ footer a {
     background-color: #B71C1C;
 }
 
+.progress-bar.progress-bar-success {
+    background-color: #5cb85c;
+}
+
+.progress-bar.progress-bar-warning {
+    background-color: #f0ad4e;
+}
+
+.progress-bar.progress-bar-danger {
+    background-color: #B71C1C;
+}
+
 .panel-body.collapse.in {
     overflow-x: auto;
 }

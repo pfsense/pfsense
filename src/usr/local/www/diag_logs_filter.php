@@ -207,7 +207,7 @@ if ($filterfieldsarray['interface'] == "All")
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section(gettext('Advanced Log Filter'), 'adv-filter-panel', true);
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', true);
 
 	$group = new Form_Group('');
 
@@ -216,14 +216,14 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['srcip']
-	))->setHelp(gettext('Source IP Address'));
+	))->setHelp('Source IP Address');
 
 	$group->add(new Form_Input(
 		'filterlogentries_destinationipaddress',
 		null,
 		'text',
 		$filterfieldsarray['dstip']
-	))->setHelp(gettext('Destination IP Address'));
+	))->setHelp('Destination IP Address');
 
 	$section->add($group);
 	$group = new Form_Group('');
@@ -231,7 +231,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Checkbox(
 		'actpass',
 		'Pass',
-		gettext('Pass'),
+		'Pass',
 		in_arrayi('Pass', $Include_Act),
 		'Pass'
 	));
@@ -241,21 +241,21 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['time']
-	))->setHelp(gettext('Time'));
+	))->setHelp('Time');
 
 	$group->add(new Form_Input(
 		'filterlogentries_sourceport',
 		null,
 		'text',
 		$filterfieldsarray['srcport']
-	))->setHelp(gettext('Source Port'));
+	))->setHelp('Source Port');
 
 	$group->add(new Form_Input(
 		'filterlogentries_protocol',
 		null,
 		'text',
 		$filterfieldsarray['proto']
-	))->setHelp(gettext('Protocol'));
+	))->setHelp('Protocol');
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -263,7 +263,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp(gettext('Quantity'));
+	))->setHelp('Quantity');
 
 	$section->add($group);
 
@@ -272,7 +272,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Checkbox(
 		'actblock',
 		'Block',
-		gettext('Block'),
+		'Block',
 		in_arrayi('Block', $Include_Act),
 		'Block'
 	));
@@ -282,25 +282,25 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['interface']
-	))->setHelp(gettext('Interface'));
+	))->setHelp('Interface');
 
 	$group->add(new Form_Input(
 		'filterlogentries_destinationport',
 		null,
 		'text',
 		$filterfieldsarray['dstport']
-	))->setHelp(gettext('Destination Port'));
+	))->setHelp('Destination Port');
 
 	$group->add(new Form_Input(
 		'filterlogentries_protocolflags',
 		null,
 		'text',
 		$filterfieldsarray['tcpflags']
-	))->setHelp(gettext('Protocol Flags'));
+	))->setHelp('Protocol Flags');
 
 	$btnsubmit = new Form_Button(
 		'filterlogentries_submit',
-		' ' . gettext('Apply Filter'),
+		' ' . 'Apply Filter',
 		null,
 		'fa-filter'
 	);
@@ -308,7 +308,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 else { // Simple log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section(gettext('Log Filter'), 'basic-filter-panel', true);
+	$section = new Form_Section('Log Filter', 'basic-filter-panel', true);
 
 	$group = new Form_Group('');
 
@@ -317,7 +317,7 @@ else { // Simple log filter form
 		'Interface',
 		$interfacefilter,
 		build_if_list()
-	))->setHelp(gettext('Interface'));
+	))->setHelp('Interface');
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -325,7 +325,7 @@ else { // Simple log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp(gettext('Quantity'));
+	))->setHelp('Quantity');
 
 	$section->add($group);
 
@@ -336,11 +336,11 @@ else { // Simple log filter form
 		null,
 		'text',
 		$filtertext
-	))->setHelp(gettext('Filter Expression'));
+	))->setHelp('Filter Expression');
 
 	$btnsubmit = new Form_Button(
 		'filtersubmit',
-		' ' . gettext('Apply Filter'),
+		' ' . 'Apply Filter',
 		null,
 		'fa-filter'
 	);
@@ -353,7 +353,7 @@ $group->add(new Form_StaticText(
 	$btnsubmit
 ));
 
-$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
+$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . 'Regular expression reference</a> Precede with exclamation (!) to exclude match.');
 $section->add($group);
 $form->add($section);
 print($form);
@@ -504,7 +504,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 
 <?php
 	if (count($filterlog) == 0)
-		print_info_box(gettext('No logs to display'));
+		print_info_box('No logs to display');
 }
 else
 {
@@ -532,20 +532,20 @@ else
 </div>
 <?php
 	if ($rows == 0)
-		print_info_box(gettext('No logs to display'));
+		print_info_box('No logs to display');
 }
 ?>
 
 <?php
 $form = new Form(false);
 
-$section = new Form_Section(gettext('Manage Log'), 'log-manager-panel', true);
+$section = new Form_Section('Manage Log', 'log-manager-panel', true);
 
 $group = new Form_Group('');
 
 $btnclear = new Form_Button(
 	'clear',
-	' ' . gettext('Clear log'),
+	' ' . 'Clear log',
 	null,
 	'fa-trash'
 );
@@ -553,7 +553,7 @@ $btnclear = new Form_Button(
 $btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
 
 if ($logfile == 'dhcpd')
-	print_info_box(gettext('Warning: Clearing the log file will restart the DHCP daemon.'));
+	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
 
 $group->add(new Form_StaticText(
 	'',

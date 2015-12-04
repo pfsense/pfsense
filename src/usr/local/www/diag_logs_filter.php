@@ -260,8 +260,9 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
 		null,
-		'text',
-		$filterlogentries_qty
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
 	))->setHelp('Quantity');
 
 	$section->add($group);
@@ -297,24 +298,36 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		$filterfieldsarray['tcpflags']
 	))->setHelp('Protocol Flags');
 
-	$group->add(new Form_Button(
+	$btnsubmit = new Form_Button(
 		'filterlogentries_submit',
-		'Apply Filter'
-	));
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
 }
 else { // Simple log filter form
-	$form = new Form(new Form_Button(
-		'filtersubmit',
-		'Filter'
-	));
-	$section = new Form_Section('Log Filter');
+	$form = new Form(false);
 
-	$section->addInput(new Form_Select(
+	$section = new Form_Section('Log Filter', 'basic-filter-panel', true);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Select(
 		'interface',
 		'Interface',
 		$interfacefilter,
 		build_if_list()
-	));
+	))->setHelp('Interface');
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
+	))->setHelp('Quantity');
+
+	$section->add($group);
 
 	$group = new Form_Group('');
 
@@ -325,13 +338,20 @@ else { // Simple log filter form
 		$filtertext
 	))->setHelp('Filter Expression');
 
-	$group->add(new Form_Input(
-		'filterlogentries_qty',
+	$btnsubmit = new Form_Button(
+		'filtersubmit',
+		' ' . 'Apply Filter',
 		null,
-		'text',
-		$filterlogentries_qty
-	))->setHelp('Quantity');
+		'fa-filter'
+	);
 }
+
+$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+
+$group->add(new Form_StaticText(
+	'',
+	$btnsubmit
+));
 
 $group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . 'Regular expression reference</a> Precede with exclamation (!) to exclude match.');
 $section->add($group);
@@ -361,11 +381,11 @@ if (!isset($config['syslog']['rawfilter'])) {
 		<h2 class="panel-title">
 <?php
 	if ((!$filtertext) && (!$filterfieldsarray))
-		printf(gettext("Last %s firewall log entries."), count($filterlog));
+		printf(gettext("Last %d %s log entries."), count($filterlog), gettext('firewall'));
 	else
-		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
+		printf(gettext('%d matched %s log entries.'), count($filterlog), gettext('firewall'));
 
-	printf(gettext(" (Maximum %s)"), $nentries);
+	printf(gettext(" (Maximum %d)"), $nentries);
 ?>
 		</h2>
 	</div>
@@ -481,40 +501,48 @@ if (!isset($config['syslog']['rawfilter'])) {
 		}
 	} // e-o-foreach
 	buffer_rules_clear();
-}
-else
-{
-?>
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h2 class="panel-title">
-<?php
-
-	printf(gettext("Last %s firewall log entries."), count($filterlog));
-	printf(gettext(" (Maximum %s)"), $nentries);
-?>
-		</h2>
-	</div>
-	<div class="panel-body">
-	   <div class="table-responsive">
-		<table class="table table-striped table-hover table-compact">
-			<tr>
-				<th></th>
-				<th></th>
-			</tr>
-<?php
-	if ($filtertext)
-		dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
-	else
-		dump_clog($filter_logfile, $nentries);
-}
 ?>
 		</table>
 		</div>
 	</div>
 </div>
 
-<div id="infoblock">
+<?php
+	if (count($filterlog) == 0)
+		print_info_box('No logs to display');
+}
+else
+{
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?='firewall'?><?=gettext(" log entries")?></h2></div>
+	<div class="table table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th class="col-sm-2"></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
+	if ($filtertext)
+		$rows = dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
+	else
+		$rows = dump_clog($filter_logfile, $nentries);
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
+<?php
+	if ($rows == 0)
+		print_info_box('No logs to display');
+}
+?>
+
+<div id="infoblock"
+
 <?php
 
 print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .

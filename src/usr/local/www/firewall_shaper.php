@@ -217,19 +217,19 @@ if ($_GET) {
 		case "show":
 			if ($queue) {
 				$sform = $queue->build_form();
-			}
-			else
+			} else {
 				$input_errors[] = gettext("Queue not found!");
+			}
 		break;
 		case "enable":
 			if ($queue) {
-					$queue->SetEnabled("on");
-					$sform = $queue->build_form();
-					if (write_config()) {
-						mark_subsystem_dirty('shaper');
-					}
+				$queue->SetEnabled("on");
+				$sform = $queue->build_form();
+				if (write_config()) {
+					mark_subsystem_dirty('shaper');
+				}
 			} else {
-					$input_errors[] = gettext("Queue not found!");
+				$input_errors[] = gettext("Queue not found!");
 			}
 			break;
 		case "disable":
@@ -240,7 +240,7 @@ if ($_GET) {
 					mark_subsystem_dirty('shaper');
 				}
 			} else {
-					$input_errors[] = gettext("Queue not found!");
+				$input_errors[] = gettext("Queue not found!");
 			}
 			break;
 		default:
@@ -411,19 +411,23 @@ if (is_array($altq_list_queues)) {
 
 $tree .= "</ul>";
 
-if ($queue)
+if ($queue) {
 	print($queue->build_javascript());
+}
 
 print($newjavascript);
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('shaper'))
+if (is_subsystem_dirty('shaper')) {
 	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), true, "firewall_shaper.php");
@@ -433,7 +437,7 @@ $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
+<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" property="stylesheet" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <div class="table-responsive">
@@ -461,10 +465,11 @@ if (!$dfltmsg)  {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
-			if ($queue)
+			if ($queue) {
 				$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=add';
-			else
+			} else {
 				$url = 'firewall_shaper.php?interface='. $interface . '&action=add';
+			}
 
 			$sform->addGlobal(new Form_Button(
 				'add',
@@ -474,10 +479,11 @@ if (!$dfltmsg)  {
 
 		}
 
-		if ($queue)
+		if ($queue) {
 			$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=delete';
-		else
+		} else {
 			$url = 'firewall_shaper.php?interface='. $interface . '&action=delete';
+		}
 
 		$sform->addGlobal(new Form_Button(
 			'delete',

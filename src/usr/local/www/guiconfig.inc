@@ -675,7 +675,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		}
 	}
 
+	$rows = 0;
 	foreach ($logarr as $logent) {
+		$rows++;
 		$logent = preg_split("/\s+/", $logent, 6);
 		echo "<tr>\n";
 		if ($withorig) {
@@ -694,6 +696,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		}
 		echo "</tr>\n";
 	}
+	return($rows);
 }
 
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {

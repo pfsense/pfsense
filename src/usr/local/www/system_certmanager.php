@@ -959,6 +959,13 @@ print $form;
 
 	$section = new Form_Section("Complete signing request for " . $pconfig['descr']);
 
+	$section->addInput(new Form_Input(
+		'descr',
+		'Descriptive name',
+		'text',
+		$pconfig['descr']
+	));
+
 	$section->addInput(new Form_Textarea(
 		'csr',
 		'Signing request data',

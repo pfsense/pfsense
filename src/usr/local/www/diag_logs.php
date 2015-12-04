@@ -343,12 +343,14 @@ if (!isset($config['syslog']['rawfilter'])) {
 	} // e-o-foreach
 ?>
 		</table>
+<?php
+	if (count($filterlog) == 0)
+		print_info_box('No logs to display');
+?>
 		</div>
 	</div>
 </div>
 <?php
-	if (count($filterlog) == 0)
-		print_info_box('No logs to display');
 }
 else
 {
@@ -377,11 +379,13 @@ else
 ?>
 			</tbody>
 		</table>
-	</div>
-</div>
 <?php
 	if ($rows == 0)
 		print_info_box('No logs to display');
+?>
+	</div>
+</div>
+<?php
 }
 ?>
 

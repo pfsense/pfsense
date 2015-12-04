@@ -3841,6 +3841,7 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
+	require_once("ipsec.inc");
 	global $config, $ipsec_log_cats;
 
 	if (!is_array($config['ipsec'])) {

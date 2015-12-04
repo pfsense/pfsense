@@ -33,6 +33,8 @@
 	 *    - DNSimple (dnsimple.com)
 	 *    - Google Domains (domains.google.com)
 	 *    - DNS Made Easy (www.dnsmadeeasy.com)
+	 *    - SPDNS (spdns.de)
+	 *    - SPDNS IPv6 (spdns.de)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -79,6 +81,8 @@
 	 *  DNSimple        - Last Tested: 09 February 2015
 	 *  Google Domains  - Last Tested: 27 April 2015
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
+	 *  SPDNS           - Last Tested: 04 December 2015
+	 *  SPDNS IPv6      - Last Tested: 04 December 2015
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -179,6 +183,7 @@
 			switch ($dnsService) {
 				case 'he-net-v6':
 				case 'custom-v6':
+				case 'spdns-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -254,6 +259,8 @@
 					case 'dnsimple':
 					case 'googledomains':
 					case 'dnsmadeeasy':
+					case 'spdns':
+					case 'spdns-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -820,6 +827,20 @@
 					}
 					$server = "https://cp.dnsmadeeasy.com/servlet/updateip";
 					curl_setopt($ch, CURLOPT_URL, $server . '?username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP);
+					break;
+				case 'spdns':
+				case 'spdns-v6':
+					$needsIP = FALSE;
+					if ($this->_dnsVerboseLog)
+						log_error("SPDNS: ({$this->_dnsHost}) DNS update() starting.");
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://update.spdns.de/nic/update";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				default:
 					break;
@@ -1415,6 +1436,26 @@
 							log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$data}");
 							$this->_debug($data);
 							break;
+					}
+					break;
+				case 'spdns':
+				case 'spdns-v6':
+					if (preg_match('/notfqdn/i', $data)) {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Error) Not A FQDN!";
+					} else if (preg_match('/nohost/i', $data)) {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Error) No such host";
+					} else if (preg_match('/nochg/i', $data)) {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
+							$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+							$successful_update = true;
+					} else if (preg_match('/badauth/i', $data)) {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
+					} else {
+							$status = "phpDynDNS ({$this->_dnsHost}): (Unknown Response)";
+							log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$data}");
+							$this->_debug($data);
 					}
 					break;
 			}

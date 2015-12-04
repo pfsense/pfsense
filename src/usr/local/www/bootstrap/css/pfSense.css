@@ -190,7 +190,6 @@ ul.context-links li a {
 
 .panel-title {
     font-size: 20px;
-    text-transform: capitalize;
 }
 
 .panel-body {
@@ -203,10 +202,6 @@ ul.context-links li a {
 
 .content {
     padding: 10px;
-}
-
-.control-label, th {
-    text-transform: capitalize;
 }
 
 .form-horizontal {

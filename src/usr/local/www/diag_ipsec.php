@@ -287,9 +287,6 @@ if (is_array($status)) {
 						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Disconnect VPN">
 							<?=gettext("Disconnect")?>
 						</a><br />
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$ikesa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Disconnect VPN connection">
-							<?=gettext("Disconnect")?>
-						</a>
 <?php
 		}
 ?>

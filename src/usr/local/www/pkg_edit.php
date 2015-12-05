@@ -285,20 +285,6 @@ if ($_POST) {
 	}
 }
 
-if ($pkg['title'] != "") {
-	$edit = ($only_edit ? '' : ": " . gettext("Edit"));
-	$pgtitle = $pkg['title'] . $edit;
-} else {
-	$pgtitle = gettext("Package Editor");
-}
-
-if ($pkg['custom_php_after_head_command']) {
-	$closehead = false;
-	include("head.inc");
-	eval($pkg['custom_php_after_head_command']);
-} else {
-	include("head.inc");
-}
 
 // Turn an embedded table into a bootstrap class table. This is for backward compatibility.
 // We remove any table attributes in the XML and replace them with Bootstrap table classes
@@ -529,12 +515,14 @@ function parse_package_templates() {
 	}
 }
 
-// Start of page display
-if ($input_errors)
-	print_input_errors($input_errors);
+//breadcrumb
+if ($pkg['title'] != "") {
+	$edit = ($only_edit ? '' : " / " . gettext("Edit"));
+	$pgtitle = array($pkg['title'], $edit);
+} else {
+	$pgtitle = array(gettext("Package Editor"));
+}
 
-if ($savemsg)
-	print_info_box($savemsg, 'success');
 
 // Create any required tabs
 if ($pkg['tabs'] != "") {
@@ -548,6 +536,7 @@ if ($pkg['tabs'] != "") {
 
 		if (isset($tab['active'])) {
 			$active = true;
+			$pgtitle[] = $tab['text'] ; 
 		} else {
 			$active = false;
 		}
@@ -586,11 +575,27 @@ if ($pkg['tabs'] != "") {
 	}
 
 	ksort($tab_array);
+}
 
+if ($pkg['custom_php_after_head_command']) {
+	$closehead = false;
+	include("head.inc");
+	eval($pkg['custom_php_after_head_command']);
+} else {
+	include("head.inc");
+}
+if(isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
 		display_top_tabs($tab); //, $no_drop_down, $tabid);
 	}
 }
+
+// Start of page display
+if ($input_errors)
+	print_input_errors($input_errors);
+
+if ($savemsg)
+	print_info_box($savemsg, 'success');
 
 $cols = 0;
 $savevalue = gettext("Save");

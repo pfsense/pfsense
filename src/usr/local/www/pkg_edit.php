@@ -517,8 +517,11 @@ function parse_package_templates() {
 
 //breadcrumb
 if ($pkg['title'] != "") {
-	$edit = ($only_edit ? '' : " / " . gettext("Edit"));
-	$pgtitle = array($pkg['title'], $edit);
+	if(!$only_edit) {
+		$pgtitle = array($pkg['title'], gettext("Edit"));
+	} else {
+		$pgtitle = array($pkg['title']);
+	}
 } else {
 	$pgtitle = array(gettext("Package Editor"));
 }

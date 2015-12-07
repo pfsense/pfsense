@@ -358,7 +358,7 @@ $section->addInput(new Form_Input(
 	'submit',
 	'Test SMTP settings'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
+	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 
 $form->add($section);
 

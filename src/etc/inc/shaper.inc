@@ -1381,7 +1381,7 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
 
 		$group->setHelp('Select options for this queue');
 

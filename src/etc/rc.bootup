@@ -132,6 +132,12 @@ if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
 }
 
+/* Reinstall of packages after reboot has been requested */
+if (file_exists('/conf/needs_package_sync_after_reboot')) {
+	touch('/conf/needs_package_sync');
+	@unlink('/conf/needs_package_sync_after_reboot');
+}
+
 /* start devd (dhclient now uses it) */
 echo "Starting device manager (devd)...";
 mute_kernel_msgs();

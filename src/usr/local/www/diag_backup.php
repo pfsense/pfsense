@@ -372,7 +372,7 @@ if ($_POST) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync");
+								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");

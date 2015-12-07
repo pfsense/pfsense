@@ -589,7 +589,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Server"));
 $shortcut_section = "openvpn";
 
 include("head.inc");

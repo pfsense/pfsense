@@ -750,7 +750,8 @@ if($act=="new" || $act=="edit") :
 	$certhelp = "";
 	if (count($a_cert)) {
 		if (!empty(trim($pconfig['certref']))) {
-			$purpose = cert_get_purpose($a_cert[$pconfig['certref']]['crt'], true);
+			$thiscert = lookup_cert($pconfig['certref']);
+			$purpose = cert_get_purpose($thiscert['crt'], true);
 			if ($purpose['server'] != "Yes") {
 				$certhelp = gettext("Warning: The previously saved server was not created as an SSL Server certificate and may not work properly.");
 			}

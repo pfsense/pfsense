@@ -192,7 +192,7 @@ function openvpn_build_crl_list() {
 	return($list);
 }
 
-function openvpn_build_cert_list($include_none = false) {
+function openvpn_build_cert_list($include_none = false, $prioritize_server_certs = false) {
 	global $a_cert;
 
 	if ($include_none) {
@@ -201,29 +201,50 @@ function openvpn_build_cert_list($include_none = false) {
 		$list = array();
 	}
 
+	if ($prioritize_server_certs) {
+		$list[' '] = "===== Server Certificates =====";
+		$non_server_list = array();
+		$non_server_list['  '] = "===== Non-Server Certificates =====";
+	}
+
 	foreach ($a_cert as $cert) {
-		$caname = "";
-		$inuse = "";
-		$revoked = "";
+		$properties = array();
+		$propstr = "";
 		$ca = lookup_ca($cert['caref']);
+		$purpose = cert_get_purpose($cert['crt'], true);
 
+		if ($purpose['server'] == "Yes") {
+			$properties[] = "Server: Yes";
+		} elseif ($prioritize_server_certs) {
+			$properties[] = "Server: NO";
+		}
 		if ($ca) {
-			$caname = " (CA: {$ca['descr']})";
+			$properties[] = "CA: {$ca['descr']}";
 		}
-
-		if ($pconfig['certref'] == $cert['refid']) {
-			$selected = "selected";
-		}
-
 		if (cert_in_use($cert['refid'])) {
-			$inuse = " *In Use";
+			$properties[] = "In Use";
 		}
-
 		if (is_cert_revoked($cert)) {
-			$revoked = " *Revoked";
+			$properties[] = "Revoked";
 		}
 
-		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
+		if (!empty($properties)) {
+			$propstr = " (" . implode(", ", $properties) . ")";
+		}
+
+		if ($prioritize_server_certs) {
+			if ($purpose['server'] == "Yes") {
+				$list[$cert['refid']] = $cert['descr'] . $propstr;
+			} else {
+				$non_server_list[$cert['refid']] = $cert['descr'] . $propstr;
+			}
+		} else {
+			$list[$cert['refid']] = $cert['descr'] . $propstr;
+		}
+	}
+
+	if ($prioritize_server_certs) {
+		$list = array_merge($list, $non_server_list);
 	}
 
 	return($list);

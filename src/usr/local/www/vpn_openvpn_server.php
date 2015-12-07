@@ -419,6 +419,9 @@ if ($_POST) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (empty(trim($pconfig['certref']))) {
+			$input_errors[] = gettext("The selected certificate is not valid");
+		}
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -744,12 +747,24 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
+	$certhelp = "";
+	if (count($a_cert)) {
+		if (!empty(trim($pconfig['certref']))) {
+			$purpose = cert_get_purpose($a_cert[$pconfig['certref']]['crt'], true);
+			if ($purpose['server'] != "Yes") {
+				$certhelp = gettext("Warning: The previously saved server was not created as an SSL Server certificate and may not work properly.");
+			}
+		}
+	} else {
+		$certhelp = sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>');
+	}
+
 	$section->addInput(new Form_Select(
 		'certref',
 		'Server certificate',
 		$pconfig['certref'],
-		openvpn_build_cert_list()
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
+		openvpn_build_cert_list(false, true)
+		))->setHelp($certhelp);
 
 	$section->addInput(new Form_Select(
 		'dh_length',

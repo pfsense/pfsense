@@ -207,17 +207,21 @@ function openvpn_build_cert_list($include_none = false) {
 		$revoked = "";
 		$ca = lookup_ca($cert['caref']);
 
-		if ($ca)
+		if ($ca) {
 			$caname = " (CA: {$ca['descr']})";
+		}
 
-		if ($pconfig['certref'] == $cert['refid'])
+		if ($pconfig['certref'] == $cert['refid']) {
 			$selected = "selected";
+		}
 
-		if (cert_in_use($cert['refid']))
+		if (cert_in_use($cert['refid'])) {
 			$inuse = " *In Use";
+		}
 
-		if (is_cert_revoked($cert))
-		   $revoked = " *Revoked";
+		if (is_cert_revoked($cert)) {
+			$revoked = " *Revoked";
+		}
 
 		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
 	}

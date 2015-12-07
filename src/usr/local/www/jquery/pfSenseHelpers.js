@@ -332,13 +332,15 @@ function add_row() {
 	checkLastRow();
 
 	// Autocomplete
-	$('[id^=address]').each(function() {
-		if(this.id.substring(0, 8) != "address_") {
-			$(this).autocomplete({
-				source: addressarray
-			});
-		}
-	});
+	if ( typeof addressarray !== 'undefined') {
+		$('[id^=address]').each(function() {
+			if(this.id.substring(0, 8) != "address_") {
+				$(this).autocomplete({
+					source: addressarray
+				});
+			}
+		});
+	}
 }
 
 // These are action buttons, not submit buttons

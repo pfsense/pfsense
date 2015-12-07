@@ -252,7 +252,7 @@ if ($g['services_dhcp_server_enable']) {
 }
 
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
-$services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
+$services_menu[] = array(gettext("IGMP Proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
@@ -377,7 +377,7 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
 	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
-	$help_menu[] = array(gettext("Search portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
+	$help_menu[] = array(gettext("Search Portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }

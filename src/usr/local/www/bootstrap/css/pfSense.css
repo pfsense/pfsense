@@ -429,11 +429,11 @@ footer a {
 }
 
 .progress-bar.progress-bar-success {
-    background-color: #5cb85c;
+    background-color: #4CAF50;
 }
 
 .progress-bar.progress-bar-warning {
-    background-color: #f0ad4e;
+    background-color: #FBC02D;
 }
 
 .progress-bar.progress-bar-danger {

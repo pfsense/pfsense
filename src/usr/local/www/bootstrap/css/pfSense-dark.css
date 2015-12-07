@@ -79,6 +79,11 @@ ul.context-links li a {
     color: #009688;
 }
 
+/* navigation */
+.navbar-inverse {
+    background-color: #000000;
+}
+
 .nav>li>a {
     border-bottom: 5px solid #212121;
     color: #009688;
@@ -97,7 +102,7 @@ ul.context-links li a {
     color: #009688;
 }
 
-.navbar-nav >li>a {
+.navbar-inverse .navbar-nav >li>a {
     border-bottom: 5px solid #000000;
 }
 
@@ -117,6 +122,7 @@ ul.context-links li a {
 .nav-tabs {
     border-bottom: 1px solid #009688;
 }
+/* end navigation */
 
 /* common button colors */
 .btn-default {

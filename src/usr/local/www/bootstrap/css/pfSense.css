@@ -107,7 +107,7 @@ ul.context-links li a {
 }
 
 .navbar-inverse {
-    background-color: #000000;
+    background-color: #212121;
 }
 
 .navbar-brand {
@@ -132,8 +132,9 @@ ul.context-links li a {
     background-color: #F5F5F5;
 }
 
-.navbar-nav >li>a {
-    border-bottom: 5px solid #000000;
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #212121;
+    color: #BDBDBD;
 }
 
 .nav-tabs>li>a {

@@ -70,7 +70,7 @@ require_once("vpn.inc");
 
 global $openssl_crl_status;
 
-$pgtitle = array(gettext("System"), gettext("Certificate Revocation List Manager"));
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation Lists"));
 
 $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),

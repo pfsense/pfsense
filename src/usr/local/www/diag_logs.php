@@ -112,6 +112,9 @@ if (!$_GET['logfile']) {
 	}
 }
 
+$system_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
+
+
 function getGETPOSTsettingvalue($settingname, $default) {
 	$settingvalue = $default;
 	if ($_GET[$settingname]) {
@@ -123,9 +126,11 @@ function getGETPOSTsettingvalue($settingname, $default) {
 	return $settingvalue;
 }
 
+
 $filtersubmit = getGETPOSTsettingvalue('filtersubmit', null);
 
 if ($filtersubmit) {
+	$filter_active = true;
 	$filtertext = getGETPOSTsettingvalue('filtertext', "");
 	$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 }
@@ -133,6 +138,7 @@ if ($filtersubmit) {
 $filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
 
 if ($filterlogentries_submit) {
+	$filter_active = true;
 	$filterfieldsarray = array();
 
 	$filterfieldsarray['time'] = getGETPOSTsettingvalue('filterlogentries_time', null);
@@ -142,9 +148,97 @@ if ($filterlogentries_submit) {
 	$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 }
 
-$system_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
-$nentries = $config['syslog']['nentries'];
+# Manage Log - Code
+
+$specific_log = basename($logfile) . '_settings';
+
+$pconfig['cronorder'] = $config['syslog'][$specific_log]['cronorder'];
+$pconfig['nentries'] = $config['syslog'][$specific_log]['nentries'];
+$pconfig['logfilesize'] = $config['syslog'][$specific_log]['logfilesize'];
+$pconfig['format'] = $config['syslog'][$specific_log]['format'];
+$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
+
+$save_settings = getGETPOSTsettingvalue('save_settings', null);
+
+if ($save_settings) {
+	$cronorder = getGETPOSTsettingvalue('cronorder',  null);
+	$nentries = getGETPOSTsettingvalue('nentries', null);
+	$logfilesize = getGETPOSTsettingvalue('logfilesize', null);
+	$format  = getGETPOSTsettingvalue('format',  null);
+	$loglighttpd  = getGETPOSTsettingvalue('loglighttpd',  null);
+
+	unset($input_errors);
+	$pconfig = $_POST;
+
+	/* input validation */
+	if (isset($nentries) && (strlen($nentries) > 0)) {
+		if (!is_numeric($nentries) || ($nentries < 5) || ($nentries > 2000)) {
+			$input_errors[] = gettext("Number of log entries to show must be between 5 and 2000.");
+		}
+	}
+
+	if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
+		if (!is_numeric($logfilesize) || ($logfilesize < 100000)) {
+			$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+		}
+	}
+
+	if (!$input_errors) {
+
+		# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
+		unset($config['syslog'][$specific_log]);
+
+		if ($cronorder != '') { # if not using the general logging options setting (global)
+			$config['syslog'][$specific_log]['cronorder'] = $cronorder;
+		}
+
+		if (isset($nentries) && (strlen($nentries) > 0)) {
+			$config['syslog'][$specific_log]['nentries'] = (int)$nentries;
+		}
+
+		if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
+			$config['syslog'][$specific_log]['logfilesize'] = (int)$logfilesize;
+		}
+
+		if ($format != '') { # if not using the general logging options setting (global)
+			$config['syslog'][$specific_log]['format'] = $format;
+		}
+
+		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
+		if ($logfile == 'system') {
+			$config['syslog']['nologlighttpd'] = $loglighttpd ? false : true;
+		}
+
+		write_config();
+
+		$retval = 0;
+		$savemsg = get_std_save_message($retval);
+
+		if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
+			ob_flush();
+			flush();
+			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+			send_event("service restart webgui");
+			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+		}
+	}
+}
+
+
+# Formatted/Raw Display
+if ($config['syslog'][$specific_log]['format'] == 'formatted') {
+	$rawfilter = false;
+}
+else if ($config['syslog'][$specific_log]['format'] == 'raw') {
+	$rawfilter = true;
+}	
+else {	# Use the general logging options setting (global).
+	$rawfilter = isset($config['syslog']['rawfilter']);
+}
+
+
+isset($config['syslog'][$specific_log]['nentries']) ? $nentries = $config['syslog'][$specific_log]['nentries'] : $nentries = $config['syslog']['nentries'];
 
 # Override Display Quantity
 if ($filterlogentries_qty) {
@@ -172,6 +266,11 @@ if (!empty($allowed_logs[$logfile]["shortcut"])) {
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 
+if (!$input_errors && $savemsg) {
+	print_info_box($savemsg);
+	$manage_log_active = false;
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("System"), ($logfile == 'system'), "diag_logs.php");
 $tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
@@ -196,10 +295,18 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 
-if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
+define(SEC_OPEN, 0x00);
+define(SEC_CLOSED, 0x04);
+
+if ($filter_active)
+	$filter_state = SEC_OPEN;
+else
+	$filter_state = SEC_CLOSED;
+
+if (!$rawfilter) { // Advanced log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section(gettext('Advanced Log Filter'), 'adv-filter-panel', true);
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
 
 	$group = new Form_Group('');
 
@@ -208,21 +315,21 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['time']
-	))->setHelp(gettext('Time'));
+	))->setWidth(3)->setHelp('Time');
 
 	$group->add(new Form_Input(
 		'filterlogentries_process',
 		null,
 		'text',
 		$filterfieldsarray['process']
-	))->setHelp(gettext('Process'));
+	))->setWidth(2)->setHelp('Process');
 
 	$group->add(new Form_Input(
 		'filterlogentries_pid',
 		null,
 		'text',
 		$filterfieldsarray['pid']
-	))->setHelp(gettext('PID'));
+	))->setWidth(2)->setHelp('PID');
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -230,7 +337,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp(gettext('Quantity'));
+	))->setWidth(2)->setHelp('Quantity');
 
 	$section->add($group);
 
@@ -241,7 +348,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		null,
 		'text',
 		$filterfieldsarray['message']
-	))->setHelp(gettext('Log Message'));
+	))->setWidth(7)->setHelp('Message');
 
 	$btnsubmit = new Form_Button(
 		'filterlogentries_submit',
@@ -253,7 +360,7 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 else { // Simple log filter form
 	$form = new Form(false);
 
-	$section = new Form_Section(gettext('Log Filter'), 'basic-filter-panel', true);
+	$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
 
 	$group = new Form_Group('');
 
@@ -262,7 +369,7 @@ else { // Simple log filter form
 		null,
 		'text',
 		$filtertext
-	))->setHelp(gettext('Filter Expression'));
+	))->setWidth(6)->setHelp('Filter Expression');
 
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
@@ -270,7 +377,7 @@ else { // Simple log filter form
 		'number',
 		$filterlogentries_qty,
 		['placeholder' => $nentries]
-	))->setHelp(gettext('Quantity'));
+	))->setWidth(2)->setHelp('Quantity');
 
 	$btnsubmit = new Form_Button(
 		'filtersubmit',
@@ -293,7 +400,7 @@ $form->add($section);
 print $form;
 
 // Now the forms are complete we can draw the log table and its controls
-if (!isset($config['syslog']['rawfilter'])) {
+if (!$rawfilter) {
 	if ($filterlogentries_submit)
 		$filterlog = conv_log_filter($system_logfile, $nentries, $nentries + 100, $filterfieldsarray);
 	else
@@ -305,11 +412,11 @@ if (!isset($config['syslog']['rawfilter'])) {
 		<h2 class="panel-title">
 <?php
 	if ((!$filtertext) && (!$filterfieldsarray))
-		printf(gettext("Last %d %s log entries."), count($filterlog), $logfile);
+		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 	else
-		printf(gettext("%d matched %s log entries."), count($filterlog), $logfile);
+		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 
-	printf(gettext(" (Maximum %d)"), $nentries);
+	printf(" (" . gettext("Maximum %d") . ")", $nentries);
 ?>
 		</h2>
 	</div>
@@ -343,18 +450,20 @@ if (!isset($config['syslog']['rawfilter'])) {
 	} // e-o-foreach
 ?>
 		</table>
+<?php
+	if (count($filterlog) == 0)
+		print_info_box(gettext('No logs to display'));
+?>
 		</div>
 	</div>
 </div>
 <?php
-	if (count($filterlog) == 0)
-		print_info_box(gettext('No logs to display'));
 }
 else
 {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover">
 			<thead>
@@ -377,20 +486,141 @@ else
 ?>
 			</tbody>
 		</table>
-	</div>
-</div>
 <?php
 	if ($rows == 0)
 		print_info_box(gettext('No logs to display'));
+?>
+	</div>
+</div>
+<?php
 }
 ?>
 
 <?php
+# Manage Log - Section/Form
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+	$manage_log_active = true;
+}
+
+if ($manage_log_active)
+	$manage_log_state = SEC_OPEN;
+else
+	$manage_log_state = SEC_CLOSED;
+
 $form = new Form(false);
 
-$section = new Form_Section(gettext('Manage Log'), 'log-manager-panel', true);
+$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'log-manager-panel', COLLAPSIBLE|$manage_log_state);
 
-$group = new Form_Group('');
+$section->addInput(new Form_StaticText(
+	'',
+	'These settings override the "General Logging Options" settings.'
+));
+
+$group = new Form_Group('Forward/Reverse Display');
+
+$group->add(new Form_Checkbox(
+	'cronorder',
+	null,
+	'Forward',
+	($pconfig['cronorder'] == 'forward') ? true : false,
+	'forward'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'cronorder',
+	null,
+	'Reverse',
+	($pconfig['cronorder'] == 'reverse') ? true : false,
+	'reverse'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'cronorder',
+	null,
+	'General Logging Options Setting',
+	($pconfig['cronorder'] == '') ? true : false,
+	''
+))->displayAsRadio();
+
+$group->setHelp('Show log entries in forward (newest at bottom) or reverse (newest at top) order.');
+$section->add($group);
+
+$group = new Form_Group('GUI Log Entries');
+
+# Use the general logging options setting (global) as placeholder.
+$group->add(new Form_Input(
+	'nentries',
+	'GUI Log Entries',
+	'number',
+	$pconfig['nentries'],
+	['placeholder' => $config['syslog']['nentries']]
+))->setWidth(2);
+
+$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
+$section->add($group);
+
+$group = new Form_Group('Log file size (Bytes)');
+
+# Use the general logging options setting (global) as placeholder.
+$group->add(new Form_Input(
+	'logfilesize',
+	'Log file size (Bytes)',
+	'number',
+	$pconfig['logfilesize'],
+	['placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
+))->setWidth(2);
+$group->setHelp("The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB." .
+					'<br /><br />' .
+			"NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the \"Clear Log\" action below. ");
+$section->add($group);
+
+$group = new Form_Group('Formatted/Raw Display');
+
+$group->add(new Form_Checkbox(
+	'format',
+	null,
+	'Formatted',
+	($pconfig['format'] == 'formatted') ? true : false,
+	'formatted'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'format',
+	null,
+	'Raw',
+	($pconfig['format'] == 'raw') ? true : false,
+	'raw'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'format',
+	null,
+	'General Logging Options Setting',
+	($pconfig['format'] == '') ? true : false,
+	''
+))->displayAsRadio();
+
+$group->setHelp('Show the log entries as formated or raw output as generated by the service. The raw output will reveal more detailed information, but it is more difficult to read.');
+$section->add($group);
+
+if ($logfile == 'system') {
+	$section->addInput(new Form_Checkbox(
+		'loglighttpd',
+		'Web Server Log',
+		'Log errors from the web server process',
+		$pconfig['loglighttpd']
+	))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the system log.');
+}
+
+$btnsavesettings = new Form_Button(
+	'save_settings',
+	gettext('Save'),
+	null
+);
+
+$btnsavesettings->addClass('btn-sm');
 
 $btnclear = new Form_Button(
 	'clear',
@@ -401,13 +631,17 @@ $btnclear = new Form_Button(
 
 $btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
 
-if ($logfile == 'dhcpd')
-	print_info_box(gettext('Warning: Clearing the log file will restart the DHCP daemon.'));
+$group = new Form_Group('Action');
+
+$group->add(new Form_StaticText(
+	'',
+	$btnsavesettings
+))->setHelp('Saves changed settings.');
 
 $group->add(new Form_StaticText(
 	'',
 	$btnclear
-));
+))->setHelp('Clears local log file and reinitializes it as an empty log. Save any settings changes first.');
 
 $section->add($group);
 $form->add($section);

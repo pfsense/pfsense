@@ -251,7 +251,7 @@ function build_if_list($selectedifs) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DNS Resolver"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General"));
 $shortcut_section = "resolver";
 
 include_once("head.inc");

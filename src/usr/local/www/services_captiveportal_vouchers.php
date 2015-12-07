@@ -111,7 +111,7 @@ if (empty($a_cp[$cpzone])) {
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("Vouchers"));
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -430,7 +430,7 @@ if ($savemsg)
 	print_info_box($savemsg. 'success');
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive Portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");

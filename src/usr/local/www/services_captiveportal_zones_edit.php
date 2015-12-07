@@ -69,7 +69,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
 $shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal'])) {
@@ -121,7 +121,7 @@ $form = new Form(new Form_Button(
 	'Continue'
 ));
 
-$section = new Form_Section('Edit Captive Portal Zones');
+$section = new Form_Section('Add Captive Portal Zone');
 
 $section->addInput(new Form_Input(
 	'zone',

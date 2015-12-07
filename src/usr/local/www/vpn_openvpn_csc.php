@@ -67,7 +67,7 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-csc'])) {

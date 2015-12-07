@@ -65,7 +65,7 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Client"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-client'])) {

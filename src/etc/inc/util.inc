@@ -1494,13 +1494,13 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
-/* unlink a file, if it exists */
+/* unlink a file, or pattern-match of a file, if it exists
+   if the file/path contains glob() compatible wildcards, all matching files will be unlinked 
+   if no matches, no error occurs */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
-	if (is_array($to_do)) {
-		foreach ($to_do as $filename) {
-			@unlink($filename);
-		}
+	if (is_array($to_do) && count($to_do) > 0) {
+		array_map("unlink", $to_do);
 	} else {
 		@unlink($fn);
 	}

@@ -317,7 +317,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
 include("head.inc");
 
 if ($input_errors)

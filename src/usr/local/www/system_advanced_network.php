@@ -171,7 +171,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Networking"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Networking"));
 include("head.inc");
 
 if ($input_errors)

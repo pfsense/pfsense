@@ -402,7 +402,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Firewall and NAT"));
 include("head.inc");
 
 if ($input_errors)

@@ -315,7 +315,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Miscellaneous"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 include("head.inc");
 
 if ($input_errors)

@@ -66,7 +66,7 @@
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"), gettext("IGMP Proxy"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("IGMP Proxy"), gettext("Edit"));
 
 require("guiconfig.inc");
 

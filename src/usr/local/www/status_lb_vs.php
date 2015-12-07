@@ -85,7 +85,7 @@ $a_vs = &$config['load_balancer']['virtual_server'];
 $a_pool = &$config['load_balancer']['lbpool'];
 $rdr_a = get_lb_redirects();
 
-$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Virtual Server"));
+$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Virtual Servers"));
 include("head.inc");
 
 /* active tabs */

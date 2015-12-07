@@ -268,7 +268,7 @@ if (empty($pconfig['interface'])) {
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-$pgtitle = array(gettext("Services"), gettext("NTP"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");
 

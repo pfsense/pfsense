@@ -436,9 +436,11 @@ if ($_POST) {
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 2"), gettext("Mobile Client"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 2"));
+	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 2"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 2"));
+	$editing_mobile = false;
 }
 $shortcut_section = "ipsec";
 
@@ -515,8 +517,8 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[0] = array(gettext("Tunnels"), !$editing_mobile, "vpn_ipsec.php");
+$tab_array[1] = array(gettext("Mobile Clients"), $editing_mobile, "vpn_ipsec_mobile.php");
 $tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);

@@ -70,7 +70,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("Group Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();

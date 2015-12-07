@@ -83,7 +83,7 @@ function admin_groups_sort() {
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("Group manager"), gettext("Add privileges"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Add Privileges"));
 
 if (is_numericint($_GET['groupid'])) {
 	$groupid = $_GET['groupid'];

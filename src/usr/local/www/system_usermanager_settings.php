@@ -76,7 +76,7 @@ else {
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
-$pgtitle = array(gettext("System"), gettext("User manager settings"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
 
 $save_and_test = false;
 

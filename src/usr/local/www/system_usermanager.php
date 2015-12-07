@@ -73,7 +73,7 @@ require("certs.inc");
 require("guiconfig.inc");
 
 // start admin user code
-$pgtitle = array(gettext("System"), gettext("User Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
 
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];

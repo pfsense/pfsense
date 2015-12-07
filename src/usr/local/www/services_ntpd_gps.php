@@ -224,7 +224,7 @@ function build_nmea_list() {
 
 $closehead = false;
 $pconfig = &$config['ntpd']['gps'];
-$pgtitle = array(gettext("Services"), gettext("NTP GPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 

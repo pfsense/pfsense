@@ -231,7 +231,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Advanced Settings"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -260,8 +260,8 @@ if ($input_errors)
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 

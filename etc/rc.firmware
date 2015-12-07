@@ -365,7 +365,7 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 
 	# Trigger a package reinstallation on reboot
-	touch /conf/needs_package_sync
+	touch /conf/needs_package_sync_after_reboot
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

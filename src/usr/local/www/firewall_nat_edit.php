@@ -531,7 +531,7 @@ if ($_POST) {
 }
 
 function build_srctype_list() {
-	global $pconfig, $ifdisp;
+	global $pconfig, $ifdisp, $config;
 
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
 
@@ -551,6 +551,26 @@ function build_srctype_list() {
 	}
 
 	return($list);
+}
+
+function srctype_selected() {
+	global $pconfig, $config;
+
+	$selected = "";
+
+	$sel = is_specialnet($pconfig['src']);
+	if (!$sel) {
+		if ($pconfig['srcmask'] == 32) {
+			$selected = 'single';
+		} else {
+			$selected = 'network';
+		}
+	} else {
+		$selected = $pconfig['src'];
+	}
+
+
+	return($selected);
 }
 
 function build_dsttype_list() {
@@ -599,33 +619,26 @@ function build_dsttype_list() {
 }
 
 function dsttype_selected() {
-	global $pconfig;
+	global $pconfig, $config;
 
-	$sel = is_specialnet($pconfig['dst']);
+	$selected = "";
 
-	if (!$sel) {
-		if ($pconfig['dstmask'] == 32)
-			return('single');
-
-		return('network');
+	if (is_array($config['virtualip']['vip'])) {
+		$selected = $pconfig['dst'];
+	} else {
+		$sel = is_specialnet($pconfig['dst']);
+		if (!$sel) {
+			if ($pconfig['dstmask'] == 32) {
+				$selected = 'single';
+			} else {
+				$selected = 'network';
+			}
+		} else {
+			$selected = $pconfig['dst'];
+		}
 	}
 
-	return($pconfig['dst']);
-}
-
-function srctype_selected() {
-	global $pconfig;
-
-	$sel = is_specialnet($pconfig['src']);
-
-	if (!$sel) {
-		if ($pconfig['srcmask'] == 32)
-			return('single');
-
-		return('network');
-	}
-
-	return($pconfig['src']);
+	return($selected);
 }
 
 $closehead = false;

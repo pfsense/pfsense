@@ -160,7 +160,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("RFC 2136 Client"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)

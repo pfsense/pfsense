@@ -56,7 +56,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-csc
-##|*NAME=OpenVPN: Client Specific Override page
+##|*NAME=OpenVPN: Client Specific Override
 ##|*DESCR=Allow access to the 'OpenVPN: Client Specific Override' page.
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
@@ -65,7 +65,9 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
+global $openvpn_tls_server_modes;
+
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-csc'])) {
@@ -101,6 +103,7 @@ if ($_GET['act'] == "del") {
 if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
+		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 		$pconfig['disable'] = isset($a_csc[$id]['disable']);
 		$pconfig['common_name'] = $a_csc[$id]['common_name'];
@@ -240,6 +243,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$csc = array();
 
+		$csc['server_list'] = implode(",", $pconfig['server_list']);
 		$csc['custom_options'] = $pconfig['custom_options'];
 		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;
@@ -287,14 +291,14 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_csc[$id]) {
-			$old_csc_cn = $a_csc[$id]['common_name'];
+			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
 		} else {
 			$a_csc[] = $csc;
 		}
 
-		if (!empty($old_csc_cn)) {
-			openvpn_cleanup_csc($old_csc_cn);
+		if (!empty($old_csc['common_name'])) {
+			openvpn_delete_csc($old_csc);
 		}
 		openvpn_resync_csc($csc);
 		write_config();
@@ -324,6 +328,24 @@ if($act=="new" || $act=="edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
+
+	$serveroptionlist = array();
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+				$serveroptionlist[$serversettings['vpnid']] = "OpenVPN Server {$serversettings['vpnid']}: {$serversettings['description']}";
+			}
+		}
+	}
+
+	$section->addInput(new Form_Select(
+		'server_list',
+		'Server List',
+		$pconfig['server_list'],
+		$serveroptionlist,
+		true
+		))->setHelp('Select the servers for which the override will apply. Selecting no servers will also apply the override to all servers.');
+
 
 	$section->addInput(new Form_Checkbox(
 		'disable',
@@ -586,7 +608,7 @@ if($act=="new" || $act=="edit"):
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

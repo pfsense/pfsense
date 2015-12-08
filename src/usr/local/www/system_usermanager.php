@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager
-##|*NAME=System: User Manager page
+##|*NAME=System: User Manager
 ##|*DESCR=Allow access to the 'System: User Manager' page.
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
@@ -73,7 +73,7 @@ require("certs.inc");
 require("guiconfig.inc");
 
 // start admin user code
-$pgtitle = array(gettext("System"), gettext("User Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
 
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
@@ -167,15 +167,14 @@ if ($_POST['act'] == "delcert") {
 	$_POST['act'] = "edit";
 	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
 }
-if ($_POST['act'] == "delprivid") {
 
-		if ($a_user[$id] && !empty($_POST['privid'])) {
-			unset($a_user[$id]['priv'][$_POST['privid']]);
-			local_user_set($a_user[$id]);
-			write_config();
-			$_POST['act'] = "edit";
-			$savemsg = gettext("Privilege removed.") . "<br />";
-		}
+if ($_POST['act'] == "delprivid") {
+	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
+	unset($a_user[$id]['priv'][$_POST['privid']]);
+	local_user_set($a_user[$id]);
+	write_config();
+	$_POST['act'] = "edit";
+	$savemsg = gettext("Privilege ") . $privdeleted . gettext(" removed") . "<br />";
 }
 
 if ($_POST['save']) {
@@ -388,13 +387,27 @@ function build_priv_table() {
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
-	foreach (get_user_privdesc($a_user[$id]) as $i => $priv) {
+	$i = 0;
+
+	foreach (get_user_privdesc($a_user[$id]) as $priv) {
+		$group = false;
+		if ($priv['group']) {
+			$group = $priv['group'];
+		}
+
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
-		$privhtml .=			'<td><a class="fa fa-trash no-confirm" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+		$privhtml .=			'<td>';
+		if (!$group)
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+
+		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
+
+		if(!$group)
+			$i++;
 	}
 
 	$privhtml .=		'</tbody>';
@@ -434,7 +447,7 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
-			$certhtml .=			'<a id="delcert' . $i .'" class="btn btn-xs btn-warning" title="';
+			$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
 			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '">Delete</a>';
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
@@ -490,7 +503,7 @@ foreach($a_user as $i => $userent):
 	?>
 			<tr>
 				<td>
-					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled="disabled"' : '')?>/>
+					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
 				</td>
 				<td>
 <?php
@@ -577,7 +590,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$ro = "";
 	if ($pconfig['utype'] == "system") {
-		$ro = "readonly=\"readonly\"";
+		$ro = "readonly";
 	}
 
 	$section = new Form_Section('User Properties');
@@ -842,7 +855,7 @@ $form->add($section);
 
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 
@@ -900,6 +913,7 @@ events.push(function(){
 			$('form').submit();
 		}
 	});
+
 	$('[id^=delprivid]').click(function(event) {
 		if(confirm(event.target.title)) {
 			$('#privid').val(event.target.id.match(/\d+$/)[0]);

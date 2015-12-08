@@ -63,14 +63,14 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager
-##|*NAME=System: Group manager page
+##|*NAME=System: Group manager
 ##|*DESCR=Allow access to the 'System: Group manager' page.
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("Group Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
@@ -452,7 +452,7 @@ if ($_GET['act'] != "new")
 
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

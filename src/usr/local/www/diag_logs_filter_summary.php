@@ -58,6 +58,13 @@
 	pfSense_MODULE:	filter
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-firewall-summary
+##|*NAME=Status: System Logs: Firewall Log Summary
+##|*DESCR=Allow access to the 'Status: System Logs: Firewall Log Summary' page
+##|*MATCH=diag_logs_filter_summary.php*
+##|-PRIV
+
 $pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
 $shortcut_section = "firewall";
 require_once("guiconfig.inc");
@@ -137,7 +144,8 @@ function stat_block($summary, $stat, $num) {
 function pie_block($summary, $stat, $num, $chartnum) {
 	global $fields, $segcolors, $gotlines, $numcolors;
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 var pie = new d3pie("pieChart<?=$chartnum?>", {
 	"header": {
 		"title": {
@@ -241,6 +249,7 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 	},
 	"callbacks": {}
 });
+//]]>
 </script>
 <?php
 }

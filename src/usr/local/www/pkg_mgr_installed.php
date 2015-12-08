@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installed
-##|*NAME=System: Package Manager: Installed page
+##|*NAME=System: Package Manager: Installed
 ##|*DESCR=Allow access to the 'System: Package Manager: Installed' page.
 ##|*MATCH=pkg_mgr_installed.php*
 ##|-PRIV
@@ -77,7 +77,7 @@ if (is_subsystem_dirty('packagelock')) {
 
 $closehead = false;
 
-$pgtitle = array(gettext("System"), gettext("Package Manager"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"),gettext("Installed Packages"));
 
 include("head.inc");
 
@@ -122,14 +122,14 @@ if(empty($installed_packages)):?>
 		}
 
 		#check package version
-		$txtcolor = "black";
+		$txtcolor = "";
 		$upgradeavail = false;
 		$missing = false;
 		$vergetstr = "";
 
 		if (isset($pkg['broken'])) {
 			// package is configured, but does not exist in the system
-			$txtcolor = "red";
+			$txtcolor = "text-danger";
 			$missing = true;
 			$status = 'Package is configured, but not installed!';
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
@@ -141,7 +141,7 @@ if(empty($installed_packages)):?>
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
 				$status = 'Upgrade available to '.$pkg['version'];
-				$txtcolor = "blue";
+				$txtcolor = "text-warning";
 				$upgradeavail = true;
 				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
 			} else if ($version_compare == '=') {
@@ -167,7 +167,7 @@ if(empty($installed_packages)):?>
 <?php } ?>
 		</td>
 		<td>
-			<font color="<?=$txtcolor?>"><?=$pkg['shortname']?></font>
+			<span class="<?=$txtcolor?>"><?=$pkg['shortname']?></span>
 		</td>
 		<td>
 			<?=implode(" ", $pkg['categories'])?>
@@ -185,7 +185,7 @@ if(empty($installed_packages)):?>
 			<?=$pkg['desc']?>
 		</td>
 		<td>
-			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-minus-circle"></a>
+			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
 <?php if($upgradeavail) { ?>
 			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
 <?php } else { ?>
@@ -203,18 +203,18 @@ if(empty($installed_packages)):?>
 </div>
 </div>
 <br />
-<div style="text-align: center;">
-	<span>
-		<i class="fa fa-refresh"></i> = Update, &nbsp;
-		<i class="fa fa-check"></i> = Current, &nbsp;
-		<i class="fa fa-minus-circle"></i> = Remove, &nbsp;
-		<i class="fa fa-info"></i> = Information, &nbsp;
-		<i class="fa fa-retweet"></i> = Reinstall.
-		<br />
-		<font color="blue"><?=gettext("Blue package name")?></font> = <?=gettext("Newer version available")?>
-		<br />
-		<font color="red"><?=gettext("Red")?></font> = <?=gettext("Package is configured but not (fully) installed")?>
-	</span>
+<div class="text-center">
+	<p>
+		<i class="fa fa-refresh"></i> = Update &nbsp;
+		<i class="fa fa-check"></i> = Current &nbsp;
+	</p>
+	<p>
+		<i class="fa fa-trash"></i> = Remove &nbsp;
+		<i class="fa fa-info"></i> = Information &nbsp;
+		<i class="fa fa-retweet"></i> = Reinstall
+	</p>
+	<p><span class="text-warning"><?=gettext("Newer version available")?></span></p>
+	<p><span class="text-danger"><?=gettext("Package is configured but not (fully) installed")?></span></p>
 </div>
 
 <?php endif; ?>

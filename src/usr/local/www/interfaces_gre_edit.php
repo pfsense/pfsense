@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gre-edit
-##|*NAME=Interfaces: GRE: Edit page
+##|*NAME=Interfaces: GRE: Edit
 ##|*DESCR=Allow access to the 'Interfaces: GRE: Edit' page.
 ##|*MATCH=interfaces_gre_edit.php*
 ##|-PRIV

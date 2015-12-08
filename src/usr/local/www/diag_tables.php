@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-tables
-##|*NAME=Diagnostics: PF Table IP addresses
+##|*NAME=Diagnostics: pf Table IP addresses
 ##|*DESCR=Allow access to the 'Diagnostics: Tables' page.
 ##|*MATCH=diag_tables.php*
 ##|-PRIV
@@ -140,7 +140,8 @@ $form->add($section);
 print $form;
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('a[data-entry]').on('click', function(){
 		var el = $(this);
@@ -159,6 +160,7 @@ events.push(function(){
 		});
 	});
 });
+//]]>
 </script>
 
 <div class="table-responsive">
@@ -166,6 +168,7 @@ events.push(function(){
 		<thead>
 			<tr>
 				<th><?=gettext("IP Address")?></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>

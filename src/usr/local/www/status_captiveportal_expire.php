@@ -59,8 +59,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal-expire
-##|*NAME=Status: Captive portal Expire Vouchers page
-##|*DESCR=Allow access to the 'Status: Captive portal Expire Vouchers' page.
+##|*NAME=Status: Captive Portal: Expire Vouchers
+##|*DESCR=Allow access to the 'Status: Captive Portal: Expire Vouchers' page.
 ##|*MATCH=status_captiveportal_expire.php*
 ##|-PRIV
 

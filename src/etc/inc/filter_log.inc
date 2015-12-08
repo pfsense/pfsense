@@ -79,10 +79,60 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
+	     if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/gateways.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/resolver.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/wireless.log")	{ $logfile_type = "system"; }
+
+	else if ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
+	else if ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
+
+	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/pptps.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
+
+	else if ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ntpd.log")		{ $logfile_type = "system"; }
+
+	else 														{ $logfile_type = "unknown"; }
+
+	     if ($logfile_type == 'firewall')	{
+		$pattern = "filterlog:";
+	}
+	else if ($logfile_type == 'system')		{
+
+		$month_pattern = "[a-zA-Z]{3}";
+		$day_pattern = "[0-9]{1,2}";
+		$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
+		$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
+
+		$process_pattern = "\(.*?\)";
+		$pid_pattern = "\(.*?\)\(?::\ +\)?\(?:\[[0-9:]*\]\)?:?";
+		$log_message_pattern = "\(.*\)";
+
+		$pattern = "^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$";
+	}
+	else if ($logfile_type == 'tbd')		{
+		$pattern = "^\(.*\)$";
+	}
+	else if ($logfile_type == 'unknown')	{
+		$pattern = "^\(.*\)$";
+	}
+	else									{
+		$pattern = "^\(.*\)$";
+	}
+
 	if (isset($config['system']['usefifolog'])) {
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 	}
 
 	$filterlog = array();
@@ -94,7 +144,12 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 			break;
 		}
 
-		$flent = parse_filter_line($logent);
+		     if ($logfile_type == 'firewall')	{ $flent = parse_firewall_log_line($logent); }
+		else if ($logfile_type == 'system')		{ $flent = parse_system_log_line($logent); }
+		else if ($logfile_type == 'tbd')		{ $flent = array(); }
+		else if ($logfile_type == 'unknown')	{ $flent = parse_unknown_log_line($logent); }
+		else 									{ $flent = array(); }
+
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
 			    (($flent != "") && (is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
@@ -159,7 +214,83 @@ function in_arrayi($needle, $haystack) {
 	return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
-function parse_filter_line($line) {
+function parse_unknown_log_line($line) {
+	global $config, $g;
+
+	$flent = array();
+	$log_split = "";
+
+	$month_pattern = "[a-zA-Z]{3}";
+	$day_pattern = "[0-9]{1,2}";
+	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
+	$date_pattern = "(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . ")";
+
+	$log_message_pattern = "(.*)";
+
+	$pattern = "/^" . $date_pattern . "\ +" . $log_message_pattern . "$/";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['message']) = $log_split;
+
+	if($g['debug']) {
+		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
+	return "";
+	}
+
+	/* If there is time, and message, fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['message']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
+		}
+		return "";
+	}
+}
+
+function parse_system_log_line($line) {
+	global $config, $g;
+
+	$flent = array();
+	$log_split = "";
+
+	$month_pattern = "[a-zA-Z]{3}";
+	$day_pattern = "[0-9]{1,2}";
+	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
+	$date_pattern = "(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . ")";
+
+	$process_pattern = "(.*?)";
+	$pid_pattern = "(.*?)(?::\ +)?(?:\[([0-9:]*)\])?:?";
+	$log_message_pattern = "(.*)";
+
+	$pattern = "/^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$/";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
+
+	if($g['debug']) {
+		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
+	return "";
+	}
+
+	/* If there is time, process, and message, fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
+		}
+		return "";
+	}
+}
+
+function parse_firewall_log_line($line) {
 	global $config, $g;
 
 	$flent = array();
@@ -335,11 +466,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	if ($type == "rdr") {
 		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
 	} else {
-		if (file_exists("{$g['tmp_path']}/rules.debug")) {
-			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
-		} else {
-			$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
-		}
+		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 	}
 	if (is_array($buffer)) {
 		return $buffer[0];
@@ -364,11 +491,7 @@ function buffer_rules_load() {
 		}
 	}
 	unset($buffer, $_gb);
-	if (file_exists("{$g['tmp_path']}/rules.debug")) {
-		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
-	} else {
-		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
-	}
+	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {

@@ -751,6 +751,8 @@ class altq_root_queue {
 			'Save'
 		));
 
+		$sform->setAction("firewall_shaper.php");
+
 		$section = new Form_Section(null);
 
 		$section->addInput(new Form_Checkbox(
@@ -1310,7 +1312,7 @@ class priq_queue {
 
 		$sform = new Form();
 
-		$section = new Form_Section(null);
+		$section = new Form_Section("");
 
 		$section->addInput(new Form_Checkbox(
 			'enabled',
@@ -1320,8 +1322,10 @@ class priq_queue {
 			'on'
 		));
 
-		$section->addInput(new Form_StaticText(
+		$section->addInput(new Form_Input(
+			'name',
 			'Name',
+			'text',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
 
@@ -1377,7 +1381,7 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -3755,7 +3759,7 @@ EOD;
 					$form .= "<option value=\"{$bwsidx}\"";
 
 					if ($bw['bwscale'] == $bwsidx) {
-						$form .= " selected=\"selected\"";
+						$form .= " selected";
 					}
 
 					$form .= ">{$bwscale}</option>";
@@ -3769,7 +3773,7 @@ EOD;
 				foreach ($schedules as $schd) {
 					$selected = "";
 					if ($bw['bwsched'] == $schd) {
-						$selected = "selected=\"selected\"";
+						$selected = "selected";
 					}
 
 					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
@@ -4696,7 +4700,7 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
-$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
 $default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
 	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 

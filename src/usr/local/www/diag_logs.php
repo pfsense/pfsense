@@ -62,12 +62,13 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-system
-##|*NAME=Diagnostics: Logs: System page
-##|*DESCR=Allow access to the 'Diagnostics: Logs: System' page.
-##|*MATCH=diag_logs.php*
+##|*NAME=Status: Logs: System
+##|*DESCR=Allow access to the 'Status: System Logs: General' page.
+##|*MATCH=diag_logs.php
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter_log.inc");
 
 /*
 Build a list of allowed log files so we can reject others to prevent the page
@@ -111,23 +112,51 @@ if (!$_GET['logfile']) {
 	}
 }
 
+function getGETPOSTsettingvalue($settingname, $default) {
+	$settingvalue = $default;
+	if ($_GET[$settingname]) {
+		$settingvalue = $_GET[$settingname];
+	}
+	if ($_POST[$settingname]) {
+		$settingvalue = $_POST[$settingname];
+	}
+	return $settingvalue;
+}
+
+$filtersubmit = getGETPOSTsettingvalue('filtersubmit', null);
+
+if ($filtersubmit) {
+	$filtertext = getGETPOSTsettingvalue('filtertext', "");
+	$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
+}
+
+$filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
+
+if ($filterlogentries_submit) {
+	$filterfieldsarray = array();
+
+	$filterfieldsarray['time'] = getGETPOSTsettingvalue('filterlogentries_time', null);
+	$filterfieldsarray['process'] = getGETPOSTsettingvalue('filterlogentries_process', null);
+	$filterfieldsarray['pid'] = getGETPOSTsettingvalue('filterlogentries_pid', null);
+	$filterfieldsarray['message'] = getGETPOSTsettingvalue('filterlogentries_message', null);
+	$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
+}
+
 $system_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
 $nentries = $config['syslog']['nentries'];
-if (!$nentries) {
+
+# Override Display Quantity
+if ($filterlogentries_qty) {
+	$nentries = $filterlogentries_qty;
+}
+
+if (!$nentries || !is_numeric($nentries)) {
 	$nentries = 50;
 }
 
 if ($_POST['clear']) {
 	clear_log_file($system_logfile);
-}
-
-if ($_GET['filtertext']) {
-	$filtertext = htmlspecialchars($_GET['filtertext']);
-}
-
-if ($_POST['filtertext']) {
-	$filtertext = htmlspecialchars($_POST['filtertext']);
 }
 
 if ($filtertext) {
@@ -167,49 +196,163 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 
-$form = new Form(false);
+if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
+	$form = new Form(false);
 
-$section = new Form_Section('Log file filter');
+	$section = new Form_Section(gettext('Advanced Log Filter'), 'adv-filter-panel', true);
 
-$section->addInput(new Form_Input(
-	'filtertext',
-	'Filter',
-	'text',
-	$filtertext,
-	['placeholder' => 'Filter text']
-));
+	$group = new Form_Group('');
 
-$btnsubmit = new Form_Button(
-	'filtersubmit',
-	'Filter',
-	null,
-	'fa-filter'
-);
+	$group->add(new Form_Input(
+		'filterlogentries_time',
+		null,
+		'text',
+		$filterfieldsarray['time']
+	))->setHelp(gettext('Time'));
+
+	$group->add(new Form_Input(
+		'filterlogentries_process',
+		null,
+		'text',
+		$filterfieldsarray['process']
+	))->setHelp(gettext('Process'));
+
+	$group->add(new Form_Input(
+		'filterlogentries_pid',
+		null,
+		'text',
+		$filterfieldsarray['pid']
+	))->setHelp(gettext('PID'));
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
+	))->setHelp(gettext('Quantity'));
+
+	$section->add($group);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'filterlogentries_message',
+		null,
+		'text',
+		$filterfieldsarray['message']
+	))->setHelp(gettext('Log Message'));
+
+	$btnsubmit = new Form_Button(
+		'filterlogentries_submit',
+		' ' . gettext('Apply Filter'),
+		null,
+		'fa-filter'
+	);
+}
+else { // Simple log filter form
+	$form = new Form(false);
+
+	$section = new Form_Section(gettext('Log Filter'), 'basic-filter-panel', true);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Input(
+		'filtertext',
+		null,
+		'text',
+		$filtertext
+	))->setHelp(gettext('Filter Expression'));
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
+	))->setHelp(gettext('Quantity'));
+
+	$btnsubmit = new Form_Button(
+		'filtersubmit',
+		' ' . gettext('Apply Filter'),
+		null,
+		'fa-filter'
+	);
+}
 
 $btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
 
-$btnclear = new Form_Button(
-	'clear',
-	'Clear log',
-	null,
-	'fa-trash'
-);
-
-$btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
-
-$section->addInput(new Form_StaticText(
+$group->add(new Form_StaticText(
 	'',
-	$btnsubmit . $btnclear
+	$btnsubmit
 ));
 
+$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
+$section->add($group);
 $form->add($section);
 print $form;
 
-if ($logfile == 'dhcpd')
-	print_info_box('Warning: Clearing the log file will restart the DHCP daemon.');
-
+// Now the forms are complete we can draw the log table and its controls
+if (!isset($config['syslog']['rawfilter'])) {
+	if ($filterlogentries_submit)
+		$filterlog = conv_log_filter($system_logfile, $nentries, $nentries + 100, $filterfieldsarray);
+	else
+		$filterlog = conv_log_filter($system_logfile, $nentries, $nentries + 100, $filtertext);
 ?>
 
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	if ((!$filtertext) && (!$filterfieldsarray))
+		printf(gettext("Last %d %s log entries."), count($filterlog), $logfile);
+	else
+		printf(gettext("%d matched %s log entries."), count($filterlog), $logfile);
+
+	printf(gettext(" (Maximum %d)"), $nentries);
+?>
+		</h2>
+	</div>
+	<div class="panel-body">
+	   <div class="table-responsive">
+		<table class="table table-striped table-hover table-compact">
+			<tr>
+				<th><?=gettext("Time")?></th>
+				<th><?=gettext("Process")?></th>
+				<th><?=gettext("PID")?></th>
+				<th style="width:100%"><?=gettext("Log Message")?></th>
+			</tr>
+<?php
+	foreach ($filterlog as $filterent) {
+?>
+			<tr>
+				<td style="white-space:nowrap;">
+					<?=htmlspecialchars($filterent['time'])?>
+				</td>
+				<td style="white-space:nowrap;">
+					<?=htmlspecialchars($filterent['process'])?>
+				</td>
+				<td style="white-space:nowrap;">
+					<?=htmlspecialchars($filterent['pid'])?>
+				</td>
+				<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
+					<?=htmlspecialchars($filterent['message'])?>
+				</td>
+			</tr>
+<?php
+	} // e-o-foreach
+?>
+		</table>
+		</div>
+	</div>
+</div>
+<?php
+	if (count($filterlog) == 0)
+		print_info_box(gettext('No logs to display'));
+}
+else
+{
+?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=$logfile?><?=gettext(" log entries")?></h2></div>
 	<div class="table table-responsive">
@@ -228,13 +371,47 @@ if ($logfile == 'dhcpd')
 		$inverse = null;
 
 	if ($filtertext)
-		dump_clog($system_logfile, $nentries, true, array("$filtertext"), $inverse);
+		$rows = dump_clog($system_logfile, $nentries, true, array("$filtertext"), $inverse);
 	else
-		dump_clog($system_logfile, $nentries, true, array(), $inverse);
+		$rows = dump_clog($system_logfile, $nentries, true, array(), $inverse);
 ?>
 			</tbody>
 		</table>
 	</div>
 </div>
+<?php
+	if ($rows == 0)
+		print_info_box(gettext('No logs to display'));
+}
+?>
+
+<?php
+$form = new Form(false);
+
+$section = new Form_Section(gettext('Manage Log'), 'log-manager-panel', true);
+
+$group = new Form_Group('');
+
+$btnclear = new Form_Button(
+	'clear',
+	' ' . gettext('Clear log'),
+	null,
+	'fa-trash'
+);
+
+$btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+
+if ($logfile == 'dhcpd')
+	print_info_box(gettext('Warning: Clearing the log file will restart the DHCP daemon.'));
+
+$group->add(new Form_StaticText(
+	'',
+	$btnclear
+));
+
+$section->add($group);
+$form->add($section);
+print $form;
+?>
 
 <?php include("foot.inc"); ?>

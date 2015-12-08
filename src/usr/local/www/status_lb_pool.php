@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-pool
-##|*NAME=Status: Load Balancer: Pool page
+##|*NAME=Status: Load Balancer: Pool
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Pool' page.
 ##|*MATCH=status_lb_pool.php*
 ##|-PRIV
@@ -96,7 +96,7 @@ if (!$nentries)
 $now = time();
 $year = date("Y");
 
-$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pool"));
+$pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pools"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -221,7 +221,7 @@ foreach ($a_pool as $pool):
 			switch ($server['ip']['state']) {
 				case 'up':
 					$bgcolor = LIGHTGREEN;	// lightgreen
-					$checked = "checked=\"checked\"";
+					$checked = "checked";
 					break;
 				case 'disabled':
 					$bgcolor = WHITE;
@@ -229,7 +229,7 @@ foreach ($a_pool as $pool):
 					break;
 				default:
 					$bgcolor = LIGHTCORAL;	// lightcoral
-					$checked = "checked=\"checked\"";
+					$checked = "checked";
 			}
 ?>
 								<tr>

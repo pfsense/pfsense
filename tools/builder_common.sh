@@ -683,7 +683,6 @@ awk '
 
 		# Set NanoBSD image size
 		echo "${_NANO_MEDIASIZE}" > ${MNT}/etc/nanosize.txt
-		rm -f $MNT/cf/conf/* 2>/dev/null
 
 		echo "/dev/ufs/${_label}0 / ufs ro,sync,noatime 1 1" > ${MNT}/etc/fstab
 		if [ $NANO_CONFSIZE -gt 0 ] ; then
@@ -1020,6 +1019,11 @@ clone_to_staging_area() {
 
 	tar -C ${PRODUCT_SRC} -c -f - . | \
 		tar -C ${STAGE_CHROOT_DIR} -x -p -f -
+
+	if [ "${PRODUCT_NAME}" != "pfSense" ]; then
+		mv ${STAGE_CHROOT_DIR}/usr/local/sbin/pfSense-upgrade \
+			${STAGE_CHROOT_DIR}/usr/local/sbin/${PRODUCT_NAME}-upgrade
+	fi
 
 	if [ -f ${STAGE_CHROOT_DIR}/etc/master.passwd ]; then
 		chroot ${STAGE_CHROOT_DIR} cap_mkdb /etc/master.passwd
@@ -1795,6 +1799,61 @@ poudriere_jail_name() {
 	echo "${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${_jail_arch}"
 }
 
+poudriere_rename_ports() {
+	if [ "${PRODUCT_NAME}" = "pfSense" ]; then
+		return;
+	fi
+
+	LOGFILE=${BUILDER_LOGS}/poudriere.log
+
+	local _ports_dir="/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}"
+
+	echo -n ">>> Renaming product ports on ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
+	for d in $(find ${_ports_dir} -depth 2 -type d -name '*pfSense*'); do
+		local _pdir=$(dirname ${d})
+		local _pname=$(echo $(basename ${d}) | sed "s,pfSense,${PRODUCT_NAME},")
+
+		if [ -e ${_pdir}/${_pname} ]; then
+			rm -rf ${_pdir}/${_pname}
+		fi
+
+		cp -r ${d} ${_pdir}/${_pname}
+
+		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
+			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
+			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
+			${_pdir}/${_pname}/Makefile \
+			${_pdir}/${_pname}/pkg-descr
+
+		# PHP module is special
+		if echo "${_pname}" | grep -q "^php[0-9]*-${PRODUCT_NAME}-module"; then
+			local _product_capital=$(echo ${PRODUCT_NAME} | tr '[a-z]' '[A-Z]')
+			sed -i '' -e "s,PHP_PFSENSE,PHP_${_product_capital},g" \
+				  -e "s,PFSENSE_SHARED_LIBADD,${_product_capital}_SHARED_LIBADD,g" \
+				  -e "s,pfSense,${PRODUCT_NAME},g" \
+				  -e "s,${PRODUCT_NAME}\.c,pfSense.c,g" \
+				${_pdir}/${_pname}/files/config.m4
+
+			sed -i '' -e "s,COMPILE_DL_PFSENSE,COMPILE_DL_${_product_capital}," \
+				  -e "s,pfSense_module_entry,${PRODUCT_NAME}_module_entry,g" \
+				  -e "/ZEND_GET_MODULE/ s,pfSense,${PRODUCT_NAME}," \
+				  -e "/PHP_PFSENSE_WORLD_EXTNAME/ s,pfSense,${PRODUCT_NAME}," \
+				${_pdir}/${_pname}/files/pfSense.c \
+				${_pdir}/${_pname}/files/php_pfSense.h
+		fi
+
+		if [ -d ${_pdir}/${_pname}/files ]; then
+			for fd in $(find ${_pdir}/${_pname}/files -type d -name '*pfSense*'); do
+				local _fddir=$(dirname ${fd})
+				local _fdname=$(echo $(basename ${fd}) | sed "s,pfSense,${PRODUCT_NAME},")
+
+				mv ${fd} ${_fddir}/${_fdname}
+			done
+		fi
+	done
+	echo "Done!" | tee -a ${LOGFILE}
+}
+
 poudriere_create_ports_tree() {
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
@@ -1814,6 +1873,7 @@ poudriere_create_ports_tree() {
 			print_error_pfS
 		fi
 		echo "Done!" | tee -a ${LOGFILE}
+		poudriere_rename_ports
 	fi
 }
 
@@ -1979,6 +2039,7 @@ poudriere_update_ports() {
 		echo -n ">>> Updating ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
 		script -aq ${LOGFILE} poudriere ports -u -p "${POUDRIERE_PORTS_NAME}" >/dev/null 2>&1
 		echo "Done!" | tee -a ${LOGFILE}
+		poudriere_rename_ports
 	fi
 }
 
@@ -2048,18 +2109,23 @@ poudriere_bulk() {
 # and we scp the log file to the builder host if
 # needed for the real time logging functions.
 snapshots_update_status() {
-	if [ -z "${SNAPSHOTS}" -o -z "$1" ]; then
+	if [ -z "$1" ]; then
 		return
 	fi
-	echo $1
-	echo "`date` -|- $1" >> $SNAPSHOTSLOGFILE
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
-		LU=`cat $SNAPSHOTSLASTUPDATE`
-		CT=`date "+%H%M%S"`
+	if [ -z "${SNAPSHOTS}" -a -z "${POUDRIERE_SNAPSHOTS}" ]; then
+		return
+	fi
+	echo "$*"
+	echo "`date` -|- $*" >> $SNAPSHOTSLOGFILE
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
+		LU=$(cat $SNAPSHOTSLASTUPDATE 2>/dev/null)
+		CT=$(date "+%H%M%S")
 		# Only update every minute
 		if [ "$LU" != "$CT" ]; then
-			ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCLOGS}"
-			scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log
+			ssh ${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP} \
+				"mkdir -p ${SNAPSHOTS_RSYNCLOGS}"
+			scp -q $SNAPSHOTSLOGFILE \
+				${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log
 			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
 		fi
 	fi
@@ -2068,8 +2134,9 @@ snapshots_update_status() {
 # Copy the current log file to $filename.old on
 # the snapshot www server (real time logs)
 snapshots_rotate_logfile() {
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${RSYNCIP}" ]; then
-		scp -q $SNAPSHOTSLOGFILE ${RSYNCUSER}@${RSYNCIP}:${RSYNCLOGS}/build.log.old
+	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
+		scp -q $SNAPSHOTSLOGFILE \
+			${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log.old
 	fi
 
 	# Cleanup log file

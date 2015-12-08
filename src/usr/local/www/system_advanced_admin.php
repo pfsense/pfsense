@@ -317,7 +317,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
 include("head.inc");
 
 if ($input_errors)
@@ -445,7 +445,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
 ))->setHelp('When this is unchecked, your system is protected against <a '.
-	'href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. '.
+	'href="http://en.wikipedia.org/wiki/DNS_rebinding">DNS Rebinding attacks</a>. '.
 	'This blocks private IP responses from your configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in your environment.');
@@ -557,7 +557,7 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-traceroute
-##|*NAME=Diagnostics: Traceroute page
+##|*NAME=Diagnostics: Traceroute
 ##|*DESCR=Allow access to the 'Diagnostics: Traceroute' page.
 ##|*MATCH=diag_traceroute.php*
 ##|-PRIV

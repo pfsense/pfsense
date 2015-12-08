@@ -58,10 +58,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-unbound
-##|*NAME=Services: DNS Resolver Advanced page
-##|*DESCR=Allow access to the 'Services: DNS Resolver Advanced' page.
-##|*MATCH=services_unbound.php*
+##|*IDENT=page-services-dnsresolver-advanced
+##|*NAME=Services: DNS Resolver: Advanced
+##|*DESCR=Allow access to the 'Services: DNS Resolver: Advanced' page.
+##|*MATCH=services_unbound_advanced.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

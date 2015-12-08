@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ndptable
-##|*NAME=Diagnostics: NDP Table page
+##|*NAME=Diagnostics: NDP Table
 ##|*DESCR=Allow access to the 'Diagnostics: NDP Table' page.
 ##|*MATCH=diag_ndp.php*
 ##|-PRIV

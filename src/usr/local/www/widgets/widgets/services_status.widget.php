@@ -65,15 +65,23 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
-if (isset($_POST['servicestatusfilter'])) {
+if($_POST) {
 	$validNames = array();
+
 	foreach ($services as $service) {
 		array_push($validNames, $service['name']);
 	}
-	$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+
+	if (isset($_POST['servicestatusfilter'])) {
+		$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+	} else {
+		$config['widgets']['servicestatusfilter'] = "";
+	}
+
 	write_config("Saved Service Status Filter via Dashboard");
-	header("Location: /");
+	header("Location: /index.php");
 }
+
 ?>
 <table class="table table-striped table-hover">
 <thead>
@@ -121,9 +129,9 @@ if (count($services) > 0) {
 	<div class="form-group">
 		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
 		<div class="col-sm-6">
-			<select multiple="multiple" name="servicestatusfilter[]" class="form-control" height="5">
+			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control" height="5">
 			<?php foreach ($services as $service): ?>
-				<option <?=(in_array($service['name'], $skipservices)?'selected="selected"':'')?>><?=$service['name']?></option>
+				<option <?=(in_array($service['name'], $skipservices)?'selected':'')?>><?=$service['name']?></option>
 			<?php endforeach; ?>
 			</select>
 		</div>
@@ -131,7 +139,29 @@ if (count($services) > 0) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-primary">Save</button>
+			<button id="clearall" type="button" class="btn btn-default">Clear</button>
 		</div>
 	</div>
 </form>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	$("select[multiple] option").mousedown(function(){
+	   var $self = $(this);
+
+	   if ($self.prop("selected"))
+	          $self.prop("selected", false);
+	   else
+	       $self.prop("selected", true);
+
+	   return false;
+	});
+
+    $("#clearall").click(function() {
+        $('select#servicestatusfilter option').removeAttr("selected");
+    });
+});
+//]]>
+</script>

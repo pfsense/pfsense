@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager
-##|*NAME=System: Package Manager page
+##|*NAME=System: Package Manager
 ##|*DESCR=Allow access to the 'System: Package Manager' page.
 ##|*MATCH=pkg_mgr.php*
 ##|-PRIV
@@ -82,7 +82,7 @@ if(is_subsystem_dirty('packagelock')) {
 
 $pkg_info = get_pkg_info();
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Available Packages"));
 
 include("head.inc");
 
@@ -183,6 +183,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 <?php endif;?>
 
 					<th><?=gettext("Description")?></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -233,7 +234,7 @@ endif;?>
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

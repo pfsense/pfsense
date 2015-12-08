@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan-edit
-##|*NAME=Interfaces: VLAN: Edit page
+##|*NAME=Interfaces: VLAN: Edit
 ##|*DESCR=Allow access to the 'Interfaces: VLAN: Edit' page.
 ##|*MATCH=interfaces_vlan_edit.php*
 ##|-PRIV
@@ -93,6 +93,7 @@ if (isset($id) && $a_vlans[$id]) {
 	$pconfig['if'] = $a_vlans[$id]['if'];
 	$pconfig['vlanif'] = $a_vlans[$id]['vlanif'];
 	$pconfig['tag'] = $a_vlans[$id]['tag'];
+	$pconfig['pcp'] = $a_vlans[$id]['pcp'];
 	$pconfig['descr'] = $a_vlans[$id]['descr'];
 }
 
@@ -110,6 +111,9 @@ if ($_POST) {
 	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
+	if (isset($_POST['pcp']) && !empty($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {
+		$input_errors[] = gettext("The VLAN Priority must be an integer between 0 and 7.");
+ 	}
 
 	if (!does_interface_exist($_POST['if'])) {
 		$input_errors[] = gettext("Interface supplied as parent is invalid");
@@ -158,6 +162,7 @@ if ($_POST) {
 		$vlan = array();
 		$vlan['if'] = $_POST['if'];
 		$vlan['tag'] = $_POST['tag'];
+		$vlan['pcp'] = $_POST['pcp'];
 		$vlan['descr'] = $_POST['descr'];
 		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
@@ -219,6 +224,14 @@ $section->addInput(new Form_Input(
 	$pconfig['tag'],
 	['placeholder' => '1']
 ))->setWidth(6)->setHelp(gettext('802.1Q VLAN tag (between 1 and 4094).'));
+
+$section->addInput(new Form_Input(
+	'pcp',
+	'VLAN Priority',
+	'text',
+	$pconfig['pcp'],
+	['placeholder' => '0']
+))->setWidth(6)->setHelp(gettext('802.1Q VLAN Priority (between 0 and 7).'));
 
 $section->addInput(new Form_Input(
 	'descr',

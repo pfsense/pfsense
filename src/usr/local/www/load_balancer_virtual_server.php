@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-virtualservers
-##|*NAME=Services: Load Balancer: Virtual Servers page
+##|*NAME=Services: Load Balancer: Virtual Servers
 ##|*DESCR=Allow access to the 'Services: Load Balancer: Virtual Servers' page.
 ##|*MATCH=load_balancer_virtual_server.php*
 ##|-PRIV

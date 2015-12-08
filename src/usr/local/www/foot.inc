@@ -26,13 +26,15 @@
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
-	<script src="sortable/sortable.js"></script>
+	<script src="/sortable/sortable.js"></script>
 
-	<script>
+	<script type="text/javascript">
+	//<![CDATA[
 		// Un-hide the "Top of page" icons if the page is larger than the window
 		if ($(document).height() > $(window).height()) {
 		    $('[id^=tp]').show();
 		}
+	//]]>
 	</script>
 </body>
 </html>

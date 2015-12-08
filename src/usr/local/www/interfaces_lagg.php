@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-lagg
-##|*NAME=Interfaces: LAGG: page
+##|*NAME=Interfaces: LAGG:
 ##|*DESCR=Allow access to the 'Interfaces: LAGG' page.
 ##|*MATCH=interfaces_lagg.php*
 ##|-PRIV

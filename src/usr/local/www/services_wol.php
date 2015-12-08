@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan
-##|*NAME=Services: Wake on LAN page
+##|*NAME=Services: Wake on LAN
 ##|*DESCR=Allow access to the 'Services: Wake on LAN' page.
 ##|*MATCH=services_wol.php*
 ##|-PRIV

@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-edit
-##|*NAME=Firewall: Alias: Edit page
+##|*NAME=Firewall: Alias: Edit
 ##|*DESCR=Allow access to the 'Firewall: Alias: Edit' page.
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
@@ -737,8 +737,10 @@ $form->add($section);
 print $form;
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
+addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
+
 events.push(function(){
 
 	var disable_subnets;
@@ -812,10 +814,12 @@ events.push(function(){
 	checkLastRow();
 
 	// Autocomplete
-	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
-
-	$('[id^=address]').autocomplete({
-		source: addressarray
+	$('[id^=address]').each(function() {
+		if(this.id.substring(0, 8) != "address_") {
+			$(this).autocomplete({
+				source: addressarray
+			});
+		}
 	});
 
 	// on click . .

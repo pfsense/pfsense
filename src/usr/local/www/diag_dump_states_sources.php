@@ -60,10 +60,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-showstates
-##|*NAME=Diagnostics: Show States page
-##|*DESCR=Allow access to the 'Diagnostics: Show States' page.
-##|*MATCH=diag_dump_states.php*
+##|*IDENT=page-diagnostics-sourcetracking
+##|*NAME=Diagnostics: Show Source Tracking
+##|*DESCR=Allow access to the 'Diagnostics: Show Source Tracking' page.
+##|*MATCH=diag_dump_states_sources.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -100,7 +100,8 @@ display_top_tabs($tab_array);
 
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('a[data-entry]').on('click', function(){
 		var el = $(this);
@@ -121,6 +122,7 @@ events.push(function(){
 		});
 	});
 });
+//]]>
 </script>
 
 <?php

@@ -59,8 +59,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-gps
-##|*NAME=Services: NTP Serial GPS page
-##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page..
+##|*NAME=Services: NTP Serial GPS
+##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page.
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV
 
@@ -224,7 +224,7 @@ function build_nmea_list() {
 
 $closehead = false;
 $pconfig = &$config['ntpd']['gps'];
-$pgtitle = array(gettext("Services"), gettext("NTP GPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -425,7 +425,7 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

@@ -60,8 +60,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-restart-httpd
-##|*NAME=Diagnostics: Restart HTTPD : System page
-##|*DESCR=Allow access to the 'Diagnostics: Restart HTTPD: System' page.
+##|*NAME=Diagnostics: Restart Web Server Daemon
+##|*DESCR=Allow access to the 'Diagnostics: Restart Web Server Daemon' page.
 ##|*MATCH=restart_httpd.php*
 ##|-PRIV
 
@@ -71,7 +71,6 @@ $pgtitle = array(gettext("Restarting httpd"));
 include("head.inc");
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php include("fbegin.inc"); ?>
 
@@ -89,5 +88,5 @@ include("head.inc");
 <?=gettext("Done");?>.<br />
 
 <?php
-include("fend.inc");
+include("foot.inc");
 ?>

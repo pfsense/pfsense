@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound-edit
-##|*NAME=Firewall: NAT: Outbound: Edit page
+##|*NAME=Firewall: NAT: Outbound: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: Outbound: Edit' page.
 ##|*MATCH=firewall_nat_out_edit.php*
 ##|-PRIV

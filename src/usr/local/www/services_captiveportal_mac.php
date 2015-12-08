@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-macaddresses
-##|*NAME=Services: Captive portal: Mac Addresses page
+##|*NAME=Services: Captive portal: Mac Addresses
 ##|*DESCR=Allow access to the 'Services: Captive portal: Mac Addresses' page.
 ##|*MATCH=services_captiveportal_mac.php*
 ##|-PRIV
@@ -91,7 +91,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("MAC"));
 $shortcut_section = "captiveportal";
 
 $actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;Pass',
@@ -194,7 +194,7 @@ if (is_subsystem_dirty('passthrumac'))
 	print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive Portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), true, "services_captiveportal_mac.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");

@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-carp
-##|*NAME=Status: CARP page
+##|*NAME=Status: CARP
 ##|*DESCR=Allow access to the 'Status: CARP' page.
 ##|*MATCH=carp_status.php*
 ##|-PRIV
@@ -88,13 +88,10 @@ if ($_POST['disablecarp'] != "") {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
-			$found_dhcpdv6 = false;
 			foreach ($viparr as $vip) {
-				$carp_iface = "{$vip['interface']}_vip{$vip['vhid']}";
 				switch ($vip['mode']) {
 					case "carp":
 						interface_vip_bring_down($vip);
-						interface_ipalias_cleanup($carp_iface);
 
 						/*
 						 * Reconfigure radvd when necessary
@@ -102,7 +99,8 @@ if ($_POST['disablecarp'] != "") {
 						 */
 						if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 							foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-								if ($dhcpv6ifconf['rainterface'] != $carp_iface) {
+								if ($dhcpv6if !== $vip['interface'] ||
+								    $dhcpv6ifconf['ramode'] === "disabled") {
 									continue;
 								}
 
@@ -231,7 +229,7 @@ if ($carpcount == 0) {
 
 		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
-		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
+		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 
 		if($carp_enabled == false) {
 			$icon = 'times-circle';

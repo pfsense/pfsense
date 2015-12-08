@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-virtualserver-edit
-##|*NAME=Load Balancer: Virtual Server: Edit page
+##|*NAME=Load Balancer: Virtual Server: Edit
 ##|*DESCR=Allow access to the 'Load Balancer: Virtual Server: Edit' page.
 ##|*MATCH=load_balancer_virtual_server_edit.php*
 ##|-PRIV
@@ -305,7 +305,7 @@ print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
     // --------- Autocomplete -----------------------------------------------------------------------------------------

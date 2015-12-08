@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captive portal Zones page
+##|*NAME=Services: Captive portal Zones
 ##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
@@ -90,7 +90,7 @@ if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 	exit;
 }
 
-$pgtitle = array(gettext("Captive Portal"), gettext("Zones"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Zones"));
 $shortcut_section = "captiveportal";
 include("head.inc");
 

@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-ntp
-##|*NAME=Status: NTP page
+##|*NAME=Status: NTP
 ##|*DESCR=Allow access to the 'Status: NTP' page.
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV

@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsresolver-edithost
-##|*NAME=Services: DNS Resolver: Edit host page
+##|*NAME=Services: DNS Resolver: Edit host
 ##|*DESCR=Allow access to the 'Services: DNS Resolver: Edit host' page.
 ##|*MATCH=services_unbound_host_edit.php*
 ##|-PRIV

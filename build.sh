@@ -66,6 +66,7 @@ usage() {
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
 	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
+	echo "		--poudriere-snapshots - Update poudriere packages and send them to PKG_RSYNC_HOSTNAME"
 	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
 	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
@@ -87,6 +88,7 @@ unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
 unset SNAPSHOTS
+unset POUDRIERE_SNAPSHOTS
 unset ARCH_LIST
 BUILDACTION="images"
 
@@ -136,6 +138,9 @@ while test "$1" != ""; do
 		--snapshots)
 			export SNAPSHOTS=1
 			IMAGETYPE="all"
+			;;
+		--poudriere-snapshots)
+			export POUDRIERE_SNAPSHOTS=1
 			;;
 		--build-kernel)
 			BUILDACTION="buildkernel"
@@ -223,7 +228,9 @@ fi
 
 # Update snapshot status and exit
 if [ "${BUILDACTION}" = "snapshot_status_message" ]; then
-	export SNAPSHOTS=1
+	if [ -z "${POUDRIERE_SNAPSHOTS}" ]; then
+		export SNAPSHOTS=1
+	fi
 	snapshots_update_status "${snapshot_status_message}"
 	exit 0
 fi

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal-voucher-rolls
-##|*NAME=Status: Captive portal Voucher Rolls page
+##|*NAME=Status: Captive portal Voucher Rolls
 ##|*DESCR=Allow access to the 'Status: Captive portal Voucher Rolls' page.
 ##|*MATCH=status_captiveportal_voucher_rolls.php*
 ##|-PRIV

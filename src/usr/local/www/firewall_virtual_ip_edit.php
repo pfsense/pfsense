@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddress-edit
-##|*NAME=Firewall: Virtual IP Address: Edit page
+##|*NAME=Firewall: Virtual IP Address: Edit
 ##|*DESCR=Allow access to the 'Firewall: Virtual IP Address: Edit' page.
 ##|*MATCH=firewall_virtual_ip_edit.php*
 ##|-PRIV
@@ -116,7 +116,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['descr'] = $a_vip[$id]['descr'];
 	$pconfig['type'] = $a_vip[$id]['type'];
 	$pconfig['interface'] = $a_vip[$id]['interface'];
-	$pconfig['uniqid'] = $a_vip[$id]['interface'];
+	$pconfig['uniqid'] = $a_vip[$id]['uniqid'];
 } else {
 	$lastvhid = find_last_used_vhid();
 	$lastvhid++;
@@ -145,20 +145,20 @@ if ($_POST) {
 			if (isset($id) && isset($a_vip[$id])) {
 				$ignore_if = $a_vip[$id]['interface'];
 				$ignore_mode = $a_vip[$id]['mode'];
-				if (isset($a_vip[$id]['vhid'])) {
-					$ignore_vhid = $a_vip[$id]['vhid'];
+				if (isset($a_vip[$id]['uniqid'])) {
+					$ignore_uniqid = $a_vip[$id]['uniqid'];
 				}
 			} else {
 				$ignore_if = $_POST['interface'];
 				$ignore_mode = $_POST['mode'];
 			}
 
-			if (!isset($ignore_vhid)) {
-				$ignore_vhid = $_POST['vhid'];
+			if (!isset($ignore_uniqid)) {
+				$ignore_uniqid = $_POST['uniqid'];
 			}
 
 			if ($ignore_mode == 'carp') {
-				$ignore_if .= "_vip{$ignore_vhid}";
+				$ignore_if = "_vip{$ignore_uniqid}";
 			} else {
 				$ignore_if .= "_virtualip{$id}";
 			}
@@ -483,7 +483,7 @@ print($form);
 			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), info)?>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

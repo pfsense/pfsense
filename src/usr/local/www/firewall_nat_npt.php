@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt
-##|*NAME=Firewall: NAT: NPT page
-##|*DESCR=Allow access to the 'Firewall: NAT: NPT' page.
+##|*NAME=Firewall: NAT: NPt
+##|*DESCR=Allow access to the 'Firewall: NAT: NPt' page.
 ##|*MATCH=firewall_nat_npt.php*
 ##|-PRIV
 
@@ -174,21 +174,22 @@ endforeach;
 ?>
 		</tbody>
 	</table>
-</div>
+</form>
 
 <nav class="action-buttons">
 	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
-	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled">
+	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled>
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>
 </nav>
 
-</form>
-<script>
+</div>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
@@ -198,6 +199,7 @@ events.push(function() {
 		}
 	});
 });
+//]]>
 </script>
 
 <?php

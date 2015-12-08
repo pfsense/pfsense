@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder
-##|*NAME=Services: DNS Forwarder page
+##|*NAME=Services: DNS Forwarder
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder' page.
 ##|*MATCH=services_dnsmasq.php*
 ##|-PRIV
@@ -372,10 +372,10 @@ foreach ($a_hosts as $i => $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($hostent['host'])?>
+						<?=$hostent['host']?>
 					</td>
 					<td>
-						<?=strtolower($hostent['domain'])?>
+						<?=$hostent['domain']?>
 					</td>
 					<td>
 						<?=$hostent['ip']?>
@@ -395,10 +395,10 @@ foreach ($a_hosts as $i => $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($alias['host'])?>
+						<?=$alias['host']?>
 					</td>
 					<td>
-						<?=strtolower($alias['domain'])?>
+						<?=$alias['domain']?>
 					</td>
 					<td>
 						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
@@ -451,7 +451,7 @@ foreach ($a_domainOverrides as $i => $doment):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($doment['domain'])?>
+						<?=$doment['domain']?>
 					</td>
 					<td>
 						<?=$doment['ip']?>
@@ -479,7 +479,7 @@ endforeach;
 	</a>
 </nav>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// On clicking the "Apply" button, submit the main form, not the little form the button lives in

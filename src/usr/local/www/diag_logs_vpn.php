@@ -64,8 +64,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
-##|*NAME=Diagnostics: Logs: VPN page
-##|*DESCR=Allow access to the 'Diagnostics: Logs: VPN' page.
+##|*NAME=Status: Logs: VPN
+##|*DESCR=Allow access to the 'Status: Logs: VPN' page.
 ##|*MATCH=diag_logs_vpn.php*
 ##|-PRIV
 

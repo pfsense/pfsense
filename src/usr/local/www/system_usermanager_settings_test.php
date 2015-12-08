@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings-testldap
-##|*NAME=System: User Manager: Settings: Test LDAP page
+##|*NAME=System: User Manager: Settings: Test LDAP
 ##|*DESCR=Allow access to the 'System: User Manager: Settings: Test LDAP' page.
 ##|*MATCH=system_usermanager_settings_test.php*
 ##|-PRIV

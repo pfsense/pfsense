@@ -54,6 +54,13 @@
  *
  */
 
+##|+PRIV
+##|*IDENT=page-services-dnsresolver-acls
+##|*NAME=Services: DNS Resolver: Access Lists
+##|*DESCR=Allow access to the 'Services: DNS Resolver: Access Lists' page.
+##|*MATCH=services_unbound_acls.php*
+##|-PRIV
+
 require("guiconfig.inc");
 require("unbound.inc");
 
@@ -352,7 +359,7 @@ else // NOT 'edit' or 'add'
 	</a>
 </nav>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Suppress "Delete row" button if there are fewer than two rows

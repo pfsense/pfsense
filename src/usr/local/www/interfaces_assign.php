@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
-##|*NAME=Interfaces: Assign network ports page
+##|*NAME=Interfaces: Assign network ports
 ##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
@@ -545,7 +545,7 @@ display_top_tabs($tab_array);
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
 <?php foreach ($portlist as $portname => $portinfo):?>
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
 						<?=interface_assign_description($portinfo, $portname)?>
 					</option>
 <?php endforeach;?>
@@ -570,7 +570,7 @@ display_top_tabs($tab_array);
 			<td>
 				<select name="if_add" id="if_add" class="form-control">
 <?php foreach ($unused_portlist as $portname => $portinfo):?>
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
 						<?=interface_assign_description($portinfo, $portname)?>
 					</option>
 <?php endforeach;?>

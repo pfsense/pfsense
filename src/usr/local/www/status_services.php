@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-services
-##|*NAME=Status: Services page
+##|*NAME=Status: Services
 ##|*DESCR=Allow access to the 'Status: Services' page.
 ##|*MATCH=status_services.php*
 ##|-PRIV
@@ -70,8 +70,9 @@ require_once("shortcuts.inc");
 
 // Leave GET enabled in case any other pages use it.
 // ToDo: Check other pages and remove GET completely
-if(!$_GET && $_POST)
+if (!$_GET && $_POST) {
 	$_GET = $_POST;
+}
 
 $service_name = '';
 if (isset($_GET['service'])) {
@@ -136,9 +137,10 @@ if (count($services) > 0) {
 
 	uasort($services, "service_name_compare");
 
-	foreach($services as $service) {
-		if (empty($service['name']))
+	foreach ($services as $service) {
+		if (empty($service['name'])) {
 			continue;
+		}
 
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
@@ -191,7 +193,7 @@ if (count($services) > 0) {
 	print_info_box(gettext("No services found"), 'danger');
 }
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// If a restart button is clicked, populate the hidden inputs and submit the form (via POST)

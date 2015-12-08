@@ -58,8 +58,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-rfc2136clients
-##|*NAME=Services: RFC 2136 clients page
-##|*DESCR=Allow access to the 'Services: RFC 2136 clients' page.
+##|*NAME=Services: RFC 2136 Clients
+##|*DESCR=Allow access to the 'Services: RFC 2136 Clients' page.
 ##|*MATCH=services_rfc2136.php*
 ##|-PRIV
 
@@ -93,11 +93,11 @@ else if ($_GET['act'] == "toggle") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("RFC 2136 clients"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"));
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("DynDns"), false, "services_dyndns.php");
+$tab_array[] = array(gettext("Dynamic DNS"), false, "services_dyndns.php");
 $tab_array[] = array(gettext("RFC 2136"), true, "services_rfc2136.php");
 display_top_tabs($tab_array);
 

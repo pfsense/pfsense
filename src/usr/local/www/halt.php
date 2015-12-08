@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-haltsystem
-##|*NAME=Diagnostics: Halt system page
+##|*NAME=Diagnostics: Halt system
 ##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
 ##|*MATCH=halt.php*
 ##|-PRIV

@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
-##|*NAME=pfSense wizard subsystem page
+##|*NAME=pfSense wizard subsystem
 ##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
 ##|*MATCH=wizard.php*
 ##|-PRIV
@@ -97,8 +97,14 @@ if (empty($xml)) {
 	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 	die;
 } else {
-	if (file_exists("{$g['www_path']}/wizards/{$xml}")) {
-		$pkg = parse_xml_config_pkg("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
+	$wizard_xml_prefix = "{$g['www_path']}/wizards";
+	$wizard_full_path = "{$wizard_xml_prefix}/{$xml}";
+	if (substr_compare(realpath($wizard_full_path), $wizard_xml_prefix, 0, strlen($wizard_xml_prefix))) {
+		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		die;
+	}
+	if (file_exists($wizard_full_path)) {
+		$pkg = parse_xml_config_pkg($wizard_full_path, "pfsensewizard");
 	} else {
 		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 		die;
@@ -665,21 +671,21 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				}
 
 				foreach ($config['ca'] as $ca) {
-					$name = htmlspecialchars($ca['descr']);
+					$caname = htmlspecialchars($ca['descr']);
 
-					if ($value == $name)
+					if ($value == $caname)
 						$selected = $value;
 
 					$canecho = 0;
 					if ($field['certca_filter'] != "") {
-						if (stristr($name, $field['certca_filter']) == true) {
+						if (stristr($caname, $field['certca_filter']) == true) {
 							$canecho = 1;
 						}
 					} else {
 						$canecho = 1;
 					}
 					if ($canecho == 1) {
-						$options[$ca['refid']] = $name;
+						$options[$ca['refid']] = $caname;
 					}
 				}
 
@@ -713,16 +719,16 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 						continue;
 					}
 
-					$name = htmlspecialchars($ca['descr']);
+					$caname = htmlspecialchars($ca['descr']);
 
-					if ($value == $name) {
+					if ($value == $caname) {
 						array_push($selected, $value);
 					}
 
 
 					$canecho = 0;
 					if ($field['cert_filter'] != "") {
-						if (stristr($name, $field['cert_filter']) == true) {
+						if (stristr($caname, $field['cert_filter']) == true) {
 							$canecho = 1;
 						}
 					} else {
@@ -730,7 +736,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					}
 
 					if ($canecho == 1) {
-						$options[$ca['refid']] = $name;
+						$options[$ca['refid']] = $caname;
 					}
 				}
 

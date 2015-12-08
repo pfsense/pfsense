@@ -67,7 +67,7 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-$pgtitle = array(gettext("System"), gettext("Authentication Servers"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
 
 if (is_numericint($_GET['id'])) {
@@ -748,7 +748,7 @@ if (isset($id) && $a_server[$id])
 $form->add($section);
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	function select_clicked() {

@@ -56,6 +56,7 @@ usage() {
 	echo "	-f          - Force package installation" >&2
 	echo "	-h          - Show this usage help" >&2
 	echo "	-l          - Logfile path (defaults to /cf/conf/upgrade_log.txt)" >&2
+	echo "	-n          - Dry run" >&2
 	echo "	-p socket   - Write pkg progress to socket"
 	echo "	-R          - Do not reboot (this can be dangerous)"
 	echo "	-y          - Assume yes as the answer to any possible interaction" >&2
@@ -242,7 +243,7 @@ pkg_update() {
 
 	if [ -z "${_force}" -a -f ${last_update_file} ]; then
 		local _last_update=$(head -n 1 ${last_update_file})
-		# Verify if content contain only numbers
+		# Verify if content contains only numbers
 		if echo "${_last_update}" | grep -E -q '^[0-9]+$'; then
 			local _now=$(date +%s)
 			# Only run update hourly, and if last update is in the future
@@ -299,13 +300,18 @@ pkg_upgrade() {
 			_exit 0
 		fi
 
+		if [ -n "${dry_run}" ]; then
+			pkg ${pkg_chroot} upgrade -nq 2>&1 | tee -a ${logfile}
+			_exit 0
+		fi
+
 		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
 			if [ "${platform}" = "nanobsd" ]; then
 				_echo "**** WARNING ****"
 				_echo "Duplicate slice required!!"
 				_echo ""
-				_echo "Before start upgrade process, current mounted nanobsd partition"
-				_echo "needs to be cloned to secondary partition, where update will happen"
+				_echo "Before starting the upgrade process, the currently mounted nanobsd partition"
+				_echo "needs to be cloned to the secondary partition, where the update will happen"
 				_echo ""
 				if [ -z "${yes}" ]; then
 					_echo -n "Proceed with upgrade? (y/N) "
@@ -689,6 +695,7 @@ fi
 export pkg_chroot=""
 export chroot_dir=""
 
+unset dry_run
 unset dont_reboot
 unset booting
 unset boot_stage
@@ -700,7 +707,7 @@ unset action
 unset action_pkg
 unset force_ipv4
 unset force_ipv6
-while getopts 46b:cdfi:hp:l:r:Ruy opt; do
+while getopts 46b:cdfi:hp:l:nr:Ruy opt; do
 	case ${opt} in
 		4)
 			if [ -n "${force_ipv6}" ]; then
@@ -747,6 +754,9 @@ while getopts 46b:cdfi:hp:l:r:Ruy opt; do
 				usage
 				_exit 1
 			fi
+			;;
+		n)
+			dry_run=1
 			;;
 		p)
 			progress_socket="${OPTARG}"

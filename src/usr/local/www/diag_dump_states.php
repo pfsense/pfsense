@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-showstates
-##|*NAME=Diagnostics: Show States page
+##|*NAME=Diagnostics: Show States
 ##|*DESCR=Allow access to the 'Diagnostics: Show States' page.
 ##|*MATCH=diag_dump_states.php*
 ##|-PRIV
@@ -98,7 +98,8 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function(){
 	$('a[data-entry]').on('click', function(){
 		var el = $(this);
@@ -119,6 +120,7 @@ events.push(function(){
 		});
 	});
 });
+//]]>
 </script>
 
 <?php

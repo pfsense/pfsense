@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpleases
-##|*NAME=Status: DHCP leases page
+##|*NAME=Status: DHCP leases
 ##|*DESCR=Allow access to the 'Status: DHCP leases' page.
 ##|*MATCH=status_dhcp_leases.php*
 ##|-PRIV

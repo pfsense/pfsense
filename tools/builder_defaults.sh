@@ -107,6 +107,7 @@ fi
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
 export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
+export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then
 	echo ">>>ERROR: According the following license, only Electric Sheep Fencing can build genuine pfSense® software"
@@ -273,6 +274,7 @@ export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
 export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
 export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
+export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/usr/local/www/beta"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
@@ -344,3 +346,13 @@ mkdir -p ${STAGINGAREA}
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}
+
+if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
+	export SNAPSHOTS_RSYNCIP=${PKG_RSYNC_HOSTNAME}
+	export SNAPSHOTS_RSYNCUSER=${PKG_RSYNC_USERNAME}
+	export SNAPSHOTS_RSYNCLOGS=${PKG_RSYNC_LOGS}
+else
+	export SNAPSHOTS_RSYNCIP=${RSYNCIP}
+	export SNAPSHOTS_RSYNCUSER=${RSYNCUSER}
+	export SNAPSHOTS_RSYNCLOGS=${RSYNCLOGS}
+fi

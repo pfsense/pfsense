@@ -56,7 +56,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-server
-##|*NAME=OpenVPN: Server page
+##|*NAME=OpenVPN: Server
 ##|*DESCR=Allow access to the 'OpenVPN: Server' page.
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
@@ -64,6 +64,8 @@
 require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
+
+global $openvpn_topologies;
 
 if (!is_array($config['openvpn']['openvpn-server'])) {
 	$config['openvpn']['openvpn-server'] = array();
@@ -201,7 +203,7 @@ if ($_GET['act'] == "edit") {
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
-		$pconfig['topology_subnet'] = $a_server[$id]['topology_subnet'];
+		$pconfig['topology'] = $a_server[$id]['topology'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
 		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
@@ -411,8 +413,15 @@ if ($_POST) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 
+	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
+		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
+	}
+
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (empty(trim($pconfig['certref']))) {
+			$input_errors[] = gettext("The selected certificate is not valid");
+		}
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -509,7 +518,7 @@ if ($_POST) {
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
-		$server['topology_subnet'] = $pconfig['topology_subnet'];
+		$server['topology'] = $pconfig['topology'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
 		$server['serverbridge_interface'] = $pconfig['serverbridge_interface'];
@@ -580,126 +589,10 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Server"));
 $shortcut_section = "openvpn";
 
 include("head.inc");
-
-function build_mode_list() {
-	global $openvpn_server_modes;
-
-	$list = array();
-
-	foreach ($openvpn_server_modes as $name => $desc)
-		$list[$name] = $desc;
-
-	return($list);
-}
-
-function build_if_list() {
-	$list = array();
-
-	$interfaces = get_configured_interface_with_descr();
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	$grouplist = return_gateway_groups_array();
-
-	foreach ($grouplist as $name => $group) {
-		if($group['ipprotocol'] != inet)
-			continue;
-
-		if($group[0]['vip'] != "")
-			$vipif = $group[0]['vip'];
-		else
-			$vipif = $group[0]['int'];
-
-		$interfaces[$name] = "GW Group {$name}";
-	}
-
-	$interfaces['lo0'] = "Localhost";
-	$interfaces['any'] = "any";
-
-	foreach ($interfaces as $iface => $ifacename)
-	   $list[$iface] = $ifacename;
-
-	return($list);
-}
-
-function build_crl_list() {
-	global $a_crl;
-
-	$list = array('' => 'None');
-
-	foreach ($a_crl as $crl) {
-		$caname = "";
-		$ca = lookup_ca($crl['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		$list[$crl['refid']] = $crl['descr'] . $caname;
-	}
-
-	return($list);
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array();
-
-	foreach ($a_cert as $cert) {
-		$caname = "";
-		$inuse = "";
-		$revoked = "";
-		$ca = lookup_ca($cert['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		if ($pconfig['certref'] == $cert['refid'])
-			$selected = "selected=\"selected\"";
-
-		if (cert_in_use($cert['refid']))
-			$inuse = " *In Use";
-
-		if (is_cert_revoked($cert))
-		   $revoked = " *Revoked";
-
-		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
-	}
-
-	return($list);
-}
-
-function build_bridge_list() {
-	$list = array();
-
-	$serverbridge_interface['none'] = "none";
-	$serverbridge_interface = array_merge($serverbridge_interface, get_configured_interface_with_descr());
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$serverbridge_interface[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$serverbridge_interface[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	foreach ($serverbridge_interface as $iface => $ifacename)
-		$list[$iface] = htmlspecialchars($ifacename);
-
-	return($list);
-}
 
 if (!$savemsg)
 	$savemsg = "";
@@ -736,7 +629,7 @@ if($act=="new" || $act=="edit") :
 		'mode',
 		'Server mode',
 		$pconfig['mode'],
-		build_mode_list()
+		openvpn_build_mode_list()
 		));
 
 	$options = array();
@@ -778,7 +671,7 @@ if($act=="new" || $act=="edit") :
 		'interface',
 		'Interface',
 		$pconfig['interface'],
-		build_if_list()
+		openvpn_build_if_list()
 		));
 
 	$section->addInput(new Form_Input(
@@ -845,7 +738,7 @@ if($act=="new" || $act=="edit") :
 			'crlref',
 			'Peer Certificate Revocation list',
 			$pconfig['crlref'],
-			build_crl_list()
+			openvpn_build_crl_list()
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
@@ -854,12 +747,25 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
+	$certhelp = "";
+	if (count($a_cert)) {
+		if (!empty(trim($pconfig['certref']))) {
+			$thiscert = lookup_cert($pconfig['certref']);
+			$purpose = cert_get_purpose($thiscert['crt'], true);
+			if ($purpose['server'] != "Yes") {
+				$certhelp = gettext("Warning: The previously saved server was not created as an SSL Server certificate and may not work properly.");
+			}
+		}
+	} else {
+		$certhelp = sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>');
+	}
+
 	$section->addInput(new Form_Select(
 		'certref',
 		'Server certificate',
 		$pconfig['certref'],
-		build_cert_list()
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
+		openvpn_build_cert_list(false, true)
+		))->setHelp($certhelp);
 
 	$section->addInput(new Form_Select(
 		'dh_length',
@@ -954,7 +860,7 @@ if($act=="new" || $act=="edit") :
 		'serverbridge_interface',
 		'Bridge Interface',
 		$pconfig['serverbridge_interface'],
-		build_bridge_list()
+		openvpn_build_bridge_list()
 		))->setHelp('The interface to which this tap instance will be bridged. This is not done automatically. You must assign this ' .
 						'interface and create the bridge separately. This setting controls which existing IP address and subnet ' .
 						'mask are used by OpenVPN for the bridge. Setting this to "none" will cause the Server Bridge DHCP settings below to be ignored.');
@@ -1081,14 +987,14 @@ if($act=="new" || $act=="edit") :
 		$pconfig['pool_enable']
 	));
 
-	$section->addInput(new Form_Checkbox(
-		'topology_subnet',
+	$section->addInput(new Form_Select(
+		'topology',
 		'Topology',
-		'Allocate only one IP per client (topology subnet), rather than an isolated subnet per client (topology net30).',
-		$pconfig['topology_subnet']
-	))->setHelp('Relevant when supplying a virtual adapter IP address to clients when using tun mode on IPv4.").' . '<br />' .
-				'Some clients may require this even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
-				'Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones.');
+		$pconfig['topology'],
+		$openvpn_topologies
+	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.").' . '<br />' .
+				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
+				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".');
 
 	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',
@@ -1357,6 +1263,7 @@ events.push(function(){
 				hideInput('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
+				hideInput('topology', false);
 				break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1366,6 +1273,7 @@ events.push(function(){
 				hideInput('strictusercn', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
+				hideInput('topology', false);
 				break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1380,6 +1288,7 @@ events.push(function(){
 				hideInput('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
+				hideInput('topology', true);
 				break;
 		}
 
@@ -1529,11 +1438,16 @@ events.push(function(){
 		mvalue = $('#mode').val();
 
 		switch(mvalue) {
-			case "p2p_tls":
 			case "p2p_shared_key":
+				sharedkey = true;
+				p2p = true;
+				break;
+			case "p2p_tls":
+				sharedkey = false;
 				p2p = true;
 				break;
 			default:
+				sharedkey = false;
 				p2p = false;
 				break;
 		}
@@ -1548,7 +1462,15 @@ events.push(function(){
 				hideInput('serverbridge_interface', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
-				hideInput('topology_subnet', false);
+				if (sharedkey) {
+					hideInput('local_network', true);
+					hideInput('local_networkv6', true);
+					hideInput('topology', true);
+				} else {
+					hideInput('local_network', false);
+					hideInput('local_networkv6', false);
+					hideInput('topology', false);
+				}
 				break;
 
 			case "tap":
@@ -1561,7 +1483,7 @@ events.push(function(){
 					hideInput('serverbridge_interface', false);
 					hideInput('serverbridge_dhcp_start', false);
 					hideInput('serverbridge_dhcp_end', false);
-					hideInput('topology_subnet', false);
+					hideInput('topology', true);
 
 					if( $('#serverbridge_dhcp').prop('checked')) {
 						disableInput('serverbridge_interface', false);
@@ -1573,7 +1495,7 @@ events.push(function(){
 						disableInput('serverbridge_dhcp_end', true);
 					}
 				} else {
-					hideInput('topology_subnet', true);
+					hideInput('topology', true);
 					disableInput('serverbridge_dhcp', true);
 					disableInput('serverbridge_interface', true);
 					disableInput('serverbridge_dhcp_start', true);

@@ -58,7 +58,7 @@
 */
 ##|+PRIV
 ##|*IDENT=page-diagnostics-sockets
-##|*NAME=Diagnostics: Sockets page
+##|*NAME=Diagnostics: Sockets
 ##|*DESCR=Allow access to the 'Diagnostics: Sockets' page.
 ##|*MATCH=diag_sockets.php*
 ##|-PRIV
@@ -104,6 +104,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 							continue;
 
 						$j = 0;
+						print("<tr>\n");
 						foreach (explode(' ', $line) as $entry) {
 							if ($entry == '' || $entry == "ADDRESS")
 								continue;

@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-router-advertisements
-##|*NAME=Services: Router advertisementspage
+##|*NAME=Services: Router Advertisements
 ##|*DESCR=Allow access to the 'Services: Router Advertisements' page.
 ##|*MATCH=services_router_advertisements.php*
 ##|-PRIV
@@ -402,7 +402,7 @@ $form->add($section);
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Suppress "Delete row" button if there are fewer than two rows

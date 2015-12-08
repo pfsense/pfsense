@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup
-##|*NAME=System: General Setup page
+##|*NAME=System: General Setup
 ##|*DESCR=Allow access to the 'System: General Setup' page.
 ##|*MATCH=system.php*
 ##|-PRIV
@@ -79,6 +79,11 @@ list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $
 
 $arr_gateways = return_gateways_array();
 
+// set default colmns to two if unset
+if(!isset($config['system']['webgui']['dashboardcolumns'])) {
+	$config['system']['webgui']['dashboardcolumns'] = 2;
+}
+
 $pconfig['dns1gw'] = $config['system']['dns1gw'];
 $pconfig['dns2gw'] = $config['system']['dns2gw'];
 $pconfig['dns3gw'] = $config['system']['dns3gw'];
@@ -89,7 +94,8 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
-//$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
+$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
+$pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -143,13 +149,19 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguicss']);
 	}
-	/*
+	
 	if ($_POST['webguifixedmenu']) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
 	} else {
 		unset($config['system']['webgui']['webguifixedmenu']);
 	}
-	*/
+
+	if ($_POST['dashboardcolumns']) {
+		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+	} else {
+		unset($config['system']['webgui']['dashboardcolumns']);
+	}	
+	
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
@@ -290,10 +302,8 @@ if ($_POST) {
 				// Remove the route. Later calls will add the correct new route if needed.
 				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
 					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				} else {
-					if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
-						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
-					}
+				} else if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 				}
 			}
 		}
@@ -456,7 +466,7 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 $csslist = array();
-$css = glob("bootstrap/css/*.css");
+$css = glob("/usr/local/www/bootstrap/css/*.css");
 foreach ($css as $file) {
 	$file = basename($file);
 	if(substr($file, 0, 9) !== 'bootstrap') {
@@ -470,22 +480,30 @@ if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }
 
-$section = new Form_Section('Web configurator');
+$section = new Form_Section('Web Configurator');
 
 $section->addInput(new Form_Select(
 	'webguicss',
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp("Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css");
-/*
+))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span> Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
-	'Menu',
+	'Top Navigation',
 	$pconfig['webguifixedmenu'],
 	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
-));
-*/
+))->setHelp("<span class=\"badge bg-danger\" title=\"This feature is in BETA\">BETA</span>");
+
+$section->addInput(new Form_Input(
+	'dashboardcolumns',
+	'Dashboard Columns',
+	'number',
+	$pconfig['dashboardcolumns'],
+	[min => 1, max => 4]
+))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+
 $form->add($section);
 
 print $form;

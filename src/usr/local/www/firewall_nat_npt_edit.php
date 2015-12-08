@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt-edit
-##|*NAME=Firewall: NAT: NPt: Edit page
+##|*NAME=Firewall: NAT: NPt: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: NPt: Edit' page.
 ##|*MATCH=firewall_nat_npt_edit.php*
 ##|-PRIV

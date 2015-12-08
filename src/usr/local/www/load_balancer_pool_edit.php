@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-pool-edit
-##|*NAME=Load Balancer: Pool: Edit page
+##|*NAME=Load Balancer: Pool: Edit
 ##|*DESCR=Allow access to the 'Load Balancer: Pool: Edit' page.
 ##|*MATCH=load_balancer_pool_edit.php*
 ##|-PRIV
@@ -481,7 +481,7 @@ $form->add($section);
 
 print($form);
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

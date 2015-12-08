@@ -3841,6 +3841,7 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
+	require_once("ipsec.inc");
 	global $config, $ipsec_log_cats;
 
 	if (!is_array($config['ipsec'])) {
@@ -4114,11 +4115,30 @@ function upgrade_128_to_129() {
 		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
 			unset($config['sysctl']['item'][$idx]);
 		}
+		if ($sysctl['tunable'] == "net.inet.ipsec.debug") {
+			$config['sysctl']['item'][$idx]['value'] = "0";
+		}
 	}
 
 	/* IPSEC is always on in 2.3. */
 	if (isset($config['ipsec']['enable']))
 		unset($config['ipsec']['enable']);
+}
+
+function upgrade_129_to_130() {
+	global $config;
+
+	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
+	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
+			if (isset($serversettings['topology_subnet'])) {
+				unset($serversettings['topology_subnet']);
+				$serversettings['topology'] = "subnet";
+			} else {
+				$serversettings['topology'] = "net30";
+			}
+		}
+	}
 }
 
 ?>

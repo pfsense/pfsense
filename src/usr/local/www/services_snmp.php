@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-snmp
-##|*NAME=Services: SNMP page
+##|*NAME=Services: SNMP
 ##|*DESCR=Allow access to the 'Services: SNMP' page.
 ##|*MATCH=services_snmp.php*
 ##|-PRIV

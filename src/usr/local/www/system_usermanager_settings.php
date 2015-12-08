@@ -59,8 +59,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings
-##|*NAME=System: User Manager: settings page
-##|*DESCR=Allow access to the 'System: User Manager: settings' page.
+##|*NAME=System: User Manager: Settings
+##|*DESCR=Allow access to the 'System: User Manager: Settings' page.
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
@@ -76,7 +76,7 @@ else {
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
-$pgtitle = array(gettext("System"), gettext("User manager settings"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
 
 $save_and_test = false;
 
@@ -134,8 +134,10 @@ if ($savemsg)
 
 if($save_and_test) {
 	echo "<script>\n";
+	echo "//<![CDATA[\n";
 	echo "myRef = window.open('system_usermanager_settings_test.php?authserver=".$pconfig['authmode']."','mywin','left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
 	echo "if (myRef==null || typeof(myRef)=='undefined') alert('" . gettext("Popup blocker detected.  Action aborted.") ."');\n";
+	echo "//]]>\n";
 	echo "</script>\n";
 }
 
@@ -183,4 +185,4 @@ $form->addGlobal(new Form_Button(
 $form->add($section);
 print $form;
 
-include("fend.inc");
+include("foot.inc");

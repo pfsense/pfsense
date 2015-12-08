@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-rules-edit
-##|*NAME=Firewall: Rules: Edit page
+##|*NAME=Firewall: Rules: Edit
 ##|*DESCR=Allow access to the 'Firewall: Rules: Edit' page.
 ##|*MATCH=firewall_rules_edit.php*
 ##|-PRIV
@@ -950,14 +950,14 @@ function build_flag_table() {
 		$tcpflags1 .= "<td> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
 
 		if (array_search($tcpflag, $setflags) !== false) {
-			$tcpflags1 .= "checked=\"checked\"";
+			$tcpflags1 .= "checked";
 		}
 
 		$tcpflags1 .= " /></td>\n";
 		$tcpflags2 .= "<td> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
 
 		if (array_search($tcpflag, $outofflags) !== false) {
-			$tcpflags2 .= "checked=\"checked\"";
+			$tcpflags2 .= "checked";
 		}
 
 		$tcpflags2 .= " /></td>\n";
@@ -969,10 +969,51 @@ function build_flag_table() {
 	$flagtable .=  "</table>";
 
 	$flagtable .= '<input type="checkbox" name="tcpflags_any" id="tcpflags_any" value="on"';
-	$flagtable .= $pconfig['tcpflags_any'] ? 'checked="checked"':'' . '/>';
+	$flagtable .= $pconfig['tcpflags_any'] ? 'checked':'' . '/>';
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);
+}
+
+function build_if_list() {
+	global $config;
+
+	$iflist = array();
+
+	// add group interfaces
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			if (have_ruleint_access($ifgen['ifname'])) {
+				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+			}
+		}
+	}
+
+	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$iflist[$ifent] = $ifdesc;
+		}
+	}
+
+	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
+		$iflist['l2tp'] = 'L2TP VPN';
+	}
+
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+		$iflist['pppoe'] = "PPPoE Server";
+	}
+
+	// add ipsec interfaces
+	if (ipsec_enabled() && have_ruleint_access("enc0")) {
+		$iflist["enc0"] = "IPsec";
+	}
+
+	// add openvpn/tun interfaces
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+		$iflist["openvpn"] = "OpenVPN";
+	}
+
+	return($iflist);
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
@@ -1057,7 +1098,7 @@ $section->addInput(new Form_Checkbox(
 if ($if == "FloatingRules" || isset($pconfig['floating']))
 {
 	$section->addInput(new Form_Checkbox(
-		'floating',
+		'quick',
 		'Quick',
 		'Apply the action immediately on match.',
 		$pconfig['quick']
@@ -1103,48 +1144,24 @@ if ($edit_disabled)
 	}
 }
 
-$interfaces = array();
-
-// add group interfaces
-if (is_array($config['ifgroups']['ifgroupentry']))
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen)
-		if (have_ruleint_access($ifgen['ifname']))
-			$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
-
-foreach (get_configured_interface_with_descr() as $ifent => $ifdesc)
-{
-	if (have_ruleint_access($ifent))
-		$interfaces[$ifent] = $ifdesc;
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$section->addInput($input = new Form_Select(
+		'interface',
+		'Interface',
+		explode(",", $pconfig['interface']),
+		build_if_list(),
+		true
+	))->setHelp('Choose the interface(s) for this rule.');
+} else {
+	$section->addInput($input = new Form_Select(
+		'interface',
+		'Interface',
+		$pconfig['interface'],
+		build_if_list()
+	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
-if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp"))
-	$interfaces['l2tp'] = 'L2TP VPN';
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-	$interfaces['pppoe'] = "PPPoE Server";
-
-// add ipsec interfaces
-if (ipsec_enabled() && have_ruleint_access("enc0"))
-	$interfaces["enc0"] = "IPsec";
-
-// add openvpn/tun interfaces
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-	$interfaces["openvpn"] = "OpenVPN";
-
-$section->addInput($input = new Form_Select(
-	'interface',
-	'Interface',
-	$pconfig['interface'],
-	$interfaces,
-	($if == "FloatingRules" || isset($pconfig['floating']))
-))->setHelp('Choose on which interface packets must come in to match this '.
-	'rule.');
-
-if ($if == "FloatingRules" || isset($pconfig['floating']))
-	$input->setHelp('Choose the interface(s) for this rule.');
-
-if ($if == "FloatingRules" || isset($pconfig['floating']))
-{
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput(new Form_Select(
 		'direction',
 		'Direction',
@@ -1351,7 +1368,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If you want to do a lot of logging, consider using a remote '.
-	'syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: '.
+	'syslog server (see the <a href="diag_logs_settings.php">Status: System logs: '.
 	'Settings</a> page).');
 
 $section->addInput(new Form_Input(
@@ -1492,7 +1509,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
-	$pconfig['statetype'],
+	(isset($pconfig['statetype'])) ? "keep state":$pconfig['statetype'],
 	array(
 		'keep state' => 'Keep',
 		'sloppy state' => 'Sloppy',
@@ -1509,7 +1526,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
 
-$vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc");
+$vlanprio = array("" => "none", "be" => "BE", "bk" => "BK", "ee" => "EE", "ca" => "CA", "vi" => "VI", "vo" => "VO", "ic" => "IC", "nc" => "NC");
+
 $section->addInput(new Form_Select(
 	'vlanprio',
 	'VLAN Prio',
@@ -1572,23 +1590,23 @@ $group = new Form_Group('In / Out pipe');
 $group->add(new Form_Select(
 	'dnpipe',
 	'DNpipe',
-	$pconfig['dnpipe'],
-	array('' => 'none') + array_keys($dnqlist)
+	(isset($pconfig['dnpipe'])) ? $pconfig['dnpipe']:"",
+	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $group->add(new Form_Select(
 	'pdnpipe',
 	'PDNpipe',
-	$pconfig['pdnpipe'],
-	array('' => 'none') + array_keys($dnqlist)
+	(isset($pconfig['pdnpipe'])) ? $pconfig['pdnpipe']:"",
+	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'you have also selected In. The Out selection is applied to traffic leaving '.
-	'the interface where the rule is created, In is applied to traffic coming '.
+	'the interface where the rule is created, the In selection is applied to traffic coming '.
 	'into the chosen interface.<br />If you are creating a floating rule, if the '.
-	'direction is In then the same rules apply, if the direction is out the '.
-	'selections are reverted Out is for incoming and In is for outgoing.'
+	'direction is In then the same rules apply, if the direction is Out the '.
+	'selections are reversed, Out is for incoming and In is for outgoing.'
 );
 
 $group = new Form_Group('Ackqueue / Queue');
@@ -1652,7 +1670,7 @@ $form->add($section);
 echo $form;
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

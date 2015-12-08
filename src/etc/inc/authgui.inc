@@ -127,11 +127,19 @@ function display_error_form($http_code, $desc) {
 		return;
 	}
 
+	$cssfile = "/bootstrap/css/pfSense.css";
+
+	if (isset($config['system']['webgui']['webguicss'])) {
+	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Error: not allowed"); ?></title>
 </head>
 <body id="error" class="no-menu">
@@ -222,13 +230,25 @@ if ($local_ip == false) {
 	}
 }
 
+$cssfile = "/bootstrap/css/pfSense.css";
+
+if (isset($config['system']['webgui']['webguicss'])) {
+	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Login"); ?></title>
-	<script>var events = events || [];</script>
+	<script type="text/javascript">
+	//<![CDATA{
+	var events = events || [];
+	//]]>
+	</script>
 </head>
 <body id="login" class="no-menu">
 	<div id="jumbotron">
@@ -280,7 +300,8 @@ if ($local_ip == false) {
 			</div>
 		</div>
 
-		<script>
+		<script type="text/javascript">
+		//!<[CDATA[
 		events.push(function() {
 			document.cookie=
 				"cookie_test=1" +
@@ -294,6 +315,7 @@ if ($local_ip == false) {
 			// Delete it
 			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
 		});
+		//]]>
 		</script>
 <?php
 require('foot.inc');

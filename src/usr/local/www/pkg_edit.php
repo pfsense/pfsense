@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-package-edit
-##|*NAME=Package: Edit page
+##|*NAME=Package: Edit
 ##|*DESCR=Allow access to the 'Package: Edit' page.
 ##|*MATCH=pkg_edit.php*
 ##|-PRIV
@@ -373,7 +373,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 			$size = ($size ? "size=\"{$size}\"" : '');
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
-				$multiple = "multiple=\"multiple\"";
+				$multiple = "multiple";
 			}
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
@@ -782,7 +782,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$fieldname = $pkga['fieldname'];
 
 			if (isset($pkga['multiple'])) {
-				$multiple = 'multiple="multiple"';
+				$multiple = 'multiple';
 				$items = explode(',', $value);
 				$fieldname .= "[]";
 			} else {
@@ -948,16 +948,19 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					($value == "on"),
 					'on'
 				))->setOnclick($onclick)
-				  ->setOnchange($onchange);
+				  ->setOnchange($onchange)
+				  ->setHelp($pkga['sethelp']);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
+						$pkga['fielddescr'],
 						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
 					))->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['sethelp']);
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
@@ -966,7 +969,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						($value == "on"),
 						'on'
 					))->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['sethelp']);
 				}
 			}
 
@@ -1139,7 +1143,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$fieldname = $pkga['fieldname'];
 			if (isset($pkga['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = 'multiple="multiple"';
+				$multiple = 'multiple';
 			}
 
 			$selectedlist = array();

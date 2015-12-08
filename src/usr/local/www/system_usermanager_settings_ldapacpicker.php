@@ -56,6 +56,13 @@
 	pfSense_MODULE:	auth
 */
 
+##|+PRIV
+##|*IDENT=page-system-usermanager-settings-ldappicker
+##|*NAME=System: User Manager: Settings: LDAP Picker
+##|*DESCR=Allow access to the 'System: User Manager: Settings: LDAP Picker' page.
+##|*MATCH=system_usermanager_settings_ldapacpicker.php*
+##|-PRIV
+
 require("guiconfig.inc");
 require_once("auth.inc");
 
@@ -79,6 +86,8 @@ if ($_GET) {
 ?>
 <html>
 	<head>
+		<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+
 		<STYLE type="text/css">
 			TABLE {
 				border-width: 1px 1px 1px 1px;
@@ -99,6 +108,7 @@ if ($_GET) {
 		</STYLE>
 	</head>
 <script type="text/javascript">
+//<![CDATA[
 function post_choices() {
 
 	var ous = <?php echo count($ous); ?>;
@@ -115,41 +125,41 @@ function post_choices() {
 	window.close();
 -->
 }
+//]]>
 </script>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
-<form method="post" action="system_usermanager_settings_ldapacpicker.php">
+	<body>
+		<form method="post" action="system_usermanager_settings_ldapacpicker.php">
 <?php if (empty($ous)): ?>
-	<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
-	<input type='button' value='<?=gettext("Close"); ?>' onClick="window.close();">
+			<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
+			<input type='button' class="btn btn-sm btn-default" value='<?=gettext("Close"); ?>' onClick="window.close();">
 <?php else: ?>
-	<b><?=gettext("Please select which containers to Authenticate against:");?></b>
-	<p/>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="tabnavtbl">
-				<table width="100%">
+			<b><?=gettext("Please select which containers to Authenticate against:");?></b>
+			<p/>
+			<div class="table-responsive">
+				<table class="table table-hover table-striped">
+					<tbody>
 <?php
 	if (is_array($ous)) {
 		foreach ($ous as $ou) {
 			if (in_array($ou, $authcfg['ldap_authcn'])) {
-				$CHECKED=" CHECKED";
+				$CHECKED=" checked";
 			} else {
 				$CHECKED="";
 			}
-			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
+			echo "			<tr><td><div class='checkbox'><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></div></td></tr>\n";
 		}
 	}
 ?>
+
+					</tbody>
 				</table>
-			</td>
-		</tr>
-	</table>
-
-	<p/>
-
-	<input type='button' value='<?=gettext("Save");?>' onClick="post_choices();">
+			</div>
+			<p/>
+	
+			<input type='button' class="btn btn-sm btn-primary" value='<?=gettext("Save");?>' onClick="post_choices();">
 <?php endif; ?>
-</form>
-</body>
+		</form>
+	</body>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
 </html>

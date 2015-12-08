@@ -113,15 +113,18 @@ if (isset($_POST['lastsawtime'])) {
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
 
 	foreach ($filterlog as $idx => $row) {
-		if (strtotime($log_row['time']) <= $_POST['lastsawtime'])
+		if (strtotime($log_row['time']) <= $_POST['lastsawtime']) {
 			unset($filterlog[$idx]);
+		}
 	}
-}
-else
+} else {
 	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
+}
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	var logWidgetLastRefresh = <?=time()?>;
+//]]>
 </script>
 
 
@@ -146,14 +149,15 @@ else
 			$dstIP = htmlspecialchars($filterent['dstip']);
 		}
 
-		if ($filterent['act'] == "block")
-			$iconfn = "times";
-		else if ($filterent['act'] == "reject")
-			$iconfn = "fire";
-		else if ($filterent['act'] == "match")
+		if ($filterent['act'] == "block") {
+			$iconfn = "times icon-danger";
+		} else if ($filterent['act'] == "reject") {
+			$iconfn = "hand-stop-o icon-warning";
+		} else if ($filterent['act'] == "match") {
 			$iconfn = "filter";
-		else
-			$iconfn = "check";
+		} else {
+			$iconfn = "check icon-success";
+		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 
@@ -171,7 +175,7 @@ else
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>
 			<td><a href="diag_dns.php?host=<?=$filterent['srcip']?>"
-				title="<?=gettext("Reverse Resolve with DNS")?>"><?=$srcIP?></a>:<?=htmlspecialchars($filterent['srcport'])?>
+				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$srcIP?></a>
 			</td>
 			<td><a href="diag_dns.php?host=<?=$filterent['dstip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>
@@ -186,11 +190,13 @@ else
 <?php
 
 /* for AJAX response, we only need the panel-body */
-if (isset($_GET['lastsawtime']))
+if (isset($_GET['lastsawtime'])) {
 	exit;
+}
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function logWidgetUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -210,6 +216,7 @@ function logWidgetUpdateFromServer(){
 events.push(function(){
 	setInterval('logWidgetUpdateFromServer()', 60*1000);
 });
+//]]>
 </script>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -232,11 +239,11 @@ events.push(function(){
 			<div class="col-sm-6 checkbox">
 			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
 			<label><input name="actpass" type="checkbox" value="Pass"
-					<?=(in_array('pass', $include_acts) ? 'checked="checked"':'')?> />Pass</label>
+					<?=(in_array('pass', $include_acts) ? 'checked':'')?> />Pass</label>
 				<label><input name="actblock" type="checkbox" value="Block"
-					<?=(in_array('block', $include_acts) ? 'checked="checked"':'')?> />Block</label>
+					<?=(in_array('block', $include_acts) ? 'checked':'')?> />Block</label>
 				<label><input name="actreject" type="checkbox" value="Reject"
-					<?=(in_array('reject', $include_acts) ? 'checked="checked"':'')?> />Reject</label>
+					<?=(in_array('reject', $include_acts) ? 'checked':'')?> />Reject</label>
 			</div>
 		</div>
 
@@ -247,7 +254,7 @@ events.push(function(){
 				<select name="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
-						<?=($nentriesinterfaces==$iface?'selected="selected"':'')?>><?=htmlspecialchars($ifacename)?></option>
+						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>
 			</select>
 			</div>
@@ -260,7 +267,8 @@ events.push(function(){
 		</div>
 	</form>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 if (typeof getURL == 'undefined') {
 	getURL = function(url, callback) {
 		if (!url)
@@ -301,5 +309,5 @@ if (typeof getURL == 'undefined') {
 function outputrule(req) {
 	alert(req.content);
 }
-
+//]]>
 </script>

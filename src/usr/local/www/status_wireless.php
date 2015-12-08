@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-wirelessstatus
-##|*NAME=Status: Wireless page
+##|*NAME=Status: Wireless
 ##|*DESCR=Allow access to the 'Status: Wireless' page.
 ##|*MATCH=status_wireless.php*
 ##|-PRIV

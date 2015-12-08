@@ -59,9 +59,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-system-firmware-settings
-##|*NAME=System: Firmware: Settings page
-##|*DESCR=Allow access to the 'System: Firmware: Settings' page.
+##|*IDENT=page-system-update-settings
+##|*NAME=System: Update: Settings
+##|*DESCR=Allow access to the 'System: Update: Settings' page.
 ##|*MATCH=system_update_settings.php*
 ##|-PRIV
 
@@ -107,7 +107,7 @@ if ($_POST) {
 $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
-$pgtitle = array(gettext("System"), gettext("Firmware"), gettext("Settings"));
+$pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 $closehead = false;
 
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
@@ -124,8 +124,8 @@ if ($savemsg)
 	print_info_box($savemsg, 'success');
 
 $tab_array = array();
+$tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=firmware");
 $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
-$tab_array[] = array(gettext("System update"), false, "pkg_mgr_install.php?id=firmware");
 display_top_tabs($tab_array);
 
 $form = new Form();
@@ -212,7 +212,7 @@ if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Update firmwareurl from preseturls or from the saved alternate if "Unofficial" is checked

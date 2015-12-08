@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-staticroutes-editroute
-##|*NAME=System: Static Routes: Edit route page
+##|*NAME=System: Static Routes: Edit route
 ##|*DESCR=Allow access to the 'System: Static Routes: Edit route' page.
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
@@ -315,7 +315,7 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// --------- Autocomplete -----------------------------------------------------------------------------------------

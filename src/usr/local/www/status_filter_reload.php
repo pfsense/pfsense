@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-filterreloadstatus
-##|*NAME=Status: Filter Reload Status page
+##|*NAME=Status: Filter Reload Status
 ##|*DESCR=Allow access to the 'Status: Filter Reload Status' page.
 ##|*MATCH=status_filter_reload.php*
 ##|-PRIV
@@ -67,7 +67,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array(gettext("Status"), gettext("Filter Reload Status"));
+$pgtitle = array(gettext("Status"), gettext("Filter Reload"));
 $shortcut_section = "firewall";
 
 if (file_exists("{$g['varrun_path']}/filter_reload_status")) {

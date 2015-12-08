@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec
-##|*NAME=VPN: IPsec page
+##|*NAME=VPN: IPsec
 ##|*DESCR=Allow access to the 'VPN: IPsec' page.
 ##|*MATCH=vpn_ipsec.php*
 ##|-PRIV
@@ -250,14 +250,14 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
 $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
@@ -277,7 +277,7 @@ display_top_tabs($tab_array);
 
 <form name="mainform" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPSec tunnels')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPsec tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>

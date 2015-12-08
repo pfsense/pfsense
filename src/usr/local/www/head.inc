@@ -72,9 +72,14 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 $cssfile = "/bootstrap/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
+}
+
+// set default colmns to two if unset
+if(!isset($config['system']['webgui']['dashboardcolumns'])) {
+	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
 ?>
@@ -83,10 +88,14 @@ if (isset($config['system']['webgui']['webguicss'])) {
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="sortable/sortable-theme-bootstrap.css">
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
-	<script>var events = events || [];</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var events = events || [];
+	//]]>
+	</script>
 </head>
 
 <?php
@@ -243,7 +252,7 @@ if ($g['services_dhcp_server_enable']) {
 }
 
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
-$services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
+$services_menu[] = array(gettext("IGMP Proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
@@ -269,10 +278,7 @@ $vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 
 // Status
 $status_menu = array();
-if (count($config['captiveportal']) > 0) {
-	$status_menu[] = array(gettext("Captive Portal"), "/status_captiveportal.php");
-}
-
+$status_menu[] = array(gettext("Captive Portal"), "/status_captiveportal.php");
 $status_menu[] = array(gettext("CARP (failover)"), "/carp_status.php");
 $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
@@ -371,18 +377,25 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
 	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
-	$help_menu[] = array(gettext("Search portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
+	$help_menu[] = array(gettext("Search Portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
-/* 
-$menuclass = "navbar navbar-static-top navbar-inverse";
+
+$menuclass = "static";
 
 if (isset($config['system']['webgui']['webguifixedmenu'])) {
-	$menuclass = "navbar navbar-fixed-top navbar-inverse";
-}*/
+	$menuclass = "fixed";
+}
+
+$numColumns = $config['system']['webgui']['dashboardcolumns'];
+
+if (($pagename === "index.php") && ($numColumns > 2)) {
+	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
+}
 ?>
-<nav id="topmenu" class="navbar navbar-fixed-top navbar-inverse">
+<body id="<?=$numColumns?>">
+<nav id="topmenu" class="navbar navbar-<?=$menuclass?>-top navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pf-navbar">
@@ -420,19 +433,20 @@ if (isset($config['system']['webgui']['webguifixedmenu'])) {
 				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
-						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>
-							<span class="badge"><?=count($notices)?></span>
+						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
+							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i> 
+							<span class="badge bg-danger"><?=count($notices)?></span>
 						</a>
 					</li>
-<?php
-				endif;
-?>
+				<?php
+					endif;
+				?>
 			</ul>
 		</div>
 	</div>
 </nav>
 
-<div class="container">
+<div class="container <?=$menuclass?>" <?=$columnsContainer?>>
 	<header class="header">
 
 <?php
@@ -512,7 +526,7 @@ if ($config['remote_managed_pages']['item']) {
 if (are_notices_pending()):?>
 
 <div id="notices" class="modal fade" role="dialog">
-	<div class="mopdal-dialog">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -565,7 +579,7 @@ if (are_notices_pending()):?>
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
 	    $('#clearallnotices').click(function() {

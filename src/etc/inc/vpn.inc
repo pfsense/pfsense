@@ -138,6 +138,7 @@ function vpn_ipsec_configure($restart = false) {
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
+	$ipsecpinghostsactive = false;
 
 	/* service may have been enabled, disabled, or otherwise changed in a way requiring rule updates */
 	filter_configure();
@@ -386,6 +387,7 @@ function vpn_ipsec_configure($restart = false) {
 						}
 						if (is_ipaddr($srcip)) {
 							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
+							$ipsecpinghostsactive = true;
 						}
 					}
 				}
@@ -1435,6 +1437,11 @@ EOD;
 		} else {
 			mwexec("/usr/local/sbin/ipsec start", false);
 		}
+	}
+
+	// run ping_hosts.sh once if it's enabled to avoid wait for minicron
+	if ($ipsecpinghostsactive == true) {
+		mwexec_bg("/usr/local/bin/ping_hosts.sh");
 	}
 
 	if ($natfilterrules == true) {

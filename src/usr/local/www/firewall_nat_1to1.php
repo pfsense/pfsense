@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1
-##|*NAME=Firewall: NAT: 1:1 page
+##|*NAME=Firewall: NAT: 1:1
 ##|*DESCR=Allow access to the 'Firewall: NAT: 1:1' page.
 ##|*MATCH=firewall_nat_1to1.php*
 ##|-PRIV
@@ -269,7 +269,7 @@ display_top_tabs($tab_array);
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled">
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled>
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
@@ -286,17 +286,15 @@ display_top_tabs($tab_array);
 
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
-
-	stripe_table();
 
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			stripe_table();
 		}
 	});
 
@@ -305,5 +303,6 @@ events.push(function() {
 	   $('[id^=frc]').prop('checked', true);
 	});
 });
+//]]>
 </script>
 <?php include("foot.inc"); ?>

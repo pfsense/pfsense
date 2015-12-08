@@ -120,8 +120,9 @@ if ($config['widgets']['rssfeed']) {
 	exec("chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
 	function textLimit($string, $length, $replacer = '...') {
-		if(strlen($string) > $length)
+		if (strlen($string) > $length) {
 			return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
+		}
 		return $string;
 	}
 	$feed = new SimplePie();
@@ -130,7 +131,7 @@ if ($config['widgets']['rssfeed']) {
 	$feed->init();
 	$feed->handle_content_type();
 	$counter = 1;
-	foreach($feed->get_items(0, $max_items) as $item) {
+	foreach ($feed->get_items(0, $max_items) as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
 		$content = $item->get_content();

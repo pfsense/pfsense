@@ -56,6 +56,13 @@
 	pfSense_MODULE: dnsupdate
 */
 
+##|+PRIV
+##|*IDENT=page-services-rfc2136edit
+##|*NAME=Services: RFC 2136 Client: Edit
+##|*DESCR=Allow access to the 'Services: RFC 2136 Client: Edit' page.
+##|*MATCH=services_rfc2136.php*
+##|-PRIV
+
 require("guiconfig.inc");
 
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
@@ -153,7 +160,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("RFC 2136 client"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors)

@@ -65,7 +65,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-command
-##|*NAME=Diagnostics: Command page
+##|*NAME=Diagnostics: Command
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
 ##|*MATCH=exec.php*
 ##|-PRIV
@@ -129,7 +129,8 @@ $closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	// Create recall buffer array (of encoded strings).
 <?php
 
@@ -227,7 +228,8 @@ if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
 		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
 		<div class="panel-body">
-			<pre>
+			<div class="content">
+				<pre>
 <?php
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
@@ -235,8 +237,9 @@ if (!isBlank($_POST['txtCommand'])):?>
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
 	foreach($output as $line)
 		print(htmlspecialchars($line) . "\r\n");
-?></pre>
-
+?>
+				</pre>
+			</div>
 		</div>
 	</div>
 <? endif ?>
@@ -245,22 +248,26 @@ if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
 		<div class="panel-body">
-			<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
-			<br /><br />
-			<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
-			<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
-			<button type="submit" class="btn btn-default btn-sm" value="EXEC"><?=gettext("Execute"); ?></button>
-			<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
-			<input type="button" class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+			<div class="content">
+				<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
+				<br /><br />
+				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
+				<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
+				<button type="submit" class="btn btn-default btn-sm" value="EXEC"><?=gettext("Execute"); ?></button>
+				<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
+				<input type="button" class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+			</div>
 		</div>
 	</div>
 
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
 		<div class="panel-body">
-			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
-			<br /><br />
-			<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
+			<div class="content">
+				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
+				<br /><br />
+				<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
+			</div>
 		</div>
 	</div>
 
@@ -271,10 +278,11 @@ if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
 		<div class="panel-body">
-			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
-			<br />
-			<button name="submit" type="submit" class="btn btn-default btn-sm pull-left" id="upload" value="UPLOAD"><?=gettext("Upload")?></button>
-
+			<div class="content">
+				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
+				<br />
+				<button name="submit" type="submit" class="btn btn-default btn-sm" id="upload" value="UPLOAD"><?=gettext("Upload")?></button>
+			</div>
 		</div>
 	</div>
 <?php
@@ -304,11 +312,13 @@ if (!isBlank($_POST['txtCommand'])):?>
 		puts("&nbsp;</pre>");
 		puts("</div>");
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	events.push(function(){
 		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
 		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
 	});
+//]]>
 </script>
 <?php
 }
@@ -316,10 +326,12 @@ if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-default responsive">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute PHP Commands')?></h2></div>
 		<div class="panel-body">
-			<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
-			<br />
-			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
-			<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
+			<div class="content">
+				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
+				<br />
+				<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
+				<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
+			</div>
 		</div>
 	</div>
 </form>

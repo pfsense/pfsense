@@ -147,11 +147,6 @@ function hideLabel(text, hide) {
 // Striping of the tables is handled here, NOT with the Bootstrap table-striped class because it would
 // get confused when rows are sorted or deleted.
 
-function stripe_table() {
-	$("tr:odd").addClass('active');
-	$("tr:even").removeClass('active');
-}
-
 function fr_toggle(id, prefix) {
 	if (!prefix)
 		prefix = 'fr';
@@ -161,8 +156,7 @@ function fr_toggle(id, prefix) {
 	fr_bgcolor(id, prefix);
 }
 
-// Change background color based on state of checkbox
-// On resetting background, reapply table striping
+// Change background color of selected row based on state of checkbox
 function fr_bgcolor(id, prefix) {
 	if (!prefix)
 		prefix = 'fr';
@@ -170,11 +164,9 @@ function fr_bgcolor(id, prefix) {
 	var row = $('#' + prefix + id);
 
 	if ($('#' + prefix + 'c' + id).prop('checked') ) {
-		row.css("background-color", "#DDF4FF");
-		row.removeClass('active');
+		row.addClass('active');
 	} else {
-		row.css("background-color", "#FFFFFF");
-		stripe_table();
+		row.removeClass('active');
 	}
 }
 
@@ -296,8 +288,7 @@ function add_row() {
 	var lastRepeatableGroup = $('.repeatable:last');
 
 	// Clone it
-	var newGroup = lastRepeatableGroup.clone(true);
-
+	var newGroup = lastRepeatableGroup.clone();
 	// Increment the suffix number for each input element in the new group
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
@@ -340,9 +331,16 @@ function add_row() {
 
 	checkLastRow();
 
-	$('[id^=address]').autocomplete({
-		source: addressarray
-	});
+	// Autocomplete
+	if ( typeof addressarray !== 'undefined') {
+		$('[id^=address]').each(function() {
+			if(this.id.substring(0, 8) != "address_") {
+				$(this).autocomplete({
+					source: addressarray
+				});
+			}
+		});
+	}
 }
 
 // These are action buttons, not submit buttons
@@ -390,7 +388,36 @@ $('tbody').each(function(){
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
-//Trick top navbar drowdowns to work on hover when navbar is horizontal
-$('.dropdown').hover(function(){
-	if($('body').width() > 1200) { $('.dropdown-toggle', this).trigger('click'); } 
-});
+	// Hide configuration button for panels without configuration
+	$('.container .panel-heading a.config').each(function (idx, el){
+		var config = $(el).parents('.panel').children('.panel-footer');
+		if (config.length == 1)
+			$(el).removeClass('hidden');
+	});
+
+	// Initial state & toggle icons of collapsed panel
+	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
+
+		body.on('shown.bs.collapse', function(){
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
+
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
+		});
+
+		body.on('hidden.bs.collapse', function(){
+			$(el).children('i').toggleClass('fa-minus-circle', false);
+			$(el).children('i').toggleClass('fa-plus-circle', true);
+
+			if($(el).closest('a').attr('name') != 'widgets-available') {
+				updateWidgets();
+			}
+		});
+	});

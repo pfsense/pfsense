@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-settings
-##|*NAME=Diagnostics: Logs: Settings page
-##|*DESCR=Allow access to the 'Diagnostics: Logs: Settings' page.
+##|*NAME=Status: Logs: Settings
+##|*DESCR=Allow access to the 'Status: Logs: Settings' page.
 ##|*MATCH=diag_logs_settings.php*
 ##|-PRIV
 
@@ -479,7 +479,7 @@ $form->add($section);
 
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

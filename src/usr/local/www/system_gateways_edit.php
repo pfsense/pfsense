@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgateway
-##|*NAME=System: Gateways: Edit Gateway page
+##|*NAME=System: Gateways: Edit Gateway
 ##|*DESCR=Allow access to the 'System: Gateways: Edit Gateway' page.
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV
@@ -124,6 +124,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['down'] = $a_gateways[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
@@ -190,7 +191,7 @@ if ($_POST) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if (empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
-			} else {
+			} elseif (!isset($_POST["nonlocalgateway"])) {
 				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
 				$vips = link_interface_to_vips($_POST['interface']);
 				if (is_array($vips)) {
@@ -221,7 +222,7 @@ if ($_POST) {
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
 				if (empty($parent_ip) || empty($parent_sn)) {
 					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
-				} else {
+				} elseif (!isset($_POST["nonlocalgateway"])) {
 					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
 					$vips = link_interface_to_vips($_POST['interface']);
 					if (is_array($vips)) {
@@ -515,6 +516,9 @@ if ($_POST) {
 		if ($_POST['monitor_disable'] == "yes") {
 			$gateway['monitor_disable'] = true;
 		}
+		if ($_POST['nonlocalgateway'] == "yes") {
+			$gateway['nonlocalgateway'] = true;
+		}
 		if ($_POST['force_down'] == "yes") {
 			$gateway['force_down'] = true;
 		}
@@ -522,6 +526,16 @@ if ($_POST) {
 			$gateway['monitor'] = $_POST['monitor'];
 		}
 
+		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
+		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+			$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+			isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+			$realif = get_real_interface($a_gateway_item[$realid]['interface']);
+			$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
+			$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
+			mwexec($cmd);
+		}
+		
 		/* NOTE: If monitor ip is changed need to cleanup the old static route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
 			$_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
@@ -616,7 +630,8 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 var systemGatewaysEditRecalculate = function(){
 	var interval = $('#interval')[0].value;
 
@@ -665,6 +680,7 @@ events.push(function(){
 
 	systemGatewaysEditRecalculate();
 });
+//]]>
 </script>
 <?php
 
@@ -965,6 +981,13 @@ $section->addInput(new Form_StaticText(
 		'is marked down.').
 	'</span>'
 ));
+
+$section->addInput(new Form_Checkbox(
+	'nonlocalgateway',
+	'Use non-local gateway',
+	'Use non-local gateway through interface specific route.',
+	$pconfig['nonlocalgateway']
+))->setHelp('This will allow use of a gateway outside of this interface\'s subnet. This is usually indicative of a configuration error, but is required for some scenarios.');
 
 $form->add($section);
 

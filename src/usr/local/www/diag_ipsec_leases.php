@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-leases
-##|*NAME=Status: IPsec: Leases page
+##|*NAME=Status: IPsec: Leases
 ##|*DESCR=Allow access to the 'Status: IPsec: Leases' page.
 ##|*MATCH=diag_ipsec_leases.php*
 ##|-PRIV

@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-setting
-##|*NAME=Services: Load Balancer: setting page
+##|*NAME=Services: Load Balancer: Settings
 ##|*DESCR=Allow access to the 'Settings: Load Balancer: Settings' page.
 ##|*MATCH=load_balancer_setting.php*
 ##|-PRIV

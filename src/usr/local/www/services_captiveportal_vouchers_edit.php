@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-voucher-edit
-##|*NAME=Services: Captive portal Voucher Rolls page
+##|*NAME=Services: Captive portal Voucher Rolls
 ##|*DESCR=Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
@@ -130,6 +130,8 @@ if ($_POST) {
 
 	// Look for duplicate roll #
 	foreach ($a_roll as $re) {
+		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re)
+			continue;
 		if ($re['number'] == $_POST['number']) {
 			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;

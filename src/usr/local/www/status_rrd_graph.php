@@ -59,9 +59,10 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraphs
-##|*NAME=Status: RRD Graphs page
+##|*NAME=Status: RRD Graphs
 ##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
 ##|*MATCH=status_rrd_graph.php*
+##|*MATCH=status_rrd_graph_img.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -611,7 +612,7 @@ if($curcat == 'custom') {
 		$id = preg_replace('/\./', '_', $id);
 ?>
 		<div class="panel panel-default">
-			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 		</div>
 <?php
 
@@ -686,7 +687,7 @@ if($curcat == 'custom') {
 				$end = $dates['end'];
 ?>
 				<div class="panel panel-default" align="center">
-					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 				</div>
 <?php
 			}

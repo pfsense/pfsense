@@ -91,7 +91,8 @@ if ($input_errors)
 	print_input_errors($input_errors);
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function getlimiteractivity() {
 		$.ajax(
 			'/diag_limiter_info.php',
@@ -110,6 +111,7 @@ if ($input_errors)
 		setInterval('getlimiteractivity()', 2500);
 		getlimiteractivity();
 	});
+//]]>
 </script>
 
 <div class="panel panel-default">

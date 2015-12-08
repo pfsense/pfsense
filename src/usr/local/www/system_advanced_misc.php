@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-misc
-##|*NAME=System: Advanced: Miscellaneous page
+##|*NAME=System: Advanced: Miscellaneous
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
 ##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
@@ -315,7 +315,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Miscellaneous"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 include("head.inc");
 
 if ($input_errors)

@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup/restore
-##|*NAME=Diagnostics: Backup/restore page
+##|*NAME=Diagnostics: Backup/restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
@@ -372,7 +372,7 @@ if ($_POST) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync");
+								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
@@ -735,7 +735,7 @@ $section->addInput(new Form_Input(
 $group = new Form_Group('');
 $group->add(new Form_Button(
 	'Submit',
-	'Restore configuration'
+	'Restore Configuration'
 ))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger');
 
 $section->add($group);
@@ -749,8 +749,8 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		$group->add(new Form_Button(
 			'Submit',
-			'Reinstall packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-warning');
+			'Reinstall Packages'
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-danger');
 
 		$section->add($group);
 	}

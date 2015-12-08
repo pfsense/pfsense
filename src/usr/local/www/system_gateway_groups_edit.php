@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgatewaygroups
-##|*NAME=System: Gateways: Edit Gateway Groups page
+##|*NAME=System: Gateways: Edit Gateway Groups
 ##|*DESCR=Allow access to the 'System: Gateways: Edit Gateway Groups' page.
 ##|*MATCH=system_gateway_groups_edit.php*
 ##|-PRIV

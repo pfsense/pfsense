@@ -100,13 +100,9 @@ $ipsec_idhandling = array(
 global $p1_ealgos;
 $p1_ealgos = array(
 	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'),
-	'des' => array('name' => 'DES'));
+	'cast128' => array('name' => 'CAST128'));
 
 global $p2_ealgos;
 $p2_ealgos = array(
@@ -116,8 +112,7 @@ $p2_ealgos = array(
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'),
-	'des' => array('name' => 'DES'));
+	'cast128' => array('name' => 'CAST128'));
 
 global $p1_halgos;
 $p1_halgos = array(

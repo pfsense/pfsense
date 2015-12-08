@@ -61,12 +61,12 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-igmpproxy-edit
-##|*NAME=Firewall: Igmpproxy: Edit page
-##|*DESCR=Allow access to the 'Services: Igmpproxy: Edit' page.
+##|*NAME=Services: IGMP Proxy: Edit
+##|*DESCR=Allow access to the 'Services: IGMP Proxy: Edit' page.
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"), gettext("IGMP Proxy"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("IGMP Proxy"), gettext("Edit"));
 
 require("guiconfig.inc");
 

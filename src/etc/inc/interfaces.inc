@@ -228,13 +228,14 @@ function interface_vlan_configure(&$vlan) {
 		return;
 	}
 	$if = $vlan['if'];
-	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
-	$tag = $vlan['tag'];
-
 	if (empty($if)) {
 		log_error(gettext("interface_vlan_configure called with if undefined."));
 		return;
 	}
+
+	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$tag = $vlan['tag'];
+	$pcp  = empty($vlan['pcp']) ? 0 : $vlan['pcp'];	/* Apply "Best Effort" if not set */
 
 	/* make sure the parent interface is up */
 	interfaces_bring_up($if);
@@ -242,14 +243,14 @@ function interface_vlan_configure(&$vlan) {
 	pfSense_interface_capabilities($if, IFCAP_VLAN_HWTAGGING|IFCAP_VLAN_MTU|IFCAP_VLAN_HWFILTER);
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		interface_bring_down($vlanif, true);
-	} else {
-		$tmpvlanif = pfSense_interface_create("vlan");
-		pfSense_interface_rename($tmpvlanif, $vlanif);
-		pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
+		pfSense_interface_destroy($vlanif);
 	}
 
-	pfSense_vlan_create($vlanif, $if, $tag);
+	$tmpvlanif = pfSense_interface_create("vlan");
+	pfSense_interface_rename($tmpvlanif, $vlanif);
+	pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
+
+	pfSense_vlan_create($vlanif, $if, $tag, $pcp);
 
 	interfaces_bring_up($vlanif);
 
@@ -807,6 +808,7 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 	$realif = get_real_interface($gre['if']);
 	$realifip = get_interface_ip($gre['if']);
+	$realifip6 = get_interface_ipv6($gre['if']);
 
 	/* make sure the parent interface is up */
 	interfaces_bring_up($realif);
@@ -820,7 +822,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	}
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
-	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
+	if (is_ipaddrv6($gre['remote-addr'])) {
+		mwexec("/sbin/ifconfig {$greif} inet6 tunnel {$realifip6} " . escapeshellarg($gre['remote-addr']));
+	}else{
+		mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
+	}
 	if ((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		//mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
@@ -936,7 +942,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	}
 
 	/* Do not change the order here for more see gif(4) NOTES section. */
-	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+	if (is_ipaddrv6($gif['remote-addr'])) {
+		mwexec("/sbin/ifconfig {$gifif} inet6 tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+	} else {
+		mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));	
+	}
 	if ((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
@@ -4347,7 +4357,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 	if (stripos($interface, "_vip")) {
 		foreach ($config['virtualip']['vip'] as $counter => $vip) {
 			if ($vip['mode'] == "carp") {
-				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
+				if ($interface == "_vip{$vip['uniqid']}") {
 					return $vip['interface'];
 				}
 			}
@@ -4420,7 +4430,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 				if (is_array($config['virtualip']['vip'])) {
 					foreach ($config['virtualip']['vip'] as $counter => $vip) {
 						if ($vip['mode'] == "carp") {
-							if ($interface == "{$vip['interface']}_vip{$vip['vhid']}") {
+							if ($interface == "_vip{$vip['uniqid']}") {
 								return "{$vip['subnet']} - {$vip['descr']}";
 							}
 						}
@@ -4576,7 +4586,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 			break;
 		default:
 			if (substr($interface, 0, 4) == '_vip') {
-				$wanif = get_configured_carp_interface_list($interface, '', 'iface');
+				$wanif = get_configured_carp_interface_list($interface, $family, 'iface');
 				if (!empty($wanif)) {
 					$wanif = get_real_interface($wanif, $family);
 				}
@@ -5231,11 +5241,17 @@ function get_possible_listen_ips($include_ipv6_link_local=false) {
 	/* XXX: Maybe use array_merge below? */
 	$carplist = get_configured_carp_interface_list();
 	foreach ($carplist as $cif => $carpip) {
-		$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+		if (get_vip_descr($carpip))
+			$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+		else
+			$interfaces[$cif] = $carpip;
 	}
 	$aliaslist = get_configured_ip_aliases_list();
 	foreach ($aliaslist as $aliasip => $aliasif) {
-		$interfaces[$aliasip] = $aliasip . ' (' . get_vip_descr($aliasip) . ')';
+		if (get_vip_descr($aliasip))
+			$interfaces[$aliasip] = $aliasip . ' (' . get_vip_descr($aliasip) . ')';
+		else
+			$interfaces[$aliasip] = $aliasip;
 	}
 
 	$interfaces['lo0'] = 'Localhost';
@@ -5262,13 +5278,13 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 
 function get_interface_ip($interface = "wan") {
 
-	$realif = get_failover_interface($interface);
+	$realif = get_failover_interface($interface, 'inet');
 	if (!$realif) {
 		return null;
 	}
 
 	if (substr($interface, 0, 4) == '_vip') {
-		return get_configured_carp_interface_list($realif, 'inet', 'ip');
+		return get_configured_carp_interface_list($interface, 'inet', 'ip');
 	} else if (substr($interface, 0, 5) == '_lloc') {
 		/* No link-local address for v4. */
 		return null;
@@ -5291,7 +5307,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	}
 
 	if (substr($interface, 0, 4) == '_vip') {
-		return get_configured_carp_interface_list($realif, 'inet6', 'ip');
+		return get_configured_carp_interface_list($interface, 'inet6', 'ip');
 	} else if (substr($interface, 0, 5) == '_lloc') {
 		return get_interface_linklocal($interface);
 	}

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn
-##|*NAME=Status: OpenVPN page
+##|*NAME=Status: OpenVPN
 ##|*DESCR=Allow access to the 'Status: OpenVPN' page.
 ##|*MATCH=status_openvpn.php*
 ##|-PRIV
@@ -397,7 +397,7 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 }
 ?>
 </form>
-<?php include("fend.inc"); ?>
+<?php include("foot.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 function show_routes(id, buttonid) {

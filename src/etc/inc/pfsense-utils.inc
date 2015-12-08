@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php-cgi /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php-cgi
 	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
 	pfSense_BUILDER_BINARIES:	/sbin/kldload
 	pfSense_MODULE:	utils
@@ -405,21 +405,33 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
+	global $config;
 
-	$interface = get_real_interface($interface);
-	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
-	foreach ($carp_query as $int) {
-		if (stripos($int, "MASTER")) {
-			return "MASTER";
+	foreach ($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp")
+			continue;
+		$carpif = "_vip{$carp['uniqid']}";
+		if ($carpinterface !== $carpif)
+			continue;
+
+		$interface = get_real_interface($carp['interface']);
+		$vhid = $carp['vhid'];
+		$carp_query = '';
+		$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+		foreach ($carp_query as $int) {
+			if (stripos($int, "MASTER")) {
+				return "MASTER";
+			}
+			if (stripos($int, "BACKUP")) {
+				return "BACKUP";
+			}
+			if (stripos($int, "INIT")) {
+				return "INIT";
+			}
 		}
-		if (stripos($int, "BACKUP")) {
-			return "BACKUP";
-		}
-		if (stripos($int, "INIT")) {
-			return "INIT";
-		}
+		break;
 	}
+
 	return;
 }
 
@@ -1779,9 +1791,11 @@ function update_output_window($text) {
 	$log = preg_replace("/\n/", "\\n", $text);
 	if ($pkg_interface != "console") {
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	document.getElementById("output").textContent="<?=htmlspecialchars($log)?>";
 	document.getElementById("output").scrollTop = document.getElementById("output").scrollHeight;
+//]]>
 </script>
 <?php
 	}
@@ -1812,7 +1826,11 @@ function update_progress_bar($percent, $first_time) {
 		$percent = 1;
 	}
 	if ($pkg_interface <> "console") {
-		echo '<script>document.getElementById("progressbar").style.width="'. $percent.'%";</script>';
+		echo '<script type="text/javascript">';
+		echo "\n//<![CDATA[\n";
+		echo 'document.getElementById("progressbar").style.width="'. $percent.'%"';
+		echo "\n//]]>\n";
+		echo '</script>';
 	} else {
 		if (!($first_time)) {
 			echo "\x08\x08\x08\x08\x08";
@@ -2678,7 +2696,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5) == $vip['uniqdid']) {
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && $ignore_vip_if === $vip['if']) {
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {

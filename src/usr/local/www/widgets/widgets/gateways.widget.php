@@ -81,9 +81,9 @@ if($_REQUEST && $_REQUEST['ajax']) {
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name") . "</th>\n");
-	print(		"<th>RTT</td>\n");
-	print(		"<th>" . gettext("Loss") . "</td>\n");
-	print(		"<th>" . gettext("Status") . "</td>\n");
+	print(		"<th>RTT</th>\n");
+	print(		"<th>" . gettext("Loss") . "</th>\n");
+	print(		"<th>" . gettext("Status") . "</th>\n");
 	print(	"</tr>\n");
 	print("</thead>\n");
 	print("<tbody>\n");
@@ -194,7 +194,7 @@ if ($_POST) {
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 
 	function get_gw_stats() {
@@ -227,23 +227,23 @@ if ($_POST) {
 	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
 		Display:
 			<?php
-				$display_type_gw_ip="checked=\"checked\"";
+				$display_type_gw_ip="checked";
 				$display_type_monitor_ip="";
 				$display_type_both_ip="";
 				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
 					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
 					if ($selected_radio == "gw_ip") {
-						$display_type_gw_ip = "checked=\"checked\"";
+						$display_type_gw_ip = "checked";
 						$display_type_monitor_ip="";
 						$display_type_both_ip="";
 					} else if ($selected_radio == "monitor_ip") {
 						$display_type_gw_ip = "";
-						$display_type_monitor_ip="checked=\"checked\"";
+						$display_type_monitor_ip="checked";
 						$display_type_both_ip="";
 					} else if ($selected_radio == "both_ip") {
 						$display_type_gw_ip = "";
 						$display_type_monitor_ip="";
-						$display_type_both_ip="checked=\"checked\"";
+						$display_type_both_ip="checked";
 					}
 				}
 			?>

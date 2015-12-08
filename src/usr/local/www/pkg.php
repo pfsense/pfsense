@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-package-settings
-##|*NAME=Package: Settings page
+##|*NAME=Package: Settings
 ##|*DESCR=Allow access to the 'Package: Settings' page.
 ##|*MATCH=pkg.php*
 ##|-PRIV
@@ -83,8 +83,14 @@ if ($xml == "") {
 	include("foot.inc");
 	exit;
 } else {
-	if (file_exists("/usr/local/pkg/" . $xml)) {
-		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+	$pkg_xml_prefix = "/usr/local/pkg/";
+	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
+	if (substr_compare(realpath($pkg_full_path), $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
+		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		die;
+	}
+	if (file_exists($pkg_full_path)) {
+		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	} else {
 		include("head.inc");
 		print_info_box_np(gettext("File not found ") . htmlspecialchars($xml));
@@ -334,7 +340,7 @@ if ($savemsg)
 					echo "Filter field: <select name='pkg_filter_type'>";
 					foreach ($field['sortablefields']['item'] as $si) {
 						if ($si['name'] == $_REQUEST['pkg_filter_type']) {
-							$SELECTED = "selected=\"selected\"";
+							$SELECTED = "selected";
 						} else {
 							$SELECTED = "";
 						}
@@ -377,7 +383,7 @@ if ($savemsg)
 		echo "<td align='right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
 		for ($x = 0; $x < 250; $x++) {
 			if ($x == $display_maximum_rows) {
-				$SELECTED = "selected=\"selected\"";
+				$SELECTED = "selected";
 			} else {
 				$SELECTED = "";
 			}

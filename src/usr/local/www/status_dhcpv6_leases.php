@@ -64,7 +64,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpv6leases
-##|*NAME=Status: DHCPv6 leases page
+##|*NAME=Status: DHCPv6 leases
 ##|*DESCR=Allow access to the 'Status: DHCPv6 leases' page.
 ##|*MATCH=status_dhcpv6_leases.php*
 ##|-PRIV

@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-qinq
-##|*NAME=Interfaces: QinQ page
+##|*NAME=Interfaces: QinQ
 ##|*DESCR=Allow access to the 'Interfaces: QinQ' page.
 ##|*MATCH=interfaces_qinq.php*
 ##|-PRIV

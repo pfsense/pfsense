@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-login/logout
-##|*NAME=System: Login / Logout page / Dashboard
+##|*NAME=System: Login / Logout / Dashboard
 ##|*DESCR=Allow access to the 'System: Login / Logout' page and Dashboard.
 ##|*MATCH=index.php*
 ##|-PRIV
@@ -302,7 +302,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
 		<span class="widget-heading-icon">
 			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
-				<i class="fa fa-plus-cirle"></i>
+				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
@@ -370,8 +370,12 @@ foreach ($widgets as $widgetname => $widgetconfig)
 ?>
 
 <div class="row">
+	<?php
+	$columnWidth = 12 / $numColumns;
+	$columnCounter = 0;
+	?>
 <?php foreach ($widgetColumns as $column => $columnWidgets):?>
-	<div class="col-md-6" id="widgets-<?=$column?>">
+	<div class="col-md-<?=$columnWidth?>" id="widgets-<?=$column?>">
 <?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
@@ -393,17 +397,25 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 			</div>
 		</div>
-<?php endforeach; ?>
+<?php endforeach; 
+	  $columnCounter++;
+?>
 	</div>
 <?php endforeach; ?>
+<?php
+	for($n = 1; $n <= ($numColumns - $columnCounter); $n++) {
+		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . ($n + $columnCounter) . '"></div>';
+	}
+?>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function updateWidgets(newWidget)
 {
 	var sequence = '';
 
-	$('.container .col-md-6').each(function(idx, col){
+	$('.container .col-md-<?=$columnWidth?>').each(function(idx, col){
 		$('.panel', col).each(function(idx, widget){
 			var isOpen = $('.panel-body', widget).hasClass('in');
 
@@ -419,39 +431,6 @@ function updateWidgets(newWidget)
 }
 
 events.push(function() {
-	// Hide configuration button for panels without configuration
-	$('.container .panel-heading a.config').each(function (idx, el){
-		var config = $(el).parents('.panel').children('.panel-footer');
-		if (config.length == 1)
-			$(el).removeClass('hidden');
-	});
-
-	// Initial state & toggle icons of collapsed panel
-	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body')
-		var isOpen = body.hasClass('in');
-
-		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
-		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
-
-		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', true);
-			$(el).children('i').toggleClass('fa-plus-circle', false);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
-
-		body.on('hidden.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', false);
-			$(el).children('i').toggleClass('fa-plus-circle', true);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
-	});
 
 	// Make panels destroyable
 	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el){
@@ -462,10 +441,10 @@ events.push(function() {
 	});
 
 	// Make panels sortable
-	$('.container .col-md-6').sortable({
+	$('.container .col-md-<?=$columnWidth?>').sortable({
 		handle: '.panel-heading',
 		cursor: 'grabbing',
-		connectWith: '.container .col-md-6',
+		connectWith: '.container .col-md-<?=$columnWidth?>',
 		update: updateWidgets
 	});
 
@@ -482,6 +461,7 @@ events.push(function() {
 	});
 
 });
+//]]>
 </script>
 <?php
 //build list of javascript include files

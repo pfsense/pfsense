@@ -63,8 +63,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall
-##|*NAME=Diagnostics: Logs: Firewall page
-##|*DESCR=Allow access to the 'Diagnostics: Logs: Firewall' page.
+##|*NAME=Status: Logs: Firewall
+##|*DESCR=Allow access to the 'Status: Logs: Firewall' page.
 ##|*MATCH=diag_logs_filter.php*
 ##|-PRIV
 
@@ -205,12 +205,9 @@ if ($filterfieldsarray['interface'] == "All")
 	$interface = "";
 
 if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
-	$form = new Form(new Form_Button(
-		'filterlogentries_submit',
-		'Filter'
-	));
+	$form = new Form(false);
 
-	$section = new Form_Section('Advanced Log Filter');
+	$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|SEC_CLOSED);
 
 	$group = new Form_Group('');
 
@@ -263,8 +260,9 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 	$group->add(new Form_Input(
 		'filterlogentries_qty',
 		null,
-		'text',
-		$filterlogentries_qty
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
 	))->setHelp('Quantity');
 
 	$section->add($group);
@@ -299,20 +297,37 @@ if (!isset($config['syslog']['rawfilter'])) { // Advanced log filter form
 		'text',
 		$filterfieldsarray['tcpflags']
 	))->setHelp('Protocol Flags');
+
+	$btnsubmit = new Form_Button(
+		'filterlogentries_submit',
+		' ' . 'Apply Filter',
+		null,
+		'fa-filter'
+	);
 }
 else { // Simple log filter form
-	$form = new Form(new Form_Button(
-		'filtersubmit',
-		'Filter'
-	));
-	$section = new Form_Section('Log Filter');
+	$form = new Form(false);
 
-	$section->addInput(new Form_Select(
+	$section = new Form_Section('Log Filter', 'basic-filter-panel', true);
+
+	$group = new Form_Group('');
+
+	$group->add(new Form_Select(
 		'interface',
 		'Interface',
 		$interfacefilter,
 		build_if_list()
-	));
+	))->setHelp('Interface');
+
+	$group->add(new Form_Input(
+		'filterlogentries_qty',
+		null,
+		'number',
+		$filterlogentries_qty,
+		['placeholder' => $nentries]
+	))->setHelp('Quantity');
+
+	$section->add($group);
 
 	$group = new Form_Group('');
 
@@ -323,13 +338,20 @@ else { // Simple log filter form
 		$filtertext
 	))->setHelp('Filter Expression');
 
-	$group->add(new Form_Input(
-		'filterlogentries_qty',
+	$btnsubmit = new Form_Button(
+		'filtersubmit',
+		' ' . 'Apply Filter',
 		null,
-		'text',
-		$filterlogentries_qty
-	))->setHelp('Quantity');
+		'fa-filter'
+	);
 }
+
+$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+
+$group->add(new Form_StaticText(
+	'',
+	$btnsubmit
+));
 
 $group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . 'Regular expression reference</a> Precede with exclamation (!) to exclude match.');
 $section->add($group);
@@ -349,16 +371,21 @@ if (!isset($config['syslog']['rawfilter'])) {
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
 ?>
 
+<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+	<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+</form>
+
+<br />
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
 	if ((!$filtertext) && (!$filterfieldsarray))
-		printf(gettext("Last %s firewall log entries."), count($filterlog));
+		printf(gettext("Last %d %s log entries."), count($filterlog), gettext('firewall'));
 	else
-		print(count($filterlog). ' ' . gettext('matched log entries.') . ' ');
+		printf(gettext('%d matched %s log entries.'), count($filterlog), gettext('firewall'));
 
-	printf(gettext(" (Maximum %s)"), $nentries);
+	printf(gettext(" (Maximum %d)"), $nentries);
 ?>
 		</h2>
 	</div>
@@ -474,32 +501,47 @@ if (!isset($config['syslog']['rawfilter'])) {
 		}
 	} // e-o-foreach
 	buffer_rules_clear();
-}
-else
-{
-?>
-			<tr>
-				<td colspan="2">
-					<?php printf(gettext("Last %s firewall log entries"),$nentries)?>
-				</td>
-			</tr>
-<?php
-	if ($filtertext)
-		dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
-	else
-		dump_clog($filter_logfile, $nentries);
-}
 ?>
 		</table>
 		</div>
 	</div>
 </div>
 
-<p>
-	<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-		<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
-	</form>
-</p>
+<?php
+	if (count($filterlog) == 0)
+		print_info_box('No logs to display');
+}
+else
+{
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?='firewall'?><?=gettext(" log entries")?></h2></div>
+	<div class="table table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th class="col-sm-2"></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
+	if ($filtertext)
+		$rows = dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
+	else
+		$rows = dump_clog($filter_logfile, $nentries);
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
+<?php
+	if ($rows == 0)
+		print_info_box('No logs to display');
+}
+?>
+
+<div id="infoblock"
 
 <?php
 
@@ -508,25 +550,18 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 	'<i class="fa fa-minus-square-o icon-primary"></i> = Add to block list., <i class="fa fa-plus-square-o icon-primary"></i> = Pass traffic, <i class="fa fa-info icon-primary"></i> = Resolve');
 
 ?>
-
+</div>
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
 //<![CDATA[
-	function outputrule(req) {
-		alert(req.content);
-	}
-//]]>
-</script>
-
-<?php include("foot.inc");
-?>
-<script type="text/javascript">
-//<![CDATA[
+function outputrule(req) {
+	alert(req.content);
+}
 
 function resolve_with_ajax(ip_to_resolve) {
 	var url = "/diag_logs_filter.php";
 
-	jQuery.ajax(
+	$.ajax(
 		url,
 		{
 			method: 'post',
@@ -540,7 +575,7 @@ function resolve_with_ajax(ip_to_resolve) {
 }
 
 function resolve_ip_callback(transport) {
-	var response = jQuery.parseJSON(transport.responseText);
+	var response = $.parseJSON(transport.responseText);
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
@@ -594,3 +629,6 @@ events.push(function(){
 });
 //]]>
 </script>
+
+<?php include("foot.inc");
+?>

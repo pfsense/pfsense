@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-gatewaygroups
-##|*NAME=System: Gateway Groups page
+##|*NAME=System: Gateway Groups
 ##|*DESCR=Allow access to the 'System: Gateway Groups' page.
 ##|*MATCH=system_gateway_groups.php*
 ##|-PRIV

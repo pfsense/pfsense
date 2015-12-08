@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-edit
-##|*NAME=Diagnostics: Edit FIle
+##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
 ##|*MATCH=edit.php*
 ##|*MATCH=browser.php*
@@ -149,7 +149,8 @@ require("head.inc");
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function loadFile() {
 		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
@@ -350,6 +351,7 @@ var Base64 = {
 			loadFile();
 		});
 	<?php endif; ?>
+//]]>
 </script>
 
 <?php include("foot.inc");

@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-staticroutes
-##|*NAME=System: Static Routes page
+##|*NAME=System: Static Routes
 ##|*DESCR=Allow access to the 'System: Static Routes' page.
 ##|*MATCH=system_routes.php*
 ##|-PRIV
@@ -313,8 +313,8 @@ foreach ($a_routes as $i => $route):
 			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 
 		</td>
-<? endforeach?>
 	</tr>
+<? endforeach?>
 </table>
 
 <nav class="action-buttons">

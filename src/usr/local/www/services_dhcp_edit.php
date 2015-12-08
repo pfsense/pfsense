@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpserver-editstaticmapping
-##|*NAME=Services: DHCP Server : Edit static mapping page
-##|*DESCR=Allow access to the 'Services: DHCP Server : Edit static mapping' page.
+##|*NAME=Services: DHCP Server: Edit static mapping
+##|*DESCR=Allow access to the 'Services: DHCP Server: Edit static mapping' page.
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
@@ -684,7 +684,7 @@ $form->add($section);
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

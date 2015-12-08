@@ -58,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-notifications
-##|*NAME=System: Advanced: Notifications page
+##|*NAME=System: Advanced: Notifications
 ##|*DESCR=Allow access to the 'System: Advanced: Notifications' page.
 ##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV
@@ -199,7 +199,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Notifications"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Notifications"));
 include("head.inc");
 
 if ($input_errors)
@@ -358,7 +358,7 @@ $section->addInput(new Form_Input(
 	'submit',
 	'Test SMTP settings'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
+	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 
 $form->add($section);
 

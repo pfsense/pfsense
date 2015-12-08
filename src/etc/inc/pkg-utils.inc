@@ -59,8 +59,6 @@
 
 require_once("globals.inc");
 require_once("service-utils.inc");
-/* Do NOT remove until packages had time to get updated */
-require_once("xmlrpc.inc");
 
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
@@ -704,10 +702,9 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
-	if (file_exists("/usr/local/pkg/" . $configfile)) {
+	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		update_status(gettext("Loading package configuration... "));
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg_info['configurationfile'], "packagegui");
 		update_status(gettext("done.") . "\n");
 		update_status(gettext("Configuring package components...") . "\n");
 		if (!empty($pkg_config['filter_rules_needed'])) {

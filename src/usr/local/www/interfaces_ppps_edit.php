@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit
-##|*NAME=Interfaces: PPPs: Edit page
+##|*NAME=Interfaces: PPPs: Edit
 ##|*DESCR=Allow access to the 'Interfaces: PPPs: Edit' page.
 ##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV
@@ -94,12 +94,6 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 if($_GET && $_GET['type'])
 	$pconfig['type'] = $_GET['type'];
-
-if($_GET && $_GET['country'])
-	$pconfig['country'] = $_GET['country'];
-
-if($_GET && $_GET['provider'])
-	$pconfig['provider'] = $_GET['provider'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
@@ -214,7 +208,6 @@ if (isset($id) && $a_ppps[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -318,19 +311,6 @@ if ($_POST) {
 			}
 		}
 	}
-
-/*
-	foreach ($a_ppps as $ppp) {
-		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp)) {
-			continue;
-		}
-
-		if ($ppp['serialport'] == $_POST['serialport']) {
-			$input_errors[] = "Serial port is in use";
-			break;
-		}
-	}
-*/
 
 	if (!$input_errors) {
 		$ppp = array();
@@ -473,6 +453,8 @@ $serviceproviders_attr = xml2array($serviceproviders_contents,1,"attr");
 
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 
+//print_r($serviceproviders);
+
 function build_country_list() {
 	global $serviceproviders;
 
@@ -488,61 +470,6 @@ function build_country_list() {
 	return($list);
 }
 
-function build_provider_list($country) {
-	global $serviceproviders;
-
-	$list = array();
-
-	foreach($serviceproviders as $sp) {
-		if($sp['attr']['code'] == strtolower($country)) {
-			if(is_array($sp['provider'][0])) {
-				foreach($sp['provider'] as $provider) {
-					array_push($list, $provider['name']['value']);
-				 }
-			}
-		}
-	}
-
-	return array_combine($list, $list);
-}
-
-function build_plans_list($country, $provider) {
-	global $serviceproviders;
-
-	$list = array();
-
-	foreach($serviceproviders as $sprecord) {
-		if($sprecord['attr']['code'] == strtolower($country)) {
-			foreach($sprecord['provider'] as $sp) {
-				if(strtolower($sp['name']['value']) == strtolower($provider)) {
-					if(array_key_exists('gsm', $sp)) {
-
-						if(array_key_exists('attr',$sp['gsm']['apn'])) {
-							$name = ($sp['gsm']['apn']['name'] ? $sp['gsm']['apn']['name'] : $sp['name']['value']);
-							echo $name . ":" . $sp['gsm']['apn']['attr']['value'];
-						} else {
-							foreach($sp['gsm']['apn'] as $apn_info) {
-								$name = ($apn_info['name']['value'] ? $apn_info['name']['value'] : $apn_info['gsm']['apn']['name']);
-
-								$key = $apn_info['attr']['value'];
-								$list[$key] = $name . ($key ? ' ':'') . '- ' . $key;
-							}
-						}
-					}
-
-					if(array_key_exists('cdma',$sp)) {
-						$name = $sp['cdma']['name']['value'] ? $sp['cdma']['name']['value']:$sp['name']['value'];
-						$key = 'CDMA';
-						$list[$key] = $name . ' - ' . $key;
-					}
-				}
-			}
-		}
-	}
-
-	return($list);
-}
-
 $port_count = 0;
 $serport_count = 0;
 
@@ -552,14 +479,17 @@ function build_link_list() {
 	$linklist = array('list'	 => array(),
 					  'selected' => array());
 
-	$selected_ports = explode(',',$pconfig['interfaces']);
+	$selected_ports = array();
+
+	if($pconfig['interfaces']) {
+		$selected_ports = explode(',',$pconfig['interfaces']);
+	}
 
 	if (!is_dir("/var/spool/lock"))
 		mwexec("/bin/mkdir -p /var/spool/lock");
 
 	if($pconfig['type'] == 'ppp') {
 		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
-
 		$serport_count = 0;
 
 		foreach ($serialports as $port) {
@@ -600,10 +530,10 @@ function build_link_list() {
 if ($input_errors)
 	print_input_errors($input_errors);
 
-$linkparamstr = gettext('Bandwidth is set only for MLLP conncetions and when links have diferent bandwidths' . '<br />' .
+$linkparamstr = gettext('Bandwidth is set only for MLPPP connections and when links have different bandwidths' . '<br />' .
 						'MTU defaults to 1492' . '<br />' .
 						'MRU will be auto-negotiated by default' . '<br />' .
-						'Set only for MLLP conncetions. MRRU will be auto-negotiated by default.');
+						'Set only for MLPPP connections. MRRU will be auto-negotiated by default.');
 
 $form = new Form();
 
@@ -644,14 +574,14 @@ $section->addInput(new Form_Select(
 	'provider',
 	'Provider',
 	$pconfig['provider'],
-	build_provider_list($pconfig['country'])
+	[]
 ));
 
 $section->addInput(new Form_Select(
 	'providerplan',
 	'Plan',
 	$pconfig['providerplan'],
-	build_plans_list($pconfig['country'], $pconfig['provider'])
+	[]
 ))->setHelp('Select to fill in data for your service provider.');
 
 $section->addInput(new Form_Input(
@@ -665,10 +595,10 @@ $section->addInput(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
-	$pconfig['passwordfld']
+	$pconfig['password']
 ));
 
-// These elements arehidden by default, and un-hidden in Javascript
+// These elements are hidden by default, and un-hidden in Javascript
 if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	$j = 0;
 	foreach($linklist['list'] as $ifnm =>$nm) {
@@ -684,7 +614,7 @@ if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 		$group->add(new Form_Input(
 			'gateway' . $j,
 			null,
-			'password',
+			'text',
 			$pconfig['gateway'][$j]
 		))->setHelp('IP or Hostname');
 
@@ -751,7 +681,7 @@ $section->addInput(new Form_Checkbox(
 	'uptime',
 	'Uptime logging',
 	'Enable persistent logging of connection uptime. ',
-	$pconfig['uptime']
+	isset($pconfig['uptime'])
 ))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %sStatus->Interfaces%s page.', '<a href="status_interfaces.php">', '</a>'));
 
 $group = new Form_Group('Service name');
@@ -787,7 +717,7 @@ $section->addInput(new Form_Select(
 	)
 ))->addClass('pppoe')->setHelp('Select a reset timing type');
 
-$group = new Form_Group('Rest Date/Time');
+$group = new Form_Group('Reset Date/Time');
 $group->addClass('pppoe-reset-date');
 
 $group->add(new Form_Input(
@@ -816,7 +746,7 @@ $group->setHelp('Leaving the date field empty will cause the reset to be execute
 
 $section->add($group);
 
-$group = new Form_Group('Rest frequency');
+$group = new Form_Group('Reset frequency');
 $group->addClass('pppoe-reset-cron');
 
 $group->add(new Form_Checkbox(
@@ -947,21 +877,21 @@ foreach($linklist['list'] as $ifnm =>$nm) {
 	$group->add(new Form_Input(
 		'mtu' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mtu'][$j]
 	))->setHelp('MTU');
 
 	$group->add(new Form_Input(
 		'mru' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mru'][$j]
 	))->setHelp('MRU');
 
 	$group->add(new Form_Input(
 		'mrru' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mrru'][$j]
 	))->setHelp('MRRU');
 
@@ -1001,7 +931,7 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	var showadvanced = false;
@@ -1062,8 +992,8 @@ events.push(function(){
 		hideClass('linkparam', true);
 		hideInput('linkparamhelp', true);
 
-		var selected = $('.interfaces').val();
-		var length = selected.length;
+		var selected = $('#interfaces').val();
+		var length = $("#interfaces :selected").length;
 
 		for(var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
@@ -1071,8 +1001,79 @@ events.push(function(){
 			if(!showadvanced) {
 				hideClass('linkparam' + selected[i], false);
 				hideInput('linkparamhelp', false);
-			   }
+			}
 		}
+	}
+
+	function hideProviders(hide) {
+		hideInput('country', hide);
+		hideInput('provider', hide);
+		hideInput('providerplan', hide);
+	}
+
+	function providers_list() {
+		$('#provider option').remove();
+		$('#providerplan option').remove();
+		$('#provider').append(new Option('', ''));
+		$.ajax("getserviceproviders.php",{
+			type: 'POST',
+			data: {country : $('#country').val()},
+			success: function(responseText) {
+				var responseTextArr = responseText.split("\n");
+				var value, i;
+				responseTextArr.sort();
+				for (i = 0; i < responseTextArr.length; i += 1) {
+					value = responseTextArr[i];
+					if (/\S/.test(value)) {
+						$('#provider').append(new Option(value, value));
+					}
+				}
+			}
+		});
+	}
+
+	function providerplan_list() {
+		$('#providerplan option').remove();
+		$('#providerplan').append( new Option('','') );
+		$.ajax("getserviceproviders.php",{
+			type: 'POST',
+			data: {country : $('#country').val(), provider : $('#provider').val()},
+			success: function(responseText) {
+				var responseTextArr = responseText.split("\n");
+				var value, providerplan, i;
+				responseTextArr.sort();
+				for (i = 0; i < responseTextArr.length; i += 1) {
+					value = responseTextArr[i];
+					if (/\S/.test(value)) {
+						providerplan = value.split(":");
+						$('#providerplan').append(new Option(providerplan[0] + " - " + providerplan[1],
+											  providerplan[1]));
+					}
+				}
+			}
+		});
+	}
+
+	function prefill_provider() {
+		$.ajax("getserviceproviders.php",{
+			type: "POST",
+			data: {country : $('#country').val(), provider : $('#provider').val(), plan : $('#providerplan').val()},
+			success: function(responseXML) {
+				var xmldoc = responseXML;
+				var provider = xmldoc.getElementsByTagName('connection')[0];
+				$('#username').val('');
+				$('#password').val('');
+				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+					$('#phone').val('#777');
+					$('#apn').val('');
+				} else {
+					$('#phone').val('*99#');
+					$('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
+				}
+				$('#username').val(provider.getElementsByTagName('username')[0].firstChild.data);
+				$('#password').val(provider.getElementsByTagName('password')[0].firstChild.data);
+			}
+		});
 	}
 
 	// Make the ‘btnadvanced’ button a plain button, not a submit button
@@ -1090,25 +1091,38 @@ events.push(function(){
 	// Multiselect boxes must be handled by class
 	$('.interfaces').on('change', function() {
 		hideInterfaces();
-	 });
+	});
 
-	// When type, country or provider are changed, reload the page and build the new selector arrays
+	// When type, country, provider or plan are changed, reload the page and build the new selector arrays
 	$('#type').on('change', function() {
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&type=' + this.value;
 	});
 
 	$('#country').on('change', function() {
-		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&country=' + this.value + '&type=' + $('#type').val();
+		providers_list();
+		hideInput('provider', false);
 	});
 
 	$('#provider').on('change', function() {
-		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&provider=' + this.value + '&type=' + $('#type').val() + '&country=' + $('#country').val();
+		providerplan_list();
+		hideInput('providerplan', false);
+	});
+
+	$('#providerplan').on('change', function() {
+		prefill_provider();
 	});
 
 	// Set element visibility on initial page load
 	setAdvVisible();
 
 	hideClass('linkparam', true);
+
+	hideProviders($('#type').val() != "ppp");
+	if ($('provider').size() == 0)
+		hideInput('provider', true);
+
+	if ($('providerplan').size() == 0)
+		hideInput('providerplan', true);
 });
 //]]>
 
@@ -1116,3 +1130,4 @@ events.push(function(){
 <?php
 
 include("foot.inc");
+

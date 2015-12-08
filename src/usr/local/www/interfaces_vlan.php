@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan
-##|*NAME=Interfaces: VLAN page
+##|*NAME=Interfaces: VLAN
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
 ##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
@@ -140,6 +140,7 @@ display_top_tabs($tab_array);
 				<tr>
 					<th><?=gettext('Interface');?></th>
 					<th><?=gettext('VLAN tag');?></th>
+					<th><?=gettext('Priority');?></th>
 					<th><?=gettext('Description');?></th>
 				</tr>
 			</thead>
@@ -150,6 +151,7 @@ display_top_tabs($tab_array);
 				<tr>
 					<td><?=htmlspecialchars($vlan['if']);?></td>
 					<td><?=htmlspecialchars($vlan['tag']);?></td>
+					<td><?=htmlspecialchars($vlan['pcp']);?></td>
 					<td><?=htmlspecialchars($vlan['descr']);?></td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
@@ -177,16 +179,14 @@ display_top_tabs($tab_array);
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
 		'%s handbook for information on supported cards.'),$g['product_name']), info)?>
 </div>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
-		if(confirm('<?=gettext("Are you sure you want to delete this VLAN?")?>')) {
-			$('#act').val('del');
-			$('#id').val(this.id.replace("del-", ""));
-			$(this).parents('form').submit();
-		}
+		$('#act').val('del');
+		$('#id').val(this.id.replace("del-", ""));
+		$(this).parents('form').submit();
 	});
 });
 //]]>

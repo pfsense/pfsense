@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedips
-##|*NAME=Services: Captive portal: Edit Allowed IPs page
+##|*NAME=Services: Captive portal: Edit Allowed IPs
 ##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.
 ##|*MATCH=services_captiveportal_ip_edit.php*
 ##|-PRIV

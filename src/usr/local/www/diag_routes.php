@@ -59,7 +59,7 @@
 */
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
-##|*NAME=Diagnostics: Routing tables page
+##|*NAME=Diagnostics: Routing tables
 ##|*DESCR=Allow access to the 'Diagnostics: Routing tables' page.
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
@@ -138,7 +138,8 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print $form;
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function update_routes(section) {
 	$.ajax(
 		'/diag_routes.php',
@@ -207,6 +208,7 @@ events.push(function(){
 		e.preventDefault();
 	});
 });
+//]]>
 </script>
 
 <div class="panel panel-default">

@@ -53,13 +53,12 @@
  *
  */
 /*
-	pfSense_BUILDER_BINARIES: /usr/bin/netstat
 	pfSense_MODULE:	interfaces
 */
 
 ##|+PRIV
 ##|*IDENT=page-xmlrpcinterfacestats
-##|*NAME=XMLRPC Interface Stats page
+##|*NAME=XMLRPC Interface Stats
 ##|*DESCR=Allow access to the 'XMLRPC Interface Stats' page.
 ##|*MATCH=ifstats.php*
 ##|-PRIV

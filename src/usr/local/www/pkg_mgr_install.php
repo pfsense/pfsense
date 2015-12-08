@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installpackage
-##|*NAME=System: Package Manager: Install Package page
+##|*NAME=System: Package Manager: Install Package
 ##|*DESCR=Allow access to the 'System: Package Manager: Install Package' page.
 ##|*MATCH=pkg_mgr_install.php*
 ##|-PRIV
@@ -76,8 +76,8 @@ require_once("pkg-utils.inc");
 $sendto = "output";
 $start_polling = false;
 $firmwareupdate = false;
-$reloadtimer = 90;  // Number of seconds after which we reload the page following a firmware update.
-					// Allows time for the device to reboot
+$guitimeout = 90;	// Seconds to wait before reloading the page after reboot
+$guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //---------------------------------------------------------------------------------------------------------------------
 // After an installation or removal has been started (mwexec(/usr/local/sbin/pfSense-upgrade-GUI.sh . . . )) AJAX calls
 // are made to get status.
@@ -247,23 +247,23 @@ if ($_POST) {
 if($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
 	$firmwareversion = get_system_pkg_version();
+	$headline = gettext("System update") ;
 }
-
-$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
-include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
-$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
+
 if($firmwareupdate) {
-	$tab_array[] = array(gettext("System update"), true, "");
+	$pgtitle = array(gettext("System"),gettext("Update"), $headline);
+	$tab_array[] = array(gettext("System Update"), true, "");
+	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
+	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
+	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
 }
-if($firmwareupdate) {
-	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
-}
 
+include("head.inc");
 display_top_tabs($tab_array);
 
 if ($input_errors)
@@ -406,7 +406,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
 <?php } else {
 ?>
- 			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
+			<h2 class="panel-title" id="status"><?=gettext("Package") . " " . $modetxt?></h2>
  <?php } ?>
 		</div>
 
@@ -474,7 +474,8 @@ if ($_POST && $_POST['completed'] == "true"):
 <script>
 //<![CDATA[
 events.push(function(){
-	startCountdown("<?=$reloadtimer?>");
+	time = "<?=$guitimeout?>";
+	startCountdown();
 });
 //]]>
 </script>
@@ -607,14 +608,30 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
-function startCountdown(time) {
+var timeoutmsg = '<h4>Rebooting<br />Page will automatically reload in ';
+var time = 0;
+
+function checkonline() {
+	$.ajax({
+		url	 : "/index.php", // or other resource
+		type : "HEAD"
+	})
+	.done(function() {
+		window.location="/index.php";
+	});
+}
+
+function startCountdown() {
 	setInterval(function(){
 		if(time > 0) {
-			$('#countdown').html('<h4>Rebooting.<br />Page will reload in ' + time + ' seconds.</h4>');
+			$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
+			time--;
+		} else {
+			time = "<?=$guiretry?>";
+			timeoutmsg = '<h4>Not yet ready<br />Retrying in another ';
+			checkonline();
 		}
-
-		time-- != 0 || (window.location="/index.php");
-	},1000);
+	}, 1000);
 }
 
 events.push(function(){

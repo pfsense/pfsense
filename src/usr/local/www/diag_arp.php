@@ -63,7 +63,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-arptable
-##|*NAME=Diagnostics: ARP Table page
+##|*NAME=Diagnostics: ARP Table
 ##|*DESCR=Allow access to the 'Diagnostics: ARP Table' page.
 ##|*MATCH=diag_arp.php*
 ##|-PRIV
@@ -361,8 +361,9 @@ $mac_man = load_mac_manufacturer_table();
 					$mac = trim($entry['mac']);
 					$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 
-					if (isset($mac_man[$mac_hi]))
+					if (isset($mac_man[$mac_hi])) {
 						print '<small>('. $mac_man[$mac_hi] .')</small>';
+					}
 	?>
 				</td>
 				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
@@ -372,7 +373,7 @@ $mac_man = load_mac_manufacturer_table();
 	</table>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
 events.push(function(){

@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpv6relay
-##|*NAME=Services: DHCPv6 Relay page
+##|*NAME=Services: DHCPv6 Relay
 ##|*DESCR=Allow access to the 'Services: DHCPv6 Relay' page.
 ##|*MATCH=services_dhcpv6_relay.php*
 ##|-PRIV

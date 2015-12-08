@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-sysctl
-##|*NAME=System: Advanced: Tunables page
+##|*NAME=System: Advanced: Tunables
 ##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
 ##|*MATCH=system_advanced_sysctl.php*
 ##|-PRIV
@@ -166,7 +166,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: System Tunables"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
 include("head.inc");
 
 if ($input_errors)
@@ -270,4 +270,4 @@ if ($act != "edit" ): ?>
 
 endif;
 
-include("fend.inc");
+include("foot.inc");

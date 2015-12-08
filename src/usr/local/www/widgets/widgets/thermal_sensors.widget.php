@@ -217,7 +217,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_raw_output"
 					name="thermal_sensors_widget_show_raw_output"
-					value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked='checked'" : ""; ?> />
+					value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked" : ""; ?> />
 			</td>
 		</tr>
 		<tr>
@@ -235,7 +235,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_full_sensor_name"
 					name="thermal_sensors_widget_show_full_sensor_name"
-					value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked='checked'" : ""; ?> />
+					value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked" : ""; ?> />
 			</td>
 		</tr>
 		<tr>

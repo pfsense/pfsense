@@ -475,13 +475,8 @@
 /usr/local/lib/libevent-1.2.so
 /usr/local/lib/libevent-1.3e.so.1
 /usr/local/lib/libevent-1.4.so.4
-/usr/local/lib/libevtlog.so.0
 /usr/local/lib/libfreetype.so.9
-/usr/local/lib/libglib-2.0.so.0
-/usr/local/lib/libgmodule-2.0.so.0
-/usr/local/lib/libgthread-2.0.so.0
 /usr/local/lib/libhistory.so.5
-/usr/local/lib/libiconv.so.3
 /usr/local/lib/libidn.so.17
 /usr/local/lib/libipsec.so
 /usr/local/lib/libipsec.so.0
@@ -577,7 +572,6 @@
 /usr/local/lib/lighttpd/mod_webdav.a
 /usr/local/lib/lighttpd/mod_webdav.la
 /usr/local/lib/mysql/libmysqlclient.so.15
-/usr/local/lib/mysql/libmysqlclient.so.18
 /usr/local/lib/olsrd_dot_draw.so.0.3
 /usr/local/lib/olsrd_dyn_gw.so.0.4
 /usr/local/lib/olsrd_dyn_gw_plain.so.0.4
@@ -621,8 +615,6 @@
 /usr/local/pkg/openvpn_cli.xml
 /usr/local/pkg/openvpn_csc.xml
 /usr/local/pkg/routed
-/usr/local/pkg/routed.inc
-/usr/local/pkg/routed.xml
 /usr/local/pkg/routed/routed.inc
 /usr/local/pkg/routed/routed.xml
 /usr/local/pkg/sasyncd.xml
@@ -633,7 +625,6 @@
 /usr/local/sbin/dnsextd
 /usr/local/sbin/dnswatch
 /usr/local/sbin/env4801
-/usr/local/sbin/fping
 /usr/local/sbin/ftpsesame
 /usr/local/sbin/grub-install1
 /usr/local/sbin/ipfw_context
@@ -666,7 +657,7 @@
 /usr/local/sbin/pbi_update
 /usr/local/sbin/pbi_update_hashdir
 /usr/local/sbin/pfsense-upgrade.sh
-/usr/local/sbin/pfsense-upgrade-GUI.sh
+/usr/local/sbin/pfSense-upgrade-GUI.sh
 /usr/local/sbin/pftpx
 /usr/local/sbin/racoon
 /usr/local/sbin/racoon_watch.sh
@@ -676,7 +667,6 @@
 /usr/local/sbin/setkey
 /usr/local/sbin/slbd
 /usr/local/sbin/slbd.sh
-/usr/local/sbin/syslog-ng
 /usr/local/share/aclocal
 /usr/local/share/dict
 /usr/local/share/doc

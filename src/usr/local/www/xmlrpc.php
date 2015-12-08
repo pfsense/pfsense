@@ -56,7 +56,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-xmlrpclibrary
-##|*NAME=XMLRPC Library page
+##|*NAME=XMLRPC Library
 ##|*DESCR=Allow access to the 'XMLRPC Library' page.
 ##|*MATCH=xmlrpc.php*
 ##|-PRIV

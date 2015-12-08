@@ -58,8 +58,8 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-unbound
-##|*NAME=Services: DNS Resolver page
+##|*IDENT=page-services-dnsresolver
+##|*NAME=Services: DNS Resolver
 ##|*DESCR=Allow access to the 'Services: DNS Resolver' page.
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
@@ -101,9 +101,6 @@ if (isset($a_unboundcfg['regdhcp'])) {
 if (isset($a_unboundcfg['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
 }
-if (isset($a_unboundcfg['txtsupport'])) {
-	$pconfig['txtsupport'] = true;
-}
 
 $pconfig['port'] = $a_unboundcfg['port'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
@@ -118,6 +115,12 @@ if (empty($a_unboundcfg['outgoing_interface'])) {
 	$pconfig['outgoing_interface'] = array();
 } else {
 	$pconfig['outgoing_interface'] = explode(",", $a_unboundcfg['outgoing_interface']);
+}
+
+if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
+	$pconfig['system_domain_local_zone_type'] = "transparent";
+} else {
+	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
 if ($_POST) {
@@ -151,6 +154,10 @@ if ($_POST) {
 			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
 		}
 
+		if (empty($pconfig['system_domain_local_zone_type'])) {
+			$input_errors[] = "A System Domain Local-Zone Type must be selected.";
+		}
+
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
 			$input_errors[] = gettext("You must specify a valid port number.");
 		}
@@ -168,6 +175,11 @@ if ($_POST) {
 			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
 		}
 
+		if (isset($pconfig['system_domain_local_zone_type']) && !empty($pconfig['system_domain_local_zone_type'])) {
+			$display_system_domain_local_zone_type = $pconfig['system_domain_local_zone_type'];
+			$pconfig['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
+		}
+
 		$test_output = array();
 		if (test_unbound_config($pconfig, $test_output)) {
 			$input_errors[] = gettext("The generated config file cannot be parsed by unbound. Please correct the following errors:");
@@ -176,13 +188,14 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			$a_unboundcfg['enable'] = isset($pconfig['enable']);
+			$a_unboundcfg['port'] = $pconfig['port'];
 			$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
 			$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
-			$a_unboundcfg['txtsupport'] = isset($pconfig['txtsupport']);
 			$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
 			$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
+			$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 			$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
 
 			write_config("DNS Resolver configured.");
@@ -191,6 +204,7 @@ if ($_POST) {
 
 		$pconfig['active_interface'] = $display_active_interface;
 		$pconfig['outgoing_interface'] = $display_outgoing_interface;
+		$pconfig['system_domain_local_zone_type'] = $display_system_domain_local_zone_type;
 		$pconfig['custom_options'] = $display_custom_options;
 	}
 }
@@ -237,7 +251,7 @@ function build_if_list($selectedifs) {
 }
 
 $closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DNS Resolver"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General"));
 $shortcut_section = "resolver";
 
 include_once("head.inc");
@@ -272,8 +286,9 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'port',
 	'Listen Port',
-	'text',
-	$pconfig['port']
+	'number',
+	$pconfig['port'],
+	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
 $activeiflist = build_if_list($pconfig['active_interface']);
@@ -296,6 +311,15 @@ $section->addInput(new Form_Select(
 	$outiflist['options'],
 	true
 ))->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
+
+$unbound_local_zone_types = array("deny" => gettext("Deny"), "refuse" => gettext("Refuse"), "static" => gettext("Static"), "transparent" => gettext("Transparent"), "typetransparent" => gettext("Type Transparent"), "redirect" => gettext("Redirect"), "inform" => gettext("Inform"), "inform_deny" => gettext("Inform Deny"), "nodefault" => gettext("No Default"));
+
+$section->addInput(new Form_Select(
+	'system_domain_local_zone_type',
+	'System Domain Local Zone Type',
+	$pconfig['system_domain_local_zone_type'],
+	$unbound_local_zone_types
+))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
 
 $section->addInput(new Form_Checkbox(
 	'dnssec',
@@ -329,13 +353,6 @@ $section->addInput(new Form_Checkbox(
 					'resolved. You should also set the domain in %s'.
 					'System: General setup%s to the proper value.','<a href="system.php">','</a>'));
 
-$section->addInput(new Form_Checkbox(
-	'txtsupport',
-	'TXT Comment Support',
-	'Create TXT records',
-	$pconfig['txtsupport']
-))->setHelp('Any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.');
-
 $btnadvdns = new Form_Button(
 	'btnadvdns',
 	'Custom options'
@@ -358,7 +375,7 @@ $form->add($section);
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 
@@ -369,12 +386,12 @@ events.push(function(){
 		disableInput('port', hide);
 		disableInput('active_interface', hide);
 		disableInput('outgoing_interface', hide);
+		disableInput('system_domain_local_zone_type', hide);
 		disableInput('regdhcpstatic', hide);
 		disableInput('dnssec', hide);
 		disableInput('forwarding', hide);
 		disableInput('regdhcp', hide);
 		disableInput('regdhcpstatic', hide);
-		disableInput('txtsupport', hide);
 		disableInput('btnadvdns', hide);
 	}
 
@@ -423,10 +440,10 @@ foreach ($a_hosts as $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($hostent['host'])?>
+						<?=$hostent['host']?>
 					</td>
 					<td>
-						<?=strtolower($hostent['domain'])?>
+						<?=$hostent['domain']?>
 					</td>
 					<td>
 						<?=$hostent['ip']?>
@@ -446,10 +463,10 @@ foreach ($a_hosts as $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($alias['host'])?>
+						<?=$alias['host']?>
 					</td>
 					<td>
-						<?=strtolower($alias['domain'])?>
+						<?=$alias['domain']?>
 					</td>
 					<td>
 						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
@@ -499,7 +516,7 @@ foreach ($a_domainOverrides as $doment):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($doment['domain'])?>&nbsp;
+						<?=$doment['domain']?>&nbsp;
 					</td>
 					<td>
 						<?=$doment['ip']?>&nbsp;

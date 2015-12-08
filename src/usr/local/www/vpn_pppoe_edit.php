@@ -55,7 +55,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-pppoeserver-edit
-##|*NAME=Services: PPPoE Server: Edit page
+##|*NAME=Services: PPPoE Server: Edit
 ##|*DESCR=Allow access to the 'Services: PPPoE Server: Edit' page.
 ##|*MATCH=vpn_pppoe_edit.php*
 ##|-PRIV
@@ -577,7 +577,7 @@ print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients'));
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 

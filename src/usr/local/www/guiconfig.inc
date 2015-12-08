@@ -675,7 +675,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		}
 	}
 
+	$rows = 0;
 	foreach ($logarr as $logent) {
+		$rows++;
 		$logent = preg_split("/\s+/", $logent, 6);
 		echo "<tr>\n";
 		if ($withorig) {
@@ -694,6 +696,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		}
 		echo "</tr>\n";
 	}
+	return($rows);
 }
 
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
@@ -962,7 +965,7 @@ function print_rfc2616_select($tag, $current) {
 	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";
 	foreach ($rfc2616 as $code => $message) {
 		if ($code == $current) {
-			$sel = " selected=\"selected\"";
+			$sel = " selected";
 		} else {
 			$sel = "";
 		}
@@ -1060,7 +1063,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 
 		foreach ($tab_array as $ta) {
 			if ($ta[1] == "true")
-				$selected = " selected=\"selected\"";
+				$selected = " selected";
 			else
 				$selected = "";
 			// Onclick in option will not work in some browser
@@ -1138,9 +1141,8 @@ function alias_info_popup($alias_id) {
 			$alias_addresses = explode("\n", file_get_contents($urlfn));
 			$counter = count($alias_addresses);
 		}
-
-		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_ports_address) .'</li></ul>';
-
+		
+		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
 		if ($counter > 10002)
 			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
 	}

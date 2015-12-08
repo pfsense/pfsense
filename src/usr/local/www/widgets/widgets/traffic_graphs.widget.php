@@ -96,7 +96,7 @@ if ($_POST) {
 	$a_config["shown"]["item"] = array();
 
 	foreach ($ifdescrs as $ifname => $ifdescr) {
-		if(in_array($ifname, $_POST["shown"])) {
+		if (in_array($ifname, $_POST["shown"])) {
 			$a_config["shown"]["item"][] = $ifname;
 		}
 	}
@@ -175,11 +175,11 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<label for="scale_type_up" class="col-sm-3 control-label">Default Autoscale</label>
 		<div class="col-sm-6 checkbox">
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked="checked"')?> />
+				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked')?> />
 				up
 			</label>
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked="checked"' : '')?> />
+				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked' : '')?> />
 				follow
 			</label>
 		</div>

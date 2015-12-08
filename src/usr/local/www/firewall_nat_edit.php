@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward-edit
-##|*NAME=Firewall: NAT: Port Forward: Edit page
+##|*NAME=Firewall: NAT: Port Forward: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: Port Forward: Edit' page.
 ##|*MATCH=firewall_nat_edit.php*
 ##|-PRIV
@@ -531,7 +531,7 @@ if ($_POST) {
 }
 
 function build_srctype_list() {
-	global $pconfig, $ifdisp;
+	global $pconfig, $ifdisp, $config;
 
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
 
@@ -551,6 +551,26 @@ function build_srctype_list() {
 	}
 
 	return($list);
+}
+
+function srctype_selected() {
+	global $pconfig, $config;
+
+	$selected = "";
+
+	$sel = is_specialnet($pconfig['src']);
+	if (!$sel) {
+		if ($pconfig['srcmask'] == 32) {
+			$selected = 'single';
+		} else {
+			$selected = 'network';
+		}
+	} else {
+		$selected = $pconfig['src'];
+	}
+
+
+	return($selected);
 }
 
 function build_dsttype_list() {
@@ -574,10 +594,10 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
-				continue;
-
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
@@ -589,6 +609,8 @@ function build_dsttype_list() {
 				}
 
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+			} else {
+				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
@@ -597,33 +619,26 @@ function build_dsttype_list() {
 }
 
 function dsttype_selected() {
-	global $pconfig;
+	global $pconfig, $config;
 
-	$sel = is_specialnet($pconfig['dst']);
+	$selected = "";
 
-	if (!$sel) {
-		if ($pconfig['dstmask'] == 32)
-			return('single');
-
-		return('network');
+	if (is_array($config['virtualip']['vip'])) {
+		$selected = $pconfig['dst'];
+	} else {
+		$sel = is_specialnet($pconfig['dst']);
+		if (!$sel) {
+			if ($pconfig['dstmask'] == 32) {
+				$selected = 'single';
+			} else {
+				$selected = 'network';
+			}
+		} else {
+			$selected = $pconfig['dst'];
+		}
 	}
 
-	return($pconfig['dst']);
-}
-
-function srctype_selected() {
-	global $pconfig;
-
-	$sel = is_specialnet($pconfig['src']);
-
-	if (!$sel) {
-		if ($pconfig['srcmask'] == 32)
-			return('single');
-
-		return('network');
-	}
-
-	return($pconfig['src']);
+	return($selected);
 }
 
 $closehead = false;
@@ -691,7 +706,20 @@ $section->addInput(new Form_Select(
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
 
+$btnsrcadv = new Form_Button(
+	'srcadv',
+	'Advanced'
+);
+
+$btnsrcadv->removeClass('btn-primary')->addClass('btn-default');
+
+$section->addInput(new Form_StaticText(
+	'Source',
+	$btnsrcadv
+));
+
 $group = new Form_Group('Source');
+$group->addClass('srcadv');
 
 $group->add(new Form_Checkbox(
 	'srcnot',
@@ -933,14 +961,14 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext("by") . $a_nat[$id]['created']['username']
+			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext(" by ") . $a_nat[$id]['created']['username']
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext("by") . $a_nat[$id]['updated']['username']
+			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext(" by ") . $a_nat[$id]['updated']['username']
 		));
 	}
 
@@ -1170,6 +1198,12 @@ events.push(function(){
 		}
 	}
 
+	function hideSource(hide) {
+		hideClass('srcadv', hide);
+		hideClass('srcportrange', hide || !portsenabled);
+		hideInput('srcadv', !hide);
+	}
+
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------
 	$('#srcbeginport').on('change', function() {
 		src_rep_change();
@@ -1217,14 +1251,19 @@ events.push(function(){
 		typesel_change();
 	});
 
+    $("#srcadv").click(function() {
+        hideSource(false);
+    });
 	// ---------- On initial page load --------------------------------------------------------------------------------
 
+	$("#srcadv").prop('type' ,'button');
 	ext_change();
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	iface_old = $('#interface').val();
 	typesel_change();
 	proto_change();
 	nordr_change();
+	hideSource(true);
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;

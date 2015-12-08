@@ -60,7 +60,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus
-##|*NAME=Status: UPnP Status page
+##|*NAME=Status: UPnP Status
 ##|*DESCR=Allow access to the 'Status: UPnP Status' page.
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
@@ -77,7 +77,7 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP Status"));
+$pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP"));
 $shortcut_section = "upnp";
 
 include("head.inc");

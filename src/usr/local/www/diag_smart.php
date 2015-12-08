@@ -54,6 +54,13 @@
  *
  */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-smart
+##|*NAME=Diagnostics: S.M.A.R.T. Monitor Tools
+##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.
+##|*MATCH=diag_smart.php*
+##|-PRIV
+
 require("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));

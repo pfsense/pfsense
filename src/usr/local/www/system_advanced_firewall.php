@@ -62,7 +62,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-firewall
-##|*NAME=System: Advanced: Firewall and NAT page
+##|*NAME=System: Advanced: Firewall and NAT
 ##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
 ##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
@@ -402,7 +402,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Firewall and NAT"));
 include("head.inc");
 
 if ($input_errors)
@@ -743,7 +743,7 @@ $section->add($group);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	// Change help text based on the selector value

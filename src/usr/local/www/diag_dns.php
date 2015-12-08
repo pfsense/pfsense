@@ -56,6 +56,13 @@
 	pfSense_MODULE: dns
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-dns
+##|*NAME=Diagnostics: DNS Lookup
+##|*DESCR=Allow access to the 'Diagnostics: DNS Lookup' page.
+##|*MATCH=diag_dns.php*
+##|-PRIV
+
 $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require("guiconfig.inc");
 
@@ -286,7 +293,7 @@ if (!$input_errors && $type) {
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
 		</ul>
-		<p><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></p>
+		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
 		<ul class="list-group">
 			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
 			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>

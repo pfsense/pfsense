@@ -61,7 +61,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound
-##|*NAME=Firewall: NAT: Outbound page
+##|*NAME=Firewall: NAT: Outbound
 ##|*DESCR=Allow access to the 'Firewall: NAT: Outbound' page.
 ##|*MATCH=firewall_nat_out.php*
 ##|-PRIV
@@ -301,7 +301,7 @@ print($form);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext('Mappings')?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-condensed">
+			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox	  --></th>
@@ -346,12 +346,12 @@ print($form);
 <?php
 				if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
+							<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
 <?php
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
@@ -500,11 +500,11 @@ print($form);
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
+					</tr>
 <?php
 				$i++;
 			endforeach;
 ?>
-					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -523,7 +523,7 @@ print($form);
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled="disabled" name="order-store" title="<?=gettext('Save map order')?>">
+		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save map order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
@@ -543,7 +543,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Automatic rules:")?></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-condensed">
+			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- status	  --></th>
@@ -565,7 +565,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<i class="fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
+							<i class="fa fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
@@ -660,16 +660,15 @@ endif;
 ?>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
-	stripe_table();
 
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			stripe_table();
 		}
 	});
 
@@ -678,6 +677,7 @@ events.push(function() {
 	   $('[id^=frc]').prop('checked', true);
 	});
 });
+//]]>
 </script>
 
 <?php include("foot.inc");

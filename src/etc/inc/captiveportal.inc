@@ -930,6 +930,7 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutReason = "LOGOUT") {
 	global $g, $config;
 
+	$sessionid = SQLite3::escapeString($sessionid);
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* read database */
@@ -1971,6 +1972,8 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	if ($attributes['voucher']) {
 		$remaining_time = $attributes['session_timeout'];
+	// Set RADIUS-Attribute to Voucher to prevent ReAuth-Reqeuest for Vouchers Bug: #2155
+		$radiusctx="voucher";
 	}
 
 	$writecfg = false;

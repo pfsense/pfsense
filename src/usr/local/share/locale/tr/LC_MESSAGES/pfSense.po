@@ -8374,7 +8374,7 @@ msgstr "NOT: IE8 kullanıcıları uyumluluk görünümünü etkinleştirmelidir.
 #: usr/local/www/diag_logs_ipsec.php:93
 #, php-format
 msgid "Last %s  IPsec log entries"
-msgstr "IPSec son %s günlük girdisi"
+msgstr "IPsec son %s günlük girdisi"
 
 #: usr/local/www/diag_logs_ntpd.php:87
 #, php-format
@@ -28588,7 +28588,7 @@ msgstr "HATA: Geçersiz yapılandırma alındı."
 #: usr/local/www/vpn_ipsec.php:231 usr/local/www/vpn_ipsec_keys.php:92
 #: usr/local/www/vpn_ipsec_mobile.php:331
 msgid "The IPsec tunnel configuration has been changed"
-msgstr "IPSec tünel yapılandırması değiştirildi"
+msgstr "IPsec tünel yapılandırması değiştirildi"
 
 #: usr/local/www/vpn_ipsec.php:238 usr/local/www/vpn_ipsec_keys.php:100
 #: usr/local/www/vpn_ipsec_mobile.php:346
@@ -34155,7 +34155,7 @@ msgstr "rc.reboot için temel XMLRPC paketleyici."
 #~ "değiştirmelisiniz"
 
 #~ msgid "Mobile IPsec only supports Tunnel mode."
-#~ msgstr "Mobil IPSec yalnızca tünel modu destekler."
+#~ msgstr "Mobil IPsec yalnızca tünel modu destekler."
 
 #~ msgid "Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2."
 #~ msgstr ""

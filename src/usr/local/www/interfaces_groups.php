@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-groups
-##|*NAME=Interfaces: Groups page
+##|*NAME=Interfaces: Groups
 ##|*DESCR=Create interface groups
 ##|*MATCH=interfaces_groups.php*
 ##|-PRIV
@@ -166,4 +166,4 @@ display_top_tabs($tab_array);
 </div>
 <?php
 
-include("fend.inc");
+include("foot.inc");

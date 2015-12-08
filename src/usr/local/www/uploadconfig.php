@@ -59,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-hidden-uploadconfiguration
-##|*NAME=Hidden: Upload Configuration page
+##|*NAME=Hidden: Upload Configuration
 ##|*DESCR=Allow access to the 'Hidden: Upload Configuration' page.
 ##|*MATCH=uploadconfig.php*
 ##|-PRIV

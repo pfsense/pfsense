@@ -102,7 +102,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Keys"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -121,7 +121,7 @@ if (is_subsystem_dirty('ipsec'))
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-	$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+	$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
 	$tab_array[2] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
 	$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 	display_top_tabs($tab_array);

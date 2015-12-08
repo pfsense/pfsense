@@ -62,8 +62,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps
-##|*NAME=Interfaces: ppps page
-##|*DESCR=Allow access to the 'Interfaces: ppps' page.
+##|*NAME=Interfaces: PPPs
+##|*DESCR=Allow access to the 'Interfaces: PPPs' page.
 ##|*MATCH=interfaces_ppps.php*
 ##|-PRIV
 

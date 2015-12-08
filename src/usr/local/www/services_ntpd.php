@@ -107,7 +107,7 @@ if ($_POST) {
 		unset($config['ntpd']['noselect']);
 		$timeservers = '';
 
-		for ($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
@@ -299,8 +299,8 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
 
-$maxrows = 3;
 $timeservers = explode( ' ', $config['system']['timeservers']);
+$maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time servers':'');
 	$group->addClass('repeatable');

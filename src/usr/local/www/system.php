@@ -466,7 +466,7 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 $csslist = array();
-$css = glob("bootstrap/css/*.css");
+$css = glob("/usr/local/www/bootstrap/css/*.css");
 foreach ($css as $file) {
 	$file = basename($file);
 	if(substr($file, 0, 9) !== 'bootstrap') {

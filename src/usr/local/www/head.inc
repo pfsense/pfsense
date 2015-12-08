@@ -72,7 +72,7 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 $cssfile = "/bootstrap/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("/bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
 }

@@ -261,8 +261,8 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 }
 
 ## Replace any known acronyms in widget names with suitable mixed-case forms
-$input_acronyms = array("carp", "dns", "dyn dns", "gmirror", "ipsec", "ntp", "openvpn", "rss", "smart");
-$output_acronyms = array("CARP", "DNS", "Dynamic DNS", "gmirror", "IPsec", "NTP", "OpenVPN", "RSS", "SMART");
+$input_acronyms = array("carp", "dns", "dyn dns", "gmirror", "ipsec", "ntp", "openvpn", "rss", "smart", "pfblockerng");
+$output_acronyms = array("CARP", "DNS", "Dynamic DNS", "gmirror", "IPsec", "NTP", "OpenVPN", "RSS", "SMART", "pfBlockerNG");
 foreach ($widgets as $widgetname => $widgetconfig) {
 	$widgets[$widgetname]['name'] = str_ireplace($input_acronyms, $output_acronyms, $widgetconfig['name']);
 }

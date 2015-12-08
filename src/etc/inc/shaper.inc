@@ -1310,7 +1310,12 @@ class priq_queue {
 
 	function build_form() {
 
-		$sform = new Form();
+		$sform = new Form(new Form_Button(
+			'Submit',
+			'Save'
+		));
+
+		$sform->setAction("firewall_shaper.php");
 
 		$section = new Form_Section("");
 
@@ -1323,11 +1328,18 @@ class priq_queue {
 		));
 
 		$section->addInput(new Form_Input(
-			'name',
+			'newname',
 			'Name',
 			'text',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
+
+		$section->addInput(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		$section->addInput(new Form_Input(
 			'priority',
@@ -1351,7 +1363,8 @@ class priq_queue {
 				'default',
 				null,
 				null,
-				$this->GetDefault()
+				$this->GetDefault(),
+				'default'
 			))->setHelp('Default Queue');
 		}
 
@@ -1394,14 +1407,21 @@ class priq_queue {
 			$this->GetDescription()
 		));
 
-		$section->addInput(new Form_Input(
+		$sform->add($section);
+
+		$sform->addGlobal(new Form_Input(
 			'interface',
 			null,
 			'hidden',
 			$this->GetInterface()
 		));
 
-		$sform->add($section);
+		$sform->addGlobal(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		return($sform);
 	}
@@ -3810,6 +3830,7 @@ EOD;
 
 
 		$sform = new Form();
+		$sform->setAction("firewall_shaper.php");
 
 		$section = new Form_Section('Limiters');
 
@@ -4132,7 +4153,7 @@ class dnqueue_class extends dummynet_class {
 
 
 		$sform = new Form();
-
+		$sform->setAction("firewall_shaper.php");
 		$section = new Form_Section('Limiters');
 
 		$section->addInput(new Form_Checkbox(

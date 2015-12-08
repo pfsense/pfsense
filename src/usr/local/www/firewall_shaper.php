@@ -120,7 +120,6 @@ if ($interface) {
 	}
 }
 
-
 $dontshow = false;
 $newqueue = false;
 $dfltmsg = false;
@@ -204,16 +203,23 @@ if ($_GET) {
 			$q = new altq_root_queue();
 		} else {
 			$input_errors[] = gettext("Could not create new queue/discipline!");
-			}
+		}
 
-			if ($q) {
-				$q->SetInterface($interface);
-				$sform = $q->build_form();
-				$newjavascript = $q->build_javascript();
-				unset($q);
-				$newqueue = true;
-			}
-			break;
+		if ($q) {
+			$q->SetInterface($interface);
+			$sform = $q->build_form();
+			$sform->addGlobal(new Form_Input(
+				'parentqueue',
+				null,
+				'hidden',
+				$qname
+			));
+
+			$newjavascript = $q->build_javascript();
+			unset($q);
+			$newqueue = true;
+		}
+		break;
 		case "show":
 			if ($queue) {
 				$sform = $queue->build_form();
@@ -493,7 +499,6 @@ if (!$dfltmsg)  {
 
 	}
 
-	// Print the form
 	print($sform);
 }
 ?>

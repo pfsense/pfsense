@@ -164,6 +164,18 @@ ul.context-links li a {
     border-color: #37474F;
 }
 
+.alert-warning {
+    border-top: 1px solid #FFECB3;
+}
+
+.alert-success {
+    border-top: 1px solid #DCEDC8;
+}
+
+.alert-info {
+    border-top: 1px solid #B2EBF2;
+}
+
 caption {
     color: #E0E0E0;
     background-color: #303030;
@@ -191,12 +203,6 @@ caption {
 
 .panel-footer {
     background-color: #424242;
-}
-
-.alert-warning {
-    color: #6D4C41;
-    background-color: #FFF9C4;
-    border-color: #FFEB3B;
 }
 
 .help-block {

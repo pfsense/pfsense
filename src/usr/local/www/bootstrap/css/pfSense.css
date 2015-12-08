@@ -618,3 +618,8 @@ textarea
         max-height: none !important;
     }
 }
+
+.panel-heading a:link, .panel-heading a:visited {
+    color: white;
+    text-decoration: underline;
+}

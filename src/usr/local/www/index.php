@@ -376,10 +376,21 @@ foreach ($widgets as $widgetname => $widgetconfig)
 	?>
 <?php foreach ($widgetColumns as $column => $columnWidgets):?>
 	<div class="col-md-<?=$columnWidth?>" id="widgets-<?=$column?>">
-<?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
+<?php foreach ($columnWidgets as $widgetname => $widgetconfig):
+
+		// Compose the widget title and include the title link if available
+		$widgetlink = ${str_replace(' ', '_', strtolower($widgetconfig['name'])) . '_title_link'};
+
+		if ((strlen($widgetlink) > 0)) {
+			$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';
+		} else {
+			$wtitle = $widgetconfig['name'];
+		}
+
+?>
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
-				<?=$widgetconfig['name']?>
+				<?=$wtitle?>
 				<span class="widget-heading-icon">
 					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
 						<i class="fa fa-wrench"></i>
@@ -397,7 +408,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 			</div>
 		</div>
-<?php endforeach; 
+<?php endforeach;
 	  $columnCounter++;
 ?>
 	</div>

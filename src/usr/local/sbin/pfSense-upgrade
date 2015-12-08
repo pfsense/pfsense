@@ -243,7 +243,7 @@ pkg_update() {
 
 	if [ -z "${_force}" -a -f ${last_update_file} ]; then
 		local _last_update=$(head -n 1 ${last_update_file})
-		# Verify if content contain only numbers
+		# Verify if content contains only numbers
 		if echo "${_last_update}" | grep -E -q '^[0-9]+$'; then
 			local _now=$(date +%s)
 			# Only run update hourly, and if last update is in the future
@@ -310,8 +310,8 @@ pkg_upgrade() {
 				_echo "**** WARNING ****"
 				_echo "Duplicate slice required!!"
 				_echo ""
-				_echo "Before start upgrade process, current mounted nanobsd partition"
-				_echo "needs to be cloned to secondary partition, where update will happen"
+				_echo "Before starting the upgrade process, the currently mounted nanobsd partition"
+				_echo "needs to be cloned to the secondary partition, where the update will happen"
 				_echo ""
 				if [ -z "${yes}" ]; then
 					_echo -n "Proceed with upgrade? (y/N) "

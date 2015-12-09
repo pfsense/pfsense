@@ -75,7 +75,7 @@ if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
 }
 
 // Compose the table contents and pass it back to the ajax caller
-if($_REQUEST && $_REQUEST['ajax']) {
+if ($_REQUEST && $_REQUEST['ajax']) {
 	global $a_gateways, $gateways_status;
 
 	print("<thead>\n");
@@ -167,7 +167,7 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n");
 		print('<td class="bg-' . $bgcolor . '">' . $online . "</td>\n");
 		print("</tr>\n");
-		}
+	}
 
 	print("</tbody>\n");
 
@@ -227,23 +227,23 @@ if ($_POST) {
 	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
 		Display:
 			<?php
-				$display_type_gw_ip="checked";
-				$display_type_monitor_ip="";
-				$display_type_both_ip="";
+				$display_type_gw_ip = "checked";
+				$display_type_monitor_ip = "";
+				$display_type_both_ip = "";
 				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
 					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
 					if ($selected_radio == "gw_ip") {
 						$display_type_gw_ip = "checked";
-						$display_type_monitor_ip="";
-						$display_type_both_ip="";
+						$display_type_monitor_ip = "";
+						$display_type_both_ip = "";
 					} else if ($selected_radio == "monitor_ip") {
 						$display_type_gw_ip = "";
-						$display_type_monitor_ip="checked";
-						$display_type_both_ip="";
+						$display_type_monitor_ip = "checked";
+						$display_type_both_ip = "";
 					} else if ($selected_radio == "both_ip") {
 						$display_type_gw_ip = "";
-						$display_type_monitor_ip="";
-						$display_type_both_ip="checked";
+						$display_type_monitor_ip = "";
+						$display_type_both_ip = "checked";
 					}
 				}
 			?>

@@ -65,8 +65,8 @@ function getServerDateItems($inDate) {
 	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
 	// year (4-digit),month,day,hours (0-23),minutes,seconds
 	// use intval to strip leading zero from minutes and seconds
-	//	 so JavaScript won't try to interpret them in octal
-	//	 (use intval instead of ltrim, which translates '00' to '')
+	// so JavaScript won't try to interpret them in octal
+	// (use intval instead of ltrim, which translates '00' to '')
 }
 
 function clockTimeString($inDate, $showSeconds) {
@@ -110,7 +110,7 @@ if ($_REQUEST['updateme']) {
 			$tmp = $tmp[1];
 			if (substr($tmp, 0, 6) == '$GPRMC') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[2] == "A");
+				$gps_ok	= ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
 				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
@@ -123,7 +123,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lo = $gps_vars[6];
 			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = $gps_vars[6];
+				$gps_ok	= $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
 				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
@@ -139,7 +139,7 @@ if ($_REQUEST['updateme']) {
 				$gps_lo = $gps_vars[5];
 			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[6] == "A");
+				$gps_ok	= ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);

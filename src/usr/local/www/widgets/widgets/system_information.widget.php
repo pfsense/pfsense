@@ -120,12 +120,12 @@ $filesystems = get_mounted_filesystems();
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
-			<?php if(!$g['hideuname']): ?>
+			<?php if (!$g['hideuname']): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
 			<br/><br/>
-			<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
+			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
 			<?php endif; ?>
 			</td>
@@ -163,12 +163,13 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
-			<div id="cpufreq"><?= get_cpufreq(); ?></div>
+				<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
-			<div id="cpucount">
-				<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?></div>
+				<div id="cpucount">
+					<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?>
+				</div>
 		<?php endif; ?>
 			</td>
 		</tr>
@@ -208,7 +209,8 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("State table size");?></th>
 			<td>
-				<?php	$pfstatetext = get_pfstate();
+				<?php
+					$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
 				<div class="progress">
@@ -245,7 +247,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
-			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
+				<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -263,11 +265,11 @@ $filesystems = get_mounted_filesystems();
 			<td>
 				<?php $memUsage = mem_usage(); ?>
 
-					<div class="progress" >
-						<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
-						</div>
+				<div class="progress" >
+					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
-					<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
+				</div>
+				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
 			</td>
 		</tr>
 		<?php if ($showswap == true): ?>
@@ -279,7 +281,7 @@ $filesystems = get_mounted_filesystems();
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-			<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -287,16 +289,16 @@ $filesystems = get_mounted_filesystems();
 			<th><?=gettext("Disk usage");?></th>
 			<td>
 				<table class="table">
-<?PHP foreach ($filesystems as $fs): ?>
-				<tr>
-					<th><?=$fs['mountpoint']?></th>
-					<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
-					<td><?=$fs['total_size']?></td>
-					<td>
-						<span><?=$fs['percent_used']?>%</span>
-					</td>
-				</tr>
-<?PHP endforeach; ?>
+<?php foreach ($filesystems as $fs): ?>
+					<tr>
+						<th><?=$fs['mountpoint']?></th>
+						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
+						<td><?=$fs['total_size']?></td>
+						<td>
+							<span><?=$fs['percent_used']?>%</span>
+						</td>
+					</tr>
+<?php endforeach; ?>
 				</table>
 			</td>
 		</tr>
@@ -383,75 +385,88 @@ function stats(x) {
 }
 
 function updateMemory(x) {
-	if(jQuery('#memusagemeter'))
+	if (jQuery('#memusagemeter')) {
 		jQuery("#memusagemeter").html(x);
-	if(jQuery('#memUsagePB')) {
+	}
+	if (jQuery('#memUsagePB')) {
 		setProgress('memUsagePB', parseInt(x));
 	}
 }
 
 function updateMbuf(x) {
-	if(jQuery('#mbuf'))
+	if (jQuery('#mbuf')) {
 		jQuery("#mbuf").html(x);
+	}
 }
 
 function updateMbufMeter(x) {
-	if(jQuery('#mbufusagemeter'))
+	if (jQuery('#mbufusagemeter')) {
 		jQuery("#mbufusagemeter").html(x + '%');
-	if(jQuery('#mbufPB'))
+	}
+	if (jQuery('#mbufPB')) {
 		setProgress('mbufPB', parseInt(x));
+	}
 }
 
 function updateCPU(x) {
 
-	if(jQuery('#cpumeter'))
+	if (jQuery('#cpumeter')) {
 		jQuery("#cpumeter").html(x + '%');
-	if(jQuery('#cpuPB'))
+	}
+	if (jQuery('#cpuPB')) {
 		setProgress('cpuPB', parseInt(x));
+	}
 
 	/* Load CPU Graph widget if enabled */
-	if(widgetActive('cpu_graphs')) {
+	if (widgetActive('cpu_graphs')) {
 		GraphValue(graph[0], x);
 	}
 }
 
 function updateTemp(x) {
-	if(jQuery("#tempmeter"))
+	if (jQuery("#tempmeter")) {
 		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
-        if(jQuery('#tempPB'))
+	}
+	if (jQuery('#tempPB')) {
 		jQuery("#tempPB").progressbar( { value: parseInt(x) } );
+	}
 }
 
 function updateDateTime(x) {
-	if(jQuery('#datetime'))
+	if (jQuery('#datetime')) {
 		jQuery("#datetime").html(x);
+	}
 }
 
 function updateUptime(x) {
-	if(jQuery('#uptime'))
+	if (jQuery('#uptime')) {
 		jQuery("#uptime").html(x);
+	}
 }
 
 function updateState(x) {
-	if(jQuery('#pfstate'))
+	if (jQuery('#pfstate')) {
 		jQuery("#pfstate").html('(' + x + ')');
+	}
 }
 
 function updateStateMeter(x) {
-	if(jQuery('#pfstateusagemeter'))
+	if (jQuery('#pfstateusagemeter')) {
 		jQuery("#pfstateusagemeter").html(x + '%');
-	if(jQuery('#statePB'))
+	}
+	if (jQuery('#statePB')) {
 		setProgress('statePB', parseInt(x));
+	}
 }
 
-function updateGatewayStats(x){
-	if (widgetActive("gateways")){
+function updateGatewayStats(x) {
+	if (widgetActive("gateways")) {
 		gateways_split = x.split(",");
-		for (var y=0; y<gateways_split.length; y++){
+		for (var y=0; y<gateways_split.length; y++) {
 			gateways_field_split = gateways_split[y].split("^");
-			if(jQuery('#gateway' + (y + 1))) {
+			if (jQuery('#gateway' + (y + 1))) {
 				jQuery('#gateway' + (y + 1)).html(gateways_field_split[0]);
-				if(gateways_field_split[1]) {
+				if (gateways_field_split[1]) {
 					jQuery('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
 				}
 			}
@@ -460,21 +475,23 @@ function updateGatewayStats(x){
 }
 
 function updateCpuFreq(x) {
-	if(jQuery('#cpufreq'))
+	if (jQuery('#cpufreq')) {
 		jQuery("#cpufreq").html(x);
+	}
 }
 
 function updateLoadAverage(x) {
-	if(jQuery('#load_average'))
+	if (jQuery('#load_average')) {
 		jQuery("#load_average").html(x);
+	}
 }
 
-function updateInterfaceStats(x){
-	if (widgetActive("interface_statistics")){
+function updateInterfaceStats(x) {
+	if (widgetActive("interface_statistics")) {
 		statistics_split = x.split(",");
 		var counter = 1;
-		for (var y=0; y<statistics_split.length-1; y++){
-			if(jQuery('#stat' + counter)) {
+		for (var y=0; y<statistics_split.length-1; y++) {
+			if (jQuery('#stat' + counter)) {
 				jQuery('#stat' + counter).html(statistics_split[y]);
 				counter++;
 			}
@@ -482,15 +499,16 @@ function updateInterfaceStats(x){
 	}
 }
 
-function updateInterfaces(x){
-	if (widgetActive("interfaces")){
+function updateInterfaces(x) {
+	if (widgetActive("interfaces")) {
 		interfaces_split = x.split("~");
 		interfaces_split.each(function(iface){
 			details = iface.split("^");
-			if (details[2] == '')
+			if (details[2] == '') {
 				ipv4_details = '';
-			else
+			} else {
 				ipv4_details = details[2] + '<br />';
+			}
 			switch(details[1]) {
 				case "up":
 					jQuery('#' + details[0] + '-up').css("display","inline");
@@ -520,10 +538,11 @@ function updateInterfaces(x){
 
 function widgetActive(x) {
 	var widget = jQuery('#' + x + '-container');
-	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none"))
+	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none")) {
 		return true;
-	else
+	} else {
 		return false;
+	}
 }
 
 /* start updater */

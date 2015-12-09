@@ -151,7 +151,7 @@ if ($_POST['clear']) {
 	clear_log_file($filter_logfile);
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Normal View"));
 $shortcut_section = "firewall";
 include("head.inc");
 

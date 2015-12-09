@@ -65,8 +65,6 @@
 ##|*MATCH=diag_logs_filter_summary.php*
 ##|-PRIV
 
-$pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
-$shortcut_section = "firewall";
 require_once("guiconfig.inc");
 include_once("filter_log.inc");
 
@@ -274,7 +272,8 @@ foreach ($filterlog as $fe) {
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary View"));
+$shortcut_section = "firewall";
 include("head.inc");
 
 $tab_array = array();

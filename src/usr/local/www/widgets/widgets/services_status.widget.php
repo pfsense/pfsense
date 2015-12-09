@@ -65,7 +65,7 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
-if($_POST) {
+if ($_POST) {
 	$validNames = array();
 
 	foreach ($services as $service) {

@@ -93,20 +93,30 @@ $carp_enabled = get_carp_status();
 				$status = "DISABLED";
 				echo '<i class="fa fa-ban"></i>';
 			} else {
-				if($status == "MASTER") {
+				if ($status == "MASTER") {
 					echo '<i class="fa fa-arrow-right"></i>';
-				} else if($status == "BACKUP") {
+				} else if ($status == "BACKUP") {
 					echo '<i class="fa fa-arrow-right"></i>';
-				} else if($status == "INIT") {
+				} else if ($status == "INIT") {
 					echo '<i class="fa fa-list-alt"></i>';
 				}
 			}
-			if ($ipaddress){ ?> &nbsp;
+			if ($ipaddress) {
+?>
+				&nbsp;
 				<?=htmlspecialchars($status);?> &nbsp;
-				<?=htmlspecialchars($ipaddress);}?>
-</td></tr><?php	}
-	} else { ?>
+				<?=htmlspecialchars($ipaddress);?>
+<?php
+			}
+?>
+</td></tr>
+<?php
+		}
+	} else {
+?>
 		<tr><td>No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
-<?php	} ?>
+<?php
+	}
+?>
 </table>
 </div>

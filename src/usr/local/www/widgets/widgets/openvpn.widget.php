@@ -197,7 +197,7 @@ $clients = openvpn_get_active_clients();
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th>Remote/Virtual IP</th>
+					<th>Name/Time</th>
 					<th>Remote/Virtual IP</th>
 					<th></th>
 				</tr>

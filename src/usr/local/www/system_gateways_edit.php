@@ -103,11 +103,8 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interval'] = $a_gateways[$id]['interval'];
 	$pconfig['avg_delay_samples'] = $a_gateways[$id]['avg_delay_samples'];
-	$pconfig['avg_delay_samples_calculated'] = isset($a_gateways[$id]['avg_delay_samples_calculated']);
 	$pconfig['avg_loss_samples'] = $a_gateways[$id]['avg_loss_samples'];
-	$pconfig['avg_loss_samples_calculated'] = isset($a_gateways[$id]['avg_loss_samples_calculated']);
 	$pconfig['avg_loss_delay_samples'] = $a_gateways[$id]['avg_loss_delay_samples'];
-	$pconfig['avg_loss_delay_samples_calculated'] = isset($a_gateways[$id]['avg_loss_delay_samples_calculated']);
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['ipprotocol'] = $a_gateways[$id]['ipprotocol'];
@@ -498,19 +495,8 @@ if ($_POST) {
 		$gateway['interval'] = $_POST['interval'];
 
 		$gateway['avg_delay_samples'] = $_POST['avg_delay_samples'];
-		if ($_POST['avg_delay_samples_calculated'] == "yes" || $_POST['avg_delay_samples_calculated'] == "on") {
-			$gateway['avg_delay_samples_calculated'] = true;
-		}
-
 		$gateway['avg_loss_samples'] = $_POST['avg_loss_samples'];
-		if ($_POST['avg_loss_samples_calculated'] == "yes" || $_POST['avg_loss_samples_calculated'] == "on") {
-			$gateway['avg_loss_samples_calculated'] = true;
-		}
-
 		$gateway['avg_loss_delay_samples'] = $_POST['avg_loss_delay_samples'];
-		if ($_POST['avg_loss_delay_samples_calculated'] == "yes" || $_POST['avg_loss_delay_samples_calculated'] == "on") {
-			$gateway['avg_loss_delay_samples_calculated'] = true;
-		}
 
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes") {
@@ -628,61 +614,6 @@ include("head.inc");
 
 if ($input_errors)
 	print_input_errors($input_errors);
-
-?>
-<script type="text/javascript">
-//<![CDATA[
-var systemGatewaysEditRecalculate = function(){
-	var interval = $('#interval')[0].value;
-
-	$('input[name$=_calculated]').each(function (idx, c){
-		c = $(c);
-		i = $(c.parents('.form-group').find('input[type=number]')[0]);
-
-		c.prop('disabled', interval==0);
-
-		if (interval==0)
-			c.prop('checked', false);
-
-		if (!c.prop('checked'))
-			return i.prop('readonly', false);
-
-		switch (i.attr('name'))
-		{
-			case 'avg_delay_samples':
-				// How many replies should be used to compute average delay
-				// for controlling "delay" alarms.
-				// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
-				i.attr('value', Math.round(60 * (1/6) / Math.pow(interval, 0.333)));
-			break;
-
-			case 'avg_loss_samples':
-				// How many probes should be used to compute average loss.
-				// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
-				i.attr('value', Math.round(60 / interval));
-			break;
-
-			case 'avg_loss_delay_samples':
-				// The delay (in samples) after which loss is computed
-				// without this delays larger than interval would be treated as loss.
-				// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
-				i.attr('value', Math.round(60 * (1/3) / interval));
-			break;
-		}
-
-		i.prop('readonly', true);
-	});
-};
-
-events.push(function(){
-	$('#interval').on('change', systemGatewaysEditRecalculate);
-	$('input[name$=_calculated]').on('change', systemGatewaysEditRecalculate);
-
-	systemGatewaysEditRecalculate();
-});
-//]]>
-</script>
-<?php
 
 $form = new Form;
 
@@ -910,12 +841,6 @@ $group->add(new Form_Input(
 		'max' => 100
 	]
 ));
-$group->add(new Form_Checkbox(
-	'avg_delay_samples_calculated',
-	null,
-	'Use calculated value.',
-	$pconfig['avg_delay_samples_calculated']
-));
 $group->setHelp('How many replies should be used to compute average delay for '.
 	'controlling "delay" alarms? Default is %d.',
 	[$dpinger_default['avg_delay_samples']]);
@@ -932,12 +857,6 @@ $group->add(new Form_Input(
 		'max' => 1000
 	]
 ));
-$group->add(new Form_Checkbox(
-	'avg_loss_samples_calculated',
-	null,
-	'Use calculated value.',
-	$pconfig['avg_loss_samples_calculated']
-));
 $group->setHelp('How many probes should be useds to compute average packet loss? '.
 	'Default is %d.',
 	[$dpinger_default['avg_loss_samples']]);
@@ -953,12 +872,6 @@ $group->add(new Form_Input(
 		'placeholder' => $dpinger_default['avg_loss_delay_samples'],
 		'max' => 200
 	]
-));
-$group->add(new Form_Checkbox(
-	'avg_loss_delay_samples_calculated',
-	null,
-	'Use calculated value.',
-	$pconfig['avg_loss_samples_calculated']
 ));
 $group->setHelp('The delay (in qty of probe samples) after which loss is '.
 	'computed. Without this, delays longer than the probe interval would be '.

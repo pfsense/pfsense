@@ -50,7 +50,7 @@ $friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
 $vips = link_interface_to_vips($friendly, '', $vhid);
 $carp_iface = "{$friendly}_vip{$vhid}";
 
-if(is_array($vips)) {
+if (is_array($vips)) {
 	foreach ($vips as $vip) {
 		$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "BACKUP" for vhid %3$s', $argument, $friendly_descr, $vhid);
 

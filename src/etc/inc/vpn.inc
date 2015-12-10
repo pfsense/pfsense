@@ -1223,7 +1223,8 @@ EOD;
 					$tunneltype = "type = transport";
 
 					if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
-					    ($ph1ent['authentication_method'] == "pre_shared_key")) && isset($ph1ent['mobile'])) {
+					     ($ph1ent['authentication_method'] == "pre_shared_key")) &&
+					    isset($ph1ent['mobile'])) {
 						$left_spec = "%any";
 					} else {
 						$tmpsubnet = ipsec_get_phase1_src($ph1ent);

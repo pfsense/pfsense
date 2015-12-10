@@ -48,7 +48,7 @@ while (!empty($temp_args)) {
 		switch ($arg) {
 			case "--help":
 				echo "Usage: playback gitsync [options] [[repository] <branch>]\nOptions:\n";
-				foreach($valid_args as $arg_name => $arg_desc) {
+				foreach ($valid_args as $arg_name => $arg_desc) {
 					echo $arg_name . "\n" . $arg_desc;
 				}
 				exit;

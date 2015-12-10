@@ -408,11 +408,13 @@ function get_carp_interface_status($carpinterface) {
 	global $config;
 
 	foreach ($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp")
+		if ($carp['mode'] != "carp") {
 			continue;
+		}
 		$carpif = "_vip{$carp['uniqid']}";
-		if ($carpinterface !== $carpif)
+		if ($carpinterface !== $carpif) {
 			continue;
+		}
 
 		$interface = get_real_interface($carp['interface']);
 		$vhid = $carp['vhid'];

@@ -278,7 +278,7 @@ function enable_rrd_graphing() {
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 	$ntpdvalid = $rrdntpdinterval * 2;
 	$dhcpdvalid = $rrddhcpdinterval * 2;
-	
+
 	/* Assume 2*10GigE for now */
 	$downstream = 2500000000;
 	$upstream = 2500000000;
@@ -915,11 +915,11 @@ function enable_rrd_graphing() {
 
 		}
 		/* End NTP statistics */
-		
+
 		/* Start dhcpd statistics */
 		if (is_array($config['dhcpd'])) {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {	
+				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {
 					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
 						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
 						$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
@@ -950,7 +950,7 @@ function enable_rrd_graphing() {
 					$rrdupdatesh .= "# polling leases for dhcp \n";
 					$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
 					$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
-					
+
 				}
 			}
 		}

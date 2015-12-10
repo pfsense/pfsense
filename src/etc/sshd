@@ -163,7 +163,7 @@
 	$generate_keys = array();
 	foreach ($keys as $key) {
 		if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
-			!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
+		    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
 			$generate_keys[] = $key;
 		}
 	}

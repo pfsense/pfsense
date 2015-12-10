@@ -4033,7 +4033,7 @@ function upgrade_125_to_126() {
 	/* subtract 2 from ipsec log levels. the value stored in the config.xml
 	 * will now match the strongswan level exactly.
 	 */
-	foreach(array_keys($ipsec_log_cats) as $cat) {
+	foreach (array_keys($ipsec_log_cats) as $cat) {
 		if (!isset($config['ipsec']["ipsec_{$cat}"])) {
 			$new_level = $def_loglevel;
 		} else {
@@ -4121,8 +4121,9 @@ function upgrade_128_to_129() {
 	}
 
 	/* IPSEC is always on in 2.3. */
-	if (isset($config['ipsec']['enable']))
+	if (isset($config['ipsec']['enable'])) {
 		unset($config['ipsec']['enable']);
+	}
 }
 
 function upgrade_129_to_130() {

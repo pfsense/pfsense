@@ -230,8 +230,9 @@ function parse_unknown_log_line($line) {
 
 	$pattern = "/^" . $date_pattern . "\ +" . $log_message_pattern . "$/";
 
-	if (!preg_match($pattern, $line, $log_split))
+	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
+	}
 
 	list($all, $flent['time'], $flent['message']) = $log_split;
 
@@ -241,10 +242,10 @@ function parse_unknown_log_line($line) {
 	}
 
 	/* If there is time, and message, fields, then the line should be usable/good */
-	if (!( (trim($flent['time']) == "") && (trim($flent['message']) == "") )) {
+	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
 		}
 		return "";
@@ -269,8 +270,9 @@ function parse_system_log_line($line) {
 
 	$pattern = "/^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$/";
 
-	if (!preg_match($pattern, $line, $log_split))
+	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
+	}
 
 	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
 
@@ -280,10 +282,10 @@ function parse_system_log_line($line) {
 	}
 
 	/* If there is time, process, and message, fields, then the line should be usable/good */
-	if (!( (trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == "") )) {
+	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
 		}
 		return "";
@@ -552,7 +554,7 @@ function find_action_image($action) {
 function handle_ajax($nentries, $tail = 50) {
 	global $config;
 	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile,$filterent;
+		global $filter_logfile, $filterent;
 		if ($_GET['lastsawtime']) {
 			$lastsawtime = $_GET['lastsawtime'];
 		}

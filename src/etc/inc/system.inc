@@ -587,7 +587,7 @@ function system_routing_configure($interface = "") {
 	}
 
 	$gateways_arr = return_gateways_array(false, true);
-	foreach($gateways_arr as $gateway) {
+	foreach ($gateways_arr as $gateway) {
 		// setup static interface routes for nonlocal gateways
 		if (isset($gateway["nonlocalgateway"])) {
 			$srgatewayip = $gateway['gateway'];

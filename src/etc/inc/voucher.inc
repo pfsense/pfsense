@@ -588,8 +588,9 @@ function voucher_configure_zone($sync = false) {
 
 			$roll = $rollent['number'];
 			$len = ($rollent['count'] >> 3) + 1;
-			if (strlen(base64_decode($rollent['used'])) != $len)
+			if (strlen(base64_decode($rollent['used'])) != $len) {
 				$rollent['used'] = base64_encode(str_repeat("\000", $len));
+			}
 			voucher_write_used_db($roll, $rollent['used']);
 			$minutes = $rollent['minutes'];
 			$active_vouchers = array();

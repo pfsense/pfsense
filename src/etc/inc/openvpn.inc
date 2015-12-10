@@ -208,9 +208,10 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 		$list = array();
 	}
 
+	$non_server_list = array();
+
 	if ($prioritize_server_certs) {
 		$list[' '] = "===== Server Certificates =====";
-		$non_server_list = array();
 		$non_server_list['  '] = "===== Non-Server Certificates =====";
 	}
 
@@ -250,11 +251,7 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 		}
 	}
 
-	if ($prioritize_server_certs) {
-		$list = array_merge($list, $non_server_list);
-	}
-
-	return($list);
+	return(array('server' => $list, 'non-server' => $non_server_list));
 }
 
 function openvpn_build_bridge_list() {

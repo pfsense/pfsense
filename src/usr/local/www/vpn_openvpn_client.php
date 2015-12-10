@@ -616,11 +616,13 @@ if($act=="new" || $act=="edit") :
 		$pconfig['shared_key']
 	))->setHelp('Paste your shared key here');
 
+	$cl = openvpn_build_cert_list(true);
+
 	$section->addInput(new Form_Select(
 		'certref',
 		'Client Certificate',
 		$pconfig['certref'],
-		openvpn_build_cert_list(true)
+		$cl['server']
 		));
 
 	$section->addInput(new Form_Select(

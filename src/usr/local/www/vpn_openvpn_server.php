@@ -747,24 +747,29 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$certhelp = "";
+	$certhelp = '<span id="certtype"></span>';
 	if (count($a_cert)) {
 		if (!empty(trim($pconfig['certref']))) {
 			$thiscert = lookup_cert($pconfig['certref']);
 			$purpose = cert_get_purpose($thiscert['crt'], true);
 			if ($purpose['server'] != "Yes") {
-				$certhelp = gettext("Warning: The previously saved server was not created as an SSL Server certificate and may not work properly.");
+				$certhelp = '<span id="certtype" class="text-danger">' . gettext("Warning: The selected server certificate was not created as an SSL Server certificate and may not work as expected") . ' </span>';
 			}
 		}
 	} else {
-		$certhelp = sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">System &gt; Cert Manager</a>', '</span>');
 	}
+
+	$cl = openvpn_build_cert_list(false, true);
+
+	//Save the number of server certs for use at run-time
+	$servercerts = count($cl['server']);
 
 	$section->addInput(new Form_Select(
 		'certref',
 		'Server certificate',
 		$pconfig['certref'],
-		openvpn_build_cert_list(false, true)
+		$cl['server'] + $cl['non-server']
 		))->setHelp($certhelp);
 
 	$section->addInput(new Form_Select(
@@ -1567,6 +1572,17 @@ events.push(function(){
 	 // Tun/tap mode
 	$('#dev_mode, #serverbridge_dhcp').click(function () {
 		tuntap_change();
+	});
+
+	// Certref
+	$('#certref').on('change', function() {
+		var errmsg = "";
+
+		if ($(this).find(":selected").index() >= "<?=$servercerts?>") {
+			var errmsg = '<span class="text-danger">' + "<?=gettext('Warning: The selected server certificate was not created as an SSL Server certificate and may not work as expected')?>" + '</span>';
+		}
+
+		$('#certtype').html(errmsg);
 	});
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------

@@ -379,7 +379,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 <?php foreach ($columnWidgets as $widgetname => $widgetconfig):
 
 		// Compose the widget title and include the title link if available
-		$widgetlink = ${str_replace(' ', '_', strtolower($widgetconfig['name'])) . '_title_link'};
+		$widgetlink = ${$widgetname . '_title_link'};
 
 		if ((strlen($widgetlink) > 0)) {
 			$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';

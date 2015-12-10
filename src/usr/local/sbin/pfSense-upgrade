@@ -157,16 +157,16 @@ pkg_with_pb() {
 	local _event_pipe=""
 
 	if [ -n "${progress_socket}" ]; then
-		if [ -e "${progress_socket}" ]; then
-			rm -f ${progress_socket}
+		if [ -e "${chroot_dir}${progress_socket}" ]; then
+			rm -f ${chroot_dir}${progress_socket}
 		fi
 
 		_event_pipe="-o EVENT_PIPE=${progress_socket}"
 
-		nc -lU ${progress_socket} >> ${progress_file} &
+		nc -lU ${chroot_dir}${progress_socket} >> ${progress_file} &
 		nc_pid=$!
 
-		while [ ! -e "${progress_socket}" ]; do
+		while [ ! -e "${chroot_dir}${progress_socket}" ]; do
 			sleep 0.1
 		done
 	fi

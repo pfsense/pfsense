@@ -313,165 +313,144 @@ if ($_POST) {
 	if ($_POST['latencylow']) {
 		if (!is_numeric($_POST['latencylow'])) {
 			$input_errors[] = gettext("The low latency threshold needs to be a numeric value.");
-		} else {
-			if ($_POST['latencylow'] < 1) {
-				$input_errors[] = gettext("The low latency threshold needs to be positive.");
-			}
+		} else if ($_POST['latencylow'] < 1) {
+			$input_errors[] = gettext("The low latency threshold needs to be positive.");
 		}
 	}
 
 	if ($_POST['latencyhigh']) {
 		if (!is_numeric($_POST['latencyhigh'])) {
 			$input_errors[] = gettext("The high latency threshold needs to be a numeric value.");
-		} else {
-			if ($_POST['latencyhigh'] < 1) {
-				$input_errors[] = gettext("The high latency threshold needs to be positive.");
-			}
+		} else if ($_POST['latencyhigh'] < 1) {
+			$input_errors[] = gettext("The high latency threshold needs to be positive.");
 		}
 	}
 
 	if ($_POST['losslow']) {
 		if (!is_numeric($_POST['losslow'])) {
 			$input_errors[] = gettext("The low Packet Loss threshold needs to be a numeric value.");
-		} else {
-			if ($_POST['losslow'] < 1) {
-				$input_errors[] = gettext("The low Packet Loss threshold needs to be positive.");
-			}
-			if ($_POST['losslow'] >= 100) {
-				$input_errors[] = gettext("The low Packet Loss threshold needs to be less than 100.");
-			}
+		} else if ($_POST['losslow'] < 1) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be positive.");
+		} else if ($_POST['losslow'] >= 100) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be less than 100.");
 		}
 	}
 
 	if ($_POST['losshigh']) {
 		if (!is_numeric($_POST['losshigh'])) {
 			$input_errors[] = gettext("The high Packet Loss threshold needs to be a numeric value.");
-		} else {
-			if ($_POST['losshigh'] < 1) {
-				$input_errors[] = gettext("The high Packet Loss threshold needs to be positive.");
-			}
-			if ($_POST['losshigh'] > 100) {
-				$input_errors[] = gettext("The high Packet Loss threshold needs to be 100 or less.");
-			}
+		} else if ($_POST['losshigh'] < 1) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be positive.");
+		} else if ($_POST['losshigh'] > 100) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be 100 or less.");
 		}
 	}
 
 	if (($_POST['latencylow']) && ($_POST['latencyhigh'])) {
-		if ((is_numeric($_POST['latencylow'])) && (is_numeric($_POST['latencyhigh']))) {
-			if (($_POST['latencylow'] > $_POST['latencyhigh'])) {
-				$input_errors[] = gettext("The high latency threshold needs to be higher than the low latency threshold");
-			}
+		if ((is_numeric($_POST['latencylow'])) &&
+		    (is_numeric($_POST['latencyhigh'])) &&
+		    ($_POST['latencylow'] >= $_POST['latencyhigh'])) {
+			$input_errors[] = gettext(
+			    "The high latency threshold needs to be higher than the low latency threshold");
 		}
-	} else {
-		if ($_POST['latencylow']) {
-			if (is_numeric($_POST['latencylow'])) {
-				if ($_POST['latencylow'] > $dpinger_default['latencyhigh']) {
-					$input_errors[] = gettext(sprintf("The low latency threshold needs to be less than the default high latency threshold (%d)", $dpinger_default['latencyhigh']));
-				}
-			}
+	} else if ($_POST['latencylow']) {
+		if (is_numeric($_POST['latencylow']) &&
+		    ($_POST['latencylow'] > $dpinger_default['latencyhigh'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The low latency threshold needs to be less than the default high latency threshold (%d)",
+			    $dpinger_default['latencyhigh']));
 		}
-		if ($_POST['latencyhigh']) {
-			if (is_numeric($_POST['latencyhigh'])) {
-				if ($_POST['latencyhigh'] < $dpinger_default['latencylow']) {
-					$input_errors[] = gettext(sprintf("The high latency threshold needs to be higher than the default low latency threshold (%d)", $dpinger_default['latencylow']));
-				}
-			}
+	} else if ($_POST['latencyhigh']) {
+		if (is_numeric($_POST['latencyhigh']) &&
+		    ($_POST['latencyhigh'] < $dpinger_default['latencylow'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The high latency threshold needs to be higher than the default low latency threshold (%d)",
+			    $dpinger_default['latencylow']));
 		}
 	}
 
 	if (($_POST['losslow']) && ($_POST['losshigh'])) {
-		if ((is_numeric($_POST['losslow'])) && (is_numeric($_POST['losshigh']))) {
-			if ($_POST['losslow'] > $_POST['losshigh']) {
-				$input_errors[] = gettext("The high Packet Loss threshold needs to be higher than the low Packet Loss threshold");
-			}
+		if ((is_numeric($_POST['losslow'])) &&
+		    (is_numeric($_POST['losshigh'])) &&
+		    ($_POST['losslow'] > $_POST['losshigh'])) {
+			$input_errors[] = gettext(
+			    "The high Packet Loss threshold needs to be higher than the low Packet Loss threshold");
 		}
-	} else {
-		if ($_POST['losslow']) {
-			if (is_numeric($_POST['losslow'])) {
-				if ($_POST['losslow'] > $dpinger_default['losshigh']) {
-					$input_errors[] = gettext(sprintf("The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)", $dpinger_default['losshigh']));
-				}
-			}
+	} else if ($_POST['losslow']) {
+		if (is_numeric($_POST['losslow']) &&
+		    ($_POST['losslow'] > $dpinger_default['losshigh'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)",
+			    $dpinger_default['losshigh']));
 		}
-		if ($_POST['losshigh']) {
-			if (is_numeric($_POST['losshigh'])) {
-				if ($_POST['losshigh'] < $dpinger_default['losslow']) {
-					$input_errors[] = gettext(sprintf("The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)", $dpinger_default['losslow']));
-				}
-			}
+	} else if ($_POST['losshigh']) {
+		if (is_numeric($_POST['losshigh']) &&
+		    ($_POST['losshigh'] < $dpinger_default['losslow'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)",
+			    $dpinger_default['losslow']));
 		}
 	}
 
 	if ($_POST['interval']) {
 		if (!is_numeric($_POST['interval'])) {
 			$input_errors[] = gettext("The probe interval needs to be a numeric value.");
-		} else {
-			if ($_POST['interval'] < 1) {
-				$input_errors[] = gettext("The probe interval needs to be positive.");
-			}
+		} else if ($_POST['interval'] < 1) {
+			$input_errors[] = gettext("The probe interval needs to be positive.");
 		}
 	}
 
 	if ($_POST['down']) {
 		if (!is_numeric($_POST['down'])) {
 			$input_errors[] = gettext("The down time setting needs to be a numeric value.");
-		} else {
-			if ($_POST['down'] < 1) {
-				$input_errors[] = gettext("The down time setting needs to be positive.");
-			}
+		} else if ($_POST['down'] < 1) {
+			$input_errors[] = gettext("The down time setting needs to be positive.");
 		}
 	}
 
 	if (($_POST['interval']) && ($_POST['down'])) {
-		if ((is_numeric($_POST['interval'])) && (is_numeric($_POST['down']))) {
-			if ($_POST['interval'] > $_POST['down']) {
-				$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
-			}
+		if ((is_numeric($_POST['interval'])) &&
+		    (is_numeric($_POST['down'])) &&
+		    ($_POST['interval'] > $_POST['down'])) {
+			$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
 		}
-	} else {
-		if ($_POST['interval']) {
-			if (is_numeric($_POST['interval'])) {
-				if ($_POST['interval'] > $dpinger_default['down']) {
-					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $dpinger_default['down']));
-				}
-			}
+	} else if ($_POST['interval']) {
+		if (is_numeric($_POST['interval']) &&
+		    ($_POST['interval'] > $dpinger_default['down'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The probe interval needs to be less than the default down time setting (%d)",
+			    $dpinger_default['down']));
 		}
-		if ($_POST['down']) {
-			if (is_numeric($_POST['down'])) {
-				if ($_POST['down'] < $dpinger_default['interval']) {
-					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $dpinger_default['interval']));
-				}
-			}
+	} else if ($_POST['down']) {
+		if (is_numeric($_POST['down']) &&
+		    ($_POST['down'] < $dpinger_default['interval'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The down time setting needs to be higher than the default probe interval (%d)",
+			    $dpinger_default['interval']));
 		}
 	}
 
 	if ($_POST['avg_delay_samples']) {
 		if (!is_numeric($_POST['avg_delay_samples'])) {
 			$input_errors[] = gettext("The average delay replies qty needs to be a numeric value.");
-		} else {
-			if ($_POST['avg_delay_samples'] < 1) {
-				$input_errors[] = gettext("The average delay replies qty needs to be positive.");
-			}
+		} else if ($_POST['avg_delay_samples'] < 1) {
+			$input_errors[] = gettext("The average delay replies qty needs to be positive.");
 		}
 	}
 
 	if ($_POST['avg_loss_samples']) {
 		if (!is_numeric($_POST['avg_loss_samples'])) {
 			$input_errors[] = gettext("The average packet loss probes qty needs to be a numeric value.");
-		} else {
-			if ($_POST['avg_loss_samples'] < 1) {
-				$input_errors[] = gettext("The average packet loss probes qty needs to be positive.");
-			}
+		} else if ($_POST['avg_loss_samples'] < 1) {
+			$input_errors[] = gettext("The average packet loss probes qty needs to be positive.");
 		}
 	}
 
 	if ($_POST['avg_loss_delay_samples']) {
 		if (!is_numeric($_POST['avg_loss_delay_samples'])) {
 			$input_errors[] = gettext("The lost probe delay needs to be a numeric value.");
-		} else {
-			if ($_POST['avg_loss_delay_samples'] < 1) {
-				$input_errors[] = gettext("The lost probe delay needs to be positive.");
-			}
+		} else if ($_POST['avg_loss_delay_samples'] < 1) {
+			$input_errors[] = gettext("The lost probe delay needs to be positive.");
 		}
 	}
 

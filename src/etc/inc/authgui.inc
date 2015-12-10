@@ -139,6 +139,7 @@ function display_error_form($http_code, $desc) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Error: not allowed"); ?></title>
 </head>
@@ -242,6 +243,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Login"); ?></title>
 	<script type="text/javascript">

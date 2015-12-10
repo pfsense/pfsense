@@ -4142,4 +4142,54 @@ function upgrade_129_to_130() {
 	}
 }
 
+function upgrade_130_to_131() {
+	global $config;
+
+	if (isset($config['syslog']['apinger'])) {
+		$config['syslog']['dpinger'] = true;
+		unset($config['syslog']['apinger']);
+	}
+
+	if (isset($config['system']['apinger_debug'])) {
+		unset($config['system']['apinger_debug']);
+	}
+
+	if (!isset($config['gateways']['gateway_item']) ||
+	    !is_array($config['gateways']['gateway_item'])) {
+		return;
+	}
+
+	foreach ($config['gateways']['gateway_item'] as &$gw) {
+		// dpinger uses milliseconds
+		if (isset($gw['interval']) &&
+		    is_numeric($gw['interval'])) {
+			$gw['interval'] = $gw['interval'] * 1000;
+		}
+		if (isset($gw['down']) &&
+		    is_numeric($gw['down'])) {
+			$gw['loss_interval'] = $gw['down'] * 1000;
+			unset($gw['down']);
+		}
+
+		if (isset($gw['avg_delay_samples'])) {
+			unset($gw['avg_delay_samples']);
+		}
+		if (isset($gw['avg_delay_samples_calculated'])) {
+			unset($gw['avg_delay_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_samples'])) {
+			unset($gw['avg_loss_samples']);
+		}
+		if (isset($gw['avg_loss_samples_calculated'])) {
+			unset($gw['avg_loss_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_delays_samples'])) {
+			unset($gw['avg_loss_delays_samples']);
+		}
+		if (isset($gw['avg_loss_delays_samples_calculated'])) {
+			unset($gw['avg_loss_delays_samples_calculated']);
+		}
+	}
+}
+
 ?>

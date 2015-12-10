@@ -711,9 +711,9 @@ $section->addInput(new Form_Input(
 // If any of the advanced options are non-default, we will not show the "Advanced" button
 // and will display the advanced section
 if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) ||
-	!empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-	(isset($pconfig['interval']) && ($pconfig['interval'] > $dpinger_default['interval'])) ||
-	(isset($pconfig['down']) && !($pconfig['down'] == $dpinger_default['down'])))) {
+    !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
+    (isset($pconfig['interval']) && ($pconfig['interval'] > $dpinger_default['interval'])) ||
+    (isset($pconfig['down']) && !($pconfig['down'] == $dpinger_default['down'])))) {
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',

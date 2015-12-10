@@ -116,11 +116,40 @@ if ($g['disablecrashreporter'] != true) {
 	}
 }
 
+##build list of php include files
+$phpincludefiles = array();
+$directory = "/usr/local/www/widgets/include/";
+$dirhandle = opendir($directory);
+$filename = "";
+
+while (false !== ($filename = readdir($dirhandle))) {
+	$phpincludefiles[] = $filename;
+}
+
+## Include each widget include file.
+## These define vars that specify the widget title and title link.
+foreach ($phpincludefiles as $includename) {
+	if (!stristr($includename, ".inc")) {
+		continue;
+	}
+	if (file_exists($directory . $includename)) {
+		include($directory . $includename);
+	}
+}
+
 ##build list of widgets
 foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file)
 {
 	$name = basename($file, '.widget.php');
-	$widgets[ $name ] = array('name' => ucwords(str_replace('_', ' ', $name)), 'display' => 'none');
+	// Get the widget title that should be in a var defined in the widget's inc file.
+	$widgettitle = ${$name . '_title'};
+
+	if ((strlen($widgettitle) == 0)) {
+		// Fall back to constructing a title from the file name of the widget.
+		$widgettitle = ucwords(str_replace('_', ' ', $name));
+	}
+
+	$widgets[ $name ] = array('name' => $widgettitle, 'display' => 'none');
 }
 
 ##insert the system information widget as first, so as to be displayed first
@@ -242,8 +271,16 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		if (false !== $offset)
 			$file = substr($file, 0, $offset);
 
+		// Get the widget title that should be in a var defined in the widget's inc file.
+		$widgettitle = ${$file . '_title'};
+
+		if ((strlen($widgettitle) == 0)) {
+			// Fall back to constructing a title from the file name of the widget.
+			$widgettitle = ucwords(str_replace('_', ' ', $file));
+		}
+
 		$widgetsfromconfig[ $file ] = array(
-			'name' => ucwords(str_replace('_', ' ', $file)),
+			'name' => $widgettitle,
 			'col' => $col,
 			'display' => $display,
 		);
@@ -257,32 +294,6 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		if ($config['widgets'][$widgetname . '-config']) {
 			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
 		}
-	}
-}
-
-## Replace any known acronyms in widget names with suitable mixed-case forms
-$input_acronyms = array("carp", "dns", "dyn dns", "gmirror", "ipsec", "ntp", "openvpn", "rss", "smart");
-$output_acronyms = array("CARP", "DNS", "Dynamic DNS", "gmirror", "IPsec", "NTP", "OpenVPN", "RSS", "SMART");
-foreach ($widgets as $widgetname => $widgetconfig) {
-	$widgets[$widgetname]['name'] = str_ireplace($input_acronyms, $output_acronyms, $widgetconfig['name']);
-}
-
-##build list of php include files
-$phpincludefiles = array();
-$directory = "/usr/local/www/widgets/include/";
-$dirhandle = opendir($directory);
-$filename = "";
-
-while (false !== ($filename = readdir($dirhandle))) {
-	$phpincludefiles[] = $filename;
-}
-
-foreach ($phpincludefiles as $includename) {
-	if (!stristr($includename, ".inc")) {
-		continue;
-	}
-	if (file_exists($directory . $includename)) {
-		include($directory . $includename);
 	}
 }
 
@@ -379,7 +390,7 @@ foreach ($widgets as $widgetname => $widgetconfig)
 <?php foreach ($columnWidgets as $widgetname => $widgetconfig):
 
 		// Compose the widget title and include the title link if available
-		$widgetlink = ${str_replace(' ', '_', strtolower($widgetconfig['name'])) . '_title_link'};
+		$widgetlink = ${$widgetname . '_title_link'};
 
 		if ((strlen($widgetlink) > 0)) {
 			$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';

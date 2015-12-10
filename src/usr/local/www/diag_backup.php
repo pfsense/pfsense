@@ -736,7 +736,7 @@ $group = new Form_Group('');
 $group->add(new Form_Button(
 	'Submit',
 	'Restore Configuration'
-))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger');
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore');
 
 $section->add($group);
 
@@ -750,7 +750,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group->add(new Form_Button(
 			'Submit',
 			'Reinstall Packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-danger');
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success');
 
 		$section->add($group);
 	}
@@ -791,7 +791,7 @@ events.push(function(){
 		hideInput('decrypt_passconf', decryptHide);
 	}
 
-	// ---------- Click checkbox handlers ---------------------------------------------------------
+	// ---------- Click handlers ------------------------------------------------------------------
 
 	$('input[name="encrypt"]').on('change', function() {
 		hidePasswords();
@@ -801,9 +801,13 @@ events.push(function(){
 		hidePasswords();
 	});
 
+	$('#conffile').change(function (){
+		$('.restore').prop('disabled', false);
+    });
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideSections();
+	$('.restore').prop('disabled', true);
 });
 //]]>
 </script>

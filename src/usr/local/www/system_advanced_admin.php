@@ -520,7 +520,7 @@ if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['pl
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
 		'the serial port. You can still access the console menu from the internal video '.
-		'card/keyboard. A<b>null modem</b>serial cable or adapter is required to use the '.
+		'card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the '.
 		'serial console.');
 
 	$section->addInput(new Form_Select(

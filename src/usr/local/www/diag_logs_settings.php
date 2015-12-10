@@ -278,14 +278,14 @@ $section->addInput(new Form_Checkbox(
 	'Log firewall default blocks',
 	'Log packets matched from the default block rules in the ruleset',
 	$pconfig['logdefaultblock']
-))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.');
+))->setHelp('Log packets that are <strong>blocked</strong> by the implicit default block rule. - Per-rule logging options are still respected.');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
 	'Log packets matched from the default pass rules put in the ruleset',
 	$pconfig['logdefaultpass']
-))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected. ');
+))->setHelp('Log packets that are <strong>allowed</strong> by the implicit default pass rule. - Per-rule logging options are still respected. ');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',

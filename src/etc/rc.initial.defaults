@@ -36,24 +36,13 @@
 
 	$fp = fopen('php://stdin', 'r');
 
-	echo <<<EOD
-
-You are about to reset the firewall to factory defaults.
-The firewall will reboot after resetting the configuration.
-
-Do you want to proceed [y|n]?
-EOD;
+	echo "\n" . gettext("You are about to reset the firewall to factory defaults.");
+	echo "\n" . gettext("The firewall will reboot after resetting the configuration.");
+	echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-
 		reset_factory_defaults();
-
-		echo <<<EOD
-
-{$g['product_name']} is rebooting now.
-
-EOD;
-
+		echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_name']) . "\n";
 		system_reboot_sync();
 	}
 

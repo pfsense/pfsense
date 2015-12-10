@@ -84,7 +84,7 @@ if (!is_array($config['gateways']['gateway_item'])) {
 }
 
 $a_gateway_item = &$config['gateways']['gateway_item'];
-$apinger_default = return_apinger_defaults();
+$dpinger_default = return_dpinger_defaults();
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
@@ -312,7 +312,7 @@ if ($_POST) {
 		}
 	}
 
-	/* input validation of apinger advanced parameters */
+	/* input validation of dpinger advanced parameters */
 	if ($_POST['latencylow']) {
 		if (!is_numeric($_POST['latencylow'])) {
 			$input_errors[] = gettext("The low latency threshold needs to be a numeric value.");
@@ -368,15 +368,15 @@ if ($_POST) {
 	} else {
 		if ($_POST['latencylow']) {
 			if (is_numeric($_POST['latencylow'])) {
-				if ($_POST['latencylow'] > $apinger_default['latencyhigh']) {
-					$input_errors[] = gettext(sprintf("The low latency threshold needs to be less than the default high latency threshold (%d)", $apinger_default['latencyhigh']));
+				if ($_POST['latencylow'] > $dpinger_default['latencyhigh']) {
+					$input_errors[] = gettext(sprintf("The low latency threshold needs to be less than the default high latency threshold (%d)", $dpinger_default['latencyhigh']));
 				}
 			}
 		}
 		if ($_POST['latencyhigh']) {
 			if (is_numeric($_POST['latencyhigh'])) {
-				if ($_POST['latencyhigh'] < $apinger_default['latencylow']) {
-					$input_errors[] = gettext(sprintf("The high latency threshold needs to be higher than the default low latency threshold (%d)", $apinger_default['latencylow']));
+				if ($_POST['latencyhigh'] < $dpinger_default['latencylow']) {
+					$input_errors[] = gettext(sprintf("The high latency threshold needs to be higher than the default low latency threshold (%d)", $dpinger_default['latencylow']));
 				}
 			}
 		}
@@ -391,15 +391,15 @@ if ($_POST) {
 	} else {
 		if ($_POST['losslow']) {
 			if (is_numeric($_POST['losslow'])) {
-				if ($_POST['losslow'] > $apinger_default['losshigh']) {
-					$input_errors[] = gettext(sprintf("The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)", $apinger_default['losshigh']));
+				if ($_POST['losslow'] > $dpinger_default['losshigh']) {
+					$input_errors[] = gettext(sprintf("The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)", $dpinger_default['losshigh']));
 				}
 			}
 		}
 		if ($_POST['losshigh']) {
 			if (is_numeric($_POST['losshigh'])) {
-				if ($_POST['losshigh'] < $apinger_default['losslow']) {
-					$input_errors[] = gettext(sprintf("The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)", $apinger_default['losslow']));
+				if ($_POST['losshigh'] < $dpinger_default['losslow']) {
+					$input_errors[] = gettext(sprintf("The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)", $dpinger_default['losslow']));
 				}
 			}
 		}
@@ -434,15 +434,15 @@ if ($_POST) {
 	} else {
 		if ($_POST['interval']) {
 			if (is_numeric($_POST['interval'])) {
-				if ($_POST['interval'] > $apinger_default['down']) {
-					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
+				if ($_POST['interval'] > $dpinger_default['down']) {
+					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $dpinger_default['down']));
 				}
 			}
 		}
 		if ($_POST['down']) {
 			if (is_numeric($_POST['down'])) {
-				if ($_POST['down'] < $apinger_default['interval']) {
-					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $apinger_default['interval']));
+				if ($_POST['down'] < $dpinger_default['interval']) {
+					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $dpinger_default['interval']));
 				}
 			}
 		}
@@ -802,8 +802,8 @@ $section->addInput(new Form_Input(
 // and will display the advanced section
 if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) ||
 	!empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-	(isset($pconfig['interval']) && ($pconfig['interval'] > $apinger_default['interval'])) ||
-	(isset($pconfig['down']) && !($pconfig['down'] == $apinger_default['down'])))) {
+	(isset($pconfig['interval']) && ($pconfig['interval'] > $dpinger_default['interval'])) ||
+	(isset($pconfig['down']) && !($pconfig['down'] == $dpinger_default['down'])))) {
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
@@ -843,17 +843,17 @@ $group->add(new Form_Input(
 	'From',
 	'number',
 	$pconfig['latencylow'],
-	['placeholder' => $apinger_default['latencylow']]
+	['placeholder' => $dpinger_default['latencylow']]
 ));
 $group->add(new Form_Input(
 	'latencyhigh',
 	'To',
 	'number',
 	$pconfig['latencyhigh'],
-	['placeholder' => $apinger_default['latencyhigh']]
+	['placeholder' => $dpinger_default['latencyhigh']]
 ));
 $group->setHelp('Low and high thresholds for latency in milliseconds.
-	Default is %d/%d.', [$apinger_default['latencylow'], $apinger_default['latencyhigh']]);
+	Default is %d/%d.', [$dpinger_default['latencylow'], $dpinger_default['latencyhigh']]);
 
 $section->add($group);
 
@@ -863,17 +863,17 @@ $group->add(new Form_Input(
 	'From',
 	'number',
 	$pconfig['losslow'],
-	['placeholder' => $apinger_default['losslow']]
+	['placeholder' => $dpinger_default['losslow']]
 ));
 $group->add(new Form_Input(
 	'losshigh',
 	'To',
 	'number',
 	$pconfig['losshigh'],
-	['placeholder' => $apinger_default['losshigh']]
+	['placeholder' => $dpinger_default['losshigh']]
 ));
 $group->setHelp('Low and high thresholds for packet loss in milliseconds.
-	Default is %d/%d.', [$apinger_default['losslow'], $apinger_default['losshigh']]);
+	Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -882,22 +882,22 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['interval'],
 	[
-		'placeholder' => $apinger_default['interval'],
+		'placeholder' => $dpinger_default['interval'],
 		'max' => 86400
 	]
 ))->setHelp('How often an ICMP probe will be sent in seconds. Default is %d.'.
 	'NOTE: The quality graph is averaged over seconds, not intervals, so as '.
 	'the probe interval is increased the accuracy of the quality graph is '.
-	'decreased.', [$apinger_default['interval']]);
+	'decreased.', [$dpinger_default['interval']]);
 
 $section->addInput(new Form_Input(
 	'down',
 	'Down',
 	'number',
 	$pconfig['down'],
-	['placeholder' => $apinger_default['down']]
+	['placeholder' => $dpinger_default['down']]
 ))->setHelp('The number of seconds of failed probes before the alarm '.
-	'will fire. Default is %d.', [$apinger_default['down']]);
+	'will fire. Default is %d.', [$dpinger_default['down']]);
 
 $group = new Form_Group('Avg. Delay Replies Qty');
 $group->add(new Form_Input(
@@ -906,7 +906,7 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['avg_delay_samples'],
 	[
-		'placeholder' => $apinger_default['avg_delay_samples'],
+		'placeholder' => $dpinger_default['avg_delay_samples'],
 		'max' => 100
 	]
 ));
@@ -918,7 +918,7 @@ $group->add(new Form_Checkbox(
 ));
 $group->setHelp('How many replies should be used to compute average delay for '.
 	'controlling "delay" alarms? Default is %d.',
-	[$apinger_default['avg_delay_samples']]);
+	[$dpinger_default['avg_delay_samples']]);
 $section->add($group);
 
 $group = new Form_Group('Avg. Packet Loss Probes');
@@ -928,7 +928,7 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['avg_loss_samples'],
 	[
-		'placeholder' => $apinger_default['avg_loss_samples'],
+		'placeholder' => $dpinger_default['avg_loss_samples'],
 		'max' => 1000
 	]
 ));
@@ -940,7 +940,7 @@ $group->add(new Form_Checkbox(
 ));
 $group->setHelp('How many probes should be useds to compute average packet loss? '.
 	'Default is %d.',
-	[$apinger_default['avg_loss_samples']]);
+	[$dpinger_default['avg_loss_samples']]);
 $section->add($group);
 
 $group = new Form_Group('Lost Probe Delay');
@@ -950,7 +950,7 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['avg_loss_delay_samples'],
 	[
-		'placeholder' => $apinger_default['avg_loss_delay_samples'],
+		'placeholder' => $dpinger_default['avg_loss_delay_samples'],
 		'max' => 200
 	]
 ));
@@ -963,7 +963,7 @@ $group->add(new Form_Checkbox(
 $group->setHelp('The delay (in qty of probe samples) after which loss is '.
 	'computed. Without this, delays longer than the probe interval would be '.
 	'treated as packet loss.  Default is %d.',
-	[$apinger_default['avg_loss_delay_samples']]);
+	[$dpinger_default['avg_loss_delay_samples']]);
 $section->add($group);
 
 $section->addInput(new Form_StaticText(

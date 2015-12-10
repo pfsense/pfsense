@@ -140,6 +140,10 @@ _exit() {
 		/etc/rc.conf_mount_ro
 	fi
 
+	if [ -n "${nc_pid}" ] && ps -p ${nc_pid} >/dev/null 2>&1; then
+		kill ${nc_pid}
+	fi
+
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
@@ -160,6 +164,7 @@ pkg_with_pb() {
 		_event_pipe="-o EVENT_PIPE=${progress_socket}"
 
 		nc -lU ${progress_socket} >> ${progress_file} &
+		nc_pid=$!
 
 		while [ ! -e "${progress_socket}" ]; do
 			sleep 0.1
@@ -167,6 +172,7 @@ pkg_with_pb() {
 	fi
 
 	pkg ${_event_pipe} $@
+	nc_pid=""
 	return $?
 }
 
@@ -694,6 +700,9 @@ fi
 # Upgrade process on nanobsd will happen in chroot
 export pkg_chroot=""
 export chroot_dir=""
+
+# Save nc_pid to be able to kill it
+export nc_pid=""
 
 unset dry_run
 unset dont_reboot

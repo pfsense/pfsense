@@ -53,8 +53,9 @@ function easyrule_find_rule_interface($int) {
 	}
 
 	/* add ipsec interfaces */
-	if (ipsec_enabled())
+	if (ipsec_enabled()) {
 		$iflist["enc0"] = "IPSEC";
+	}
 
 	if (isset($iflist[$int])) {
 		return $int;

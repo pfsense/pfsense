@@ -430,7 +430,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if ($rules_loading <> 0) {
-		foreach($rules_error as $errorline) {
+		foreach ($rules_error as $errorline) {
 			$saved_line_error = $errorline;
 			$line_error = explode(":", $errorline);
 			$line_number = $line_error[1];
@@ -2872,7 +2872,7 @@ function filter_generate_user_rule($rule) {
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync'])) ) {
+			    (isset($rule['nopfsync']))) {
 				$aline['flags'] .= "( ";
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
@@ -3324,7 +3324,7 @@ EOD;
 
 				}
 				/* allow access to DHCP relay on interfaces */
-				if(isset($config['dhcrelay']['enable'])) {
+				if (isset($config['dhcrelay']['enable'])) {
 					$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 					foreach ($dhcifaces as $dhcrelayif) {
 						if ($dhcrelayif == $on) {

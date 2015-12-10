@@ -130,7 +130,7 @@ function display_error_form($http_code, $desc) {
 	$cssfile = "/bootstrap/css/pfSense.css";
 
 	if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
 }
@@ -233,7 +233,7 @@ if ($local_ip == false) {
 $cssfile = "/bootstrap/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
 }

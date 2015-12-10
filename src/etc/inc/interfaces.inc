@@ -824,7 +824,7 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	if (is_ipaddrv6($gre['remote-addr'])) {
 		mwexec("/sbin/ifconfig {$greif} inet6 tunnel {$realifip6} " . escapeshellarg($gre['remote-addr']));
-	}else{
+	} else {
 		mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
 	}
 	if ((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
@@ -945,7 +945,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	if (is_ipaddrv6($gif['remote-addr'])) {
 		mwexec("/sbin/ifconfig {$gifif} inet6 tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
 	} else {
-		mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));	
+		mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
 	}
 	if ((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
@@ -5241,17 +5241,19 @@ function get_possible_listen_ips($include_ipv6_link_local=false) {
 	/* XXX: Maybe use array_merge below? */
 	$carplist = get_configured_carp_interface_list();
 	foreach ($carplist as $cif => $carpip) {
-		if (get_vip_descr($carpip))
+		if (get_vip_descr($carpip)) {
 			$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
-		else
+		} else {
 			$interfaces[$cif] = $carpip;
+		}
 	}
 	$aliaslist = get_configured_ip_aliases_list();
 	foreach ($aliaslist as $aliasip => $aliasif) {
-		if (get_vip_descr($aliasip))
+		if (get_vip_descr($aliasip)) {
 			$interfaces[$aliasip] = $aliasip . ' (' . get_vip_descr($aliasip) . ')';
-		else
+		} else {
 			$interfaces[$aliasip] = $aliasip;
+		}
 	}
 
 	$interfaces['lo0'] = 'Localhost';

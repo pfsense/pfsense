@@ -192,7 +192,7 @@ function pkg_call($params, $mute = false) {
 
 		$now = time();
 
-		if(($now - $started) >= $maxwaittime) {
+		if (($now - $started) >= $maxwaittime) {
 			$rc = -1;
 			proc_terminate($process);
 			break;
@@ -204,7 +204,7 @@ function pkg_call($params, $mute = false) {
 	fclose($pipes[2]);
 	proc_close($process);
 
-	if(!isset($rc)) {
+	if (!isset($rc)) {
 		$rc = $status['exitcode'];
 	}
 
@@ -353,7 +353,7 @@ function get_package_id($package_name) {
 
 	foreach ($config['installedpackages']['package'] as $idx => $pkg) {
 		if ($pkg['name'] == $package_name ||
-			get_package_internal_name($pkg) == $package_name) {
+		    get_package_internal_name($pkg) == $package_name) {
 			return $idx;
 		}
 	}

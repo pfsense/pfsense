@@ -205,8 +205,9 @@ $p2_pfskeygroups = array(
 function ipsec_enabled() {
 	global $config;
 
-	if (!isset($config['ipsec']) || !is_array($config['ipsec']))
+	if (!isset($config['ipsec']) || !is_array($config['ipsec'])) {
 		return false;
+	}
 
 	/* Check if we have at least one phase 1 entry. */
 	if (!isset($config['ipsec']['phase1']) ||
@@ -216,8 +217,9 @@ function ipsec_enabled() {
 	}
 	/* Check if at least one phase 1 entry is enabled. */
 	foreach ($config['ipsec']['phase1'] as $phase1) {
-		if (!isset($phase1['disabled']))
+		if (!isset($phase1['disabled'])) {
 			return true;
+		}
 	}
 
 	return false;
@@ -477,8 +479,9 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
  */
 function ipsec_list_sa() {
 
-	if (ipsec_enabled())
+	if (ipsec_enabled()) {
 		return pfSense_ipsec_list_sa();
+	}
 
 	return array();
 }

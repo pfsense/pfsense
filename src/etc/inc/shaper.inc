@@ -3761,8 +3761,9 @@ EOD;
 		$form .= "<tbody>";
 
 		// If there are no bandwidths defined, make a blank one for convenience
-		if(empty($bandwidth))
+		if (empty($bandwidth)) {
 			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
+		}
 
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
@@ -4190,11 +4191,12 @@ class dnqueue_class extends dummynet_class {
 		$bandwidth = $this->GetBandwidth();
 
 		// Delete a row
-		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
+		if (isset($_GET['delbwrow']) && (count($bandwidth) > 0)) {
 			unset($bandwidth[$_GET['delbwrow']]);
+		}
 
 		// Add a row
-		if($_GET['newbwrow']) {
+		if ($_GET['newbwrow']) {
 			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
 
 		}
@@ -4203,7 +4205,7 @@ class dnqueue_class extends dummynet_class {
 			$row = 0;
 			$numrows = count($bandwidth) - 1;
 
-			if($numrows >= 0) {
+			if ($numrows >= 0) {
 				foreach ($bandwidth as $bwidx => $bw) {
 					$group = new Form_Group($row == 0 ? 'Bandwidth':null);
 
@@ -4234,8 +4236,9 @@ class dnqueue_class extends dummynet_class {
 						'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&delbwrow=' . $bwidx
 					))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
 
-					if($row == $numrows)
+					if ($row == $numrows) {
 						$group->setHelp('Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.');
+					}
 
 					$section->add($group);
 					$row++;

@@ -241,7 +241,7 @@ $shortcuts['gateways'] = array();
 $shortcuts['gateways']['main'] = "system_gateways.php";
 $shortcuts['gateways']['log'] = "diag_logs.php?logfile=gateways";
 $shortcuts['gateways']['status'] = "status_gateways.php";
-$shortcuts['gateways']['service'] = "apinger";
+$shortcuts['gateways']['service'] = "dpinger";
 
 $shortcuts['gateway-groups'] = array();
 $shortcuts['gateway-groups']['main'] = "system_gateway_groups.php";

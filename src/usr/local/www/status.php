@@ -255,12 +255,6 @@ if (file_exists("/boot/loader.conf")) {
 if (file_exists("/boot/loader.conf.local")) {
 	defCmdT("Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
 }
-if (file_exists("/var/run/apinger.status")) {
-	defCmdT("Gateway Status", "/bin/cat /var/run/apinger.status");
-}
-if (file_exists("/var/etc/apinger.conf")) {
-	defCmdT("Gateway Monitoring Config", "/bin/cat /var/etc/apinger.conf");
-}
 if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
 }

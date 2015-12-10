@@ -102,9 +102,9 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interval'] = $a_gateways[$id]['interval'];
-	$pconfig['avg_delay_samples'] = $a_gateways[$id]['avg_delay_samples'];
-	$pconfig['avg_loss_samples'] = $a_gateways[$id]['avg_loss_samples'];
-	$pconfig['avg_loss_delay_samples'] = $a_gateways[$id]['avg_loss_delay_samples'];
+	$pconfig['loss_interval'] = $a_gateways[$id]['loss_interval'];
+	$pconfig['alert_interval'] = $a_gateways[$id]['alert_interval'];
+	$pconfig['time_period'] = $a_gateways[$id]['time_period'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['ipprotocol'] = $a_gateways[$id]['ipprotocol'];
@@ -118,7 +118,6 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
 	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
-	$pconfig['down'] = $a_gateways[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
@@ -400,57 +399,49 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['down']) {
-		if (!is_numeric($_POST['down'])) {
-			$input_errors[] = gettext("The down time setting needs to be a numeric value.");
-		} else if ($_POST['down'] < 1) {
-			$input_errors[] = gettext("The down time setting needs to be positive.");
+	if ($_POST['loss_interval']) {
+		if (!is_numeric($_POST['loss_interval'])) {
+			$input_errors[] = gettext("The loss interval needs to be a numeric value.");
+		} else if ($_POST['loss_interval'] < 1) {
+			$input_errors[] = gettext("The loss interval setting needs to be positive.");
 		}
 	}
 
-	if (($_POST['interval']) && ($_POST['down'])) {
+	if (($_POST['interval']) && ($_POST['loss_interval'])) {
 		if ((is_numeric($_POST['interval'])) &&
-		    (is_numeric($_POST['down'])) &&
-		    ($_POST['interval'] > $_POST['down'])) {
-			$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
+		    (is_numeric($_POST['loss_interval'])) &&
+		    ($_POST['interval'] > $_POST['loss_interval'])) {
+			$input_errors[] = gettext("The probe interval needs to be less than the loss interval setting.");
 		}
 	} else if ($_POST['interval']) {
 		if (is_numeric($_POST['interval']) &&
-		    ($_POST['interval'] > $dpinger_default['down'])) {
+		    ($_POST['interval'] > $dpinger_default['loss_interval'])) {
 			$input_errors[] = gettext(sprintf(
-			    "The probe interval needs to be less than the default down time setting (%d)",
-			    $dpinger_default['down']));
+			    "The probe interval needs to be less than the default loss interval setting (%d)",
+			    $dpinger_default['loss_interval']));
 		}
-	} else if ($_POST['down']) {
-		if (is_numeric($_POST['down']) &&
-		    ($_POST['down'] < $dpinger_default['interval'])) {
+	} else if ($_POST['loss_interval']) {
+		if (is_numeric($_POST['loss_interval']) &&
+		    ($_POST['loss_interval'] < $dpinger_default['interval'])) {
 			$input_errors[] = gettext(sprintf(
-			    "The down time setting needs to be higher than the default probe interval (%d)",
+			    "The loss interval setting needs to be higher than the default probe interval (%d)",
 			    $dpinger_default['interval']));
 		}
 	}
 
-	if ($_POST['avg_delay_samples']) {
-		if (!is_numeric($_POST['avg_delay_samples'])) {
-			$input_errors[] = gettext("The average delay replies qty needs to be a numeric value.");
-		} else if ($_POST['avg_delay_samples'] < 1) {
-			$input_errors[] = gettext("The average delay replies qty needs to be positive.");
+	if ($_POST['time_period']) {
+		if (!is_numeric($_POST['time_period'])) {
+			$input_errors[] = gettext("The time period over which results are averaged needs to be a numeric value.");
+		} else if ($_POST['time_period'] < 1) {
+			$input_errors[] = gettext("The time period over which results are averaged needs to be positive.");
 		}
 	}
 
-	if ($_POST['avg_loss_samples']) {
-		if (!is_numeric($_POST['avg_loss_samples'])) {
-			$input_errors[] = gettext("The average packet loss probes qty needs to be a numeric value.");
-		} else if ($_POST['avg_loss_samples'] < 1) {
-			$input_errors[] = gettext("The average packet loss probes qty needs to be positive.");
-		}
-	}
-
-	if ($_POST['avg_loss_delay_samples']) {
-		if (!is_numeric($_POST['avg_loss_delay_samples'])) {
-			$input_errors[] = gettext("The lost probe delay needs to be a numeric value.");
-		} else if ($_POST['avg_loss_delay_samples'] < 1) {
-			$input_errors[] = gettext("The lost probe delay needs to be positive.");
+	if ($_POST['alert_interval']) {
+		if (!is_numeric($_POST['alert_interval'])) {
+			$input_errors[] = gettext("The alert interval needs to be a numeric value.");
+		} else if ($_POST['alert_interval'] < 1) {
+			$input_errors[] = gettext("The alert interval needs to be positive.");
 		}
 	}
 
@@ -471,11 +462,16 @@ if ($_POST) {
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
 		$gateway['ipprotocol'] = $_POST['ipprotocol'];
-		$gateway['interval'] = $_POST['interval'];
+		if ($_POST['interval']) {
+			$gateway['interval'] = $_POST['interval'];
+		}
 
-		$gateway['avg_delay_samples'] = $_POST['avg_delay_samples'];
-		$gateway['avg_loss_samples'] = $_POST['avg_loss_samples'];
-		$gateway['avg_loss_delay_samples'] = $_POST['avg_loss_delay_samples'];
+		if ($_POST['time_period']) {
+			$gateway['time_period'] = $_POST['time_period'];
+		}
+		if ($_POST['alert_interval']) {
+			$gateway['alert_interval'] = $_POST['alert_interval'];
+		}
 
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes") {
@@ -538,8 +534,8 @@ if ($_POST) {
 		if ($_POST['losshigh']) {
 			$gateway['losshigh'] = $_POST['losshigh'];
 		}
-		if ($_POST['down']) {
-			$gateway['down'] = $_POST['down'];
+		if ($_POST['loss_interval']) {
+			$gateway['loss_interval'] = $_POST['loss_interval'];
 		}
 
 		if (isset($_POST['disabled'])) {
@@ -713,7 +709,7 @@ $section->addInput(new Form_Input(
 if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) ||
     !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
     (isset($pconfig['interval']) && ($pconfig['interval'] > $dpinger_default['interval'])) ||
-    (isset($pconfig['down']) && !($pconfig['down'] == $dpinger_default['down'])))) {
+    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])))) {
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
@@ -795,67 +791,46 @@ $section->addInput(new Form_Input(
 		'placeholder' => $dpinger_default['interval'],
 		'max' => 86400
 	]
-))->setHelp('How often an ICMP probe will be sent in seconds. Default is %d.'.
+))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.'.
 	'NOTE: The quality graph is averaged over seconds, not intervals, so as '.
 	'the probe interval is increased the accuracy of the quality graph is '.
 	'decreased.', [$dpinger_default['interval']]);
 
 $section->addInput(new Form_Input(
-	'down',
-	'Down',
+	'loss_interval',
+	'Loss Interval',
 	'number',
-	$pconfig['down'],
-	['placeholder' => $dpinger_default['down']]
-))->setHelp('The number of seconds of failed probes before the alarm '.
-	'will fire. Default is %d.', [$dpinger_default['down']]);
+	$pconfig['loss_interval'],
+	['placeholder' => $dpinger_default['loss_interval']]
+))->setHelp('Time interval in milliseconds before packets are treated as lost. '.
+	'Default is %d.', [$dpinger_default['down']]);
 
-$group = new Form_Group('Avg. Delay Replies Qty');
+$group = new Form_Group('Time Period');
 $group->add(new Form_Input(
-	'avg_delay_samples',
+	'time_period',
 	null,
 	'number',
-	$pconfig['avg_delay_samples'],
+	$pconfig['time_period'],
 	[
-		'placeholder' => $dpinger_default['avg_delay_samples'],
-		'max' => 100
+		'placeholder' => $dpinger_default['time_period']
 	]
 ));
-$group->setHelp('How many replies should be used to compute average delay for '.
-	'controlling "delay" alarms? Default is %d.',
-	[$dpinger_default['avg_delay_samples']]);
+$group->setHelp('time period in milliseconds over which results are averaged. Default is %d.',
+	[$dpinger_default['time_period']]);
 $section->add($group);
 
-$group = new Form_Group('Avg. Packet Loss Probes');
+$group = new Form_Group('Alert interval');
 $group->add(new Form_Input(
-	'avg_loss_samples',
+	'alert_interval',
 	null,
 	'number',
-	$pconfig['avg_loss_samples'],
+	$pconfig['alert_interval'],
 	[
-		'placeholder' => $dpinger_default['avg_loss_samples'],
-		'max' => 1000
+		'placeholder' => $dpinger_default['alert_interval']
 	]
 ));
-$group->setHelp('How many probes should be useds to compute average packet loss? '.
-	'Default is %d.',
-	[$dpinger_default['avg_loss_samples']]);
-$section->add($group);
-
-$group = new Form_Group('Lost Probe Delay');
-$group->add(new Form_Input(
-	'avg_loss_delay_samples',
-	null,
-	'number',
-	$pconfig['avg_loss_delay_samples'],
-	[
-		'placeholder' => $dpinger_default['avg_loss_delay_samples'],
-		'max' => 200
-	]
-));
-$group->setHelp('The delay (in qty of probe samples) after which loss is '.
-	'computed. Without this, delays longer than the probe interval would be '.
-	'treated as packet loss.  Default is %d.',
-	[$dpinger_default['avg_loss_delay_samples']]);
+$group->setHelp('time interval in milliseconds between alerts. Default is %d.',
+	[$dpinger_default['alert_interval']]);
 $section->add($group);
 
 $section->addInput(new Form_StaticText(

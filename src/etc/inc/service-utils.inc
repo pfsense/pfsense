@@ -322,7 +322,7 @@ function get_services() {
 	$gateways_arr = return_gateways_array();
 	if (is_array($gateways_arr)) {
 		$pconfig = array();
-		$pconfig['name'] = "apinger";
+		$pconfig['name'] = "dpinger";
 		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
 		$services[] = $pconfig;
 	}
@@ -609,7 +609,7 @@ function service_control_start($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':
@@ -678,8 +678,8 @@ function service_control_stop($name, $extras) {
 		case 'openntpd':
 			killbyname("openntpd");
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
+			stop_dpinger();
 			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
@@ -748,8 +748,7 @@ function service_control_restart($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':

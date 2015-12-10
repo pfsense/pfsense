@@ -83,7 +83,7 @@ $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
-$pconfig['apinger'] = isset($config['syslog']['apinger']);
+$pconfig['dpinger'] = isset($config['syslog']['dpinger']);
 $pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
@@ -156,7 +156,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
-		$config['syslog']['apinger'] = $_POST['apinger'] ? true : false;
+		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
 		$config['syslog']['relayd'] = $_POST['relayd'] ? true : false;
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
@@ -441,10 +441,10 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
-	'apinger',
+	'dpinger',
 	null,
 	'Gateway Monitor events',
-	$pconfig['apinger']
+	$pconfig['dpinger']
 ));
 
 $group->add(new Form_MultiCheckbox(
@@ -506,7 +506,7 @@ events.push(function(){
 		disableInput('dhcp', hide);
 		disableInput('portalauth', hide);
 		disableInput('vpn', hide);
-		disableInput('apinger', hide);
+		disableInput('dpinger', hide);
 		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
 	}

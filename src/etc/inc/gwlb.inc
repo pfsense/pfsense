@@ -108,7 +108,7 @@ function start_dpinger($gateway) {
 	    ) . " ";
 
 	$params .= "-l " .
-	    (isset($gateway['loss_interval']) && is_numeric($gateway['loos_interval'])
+	    (isset($gateway['loss_interval']) && is_numeric($gateway['loss_interval'])
 	    ?  $gateway['loss_interval']
 	    : $dpinger_defaults['loss_interval']
 	    ) . " ";
@@ -340,7 +340,7 @@ function get_dpinger_status($gwname) {
 	return $r;
 }
 
-/* return the status of the dpinger targets as a array */
+/* return the status of the dpinger targets as an array */
 function return_gateways_status($byname = false) {
 	global $config, $g;
 
@@ -365,7 +365,7 @@ function return_gateways_status($byname = false) {
 		$status[$target]['monitorip'] = $dpinger_status['targetip'];
 		$status[$target]['srcip'] = $dpinger_status['srcip'];
 		$status[$target]['name'] = $gwname;
-		$status[$target]['delay'] = empty($dpinger_status['latency_avg']) ? "0ms" : $dpinger_status['latency_avg'] ."ms";
+		$status[$target]['delay'] = empty($dpinger_status['latency_avg']) ? "0ms" : $dpinger_status['latency_avg'] . "ms";
 		$status[$target]['loss'] = empty($dpinger_status['loss']) ? "0.0%" : round($dpinger_status['loss'], 1) . "%";
 		$status[$target]['status'] = $dpinger_status['status'];
 	}

@@ -803,7 +803,7 @@ $section->addInput(new Form_Input(
 	$pconfig['loss_interval'],
 	['placeholder' => $dpinger_default['loss_interval']]
 ))->setHelp('Time interval in milliseconds before packets are treated as lost. '.
-	'Default is %d.', [$dpinger_default['down']]);
+	'Default is %d.', [$dpinger_default['loss_interval']]);
 
 $group = new Form_Group('Time Period');
 $group->add(new Form_Input(

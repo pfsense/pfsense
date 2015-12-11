@@ -55,7 +55,7 @@ $opts .= "t:"; // Path to ports tree repo
 
 $options = getopt($opts);
 
-if(!isset($options['x']))
+if (!isset($options['x']))
 	usage();
 
 // Set the XML filename that we are processing
@@ -85,7 +85,7 @@ if (is_dir("{$src_dir}/etc/inc")) {
 }
 
 $pkgs = parse_xml_config_pkg($xml_filename, "pfsensepkgs");
-if(!$pkgs) {
+if (!$pkgs) {
 	echo "!!! An error occurred while trying to process {$xml_filename}.  Exiting.\n";
 	exit;
 }
@@ -101,7 +101,7 @@ if (isset($options['p'])) {
 
 $pfs_version = trim(file_get_contents("{$src_dir}/etc/version"));
 
-foreach($pkgs['packages']['package'] as $pkg) {
+foreach ($pkgs['packages']['package'] as $pkg) {
 	if (isset($pkg_list) && !in_array(strtolower($pkg['name']), $pkg_list))
 		continue;
 

@@ -84,7 +84,7 @@ fi
 # Make sure pkg will not be interactive
 export ASSUME_ALWAYS_YES=true
 
-# Architecture, supported ARCH values are: 
+# Architecture, supported ARCH values are:
 #  Tier 1: i386, AMD64, and PC98
 #  Tier 2: ARM, PowerPC, ia64, Sparc64 and sun4v
 #  Tier 3: MIPS and S/390
@@ -212,7 +212,7 @@ export VMDK_DISK_CAPACITY_IN_GB=${VMDK_DISK_CAPACITY_IN_GB:-"8"}
 export OVA_FIRST_PART_SIZE_IN_GB=${OVA_FIRST_PART_SIZE_IN_GB:-"6"}
 # swap partition size (freebsd-swap)
 export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"2"}
-# Calculate real swap size, removing 128 blocks (65536 bytes) beggining/loader
+# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
 export OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
 # Temporary place to save files
 export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}

@@ -100,7 +100,7 @@ foreach ($found as $fname)
 echo "--Generating privilege definitions--\n";
 $privdef = $prefix."etc/inc/priv.defs.inc";
 
-$fp = fopen($privdef,"w");
+$fp = fopen($privdef, "w");
 if (!$fp) {
 	echo "unable to open {$privdef}\n";
 	exit -2;
@@ -196,7 +196,7 @@ echo "--Checking for pages without privilege definitions--\n";
 foreach ($found as $fname) {
 	$match = false;
 	foreach ($pages_current as $pname => $pdesc) {
-		if (!strcmp($pname,$fname)) {
+		if (!strcmp($pname, $fname)) {
 			$match = true;
 			break;
 		}
@@ -210,7 +210,7 @@ echo "--Checking for stale privilege definitions--\n";
 foreach ($pages_current as $pname => $pdesc) {
 	$match = false;
 	foreach ($found as $fname) {
-		if (!strncmp($fname,$pname,strlen($fname))) {
+		if (!strncmp($fname, $pname, strlen($fname))) {
 			$match = true;
 			break;
 		}

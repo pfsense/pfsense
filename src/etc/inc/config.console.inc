@@ -101,15 +101,13 @@ BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
 EOD;
 	}
 
-	echo <<<EOD
-
-Do you want to set up VLANs first? 
-
-If you are not going to use VLANs, or only for optional interfaces, you should
-say no here and use the webConfigurator to configure VLANs later, if required.
-
-Do you want to set up VLANs now [y|n]? 
-EOD;
+	echo "\n" . gettext("Do you want to set up VLANs first?");
+	echo "\n" .
+		gettext(
+			"If you are not going to use VLANs, or only for optional interfaces, you should\n" .
+			"say no here and use the webConfigurator to configure VLANs later, if required.") .
+		"\n";
+	echo "\n" . gettext("Do you want to set up VLANs now [y|n]?") . " ";
 
 	if ($auto_assign) {
 		$key = timeout();
@@ -314,10 +312,7 @@ EOD;
 			echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 		}
 
-		echo <<<EOD
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 		$key = chop(fgets($fp));
 	}
 
@@ -330,13 +325,8 @@ EOD;
 			$config['interfaces']['lan']['enable'] = true;
 		} elseif (!platform_booting() && !$auto_assign) {
 
-echo <<<EODD
-
-You have chosen to remove the LAN interface.
-
-Would you like to remove the LAN IP address and
-unload the interface now? [y|n]? 
-EODD;
+			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
+			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";
 
 			if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 				if (isset($config['interfaces']['lan']) && $config['interfaces']['lan']['if']) {
@@ -497,13 +487,8 @@ function vlan_setup() {
 	$iflist = get_interface_list();
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
-		echo <<<EOD
-
-WARNING: all existing VLANs will be cleared if you proceed!
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("WARNING: all existing VLANs will be cleared if you proceed!") . "\n";
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0) {
 			return;

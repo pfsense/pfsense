@@ -972,6 +972,9 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 	fi
 	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
 		delay="U"
+	else
+		# Convert delay to millisecond
+		delay=\$(echo "scale=3; \$delay / 1000")
 	fi
 
 	gw=\$(echo \$sock | sed 's,^.*dpinger_,,; s,\.sock,,')

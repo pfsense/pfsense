@@ -710,8 +710,8 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
+	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
+	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {

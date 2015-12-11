@@ -317,6 +317,9 @@ function get_dpinger_status($gwname) {
 		$gw = $gateways_arr[$gwname];
 	}
 
+	$r['latency_avg'] = round($r['latency_avg']/1000, 3);
+	$r['latency_stddev'] = round($r['latency_stddev']/1000, 3);
+
 	$r['status'] = "none";
 	if (isset($gw) && isset($gw['force_down'])) {
 		$r['status'] = "force_down";
@@ -333,9 +336,6 @@ function get_dpinger_status($gwname) {
 			$r['status'] = "loss";
 		}
 	}
-
-	$r['latency_avg'] = round($r['latency_avg']/1000, 3);
-	$r['latency_stddev'] = round($r['latency_stddev']/1000, 3);
 
 	return $r;
 }

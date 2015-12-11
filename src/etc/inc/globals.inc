@@ -59,7 +59,7 @@ $g = array(
 	"product_name" => "pfSense",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
 	"product_copyright" => "Electric Sheep Fencing LLC",
-	"product_copyright_url" => "http://www.electricsheepfencing.com",
+	"product_copyright_url" => "https://pfsense.org/license",
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"product_website" => "www.pfsense.org",
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",

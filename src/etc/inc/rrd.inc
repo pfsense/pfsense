@@ -50,7 +50,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 function restore_rrd() {
 	global $g, $config;
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
 	$rrdrestore = "";
@@ -211,7 +211,7 @@ function enable_rrd_graphing() {
 		echo gettext("Generating RRD graphs...");
 	}
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
 
 	$traffic = "-traffic.rrd";
@@ -323,11 +323,11 @@ function enable_rrd_graphing() {
 		}
 
 		if (platform_booting()) {
-			if (!is_dir("{$g['vardb_path']}/rrd")) {
-				mkdir("{$g['vardb_path']}/rrd", 0775);
+			if (!is_dir($rrddbpath)) {
+				mkdir($rrddbpath, 0775);
 			}
 
-			@chown("{$g['vardb_path']}/rrd", "nobody");
+			@chown($rrddbpath, "nobody");
 		}
 
 		/* process all real and pseudo interfaces */

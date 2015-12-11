@@ -778,7 +778,7 @@ $group->add(new Form_Input(
 	$pconfig['losshigh'],
 	['placeholder' => $dpinger_default['losshigh']]
 ));
-$group->setHelp('Low and high thresholds for packet loss in milliseconds.
+$group->setHelp('Low and high thresholds for packet loss in %%.
 	Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
 $section->add($group);
 
@@ -791,7 +791,7 @@ $section->addInput(new Form_Input(
 		'placeholder' => $dpinger_default['interval'],
 		'max' => 86400
 	]
-))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.'.
+))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d. '.
 	'NOTE: The quality graph is averaged over seconds, not intervals, so as '.
 	'the probe interval is increased the accuracy of the quality graph is '.
 	'decreased.', [$dpinger_default['interval']]);
@@ -815,7 +815,7 @@ $group->add(new Form_Input(
 		'placeholder' => $dpinger_default['time_period']
 	]
 ));
-$group->setHelp('time period in milliseconds over which results are averaged. Default is %d.',
+$group->setHelp('Time period in milliseconds over which results are averaged. Default is %d.',
 	[$dpinger_default['time_period']]);
 $section->add($group);
 
@@ -829,7 +829,7 @@ $group->add(new Form_Input(
 		'placeholder' => $dpinger_default['alert_interval']
 	]
 ));
-$group->setHelp('time interval in milliseconds between alerts. Default is %d.',
+$group->setHelp('Time interval in milliseconds between alerts. Default is %d.',
 	[$dpinger_default['alert_interval']]);
 $section->add($group);
 

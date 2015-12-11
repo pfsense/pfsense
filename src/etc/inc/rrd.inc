@@ -956,6 +956,43 @@ function enable_rrd_graphing() {
 		}
 		/* END dhcpd statistics */
 
+		/* Start gateway quality */
+		$rrdupdatesh .= <<<EOD
+
+# Gateway quality graphs
+for sock in {$g['varrun_path']}/dpinger_*.sock; do
+	if [ ! -S "\$sock" ]; then
+		continue
+	fi
+	loss=\$(/usr/bin/nc -U \$sock | awk '{ print \$3 }')
+	delay=\$(/usr/bin/nc -U \$sock | awk '{ print \$1 }')
+
+	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
+		loss="U"
+	fi
+	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
+		delay="U"
+	fi
+
+	gw=\$(echo \$sock | sed 's,^.*dpinger_,,; s,\.sock,,')
+	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
+		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
+		DS:loss:GAUGE:120:0:100 \\
+		DS:delay:GAUGE:120:0:100000 \\
+		RRA:AVERAGE:0.5:1:1200 \\
+		RRA:AVERAGE:0.5:5:720 \\
+		RRA:AVERAGE:0.5:60:1860 \\
+		RRA:AVERAGE:0.5:1440:2284
+
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd N:U:U
+	fi
+
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd N:\$loss:\$delay
+done
+
+EOD;
+		/* End gateway quality */
+
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
 		log_error(gettext("Creating rrd update script"));

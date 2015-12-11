@@ -515,7 +515,7 @@ function safe_write_file($file, $content, $force_binary) {
  *   null
  ******/
 /* save the system configuration */
-function write_config($desc="Unknown", $backup = true) {
+function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $config, $g;
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
@@ -579,6 +579,12 @@ function write_config($desc="Unknown", $backup = true) {
 	}
 
 	unlock($lockkey);
+
+	if ($write_config_only) {
+		/* tell kernel to sync fs data */
+		conf_mount_ro();
+		return $config;
+	}
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 

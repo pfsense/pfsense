@@ -987,10 +987,10 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		RRA:AVERAGE:0.5:60:1860 \\
 		RRA:AVERAGE:0.5:1440:2284
 
-		{$rrdtool} update -t loss:delay {$rrddbpath}\$gw-quality.rrd N:U:U
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:U:U
 	fi
 
-	{$rrdtool} update -t loss:delay {$rrddbpath}\$gw-quality.rrd N:\$loss:\$delay
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:\$loss:\$delay
 done
 
 EOD;

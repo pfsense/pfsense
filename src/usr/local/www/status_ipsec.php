@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_ipsec.php
+	status_ipsec.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -65,7 +65,7 @@
 ##|*IDENT=page-status-ipsec
 ##|*NAME=Status: IPsec
 ##|*DESCR=Allow access to the 'Status: IPsec' page.
-##|*MATCH=diag_ipsec.php*
+##|*MATCH=status_ipsec.php*
 ##|-PRIV
 
 
@@ -120,10 +120,10 @@ $a_phase1 = &$config['ipsec']['phase1'];
 $status = ipsec_list_sa();
 
 $tab_array = array();
-$tab_array[] = array(gettext("Overview"), true, "diag_ipsec.php");
-$tab_array[] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-$tab_array[] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-$tab_array[] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+$tab_array[] = array(gettext("Overview"), true, "status_ipsec.php");
+$tab_array[] = array(gettext("Leases"), false, "status_ipsec_leases.php");
+$tab_array[] = array(gettext("SAD"), false, "status_ipsec_sad.php");
+$tab_array[] = array(gettext("SPD"), false, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 ?>
 
@@ -278,13 +278,13 @@ if (is_array($status)) {
 <?php
 		if ($ikesa['state'] != 'ESTABLISHED') {
 ?>
-					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
+					<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
 							<?=gettext("Connect VPN")?>
 						</a>
 <?php
 		} else {
 ?>
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Disconnect VPN">
+						<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Disconnect VPN">
 							<?=gettext("Disconnect")?>
 						</a><br />
 <?php
@@ -393,7 +393,7 @@ if (is_array($status)) {
 ?>
 									</td>
 									<td>
-										<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
+										<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
 											<?=gettext("Disconnect")?>
 										</a>
 									</td>
@@ -490,7 +490,7 @@ foreach ($a_phase1 as $ph1ent) {
 						<?=gettext("Disconnected")?>
 					</td>
 					<td >
-						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?=$ph1ent['ikeid']; ?>" class="btn btn-xs btn-success">
+						<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$ph1ent['ikeid']; ?>" class="btn btn-xs btn-success">
 							<?=gettext("Connect VPN")?>
 						</a>
 					</td>

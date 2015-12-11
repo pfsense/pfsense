@@ -1,6 +1,6 @@
 <?php
 /*
-	carp_status.php
+	status_carp.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -57,7 +57,7 @@
 ##|*IDENT=page-status-carp
 ##|*NAME=Status: CARP
 ##|*DESCR=Allow access to the 'Status: CARP' page.
-##|*MATCH=carp_status.php*
+##|*MATCH=status_carp.php*
 ##|-PRIV
 
 /*
@@ -180,7 +180,7 @@ if ($carpcount == 0) {
 } else
 {
 ?>
-<form action="carp_status.php" method="post">
+<form action="status_carp.php" method="post">
 <?php
 	if($status > 0)
 		$carp_enabled = true;
@@ -193,7 +193,7 @@ if ($carpcount == 0) {
 			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
 			gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
 			gettext("Search the") .
-			" <a href=\"/diag_logs.php?filtertext=carp%3A+demoted+by\">" .
+			" <a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">" .
 			gettext("system log") .
 			"</a> " .
 			gettext("for CARP demotion-related events.") . "<br/><br/>" .

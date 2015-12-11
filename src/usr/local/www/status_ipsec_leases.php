@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_ipsec_leases.php
+	status_ipsec_leases.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -62,7 +62,7 @@
 ##|*IDENT=page-status-ipsec-leases
 ##|*NAME=Status: IPsec: Leases
 ##|*DESCR=Allow access to the 'Status: IPsec: Leases' page.
-##|*MATCH=diag_ipsec_leases.php*
+##|*MATCH=status_ipsec_leases.php*
 ##|-PRIV
 
 define(DEBUG, true); // Force dummy data for testing. Setting up a pFSense box to get real data is far too hard!
@@ -77,10 +77,10 @@ include("head.inc");
 $mobile = ipsec_dump_mobile();
 
 $tab_array = array();
-$tab_array[] = array(gettext("Overview"), false, "diag_ipsec.php");
-$tab_array[] = array(gettext("Leases"), true, "diag_ipsec_leases.php");
-$tab_array[] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-$tab_array[] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+$tab_array[] = array(gettext("Overview"), false, "status_ipsec.php");
+$tab_array[] = array(gettext("Leases"), true, "status_ipsec_leases.php");
+$tab_array[] = array(gettext("SAD"), false, "status_ipsec_sad.php");
+$tab_array[] = array(gettext("SPD"), false, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 
 if (isset($mobile['pool']) && is_array($mobile['pool'])) {

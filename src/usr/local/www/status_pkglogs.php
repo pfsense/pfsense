@@ -1,12 +1,10 @@
 <?php
 /*
-	diag_ipsec_spd.php
+	status_pkglogs.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *  Copyright (c)  2005 Colin Smith
  *
  *  Redistribution and use in source and binary forms, with or without modification,
  *  are permitted provided that the following conditions are met:
@@ -55,89 +53,93 @@
  *  ====================================================================
  *
  */
+/*
+	<logging>
+		<logtab>arpwatch</logtab>
+		<grepfor>arpwatch</logtab>
+	</logging>
+
+		<invertgrep/>
+		<logfile>/var/log/arpwatch.log</logfile>
+
+*/
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/setkey
-	pfSense_MODULE: ipsec
+	pfSense_MODULE:	pkgs
 */
 
 ##|+PRIV
-##|*IDENT=page-status-ipsec-spd
-##|*NAME=Status: IPsec: SPD
-##|*DESCR=Allow access to the 'Status: IPsec: SPD' page.
-##|*MATCH=diag_ipsec_spd.php*
+##|*IDENT=page-status-packagelogs
+##|*NAME=Status: Package logs
+##|*DESCR=Allow access to the 'Status: Package logs' page.
+##|*MATCH=status_pkglogs.php*
 ##|-PRIV
 
-define(RIGHTARROW, '&#x25ba;');
-define(LEFTARROW,  '&#x25c0;');
-
 require("guiconfig.inc");
-require("ipsec.inc");
+require("pkg-utils.inc");
 
-$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
-$shortcut_section = "ipsec";
-include("head.inc");
-
-$spd = ipsec_dump_spd();
-
-$tab_array = array();
-$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-$tab_array[2] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-$tab_array[3] = array(gettext("SPD"), true, "diag_ipsec_spd.php");
-display_top_tabs($tab_array);
-
-if (count($spd)) {
-?>
-	<div class="table-responsive">
-		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?= gettext("Source"); ?></th>
-					<th><?= gettext("Destination"); ?></th>
-					<th><?= gettext("Direction"); ?></th>
-					<th><?= gettext("Protocol"); ?></th>
-					<th><?= gettext("Tunnel endpoints"); ?></th>
-				</tr>
-			</thead>
-
-			<tbody>
-<?php
-		foreach ($spd as $sp) {
-			if ($sp['dir'] == 'in')
-				$dirstr = LEFTARROW . ' Inbound';
-			else
-				$dirstr = RIGHTARROW . ' Outbound';
-?>
-				<tr>
-					<td>
-						<?=htmlspecialchars($sp['srcid'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($sp['dstid'])?>
-					</td>
-					<td>
-						<?=$dirstr ?>
-					</td>
-					<td>
-						<?=htmlspecialchars(strtoupper($sp['proto']))?>
-					</td>
-					<td>
-						<?=htmlspecialchars($sp['src'])?> -&gt; <?=htmlspecialchars($sp['dst'])?>
-					</td>
-				</tr>
-<?php
-		}
-?>
-			</tbody>
-		</table>
-	</div>
-<?php
-	 } // e-o-if (count($spd))
-else {
-	print_info_box(gettext('No IPsec security policies configured.'));
+if (!($nentries = $config['syslog']['nentries'])) {
+	$nentries = 50;
 }
 
-print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
+$i = 0;
+$pkgwithlogging = false;
+$apkg = $_GET['pkg'];
+if (!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
+	if ($config['installedpackages']['package'] <> "") {
+		foreach ($config['installedpackages']['package'] as $package) {
+			if (is_array($package['logging'])) {
+				$pkgwithlogging = true;
+				$apkg = $package['name'];
+				$apkgid = $i;
+				break;
+			}
+			$i++;
+		}
+	}
+} elseif ($apkg) {
+	$apkgid = get_package_id($apkg);
+	if ($apkgid != -1) {
+		$pkgwithlogging = true;
+		$i = $apkgid;
+	}
+}
 
-include("foot.inc");
+$pgtitle = array(gettext("Status"), gettext("Package logs"));
+include("head.inc");
+
+if ($pkgwithlogging == false) {
+	print_info_box(gettext("No packages with logging facilities are currently installed."));
+} else {
+	$tab_array = array();
+	foreach ($config['installedpackages']['package'] as $package) {
+		if (is_array($package['logging'])) {
+			if (!($logtab = $package['logging']['logtab']))
+				$logtab = $package['name'];
+
+			if ($apkg == $package['name']) {
+				$curtab = $logtab;
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "status_pkglogs.php?pkg=".$package['name']);
+			} else {
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "status_pkglogs.php?pkg=".$package['name']);
+			}
+		}
+	}
+	display_top_tabs($tab_array);
+?>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=printf(gettext('Last %1$s %2$s log entries'), $nentries, $curtab)?></h2></div>
+		<div>class="panel-body">
+			<pre>
+<?php
+			$package = $config['installedpackages']['package'][$apkgid];
+			dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+?>
+			</pre>
+		</div>
+	</div>
+
+<?php }
+
+include("foot.inc"); ?>

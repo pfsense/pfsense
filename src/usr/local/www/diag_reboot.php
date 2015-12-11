@@ -1,6 +1,6 @@
 <?php
 /*
-	reboot.php
+	diag_reboot.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -60,7 +60,7 @@
 ##|*IDENT=page-diagnostics-rebootsystem
 ##|*NAME=Diagnostics: Reboot System
 ##|*DESCR=Allow access to the 'Diagnostics: Reboot System' page.
-##|*MATCH=reboot.php*
+##|*MATCH=diag_reboot.php*
 ##|-PRIV
 
 // Set DEBUG to true to prevent the system_reboot() function from being called
@@ -137,7 +137,7 @@ events.push(function(){
 	<div class="panel-body">
 		<div class="content">
 			<p>Click "Reboot" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)</p>
-			<form action="reboot.php" method="post">
+			<form action="diag_reboot.php" method="post">
 				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Reboot">
 				<a href="/" class="btn btn-default">No</a>
 			</form>

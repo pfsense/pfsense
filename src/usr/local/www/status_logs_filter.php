@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_logs_filter.php
+	status_logs_filter.php
 */
 
 /* ====================================================================
@@ -65,7 +65,7 @@
 ##|*IDENT=page-diagnostics-logs-firewall
 ##|*NAME=Status: Logs: Firewall
 ##|*DESCR=Allow access to the 'Status: Logs: Firewall' page.
-##|*MATCH=diag_logs_filter.php*
+##|*MATCH=status_logs_filter.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -181,23 +181,23 @@ function build_if_list() {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), true, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-$tab_array[] = array(gettext("Normal View"), true, "/diag_logs_filter.php");
-$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
-$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
+$tab_array[] = array(gettext("Normal View"), true, "/status_logs_filter.php");
+$tab_array[] = array(gettext("Dynamic View"), false, "/status_logs_filter_dynamic.php");
+$tab_array[] = array(gettext("Summary View"), false, "/status_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 $Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
@@ -371,7 +371,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
 ?>
 
-<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+<form id="clearform" name="clearform" action="status_logs_filter.php" method="post" style="margin-top: 14px;">
 	<input id="submit" name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
 </form>
 
@@ -424,7 +424,7 @@ if (!isset($config['syslog']['rawfilter'])) {
 			$icon_act = "fa-check icon-success";
 		}
 ?>
-					<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+					<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
 		if ($filterent['count'])
 			echo $filterent['count'];
@@ -559,7 +559,7 @@ function outputrule(req) {
 }
 
 function resolve_with_ajax(ip_to_resolve) {
-	var url = "/diag_logs_filter.php";
+	var url = "/status_logs_filter.php";
 
 	$.ajax(
 		url,

@@ -114,7 +114,7 @@ $carp_enabled = get_carp_status();
 		}
 	} else {
 ?>
-		<tr><td>No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
+		<tr><td>No CARP Interfaces Defined. Click <a href="status_carp.php">here</a> to configure CARP.</td></tr>
 <?php
 	}
 ?>

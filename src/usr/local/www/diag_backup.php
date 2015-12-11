@@ -617,7 +617,7 @@ if ($savemsg)
 if (is_subsystem_dirty('restore')):
 ?>
 	<br/>
-	<form action="reboot.php" method="post">
+	<form action="diag_reboot.php" method="post">
 		<input name="Submit" type="hidden" value="Yes" />
 		<?=print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?>
 		<br />

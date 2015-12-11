@@ -1,6 +1,6 @@
-<?php
+status_logs_vpn.php<?php
 /*
-	diag_logs_settings.php
+	status_logs_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -64,7 +64,7 @@
 ##|*IDENT=page-diagnostics-logs-settings
 ##|*NAME=Status: Logs: Settings
 ##|*DESCR=Allow access to the 'Status: Logs: Settings' page.
-##|*MATCH=diag_logs_settings.php*
+##|*MATCH=status_logs_settings.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -230,17 +230,17 @@ else if ($savemsg)
 	print_info_box($savemsg);
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
 $form = new Form(new Form_Button(

@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_logs_filter_dynamic.php
+	status_logs_filter_dynamic.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -64,7 +64,7 @@
 ##|*IDENT=page-diagnostics-logs-firewall-dynamic
 ##|*NAME=Status: System Logs: Firewall (Dynamic View)
 ##|*DESCR=Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page
-##|*MATCH=diag_logs_filter_dynamic.php*
+##|*MATCH=status_logs_filter_dynamic.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -185,7 +185,7 @@ function fetch_new_rules() {
 	if(isBusy)
 		return;
 	isBusy = true;
-	getURL('diag_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
+	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
 }
 
 function fetch_new_rules_callback(callback_data) {
@@ -325,23 +325,23 @@ function toggleListDescriptions(){
 
 <?php
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), true, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
-$tab_array[] = array(gettext("Dynamic View"), true, "/diag_logs_filter_dynamic.php");
-$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
+$tab_array[] = array(gettext("Normal View"), false, "/status_logs_filter.php");
+$tab_array[] = array(gettext("Dynamic View"), true, "/status_logs_filter_dynamic.php");
+$tab_array[] = array(gettext("Summary View"), false, "/status_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 
@@ -399,7 +399,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 			$icon_act = "fa-check icon-success";
 		}
 ?>
-							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>

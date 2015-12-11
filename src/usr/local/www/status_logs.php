@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_logs.php
+	status_logs.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -64,7 +64,7 @@
 ##|*IDENT=page-diagnostics-logs-system
 ##|*NAME=Status: Logs: System
 ##|*DESCR=Allow access to the 'Status: System Logs: General' page.
-##|*MATCH=diag_logs.php
+##|*MATCH=status_logs.php
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -286,26 +286,26 @@ if (!$input_errors && $savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), ($logfile == 'system'), "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "diag_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("System"), ($logfile == 'system'), "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "status_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
 if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless')))	 {
-	$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/diag_logs.php");
-	$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/diag_logs.php?logfile=gateways");
-	$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/diag_logs.php?logfile=routing");
-	$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/diag_logs.php?logfile=resolver");
-	$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/diag_logs.php?logfile=wireless");
+	$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/status_logs.php");
+	$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/status_logs.php?logfile=gateways");
+	$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/status_logs.php?logfile=routing");
+	$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
+	$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/status_logs.php?logfile=wireless");
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 

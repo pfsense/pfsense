@@ -89,7 +89,7 @@ if($_GET['wakeall'] != "") {
 		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
 			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'), $mac, $description, ".<br />");
 		} else {
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'), '<a href="/diag_logs.php">', '</a>', $description, $mac, ".<br />");
+			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'), '<a href="/status_logs.php">', '</a>', $description, $mac, ".<br />");
 		}
 	}
 }
@@ -128,7 +128,7 @@ if ($_POST || $_GET['mac']) {
 			if (!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac))) {
 				$savemsg .= sprintf(gettext("Sent magic packet to %s."), $mac);
 			} else {
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'), '<a href="/diag_logs.php">', '</a>', $mac, ".<br />");
+				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'), '<a href="/status_logs.php">', '</a>', $mac, ".<br />");
 			}
 		}
 	}

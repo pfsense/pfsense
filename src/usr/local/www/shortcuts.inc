@@ -182,70 +182,70 @@ if (is_dir("/usr/local/pkg/shortcuts")) {
 
 $shortcuts['relayd'] = array();
 $shortcuts['relayd']['main'] = "load_balancer_pool.php";
-$shortcuts['relayd']['log'] = "diag_logs.php?logfile=relayd";
+$shortcuts['relayd']['log'] = "status_logs.php?logfile=relayd";
 $shortcuts['relayd']['status'] = "status_lb_pool.php";
 $shortcuts['relayd']['service'] = "relayd";
 
 $shortcuts['relayd-virtualservers'] = array();
 $shortcuts['relayd-virtualservers']['main'] = "load_balancer_virtual_server.php";
-$shortcuts['relayd-virtualservers']['log'] = "diag_logs.php?logfile=relayd";
+$shortcuts['relayd-virtualservers']['log'] = "status_logs.php?logfile=relayd";
 $shortcuts['relayd-virtualservers']['status'] = "status_lb_vs.php";
 $shortcuts['relayd-virtualservers']['service'] = "relayd";
 
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['main'] = "services_captiveportal_zones.php";
-$shortcuts['captiveportal']['log'] = "diag_logs.php?logfile=portalauth";
+$shortcuts['captiveportal']['log'] = "status_logs.php?logfile=portalauth";
 $shortcuts['captiveportal']['status'] = "status_captiveportal.php";
 $shortcuts['captiveportal']['service'] = "captiveportal";
 
 $shortcuts['captiveportal-vouchers'] = array();
-$shortcuts['captiveportal-vouchers']['log'] = "diag_logs.php?logfile=auth";
+$shortcuts['captiveportal-vouchers']['log'] = "status_logs.php?logfile=auth";
 $shortcuts['captiveportal-vouchers']['status'] = "status_captiveportal_vouchers.php";
 $shortcuts['captiveportal-vouchers']['service'] = "captiveportal";
 
 $shortcuts['dhcp'] = array();
 $shortcuts['dhcp']['main'] = "services_dhcp.php";
-$shortcuts['dhcp']['log'] = "diag_logs.php?logfile=dhcpd";
+$shortcuts['dhcp']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp']['status'] = "status_dhcp_leases.php";
 $shortcuts['dhcp']['service'] = "dhcpd";
 
 $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
-$shortcuts['dhcp6']['log'] = "diag_logs.php?logfile=dhcp";
+$shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcp";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 
 
 $shortcuts['ipsec'] = array();
 $shortcuts['ipsec']['main'] = "vpn_ipsec.php";
-$shortcuts['ipsec']['log'] = "diag_logs.php?logfile=ipsec";
-$shortcuts['ipsec']['status'] = "diag_ipsec.php";
+$shortcuts['ipsec']['log'] = "status_logs.php?logfile=ipsec";
+$shortcuts['ipsec']['status'] = "status_ipsec.php";
 $shortcuts['ipsec']['service'] = "ipsec";
 
 $shortcuts['openvpn'] = array();
 $shortcuts['openvpn']['main'] = "vpn_openvpn_server.php";
-$shortcuts['openvpn']['log'] = "diag_logs.php?logfile=openvpn";
+$shortcuts['openvpn']['log'] = "status_logs.php?logfile=openvpn";
 $shortcuts['openvpn']['status'] = "status_openvpn.php";
 $shortcuts['openvpn']['service'] = "openvpn";
 
 $shortcuts['firewall'] = array();
 $shortcuts['firewall']['main'] = "firewall_rules.php";
-$shortcuts['firewall']['log'] = "diag_logs_filter.php";
+$shortcuts['firewall']['log'] = "status_logs_filter.php";
 $shortcuts['firewall']['status'] = "status_filter_reload.php";
 
 $shortcuts['routing'] = array();
 $shortcuts['routing']['main'] = "system_routes.php";
-$shortcuts['routing']['log'] = "diag_logs.php?logfile=routing";
+$shortcuts['routing']['log'] = "status_logs.php?logfile=routing";
 $shortcuts['routing']['status'] = "diag_routes.php";
 
 $shortcuts['gateways'] = array();
 $shortcuts['gateways']['main'] = "system_gateways.php";
-$shortcuts['gateways']['log'] = "diag_logs.php?logfile=gateways";
+$shortcuts['gateways']['log'] = "status_logs.php?logfile=gateways";
 $shortcuts['gateways']['status'] = "status_gateways.php";
 $shortcuts['gateways']['service'] = "dpinger";
 
 $shortcuts['gateway-groups'] = array();
 $shortcuts['gateway-groups']['main'] = "system_gateway_groups.php";
-$shortcuts['gateway-groups']['log'] = "diag_logs.php?logfile=gateways";
+$shortcuts['gateway-groups']['log'] = "status_logs.php?logfile=gateways";
 $shortcuts['gateway-groups']['status'] = "status_gateway_groups.php";
 
 $shortcuts['interfaces'] = array();
@@ -262,36 +262,36 @@ $shortcuts['trafficshaper-limiters']['status'] = "diag_limiter_info.php";
 
 $shortcuts['forwarder'] = array();
 $shortcuts['forwarder']['main'] = "services_dnsmasq.php";
-$shortcuts['forwarder']['log'] = "diag_logs.php?logfile=resolver";
+$shortcuts['forwarder']['log'] = "status_logs.php?logfile=resolver";
 $shortcuts['forwarder']['service'] = "dnsmasq";
 
 $shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_unbound.php";
-$shortcuts['resolver']['log'] = "diag_logs.php?logfile=resolver";
+$shortcuts['resolver']['log'] = "status_logs.php?logfile=resolver";
 $shortcuts['resolver']['service'] = "unbound";
 
 $shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
-$shortcuts['wireless']['log'] = "diag_logs.php?logfile=wireless";
+$shortcuts['wireless']['log'] = "status_logs.php?logfile=wireless";
 $shortcuts['wireless']['status'] = "status_wireless.php";
 
 $shortcuts['ntp'] = array();
 $shortcuts['ntp']['main'] = "services_ntpd.php";
-$shortcuts['ntp']['log'] = "diag_logs.php?logfile=ntpd";
+$shortcuts['ntp']['log'] = "status_logs.php?logfile=ntpd";
 $shortcuts['ntp']['status'] = "status_ntpd.php";
 $shortcuts['ntp']['service'] = "ntpd";
 
 $shortcuts['pptps'] = array();
 $shortcuts['pptps']['main'] = "vpn_pptp.php";
-$shortcuts['pptps']['log'] = "diag_logs_vpn.php";
+$shortcuts['pptps']['log'] = "status_logs_vpn.php";
 
 $shortcuts['pppoes'] = array();
-$shortcuts['pppoes']['main'] = "vpn_pppoe.php";
-$shortcuts['pppoes']['log'] = "diag_logs_vpn.php?vpntype=poes";
+$shortcuts['pppoes']['main'] = "services_pppoe.php";
+$shortcuts['pppoes']['log'] = "status_logs_vpn.php?vpntype=poes";
 
 $shortcuts['l2tps'] = array();
 $shortcuts['l2tps']['main'] = "vpn_l2tp.php";
-$shortcuts['l2tps']['log'] = "diag_logs_vpn.php?vpntype=l2tp";
+$shortcuts['l2tps']['log'] = "status_logs_vpn.php?vpntype=l2tp";
 
 $shortcuts['carp'] = array();
 $shortcuts['carp']['main'] = "system_hasync.php";

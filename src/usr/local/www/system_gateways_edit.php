@@ -354,14 +354,14 @@ if ($_POST) {
 		}
 	} else if ($_POST['latencylow']) {
 		if (is_numeric($_POST['latencylow']) &&
-		    ($_POST['latencylow'] > $dpinger_default['latencyhigh'])) {
+		    ($_POST['latencylow'] >= $dpinger_default['latencyhigh'])) {
 			$input_errors[] = gettext(sprintf(
 			    "The low latency threshold needs to be less than the default high latency threshold (%d)",
 			    $dpinger_default['latencyhigh']));
 		}
 	} else if ($_POST['latencyhigh']) {
 		if (is_numeric($_POST['latencyhigh']) &&
-		    ($_POST['latencyhigh'] < $dpinger_default['latencylow'])) {
+		    ($_POST['latencyhigh'] <= $dpinger_default['latencylow'])) {
 			$input_errors[] = gettext(sprintf(
 			    "The high latency threshold needs to be higher than the default low latency threshold (%d)",
 			    $dpinger_default['latencylow']));
@@ -371,20 +371,20 @@ if ($_POST) {
 	if (($_POST['losslow']) && ($_POST['losshigh'])) {
 		if ((is_numeric($_POST['losslow'])) &&
 		    (is_numeric($_POST['losshigh'])) &&
-		    ($_POST['losslow'] > $_POST['losshigh'])) {
+		    ($_POST['losslow'] >= $_POST['losshigh'])) {
 			$input_errors[] = gettext(
 			    "The high Packet Loss threshold needs to be higher than the low Packet Loss threshold");
 		}
 	} else if ($_POST['losslow']) {
 		if (is_numeric($_POST['losslow']) &&
-		    ($_POST['losslow'] > $dpinger_default['losshigh'])) {
+		    ($_POST['losslow'] >= $dpinger_default['losshigh'])) {
 			$input_errors[] = gettext(sprintf(
 			    "The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)",
 			    $dpinger_default['losshigh']));
 		}
 	} else if ($_POST['losshigh']) {
 		if (is_numeric($_POST['losshigh']) &&
-		    ($_POST['losshigh'] < $dpinger_default['losslow'])) {
+		    ($_POST['losshigh'] <= $dpinger_default['losslow'])) {
 			$input_errors[] = gettext(sprintf(
 			    "The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)",
 			    $dpinger_default['losslow']));
@@ -407,25 +407,27 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['interval']) && ($_POST['loss_interval'])) {
-		if ((is_numeric($_POST['interval'])) &&
+	// If the loss interval is less than latencyhigh, then high latency could never be recorded
+	// because those high latency packets would be considered as lost. So do not allow that.
+	if (($_POST['latencyhigh']) && ($_POST['loss_interval'])) {
+		if ((is_numeric($_POST['latencyhigh'])) &&
 		    (is_numeric($_POST['loss_interval'])) &&
-		    ($_POST['interval'] > $_POST['loss_interval'])) {
-			$input_errors[] = gettext("The probe interval needs to be less than the loss interval setting.");
+		    ($_POST['latencyhigh'] > $_POST['loss_interval'])) {
+			$input_errors[] = gettext("The loss interval needs to be greater than or equal to the high latency threshold.");
 		}
-	} else if ($_POST['interval']) {
-		if (is_numeric($_POST['interval']) &&
-		    ($_POST['interval'] > $dpinger_default['loss_interval'])) {
+	} else if ($_POST['latencyhigh']) {
+		if (is_numeric($_POST['latencyhigh']) &&
+		    ($_POST['latencyhigh'] > $dpinger_default['loss_interval'])) {
 			$input_errors[] = gettext(sprintf(
-			    "The probe interval needs to be less than the default loss interval setting (%d)",
+			    "The high latency threshold needs to be less than or equal to the default loss interval (%d)",
 			    $dpinger_default['loss_interval']));
 		}
 	} else if ($_POST['loss_interval']) {
 		if (is_numeric($_POST['loss_interval']) &&
-		    ($_POST['loss_interval'] < $dpinger_default['interval'])) {
+		    ($_POST['loss_interval'] < $dpinger_default['latencyhigh'])) {
 			$input_errors[] = gettext(sprintf(
-			    "The loss interval setting needs to be higher than the default probe interval (%d)",
-			    $dpinger_default['interval']));
+			    "The loss interval needs to be greater than or equal to the default high latency threshold (%d)",
+			    $dpinger_default['latencyhigh']));
 		}
 	}
 
@@ -437,11 +439,59 @@ if ($_POST) {
 		}
 	}
 
+	// It would be a weird averaging algorithm if we allowed averaging over a time that covered less than 2 pings.
+	// So make sure that the averaging time period is at least 2 times the probe interval.
+	if (($_POST['interval']) && ($_POST['time_period'])) {
+		if ((is_numeric($_POST['interval'])) &&
+		    (is_numeric($_POST['time_period'])) &&
+		    (($_POST['interval'] * 2) > $_POST['time_period'])) {
+			$input_errors[] = gettext("The time period over which results are averaged needs to be at least twice the probe interval.");
+		}
+	} else if ($_POST['interval']) {
+		if (is_numeric($_POST['interval']) &&
+		    (($_POST['interval'] * 2) > $dpinger_default['time_period'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The probe interval needs to be half or less than the default time period over which results are averaged (%d)",
+			    $dpinger_default['time_period']));
+		}
+	} else if ($_POST['time_period']) {
+		if (is_numeric($_POST['time_period']) &&
+		    ($_POST['time_period'] < ($dpinger_default['interval'] * 2))) {
+			$input_errors[] = gettext(sprintf(
+			    "The time period over which results are averaged needs to be at least twice the default probe interval (%d)",
+			    $dpinger_default['interval']));
+		}
+	}
+
 	if ($_POST['alert_interval']) {
 		if (!is_numeric($_POST['alert_interval'])) {
 			$input_errors[] = gettext("The alert interval needs to be a numeric value.");
 		} else if ($_POST['alert_interval'] < 1) {
 			$input_errors[] = gettext("The alert interval needs to be positive.");
+		}
+	}
+
+	// There is no point recalculating the average latency and loss more often than the probe interval.
+	// So the alert interval needs to be >= probe interval.
+	if (($_POST['interval']) && ($_POST['alert_interval'])) {
+		if ((is_numeric($_POST['interval'])) &&
+		    (is_numeric($_POST['alert_interval'])) &&
+		    ($_POST['interval'] > $_POST['alert_interval'])) {
+			$input_errors[] = gettext("The alert interval needs to be greater than or equal to the probe interval.");
+		}
+	} else if ($_POST['interval']) {
+		if (is_numeric($_POST['interval']) &&
+		    ($_POST['interval'] > $dpinger_default['alert_interval'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The probe interval needs to be less than or equal to the default alert interval (%d)",
+			    $dpinger_default['alert_interval']));
+		}
+	} else if ($_POST['alert_interval']) {
+		if (is_numeric($_POST['alert_interval']) &&
+		    ($_POST['alert_interval'] < $dpinger_default['interval'])) {
+			$input_errors[] = gettext(sprintf(
+			    "The alert interval needs to be greater than or equal to the default probe interval (%d)",
+			    $dpinger_default['interval']));
 		}
 	}
 
@@ -706,10 +756,14 @@ $section->addInput(new Form_Input(
 
 // If any of the advanced options are non-default, we will not show the "Advanced" button
 // and will display the advanced section
-if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) ||
-    !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-    (isset($pconfig['interval']) && ($pconfig['interval'] > $dpinger_default['interval'])) ||
-    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])))) {
+if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
+    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) ||
+    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
+    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
+    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
+    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
+    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
+    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
@@ -829,23 +883,27 @@ $group->add(new Form_Input(
 		'placeholder' => $dpinger_default['alert_interval']
 	]
 ));
-$group->setHelp('Time interval in milliseconds between alerts. Default is %d.',
+$group->setHelp('Time interval in milliseconds between checking for an alert condition. Default is %d.',
 	[$dpinger_default['alert_interval']]);
 $section->add($group);
 
 $section->addInput(new Form_StaticText(
 	'Additional information',
 	'<span class="help-block">'.
-	gettext('The probe interval must be less than the down time, otherwise the '.
-		'gateway will seem to go down then come up again at the next probe.').
-	'<br/><br/>'.
-	gettext('The down time defines the length of time before the gateway is marked '.
-		'as down, but the accuracy is controlled by the probe interval. For example, '.
-		'if your down time is 40 seconds but on a 30 second probe interval, only one '.
-		'probe would have to fail before the gateway is marked down at the 40 second '.
-		'mark. By default, the gateway is considered down after 10 seconds, and the '.
-		'probe interval is 1 second, so 10 probes would have to fail before the gateway '.
-		'is marked down.').
+	gettext('The time period over which results are averaged must be at least twice ' .
+		'the probe interval, otherwise the averaging would only "average" over a single probe.') .
+	'<br/><br/>' .
+	gettext('The alert interval must be greater than or equal to the probe interval. ' .
+		'There is no point checking for alerts more often than probes are done.') .
+	'<br/><br/>' .
+	gettext('The loss interval must be greater than or equal to the high latency threshold. ' .
+		'Otherwise high latency packets would always be considered as lost.') .
+	'<br/><br/>' .
+	gettext('Choose a combination of parameters to suit your needs. ' .
+		'For example, a short probe interval will give more probes and (hopefully) ' .
+		'a statistically more stable average. A higher loss interval will allow the ' .
+		'system to wait longer for probes on high-latency links, and thus allow a ' .
+		'better estimate of high-latency versus loss.').
 	'</span>'
 ));
 

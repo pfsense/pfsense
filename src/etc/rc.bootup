@@ -158,6 +158,10 @@ echo "done.\n";
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 
+if (file_exists("/conf/trigger_initial_wizard")) {
+	check_for_alternate_interfaces();
+}
+
 /*
  *	Determine if we need to throw a interface exception
  *	and ask the user to reassign interfaces.  This will

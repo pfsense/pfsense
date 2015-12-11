@@ -236,11 +236,6 @@ function parse_unknown_log_line($line) {
 
 	list($all, $flent['time'], $flent['message']) = $log_split;
 
-	if($g['debug']) {
-		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
-	return "";
-	}
-
 	/* If there is time, and message, fields, then the line should be usable/good */
 	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
@@ -275,11 +270,6 @@ function parse_system_log_line($line) {
 	}
 
 	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
-
-	if($g['debug']) {
-		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
-	return "";
-	}
 
 	/* If there is time, process, and message, fields, then the line should be usable/good */
 	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {

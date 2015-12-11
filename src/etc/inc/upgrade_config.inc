@@ -4183,11 +4183,11 @@ function upgrade_130_to_131() {
 		if (isset($gw['avg_loss_samples_calculated'])) {
 			unset($gw['avg_loss_samples_calculated']);
 		}
-		if (isset($gw['avg_loss_delays_samples'])) {
-			unset($gw['avg_loss_delays_samples']);
+		if (isset($gw['avg_loss_delay_samples'])) {
+			unset($gw['avg_loss_delay_samples']);
 		}
-		if (isset($gw['avg_loss_delays_samples_calculated'])) {
-			unset($gw['avg_loss_delays_samples_calculated']);
+		if (isset($gw['avg_loss_delay_samples_calculated'])) {
+			unset($gw['avg_loss_delay_samples_calculated']);
 		}
 	}
 }

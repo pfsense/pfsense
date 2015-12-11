@@ -974,7 +974,7 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		delay="U"
 	else
 		# Convert delay to millisecond
-		delay=\$(echo "scale=3; \$delay / 1000")
+		delay=\$(echo "scale=3; \$delay / 1000" | /usr/bin/bc)
 	fi
 
 	gw=\$(echo \$sock | sed 's,^.*dpinger_,,; s,\.sock,,')

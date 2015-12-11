@@ -92,7 +92,7 @@ include("head.inc");
                                 <?php 	if ($gateways_status[$gname]) 
 						echo $gateways_status[$gname]['monitorip'];
 					else
-						echo $gateway['monitorip'];
+						echo $gateway['monitor'];
 				?>
                   </td>
 		<td class="listr" align="center">

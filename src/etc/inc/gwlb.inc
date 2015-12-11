@@ -326,14 +326,27 @@ function get_dpinger_status($gwname) {
 	} else if ($r['alarm_on'] == 1) {
 		$r['status'] = "down";
 	} else if (isset($gw)) {
+		$dpinger_defaults = return_dpinger_defaults();
 		if (isset($gw['latencylow']) &&
-		    is_numeric($gw['latencylow']) &&
-		    ($r['latency_avg'] > $gw['latencylow'])) {
+		    is_numeric($gw['latencylow'])) {
+			$latencylow = $gw['latencylow'];
+		} else {
+			$latencylow = $dpinger_defaults['latencylow'];
+		}
+
+		if ($r['latency_avg'] > $latencylow) {
 			$r['status'] = "delay";
-		} else if (isset($gw['losslow']) &&
-		    is_numeric($gw['losslow']) &&
-		    ($r['loss'] > $gw['losslow'])) {
-			$r['status'] = "loss";
+		} else {
+			if (isset($gw['losslow']) &&
+			    is_numeric($gw['losslow'])) {
+				$losslow = $gw['losslow'];
+			} else {
+				$losslow = $dpinger_defaults['losslow'];
+			}
+
+			if ($r['loss'] > $losslow) {
+				$r['status'] = "loss";
+			}
 		}
 	}
 

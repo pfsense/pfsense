@@ -487,14 +487,14 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span> Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Top Navigation',
 	$pconfig['webguifixedmenu'],
 	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
-))->setHelp("<span class=\"badge bg-danger\" title=\"This feature is in BETA\">BETA</span>");
+))->setHelp("This is intended for large screens only.");
 
 $section->addInput(new Form_Input(
 	'dashboardcolumns',

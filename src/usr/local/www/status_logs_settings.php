@@ -1,4 +1,4 @@
-status_logs_vpn.php<?php
+<?php
 /*
 	status_logs_settings.php
 */

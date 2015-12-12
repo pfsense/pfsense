@@ -290,8 +290,8 @@ if ($save_settings) {
 				($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
 				($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 
-				$retval |= filter_configure();
 				require_once("filter.inc");
+				$retval |= filter_configure();
 				filter_pflog_start(true);
 			}
 		}

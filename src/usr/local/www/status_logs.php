@@ -466,7 +466,7 @@ if (!$rawfilter) {
 <?php
 	} // e-o-foreach
 ?>
-			<tbody>
+			</tbody>
 		</table>
 <?php
 	if (count($filterlog) == 0)

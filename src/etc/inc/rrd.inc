@@ -50,7 +50,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 function restore_rrd() {
 	global $g, $config;
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
 	$rrdrestore = "";
@@ -211,7 +211,7 @@ function enable_rrd_graphing() {
 		echo gettext("Generating RRD graphs...");
 	}
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
 
 	$traffic = "-traffic.rrd";
@@ -278,7 +278,7 @@ function enable_rrd_graphing() {
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 	$ntpdvalid = $rrdntpdinterval * 2;
 	$dhcpdvalid = $rrddhcpdinterval * 2;
-	
+
 	/* Assume 2*10GigE for now */
 	$downstream = 2500000000;
 	$upstream = 2500000000;
@@ -323,11 +323,11 @@ function enable_rrd_graphing() {
 		}
 
 		if (platform_booting()) {
-			if (!is_dir("{$g['vardb_path']}/rrd")) {
-				mkdir("{$g['vardb_path']}/rrd", 0775);
+			if (!is_dir($rrddbpath)) {
+				mkdir($rrddbpath, 0775);
 			}
 
-			@chown("{$g['vardb_path']}/rrd", "nobody");
+			@chown($rrddbpath, "nobody");
 		}
 
 		/* process all real and pseudo interfaces */
@@ -915,11 +915,11 @@ function enable_rrd_graphing() {
 
 		}
 		/* End NTP statistics */
-		
+
 		/* Start dhcpd statistics */
 		if (is_array($config['dhcpd'])) {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {	
+				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {
 					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
 						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
 						$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
@@ -950,11 +950,51 @@ function enable_rrd_graphing() {
 					$rrdupdatesh .= "# polling leases for dhcp \n";
 					$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
 					$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
-					
+
 				}
 			}
 		}
 		/* END dhcpd statistics */
+
+		/* Start gateway quality */
+		$rrdupdatesh .= <<<EOD
+
+# Gateway quality graphs
+for sock in {$g['varrun_path']}/dpinger_*.sock; do
+	if [ ! -S "\$sock" ]; then
+		continue
+	fi
+	loss=\$(/usr/bin/nc -U \$sock | awk '{ print \$3 }')
+	delay=\$(/usr/bin/nc -U \$sock | awk '{ print \$1 }')
+
+	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
+		loss="U"
+	fi
+	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
+		delay="U"
+	else
+		# Convert delay to millisecond
+		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
+	fi
+
+	gw=\$(echo \$sock | sed 's,^.*dpinger_,,; s,\.sock,,')
+	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
+		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
+		DS:loss:GAUGE:120:0:100 \\
+		DS:delay:GAUGE:120:0:100000 \\
+		RRA:AVERAGE:0.5:1:1200 \\
+		RRA:AVERAGE:0.5:5:720 \\
+		RRA:AVERAGE:0.5:60:1860 \\
+		RRA:AVERAGE:0.5:1440:2284
+
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:U:U
+	fi
+
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:\$loss:\$delay
+done
+
+EOD;
+		/* End gateway quality */
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
@@ -987,41 +1027,6 @@ function enable_rrd_graphing() {
 		echo gettext("done.") . "\n";
 	}
 
-}
-
-# Create gateway quality RRD with settings suitable for pfSense graph set.
-function create_gateway_quality_rrd($rrd_file) {
-	global $g;
-
-	$rrdinterval = 60;
-	$valid = $rrdinterval * 2;
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	/* GATEWAY QUALITY, set up the rrd file */
-	if (!file_exists("$rrd_file")) {
-		$rrdcreate = "$rrdtool create $rrd_file --step $rrdinterval ";
-		$rrdcreate .= "DS:loss:GAUGE:$valid:0:100 ";
-		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
-
-		create_new_rrd($rrdcreate);
-		unset($rrdcreate);
-	}
-
-	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-	if (platform_booting()) {
-		if (!is_dir("{$g['vardb_path']}/rrd")) {
-			mkdir("{$g['vardb_path']}/rrd", 0775);
-		}
-
-		@chown("{$g['vardb_path']}/rrd", "nobody");
-
-		mwexec("$rrdtool update $rrd_file N:U:U");
-	}
-	unset($rrdtool, $rrdinterval, $valid, $rrd_file);
 }
 
 function kill_traffic_collector() {

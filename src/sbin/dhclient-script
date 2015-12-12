@@ -110,7 +110,7 @@ add_new_address() {
 	$LOGGER "New Routers ($interface): $new_routers"
 
 
-	# This is necessary otherwise apinger will try to ping all 1s address
+	# This is necessary otherwise dpinger will try to ping all 1s address
 	if [ -n "$new_routers" ] && [ "$new_routers" != "255.255.255.255" ]; then
 		echo $new_routers > /tmp/${interface}_router
 	fi

@@ -1588,7 +1588,7 @@ pkg_bootstrap() {
 }
 
 # This routine assists with installing various
-# freebsd ports files into the pfsenese-fs staging
+# freebsd ports files into the pfsense-fs staging
 # area.
 install_pkg_install_ports() {
 	local MAIN_PKG="${1}"
@@ -1751,7 +1751,7 @@ poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs="i386.i386"
 
-	# IF host is amd64, we'll create both repos, and if possible armv6
+	# If host is amd64, we'll create both repos, and if possible armv6
 	if [ "${_arch}" = "amd64" ]; then
 		_archs="amd64.amd64 ${_archs}"
 
@@ -2032,7 +2032,7 @@ poudriere_update_ports() {
 	if ! poudriere ports -l | grep -q -E "^${POUDRIERE_PORTS_NAME}[[:blank:]]"; then
 		poudriere_create_ports_tree
 	else
-		echo -n ">>> Reseting local changes on ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
+		echo -n ">>> Resetting local changes on ports tree ${POUDRIERE_PORTS_NAME}... " | tee -a ${LOGFILE}
 		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" reset --hard >/dev/null 2>&1
 		script -aq ${LOGFILE} git -C "/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}" clean -fd >/dev/null 2>&1
 		echo "Done!" | tee -a ${LOGFILE}
@@ -2099,7 +2099,7 @@ poudriere_bulk() {
 			print_error_pfS
 		fi
 
-		# ./ is intentional, it's a rsync trick to make it chdir to directory before send it
+		# ./ is intentional, it's an rsync trick to make it chdir to directory before sending it
 		pkg_repo_rsync "/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
 }
@@ -2236,7 +2236,7 @@ snapshots_scp_files() {
 	fi
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
-	# Add ./ before last directory, it's rsync trick to make it chdir to parent directory before send
+	# Add ./ before last directory, it's an rsync trick to make it chdir to parent directory before sending
 	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
 	snapshots_update_status ">>> Finished copying core pkg repo"
 

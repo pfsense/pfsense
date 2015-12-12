@@ -572,6 +572,7 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 		touch($logfile);
 	} else {
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
+		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
 		if (isset($config['system']['usefifolog'])) {
 			exec("/usr/sbin/fifolog_create -s {$log_size} " . escapeshellarg($logfile));
 		} else {
@@ -602,6 +603,9 @@ function clear_all_log_files() {
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor))
@@ -651,6 +655,9 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {
@@ -702,6 +709,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
+	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {

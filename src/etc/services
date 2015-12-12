@@ -134,7 +134,7 @@ bootpc		 68/tcp	   dhcpc	#Bootstrap Protocol Client
 bootpc		 68/udp	   dhcpc	#Bootstrap Protocol Client
 tftp		 69/tcp	   #Trivial File Transfer
 tftp		 69/udp	   #Trivial File Transfer
-tftp-proxy	 6969/udp 
+tftp-proxy	 6969/udp
 gopher		 70/tcp
 gopher		 70/udp
 netrjs-1	 71/tcp	   #Remote Job Service

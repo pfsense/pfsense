@@ -130,7 +130,7 @@ function display_error_form($http_code, $desc) {
 	$cssfile = "/bootstrap/css/pfSense.css";
 
 	if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
 }
@@ -139,6 +139,7 @@ function display_error_form($http_code, $desc) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Error: not allowed"); ?></title>
 </head>
@@ -233,7 +234,7 @@ if ($local_ip == false) {
 $cssfile = "/bootstrap/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if(file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
 	}
 }
@@ -242,6 +243,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
 	<title><?=gettext("Login"); ?></title>
 	<script type="text/javascript">

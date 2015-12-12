@@ -1310,7 +1310,12 @@ class priq_queue {
 
 	function build_form() {
 
-		$sform = new Form();
+		$sform = new Form(new Form_Button(
+			'Submit',
+			'Save'
+		));
+
+		$sform->setAction("firewall_shaper.php");
 
 		$section = new Form_Section("");
 
@@ -1323,11 +1328,18 @@ class priq_queue {
 		));
 
 		$section->addInput(new Form_Input(
-			'name',
+			'newname',
 			'Name',
 			'text',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
+
+		$section->addInput(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		$section->addInput(new Form_Input(
 			'priority',
@@ -1351,7 +1363,8 @@ class priq_queue {
 				'default',
 				null,
 				null,
-				$this->GetDefault()
+				$this->GetDefault(),
+				'default'
 			))->setHelp('Default Queue');
 		}
 
@@ -1394,14 +1407,21 @@ class priq_queue {
 			$this->GetDescription()
 		));
 
-		$section->addInput(new Form_Input(
+		$sform->add($section);
+
+		$sform->addGlobal(new Form_Input(
 			'interface',
 			null,
 			'hidden',
 			$this->GetInterface()
 		));
 
-		$sform->add($section);
+		$sform->addGlobal(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		return($sform);
 	}
@@ -3741,8 +3761,9 @@ EOD;
 		$form .= "<tbody>";
 
 		// If there are no bandwidths defined, make a blank one for convenience
-		if(empty($bandwidth))
+		if (empty($bandwidth)) {
 			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
+		}
 
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
@@ -3810,6 +3831,7 @@ EOD;
 
 
 		$sform = new Form();
+		$sform->setAction("firewall_shaper.php");
 
 		$section = new Form_Section('Limiters');
 
@@ -4132,7 +4154,7 @@ class dnqueue_class extends dummynet_class {
 
 
 		$sform = new Form();
-
+		$sform->setAction("firewall_shaper.php");
 		$section = new Form_Section('Limiters');
 
 		$section->addInput(new Form_Checkbox(
@@ -4169,11 +4191,12 @@ class dnqueue_class extends dummynet_class {
 		$bandwidth = $this->GetBandwidth();
 
 		// Delete a row
-		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
+		if (isset($_GET['delbwrow']) && (count($bandwidth) > 0)) {
 			unset($bandwidth[$_GET['delbwrow']]);
+		}
 
 		// Add a row
-		if($_GET['newbwrow']) {
+		if ($_GET['newbwrow']) {
 			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
 
 		}
@@ -4182,7 +4205,7 @@ class dnqueue_class extends dummynet_class {
 			$row = 0;
 			$numrows = count($bandwidth) - 1;
 
-			if($numrows >= 0) {
+			if ($numrows >= 0) {
 				foreach ($bandwidth as $bwidx => $bw) {
 					$group = new Form_Group($row == 0 ? 'Bandwidth':null);
 
@@ -4213,8 +4236,9 @@ class dnqueue_class extends dummynet_class {
 						'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&delbwrow=' . $bwidx
 					))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
 
-					if($row == $numrows)
+					if ($row == $numrows) {
 						$group->setHelp('Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.');
+					}
 
 					$section->add($group);
 					$row++;

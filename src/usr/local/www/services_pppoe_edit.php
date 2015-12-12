@@ -1,6 +1,6 @@
 <?php
 /*
-	vpn_pppoe_edit.php
+	services_pppoe_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -57,7 +57,7 @@
 ##|*IDENT=page-services-pppoeserver-edit
 ##|*NAME=Services: PPPoE Server: Edit
 ##|*DESCR=Allow access to the 'Services: PPPoE Server: Edit' page.
-##|*MATCH=vpn_pppoe_edit.php*
+##|*MATCH=services_pppoe_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -282,7 +282,7 @@ if ($_POST) {
 		write_config();
 		mark_subsystem_dirty('vpnpppoe');
 		file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
-		header("Location: vpn_pppoe.php");
+		header("Location: services_pppoe.php");
 		exit;
 	}
 }

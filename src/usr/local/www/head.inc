@@ -255,7 +255,7 @@ $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
 $services_menu[] = array(gettext("IGMP Proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
-$services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
+$services_menu[] = array(gettext("PPPoE Server"), "/services_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 
 if (count($config['interfaces']) > 1) {
@@ -279,26 +279,26 @@ $vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 // Status
 $status_menu = array();
 $status_menu[] = array(gettext("Captive Portal"), "/status_captiveportal.php");
-$status_menu[] = array(gettext("CARP (failover)"), "/carp_status.php");
+$status_menu[] = array(gettext("CARP (failover)"), "/status_carp.php");
 $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
 $status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
 $status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
-$status_menu[] = array(gettext("IPsec"), "/diag_ipsec.php");
+$status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");
 $status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
 $status_menu[] = array(gettext("NTP"), "/status_ntpd.php");
 $status_menu[] = array(gettext("OpenVPN"), "/status_openvpn.php");
 
 if ($g['platform'] == $g['product_name']) {
-	$status_menu[] = array(gettext("Package Logs"), "/diag_pkglogs.php");
+	$status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
 }
 
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
 $status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
-$status_menu[] = array(gettext("System Logs"), "/diag_logs.php");
+$status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
 
 if (count($config['interfaces']) > 1) {
@@ -333,15 +333,15 @@ if (file_exists("/var/run/gmirror_active")) {
 	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php");
 }
 
-$diagnostics_menu[] = array(gettext("Halt System"), "/halt.php");
+$diagnostics_menu[] = array(gettext("Halt System"), "/diag_halt.php");
 $diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php");
 $diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php");
 $diagnostics_menu[] = array(gettext("Tables"), "/diag_tables.php");
 $diagnostics_menu[] = array(gettext("Ping"), "/diag_ping.php");
 $diagnostics_menu[] = array(gettext("Test Port"), "/diag_testport.php");
 $diagnostics_menu[] = array(gettext("pfInfo"), "/diag_pf_info.php");
-$diagnostics_menu[] = array(gettext("pfTop"), "/diag_system_pftop.php");
-$diagnostics_menu[] = array(gettext("Reboot"), "/reboot.php");
+$diagnostics_menu[] = array(gettext("pfTop"), "/diag_pftop.php");
+$diagnostics_menu[] = array(gettext("Reboot"), "/diag_reboot.php");
 $diagnostics_menu[] = array(gettext("Routes"), "/diag_routes.php");
 $diagnostics_menu[] = array(gettext("SMART Status"), "/diag_smart.php");
 $diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php");

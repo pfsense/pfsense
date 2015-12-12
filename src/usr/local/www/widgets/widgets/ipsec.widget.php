@@ -182,8 +182,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		case "mobile" :
 			foreach ($mobile['pool'] as $pool) {
-				if (!is_array($pool['lease']))
+				if (!is_array($pool['lease'])) {
 					continue;
+				}
 
 				foreach ($pool['lease'] as $muser) {
 					print("	<tr>\n");
@@ -259,7 +260,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 <?php endif;
 
 // This function was in index.php It seems that the ipsec widget is the only place it is used
-// so now it lives here. It wouldn't hurt to update this functions and the tab display, but it
+// so now it lives here. It wouldn't hurt to update this function and the tab display, but it
 // looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match
 ?>
 <script type="text/javascript">
@@ -316,7 +317,7 @@ function get_ipsec_stats() {
 	ajaxRequest = $.ajax({
 			url: "/widgets/widgets/ipsec.widget.php",
 			type: "post",
-			data: { 
+			data: {
 					ajax: "ajax",
 					tab:  curtab
 				  }

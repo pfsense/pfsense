@@ -1,6 +1,6 @@
 <?php
 /*
-	vpn_pppoe.php
+	services_pppoe.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -60,7 +60,7 @@
 ##|*IDENT=page-services-pppoeserver
 ##|*NAME=Services: PPPoE Server
 ##|*DESCR=Allow access to the 'Services: PPPoE Server' page.
-##|*MATCH=vpn_pppoe.php*
+##|*MATCH=services_pppoe.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -111,7 +111,7 @@ if ($_GET['act'] == "del") {
 		}
 		unset($a_pppoes[$_GET['id']]);
 		write_config();
-		header("Location: vpn_pppoe.php");
+		header("Location: services_pppoe.php");
 		exit;
 	}
 }
@@ -157,8 +157,8 @@ foreach ($a_pppoes as $pppoe):
 					<?=htmlspecialchars($pppoe['descr'])?>
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="vpn_pppoe_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="vpn_pppoe.php?act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
+					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>"></a>
 				</td>
 			</tr>
 <?php
@@ -170,7 +170,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_pppoe_edit.php" class="btn btn-success">
+	<a href="services_pppoe_edit.php" class="btn btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

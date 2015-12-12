@@ -1041,21 +1041,24 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 
 	$iflist = array();
 
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip']))
+	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
 		return $iflist;
+	}
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp")
+		if ($vip['mode'] != "carp") {
 			continue;
+		}
 
 		if (empty($carpinterface)) {
 			$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
 			continue;
 		}
 
-		if ($carpinterface != "_vip{$vip['uniqid']}")
+		if ($carpinterface != "_vip{$vip['uniqid']}") {
 			continue;
+		}
 
 		switch ($what) {
 			case 'subnet':
@@ -1478,8 +1481,9 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		// run in foreground, and (optionally) log if nonzero return
 		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
-		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew'])))
+		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew']))) {
 			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
+		}
 	}
 
 	if ($clearsigmask) {
@@ -1495,7 +1499,7 @@ function mwexec_bg($command, $clearsigmask = false) {
 }
 
 /* unlink a file, or pattern-match of a file, if it exists
-   if the file/path contains glob() compatible wildcards, all matching files will be unlinked 
+   if the file/path contains glob() compatible wildcards, all matching files will be unlinked
    if no matches, no error occurs */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);

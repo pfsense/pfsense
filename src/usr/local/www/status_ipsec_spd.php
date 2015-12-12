@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_ipsec_sad.php
+	status_ipsec_spd.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -62,97 +62,81 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-status-ipsec-sad
-##|*NAME=Status: IPsec: SAD
-##|*DESCR=Allow access to the 'Status: IPsec: SAD' page.
-##|*MATCH=diag_ipsec_sad.php*
+##|*IDENT=page-status-ipsec-spd
+##|*NAME=Status: IPsec: SPD
+##|*DESCR=Allow access to the 'Status: IPsec: SPD' page.
+##|*MATCH=status_ipsec_spd.php*
 ##|-PRIV
+
+define(RIGHTARROW, '&#x25ba;');
+define(LEFTARROW,  '&#x25c0;');
 
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SAD"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-$sad = ipsec_dump_sad();
-
-/* delete any SA? */
-if ($_GET['act'] == "del") {
-	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
-	if ($fd) {
-		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
-		pclose($fd);
-		sleep(1);
-	}
-}
+$spd = ipsec_dump_spd();
 
 $tab_array = array();
-$tab_array[] = array(gettext("Overview"), false, "diag_ipsec.php");
-$tab_array[] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-$tab_array[] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
-$tab_array[] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+$tab_array[0] = array(gettext("Overview"), false, "status_ipsec.php");
+$tab_array[1] = array(gettext("Leases"), false, "status_ipsec_leases.php");
+$tab_array[2] = array(gettext("SAD"), false, "status_ipsec_sad.php");
+$tab_array[3] = array(gettext("SPD"), true, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 
-if (count($sad)) {
+if (count($spd)) {
 ?>
-	<div table-responsive>
-		<table class="table table-striped table-hover table-condensed">
+	<div class="table-responsive">
+		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th><?=gettext("Source")?></th>
-					<th><?=gettext("Destination")?></th>
-					<th><?=gettext("Protocol")?></th>
-					<th><?=gettext("SPI")?></th>
-					<th><?=gettext("Enc. alg.")?></th>
-					<th><?=gettext("Auth. alg.")?></th>
-					<th><?=gettext("Data")?></th>
-					<th></th>
+					<th><?= gettext("Source"); ?></th>
+					<th><?= gettext("Destination"); ?></th>
+					<th><?= gettext("Direction"); ?></th>
+					<th><?= gettext("Protocol"); ?></th>
+					<th><?= gettext("Tunnel endpoints"); ?></th>
 				</tr>
 			</thead>
-			<tbody>
-			<?php foreach ($sad as $sa) { ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($sa['src'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($sa['dst'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars(strtoupper($sa['proto']))?>
-				</td>
-				<td>
-					<?=htmlspecialchars($sa['spi'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($sa['ealgo'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($sa['aalgo'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($sa['data'])?></td>
-				<td>
-					<?php
-						$args = "src=" . rawurlencode($sa['src']);
-						$args .= "&amp;dst=" . rawurlencode($sa['dst']);
-						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
-						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
-					?>
-					<a class="btn btn-xs btn-danger" href="diag_ipsec_sad.php?act=del&amp;<?=$args?>">Delete</a>
-				</td>
-			</tr>
 
-			<?php
-			} ?>
+			<tbody>
+<?php
+		foreach ($spd as $sp) {
+			if ($sp['dir'] == 'in')
+				$dirstr = LEFTARROW . ' Inbound';
+			else
+				$dirstr = RIGHTARROW . ' Outbound';
+?>
+				<tr>
+					<td>
+						<?=htmlspecialchars($sp['srcid'])?>
+					</td>
+					<td>
+						<?=htmlspecialchars($sp['dstid'])?>
+					</td>
+					<td>
+						<?=$dirstr ?>
+					</td>
+					<td>
+						<?=htmlspecialchars(strtoupper($sp['proto']))?>
+					</td>
+					<td>
+						<?=htmlspecialchars($sp['src'])?> -&gt; <?=htmlspecialchars($sp['dst'])?>
+					</td>
+				</tr>
+<?php
+		}
+?>
 			</tbody>
 		</table>
 	</div>
 <?php
-		}
-else
-	print_info_box(gettext('No IPsec security associations.'));
+	 } // e-o-if (count($spd))
+else {
+	print_info_box(gettext('No IPsec security policies configured.'));
+}
 
 print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
 

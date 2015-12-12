@@ -4033,7 +4033,7 @@ function upgrade_125_to_126() {
 	/* subtract 2 from ipsec log levels. the value stored in the config.xml
 	 * will now match the strongswan level exactly.
 	 */
-	foreach(array_keys($ipsec_log_cats) as $cat) {
+	foreach (array_keys($ipsec_log_cats) as $cat) {
 		if (!isset($config['ipsec']["ipsec_{$cat}"])) {
 			$new_level = $def_loglevel;
 		} else {
@@ -4121,8 +4121,9 @@ function upgrade_128_to_129() {
 	}
 
 	/* IPSEC is always on in 2.3. */
-	if (isset($config['ipsec']['enable']))
+	if (isset($config['ipsec']['enable'])) {
 		unset($config['ipsec']['enable']);
+	}
 }
 
 function upgrade_129_to_130() {
@@ -4137,6 +4138,56 @@ function upgrade_129_to_130() {
 			} else {
 				$serversettings['topology'] = "net30";
 			}
+		}
+	}
+}
+
+function upgrade_130_to_131() {
+	global $config;
+
+	if (isset($config['syslog']['apinger'])) {
+		$config['syslog']['dpinger'] = true;
+		unset($config['syslog']['apinger']);
+	}
+
+	if (isset($config['system']['apinger_debug'])) {
+		unset($config['system']['apinger_debug']);
+	}
+
+	if (!isset($config['gateways']['gateway_item']) ||
+	    !is_array($config['gateways']['gateway_item'])) {
+		return;
+	}
+
+	foreach ($config['gateways']['gateway_item'] as &$gw) {
+		// dpinger uses milliseconds
+		if (isset($gw['interval']) &&
+		    is_numeric($gw['interval'])) {
+			$gw['interval'] = $gw['interval'] * 1000;
+		}
+		if (isset($gw['down']) &&
+		    is_numeric($gw['down'])) {
+			$gw['loss_interval'] = $gw['down'] * 1000;
+			unset($gw['down']);
+		}
+
+		if (isset($gw['avg_delay_samples'])) {
+			unset($gw['avg_delay_samples']);
+		}
+		if (isset($gw['avg_delay_samples_calculated'])) {
+			unset($gw['avg_delay_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_samples'])) {
+			unset($gw['avg_loss_samples']);
+		}
+		if (isset($gw['avg_loss_samples_calculated'])) {
+			unset($gw['avg_loss_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_delay_samples'])) {
+			unset($gw['avg_loss_delay_samples']);
+		}
+		if (isset($gw['avg_loss_delay_samples_calculated'])) {
+			unset($gw['avg_loss_delay_samples_calculated']);
 		}
 	}
 }

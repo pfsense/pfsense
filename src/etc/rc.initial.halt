@@ -37,21 +37,11 @@
 
 	$fp = fopen('php://stdin', 'r');
 
-	echo <<<EOD
-
-{$g['product_name']} will shutdown and halt system. This may take a few minutes, depending on your hardware.
-
-Do you want to proceed [y|n]? 
-EOD;
+	echo "\n" . sprintf(gettext("%s will shutdown and halt system. This may take a few minutes, depending on your hardware."), $g['product_name']) . "\n";
+	echo gettext("Do you want to proceed [y|n]?") . " ";
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-
-		echo <<<EOD
-
-{$g['product_name']} will shutdown and halt system now.
-
-EOD;
-
+		echo "\n" . sprintf(gettext("%s will shutdown and halt system now."), $g['product_name']) . "\n";
 		system_halt();
 	}
 

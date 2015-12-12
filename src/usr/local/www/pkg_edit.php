@@ -870,7 +870,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			if($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
-					$pkga['name'],
+					strip_tags($pkga['fielddescr']),
 					isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 					$srcoptions,
 					isset($pkga['multiple'])
@@ -879,7 +879,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Select(
 						$pkga['fieldname'],
-						$pkga['name'],
+						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])
@@ -887,7 +887,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				} else {
 					$section->addInput(new Form_Select(
 						$pkga['fieldname'],
-						$pkga['name'],
+						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])

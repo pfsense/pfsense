@@ -73,15 +73,15 @@ if ($pkg == '' || $when == '') {
 pkg_remove_prefix($pkg);
 
 switch ($when) {
-case "post-install":
-	install_package_xml($pkg);
-	break;
-case "deinstall":
-case "post-deinstall":
-	delete_package_xml($pkg, $when);
-	break;
-default:
-	usage();
+	case "post-install":
+		install_package_xml($pkg);
+		break;
+	case "deinstall":
+	case "post-deinstall":
+		delete_package_xml($pkg, $when);
+		break;
+	default:
+		usage();
 }
 
 ?>

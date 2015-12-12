@@ -181,6 +181,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
+						<th><!-- Icons --></th>
 					</tr>
 				</thead>
 				<tbody>

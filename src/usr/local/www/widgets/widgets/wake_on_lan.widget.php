@@ -79,7 +79,7 @@ if (is_array($config['wol']['wolentry'])) {
 	<tbody>
 <?php
 if (count($wolcomputers) > 0) {
-	foreach($wolcomputers as $wolent) {
+	foreach ($wolcomputers as $wolent) {
 		echo '<tr><td>' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		echo '<td>' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 
@@ -106,7 +106,7 @@ if (count($wolcomputers) > 0) {
 	echo "<tr><td colspan=\"4\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
-</tbody>
+	</tbody>
 </table>
 <center><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></center>
 </div>

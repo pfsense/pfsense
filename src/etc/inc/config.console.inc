@@ -101,15 +101,13 @@ BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
 EOD;
 	}
 
-	echo <<<EOD
-
-Do you want to set up VLANs first? 
-
-If you are not going to use VLANs, or only for optional interfaces, you should
-say no here and use the webConfigurator to configure VLANs later, if required.
-
-Do you want to set up VLANs now [y|n]? 
-EOD;
+	echo "\n" . gettext("Do you want to set up VLANs first?");
+	echo "\n" .
+		gettext(
+			"If you are not going to use VLANs, or only for optional interfaces, you should\n" .
+			"say no here and use the webConfigurator to configure VLANs later, if required.") .
+		"\n";
+	echo "\n" . gettext("Do you want to set up VLANs now [y|n]?") . " ";
 
 	if ($auto_assign) {
 		$key = timeout();
@@ -314,10 +312,7 @@ EOD;
 			echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 		}
 
-		echo <<<EOD
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 		$key = chop(fgets($fp));
 	}
 
@@ -330,13 +325,8 @@ EOD;
 			$config['interfaces']['lan']['enable'] = true;
 		} elseif (!platform_booting() && !$auto_assign) {
 
-echo <<<EODD
-
-You have chosen to remove the LAN interface.
-
-Would you like to remove the LAN IP address and
-unload the interface now? [y|n]? 
-EODD;
+			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
+			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";
 
 			if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 				if (isset($config['interfaces']['lan']) && $config['interfaces']['lan']['if']) {
@@ -497,13 +487,8 @@ function vlan_setup() {
 	$iflist = get_interface_list();
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
-		echo <<<EOD
-
-WARNING: all existing VLANs will be cleared if you proceed!
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("WARNING: all existing VLANs will be cleared if you proceed!") . "\n";
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0) {
 			return;
@@ -560,6 +545,65 @@ EOD;
 
 		$config['vlans']['vlan'][] = $vlan;
 		$vlanif++;
+	}
+}
+
+function check_for_alternate_interfaces() {
+	global $config;
+
+	// If the WAN and/or LAN devices in the factory default config do not exist,
+	// then look for alternate devices.
+	// This lets many systems boot a factory default config without being
+	// forced to do interface assignment on the console.
+
+	$specplatform = system_identify_specific_platform();
+	$default_device = array();
+
+	// If we recognise the platform, then specify the devices directly.
+	switch ($specplatform['name']) {
+		case 'alix':
+			$default_device['wan'] = "vr1";
+			$default_device['lan'] = "vr0";
+			break;
+		case 'APU':
+			$default_device['wan'] = "re1";
+			$default_device['lan'] = "re2";
+			break;
+		case 'RCC-VE':
+			$default_device['wan'] = "igb0";
+			$default_device['lan'] = "igb1";
+			break;
+		default:
+			$default_device['wan'] = "";
+			$default_device['lan'] = "";
+			break;
+	}
+
+	// Other common device names can be put here and will be looked for
+	// if the system was not one of the known platforms.
+	$other_devices_arr['wan'] = array("vr1", "re1", "igb0", "em0");
+	$other_devices_arr['lan'] = array("vr0", "re2", "igb1", "em1");
+	$interface_assignment_changed = false;
+
+	foreach ($other_devices_arr as $ifname => $other_devices) {
+		if (!does_interface_exist($config['interfaces'][$ifname]['if'])) {
+			if (does_interface_exist($default_device[$ifname])) {
+				$config['interfaces'][$ifname]['if'] = $default_device[$ifname];
+				$interface_assignment_changed = true;
+			} else {
+				foreach ($other_devices as $other_device) {
+					if (does_interface_exist($other_device)) {
+						$config['interfaces'][$ifname]['if'] = $other_device;
+						$interface_assignment_changed = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if ($interface_assignment_changed) {
+		write_config("Factory default boot detected WAN " . $config['interfaces']['wan']['if'] . " and LAN " . $config['interfaces']['lan']['if']);
 	}
 }
 

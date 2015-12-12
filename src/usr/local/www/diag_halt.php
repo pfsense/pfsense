@@ -1,6 +1,6 @@
 <?php
 /*
-	halt.php
+	diag_halt.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -63,7 +63,7 @@
 ##|*IDENT=page-diagnostics-haltsystem
 ##|*NAME=Diagnostics: Halt system
 ##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
-##|*MATCH=halt.php*
+##|*MATCH=diag_halt.php*
 ##|-PRIV
 
 // Set DEBUG to true to prevent the system_halt() function from being called
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<div class="panel-body">
 		<div class="content">
 			<p>Click "Halt" to halt the system immediately, or "No" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)</p>
-			<form action="halt.php" method="post">
+			<form action="diag_halt.php" method="post">
 				<input type="submit" class="btn btn-danger pull-center" name="save" value="Halt">
 				<a href="/" class="btn btn-default">No</a>
 			</form>

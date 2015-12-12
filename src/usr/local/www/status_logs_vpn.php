@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-	diag_logs_vpn.php
+	status_logs_vpn.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -66,7 +66,7 @@
 ##|*IDENT=page-diagnostics-logs-pptpvpn
 ##|*NAME=Status: Logs: VPN
 ##|*DESCR=Allow access to the 'Status: Logs: VPN' page.
-##|*MATCH=diag_logs_vpn.php*
+##|*MATCH=status_logs_vpn.php*
 ##|-PRIV
 
 
@@ -152,32 +152,32 @@ function dump_clog_vpn($logfile, $tail) {
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), true, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), true, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
 $tab_array[] = array(gettext("PPPoE Logins"),
 			(($vpntype == "poes") && ($mode != "raw")),
-			"/diag_logs_vpn.php?vpntype=poes");
+			"/status_logs_vpn.php?vpntype=poes");
 $tab_array[] = array(gettext("PPPoE Raw"),
 			(($vpntype == "poes") && ($mode == "raw")),
-			"/diag_logs_vpn.php?vpntype=poes&amp;mode=raw");
+			"/status_logs_vpn.php?vpntype=poes&amp;mode=raw");
 $tab_array[] = array(gettext("L2TP Logins"),
 			(($vpntype == "l2tp") && ($mode != "raw")),
-			"/diag_logs_vpn.php?vpntype=l2tp");
+			"/status_logs_vpn.php?vpntype=l2tp");
 $tab_array[] = array(gettext("L2TP Raw"),
 			(($vpntype == "l2tp") && ($mode == "raw")),
-			"/diag_logs_vpn.php?vpntype=l2tp&amp;mode=raw");
+			"/status_logs_vpn.php?vpntype=l2tp&amp;mode=raw");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 ?>
 
@@ -223,7 +223,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 		}
 ?>
 		<p>
-			<form action="diag_logs_vpn.php" method="post">
+			<form action="status_logs_vpn.php" method="post">
 				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
 				<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
 				<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />

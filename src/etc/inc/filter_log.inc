@@ -159,7 +159,13 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		}
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
-	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
+	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+	$reverse = isset($config['syslog']['reverse']);
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+	return ($reverse) ? $filterlog : array_reverse($filterlog);
 }
 
 function escape_filter_regex($filtertext) {
@@ -230,21 +236,17 @@ function parse_unknown_log_line($line) {
 
 	$pattern = "/^" . $date_pattern . "\ +" . $log_message_pattern . "$/";
 
-	if (!preg_match($pattern, $line, $log_split))
+	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
+	}
 
 	list($all, $flent['time'], $flent['message']) = $log_split;
 
-	if($g['debug']) {
-		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
-	return "";
-	}
-
 	/* If there is time, and message, fields, then the line should be usable/good */
-	if (!( (trim($flent['time']) == "") && (trim($flent['message']) == "") )) {
+	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
 		}
 		return "";
@@ -269,21 +271,17 @@ function parse_system_log_line($line) {
 
 	$pattern = "/^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$/";
 
-	if (!preg_match($pattern, $line, $log_split))
+	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
+	}
 
 	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
 
-	if($g['debug']) {
-		log_error(sprintf(gettext("There was a error parsing: %s.   Please report to mailing list or forum."), $flent['process']));
-	return "";
-	}
-
 	/* If there is time, process, and message, fields, then the line should be usable/good */
-	if (!( (trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == "") )) {
+	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
 		}
 		return "";
@@ -552,7 +550,7 @@ function find_action_image($action) {
 function handle_ajax($nentries, $tail = 50) {
 	global $config;
 	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile,$filterent;
+		global $filter_logfile, $filterent;
 		if ($_GET['lastsawtime']) {
 			$lastsawtime = $_GET['lastsawtime'];
 		}
@@ -580,7 +578,7 @@ function handle_ajax($nentries, $tail = 50) {
 					$icon_act = "fa-check icon-success";
 				}
 
-				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'diag_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

@@ -95,7 +95,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	foreach ($rows as $key => $name) {
 		print("<tr>");
-		print(	"<th>" . $name . "</th>");
+		print(	"<td><b>" . $name . "</b></td>");
 
 		foreach ($ifdescrs as $ifdescr => $ifname) {
 			$ifinfo = get_interface_info($ifdescr);

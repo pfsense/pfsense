@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_logs_settings.php
+	status_logs_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -64,7 +64,7 @@
 ##|*IDENT=page-diagnostics-logs-settings
 ##|*NAME=Status: Logs: Settings
 ##|*DESCR=Allow access to the 'Status: Logs: Settings' page.
-##|*MATCH=diag_logs_settings.php*
+##|*MATCH=status_logs_settings.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -83,7 +83,7 @@ $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
-$pconfig['apinger'] = isset($config['syslog']['apinger']);
+$pconfig['dpinger'] = isset($config['syslog']['dpinger']);
 $pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
@@ -156,7 +156,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
-		$config['syslog']['apinger'] = $_POST['apinger'] ? true : false;
+		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
 		$config['syslog']['relayd'] = $_POST['relayd'] ? true : false;
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
@@ -230,17 +230,17 @@ else if ($savemsg)
 	print_info_box($savemsg);
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
 $form = new Form(new Form_Button(
@@ -278,14 +278,14 @@ $section->addInput(new Form_Checkbox(
 	'Log firewall default blocks',
 	'Log packets matched from the default block rules in the ruleset',
 	$pconfig['logdefaultblock']
-))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.');
+))->setHelp('Log packets that are <strong>blocked</strong> by the implicit default block rule. - Per-rule logging options are still respected.');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
 	'Log packets matched from the default pass rules put in the ruleset',
 	$pconfig['logdefaultpass']
-))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected. ');
+))->setHelp('Log packets that are <strong>allowed</strong> by the implicit default pass rule. - Per-rule logging options are still respected. ');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
@@ -441,10 +441,10 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
-	'apinger',
+	'dpinger',
 	null,
 	'Gateway Monitor events',
-	$pconfig['apinger']
+	$pconfig['dpinger']
 ));
 
 $group->add(new Form_MultiCheckbox(
@@ -506,7 +506,7 @@ events.push(function(){
 		disableInput('dhcp', hide);
 		disableInput('portalauth', hide);
 		disableInput('vpn', hide);
-		disableInput('apinger', hide);
+		disableInput('dpinger', hide);
 		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
 	}

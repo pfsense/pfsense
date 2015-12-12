@@ -165,7 +165,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
 			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
-				strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
 				$found_host = true;
 			}
 
@@ -1126,11 +1126,11 @@ function ldap_get_groups($username, $authcfg) {
 
 	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
 
-	if(is_array($gresults)) {
+	if (is_array($gresults)) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($gresults as $grp) {
-			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false))
-				|| ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
+			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false)) ||
+			    ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
 				$grpsplit = isset($authcfg['ldap_rfc2307']) ? explode(",", $grp["dn"]) : explode(",", $grp);
 				$memberof[] = preg_replace("/CN=/i", "", $grpsplit[0]);
 			}

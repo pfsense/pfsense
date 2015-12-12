@@ -66,7 +66,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if($_REQUEST && $_REQUEST['ajax']) {
+if ($_REQUEST && $_REQUEST['ajax']) {
 	$package_list = get_pkg_info();
 	$installed_packages = array_filter($package_list, function($v) {
 		return (isset($v['installed']) || isset($v['broken']));
@@ -153,13 +153,13 @@ if($_REQUEST && $_REQUEST['ajax']) {
 		print(	"<td>\n");
 		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-trash"></i></a>'."\n");
 
-		if($upgradeavail) {
+		if ($upgradeavail) {
 			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
 		} else {
 			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-retweet"></i></a>'."\n");
 		}
 
-		if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
+		if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
 			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa fa-info"></i></a>'."\n");
 		}
 

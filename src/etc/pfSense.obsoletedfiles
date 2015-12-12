@@ -739,6 +739,7 @@
 /usr/local/share/strongswan/templates/config/plugins/smp.conf
 /usr/local/share/xml
 /usr/local/www/auto_complete_helper.js
+/usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
 /usr/local/www/csrf/csrf-secret.php
@@ -749,8 +750,16 @@
 /usr/local/www/dfuife.css
 /usr/local/www/dfuife.js
 /usr/local/www/diag_dhcp_leases.php
+/usr/local/www/diag_ipsec.php
+/usr/local/www/diag_ipsec_leases.php
+/usr/local/www/diag_ipsec_sad.php
+/usr/local/www/diag_ipsec_spd.php
+/usr/local/www/diag_logs.php
 /usr/local/www/diag_logs_auth.php
 /usr/local/www/diag_logs_dhcp.php
+/usr/local/www/diag_logs_filter.php
+/usr/local/www/diag_logs_filter_dynamic.php
+/usr/local/www/diag_logs_filter_summary.php
 /usr/local/www/diag_logs_gateways.php
 /usr/local/www/diag_logs_ipsec.php
 /usr/local/www/diag_logs_ntpd.php
@@ -759,10 +768,14 @@
 /usr/local/www/diag_logs_relayd.php
 /usr/local/www/diag_logs_resolver.php
 /usr/local/www/diag_logs_routing.php
+/usr/local/www/diag_logs_settings.php
 /usr/local/www/diag_logs_slbd.php
+/usr/local/www/diag_logs_vpn.php
 /usr/local/www/diag_logs_wireless.php
 /usr/local/www/diag_patterns.php
+/usr/local/www/diag_pkglogs.php
 /usr/local/www/diag_showbogons.php
+/usr/local/diag_system_pftop.php
 /usr/local/www/dom-drag.js
 /usr/local/www/draglist.js
 /usr/local/www/dtree.js
@@ -780,6 +793,7 @@
 /usr/local/www/fred.png
 /usr/local/www/green_dot.jpg
 /usr/local/www/gui.css
+/usr/local/www/halt.php
 /usr/local/www/headjs.php
 /usr/local/www/ifstats.cgi
 /usr/local/www/includes/javascript.inc.php
@@ -815,6 +829,7 @@
 /usr/local/www/protochart/ProtoChart.js
 /usr/local/www/protochart/excanvas-compressed.js
 /usr/local/www/protochart/excanvas.js
+/usr/local/www/reboot.php
 /usr/local/www/row_helper.js
 /usr/local/www/row_helper_dynamic.js
 /usr/local/www/row_toggle.js
@@ -857,6 +872,8 @@
 /usr/local/www/vpn_openvpn_crl_edit.php
 /usr/local/www/vpn_openvpn_srv.php
 /usr/local/www/vpn_openvpn_srv_edit.php
+/usr/local/www/vpn_pppoe.php
+/usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
 /usr/local/www/wizards/traffic_shaper_wizard.inc

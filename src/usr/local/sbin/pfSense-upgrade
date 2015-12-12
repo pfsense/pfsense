@@ -140,6 +140,10 @@ _exit() {
 		/etc/rc.conf_mount_ro
 	fi
 
+	if [ -n "${nc_pid}" ] && ps -p ${nc_pid} >/dev/null 2>&1; then
+		kill ${nc_pid}
+	fi
+
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
@@ -153,20 +157,22 @@ pkg_with_pb() {
 	local _event_pipe=""
 
 	if [ -n "${progress_socket}" ]; then
-		if [ -e "${progress_socket}" ]; then
-			rm -f ${progress_socket}
+		if [ -e "${chroot_dir}${progress_socket}" ]; then
+			rm -f ${chroot_dir}${progress_socket}
 		fi
 
 		_event_pipe="-o EVENT_PIPE=${progress_socket}"
 
-		nc -lU ${progress_socket} >> ${progress_file} &
+		nc -lU ${chroot_dir}${progress_socket} >> ${progress_file} &
+		nc_pid=$!
 
-		while [ ! -e "${progress_socket}" ]; do
+		while [ ! -e "${chroot_dir}${progress_socket}" ]; do
 			sleep 0.1
 		done
 	fi
 
 	pkg ${_event_pipe} $@
+	nc_pid=""
 	return $?
 }
 
@@ -313,6 +319,8 @@ pkg_upgrade() {
 				_echo "Before starting the upgrade process, the currently mounted nanobsd partition"
 				_echo "needs to be cloned to the secondary partition, where the update will happen"
 				_echo ""
+				_echo "After installation a reboot will be required to switch partition."
+				_echo ""
 				if [ -z "${yes}" ]; then
 					_echo -n "Proceed with upgrade? (y/N) "
 					read answer
@@ -320,9 +328,11 @@ pkg_upgrade() {
 						_echo "Aborting..."
 						_exit 0
 					fi
+					# Do not make the user have to answer again.
+					yes=1
 				fi
+				setup_nanobsd_env
 			fi
-			setup_nanobsd_env
 			need_reboot=1
 		fi
 
@@ -694,6 +704,9 @@ fi
 # Upgrade process on nanobsd will happen in chroot
 export pkg_chroot=""
 export chroot_dir=""
+
+# Save nc_pid to be able to kill it
+export nc_pid=""
 
 unset dry_run
 unset dont_reboot

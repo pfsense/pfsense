@@ -1,6 +1,6 @@
 <?php
 /*
-	Original status page code from: services_dyndns.php
+	dyn_dns_status.widget.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -71,7 +71,7 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-if($_REQUEST['getdyndnsstatus']) {
+if ($_REQUEST['getdyndnsstatus']) {
 	$first_entry = true;
 	foreach ($a_dyndns as $dyndns) {
 		if ($first_entry) {

@@ -545,8 +545,9 @@ EOD;
 	$rulenum++;
 	$cprules .= "add {$rulenum} pass ip from table(100) to any out\n";
 	$rulenum++;
-	foreach ($cpips as $cpip)
+	foreach ($cpips as $cpip) {
 		$cprules .= "table 100 add {$cpip}\n";
+	}
 	$cprules .= "add {$rulenum} pass ip from any to 255.255.255.255 in\n";
 	$rulenum++;
 	$cprules .= "add {$rulenum} pass ip from 255.255.255.255 to any out\n";

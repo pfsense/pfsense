@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_system_pftop.php
+	diag_pftop.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -61,7 +61,7 @@
 ##|*IDENT=page-diagnostics-system-pftop
 ##|*NAME=Diagnostics: pfTop
 ##|*DESCR=Allows access to the 'Diagnostics: pfTop' page
-##|*MATCH=diag_system_pftop.php*
+##|*MATCH=diag_pftop.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -175,7 +175,7 @@ print $form;
 //<![CDATA[
 	function getpftopactivity() {
 		$.ajax(
-			'/diag_system_pftop.php',
+			'/diag_pftop.php',
 			{
 				method: 'post',
 				data: $(document.forms[0]).serialize(),

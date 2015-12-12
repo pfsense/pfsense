@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_logs_filter_summary.php
+	status_logs_filter_summary.php
 */
 /* ====================================================================
  *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -62,11 +62,9 @@
 ##|*IDENT=page-diagnostics-logs-firewall-summary
 ##|*NAME=Status: System Logs: Firewall Log Summary
 ##|*DESCR=Allow access to the 'Status: System Logs: Firewall Log Summary' page
-##|*MATCH=diag_logs_filter_summary.php*
+##|*MATCH=status_logs_filter_summary.php*
 ##|-PRIV
 
-$pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
-$shortcut_section = "firewall";
 require_once("guiconfig.inc");
 include_once("filter_log.inc");
 
@@ -274,27 +272,28 @@ foreach ($filterlog as $fe) {
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary"));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary View"));
+$shortcut_section = "firewall";
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "diag_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "diag_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "diag_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "diag_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+$tab_array[] = array(gettext("System"), false, "status_logs.php");
+$tab_array[] = array(gettext("Firewall"), true, "status_logs_filter.php");
+$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
+$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
+$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
+$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
+$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
+$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
+$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
+$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();
-$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
-$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
-$tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
+$tab_array[] = array(gettext("Normal View"), false, "/status_logs_filter.php");
+$tab_array[] = array(gettext("Dynamic View"), false, "/status_logs_filter_dynamic.php");
+$tab_array[] = array(gettext("Summary View"), true, "/status_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 print("<br />");

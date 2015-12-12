@@ -88,7 +88,6 @@ $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
-$pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
@@ -261,19 +260,6 @@ if ($_POST) {
 			unset($config['system']['skip_rules_gw_down']);
 		}
 
-		$need_apinger_restart = false;
-		if ($_POST['apinger_debug'] == "yes") {
-			if (!isset($config['system']['apinger_debug'])) {
-				$need_apinger_restart = true;
-			}
-			$config['system']['apinger_debug'] = true;
-		} else {
-			if (isset($config['system']['apinger_debug'])) {
-				$need_apinger_restart = true;
-			}
-			unset($config['system']['apinger_debug']);
-		}
-
 		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
 		} else {
@@ -308,9 +294,6 @@ if ($_POST) {
 		load_thermal_hardware();
 		if ($need_relayd_restart) {
 			relayd_configure();
-		}
-		if ($need_apinger_restart) {
-			setup_gateways_monitor();
 		}
 	}
 }
@@ -518,14 +501,6 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, when a rule has a gateway specified and this gateway is '.
 	'down, the rule is created omitting the gateway. This option overrides that '.
 	'behavior by omitting the entire rule instead.');
-
-$section->addInput(new Form_Checkbox(
-	'apinger_debug',
-	'Gateway monitoring logging',
-	'Enable debug logging',
-	$pconfig['apinger_debug']
-))->setHelp('Enable this setting to log debug information from the gateway '.
-	'monitoring process to the system logs.');
 
 $form->add($section);
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');

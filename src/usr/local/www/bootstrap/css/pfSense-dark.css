@@ -302,30 +302,6 @@ a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-he
 }
 
 /** create icon colors */
-.icon-black
-{
-    color: #000000;
-}
-
-.icon-danger
-{
-    color: #F44336;
-}
-
-.icon-success
-{
-    color: #5CB85C;
-}
-
-.icon-warning {
-    color: #FDD835;
-}
-
-.icon-primary
-{
-    color: #009688;
-}
-
 .bg-primary {
     color: #000;
     background-color: #009688;

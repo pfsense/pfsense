@@ -546,7 +546,7 @@ $group->add(new Form_Checkbox(
 	'Forward',
 	($pconfig['cronorder'] == 'forward') ? true : false,
 	'forward'
-))->displayAsRadio();
+))->displayAsRadio()->setHelp('(newest at bottom)');
 
 $group->add(new Form_Checkbox(
 	'cronorder',
@@ -554,7 +554,7 @@ $group->add(new Form_Checkbox(
 	'Reverse',
 	($pconfig['cronorder'] == 'reverse') ? true : false,
 	'reverse'
-))->displayAsRadio();
+))->displayAsRadio()->setHelp('(newest at top)');
 
 $group->add(new Form_Checkbox(
 	'cronorder',
@@ -564,7 +564,7 @@ $group->add(new Form_Checkbox(
 	''
 ))->displayAsRadio();
 
-$group->setHelp('Show log entries in forward (newest at bottom) or reverse (newest at top) order.');
+$group->setHelp('Show log entries in forward or reverse order.');
 $section->add($group);
 
 $group = new Form_Group('GUI Log Entries');

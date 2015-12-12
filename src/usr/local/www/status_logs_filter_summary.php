@@ -287,7 +287,7 @@ $tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
 $tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
 $tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
 $tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
 $tab_array = array();

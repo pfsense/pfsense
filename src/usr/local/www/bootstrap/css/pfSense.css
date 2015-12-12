@@ -471,33 +471,17 @@ footer a {
     overflow-x: auto;
 }
 
-/** create icon colors */
-.icon-black
-{
-    color: #000000;
-}
-
-.icon-danger
-{
-    color: #D9534F;
-}
-
-.icon-success
-{
-    color: #5CB85C;
-}
-
-.icon-primary
-{
-    color: #337AB7;
-}
-
-.icon-warning {
-    color: #FDD835;
-}
-
+/** create text colors */
 .text-warning {
     color: #F57F17;
+}
+
+.text-success {
+    color: #4CAF50;
+}
+
+.text-danger {
+    color: #B71C1C;
 }
 
 .btn-success {

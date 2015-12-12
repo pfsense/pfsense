@@ -436,33 +436,37 @@ if (!$rawfilter) {
 	</div>
 	<div class="panel-body">
 	   <div class="table-responsive">
-		<table class="table table-striped table-hover table-compact">
-			<tr>
-				<th><?=gettext("Time")?></th>
-				<th><?=gettext("Process")?></th>
-				<th><?=gettext("PID")?></th>
-				<th style="width:100%"><?=gettext("Message")?></th>
-			</tr>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr>
+					<th><?=gettext("Time")?></th>
+					<th><?=gettext("Process")?></th>
+					<th><?=gettext("PID")?></th>
+					<th style="width:100%"><?=gettext("Message")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 	foreach ($filterlog as $filterent) {
 ?>
-			<tr>
-				<td style="white-space:nowrap;">
-					<?=htmlspecialchars($filterent['time'])?>
-				</td>
-				<td style="white-space:nowrap;">
-					<?=htmlspecialchars($filterent['process'])?>
-				</td>
-				<td style="white-space:nowrap;">
-					<?=htmlspecialchars($filterent['pid'])?>
-				</td>
-				<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
-					<?=htmlspecialchars($filterent['message'])?>
-				</td>
-			</tr>
+				<tr>
+					<td style="white-space:nowrap;">
+						<?=htmlspecialchars($filterent['time'])?>
+					</td>
+					<td style="white-space:nowrap;">
+						<?=htmlspecialchars($filterent['process'])?>
+					</td>
+					<td style="white-space:nowrap;">
+						<?=htmlspecialchars($filterent['pid'])?>
+					</td>
+					<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
+						<?=htmlspecialchars($filterent['message'])?>
+					</td>
+				</tr>
 <?php
 	} // e-o-foreach
 ?>
+			<tbody>
 		</table>
 <?php
 	if (count($filterlog) == 0)

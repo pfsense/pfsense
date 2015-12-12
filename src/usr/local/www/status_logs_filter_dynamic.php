@@ -394,9 +394,9 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						<td>
 <?php
 		if ($filterent['act'] == "block") {
-			$icon_act = "fa-times icon-danger";
+			$icon_act = "fa-times text-danger";
 		} else {
-			$icon_act = "fa-check icon-success";
+			$icon_act = "fa-check text-success";
 		}
 ?>
 							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>

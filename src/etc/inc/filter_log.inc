@@ -573,9 +573,9 @@ function handle_ajax($nentries, $tail = 50) {
 				}
 
 				if ($log_row['act'] == "block") {
-					$icon_act = "fa-times icon-danger";
+					$icon_act = "fa-times text-danger";
 				} else {
-					$icon_act = "fa-check icon-success";
+					$icon_act = "fa-check text-success";
 				}
 
 				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';

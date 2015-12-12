@@ -494,7 +494,7 @@ $section->addInput(new Form_Select(
 	'Top Navigation',
 	$pconfig['webguifixedmenu'],
 	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
-))->setHelp("This is intended for large screens only.");
+))->setHelp("The fixed option is intended for large screens only.");
 
 $section->addInput(new Form_Input(
 	'dashboardcolumns',

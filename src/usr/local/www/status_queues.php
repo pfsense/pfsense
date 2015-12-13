@@ -150,7 +150,6 @@ $pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues")
 $shortcut_section = "trafficshaper";
 include("head.inc");
 ?>
-<body>
 <script src="/jquery/jquery-1.11.2.min.js"></script>
 <?php
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
@@ -222,7 +221,7 @@ else: ?>
 ?>
 		</div>
 	</div>
-</br>
+<br/>
 
 <?php
 
@@ -266,38 +265,36 @@ function processQueues($altqstats, $level, $parent_name) {
 			}
 		}
 		if ($prev_if != $q['interface']) {
-			echo "<tr><td><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
+			echo "<tr><td colspan=\"8\"><b>Interface " . htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>\n";
 			$prev_if = $q['interface'];
 		}
 ?>
 		<tr class="<?php echo $parent_name?>">
-			<td bgcolor="#<?php echo $row_background?>" style="padding-left: <?php echo $level * 20?>px;">
-				<font color="#000000">
-					<?
-					if (is_array($q['queue'])) {
-						echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
-					}
-					if (strstr($q['name'], "root_")) {
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
-					} else {
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
-					}
-					?>
-				</font>
+			<td style="background-color:#<?php echo $row_background?>;padding-left:<?php echo $level * 20?>px;">
+				<?php
+				if (is_array($q['queue'])) {
+					echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a>";
+				}
+				if (strstr($q['name'], "root_")) {
+					echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
+				} else {
+					echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
+				}
+				?>
 			</td>
 <?php
 		$cpuUsage = 0;
-		echo "<td bgcolor=\"#{$row_background}\">";
-		echo "<div class='progress' style='height: 7px;width: 170px;'>
-				<div class='progress-bar' role='progressbar' name='queue{$q['name']}{$q['interface']}width' id='queue{$q['name']}{$q['interface']}width' aria-valuenow='70' aria-valuemin='0' aria-valuemax='100' style='width: ".	($cpuUsage*100) ."%;'></div>
+		echo "<td style=\"background-color:#{$row_background}\" >";
+		echo "<div class=\"progress\" style=\"height: 7px;width: 170px;\">
+				<div class=\"progress-bar\" role=\"progressbar\" id=\"queue{$q['name']}{$q['interface']}width\" aria-valuenow=\"70\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: " . ($cpuUsage*100) . "%;\"></div>
 			  </div>";
-		echo " </td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";
+		echo "</td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}pps\" id=\"queue{$q['name']}{$q['interface']}pps\" value=\"(" . gettext("Loading") . ")\" /></td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:80px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}bps\" id=\"queue{$q['name']}{$q['interface']}bps\" value=\"\" /></td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}borrows\" id=\"queue{$q['name']}{$q['interface']}borrows\" value=\"\" /></td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}suspends\" id=\"queue{$q['name']}{$q['interface']}suspends\" value=\"\" /></td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}drops\" id=\"queue{$q['name']}{$q['interface']}drops\" value=\"\" /></td>";
+		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}length\" id=\"queue{$q['name']}{$q['interface']}length\" value=\"\" /></td>";
 ?>
 		</tr>
 <?php

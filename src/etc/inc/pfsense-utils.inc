@@ -1812,7 +1812,7 @@ function update_status($status) {
 	global $pkg_interface;
 
 	if ($pkg_interface == "console") {
-		echo "\r{$status}";
+		print ("{$status}");
 	}
 
 	/* ensure that contents are written out */

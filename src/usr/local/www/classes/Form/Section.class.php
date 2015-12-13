@@ -81,11 +81,11 @@ class Form_Section extends Form_Element
 
 		if ($this->_collapsible & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
-				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . ' .panel-body">' .
+				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
-			$bodyclass = '<div class="panel-body collapse ';
+			$bodyclass = '<div id="' . $this->_attributes['id'] . '_panel-body" class="panel-body collapse ';
 			if (($this->_collapsible & SEC_CLOSED)) {
 				$bodyclass .= 'out">';
 			} else {

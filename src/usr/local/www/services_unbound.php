@@ -472,7 +472,7 @@ foreach ($a_hosts as $hostent):
 						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
-						<i class="fa fa-angle-double-right"></i>
+						<i class="fa fa-angle-double-right text-info"></i>
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>

@@ -99,8 +99,9 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 		$isfirst = true;
 		foreach ($resolved as $re) {
 			if ($re != "") {
-				if (!$isfirst)
+				if (!$isfirst) {
 					$addresses .= " ";
+				}
 				$addresses .= rtrim($re) . "/32";
 				$isfirst = false;
 			}
@@ -211,13 +212,15 @@ function display_host_results ($address, $hostname, $dns_speeds) {
 include("head.inc");
 
 /* Display any error messages resulting from user input */
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else if (!$resolved && $type)
+} else if (!$resolved && $type) {
 	print('<div class="alert alert-warning" role="alert">' . gettext("Host") .' "'. $host .'" '. gettext("could not be resolved") . '</div>');
+}
 
-if ($createdalias)
+if ($createdalias) {
 	print('<div class="alert alert-success" role="alert">'.gettext("Alias was created/updated successfully").'</div>');
+}
 
 $form = new Form('Lookup');
 $section = new Form_Section('DNS Lookup');

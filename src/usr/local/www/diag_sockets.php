@@ -100,26 +100,27 @@ $showAllOption = $showAll ? "" : "?showAll";
 				<thead>
 <?php
 					foreach (explode("\n", $table) as $i => $line) {
-						if (trim($line) == "")
+						if (trim($line) == "") {
 							continue;
+						}
 
 						$j = 0;
 						print("<tr>\n");
 						foreach (explode(' ', $line) as $entry) {
-							if ($entry == '' || $entry == "ADDRESS")
+							if ($entry == '' || $entry == "ADDRESS") {
 								continue;
+							}
 
 							if ($i == 0) {
 								print("<th class=\"$class\">$entry</th>\n");
-							}
-							else {
+							} else {
 								print("<td class=\"$class\">$entry</td>\n");
 							}
 
 							$j++;
 						}
 						print("</tr>\n");
-						if($i == 0) {
+						if ($i == 0) {
 							print("</thead>\n");
 							print("<tbody>\n");
 						}

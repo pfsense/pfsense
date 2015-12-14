@@ -221,8 +221,9 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 </script>
 <?php
 
-if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg))
+if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
 	print('<div class="alert alert-warning" role="alert">'.gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!").'</div>');
+}
 
 if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
@@ -235,8 +236,9 @@ if (!isBlank($_POST['txtCommand'])):?>
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
 	$output = array();
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
-	foreach($output as $line)
+	foreach ($output as $line) {
 		print(htmlspecialchars($line) . "\r\n");
+	}
 ?>
 				</pre>
 			</div>
@@ -272,8 +274,9 @@ if (!isBlank($_POST['txtCommand'])):?>
 	</div>
 
 <?php
-	if ($ulmsg)
+	if ($ulmsg) {
 		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
+	}
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
@@ -314,7 +317,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 ?>
 <script type="text/javascript">
 //<![CDATA[
-	events.push(function(){
+	events.push(function() {
 		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
 		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
 	});
@@ -339,5 +342,6 @@ if (!isBlank($_POST['txtCommand'])):?>
 <?php
 include("foot.inc");
 
-if($_POST)
+if ($_POST) {
 	conf_mount_ro();
+}

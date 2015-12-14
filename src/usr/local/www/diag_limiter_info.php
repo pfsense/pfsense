@@ -87,8 +87,9 @@ if ($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 ?>
 <script type="text/javascript">
@@ -107,7 +108,7 @@ if ($input_errors)
 		});
 	}
 
-	events.push(function(){
+	events.push(function() {
 		setInterval('getlimiteractivity()', 2500);
 		getlimiteractivity();
 	});

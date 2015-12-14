@@ -113,11 +113,16 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 		$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
 
-		$process_pattern = "\(.*?\)";
-		$pid_pattern = "\(.*?\)\(?::\ +\)?\(?:\[[0-9:]*\]\)?:?";
+		$host_pattern = "\(.*?\)";
+#		$host_pattern = "\([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]\)";
+
+		$process_pattern = "\(.*?\)\(?::\ +\)?";
+		$pid_pattern = "\(?:\[[0-9:]*\]\)?:?";
+		$process_pid_pattern = $process_pattern . $pid_pattern;
+
 		$log_message_pattern = "\(.*\)";
 
-		$pattern = "^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
 	else if ($logfile_type == 'tbd')		{
 		$pattern = "^\(.*\)$";
@@ -265,11 +270,16 @@ function parse_system_log_line($line) {
 
 	$date_pattern = "(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . ")";
 
-	$process_pattern = "(.*?)";
-	$pid_pattern = "(.*?)(?::\ +)?(?:\[([0-9:]*)\])?:?";
+	$host_pattern = "(.*?)";
+#	$host_pattern = "([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])";
+
+	$process_pattern = "(.*?)(?::\ +)?";
+	$pid_pattern = "(?:\[([0-9:]*)\])?:?";
+	$process_pid_pattern = $process_pattern . $pid_pattern;
+
 	$log_message_pattern = "(.*)";
 
-	$pattern = "/^" . $date_pattern . "\ +" . $process_pattern . "\ +" . $pid_pattern . "\ +" . $log_message_pattern . "$/";
+	$pattern = "/^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$/";
 
 	if (!preg_match($pattern, $line, $log_split)) {
 		return "";

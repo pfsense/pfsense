@@ -26,9 +26,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-define(COLLAPSIBLE, 0x08);
-define(SEC_CLOSED, 0x04);
-define(SEC_OPEN, 0x00);
 
 class Form_Section extends Form_Element
 {

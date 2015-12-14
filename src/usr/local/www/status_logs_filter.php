@@ -71,7 +71,6 @@ require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("filter_log.inc");
 
-
 # --- AJAX RESOLVE ---
 if (isset($_POST['resolve'])) {
 	$ip = strtolower($_POST['resolve']);
@@ -86,7 +85,6 @@ if (isset($_POST['resolve'])) {
 	echo json_encode(str_replace("\\", "\\\\", $response)); // single escape chars can break JSON decode
 	exit;
 }
-
 
 /*
 Build a list of allowed log files so we can reject others to prevent the page
@@ -110,7 +108,6 @@ if (!$_GET['logfile']) {
 
 $filter_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
-
 function getGETPOSTsettingvalue($settingname, $default) {
 	$settingvalue = $default;
 	if ($_GET[$settingname]) {
@@ -121,7 +118,6 @@ function getGETPOSTsettingvalue($settingname, $default) {
 	}
 	return $settingvalue;
 }
-
 
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 
@@ -161,7 +157,6 @@ if ($filterlogentries_submit) {
 	$filterfieldsarray['tcpflags'] = getGETPOSTsettingvalue('filterlogentries_protocolflags', null);
 	$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 }
-
 
 # Manage Log - Code
 
@@ -390,9 +385,6 @@ $tab_array[] = array(gettext("Normal View"), true, "/status_logs_filter.php");
 $tab_array[] = array(gettext("Dynamic View"), false, "/status_logs_filter_dynamic.php");
 $tab_array[] = array(gettext("Summary View"), false, "/status_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
-
-define(SEC_OPEN, 0x00);
-define(SEC_CLOSED, 0x04);
 
 if ($filter_active)
 	$filter_state = SEC_OPEN;

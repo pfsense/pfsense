@@ -520,12 +520,11 @@ if ($pkg['title'] != "") {
 	if(!$only_edit) {
 		$pgtitle = array($pkg['title'], gettext("Edit"));
 	} else {
-		$pgtitle = array($pkg['title']);
+		$pgtitle = array(gettext("Package"), $pkg['title']);
 	}
 } else {
-	$pgtitle = array(gettext("Package Editor"));
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
 }
-
 
 // Create any required tabs
 if ($pkg['tabs'] != "") {

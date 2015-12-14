@@ -100,8 +100,8 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$('a[data-entry]').on('click', function(){
+events.push(function() {
+	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 		var data = $(this).data('entry').split('|');
 
@@ -114,7 +114,7 @@ events.push(function(){
 					srcip: data[0],
 					dstip: data[1]
 				},
-				success: function(){
+				success: function() {
 					el.parents('tr').remove();
 				},
 		});
@@ -126,8 +126,9 @@ events.push(function(){
 <?php
 $tab_array = array();
 $tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-if (isset($config['system']['lb_use_sticky']))
+if (isset($config['system']['lb_use_sticky'])) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+}
 $tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
@@ -182,8 +183,9 @@ print $form;
 	$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
 	$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
 	while ($line = chop(fgets($fd))) {
-		if ($row >= 10000)
+		if ($row >= 10000) {
 			break;
+		}
 
 		$line_split = preg_split("/\s+/", $line);
 
@@ -213,17 +215,18 @@ print $form;
 					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
 			</td>
 		</tr>
-<?php $row++; } 
+<?php $row++; }
 ?>
 	</tbody>
 </table>
 <?php
 
 if ($row == 0) {
-	if (isset($_POST['filter']) && !empty($_POST['filter']))
+	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter');
-	else
+	} else {
 		$errmsg = gettext('No states were found');
+	}
 
 	print('<p class="alert alert-warning">' . $errmsg . '</p>');
 }

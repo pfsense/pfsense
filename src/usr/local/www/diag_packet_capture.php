@@ -137,8 +137,10 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-if (ipsec_enabled())
+if (ipsec_enabled()) {
 	$interfaces['enc0'] = "IPsec";
+}
+
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -285,8 +287,9 @@ $protocollist = array(
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(false); // No button yet. We add those later depending on the required action
 
@@ -391,8 +394,7 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		'startbtn',
 		'Start'
 	))->removeClass('btn-primary')->addClass('btn-success');
-}
-else {
+} else {
 	$form->addGlobal(new Form_Button(
 		'stopbtn',
 		'Stop'
@@ -421,14 +423,17 @@ print($form);
 if ($do_tcpdump) :
 	$matches = array();
 
-	if (in_array($fam, $fams))
+	if (in_array($fam, $fams)) {
 		$matches[] = $fam;
+	}
 
-	if (in_array($proto, $protos))
+	if (in_array($proto, $protos)) {
 		$matches[] = fixup_not($proto);
+	}
 
-	if ($port != "")
+	if ($port != "") {
 		$matches[] = "port ".fixup_not($port);
+	}
 
 	if ($host != "") {
 		$hostmatch = "";
@@ -437,15 +442,17 @@ if ($do_tcpdump) :
 		foreach ($hosts as $h) {
 			$h = fixup_host($h, $hostcount++);
 
-			if (!empty($h))
+			if (!empty($h)) {
 				$hostmatch .= " " . $h;
+			}
 		}
 
-		if (!empty($hostmatch))
+		if (!empty($hostmatch)) {
 			$matches[] = "({$hostmatch})";
+		}
 	}
 
-	if ($count != "0" ) {
+	if ($count != "0") {
 		$searchcount = "-c " . $count;
 	} else {
 		$searchcount = "";

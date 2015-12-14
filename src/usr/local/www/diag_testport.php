@@ -124,7 +124,7 @@ if ($_POST || $_REQUEST['host']) {
 ?>
 		<script type="text/javascript">
 			//<![CDATA[
-			window.onload=function(){
+			window.onload=function() {
 				document.getElementById("testportCaptured").wrap='off';
 			}
 			//]]>
@@ -134,10 +134,12 @@ if ($_POST || $_REQUEST['host']) {
 		$ncoutput = "";
 		$nc_base_cmd = '/usr/bin/nc';
 		$nc_args = "-w " . escapeshellarg($timeout);
-		if (!$showtext)
+		if (!$showtext) {
 			$nc_args .= ' -z ';
-		if (!empty($srcport))
+		}
+		if (!empty($srcport)) {
 			$nc_args .= ' -p ' . escapeshellarg($srcport) . ' ';
+		}
 
 		/* Attempt to determine the interface address, if possible. Else try both. */
 		if (is_ipaddrv4($host)) {
@@ -152,12 +154,13 @@ if ($_POST || $_REQUEST['host']) {
 			}
 			$nc_args .= ' -4';
 		} elseif (is_ipaddrv6($host)) {
-			if ($sourceip == "any")
+			if ($sourceip == "any") {
 				$ifaddr = '';
-			else if (is_linklocal($sourceip))
+			} else if (is_linklocal($sourceip)) {
 				$ifaddr = $sourceip;
-			else
+			} else {
 				$ifaddr = get_interface_ipv6($sourceip);
+			}
 			$nc_args .= ' -6';
 		} else {
 			switch ($ipprotocol) {
@@ -197,8 +200,9 @@ if ($_POST || $_REQUEST['host']) {
 		if (!empty($ifaddr)) {
 			$nc_args .= ' -s ' . escapeshellarg($ifaddr) . ' ';
 			$scope = get_ll_scope($ifaddr);
-			if (!empty($scope) && !strstr($host, "%"))
+			if (!empty($scope) && !strstr($host, "%")) {
 				$host .= "%{$scope}";
+			}
 		}
 
 		$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . ' ' . escapeshellarg($port) . ' 2>&1';
@@ -220,9 +224,9 @@ if ($_POST || $_REQUEST['host']) {
 include("head.inc");
 
 // Handle the display of all messages here where the user can readily see them
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else {
+} else {
 	// New page
 	if (empty($result) && $retval != 0 && !$showtext) {
 	    print('<div class="alert alert-warning" role="alert">This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
@@ -231,18 +235,21 @@ else {
 
 	// Good host & port
 	if ($retval == 0 && $do_testport == 1)	{
-		if (!$showtext)
+		if (!$showtext) {
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful").'</div>');
-		else
+		} else {
 			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from the host will be shown below the form.</div>');
+		}
 	}
 
 	// netcat exit value != 0
-	if ($retval != 0 && !empty($result))
-		if ($showtext)
+	if ($retval != 0 && !empty($result)) {
+		if ($showtext) {
 			print('<div class="alert alert-danger" role="alert">'.gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.').'</div>');
-		else
+		} else {
 			print('<div class="alert alert-danger" role="alert">'.gettext('Connection failed.').'</div>');
+		}
+	}
 }
 
 $form = new Form('Test');

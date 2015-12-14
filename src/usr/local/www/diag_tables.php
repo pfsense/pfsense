@@ -105,15 +105,18 @@ if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
 		$loading = true;
 		while ($loading == true) {
 			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-			if ($isrunning == "")
+			if ($isrunning == "") {
 				$loading = false;
+			}
 			$maxtimetowait++;
-			if ($maxtimetowait > 89)
+			if ($maxtimetowait > 89) {
 				$loading = false;
+			}
 			sleep(1);
 		}
-		if ($maxtimetowait < 90)
+		if ($maxtimetowait < 90) {
 			$savemsg = gettext("The bogons database has been updated.");
+		}
 	}
 }
 
@@ -122,8 +125,9 @@ exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $form = new Form('Show');
 
@@ -142,8 +146,8 @@ print $form;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$('a[data-entry]').on('click', function(){
+events.push(function() {
+	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 
 		$.ajax(
@@ -154,7 +158,7 @@ events.push(function(){
 					type: '<?=htmlspecialchars($tablename)?>',
 					delete: $(this).data('entry')
 				},
-				success: function(){
+				success: function() {
 					el.parents('tr').remove();
 				},
 		});

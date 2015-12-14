@@ -87,8 +87,9 @@ if ($_POST) {
 			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
 			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br />";
 			$savemsg .= "<ul>";
-			foreach ($groups as $group)
+			foreach ($groups as $group) {
 				$savemsg .= "<li>" . "{$group} " . "</li>";
+			}
 			$savemsg .= "</ul>";
 
 		} else {
@@ -109,18 +110,21 @@ include("head.inc");
 
 ?>
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
+}
 
 $form = new Form('Test');
 
 $section = new Form_Section('Authentication Test');
 
-foreach (auth_get_authserver_list() as $auth_server)
+foreach (auth_get_authserver_list() as $auth_server) {
 	$serverlist[$auth_server['name']] = $auth_server['name'];
+}
 
 $section->addInput(new Form_Select(
 	'authmode',

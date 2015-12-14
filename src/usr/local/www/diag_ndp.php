@@ -165,10 +165,11 @@ include("head.inc");
 					</td>
 					<td>
 						<?php
-						if (isset($hwif[$entry['interface']]))
+						if (isset($hwif[$entry['interface']])) {
 							echo $hwif[$entry['interface']];
-						else
+						} else {
 							echo $entry['interface'];
+						}
 						?>
 					</td>
 				</tr>

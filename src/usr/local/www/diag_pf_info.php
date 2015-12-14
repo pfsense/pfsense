@@ -88,8 +88,9 @@ if ($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(false);
 $form->addGlobal(new Form_Input(
@@ -114,8 +115,9 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 	function getpfinfo() {
-		if (!$('#refresh').is(':checked'))
+		if (!$('#refresh').is(':checked')) {
 			return;
+		}
 
 		$.ajax(
 			'/diag_pf_info.php',
@@ -128,7 +130,7 @@ print $form;
 		});
 	}
 
-	events.push(function(){
+	events.push(function() {
 		setInterval('getpfinfo()', 2500);
 		getpfinfo();
 	});

@@ -93,11 +93,13 @@ if ($_POST) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'alert-success');
+}
 
 $statetablehelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
@@ -117,8 +119,9 @@ $sourcetablehelp =	'Resetting the source tracking table will remove all source/d
 $tab_array = array();
 $tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
 
-if (isset($config['system']['lb_use_sticky']))
+if (isset($config['system']['lb_use_sticky'])) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+}
 
 $tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
 display_top_tabs($tab_array);

@@ -117,7 +117,7 @@ if ($_POST || $_REQUEST['host']) {
 		if ($_POST) {
 			$do_ping = true;
 		}
-		if(isset($_REQUEST['sourceip'])) {
+		if (isset($_REQUEST['sourceip'])) {
 			$sourceip = $_REQUEST['sourceip'];
 		}
 		$count = $_REQUEST['count'];
@@ -131,7 +131,7 @@ if ($do_ping) {
 ?>
 	<script type="text/javascript">
 	//<![CDATA[
-	window.onload=function(){
+	window.onload=function() {
 		document.getElementById("pingCaptured").wrap='off';
 	}
 	//]]>
@@ -142,31 +142,35 @@ if ($do_ping) {
 	if ($ipproto == "ipv6") {
 		$command .= "6";
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-		if (is_linklocal($ifaddr))
+		if (is_linklocal($ifaddr)) {
 			$ifscope = get_ll_scope($ifaddr);
+		}
 	} else {
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 	}
 
 	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
 		$srcip = "-S" . escapeshellarg($ifaddr);
-		if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope))
+		if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope)) {
 			$host .= "%{$ifscope}";
+		}
 	}
 
 	$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 	//echo "Ping command: {$cmd}\n";
 	$result = shell_exec($cmd);
 
-	if (empty($result))
+	if (empty($result)) {
 		$input_errors[] = "Host \"" . $host . "\" did not respond or could not be resolved.";
+	}
 
 }
 
 include('head.inc');
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form('Ping');
 

@@ -92,14 +92,15 @@ if (stristr($retval, "error") == true) {
 
 include("head.inc"); ?>
 
-include("fbegin.inc"); 
+include("fbegin.inc");
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-<?php 
-if ($input_errors) 
+<?php
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 if ($message) { ?>
 <br />

@@ -349,7 +349,7 @@ $mac_man = load_mac_manufacturer_table();
 			</tr>
 		</thead>
 		<tbody>
-		
+
 <?php
 		foreach ($data as $entry): ?>
 			<tr>
@@ -376,7 +376,7 @@ $mac_man = load_mac_manufacturer_table();
 <script type="text/javascript">
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
-events.push(function(){
+events.push(function() {
 	$('#loading').empty();
 });
 //]]>

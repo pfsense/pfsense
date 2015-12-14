@@ -161,29 +161,33 @@ function update_routes_callback(html) {
 
 	for (var i = 0; i < responseTextArr.length; i++) {
 
-		if (responseTextArr[i] == "")
+		if (responseTextArr[i] == "") {
 			continue;
+		}
 
-		if (i == 0)
+		if (i == 0) {
 			var tmp = '';
-		else
+		} else {
 			var tmp = '<tr>';
+		}
 
 		var j = 0;
 		var entry = responseTextArr[i].split(" ");
 		for (var k = 0; k < entry.length; k++) {
-			if (entry[k] == "")
+			if (entry[k] == "") {
 				continue;
-			if (i == 0)
+			}
+			if (i == 0) {
 				tmp += '<th>' + entry[k] + '<\/th>';
-			else
+			} else {
 				tmp += '<td>' + entry[k] + '<\/td>';
+			}
 			j++;
 		}
 
-		if (i == 0)
+		if (i == 0) {
 			thead += tmp;
-		else {
+		} else {
 			tmp += '<td><\/td>'
 			tbody += tmp;
 		}
@@ -198,11 +202,11 @@ function update_all_routes() {
 	update_routes("IPv6");
 }
 
-events.push(function(){
+events.push(function() {
 	setInterval('update_all_routes()', 5000);
 	update_all_routes();
 
-	$(document.forms[0]).on('submit', function(e){
+	$(document.forms[0]).on('submit', function(e) {
 		update_all_routes();
 
 		e.preventDefault();

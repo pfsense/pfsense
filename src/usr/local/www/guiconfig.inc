@@ -87,15 +87,6 @@ require_once("functions.inc");
 /* Include the autoloader for all the GUI display classes */
 require_once("classes/autoload.inc.php");
 
-/* Set the default interface language */
-if ($config['system']['language'] <> "") {
-	$g['language'] = $config['system']['language'];
-} elseif ($g['language'] == "") {
-	$g['language'] = 'en_US';
-}
-
-set_language($g['language']);
-
 /* used by progress bar */
 $lastseen = "-1";
 

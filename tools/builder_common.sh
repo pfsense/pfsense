@@ -1953,6 +1953,11 @@ COMMIT_PACKAGES_ON_FAILURE=no
 GIT_URL="${POUDRIERE_PORTS_GIT_URL}"
 EOF
 
+	# Create DISTFILES_CACHE if it doesn't exist
+	if [ ! -d /usr/ports/distfiles ]; then
+		mkdir -p /usr/ports/distfiles
+	fi
+
 	# Remove old jails
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})

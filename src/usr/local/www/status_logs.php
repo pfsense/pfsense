@@ -438,8 +438,8 @@ if (!$rawfilter) {
 				<tr>
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("Process")?></th>
-					<th><?=gettext("PID")?></th>
-					<th style="width:100%"><?=gettext("Message")?></th>
+					<th class="col-md-1"><?=gettext("PID")?></th>
+					<th><?=gettext("Message")?></th>
 				</tr>
 			</thead>
 			<tbody>

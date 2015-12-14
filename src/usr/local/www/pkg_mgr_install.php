@@ -344,8 +344,15 @@ if ($input_errors)
 <?php
 		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
 ?>
-			<input type="hidden" name="id" value="firmware" />
-			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Confirm Upgrade")?>
+			</label>
+			<div class="col-sm-10">
+				<input type="hidden" name="id" value="firmware" />
+				<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			</div>
+		</div>
 <?php
 		} else {
 ?>

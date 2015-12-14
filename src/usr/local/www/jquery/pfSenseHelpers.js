@@ -342,7 +342,7 @@ function add_row() {
 		});
 	}
 
-	// Not that we are no longer cloning the event handlers, we need to remove and re-add after a new row
+	// Now that we are no longer cloning the event handlers, we need to remove and re-add after a new row
 	// has been added to the table
 	$('[id^=delete]').unbind();
 	$('[id^=delete]').click(function(event) {

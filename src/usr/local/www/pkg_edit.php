@@ -518,13 +518,17 @@ function parse_package_templates() {
 //breadcrumb
 if ($pkg['title'] != "") {
 	if(!$only_edit) {
-		$pgtitle = array($pkg['title'], gettext("Edit"));
-	} else {
-		if (strpos($pkg['title'], '/')) {
-			$pgtitle = explode('/', $pkg['title']);
-		} else {
-		$pgtitle = array(gettext("Package"), $pkg['title']);
+		$pkg['title'] = $pkg['title'] . '/Edit';
+	}
+
+	if (strpos($pkg['title'], '/')) {
+		$title = explode('/', $pkg['title']);
+
+		foreach ($title as $subtitle) {
+			$pgtitle[] = gettext($subtitle);
 		}
+	} else {
+		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
@@ -542,7 +546,7 @@ if ($pkg['tabs'] != "") {
 
 		if (isset($tab['active'])) {
 			$active = true;
-			$pgtitle[] = $tab['text'] ; 
+			$pgtitle[] = $tab['text'] ;
 		} else {
 			$active = false;
 		}

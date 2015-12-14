@@ -460,7 +460,7 @@ $group->add(new Form_Checkbox(
 	'dstnot',
 	null,
 	'Not',
-	$pconfig['srcnot']
+	$pconfig['dstnot']
 ))->setHelp('Invert the sense of the match.');
 
 $group->add(new Form_Select(

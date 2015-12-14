@@ -415,14 +415,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {
-		$saved_line_error = $rules_error[0];
-		$line_error = explode(":", $rules_error[0]);
-		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
-		if(is_array($line_split))
-			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
-		unset($line_split);
-
 		/* Brutal ugly hack but required -- PF is stuck, unwedge */
 		if (strstr("$rules_error[0]", "busy")) {
 			exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
@@ -431,14 +424,23 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		} else {
 			$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
 		}
-		unset($rules_loading, $rules_error);
 
-		if ($line_error and $line_number) {
-			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
-			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
-			unlock($filterlck);
-			return;
+		foreach($rules_error as $errorline) {
+			$saved_line_error = $errorline;
+			$line_error = explode(":", $errorline);
+			$line_number = $line_error[1];
+			if(is_array($line_split))
+				$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
+
+			if ($line_error and $line_number) {
+				file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
+				update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
+				unlock($filterlck);
+				unset($line_split, $rules_loading, $rules_error);
+				return;
+			}
 		}
+		unset($line_split, $rules_loading, $rules_error);
 	}
 
 	# If we are not using bogonsv6 then we can remove any bogonsv6 table from the running pf (if the table is not there, the kill is still fine).

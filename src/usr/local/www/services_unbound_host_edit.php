@@ -106,7 +106,6 @@ if (isset($id) && $a_hosts[$id]) {
 }
 
 if ($_POST) {
-print_r($_POST);
 	unset($input_errors);
 	$pconfig = $_POST;
 

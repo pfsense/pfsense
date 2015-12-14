@@ -191,7 +191,7 @@ $tab_array[] = array(gettext("URLs"),  ($tab == "url"? true : false), "/firewall
 $tab_array[] = array(gettext("All"),   ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 
 foreach ($tab_array as $dtab) {
-	if($dtab[1] == true) {
+	if ($dtab[1] == true) {
 		$bctab = $dtab[0];
 		break;
 	}
@@ -202,11 +202,13 @@ $shortcut_section = "aliases";
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('aliases'))
+if (is_subsystem_dirty('aliases')) {
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 
 display_top_tabs($tab_array);
@@ -234,16 +236,19 @@ display_top_tabs($tab_array);
 		case "ip":
 		case "host":
 		case "network":
-			if (preg_match("/(host|network)/", $alias["type"]))
+			if (preg_match("/(host|network)/", $alias["type"])) {
 				$show_alias= true;
+			}
 			break;
 		case "url":
-			if (preg_match("/(url)/i", $alias["type"]))
+			if (preg_match("/(url)/i", $alias["type"])) {
 				$show_alias= true;
+			}
 			break;
 		case "port":
-			if ($alias["type"] == "port")
+			if ($alias["type"] == "port") {
 				$show_alias= true;
+			}
 			break;
 		}
 		if ($show_alias):
@@ -303,7 +308,7 @@ display_top_tabs($tab_array);
 	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
 <div>
 	<div id="infoblock">
-		<?=print_info_box(gettext( 'Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
+		<?=print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .
 			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
 			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), info)?>

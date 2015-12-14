@@ -143,8 +143,9 @@ if ($_POST) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
-		if ($newpost != $temp)
+		if ($newpost != $temp) {
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
+		}
 	}
 
 	/* input validation */
@@ -283,11 +284,13 @@ function build_srctype_list() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
@@ -305,8 +308,9 @@ function srctype_selected() {
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
-		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask'])))
+		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask']))) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -320,11 +324,13 @@ function build_dsttype_list() {
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
@@ -335,8 +341,9 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
+			if (isset($sn['noexpand'])) {
 				continue;
+			}
 
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
@@ -362,12 +369,14 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if (empty($pconfig['dst'] || $pconfig['dst'] == "any"))
+	if (empty($pconfig['dst'] || $pconfig['dst'] == "any")) {
 		return('any');
+	}
 
 	if (!$sel) {
-		if ($pconfig['dstmask'] == 32)
+		if ($pconfig['dstmask'] == 32) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -375,8 +384,9 @@ function dsttype_selected() {
 	return($pconfig['dst']);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -394,24 +404,31 @@ $section->addInput(new Form_Checkbox(
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 	$interfaces['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
 	$interfaces["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = "OpenVPN";
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -505,7 +522,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Disables the specified input element
 	function disableInput(id, disable) {

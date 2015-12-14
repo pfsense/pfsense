@@ -198,8 +198,9 @@ if ($_GET) {
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
-		} else
+		} else {
 			$input_errors[] = gettext("Could not create new queue/discipline!");
+		}
 
 		if ($q) {
 			$sform = $q->build_form();
@@ -220,8 +221,9 @@ if ($_GET) {
 			$queue->SetEnabled("on");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('shaper');
+			}
 		} else {
 			$input_errors[] = gettext("Queue not found!");
 		}
@@ -231,8 +233,9 @@ if ($_GET) {
 			$queue->SetEnabled("");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config())
+			if (write_config()) {
 				mark_subsystem_dirty('shaper');
+			}
 		} else {
 			$input_errors[] = gettext("Queue not found!");
 		}
@@ -351,8 +354,9 @@ if ($queue) {
 	}
 	if ($queue->CanHaveChildren()) {
 		$can_add = true;
-	} else
+	} else {
 		$can_add = false;
+	}
 }
 
 $tree = "<ul class=\"tree\" >";
@@ -469,7 +473,7 @@ if ($dfltmsg) {
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
     // Disables the specified input element
     function disableInput(id, disable) {

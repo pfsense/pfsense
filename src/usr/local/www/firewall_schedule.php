@@ -113,8 +113,9 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 ?>
 
 <div class="panel panel-default">
@@ -183,23 +184,24 @@ foreach ($a_schedules as $schedule):
 					$currentDay++;
 
 					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
-						if ($firstPrint)
+						if ($firstPrint) {
 							$dayFriendly .= "<br />";
+						}
 
 						$currentDay--;
 
-						if ($currentDay != $firstDay)
+						if ($currentDay != $firstDay) {
 							$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-						else
+						} else {
 							$dayFriendly .=	 $monthArray[$month-1] . " " . $day;
+						}
 
 						$firstDayFound = false;
 						$firstPrint = true;
 					}
 					$arraycounter++;
 				}
-			}
-			else {
+			} else {
 				$tempdayFriendly = $timerange['position'];
 				$firstDayFound = false;
 				$tempFriendlyDayArray = explode(",", $tempdayFriendly);
@@ -210,8 +212,7 @@ foreach ($a_schedules as $schedule):
 
 				foreach ($tempFriendlyDayArray as $day) {
 					if ($day != "") {
-						if (!$firstDayFound)
-						{
+						if (!$firstDayFound) {
 							$firstDay = $tempFriendlyDayArray[$counter];
 							$firstDayFound = true;
 						}
@@ -222,15 +223,17 @@ foreach ($a_schedules as $schedule):
 						$currentDay++;
 
 						if ($currentDay != $nextDay) {
-							if ($firstprint)
+							if ($firstprint) {
 								$dayFriendly .= "<br />";
+							}
 
 							$currentDay--;
 
-							if ($currentDay != $firstDay)
+							if ($currentDay != $firstDay) {
 								$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-							else
+							} else {
 								$dayFriendly .= $dayArray[$firstDay-1];
+							}
 
 							$firstDayFound = false;
 							$firstprint = true;

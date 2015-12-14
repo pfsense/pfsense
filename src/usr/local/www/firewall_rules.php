@@ -136,8 +136,9 @@ if (is_array($config['pppoes']['pppoe'])) {
 }
 
 /* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
 	$iflist["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
@@ -201,7 +202,7 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 		}
 
-		if($deleted) {
+		if ($deleted) {
 			if (write_config()) {
 				mark_subsystem_dirty('filter');
 			}
@@ -224,14 +225,15 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
-} else if($_POST['order-store']) {
+} else if ($_POST['order-store']) {
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_filter_new[] = $a_filter[$id];
+		}
 
 		$a_filter = $a_filter_new;
 		if (write_config()) {
@@ -245,11 +247,12 @@ if (isset($_POST['del_x'])) {
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
 
-foreach ($iflist as $ifent => $ifname)
+foreach ($iflist as $ifent => $ifname) {
 	$tab_array[] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
+}
 
 foreach ($tab_array as $dtab) {
-	if($dtab[1]) {
+	if ($dtab[1]) {
 		$bctab = $dtab[0];
 		break;
 	}
@@ -261,13 +264,13 @@ $shortcut_section = "firewall";
 include("head.inc");
 $nrules = 0;
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('filter'))
+if (is_subsystem_dirty('filter')) {
 	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
-
-
+}
 
 display_top_tabs($tab_array);
 
@@ -297,8 +300,8 @@ display_top_tabs($tab_array);
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 	if (!isset($config['system']['webgui']['noantilockout']) &&
-		(((count($config['interfaces']) > 1) && ($if == 'lan')) ||
-		 ((count($config['interfaces']) == 1) && ($if == 'wan')))):
+	    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
 					<tr id="antilockout">
@@ -362,7 +365,7 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
+	if (($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if)) {
 		$display = 'style="display: none;"';
 	} else {
 		$display = "";
@@ -393,11 +396,13 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<i class="fa fa-<?=$iconfn?>"></i>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
-		if ($isadvset)
+		if ($isadvset) {
 			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
+		}
 
-		if (isset($filterent['log']))
+		if (isset($filterent['log'])) {
 			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'"></i>';
+		}
 	?>
 						</td>
 	<?php
@@ -418,8 +423,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 		$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
-			foreach ($a_schedules as $schedule)
-			{
+			foreach ($a_schedules as $schedule) {
 				if ($schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 
@@ -448,8 +452,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 									$month = $tempmontharray[$arraycounter];
 									$day = $tempdayarray[$arraycounter];
 
-									if (!$firstDayFound)
-									{
+									if (!$firstDayFound) {
 										$firstDay = $day;
 										$firstmonth = $month;
 										$firstDayFound = true;
@@ -459,21 +462,21 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 									$nextDay = $tempdayarray[$arraycounter+1];
 									$currentDay++;
 									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
-										if ($firstPrint)
+										if ($firstPrint) {
 											$dayFriendly .= ", ";
+										}
 										$currentDay--;
-										if ($currentDay != $firstDay)
+										if ($currentDay != $firstDay) {
 											$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-										else
+										} else {
 											$dayFriendly .=	 $monthArray[$month-1] . " " . $day;
+										}
 										$firstDayFound = false;
 										$firstPrint = true;
 									}
 									$arraycounter++;
 								}
-							}
-							else
-							{
+							} else {
 								$tempdayFriendly = $timerange['position'];
 								$firstDayFound = false;
 								$tempFriendlyDayArray = explode(",", $tempdayFriendly);
@@ -483,8 +486,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								$counter = 0;
 								foreach ($tempFriendlyDayArray as $day) {
 									if ($day != "") {
-										if (!$firstDayFound)
-										{
+										if (!$firstDayFound) {
 											$firstDay = $tempFriendlyDayArray[$counter];
 											$firstDayFound = true;
 										}
@@ -493,13 +495,15 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 										$nextDay = $tempFriendlyDayArray[$counter+1];
 										$currentDay++;
 										if ($currentDay != $nextDay) {
-											if ($firstprint)
+											if ($firstprint) {
 												$dayFriendly .= ", ";
+											}
 											$currentDay--;
-											if ($currentDay != $firstDay)
+											if ($currentDay != $firstDay) {
 												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-											else
+											} else {
 												$dayFriendly .= $dayArray[$firstDay-1];
+											}
 											$firstDayFound = false;
 											$firstprint = true;
 										}
@@ -533,10 +537,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
-				if ($iconfn == "block" || $iconfn == "reject")
+				if ($iconfn == "block" || $iconfn == "reject") {
 					$image = "times-circle";
-				else
+				} else {
 					$image = "times-circle";
+				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
 				$printicon = true;
 			}
@@ -615,8 +620,9 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								} else if (isset($filterent['defaultqueue'])) {
 									$desc = $filterent['defaultqueue'];
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
-								} else
+								} else {
 									echo gettext("none");
+								}
 							?>
 						</td>
 						<td>
@@ -700,18 +706,19 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		</dl>
 
 <?php
-	if ("FloatingRules" != $if)
+	if ("FloatingRules" != $if) {
 		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
 			gettext("This means that if you use block rules, you'll have to pay attention " .
 			"to the rule order. Everything that isn't explicitly passed is blocked " .
 			"by default. "));
-	else
+	} else {
 		print(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed) only " .
 			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
 			"other rules match. Pay close attention to the rule order and options " .
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
+	}
 ?>
 	</div>
 </div>

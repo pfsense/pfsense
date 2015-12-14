@@ -309,9 +309,6 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
 
-define(SEC_OPEN, 0x00);
-define(SEC_CLOSED, 0x04);
-
 if ($filter_active)
 	$filter_state = SEC_OPEN;
 else

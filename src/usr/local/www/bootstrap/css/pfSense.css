@@ -532,6 +532,10 @@ footer a {
     font-size: 15px;
     vertical-align: middle;
     color: white;
+    padding-right: 15px;
+    padding-bottom: 17px;
+    margin-top: -0.125em
+
 }
 
 /* Used when you need an icon to act as a submit button **/

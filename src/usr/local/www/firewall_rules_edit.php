@@ -1476,7 +1476,7 @@ $section->addInput(new Form_Input(
 	'Max. src. conn. Rate',
 	'number',
 	$pconfig['max-src-conn-rate']
-))->setHelp('Maximum state entries per host');
+))->setHelp('Maximum new connections per host (TCP only)');
 
 $section->addInput(new Form_Input(
 	'max-src-conn-rates',
@@ -1484,7 +1484,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['max-src-conn-rates'],
 	['min' => 1, 'max' => 255]
-))->setHelp('Maximum new connections per host / per second(s) (TCP only)');
+))->setHelp('/ per how many second(s) (TCP only)');
 
 $section->addInput(new Form_Input(
 	'statetimeout',

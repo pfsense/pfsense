@@ -188,7 +188,7 @@ if ($_POST) {
 ?>
 
 <table id="gwtbl" class="table table-striped table-hover">
-		<tr><td><?=gettext("Retrieving gateway data")?></td></tr>
+	<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->

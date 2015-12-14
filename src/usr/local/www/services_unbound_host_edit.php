@@ -282,12 +282,17 @@ $form->add($section);
 
 $section = new Form_Section('Additional names for this host');
 
+if(!$pconfig['aliases']['item']) {
+	$pconfig['aliases']['item'] = array('host' => "");
+}
+
 if( $pconfig['aliases']['item']) {
 	$counter = 0;
 	$last = count($pconfig['aliases']['item']) - 1;
 
 	foreach($pconfig['aliases']['item'] as $item) {
 		$group = new Form_Group(null);
+		$group->addClass('repeatable');
 
 		$group->add(new Form_Input(
 			'aliashost' . $counter,
@@ -310,28 +315,22 @@ if( $pconfig['aliases']['item']) {
 			$item['description']
 		))->setHelp($counter == $last ? 'Description':null);
 
-		$btn = new Form_Button(
-			'btn' . $counter,
-			'Delete',
-			'services_unbound_host_edit.php?act=delopt' . '&id=' . $counter
-		);
+		$group->add(new Form_Button(
+			'deleterow' . $counter,
+			'Delete'
+		))->removeClass('btn-primary')->addClass('btn-warning');
 
-		$btn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-		$group->add($btn);
 		$section->add($group);
 		$counter++;
 	}
 }
 
-$btnaddopt = new Form_Button(
-	'btnaddopt',
-	'Add Host name',
-	'services_unbound_host_edit.php?act=addopt'
-);
-
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$section->addInput($btnaddopt);
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add host name',
+	null,
+	'fa-plus'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 print($form);

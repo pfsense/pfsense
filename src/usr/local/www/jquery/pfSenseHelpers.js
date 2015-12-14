@@ -341,6 +341,21 @@ function add_row() {
 			}
 		});
 	}
+
+	// Not that we are no longer cloning the event handlers, we need to remove and re-add after a new row
+	// has been added to the table
+	$('[id^=delete]').unbind();
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			if((typeof retainhelp) == "undefined")
+				moveHelpText(event.target.id);
+
+			delete_row(event.target.id);
+		}
+		else
+			alert('You may not delete the last row!');
+	});
+
 }
 
 // These are action buttons, not submit buttons

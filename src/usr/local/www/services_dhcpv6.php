@@ -599,19 +599,19 @@ $group->add($f2);
 $section->add($group);
 
 $f1 = new Form_Input(
-	'prefix_from',
+	'prefixrange_from',
 	null,
 	'text',
-	$pconfig['prefix_from']
+	$pconfig['prefixrange_from']
 );
 
 $f1->setHelp('To');
 
 $f2 = new Form_Input(
-	'prefix_to',
+	'prefixrange_to',
 	null,
 	'text',
-	$pconfig['prefix_to']
+	$pconfig['prefixrange_to']
 );
 
 $f2->setHelp('From');

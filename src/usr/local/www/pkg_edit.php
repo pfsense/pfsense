@@ -520,7 +520,11 @@ if ($pkg['title'] != "") {
 	if(!$only_edit) {
 		$pgtitle = array($pkg['title'], gettext("Edit"));
 	} else {
+		if (strpos($pkg['title'], '/')) {
+			$pgtitle = explode('/', $pkg['title']);
+		} else {
 		$pgtitle = array(gettext("Package"), $pkg['title']);
+		}
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));

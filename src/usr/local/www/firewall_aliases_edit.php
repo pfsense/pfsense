@@ -627,13 +627,6 @@ $form->addGlobal(new Form_Input(
 ));
 
 $form->addGlobal(new Form_Input(
-	'tab',
-	null,
-	'hidden',
-	$tab
-));
-
-$form->addGlobal(new Form_Input(
 	'origname',
 	null,
 	'hidden',

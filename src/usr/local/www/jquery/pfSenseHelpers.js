@@ -138,7 +138,7 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
-// Toggle table row chackboxes and background colors on the pages that use sortable tables:
+// Toggle table row checkboxes and background colors on the pages that use sortable tables:
 //	/usr/local/www/firewall_nat.php
 //	/usr/local/www/firewall_nat_1to1.php
 //	/usr/local/www/firewall_nat_out.php
@@ -214,13 +214,18 @@ function moveHelpText(id) {
 		var helpSpan;
 
 		if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
-
-			helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+			if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+			} else {
+				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
+			}
 			if($(helpSpan).hasClass('help-block')) {
-				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
+				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
-				else
+				}
+				else {
 					$('#' + decrStringInt(fromId)).after(helpSpan);
+				}
 			}
 		}
 	});

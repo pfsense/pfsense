@@ -681,7 +681,7 @@ if (count($config['interfaces']) > 1) {
 	$form->add($section);
 }
 
-$section = new Form_Section('State Timeouts');
+$section = new Form_Section('State Timeouts in seconds. (Leave blank for default)');
 
 $tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
 foreach ($tcpTimeouts as $name) {
@@ -691,8 +691,7 @@ foreach ($tcpTimeouts as $name) {
 		'TCP '. $name,
 		'number',
 		$config['system'][$keyname]
-	))->setHelp('Enter value for TCP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+	));
 }
 
 $udpTimeouts = array('First', 'Single', 'Multiple');
@@ -703,8 +702,7 @@ foreach ($udpTimeouts as $name) {
 		'UDP '. $name,
 		'number',
 		$config['system'][$keyname]
-	))->setHelp('Enter value for UDP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+	));
 }
 
 $icmpTimeouts = array('First', 'Error');
@@ -715,8 +713,7 @@ foreach ($icmpTimeouts as $name) {
 		'ICMP '. $name,
 		'number',
 		$config['system'][$keyname]
-	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+	));
 }
 
 $otherTimeouts = array('First', 'Single', 'Multiple');
@@ -727,8 +724,7 @@ foreach ($otherTimeouts as $name) {
 		'Other '. $name,
 		'number',
 		$config['system'][$keyname]
-	))->setHelp('Enter value for Other '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+	));
 }
 
 $form->add($section);

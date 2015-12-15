@@ -8,6 +8,7 @@
 /etc/auth.conf
 /etc/current-supfile
 /etc/defaults/pccard.conf
+/etc/fbtab
 /etc/freebsd-update.conf
 /etc/gnats
 /etc/hostid

@@ -174,10 +174,12 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Networking"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -284,14 +286,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('This option will suppress ARP log messages when multiple interfaces '.
 	'reside on the same broadcast domain');
 
-if (get_freebsd_version() == 8)
-{
+if (get_freebsd_version() == 8) {
 	$section->addInput(new Form_Checkbox(
 		'flowtable',
 		'Enable flowtable support',
 		$pconfig['flowtable']
 	))->setHelp('Enables infrastructure for caching flows as a means of accelerating '.
-		'L3 and L2 lookupsas well as providing stateful load balancing when used with '.
+		'L3 and L2 lookups as well as providing stateful load balancing when used with '.
 		'RADIX_MPATH.');
 }
 

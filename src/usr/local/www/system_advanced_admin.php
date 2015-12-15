@@ -266,8 +266,8 @@ if ($_POST) {
 		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-			($sshd_port != $config['system']['ssh']['port'])) {
+		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
 
@@ -320,11 +320,13 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
@@ -345,7 +347,7 @@ $group->add(new Form_Checkbox(
 	'webguiproto',
 	'Protocol',
 	'HTTP',
-	($pconfig['webguiproto']=='http'),
+	($pconfig['webguiproto'] == 'http'),
 	'http'
 ))->displayAsRadio();
 
@@ -353,7 +355,7 @@ $group->add(new Form_Checkbox(
 	'webguiproto',
 	'Protocol',
 	'HTTPS',
-	($pconfig['webguiproto']=='https'),
+	($pconfig['webguiproto'] == 'https'),
 	'https'
 ))->displayAsRadio();
 
@@ -364,8 +366,9 @@ $group->setHelp($certs_available ? '':'No Certificates have been defined. You mu
 $section->add($group);
 
 $values = array();
-foreach($a_cert as $cert)
+foreach ($a_cert as $cert) {
 	$values[ $cert['refid'] ] = $cert['descr'];
+}
 
 $section->addInput($input = new Form_Select(
 	'ssl-certref',
@@ -421,10 +424,11 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When this is checked, successful logins to the webConfigurator will '.
 	'not be logged.');
 
-if ($config['interfaces']['lan'])
+if ($config['interfaces']['lan']) {
 	$lockout_interface = "LAN";
-else
+} else {
 	$lockout_interface = "WAN";
+}
 
 $section->addInput(new Form_Checkbox(
 	'noantilockout',
@@ -508,8 +512,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 
-if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom"))
-{
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 	$form->add($section);
 	$section = new Form_Section('Serial Communications');
 
@@ -559,7 +562,7 @@ print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
@@ -577,11 +580,11 @@ events.push(function(){
 <?php
 include("foot.inc");
 
-if ($restart_webgui)
+if ($restart_webgui) {
 	echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
+}
 
-if ($restart_sshd)
-{
+if ($restart_sshd) {
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
@@ -591,8 +594,7 @@ if ($restart_sshd)
 	}
 }
 
-if ($restart_webgui)
-{
+if ($restart_webgui) {
 	ob_flush();
 	flush();
 	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));

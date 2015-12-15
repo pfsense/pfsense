@@ -78,7 +78,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 }
 
 // set default colmns to two if unset
-if(!isset($config['system']['webgui']['dashboardcolumns'])) {
+if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
@@ -141,7 +141,7 @@ function return_ext_menu($section) {
 	$htmltext = "";
 	$extarray = array();
 
-	if ( (!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
+	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
 		foreach ($config['installedpackages']['menu'] as $menu) {
 //			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
 			if ($menu['section'] != $section) {
@@ -308,7 +308,7 @@ if (count($config['interfaces']) > 1) {
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
-		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
+	    preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -434,7 +434,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
-							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i> 
+							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
 							<span class="badge bg-danger"><?=count($notices)?></span>
 						</a>
 					</li>
@@ -451,12 +451,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 <?php
 	// If you set $notitle = true BEFORE including head.inc, the page title will be supressed
-	if(isset($notitle)) {
+	if (isset($notitle)) {
 		print('<br />');
 		unset($notitle);
 	} else {
-
-	print(genhtmltitle($pgtitle));
+		print(genhtmltitle($pgtitle));
 	}
 ?>
 		<ul class="context-links">
@@ -540,11 +539,11 @@ if (are_notices_pending()):?>
 <?php
 	$noticeCategories = array();
 
-	if(is_array($notices)) {
-		foreach ($notices as $time => $notice)
-		{
-			if (!isset($noticeCategories[ $notice['category'] ]))
+	if (is_array($notices)) {
+		foreach ($notices as $time => $notice) {
+			if (!isset($noticeCategories[ $notice['category'] ])) {
 				$noticeCategories[ $notice['category'] ] = array();
+			}
 
 			$notice['time'] = $time;
 			array_push($noticeCategories[ $notice['category'] ], $notice);
@@ -581,16 +580,16 @@ if (are_notices_pending()):?>
 
 <script type="text/javascript">
 //<![CDATA[
-	events.push(function(){
+	events.push(function() {
 	    $('#clearallnotices').click(function() {
 			ajaxRequest = $.ajax({
 				url: "/index.php",
 				type: "post",
 				data: { closenotice: "all"},
-				success: function(){
+				success: function() {
 					window.location = window.location.href;
 				},
-				failure: function () {
+				failure: function() {
 					alert("Error clearing notices!");
 				}
 			});

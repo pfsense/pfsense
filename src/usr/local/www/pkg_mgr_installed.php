@@ -77,7 +77,7 @@ if (is_subsystem_dirty('packagelock')) {
 
 $closehead = false;
 
-$pgtitle = array(gettext("System"), gettext("Package Manager"),gettext("Installed Packages"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Installed Packages"));
 
 include("head.inc");
 
@@ -95,13 +95,13 @@ foreach ($package_list as $pkg) {
 	$installed_packages[] = $pkg;
 }
 
-if(empty($installed_packages)):?>
+if (empty($installed_packages)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
 <?php else: ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed packages')?></h2></div> 
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed packages')?></h2></div>
 		<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -117,7 +117,7 @@ if(empty($installed_packages)):?>
 		<tbody>
 <?php
 	foreach ($installed_packages as $pkg):
-		if(!$pkg['name']) {
+		if (!$pkg['name']) {
 			continue;
 		}
 
@@ -158,7 +158,7 @@ if(empty($installed_packages)):?>
 ?>
 	<tr>
 		<td>
-<?php if($upgradeavail) { ?>
+<?php if ($upgradeavail) { ?>
 			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
 <?php } else if ($missing) { ?>
 			<font color="red"><i title="<?=$status?>" class="fa fa-exclamation"></i></font>
@@ -186,13 +186,13 @@ if(empty($installed_packages)):?>
 		</td>
 		<td>
 			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
-<?php if($upgradeavail) { ?>
+<?php if ($upgradeavail) { ?>
 			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
 <?php } else { ?>
 			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
 <?php } ?>
 
-<?php if(!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+<?php if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
 			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
 <?php endif; ?>
 		</td>

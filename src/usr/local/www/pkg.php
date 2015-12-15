@@ -191,7 +191,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	function setFilter(filtertext) {
 		jQuery('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
@@ -243,11 +243,13 @@ events.push(function(){
 </script>
 
 <?php
-if ($_GET['savemsg'] != "")
+if ($_GET['savemsg'] != "") {
 	$savemsg = htmlspecialchars($_GET['savemsg']);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 ?>
 
 <form action="pkg.php" name="pkgform" method="get">

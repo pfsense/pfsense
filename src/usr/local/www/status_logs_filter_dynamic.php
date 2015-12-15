@@ -180,17 +180,20 @@ function outputrule(req) {
 }
 
 function fetch_new_rules() {
-	if(isPaused)
+	if (isPaused) {
 		return;
-	if(isBusy)
+	}
+	if (isBusy) {
 		return;
+	}
 	isBusy = true;
 	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
 }
 
 function fetch_new_rules_callback(callback_data) {
-	if(isPaused)
+	if (isPaused) {
 		return;
+	}
 
 	var data_split;
 	var new_data_to_add = Array();
@@ -198,15 +201,16 @@ function fetch_new_rules_callback(callback_data) {
 
 	data_split = data.split("\n");
 
-	for(var x=0; x<data_split.length-1; x++) {
+	for (var x=0; x<data_split.length-1; x++) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
 		lastsawtime = row_split[9];
 
 		var tmp = format_log_line(row_split);
 
-		if ( !(tmp) )
+		if (!(tmp)) {
 			continue;
+		}
 
 		new_data_to_add[new_data_to_add.length] = tmp;
 	}
@@ -226,8 +230,9 @@ function in_arrayi(needle, haystack) {
 }
 
 function update_table_rows(data) {
-	if(isPaused)
+	if (isPaused) {
 		return;
+	}
 
 	var isIE = navigator.appName.indexOf('Microsoft') != -1;
 	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
@@ -251,8 +256,9 @@ function update_table_rows(data) {
 	// Number of rows to move by
 	var move = rows.length + data.length - nentries;
 
-	if (move < 0)
+	if (move < 0) {
 		move = 0;
+	}
 
 	if (isReverse == false) {
 		for (var i = move; i < rows.length; i++) {
@@ -296,7 +302,7 @@ function update_table_rows(data) {
 }
 
 function toggle_pause() {
-	if(isPaused) {
+	if (isPaused) {
 		isPaused = false;
 		fetch_new_rules();
 	} else {
@@ -308,7 +314,7 @@ if (typeof updateDelay != 'undefined') {
 	timer = setInterval('fetch_new_rules()', updateDelay);
 }
 
-function toggleListDescriptions(){
+function toggleListDescriptions() {
 	var ss = document.styleSheets;
 	for (var i=0; i<ss.length; i++) {
 		var rules = ss[i].cssRules || ss[i].rules;
@@ -380,24 +386,26 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						$dstIP = htmlspecialchars($filterent['dstip']);
 					}
 
-					if ($filterent['srcport'])
+					if ($filterent['srcport']) {
 						$srcPort = ":" . htmlspecialchars($filterent['srcport']);
-					else
+					} else {
 						$srcPort = "";
+					}
 
-					if ($filterent['dstport'])
+					if ($filterent['dstport']) {
 						$dstPort = ":" . htmlspecialchars($filterent['dstport']);
-					else
+					} else {
 						$dstPort = "";
+					}
 ?>
 					<tr>
 						<td>
 <?php
-		if ($filterent['act'] == "block") {
-			$icon_act = "fa-times text-danger";
-		} else {
-			$icon_act = "fa-check text-success";
-		}
+							if ($filterent['act'] == "block") {
+								$icon_act = "fa-times text-danger";
+							} else {
+								$icon_act = "fa-check text-success";
+							}
 ?>
 							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
@@ -423,15 +431,16 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 </div>
 <?php
 
-if ($tcpcnt > 0)
+if ($tcpcnt > 0) {
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
+}
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$(document).ready(function(){
+events.push(function() {
+	$(document).ready(function() {
 	    $('.fa').tooltip();
 	});
 });

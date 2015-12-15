@@ -190,9 +190,9 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-			($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-			($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-			($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
+		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+		    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 			$retval |= filter_configure();
 		}
 
@@ -224,10 +224,11 @@ $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a
 					gettext("If you pick a single IP, remote syslog servers must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
 					"<br /><br />" .
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else if ($savemsg)
+} else if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "status_logs.php");
@@ -481,7 +482,7 @@ print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	hideMultiCheckbox('notoggleall', true);
 

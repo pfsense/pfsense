@@ -150,9 +150,9 @@ if (count($sad)) {
 		</table>
 	</div>
 <?php
-		}
-else
+} else {
 	print_info_box(gettext('No IPsec security associations.'));
+}
 
 print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
 

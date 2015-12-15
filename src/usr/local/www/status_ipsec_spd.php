@@ -104,10 +104,11 @@ if (count($spd)) {
 			<tbody>
 <?php
 		foreach ($spd as $sp) {
-			if ($sp['dir'] == 'in')
+			if ($sp['dir'] == 'in') {
 				$dirstr = LEFTARROW . ' Inbound';
-			else
+			} else {
 				$dirstr = RIGHTARROW . ' Outbound';
+			}
 ?>
 				<tr>
 					<td>
@@ -133,8 +134,7 @@ if (count($spd)) {
 		</table>
 	</div>
 <?php
-	 } // e-o-if (count($spd))
-else {
+} else {
 	print_info_box(gettext('No IPsec security policies configured.'));
 }
 

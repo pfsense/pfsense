@@ -125,8 +125,9 @@ function stat_block($summary, $stat, $num) {
 				}
 			}
 
-			if (!is_ipaddr($outstr))
+			if (!is_ipaddr($outstr)) {
 				print('<tr><td>' . $outstr . '</td><td>' . $summary[$stat][$k[$i]] . '</td><td></td></tr>');
+			}
 		}
 	}
 	$leftover = $gotlines - $total;
@@ -182,8 +183,9 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
-			if ($i > 0)
+			if ($i > 0) {
 				print(",\r\n");
+			}
 
 			print("{");
 			print('"label": "' . $k[$i] . '", "value": ');

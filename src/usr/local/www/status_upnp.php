@@ -77,16 +77,18 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP"));
+$pgtitle = array(gettext("Status"), gettext("UPnP &amp; NAT-PMP"));
 $shortcut_section = "upnp";
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
-   !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (!$config['installedpackages'] ||
+    !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+    !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
 	print_info_box('UPnP is currently disabled.', 'danger');
 	include("foot.inc");

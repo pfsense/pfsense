@@ -73,8 +73,8 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if($_GET['action']) {
-	if($_GET['action'] == "kill") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "kill") {
 		$port  = $_GET['port'];
 		$remipp  = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
@@ -152,7 +152,7 @@ include("head.inc"); ?>
 
 	function killComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}

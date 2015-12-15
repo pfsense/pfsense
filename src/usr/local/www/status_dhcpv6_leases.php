@@ -332,11 +332,11 @@ while ($i < $leases_count) {
 				$f = $f+2;
 				break;
 			case "client-hostname":
-				if($data[$f+1] != "") {
-					$entry['hostname'] = preg_replace('/"/','',$data[$f+1]);
+				if ($data[$f+1] != "") {
+					$entry['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($entry['ip']);
-					if($hostname != "") {
+					if ($hostname != "") {
 						$entry['hostname'] = $hostname;
 					}
 				}
@@ -433,8 +433,9 @@ if (count($pools) > 0) {
 /* only print pool status when we have one */
 }
 
-if (empty($leases))
+if (empty($leases)) {
 	print '<div class="alert alert-warning" role="alert">'. gettext("No leases file found. Is the DHCP server active?") .'</div>';
+}
 
 ?>
 <div class="panel panel-default">
@@ -458,19 +459,21 @@ if (empty($leases))
 		<tbody>
 <?php
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
+	if ($data['act'] == 'active') {
 		$icon = 'fa-check-circle-o';
-	elseif ($data['act'] == 'expired')
+	} elseif ($data['act'] == 'expired') {
 		$icon = 'fa-ban';
-	else
+	} else {
 		$icon = 'fa-times-circle-o';
+	}
 
 	if ($data['act'] == "static") {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-			if(is_array($dhcpifconf['staticmap'])) {
+			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddr']) {
 						$data['if'] = $dhcpif;
@@ -479,8 +482,9 @@ foreach ($leases as $data):
 				}
 			}
 			/* exit as soon as we have an interface */
-			if ($data['if'] != "")
+			if ($data['if'] != "") {
 				break;
+			}
 		}
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
@@ -497,7 +501,7 @@ foreach ($leases as $data):
 				<td>
 					<?=$mac?>
 
-					<? if(isset($mac_man[$mac_hi])):?>
+					<? if (isset($mac_man[$mac_hi])):?>
 						(<?=$mac_man[$mac_hi]?>)
 					<?endif?>
 				</td>
@@ -544,19 +548,21 @@ foreach ($leases as $data):
 		<tbody>
 <?php
 foreach ($prefixes as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
+	if ($data['act'] == 'active') {
 		$icon = 'fa-check-circle-o';
-	elseif ($data['act'] == 'expired')
+	} elseif ($data['act'] == 'expired') {
 		$icon = 'fa-ban';
-	else
+	} else {
 		$icon = 'fa-times-circle-o';
+	}
 
 	if ($data['act'] == "static") {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-			if(is_array($dhcpifconf['staticmap'])) {
+			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddr']) {
 						$data['if'] = $dhcpif;
@@ -565,8 +571,9 @@ foreach ($prefixes as $data):
 				}
 			}
 			/* exit as soon as we have an interface */
-			if ($data['if'] != "")
+			if ($data['if'] != "") {
 				break;
+			}
 		}
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));

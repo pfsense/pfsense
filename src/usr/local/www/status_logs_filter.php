@@ -422,7 +422,7 @@ if (!$rawfilter) { // Advanced log filter form
 
 	$group->add(new Form_Checkbox(
 		'actpass',
-		'Pass',
+		null,
 		'Pass',
 		in_arrayi('Pass', $Include_Act),
 		'Pass'
@@ -463,7 +463,7 @@ if (!$rawfilter) { // Advanced log filter form
 
 	$group->add(new Form_Checkbox(
 		'actblock',
-		'Block',
+		null,
 		'Block',
 		in_arrayi('Block', $Include_Act),
 		'Block'
@@ -666,21 +666,21 @@ if (!$rawfilter) {
 		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 ?>
-					<td>
-						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>" alt="Reverse Resolve with DNS"/>
+					<td style="white-space:nowrap;">
+						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<i class="fa fa-minus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" alt="Easy Rule: Add to Block List" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
-						</i>
+						<a class="fa fa-minus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")?>')">
+						</a>
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
-					<td>
-						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>" class="ICON-<?= $dst_htmlclass; ?>" alt="Reverse Resolve with DNS"/>
+					<td style="white-space:nowrap;">
+						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<i class="fa fa-plus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
-						</i>
+						<a class="fa fa-plus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")?>')">
+						</a>
 						<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 					</td>
 <?php

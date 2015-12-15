@@ -180,6 +180,12 @@ if (empty($installed_packages)):?>
 		</td>
 		<td>
 			<?=$pkg['desc']?>
+<?php if (is_array($pkg['deps']) && count($pkg['deps'])): ?>
+			<br /><br /><?= gettext("Package Dependencies") ?>:
+	<?php foreach ($pkg['deps'] as $pdep): ?>
+			<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
+	<?php endforeach; ?>
+<?php endif; ?>
 		</td>
 		<td>
 			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
